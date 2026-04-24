@@ -157,7 +157,6 @@ func (s *Service) executionPayloadEnvelopesByRootRPCHandler(ctx context.Context,
 					ExecutionRequests: req.env.Message.ExecutionRequests,
 					BuilderIndex:      req.env.Message.BuilderIndex,
 					BeaconBlockRoot:   req.env.Message.BeaconBlockRoot,
-					StateRoot:         req.env.Message.StateRoot,
 				},
 				Signature: req.env.Signature,
 			}

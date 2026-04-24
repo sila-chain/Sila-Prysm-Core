@@ -205,7 +205,6 @@ func (s *Service) streamCanonicalEnvelopes(ctx context.Context, rp rangeParams, 
 				ExecutionRequests: c.env.Message.ExecutionRequests,
 				BuilderIndex:      c.env.Message.BuilderIndex,
 				BeaconBlockRoot:   c.env.Message.BeaconBlockRoot,
-				StateRoot:         c.env.Message.StateRoot,
 			},
 			Signature: c.env.Signature,
 		}

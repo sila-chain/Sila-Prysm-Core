@@ -27,7 +27,6 @@ func testEnvelopeProto() *eth.ExecutionPayloadEnvelope {
 		ExecutionRequests: &enginev1.ExecutionRequests{},
 		BuilderIndex:      7,
 		BeaconBlockRoot:   fillByteSlice(32, 0x33),
-		StateRoot:         fillByteSlice(32, 0x44),
 	}
 }
 
@@ -39,7 +38,6 @@ func TestExecutionPayloadEnvelopeFromConsensus(t *testing.T) {
 	require.Equal(t, hexutil.Encode(env.Payload.ParentHash), result.Payload.ParentHash)
 	require.Equal(t, "7", result.BuilderIndex)
 	require.Equal(t, hexutil.Encode(env.BeaconBlockRoot), result.BeaconBlockRoot)
-	require.Equal(t, hexutil.Encode(env.StateRoot), result.StateRoot)
 	require.Equal(t, "42", result.Payload.SlotNumber)
 	require.NotNil(t, result.ExecutionRequests)
 }
