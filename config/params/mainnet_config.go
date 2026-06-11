@@ -17,6 +17,15 @@ func MainnetConfig() *BeaconChainConfig {
 	return mainnetBeaconConfig.Copy()
 }
 
+// SilaMainnetConfig returns the configuration to be used in the Sila main network.
+func SilaMainnetConfig() *BeaconChainConfig {
+	cfg := MainnetConfig()
+	cfg.ConfigName = SilaMainnetName
+	cfg.DepositChainID = 2026
+	cfg.DepositNetworkID = 2026
+	return cfg
+}
+
 const (
 	// Genesis Fork Epoch for the mainnet config.
 	genesisForkEpoch = 0
