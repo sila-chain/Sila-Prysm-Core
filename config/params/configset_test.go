@@ -65,6 +65,13 @@ func TestConfigset_Replace(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestConfigset_SilaMainnetRegistered(t *testing.T) {
+	cfg, err := ByName(SilaMainnetName)
+	require.NoError(t, err)
+	require.Equal(t, SilaMainnetName, cfg.ConfigName)
+	require.Equal(t, uint64(2026), cfg.DepositChainID)
+	require.Equal(t, uint64(2026), cfg.DepositNetworkID)
+}
 func testConfig(name string) *BeaconChainConfig {
 	c := MainnetConfig()
 	FillTestVersions(c, 127)
