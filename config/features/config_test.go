@@ -62,7 +62,7 @@ func TestValidateNetworkFlags(t *testing.T) {
 		},
 		{
 			name:    "One network flag",
-			args:    []string{"command", "--sepolia"},
+			args:    []string{"command", "--sila"},
 			wantErr: false,
 		},
 		{
@@ -72,7 +72,7 @@ func TestValidateNetworkFlags(t *testing.T) {
 		},
 		{
 			name:    "All network flags",
-			args:    []string{"command", "--sepolia", "--holesky", "--mainnet"},
+			args:    []string{"command", "--sila", "--sepolia", "--holesky", "--mainnet"},
 			wantErr: true,
 		},
 	}
