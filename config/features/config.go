@@ -140,6 +140,7 @@ func configureTestnet(ctx *cli.Context) error {
 		if err := params.SetActive(params.SilaMainnetConfig().Copy()); err != nil {
 			return err
 		}
+		params.UseCustomNetworkConfig()
 	} else if ctx.Bool(SepoliaTestnet.Name) {
 		log.Info("Running on the Sepolia Beacon Chain Testnet")
 		if err := params.SetActive(params.SepoliaConfig().Copy()); err != nil {
