@@ -11,7 +11,7 @@ import (
 var Commands = &cli.Command{
 	Name:     "db",
 	Category: "db",
-	Usage:    "Defines commands for interacting with the Ethereum Beacon Node database",
+	Usage:    "Defines commands for interacting with the beacon node database",
 	Subcommands: []*cli.Command{
 		{
 			Name:        "restore",

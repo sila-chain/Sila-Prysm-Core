@@ -295,7 +295,7 @@ func main() {
 	rctx, cancel := context.WithCancel(context.Background())
 	app := cli.App{
 		Name:  "beacon-chain",
-		Usage: "this is a beacon chain implementation for Ethereum",
+		Usage: "this is a beacon chain implementation",
 		Action: func(ctx *cli.Context) error {
 			if err := startNode(ctx, cancel); err != nil {
 				log.Fatal(err.Error())
