@@ -12,7 +12,7 @@ import (
 var Commands = &cli.Command{
 	Name:     "wallet",
 	Category: "wallet",
-	Usage:    "Defines commands for interacting with Ethereum validator wallets.",
+	Usage:    "Defines commands for interacting with validator wallets.",
 	Subcommands: []*cli.Command{
 		{
 			Name: "create",

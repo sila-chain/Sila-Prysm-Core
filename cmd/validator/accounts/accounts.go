@@ -14,7 +14,7 @@ import (
 var Commands = &cli.Command{
 	Name:     "accounts",
 	Category: "accounts",
-	Usage:    "Defines commands for interacting with Ethereum validator accounts.",
+	Usage:    "Defines commands for interacting with validator accounts.",
 	Subcommands: []*cli.Command{
 		{
 			Name:        "delete",
@@ -117,7 +117,7 @@ var Commands = &cli.Command{
 		},
 		{
 			Name:        "import",
-			Description: `imports Ethereum validator accounts stored in EIP-2335 keystore.json files from an external directory`,
+			Description: `imports validator accounts stored in EIP-2335 keystore.json files from an external directory`,
 			Flags: cmd.WrapFlags([]cli.Flag{
 				flags.WalletDirFlag,
 				flags.KeysDirFlag,
