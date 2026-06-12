@@ -32,7 +32,7 @@ var (
 	Mainnet = &cli.BoolFlag{
 		Value: true,
 		Name:  "mainnet",
-		Usage: "Runs on Ethereum main network. This is the default and can be omitted.",
+		Usage: "Runs on main network. This is the default and can be omitted.",
 	}
 	devModeFlag = &cli.BoolFlag{
 		Name:  "dev",
