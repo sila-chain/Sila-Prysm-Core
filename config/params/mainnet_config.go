@@ -31,6 +31,14 @@ func SilaMainnetConfig() *BeaconChainConfig {
 	cfg.ElectraForkVersion = []byte{0x07, 0xea, 0x00, 0x05}
 	cfg.FuluForkVersion = []byte{0x07, 0xea, 0x00, 0x06}
 	cfg.GloasForkVersion = []byte{0x07, 0xea, 0x00, 0x07}
+	cfg.AltairForkEpoch = genesisForkEpoch
+	cfg.BellatrixForkEpoch = genesisForkEpoch
+	cfg.CapellaForkEpoch = genesisForkEpoch
+	cfg.DenebForkEpoch = genesisForkEpoch
+	cfg.ElectraForkEpoch = genesisForkEpoch
+	cfg.FuluForkEpoch = genesisForkEpoch
+	cfg.GloasForkEpoch = mainnetGloasForkEpoch
+	cfg.InitializeForkSchedule()
 	return cfg
 }
 
