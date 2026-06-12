@@ -52,9 +52,9 @@ func TestWarnNonChecksummedAddress(t *testing.T) {
 	address := "0x967646dCD8d34F4E02204faeDcbAe0cC96fB9245"
 	err := WarnNonChecksummedAddress(address)
 	require.NoError(t, err)
-	assert.LogsDoNotContain(t, logHook, "is not a checksum Ethereum address")
+	assert.LogsDoNotContain(t, logHook, "is not a checksum execution address")
 	address = strings.ToLower("0x967646dCD8d34F4E02204faeDcbAe0cC96fB9244")
 	err = WarnNonChecksummedAddress(address)
 	require.NoError(t, err)
-	assert.LogsContain(t, logHook, "is not a checksum Ethereum address")
+	assert.LogsContain(t, logHook, "is not a checksum execution address")
 }

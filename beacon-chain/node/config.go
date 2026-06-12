@@ -185,10 +185,10 @@ func configureExecutionSetting(cliCtx *cli.Context) error {
 	}
 	checksumAddress := common.HexToAddress(ha)
 	if !mixedcaseAddress.ValidChecksum() {
-		log.Warnf("Fee recipient %s is not a checksum Ethereum address. "+
+		log.Warnf("Fee recipient %s is not a checksum execution address. "+
 			"The checksummed address is %s and will be used as the fee recipient. "+
 			"We recommend using a mixed-case address (checksum) "+
-			"to prevent spelling mistakes in your fee recipient Ethereum address", ha, checksumAddress.Hex())
+			"to prevent spelling mistakes in your fee recipient execution address", ha, checksumAddress.Hex())
 	}
 	c.DefaultFeeRecipient = checksumAddress
 	log.Infof("Default fee recipient is set to %s, recipient may be overwritten from validator client and persist in db."+

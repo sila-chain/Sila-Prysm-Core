@@ -194,7 +194,7 @@ func (psl *SettingsLoader) applyOverrides() {
 func (psl *SettingsLoader) loadFromDefault(cliCtx *cli.Context, dbSettings *validatorpb.ProposerSettingsPayload) (*validatorpb.ProposerSettingsPayload, error) {
 	suggestedFeeRecipient := cliCtx.String(flags.SuggestedFeeRecipientFlag.Name)
 	if !common.IsHexAddress(suggestedFeeRecipient) {
-		return nil, errors.Errorf("--%s is not a valid Ethereum address", flags.SuggestedFeeRecipientFlag.Name)
+		return nil, errors.Errorf("--%s is not a valid execution address", flags.SuggestedFeeRecipientFlag.Name)
 	}
 	if err := config.WarnNonChecksummedAddress(suggestedFeeRecipient); err != nil {
 		return nil, err

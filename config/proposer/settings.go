@@ -46,7 +46,7 @@ func SettingFromConsensus(ps *validatorpb.ProposerSettingsPayload) (*Settings, e
 		d := &Option{}
 		if ps.DefaultConfig.FeeRecipient != "" {
 			if !common.IsHexAddress(ps.DefaultConfig.FeeRecipient) {
-				return nil, errors.New("default fee recipient is not a valid Ethereum address")
+				return nil, errors.New("default fee recipient is not a valid execution address")
 			}
 			if err := config.WarnNonChecksummedAddress(ps.DefaultConfig.FeeRecipient); err != nil {
 				return nil, err
@@ -68,7 +68,7 @@ func verifyOption(key string, option *validatorpb.ProposerOptionPayload) error {
 		return fmt.Errorf("fee recipient is required for proposer %s", key)
 	}
 	if !common.IsHexAddress(option.FeeRecipient) {
-		return errors.New("fee recipient is not a valid Ethereum address")
+		return errors.New("fee recipient is not a valid execution address")
 	}
 	if err := config.WarnNonChecksummedAddress(option.FeeRecipient); err != nil {
 		return err
