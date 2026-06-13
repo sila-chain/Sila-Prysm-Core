@@ -15,7 +15,7 @@ var _ fssz.Unmarshaler = (*ValidatorIndex)(nil)
 // Spec v1.6.1: BUILDER_INDEX_FLAG.
 const BuilderIndexFlag uint64 = 1 << 40
 
-// ValidatorIndex in eth2.
+// ValidatorIndex in Sila consensus.
 type ValidatorIndex uint64
 
 // IsBuilderIndex returns true when the BuilderIndex flag is set on the validator index.

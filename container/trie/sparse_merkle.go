@@ -1,4 +1,4 @@
-// Package trie defines utilities for sparse merkle tries for Ethereum consensus.
+// Package trie defines utilities for sparse merkle tries for Sila consensus.
 package trie
 
 import (
@@ -13,7 +13,7 @@ import (
 )
 
 // SparseMerkleTrie implements a sparse, general purpose Merkle trie to be used
-// across Ethereum consensus functionality.
+// across Sila consensus functionality.
 type SparseMerkleTrie struct {
 	depth         uint
 	branches      [][][]byte
