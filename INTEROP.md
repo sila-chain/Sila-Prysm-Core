@@ -1,6 +1,6 @@
 # Prysm Client Interoperability Guide
 
-This README details how to setup Prysm for interop testing for usage with other Ethereum consensus clients.
+This README details how to setup Prysm for interop testing for usage with other Sila consensus clients.
 
 > [!IMPORTANT]  
 > This guide is likely to be outdated. The Prysm team does not have capacity to troubleshoot
