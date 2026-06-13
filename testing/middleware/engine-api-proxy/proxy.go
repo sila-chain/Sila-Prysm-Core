@@ -282,7 +282,7 @@ func isEngineAPICall(reqBytes []byte) bool {
 			return false
 		}
 	}
-	return strings.Contains(jsonRequest.Method, "engine_")
+	return strings.Contains(jsonRequest.Method, "silaEngine_")
 }
 
 func unmarshalRPCObject(b []byte) (*jsonRPCObject, error) {

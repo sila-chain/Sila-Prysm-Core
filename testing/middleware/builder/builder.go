@@ -46,19 +46,19 @@ const (
 	blindedPath  = "POST /eth/v1/builder/blinded_blocks"
 
 	// ForkchoiceUpdatedMethod v1 request string for JSON-RPC.
-	ForkchoiceUpdatedMethod = "engine_forkchoiceUpdatedV1"
+	ForkchoiceUpdatedMethod = "silaEngine_forkchoiceUpdatedV1"
 	// ForkchoiceUpdatedMethodV2 v2 request string for JSON-RPC.
-	ForkchoiceUpdatedMethodV2 = "engine_forkchoiceUpdatedV2"
+	ForkchoiceUpdatedMethodV2 = "silaEngine_forkchoiceUpdatedV2"
 	// ForkchoiceUpdatedMethodV3 v3 request string for JSON-RPC.
-	ForkchoiceUpdatedMethodV3 = "engine_forkchoiceUpdatedV3"
+	ForkchoiceUpdatedMethodV3 = "silaEngine_forkchoiceUpdatedV3"
 	// GetPayloadMethod v1 request string for JSON-RPC.
-	GetPayloadMethod = "engine_getPayloadV1"
+	GetPayloadMethod = "silaEngine_getPayloadV1"
 	// GetPayloadMethodV2 v2 request string for JSON-RPC.
-	GetPayloadMethodV2 = "engine_getPayloadV2"
+	GetPayloadMethodV2 = "silaEngine_getPayloadV2"
 	// GetPayloadMethodV3 v3 request string for JSON-RPC.
-	GetPayloadMethodV3 = "engine_getPayloadV3"
+	GetPayloadMethodV3 = "silaEngine_getPayloadV3"
 	// GetPayloadMethodV4 v4 request string for JSON-RPC.
-	GetPayloadMethodV4 = "engine_getPayloadV4"
+	GetPayloadMethodV4 = "silaEngine_getPayloadV4"
 )
 
 var (
@@ -935,7 +935,7 @@ func isEngineAPICall(reqBytes []byte) bool {
 			return false
 		}
 	}
-	return strings.Contains(jsonRequest.Method, "engine_")
+	return strings.Contains(jsonRequest.Method, "silaEngine_")
 }
 
 func unmarshalRPCObject(b []byte) (*jsonRPCObject, error) {
