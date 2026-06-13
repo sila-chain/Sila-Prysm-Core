@@ -31,7 +31,7 @@ import (
 
 // GetExecutionPayloadEnvelope retrieves a full execution payload envelope by beacon block root.
 // The blinded envelope is fetched from the DB and the full execution payload is reconstructed
-// from the EL via eth_getBlockByHash.
+// from the EL via sila_getBlockByHash.
 func (s *Server) GetExecutionPayloadEnvelope(w http.ResponseWriter, r *http.Request) {
 	ctx, span := trace.StartSpan(r.Context(), "beacon.GetExecutionPayloadEnvelope")
 	defer span.End()

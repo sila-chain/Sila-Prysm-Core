@@ -320,7 +320,7 @@ func (s *Service) pruneInvalidBlock(ctx context.Context, root, parentRoot, paren
 }
 
 // getPayloadAttributes returns the payload attributes for the given state and slot.
-// The attribute is required to initiate a payload build process in the context of an `engine_forkchoiceUpdated` call.
+// The attribute is required to initiate a payload build process in the context of an `silaEngine_forkchoiceUpdated` call.
 func (s *Service) getPayloadAttribute(ctx context.Context, st state.BeaconState, slot primitives.Slot, headRoot []byte, headFull bool) payloadattribute.Attributer {
 	emptyAttri := payloadattribute.EmptyWithVersion(st.Version())
 

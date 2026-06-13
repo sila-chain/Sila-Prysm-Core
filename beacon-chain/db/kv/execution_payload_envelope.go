@@ -15,7 +15,7 @@ import (
 // SaveExecutionPayloadEnvelope blinds and saves a signed execution payload envelope keyed by
 // beacon block root. The envelope is stored in blinded form: the full execution payload is replaced
 // with its block hash. The full payload can later be retrieved from the EL via
-// engine_getPayloadBodiesByHash.
+// silaEngine_getPayloadBodiesByHash.
 // A secondary index from BlockHash → BeaconBlockRoot is maintained so that
 // envelopes can be looked up by execution block hash.
 func (s *Store) SaveExecutionPayloadEnvelope(ctx context.Context, env *ethpb.SignedExecutionPayloadEnvelope) error {

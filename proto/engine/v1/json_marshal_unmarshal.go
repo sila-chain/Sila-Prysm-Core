@@ -68,8 +68,8 @@ func (b PayloadIDBytes) MarshalJSON() ([]byte, error) {
 	return json.Marshal(hexutil.Bytes(b[:]))
 }
 
-// ExecutionBlock is the response kind received by the eth_getBlockByHash and
-// eth_getBlockByNumber endpoints via JSON-RPC.
+// ExecutionBlock is the response kind received by the sila_getBlockByHash and
+// sila_getBlockByNumber endpoints via JSON-RPC.
 type ExecutionBlock struct {
 	Version int
 	gethtypes.Header

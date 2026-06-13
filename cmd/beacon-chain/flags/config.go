@@ -77,7 +77,7 @@ func ConfigureGlobalFlags(ctx *cli.Context) error {
 	}
 
 	if ctx.Bool(DisableGetBlobsV2.Name) {
-		log.Warning("Disabling `engine_getBlobsV2` API")
+		log.Warning("Disabling `silaEngine_getBlobsV2` API")
 		cfg.DisableGetBlobsV2 = true
 	}
 
