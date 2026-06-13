@@ -106,7 +106,7 @@ func TestServer_GetBeaconBlock_Phase0(t *testing.T) {
 	randaoReveal, err := util.RandaoReveal(beaconState, 0, privKeys)
 	require.NoError(t, err)
 
-	graffiti := bytesutil.ToBytes32([]byte("eth2"))
+	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	req := &ethpb.BlockRequest{
 		Slot:         1,
 		RandaoReveal: randaoReveal,
@@ -178,7 +178,7 @@ func TestServer_GetBeaconBlock_Altair(t *testing.T) {
 	randaoReveal, err := util.RandaoReveal(beaconState, 0, privKeys)
 	require.NoError(t, err)
 
-	graffiti := bytesutil.ToBytes32([]byte("eth2"))
+	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
 	req := &ethpb.BlockRequest{
 		Slot:         altairSlot + 1,
@@ -298,7 +298,7 @@ func TestServer_GetBeaconBlock_Bellatrix(t *testing.T) {
 	randaoReveal, err := util.RandaoReveal(beaconState, 0, privKeys)
 	require.NoError(t, err)
 
-	graffiti := bytesutil.ToBytes32([]byte("eth2"))
+	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
 	req := &ethpb.BlockRequest{
 		Slot:         bellatrixSlot + 1,
@@ -431,7 +431,7 @@ func TestServer_GetBeaconBlock_Capella(t *testing.T) {
 	randaoReveal, err := util.RandaoReveal(beaconState, 0, privKeys)
 	require.NoError(t, err)
 
-	graffiti := bytesutil.ToBytes32([]byte("eth2"))
+	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
 	req := &ethpb.BlockRequest{
 		Slot:         capellaSlot + 1,
@@ -563,7 +563,7 @@ func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
 	randaoReveal, err := util.RandaoReveal(beaconState, 0, privKeys)
 	require.NoError(t, err)
 
-	graffiti := bytesutil.ToBytes32([]byte("eth2"))
+	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
 	req := &ethpb.BlockRequest{
 		Slot:         denebSlot + 1,
@@ -707,7 +707,7 @@ func TestServer_GetBeaconBlock_Electra(t *testing.T) {
 	randaoReveal, err := util.RandaoReveal(beaconState, 0, privKeys)
 	require.NoError(t, err)
 
-	graffiti := bytesutil.ToBytes32([]byte("eth2"))
+	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
 	req := &ethpb.BlockRequest{
 		Slot:         electraSlot + 1,
@@ -844,7 +844,7 @@ func TestServer_GetBeaconBlock_Fulu(t *testing.T) {
 	randaoReveal, err := util.RandaoReveal(beaconState, 0, privKeys)
 	require.NoError(t, err)
 
-	graffiti := bytesutil.ToBytes32([]byte("eth2"))
+	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
 	req := &ethpb.BlockRequest{
 		Slot:         fuluSlot + 1,
