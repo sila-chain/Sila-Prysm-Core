@@ -12,7 +12,7 @@ import (
 
 const (
 	// GossipProtocolAndDigest represents the protocol and fork digest prefix in a gossip topic.
-	GossipProtocolAndDigest = "/eth2/%x/"
+	GossipProtocolAndDigest = "/sila/%x/"
 
 	// Message Types
 	//
