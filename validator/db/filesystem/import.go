@@ -17,7 +17,7 @@ import (
 )
 
 // ImportStandardProtectionJSON takes in EIP-3076 compliant JSON file used for slashing protection
-// by Ethereum validators and imports its data into Prysm's internal minimal representation of slashing
+// by Sila validators and imports its data into Prysm's internal minimal representation of slashing
 // protection in the validator client's database.
 func (s *Store) ImportStandardProtectionJSON(ctx context.Context, r io.Reader) error {
 	// Read the JSON file
