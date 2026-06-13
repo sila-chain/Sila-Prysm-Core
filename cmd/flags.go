@@ -14,12 +14,12 @@ import (
 )
 
 var (
-	// MinimalConfigFlag declares to use the minimal config for running Ethereum consensus.
+	// MinimalConfigFlag declares to use the minimal config for running Sila consensus.
 	MinimalConfigFlag = &cli.BoolFlag{
 		Name:  "minimal-config",
 		Usage: "Uses minimal config with parameters as defined in the spec.",
 	}
-	// E2EConfigFlag declares to use a testing specific config for running Ethereum consensus in end-to-end testing.
+	// E2EConfigFlag declares to use a testing specific config for running Sila consensus in end-to-end testing.
 	E2EConfigFlag = &cli.BoolFlag{
 		Name:  "e2e-config",
 		Usage: "Enables the E2E testing config, only for use within end-to-end testing.",

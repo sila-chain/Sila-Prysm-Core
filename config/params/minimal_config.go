@@ -134,7 +134,7 @@ func MinimalSpecConfig() *BeaconChainConfig {
 	minimalConfig.ConsolidationChurnLimitQuotient = 32
 	minimalConfig.MaxPerEpochActivationChurnLimitGloas = 128000000000
 
-	// Ethereum PoW parameters.
+	// Sila execution-layer PoW compatibility parameters.
 	minimalConfig.DepositChainID = 5   // Chain ID of eth1 goerli.
 	minimalConfig.DepositNetworkID = 5 // Network ID of eth1 goerli.
 	minimalConfig.DepositContractAddress = "0x1234567890123456789012345678901234567890"

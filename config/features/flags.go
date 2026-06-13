@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	// SepoliaTestnet flag for the multiclient Ethereum consensus testnet.
+	// SepoliaTestnet flag for the multiclient Sila consensus testnet.
 	SepoliaTestnet = &cli.BoolFlag{
 		Name:  "sepolia",
 		Usage: "Runs Prysm configured for the Sepolia test network.",
@@ -18,12 +18,12 @@ var (
 		Name:  "sila",
 		Usage: "Runs Prysm configured for the Sila main network.",
 	}
-	// HoleskyTestnet flag for the multiclient Ethereum consensus testnet.
+	// HoleskyTestnet flag for the multiclient Sila consensus testnet.
 	HoleskyTestnet = &cli.BoolFlag{
 		Name:  "holesky",
 		Usage: "Runs Prysm configured for the Holesky test network.",
 	}
-	// HoodiTestnet flag for ethereum testnet.
+	// HoodiTestnet flag for Sila testnet.
 	HoodiTestnet = &cli.BoolFlag{
 		Name:  "hoodi",
 		Usage: "Runs Prysm configured for the Hoodi test network.",

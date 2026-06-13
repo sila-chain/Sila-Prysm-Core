@@ -162,7 +162,7 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	PayloadDueBPS:            primitives.BP(7500),
 	EquivocationEarlyDueBPS:  primitives.BP(7500),
 
-	// Ethereum PoW parameters.
+	// Sila execution-layer PoW compatibility parameters.
 	DepositChainID:         1, // Chain ID of eth1 mainnet.
 	DepositNetworkID:       1, // Network ID of eth1 mainnet.
 	DepositContractAddress: "0x00000000219ab540356cBB839Cbe05303d7705Fa",
