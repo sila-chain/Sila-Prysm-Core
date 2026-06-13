@@ -4,6 +4,8 @@
 package bls
 
 import (
+	"runtime"
+
 	"github.com/OffchainLabs/prysm/v7/crypto/bls/blst"
 	"github.com/OffchainLabs/prysm/v7/crypto/bls/common"
 	"github.com/OffchainLabs/prysm/v7/crypto/bls/herumi"
@@ -11,7 +13,9 @@ import (
 
 // Initialize herumi temporarily while we transition to blst for ethdo.
 func init() {
-	herumi.Init()
+	if runtime.GOOS != "windows" {
+		herumi.Init()
+	}
 }
 
 // SecretKeyFromBytes creates a BLS private key from a BigEndian byte slice.
