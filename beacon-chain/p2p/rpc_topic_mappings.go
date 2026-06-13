@@ -24,7 +24,7 @@ const (
 
 const (
 	// Specifies the protocol prefix for all our Req/Resp topics.
-	protocolPrefix = "/eth2/beacon_chain/req"
+	protocolPrefix = "/sila/beacon_chain/req"
 
 	// StatusMessageName specifies the name for the status message topic.
 	StatusMessageName = "/status"
@@ -92,10 +92,10 @@ const (
 
 	// RPCBlobSidecarsByRangeTopicV1 is a topic for requesting blob sidecars
 	// in the slot range [start_slot, start_slot + count), leading up to the current head block as selected by fork choice.
-	// /eth2/beacon_chain/req/blob_sidecars_by_range/1/ - New in deneb.
+	// /sila/beacon_chain/req/blob_sidecars_by_range/1/ - New in deneb.
 	RPCBlobSidecarsByRangeTopicV1 = protocolPrefix + BlobSidecarsByRangeName + SchemaVersionV1
 	// RPCBlobSidecarsByRootTopicV1 is a topic for requesting blob sidecars by their block root.
-	// /eth2/beacon_chain/req/blob_sidecars_by_root/1/ - New in deneb.
+	// /sila/beacon_chain/req/blob_sidecars_by_root/1/ - New in deneb.
 	RPCBlobSidecarsByRootTopicV1 = protocolPrefix + BlobSidecarsByRootName + SchemaVersionV1
 
 	// RPCLightClientBootstrapTopicV1 is a topic for requesting a light client bootstrap.
@@ -107,17 +107,17 @@ const (
 	// RPCLightClientOptimisticUpdateTopicV1 is a topic for requesting a light client Optimistic update.
 	RPCLightClientOptimisticUpdateTopicV1 = protocolPrefix + LightClientOptimisticUpdateName + SchemaVersionV1
 	// RPCDataColumnSidecarsByRootTopicV1 is a topic for requesting data column sidecars by their block root.
-	// /eth2/beacon_chain/req/data_column_sidecars_by_root/1 - New in Fulu.
+	// /sila/beacon_chain/req/data_column_sidecars_by_root/1 - New in Fulu.
 	RPCDataColumnSidecarsByRootTopicV1 = protocolPrefix + DataColumnSidecarsByRootName + SchemaVersionV1
 	// RPCDataColumnSidecarsByRangeTopicV1 is a topic for requesting data column sidecars by their slot.
-	// /eth2/beacon_chain/req/data_column_sidecars_by_range/1 - New in Fulu.
+	// /sila/beacon_chain/req/data_column_sidecars_by_range/1 - New in Fulu.
 	RPCDataColumnSidecarsByRangeTopicV1 = protocolPrefix + DataColumnSidecarsByRangeName + SchemaVersionV1
 	// RPCExecutionPayloadEnvelopesByRootTopicV1 is a topic for requesting execution payload envelopes by their beacon block root.
-	// /eth2/beacon_chain/req/execution_payload_envelopes_by_root/1 - New in Gloas.
+	// /sila/beacon_chain/req/execution_payload_envelopes_by_root/1 - New in Gloas.
 	RPCExecutionPayloadEnvelopesByRootTopicV1 = protocolPrefix + ExecutionPayloadEnvelopesByRootName + SchemaVersionV1
 	// RPCExecutionPayloadEnvelopesByRangeTopicV1 is a topic for requesting execution payload envelopes
 	// in the slot range [start_slot, start_slot + count). New in Gloas.
-	// /eth2/beacon_chain/req/execution_payload_envelopes_by_range/1/
+	// /sila/beacon_chain/req/execution_payload_envelopes_by_range/1/
 	RPCExecutionPayloadEnvelopesByRangeTopicV1 = protocolPrefix + ExecutionPayloadEnvelopesByRangeName + SchemaVersionV1
 
 	// V2 RPC Topics

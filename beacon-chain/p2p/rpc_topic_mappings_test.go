@@ -48,7 +48,7 @@ func TestTopicDeconstructor(t *testing.T) {
 		{
 			name:          "malformed status topic",
 			topic:         protocolPrefix + "/statis" + SchemaVersionV1,
-			expectedError: "unable to find a valid message for /eth2/beacon_chain/req/statis/1",
+			expectedError: "unable to find a valid message for /sila/beacon_chain/req/statis/1",
 			output:        []string{""},
 		},
 		{
@@ -60,7 +60,7 @@ func TestTopicDeconstructor(t *testing.T) {
 		{
 			name:          "beacon block by range topic with malformed version",
 			topic:         protocolPrefix + BeaconBlocksByRangeMessageName + "/v" + "/ssz_snappy",
-			expectedError: "unable to find a valid schema version for /eth2/beacon_chain/req/beacon_blocks_by_range/v/ssz_snappy",
+			expectedError: "unable to find a valid schema version for /sila/beacon_chain/req/beacon_blocks_by_range/v/ssz_snappy",
 			output:        []string{""},
 		},
 	}
@@ -122,33 +122,33 @@ func TestTopicFromMessage_CorrectType(t *testing.T) {
 		// Not modified in altair fork.
 		topic, err := TopicFromMessage(GoodbyeMessageName, altairForkEpoch)
 		require.NoError(t, err)
-		require.Equal(t, "/eth2/beacon_chain/req/goodbye/1", topic)
+		require.Equal(t, "/sila/beacon_chain/req/goodbye/1", topic)
 
 		// Modified in altair fork.
 		topic, err = TopicFromMessage(MetadataMessageName, altairForkEpoch)
 		require.NoError(t, err)
-		require.Equal(t, "/eth2/beacon_chain/req/metadata/2", topic)
+		require.Equal(t, "/sila/beacon_chain/req/metadata/2", topic)
 	})
 
 	t.Run("after fulu fork", func(t *testing.T) {
 		// Not modified in any fork.
 		topic, err := TopicFromMessage(GoodbyeMessageName, fuluForkEpoch)
 		require.NoError(t, err)
-		require.Equal(t, "/eth2/beacon_chain/req/goodbye/1", topic)
+		require.Equal(t, "/sila/beacon_chain/req/goodbye/1", topic)
 
 		// Modified in altair fork.
 		topic, err = TopicFromMessage(BeaconBlocksByRangeMessageName, fuluForkEpoch)
 		require.NoError(t, err)
-		require.Equal(t, "/eth2/beacon_chain/req/beacon_blocks_by_range/2", topic)
+		require.Equal(t, "/sila/beacon_chain/req/beacon_blocks_by_range/2", topic)
 
 		// Modified in fulu fork.
 		topic, err = TopicFromMessage(StatusMessageName, fuluForkEpoch)
 		require.NoError(t, err)
-		require.Equal(t, "/eth2/beacon_chain/req/status/2", topic)
+		require.Equal(t, "/sila/beacon_chain/req/status/2", topic)
 
 		// Modified both in altair and fulu fork.
 		topic, err = TopicFromMessage(MetadataMessageName, fuluForkEpoch)
 		require.NoError(t, err)
-		require.Equal(t, "/eth2/beacon_chain/req/metadata/3", topic)
+		require.Equal(t, "/sila/beacon_chain/req/metadata/3", topic)
 	})
 }
