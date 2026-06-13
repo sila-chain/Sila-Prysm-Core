@@ -22,13 +22,13 @@ func TestAllTopics(t *testing.T) {
 	}
 	require.Equal(t, len(tops), len(all), "duplicate topics found")
 	expected := []string{
-		"/eth2/ad532ceb/sync_committee_contribution_and_proof/ssz_snappy",
-		"/eth2/ad532ceb/beacon_aggregate_and_proof/ssz_snappy",
-		"/eth2/ad532ceb/beacon_block/ssz_snappy",
-		"/eth2/ad532ceb/bls_to_execution_change/ssz_snappy",
-		"/eth2/afcaaba0/beacon_attestation_19/ssz_snappy",
-		"/eth2/cc2c5cdb/data_column_sidecar_0/ssz_snappy",
-		"/eth2/cc2c5cdb/data_column_sidecar_127/ssz_snappy",
+		"/sila/ad532ceb/sync_committee_contribution_and_proof/ssz_snappy",
+		"/sila/ad532ceb/beacon_aggregate_and_proof/ssz_snappy",
+		"/sila/ad532ceb/beacon_block/ssz_snappy",
+		"/sila/ad532ceb/bls_to_execution_change/ssz_snappy",
+		"/sila/afcaaba0/beacon_attestation_19/ssz_snappy",
+		"/sila/cc2c5cdb/data_column_sidecar_0/ssz_snappy",
+		"/sila/cc2c5cdb/data_column_sidecar_127/ssz_snappy",
 	}
 	forks := []primitives.Epoch{cfg.GenesisEpoch, cfg.AltairForkEpoch,
 		cfg.BellatrixForkEpoch, cfg.CapellaForkEpoch, cfg.DenebForkEpoch,
@@ -37,12 +37,12 @@ func TestAllTopics(t *testing.T) {
 	// construct it by hand in case there are bugs in newTopic.
 	for _, f := range forks {
 		digest := params.ForkDigest(f)
-		expected = append(expected, "/eth2/"+hex.EncodeToString(digest[:])+"/beacon_block/ssz_snappy")
+		expected = append(expected, "/sila/"+hex.EncodeToString(digest[:])+"/beacon_block/ssz_snappy")
 	}
 	if cfg.GloasForkEpoch < cfg.FarFutureEpoch {
 		gloasDigest := params.ForkDigest(cfg.GloasForkEpoch)
-		expected = append(expected, "/eth2/"+hex.EncodeToString(gloasDigest[:])+"/execution_payload_bid/ssz_snappy")
-		expected = append(expected, "/eth2/"+hex.EncodeToString(gloasDigest[:])+"/proposer_preferences/ssz_snappy")
+		expected = append(expected, "/sila/"+hex.EncodeToString(gloasDigest[:])+"/execution_payload_bid/ssz_snappy")
+		expected = append(expected, "/sila/"+hex.EncodeToString(gloasDigest[:])+"/proposer_preferences/ssz_snappy")
 	}
 	for _, e := range expected {
 		_, ok := tops[e]
@@ -63,7 +63,7 @@ func TestAllTopics(t *testing.T) {
 		GossipBlobSidecarMessage,
 		uint64(cfg.MaxBlobsPerBlockAtEpoch(cfg.FuluForkEpoch))-1)
 	unexpected := []string{
-		"/eth2/cc2c5cdb/data_column_sidecar_128/ssz_snappy",
+		"/sila/cc2c5cdb/data_column_sidecar_128/ssz_snappy",
 		electraColumn.String(),
 		blobBeforeDeneb.String(),
 		blobAfterElectra.String(),

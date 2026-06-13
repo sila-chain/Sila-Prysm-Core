@@ -119,7 +119,7 @@ var sszEnc = &encoder.SszNetworkEncoder{}
 func newTopic(start, end primitives.Epoch, digest [4]byte, message string) topic {
 	suffix := sszEnc.ProtocolSuffix()
 	t := topic{digest: hex.EncodeToString(digest[:]), message: message, start: start, end: end, suffix: suffix}
-	t.full = "/" + "eth2" + "/" + t.digest + "/" + t.message + t.suffix
+	t.full = "/" + "sila" + "/" + t.digest + "/" + t.message + t.suffix
 	return t
 }
 
@@ -127,7 +127,7 @@ func newTopic(start, end primitives.Epoch, digest [4]byte, message string) topic
 func newSubnetTopic(start, end primitives.Epoch, digest [4]byte, message string, subnet uint64) topic {
 	t := newTopic(start, end, digest, message)
 	t.subnet = subnet
-	t.full = "/" + "eth2" + "/" + t.digest + "/" + t.message + "_" + strconv.Itoa(int(t.subnet)) + t.suffix
+	t.full = "/" + "sila" + "/" + t.digest + "/" + t.message + "_" + strconv.Itoa(int(t.subnet)) + t.suffix
 	return t
 }
 

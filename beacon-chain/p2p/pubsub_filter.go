@@ -44,7 +44,7 @@ func (s *Service) setAllForkDigests() {
 var (
 	errNotReadyToSubscribe         = fmt.Errorf("not ready to subscribe, service is not initialized")
 	errMissingLeadingSlash         = fmt.Errorf("topic is missing leading slash")
-	errTopicMissingProtocolVersion = fmt.Errorf("topic is missing protocol version (eth2)")
+	errTopicMissingProtocolVersion = fmt.Errorf("topic is missing protocol version (sila)")
 	errTopicPathWrongPartCount     = fmt.Errorf("topic path has wrong part count")
 	errDigestInvalid               = fmt.Errorf("digest is invalid")
 	errDigestUnexpected            = fmt.Errorf("digest is unexpected")
@@ -76,7 +76,7 @@ func (s *Service) checkSubscribable(topic string) error {
 		return errMissingLeadingSlash
 	}
 	protocol, rawDigest, suffix := parts[1], parts[2], parts[4]
-	if protocol != "eth2" {
+	if protocol != "sila" {
 		return errTopicMissingProtocolVersion
 	}
 	if suffix != encoder.ProtocolSuffixSSZSnappy {

@@ -60,7 +60,7 @@ func TestService_Broadcast(t *testing.T) {
 		PreviousVersion: []byte("barr"),
 	}
 
-	topic := "/eth2/%x/testing"
+	topic := "/sila/%x/testing"
 	// Set a test gossip mapping for testpb.TestSimpleMessage.
 	GossipTypeMapping[reflect.TypeFor[*ethpb.Fork]()] = topic
 	digest, err := p.currentForkDigest()
@@ -124,7 +124,7 @@ func TestService_Attestation_Subnet(t *testing.T) {
 					Slot:           2,
 				},
 			},
-			topic: "/eth2/00000000/beacon_attestation_2",
+			topic: "/sila/00000000/beacon_attestation_2",
 		},
 		{
 			att: &ethpb.Attestation{
@@ -133,7 +133,7 @@ func TestService_Attestation_Subnet(t *testing.T) {
 					Slot:           10,
 				},
 			},
-			topic: "/eth2/00000000/beacon_attestation_21",
+			topic: "/sila/00000000/beacon_attestation_21",
 		},
 		{
 			att: &ethpb.Attestation{
@@ -142,7 +142,7 @@ func TestService_Attestation_Subnet(t *testing.T) {
 					Slot:           529,
 				},
 			},
-			topic: "/eth2/00000000/beacon_attestation_8",
+			topic: "/sila/00000000/beacon_attestation_8",
 		},
 	}
 	for _, tt := range tests {
