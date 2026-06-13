@@ -54,7 +54,7 @@ type SetupConfig struct {
 }
 
 // Defines a struct containing 1-to-1 corresponding
-// private keys and public keys for Ethereum validators.
+// private keys and public keys for Sila validators.
 type accountStore struct {
 	PrivateKeys [][]byte `json:"private_keys"`
 	PublicKeys  [][]byte `json:"public_keys"`
