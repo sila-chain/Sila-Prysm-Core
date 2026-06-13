@@ -1,11 +1,11 @@
 ## Pcli (Prysm CLI)
 
-This is a utility to help users perform Ethereum consensus specific commands.
+This is a utility to help users perform Sila consensus specific commands.
 
 ### Usage
 
 *Name:*  
-   **pcli** - A command line utility to run Ethereum consensus specific commands
+   **pcli** - A command line utility to run Sila consensus specific commands
 
 *Usage:*  
    pcli [global options] command [command options] [arguments...]

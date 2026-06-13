@@ -136,7 +136,7 @@ path, _ := ParsePath(".nested.array_field[5].inner_field")
 
 ### Generalized Index Calculation (`generalized_index.go`)
 
-The generalized index is a tree position identifier. This package follows the [Ethereum consensus-specs](https://github.com/ethereum/consensus-specs/blob/master/ssz/merkle-proofs.md#generalized-merkle-tree-index) to calculate the generalized index.
+The generalized index is a tree position identifier. This package follows the [Sila consensus-specs](https://github.com/ethereum/consensus-specs/blob/master/ssz/merkle-proofs.md#generalized-merkle-tree-index) to calculate the generalized index.
 
 ### Merkle Proof Generation (`merkle_proof.go`, `proof_collector.go`)
 
