@@ -74,7 +74,7 @@ func TestCorrectSubnetGloas(t *testing.T) {
 		wrongSubnet := (peerdas.ComputeSubnetForDataColumnSidecar(roDataColumn.Index()) + 1) % 128
 		err := verifier.CorrectSubnet(
 			dataColumnSidecarSubTopic,
-			[]string{fmt.Sprintf("/eth2/9dc47cc6/data_column_sidecar_%d/ssz_snappy", wrongSubnet)},
+			[]string{fmt.Sprintf("/sila/9dc47cc6/data_column_sidecar_%d/ssz_snappy", wrongSubnet)},
 		)
 		require.ErrorIs(t, err, errBadTopic)
 	})
@@ -85,13 +85,13 @@ func TestCorrectSubnetGloas(t *testing.T) {
 		subnet := peerdas.ComputeSubnetForDataColumnSidecar(roDataColumn.Index())
 		err := verifier.CorrectSubnet(
 			dataColumnSidecarSubTopic,
-			[]string{fmt.Sprintf("/eth2/9dc47cc6/data_column_sidecar_%d/ssz_snappy", subnet)},
+			[]string{fmt.Sprintf("/sila/9dc47cc6/data_column_sidecar_%d/ssz_snappy", subnet)},
 		)
 		require.NoError(t, err)
 
 		err = verifier.CorrectSubnet(
 			dataColumnSidecarSubTopic,
-			[]string{fmt.Sprintf("/eth2/9dc47cc6/data_column_sidecar_%d/ssz_snappy", subnet)},
+			[]string{fmt.Sprintf("/sila/9dc47cc6/data_column_sidecar_%d/ssz_snappy", subnet)},
 		)
 		require.NoError(t, err)
 	})

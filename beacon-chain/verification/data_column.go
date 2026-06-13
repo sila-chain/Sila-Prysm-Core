@@ -151,8 +151,8 @@ func (dv *RODataColumnsVerifier) CorrectSubnet(dataColumnSidecarSubTopic string,
 
 	for i := range dv.dataColumns {
 		// We add a trailing slash to avoid, for example,
-		// an actual topic /eth2/9dc47cc6/data_column_sidecar_1
-		// to match with /eth2/9dc47cc6/data_column_sidecar_120
+		// an actual topic /sila/9dc47cc6/data_column_sidecar_1
+		// to match with /sila/9dc47cc6/data_column_sidecar_120
 		expectedTopic := expectedTopics[i] + "/"
 
 		actualSubnet := peerdas.ComputeSubnetForDataColumnSidecar(dv.dataColumns[i].Index())

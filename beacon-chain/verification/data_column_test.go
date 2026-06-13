@@ -107,8 +107,8 @@ func TestCorrectSubnet(t *testing.T) {
 		err := verifier.CorrectSubnet(
 			dataColumnSidecarSubTopic,
 			[]string{
-				"/eth2/9dc47cc6/data_column_sidecar_1/ssz_snappy",
-				"/eth2/9dc47cc6/data_column_sidecar_0/ssz_snappy",
+				"/sila/9dc47cc6/data_column_sidecar_1/ssz_snappy",
+				"/sila/9dc47cc6/data_column_sidecar_0/ssz_snappy",
 			})
 
 		require.ErrorIs(t, err, errBadTopic)
@@ -117,8 +117,8 @@ func TestCorrectSubnet(t *testing.T) {
 
 	t.Run("nominal", func(t *testing.T) {
 		subnets := []string{
-			"/eth2/9dc47cc6/data_column_sidecar_0/ssz_snappy",
-			"/eth2/9dc47cc6/data_column_sidecar_1",
+			"/sila/9dc47cc6/data_column_sidecar_0/ssz_snappy",
+			"/sila/9dc47cc6/data_column_sidecar_1",
 		}
 
 		columns := GenerateTestDataColumns(t, [fieldparams.RootLength]byte{}, 1, 1)
