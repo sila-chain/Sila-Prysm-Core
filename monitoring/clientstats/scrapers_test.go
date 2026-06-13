@@ -96,8 +96,8 @@ func TestInvertEth1Metrics(t *testing.T) {
 
 func TestFalseEth2Synced(t *testing.T) {
 	bnScraper := beaconNodeScraper{}
-	eth2NotSynced := strings.Replace(prometheusTestBody, "beacon_head_slot 256552", "beacon_head_slot 256559", 1)
-	bnScraper.tripper = &mockRT{body: eth2NotSynced}
+	silaNotSynced := strings.Replace(prometheusTestBody, "beacon_head_slot 256552", "beacon_head_slot 256559", 1)
+	bnScraper.tripper = &mockRT{body: silaNotSynced}
 	r, err := bnScraper.Scrape()
 	require.NoError(t, err, "Unexpected error calling beaconNodeScraper.Scrape")
 

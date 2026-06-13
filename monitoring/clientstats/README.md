@@ -20,13 +20,13 @@ The request JSON object is a non-nested object with the following properties. Th
 |network_libp2p_bytes_total_transmit|long         |beaconchain          |(currently unsupported)                                                  |The number of bytes transmitted via libp2p traffic                                                                                                                      |
 |network_peers_connected            |int          |beaconchain          |(currently unsupported)                                                  |The number of peers currently connected to the beacon chain                                                                                                             |
 |sync_eth1_connected                |bool         |beaconchain          |prom: powchain_sync_eth1_connected                                       |Whether or not the beacon chain node is connected to a _synced_ eth1 node                                                                                               |
-|sync_eth2_synced                   |bool         |beaconchain          |prom: beacon_clock_time_slot (true if this equals prom: beacon_head_slot)|Whether or not the beacon chain node is in sync with the beacon chain network                                                                                           |
+|sync_sila_synced                   |bool         |beaconchain          |prom: beacon_clock_time_slot (true if this equals prom: beacon_head_slot)|Whether or not the beacon chain node is in sync with the beacon chain network                                                                                           |
 |sync_beacon_head_slot              |long         |beaconchain          |prom: beacon_head_slot                                                   |The head slot number.                                                                                                                                                   |
 |sync_eth1_fallback_configured      |bool         |beaconchain          |prom: powchain_sync_eth1_fallback_configured                             |Whether or not the beacon chain node has a fallback eth1 endpoint configured.                                                                                           |
 |sync_eth1_fallback_connected       |bool         |beaconchain          |prom: powchain_sync_eth1_fallback_connected                              |Whether or not the beacon chain node is connected to a fallback eth1 endpoint. A true value indicates a failed or interrupted connection with the primary eth1 endpoint.|
 |slasher_active                     |bool         |beaconchain          |(coming soon)                                                            |Whether or not slasher functionality is enabled.                                                                                                                        |
-|sync_eth2_fallback_configured      |bool         |validator            |(currently unsupported)                                                  |Whether or not the process has a fallback eth2 endpoint configured                                                                                                      |
-|sync_eth2_fallback_connected       |bool         |validator            |(currently unsupported)                                                  |Weather or not the process has connected to the failover eth2 endpoint. A true value indicates a failed or interrupted connection with the primary eth2 endpoint.       |
+|sync_sila_fallback_configured      |bool         |validator            |(currently unsupported)                                                  |Whether or not the process has a fallback Sila endpoint configured                                                                                                      |
+|sync_sila_fallback_connected       |bool         |validator            |(currently unsupported)                                                  |Weather or not the process has connected to the failover Sila endpoint. A true value indicates a failed or interrupted connection with the primary Sila endpoint.       |
 |validator_total                    |int          |validator            |prom: validator_statuses (count of all peers)                            |The number of validating keys in use.                                                                                                                                   |
 |validator_active                   |int          |validator            |prom: validator_statuses (count of peers w/ "ACTIVE" status label)       |The number of validator keys that are currently active.                                                                                                                 |
 |cpu_cores                          |int          |system               |(currently unsupported)                                                  |The number of CPU cores available on the host machine                                                                                                                   |
@@ -68,8 +68,8 @@ POST https://beaconcha.in/api/v1/stats/$API_KEY/$MACHINE_NAME
    "client_name": "lighthouse",
    "client_version": "1.1.2",
    "client_build": 12,
-   "sync_eth2_fallback_configured": false,
-   "sync_eth2_fallback_connected": false,
+   "sync_sila_fallback_configured": false,
+   "sync_sila_fallback_connected": false,
    "validator_total": 3,
    "validator_active": 2
 }
@@ -88,8 +88,8 @@ POST https://beaconcha.in/api/v1/stats/$API_KEY/$MACHINE_NAME
   	"client_name":"lighthouse",
   	"client_version":"1.1.3",
   	"client_build":42,
-  	"sync_eth2_fallback_configured":false,
-  	"sync_eth2_fallback_connected":false,
+  	"sync_sila_fallback_configured":false,
+  	"sync_sila_fallback_connected":false,
   	"validator_active":1,
   	"validator_total":1
    },
