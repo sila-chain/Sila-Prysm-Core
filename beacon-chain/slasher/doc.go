@@ -2,7 +2,7 @@
 /*
 Package slasher defines an optimized implementation of Sila proof-of-stake slashing
 detection, namely focused on catching "surround vote" slashable
-offenses as explained here: https://blog.ethereum.org/2020/01/13/validated-staking-on-eth2-1-incentives/.
+offenses as explained here: https://blog.ethereum.org/2020/01/13/validated-staking-on-sila-1-incentives/.
 
 Surround vote detection is a difficult problem if done naively, as slasher
 needs to keep track of every single attestation by every single validator

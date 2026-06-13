@@ -361,7 +361,7 @@ func TestConfigParityYaml(t *testing.T) {
 }
 
 // configFilePath sets the proper config and returns the relevant
-// config file path from eth2-spec-tests directory.
+// config file path from Sila spec tests directory.
 func configFilePath(t *testing.T, config string) string {
 	fPath, err := bazel.Runfile("external/consensus_spec")
 	require.NoError(t, err)
@@ -369,7 +369,7 @@ func configFilePath(t *testing.T, config string) string {
 	return configFilePath
 }
 
-// presetsFilePath returns the relevant preset file paths from eth2-spec-tests
+// presetsFilePath returns the relevant preset file paths from Sila spec tests
 // directory. This method returns a preset file path for each hard fork or
 // major network upgrade, in order.
 func presetsFilePath(t *testing.T, config string) []string {

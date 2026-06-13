@@ -139,7 +139,7 @@ func (vs *Server) mockETH1DataVote(ctx context.Context, slot primitives.Slot) (*
 		eth1DataNotification = true
 	}
 	// If a mock eth1 data votes is specified, we use the following for the
-	// eth1data we provide to every proposer based on https://github.com/ethereum/eth2.0-pm/issues/62:
+	// eth1data we provide to every proposer based on https://github.com/sila/sila-pm/issues/62:
 	//
 	// slot_in_voting_period = current_slot % SLOTS_PER_ETH1_VOTING_PERIOD
 	// Eth1Data(
