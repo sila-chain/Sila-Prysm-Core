@@ -532,7 +532,7 @@ message SignedExecutionPayloadEnvelope {
 
 // BlindedExecutionPayloadEnvelope is a storage-only envelope that replaces the
 // full execution payload with its block hash for space savings. The full
-// payload can be retrieved from the EL via engine_getPayloadBodiesByHash using
+// payload can be retrieved from the EL via silaEngine_getPayloadBodiesByHash using
 // the block_hash.
 message BlindedExecutionPayloadEnvelope {
   bytes block_hash = 1 [ (ethereum.eth.ext.ssz_size) = "32" ];
