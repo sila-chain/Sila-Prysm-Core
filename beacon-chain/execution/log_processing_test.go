@@ -210,7 +210,7 @@ func TestUnpackDepositLogData_OK(t *testing.T) {
 	require.DeepEqual(t, data.WithdrawalCredentials, withCreds, "Withdrawal Credentials is not the same as the data that was put in")
 }
 
-func TestProcessETH2GenesisLog_8DuplicatePubkeys(t *testing.T) {
+func TestProcessSilaGenesisLog_8DuplicatePubkeys(t *testing.T) {
 	hook := logTest.NewGlobal()
 	testAcc, err := mock.Setup()
 	require.NoError(t, err, "Unable to set up simulated backend")
@@ -281,7 +281,7 @@ func TestProcessETH2GenesisLog_8DuplicatePubkeys(t *testing.T) {
 	hook.Reset()
 }
 
-func TestProcessETH2GenesisLog(t *testing.T) {
+func TestProcessSilaGenesisLog(t *testing.T) {
 	params.SetupTestConfigCleanup(t)
 	cfg := params.BeaconConfig().Copy()
 	cfg.GenesisDelay = 0
@@ -377,7 +377,7 @@ func TestProcessETH2GenesisLog(t *testing.T) {
 	hook.Reset()
 }
 
-func TestProcessETH2GenesisLog_CorrectNumOfDeposits(t *testing.T) {
+func TestProcessSilaGenesisLog_CorrectNumOfDeposits(t *testing.T) {
 	params.SetupTestConfigCleanup(t)
 	hook := logTest.NewGlobal()
 	testAcc, err := mock.Setup()
@@ -565,7 +565,7 @@ func TestProcessLogs_DepositRequestsStarted(t *testing.T) {
 	hook.Reset()
 }
 
-func TestProcessETH2GenesisLog_LargePeriodOfNoLogs(t *testing.T) {
+func TestProcessSilaGenesisLog_LargePeriodOfNoLogs(t *testing.T) {
 	params.SetupTestConfigCleanup(t)
 	hook := logTest.NewGlobal()
 	testAcc, err := mock.Setup()
