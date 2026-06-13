@@ -48,7 +48,7 @@ func (vs *Server) GetAttestationData(ctx context.Context, req *ethpb.Attestation
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // ProposeAttestation is a function called by an attester to vote
-// on a block via an attestation object as defined in the Ethereum specification.
+// on a block via an attestation object as defined in the Sila specification.
 func (vs *Server) ProposeAttestation(ctx context.Context, att *ethpb.Attestation) (*ethpb.AttestResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "AttesterServer.ProposeAttestation")
 	defer span.End()
@@ -81,7 +81,7 @@ func (vs *Server) ProposeAttestation(ctx context.Context, att *ethpb.Attestation
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // ProposeAttestationElectra is a function called by an attester to vote
-// on a block via an attestation object as defined in the Ethereum specification.
+// on a block via an attestation object as defined in the Sila specification.
 // Used for Post Electra
 func (vs *Server) ProposeAttestationElectra(ctx context.Context, singleAtt *ethpb.SingleAttestation) (*ethpb.AttestResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "AttesterServer.ProposeAttestationElectra")

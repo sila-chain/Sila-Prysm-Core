@@ -313,7 +313,7 @@ func (bs *Server) ListIndexedAttestationsElectra(
 // yet processed. Pool attestations eventually expire as the slot
 // advances, so an attestation missing from this request does not imply
 // that it was included in a block. The attestation may have expired.
-// Refer to the ethereum consensus specification for more details on how
+// Refer to the Sila consensus specification for more details on how
 // attestations are processed and when they are no longer valid.
 // https://github.com/ethereum/consensus-specs/blob/master/specs/phase0/beacon-chain.md#attestations
 func (bs *Server) AttestationPool(_ context.Context, req *ethpb.AttestationPoolRequest) (*ethpb.AttestationPoolResponse, error) {

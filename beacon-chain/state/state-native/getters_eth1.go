@@ -26,7 +26,7 @@ func (b *BeaconState) eth1DataVal() *ethpb.Eth1Data {
 	return b.eth1Data.Copy()
 }
 
-// Eth1DataVotes corresponds to votes from Ethereum on the canonical proof-of-work chain
+// Eth1DataVotes corresponds to votes from Sila on the canonical proof-of-work chain
 // data retrieved from eth1.
 func (b *BeaconState) Eth1DataVotes() []*ethpb.Eth1Data {
 	if b.eth1DataVotes == nil {
@@ -39,7 +39,7 @@ func (b *BeaconState) Eth1DataVotes() []*ethpb.Eth1Data {
 	return b.eth1DataVotesVal()
 }
 
-// eth1DataVotesVal corresponds to votes from Ethereum on the canonical proof-of-work chain
+// eth1DataVotesVal corresponds to votes from Sila on the canonical proof-of-work chain
 // data retrieved from eth1.
 // This assumes that a lock is already held on BeaconState.
 func (b *BeaconState) eth1DataVotesVal() []*ethpb.Eth1Data {

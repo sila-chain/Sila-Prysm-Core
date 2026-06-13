@@ -25,7 +25,7 @@ const (
 )
 
 // ValidatorRegistryRoot computes the HashTreeRoot Merkleization of
-// a list of compact validator structs according to the Ethereum
+// a list of compact validator structs according to the Sila
 // Simple Serialize specification.
 func ValidatorRegistryRoot(vals []CompactValidator) ([32]byte, error) {
 	return validatorRegistryRoot(vals)

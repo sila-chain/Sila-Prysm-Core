@@ -99,7 +99,7 @@ func (ns *Server) GetSyncStatus(_ context.Context, _ *empty.Empty) (*ethpb.SyncS
 
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
-// GetGenesis fetches genesis chain information of Ethereum. Returns unix timestamp 0
+// GetGenesis fetches genesis chain information of Sila. Returns unix timestamp 0
 // if a genesis time has yet to be determined.
 func (ns *Server) GetGenesis(ctx context.Context, _ *empty.Empty) (*ethpb.Genesis, error) {
 	contractAddr, err := ns.BeaconDB.DepositContractAddress(ctx)

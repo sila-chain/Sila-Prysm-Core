@@ -15,7 +15,7 @@ import (
 	ethpb "github.com/OffchainLabs/prysm/v7/proto/prysm/v1alpha1"
 )
 
-// BeaconState defines a struct containing utilities for the Ethereum Beacon Chain state, defining
+// BeaconState defines a struct containing utilities for the Sila Beacon Chain state, defining
 // getters and setters for its respective values and helpful functions such as HashTreeRoot().
 //
 // Note: genesisTime is time.Time.Unix(). i.e. the number of seconds elapsed since January 1, 1970 UTC.
