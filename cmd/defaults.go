@@ -37,7 +37,7 @@ func DefaultDataDir() string {
 		case "windows":
 			return filepath.Join(home, "AppData", "Local", "Eth2")
 		default:
-			return filepath.Join(home, ".eth2")
+			return filepath.Join(home, ".sila")
 		}
 	}
 	// As we cannot guess a stable location, return empty and handle later

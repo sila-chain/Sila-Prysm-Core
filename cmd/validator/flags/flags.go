@@ -435,7 +435,7 @@ func DefaultValidatorDir() string {
 		} else if runtime.GOOS == "windows" {
 			return filepath.Join(home, "AppData", "Local", "Eth2Validators")
 		} else {
-			return filepath.Join(home, ".eth2validators")
+			return filepath.Join(home, ".silavalidators")
 		}
 	}
 	// As we cannot guess a stable location, return empty and handle later
