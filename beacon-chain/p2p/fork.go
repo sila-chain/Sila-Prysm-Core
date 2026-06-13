@@ -21,7 +21,7 @@ var (
 )
 
 const (
-	eth2EnrKey = "eth2" // The `eth2` ENR entry advertizes the node's view of the fork schedule with an ssz-encoded ENRForkID value.
+	silaEnrKey = "sila" // The `sila` ENR entry advertizes the node's view of the fork schedule with an ssz-encoded ENRForkID value.
 	nfdEnrKey  = "nfd"  // The `nfd` ENR entry separately advertizes the "next fork digest" aspect of the fork schedule.
 )
 
@@ -99,13 +99,13 @@ func compareForkENR(self, peer *enr.Record) error {
 	// impact peering as nodes will ignore unknown ENR entries and nfd mismatches do not cause
 	// disconnects.
 	// When discovering and interfacing with peers, nodes MUST evaluate nfd alongside their existing
-	// consideration of the ENRForkID::next_* fields under the eth2 key, to form a more accurate
+	// consideration of the ENRForkID::next_* fields under the Sila key, to form a more accurate
 	// view of the peer's intended next fork for the purposes of sustained peering. If there is a
 	// mismatch, the node MUST NOT disconnect before the fork boundary, but it MAY disconnect
 	// at/after the fork boundary.
 
 	// Nodes unprepared to follow the Fulu fork will be unaware of nfd entries. However, their
-	// existing comparison of eth2 entries (concretely next_fork_epoch) is sufficient to detect
+	// existing comparison of Sila entries (concretely next_fork_epoch) is sufficient to detect
 	// upcoming divergence.
 	// ---
 
@@ -154,7 +154,7 @@ func updateENR(node *enode.LocalNode, entry, next params.NetworkScheduleEntry) e
 	if err != nil {
 		return err
 	}
-	forkEntry := enr.WithEntry(eth2EnrKey, enc)
+	forkEntry := enr.WithEntry(silaEnrKey, enc)
 	node.Set(forkEntry)
 	return nil
 }
@@ -163,7 +163,7 @@ func updateENR(node *enode.LocalNode, entry, next params.NetworkScheduleEntry) e
 // under the Sila consensus ENR key
 func forkEntry(record *enr.Record) (*pb.ENRForkID, error) {
 	sszEncodedForkEntry := make([]byte, 16)
-	entry := enr.WithEntry(eth2EnrKey, &sszEncodedForkEntry)
+	entry := enr.WithEntry(silaEnrKey, &sszEncodedForkEntry)
 	err := record.Load(entry)
 	if err != nil {
 		return nil, err

@@ -176,7 +176,7 @@ func TestDiscv5_AddRetrieveForkEntryENR(t *testing.T) {
 	}
 	enc, err := enrForkID.MarshalSSZ()
 	require.NoError(t, err)
-	entry := enr.WithEntry(eth2EnrKey, enc)
+	entry := enr.WithEntry(silaEnrKey, enc)
 	temp := t.TempDir()
 	randNum := rand.Int()
 	tempPath := path.Join(temp, strconv.Itoa(randNum))
