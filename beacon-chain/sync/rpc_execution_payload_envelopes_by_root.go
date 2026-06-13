@@ -20,7 +20,7 @@ import (
 )
 
 // executionPayloadEnvelopesByRootRPCHandler handles the
-// /eth2/beacon_chain/req/execution_payload_envelopes_by_root/1/ RPC request.
+// /sila/beacon_chain/req/execution_payload_envelopes_by_root/1/ RPC request.
 // spec: https://github.com/ethereum/consensus-specs/blob/master/specs/gloas/p2p-interface.md#executionpayloadenvelopesbyroot-v1
 func (s *Service) executionPayloadEnvelopesByRootRPCHandler(ctx context.Context, msg any, stream libp2pcore.Stream) error {
 	ctx, span := trace.StartSpan(ctx, "sync.executionPayloadEnvelopesByRootRPCHandler")

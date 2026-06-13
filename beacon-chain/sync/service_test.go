@@ -75,7 +75,7 @@ func TestSyncHandlers_WaitToSync(t *testing.T) {
 		highestExecutionPayloadBidCache: cache.NewHighestExecutionPayloadBidCache(),
 	}
 
-	topic := "/eth2/%x/beacon_block"
+	topic := "/sila/%x/beacon_block"
 	go r.startDiscoveryAndSubscriptions()
 
 	var vr [32]byte
@@ -179,7 +179,7 @@ func TestSyncHandlers_WaitTillSynced(t *testing.T) {
 	// Save block into DB so that validateBeaconBlockPubSub() process gets short cut.
 	util.SaveBlock(t, ctx, r.cfg.beaconDB, msg)
 
-	topic := "/eth2/%x/beacon_block"
+	topic := "/sila/%x/beacon_block"
 	p2p.ReceivePubSub(topic, msg)
 	assert.Equal(t, 0, len(blockChan), "block was received by sync service despite not being fully synced")
 
@@ -282,7 +282,7 @@ func TestService_Stop_SendsGoodbyeMessages(t *testing.T) {
 	r.ctxMap = ctxMap
 
 	// Setup rate limiter for goodbye topic
-	pcl := protocol.ID("/eth2/beacon_chain/req/goodbye/1/ssz_snappy")
+	pcl := protocol.ID("/sila/beacon_chain/req/goodbye/1/ssz_snappy")
 	topic := string(pcl)
 	r.rateLimiter.limiterMap[topic] = leakybucket.NewCollector(1, 1, time.Second, false)
 
@@ -360,7 +360,7 @@ func TestService_Stop_TimeoutHandling(t *testing.T) {
 	r.ctxMap = ctxMap
 
 	// Setup rate limiter for goodbye topic
-	pcl := protocol.ID("/eth2/beacon_chain/req/goodbye/1/ssz_snappy")
+	pcl := protocol.ID("/sila/beacon_chain/req/goodbye/1/ssz_snappy")
 	topic := string(pcl)
 	r.rateLimiter.limiterMap[topic] = leakybucket.NewCollector(1, 1, time.Second, false)
 
@@ -421,7 +421,7 @@ func TestService_Stop_ConcurrentGoodbyeMessages(t *testing.T) {
 	r.ctxMap = ctxMap
 
 	// Setup rate limiter for goodbye topic
-	pcl := protocol.ID("/eth2/beacon_chain/req/goodbye/1/ssz_snappy")
+	pcl := protocol.ID("/sila/beacon_chain/req/goodbye/1/ssz_snappy")
 	topic := string(pcl)
 	r.rateLimiter.limiterMap[topic] = leakybucket.NewCollector(1, 1, time.Second, false)
 

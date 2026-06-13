@@ -170,7 +170,7 @@ func connectPeers(t *testing.T, host *p2pt.TestP2P, data []*peerData, peerStatus
 
 // connectPeer connects a peer to a local host.
 func connectPeer(t *testing.T, host *p2pt.TestP2P, datum *peerData, peerStatus *peers.Status) peer.ID {
-	const topic = "/eth2/beacon_chain/req/beacon_blocks_by_range/1/ssz_snappy"
+	const topic = "/sila/beacon_chain/req/beacon_blocks_by_range/1/ssz_snappy"
 	p := p2pt.NewTestP2P(t)
 	p.SetStreamHandler(topic, func(stream network.Stream) {
 		defer func() {
@@ -280,7 +280,7 @@ func connectPeerHavingBlocks(
 ) peer.ID {
 	p := p2pt.NewTestP2P(t)
 
-	p.SetStreamHandler("/eth2/beacon_chain/req/beacon_blocks_by_range/1/ssz_snappy", func(stream network.Stream) {
+	p.SetStreamHandler("/sila/beacon_chain/req/beacon_blocks_by_range/1/ssz_snappy", func(stream network.Stream) {
 		defer func() {
 			_err := stream.Close()
 			_ = _err
@@ -299,7 +299,7 @@ func connectPeerHavingBlocks(
 		}
 	})
 
-	p.SetStreamHandler("/eth2/beacon_chain/req/beacon_blocks_by_root/1/ssz_snappy", func(stream network.Stream) {
+	p.SetStreamHandler("/sila/beacon_chain/req/beacon_blocks_by_root/1/ssz_snappy", func(stream network.Stream) {
 		defer func() {
 			_err := stream.Close()
 			_ = _err

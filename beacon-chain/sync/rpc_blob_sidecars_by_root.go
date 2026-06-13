@@ -22,7 +22,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// blobSidecarByRootRPCHandler handles the /eth2/beacon_chain/req/blob_sidecars_by_root/1/ RPC request.
+// blobSidecarByRootRPCHandler handles the /sila/beacon_chain/req/blob_sidecars_by_root/1/ RPC request.
 // spec: https://github.com/ethereum/consensus-specs/blob/a7e45db9ac2b60a33e144444969ad3ac0aae3d4c/specs/deneb/p2p-interface.md#blobsidecarsbyroot-v1
 func (s *Service) blobSidecarByRootRPCHandler(ctx context.Context, msg any, stream libp2pcore.Stream) error {
 	ctx, span := trace.StartSpan(ctx, "sync.blobSidecarByRootRPCHandler")

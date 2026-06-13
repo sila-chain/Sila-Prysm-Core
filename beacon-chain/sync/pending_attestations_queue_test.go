@@ -417,7 +417,7 @@ func TestProcessPendingAtts_HasBlockSaveUnAggregatedAttElectra_VerifyAlreadySeen
 	require.NoError(t, err)
 	digest, err := r.currentForkDigest()
 	require.NoError(t, err)
-	topic := fmt.Sprintf("/eth2/%x/beacon_attestation_1", digest)
+	topic := fmt.Sprintf("/sila/%x/beacon_attestation_1", digest)
 	m := &pubsub.Message{
 		Message: &pubsubpb.Message{
 			Data:  buf.Bytes(),

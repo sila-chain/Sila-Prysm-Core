@@ -15,7 +15,7 @@ import (
 	libp2pcore "github.com/libp2p/go-libp2p/core"
 )
 
-// lightClientBootstrapRPCHandler handles the /eth2/beacon_chain/req/light_client_bootstrap/1/ RPC request.
+// lightClientBootstrapRPCHandler handles the /sila/beacon_chain/req/light_client_bootstrap/1/ RPC request.
 func (s *Service) lightClientBootstrapRPCHandler(ctx context.Context, msg any, stream libp2pcore.Stream) error {
 	ctx, span := trace.StartSpan(ctx, "sync.lightClientBootstrapRPCHandler")
 	defer span.End()
@@ -66,7 +66,7 @@ func (s *Service) lightClientBootstrapRPCHandler(ctx context.Context, msg any, s
 	return nil
 }
 
-// lightClientUpdatesByRangeRPCHandler handles the /eth2/beacon_chain/req/light_client_updates_by_range/1/ RPC request.
+// lightClientUpdatesByRangeRPCHandler handles the /sila/beacon_chain/req/light_client_updates_by_range/1/ RPC request.
 func (s *Service) lightClientUpdatesByRangeRPCHandler(ctx context.Context, msg any, stream libp2pcore.Stream) error {
 	ctx, span := trace.StartSpan(ctx, "sync.lightClientUpdatesByRangeRPCHandler")
 	defer span.End()
@@ -152,7 +152,7 @@ func (s *Service) lightClientUpdatesByRangeRPCHandler(ctx context.Context, msg a
 	return nil
 }
 
-// lightClientFinalityUpdateRPCHandler handles the /eth2/beacon_chain/req/light_client_finality_update/1/ RPC request.
+// lightClientFinalityUpdateRPCHandler handles the /sila/beacon_chain/req/light_client_finality_update/1/ RPC request.
 func (s *Service) lightClientFinalityUpdateRPCHandler(ctx context.Context, _ any, stream libp2pcore.Stream) error {
 	ctx, span := trace.StartSpan(ctx, "sync.lightClientFinalityUpdateRPCHandler")
 	defer span.End()
@@ -188,7 +188,7 @@ func (s *Service) lightClientFinalityUpdateRPCHandler(ctx context.Context, _ any
 	return nil
 }
 
-// lightClientOptimisticUpdateRPCHandler handles the /eth2/beacon_chain/req/light_client_optimistic_update/1/ RPC request.
+// lightClientOptimisticUpdateRPCHandler handles the /sila/beacon_chain/req/light_client_optimistic_update/1/ RPC request.
 func (s *Service) lightClientOptimisticUpdateRPCHandler(ctx context.Context, _ any, stream libp2pcore.Stream) error {
 	ctx, span := trace.StartSpan(ctx, "sync.lightClientOptimisticUpdateRPCHandler")
 	defer span.End()

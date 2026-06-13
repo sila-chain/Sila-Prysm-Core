@@ -60,7 +60,7 @@ func TestSubscribe_ReceivesValidMessage(t *testing.T) {
 	require.NoError(t, err)
 	nse := params.GetNetworkScheduleEntry(r.cfg.clock.CurrentEpoch())
 	p2pService.Digest = nse.ForkDigest
-	topic := "/eth2/%x/voluntary_exit"
+	topic := "/sila/%x/voluntary_exit"
 	var wg sync.WaitGroup
 	wg.Add(1)
 
@@ -106,7 +106,7 @@ func TestSubscribe_DoesNotWaitForInitialSyncToRegisterTopic(t *testing.T) {
 	}
 	nse := params.GetNetworkScheduleEntry(r.cfg.clock.CurrentEpoch())
 	p2pService.Digest = nse.ForkDigest
-	topic := "/eth2/%x/voluntary_exit"
+	topic := "/sila/%x/voluntary_exit"
 
 	done := make(chan struct{})
 	go func() {
@@ -153,7 +153,7 @@ func TestSubscribe_UnsubscribeTopic(t *testing.T) {
 	markInitSyncComplete(t, &r)
 	nse := params.GetNetworkScheduleEntry(r.cfg.clock.CurrentEpoch())
 	p2pService.Digest = nse.ForkDigest
-	topic := "/eth2/%x/voluntary_exit"
+	topic := "/sila/%x/voluntary_exit"
 
 	r.subscribe(topic, r.noopValidator, func(_ context.Context, msg proto.Message) error {
 		return nil
@@ -202,7 +202,7 @@ func TestSubscribe_ReceivesAttesterSlashing(t *testing.T) {
 		subHandler:                newSubTopicHandler(),
 	}
 	markInitSyncComplete(t, &r)
-	topic := "/eth2/%x/attester_slashing"
+	topic := "/sila/%x/attester_slashing"
 	var wg sync.WaitGroup
 	wg.Add(1)
 	nse := params.GetNetworkScheduleEntry(r.cfg.clock.CurrentEpoch())
@@ -255,7 +255,7 @@ func TestSubscribe_ReceivesProposerSlashing(t *testing.T) {
 		subHandler:                newSubTopicHandler(),
 	}
 	markInitSyncComplete(t, &r)
-	topic := "/eth2/%x/proposer_slashing"
+	topic := "/sila/%x/proposer_slashing"
 	var wg sync.WaitGroup
 	wg.Add(1)
 	params.SetupTestConfigCleanup(t)
@@ -343,7 +343,7 @@ func TestRevalidateSubscription_CorrectlyFormatsTopic(t *testing.T) {
 	nse := params.GetNetworkScheduleEntry(r.cfg.clock.CurrentEpoch())
 
 	params := subscribeParameters{
-		topicFormat: "/eth2/testing/%#x/committee%d",
+		topicFormat: "/sila/testing/%#x/committee%d",
 		nse:         nse,
 	}
 	tracker := newSubnetTracker(params)
@@ -611,7 +611,7 @@ func TestFilterSubnetPeers(t *testing.T) {
 	defer cache.SubnetIDs.EmptyAllCaches()
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
-	defaultTopic := "/eth2/%x/beacon_attestation_%d" + r.cfg.p2p.Encoding().ProtocolSuffix()
+	defaultTopic := "/sila/%x/beacon_attestation_%d" + r.cfg.p2p.Encoding().ProtocolSuffix()
 	subnet10 := r.addDigestAndIndexToTopic(defaultTopic, digest, 10)
 	cache.SubnetIDs.AddAggregatorSubnetID(currSlot, 10)
 
