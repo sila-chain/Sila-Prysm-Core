@@ -18,8 +18,12 @@ func TestEmbededGenesisDataMatchesMainnet(t *testing.T) {
 	require.Equal(t, st.GenesisTime(), data.Time)
 }
 
-func TestEmbeddedGenesisDataDoesNotIncludeSilaMainnet(t *testing.T) {
-	require.Equal(t, false, embedded.Has(params.SilaMainnetName))
-	_, ok := embeddedGenesisData[params.SilaMainnetName]
-	require.Equal(t, false, ok)
+func TestEmbeddedGenesisDataMatchesSilaMainnet(t *testing.T) {
+	st, err := embedded.ByName(params.SilaMainnetName)
+	require.NoError(t, err)
+	gvr := st.GenesisValidatorsRoot()
+
+	data := embeddedGenesisData[params.SilaMainnetName]
+	require.DeepEqual(t, gvr, data.ValidatorsRoot[:])
+	require.Equal(t, st.GenesisTime(), data.Time)
 }
