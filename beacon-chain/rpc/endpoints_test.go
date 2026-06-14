@@ -191,10 +191,20 @@ func Test_endpoints(t *testing.T) {
 			for _, m := range tc.additionalExpectedRoutes {
 				maps.Copy(expectedRoutes, m)
 			}
+			maps.Copy(expectedRoutes, silaRouteAliases(expectedRoutes))
 
 			assert.Equal(t, true, maps.EqualFunc(expectedRoutes, actualRoutes, func(actualMethods []string, expectedMethods []string) bool {
 				return slices.Equal(expectedMethods, actualMethods)
 			}))
 		})
 	}
+}
+func silaRouteAliases(routes map[string][]string) map[string][]string {
+	aliases := make(map[string][]string)
+	for route, methods := range routes {
+		if len(route) >= len("/eth/") && route[:len("/eth/")] == "/eth/" {
+			aliases["/sila/"+route[len("/eth/"):]] = methods
+		}
+	}
+	return aliases
 }
