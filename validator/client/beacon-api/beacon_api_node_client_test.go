@@ -125,7 +125,7 @@ func TestGetGenesis(t *testing.T) {
 			if testCase.queriesDepositContract {
 				handler.EXPECT().Get(
 					gomock.Any(),
-					"/eth/v1/config/deposit_contract",
+					"/sila/v1/config/deposit_contract",
 					&depositContractJson,
 				).Return(
 					testCase.depositContractError,
@@ -151,7 +151,7 @@ func TestGetGenesis(t *testing.T) {
 }
 
 func TestGetSyncStatus(t *testing.T) {
-	const syncingEndpoint = "/eth/v1/node/syncing"
+	const syncingEndpoint = "/sila/v1/node/syncing"
 
 	testCases := []struct {
 		name                 string
@@ -226,7 +226,7 @@ func TestGetSyncStatus(t *testing.T) {
 }
 
 func TestGetVersion(t *testing.T) {
-	const versionEndpoint = "/eth/v1/node/version"
+	const versionEndpoint = "/sila/v1/node/version"
 
 	testCases := []struct {
 		name                 string
@@ -290,7 +290,7 @@ func TestGetVersion(t *testing.T) {
 }
 
 func TestIsReady(t *testing.T) {
-	const healthEndpoint = "/eth/v1/node/health"
+	const healthEndpoint = "/sila/v1/node/health"
 
 	testCases := []struct {
 		name           string

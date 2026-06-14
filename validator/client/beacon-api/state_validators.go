@@ -32,7 +32,7 @@ func (c beaconApiStateValidatorsProvider) StateValidators(
 	statuses []string,
 ) (*structs.GetValidatorsResponse, error) {
 	stringIndices := convertValidatorIndicesToStrings(indexes)
-	return c.getStateValidatorsHelper(ctx, "/eth/v1/beacon/states/head/validators", append(stringIndices, stringPubkeys...), statuses)
+	return c.getStateValidatorsHelper(ctx, "/sila/v1/beacon/states/head/validators", append(stringIndices, stringPubkeys...), statuses)
 }
 
 func (c beaconApiStateValidatorsProvider) StateValidatorsForSlot(
@@ -43,7 +43,7 @@ func (c beaconApiStateValidatorsProvider) StateValidatorsForSlot(
 	statuses []string,
 ) (*structs.GetValidatorsResponse, error) {
 	stringIndices := convertValidatorIndicesToStrings(indices)
-	return c.getStateValidatorsHelper(ctx, fmt.Sprintf("/eth/v1/beacon/states/%d/validators", slot), append(stringIndices, stringPubkeys...), statuses)
+	return c.getStateValidatorsHelper(ctx, fmt.Sprintf("/sila/v1/beacon/states/%d/validators", slot), append(stringIndices, stringPubkeys...), statuses)
 }
 
 func (c beaconApiStateValidatorsProvider) StateValidatorsForHead(
@@ -53,7 +53,7 @@ func (c beaconApiStateValidatorsProvider) StateValidatorsForHead(
 	statuses []string,
 ) (*structs.GetValidatorsResponse, error) {
 	stringIndices := convertValidatorIndicesToStrings(indices)
-	return c.getStateValidatorsHelper(ctx, "/eth/v1/beacon/states/head/validators", append(stringIndices, stringPubkeys...), statuses)
+	return c.getStateValidatorsHelper(ctx, "/sila/v1/beacon/states/head/validators", append(stringIndices, stringPubkeys...), statuses)
 }
 
 func convertValidatorIndicesToStrings(indices []primitives.ValidatorIndex) []string {

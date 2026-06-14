@@ -23,7 +23,7 @@ func (c *beaconApiValidatorClient) attestationData(
 	params.Add("slot", strconv.FormatUint(uint64(reqSlot), 10))
 	params.Add("committee_index", strconv.FormatUint(uint64(reqCommitteeIndex), 10))
 
-	query := apiutil.BuildURL("/eth/v1/validator/attestation_data", params)
+	query := apiutil.BuildURL("/sila/v1/validator/attestation_data", params)
 	produceAttestationDataResponseJson := structs.GetAttestationDataResponse{}
 
 	if err := c.handler.Get(ctx, query, &produceAttestationDataResponseJson); err != nil {

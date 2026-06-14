@@ -31,7 +31,7 @@ func TestSubmitSignedAggregateSelectionProof_Valid(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v2/validator/aggregate_and_proofs",
+		"/sila/v2/validator/aggregate_and_proofs",
 		headers,
 		bytes.NewBuffer(marshalledSignedAggregateSignedAndProof),
 		nil,
@@ -63,7 +63,7 @@ func TestSubmitSignedAggregateSelectionProof_BadRequest(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v2/validator/aggregate_and_proofs",
+		"/sila/v2/validator/aggregate_and_proofs",
 		headers,
 		bytes.NewBuffer(marshalledSignedAggregateSignedAndProof),
 		nil,
@@ -96,7 +96,7 @@ func TestSubmitSignedAggregateSelectionProofElectra_Valid(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v2/validator/aggregate_and_proofs",
+		"/sila/v2/validator/aggregate_and_proofs",
 		headers,
 		bytes.NewBuffer(marshalledSignedAggregateSignedAndProofElectra),
 		nil,
@@ -133,7 +133,7 @@ func TestSubmitSignedAggregateSelectionProofElectra_BadRequest(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v2/validator/aggregate_and_proofs",
+		"/sila/v2/validator/aggregate_and_proofs",
 		headers,
 		bytes.NewBuffer(marshalledSignedAggregateSignedAndProofElectra),
 		nil,
@@ -166,7 +166,7 @@ func TestSubmitSignedAggregateSelectionProofElectra_FuluVersion(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v2/validator/aggregate_and_proofs",
+		"/sila/v2/validator/aggregate_and_proofs",
 		headers,
 		bytes.NewBuffer(marshalledSignedAggregateSignedAndProofElectra),
 		nil,

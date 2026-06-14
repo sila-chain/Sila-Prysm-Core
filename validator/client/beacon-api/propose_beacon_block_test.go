@@ -49,7 +49,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 		{
 			name:             "phase0",
 			consensusVersion: "phase0",
-			endpoint:         "/eth/v2/beacon/blocks",
+			endpoint:         "/sila/v2/beacon/blocks",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
@@ -57,7 +57,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 		{
 			name:             "altair",
 			consensusVersion: "altair",
-			endpoint:         "/eth/v2/beacon/blocks",
+			endpoint:         "/sila/v2/beacon/blocks",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedAltairBlock(),
 			},
@@ -65,7 +65,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 		{
 			name:             "bellatrix",
 			consensusVersion: "bellatrix",
-			endpoint:         "/eth/v2/beacon/blocks",
+			endpoint:         "/sila/v2/beacon/blocks",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBellatrixBlock(),
 			},
@@ -73,7 +73,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 		{
 			name:             "blinded bellatrix",
 			consensusVersion: "bellatrix",
-			endpoint:         "/eth/v2/beacon/blinded_blocks",
+			endpoint:         "/sila/v2/beacon/blinded_blocks",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedBellatrixBlock(),
 			},
@@ -81,7 +81,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 		{
 			name:             "capella",
 			consensusVersion: "capella",
-			endpoint:         "/eth/v2/beacon/blocks",
+			endpoint:         "/sila/v2/beacon/blocks",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedCapellaBlock(),
 			},
@@ -89,7 +89,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 		{
 			name:             "blinded capella",
 			consensusVersion: "capella",
-			endpoint:         "/eth/v2/beacon/blinded_blocks",
+			endpoint:         "/sila/v2/beacon/blinded_blocks",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedCapellaBlock(),
 			},
@@ -144,7 +144,7 @@ func TestProposeBeaconBlock_SSZSuccess_NoFallback(t *testing.T) {
 		{
 			name:             "phase0",
 			consensusVersion: "phase0",
-			endpoint:         "/eth/v2/beacon/blocks",
+			endpoint:         "/sila/v2/beacon/blocks",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
@@ -152,7 +152,7 @@ func TestProposeBeaconBlock_SSZSuccess_NoFallback(t *testing.T) {
 		{
 			name:             "altair",
 			consensusVersion: "altair",
-			endpoint:         "/eth/v2/beacon/blocks",
+			endpoint:         "/sila/v2/beacon/blocks",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedAltairBlock(),
 			},
@@ -213,7 +213,7 @@ func TestProposeBeaconBlock_NewerTypes_SSZMarshal(t *testing.T) {
 
 		handler.EXPECT().PostSSZ(
 			gomock.Any(),
-			"/eth/v2/beacon/blocks",
+			"/sila/v2/beacon/blocks",
 			gomock.Any(),
 			bytes.NewBuffer(denebBytes),
 		)
@@ -244,7 +244,7 @@ func TestProposeBeaconBlock_NewerTypes_SSZMarshal(t *testing.T) {
 
 		handler.EXPECT().PostSSZ(
 			gomock.Any(),
-			"/eth/v2/beacon/blinded_blocks",
+			"/sila/v2/beacon/blinded_blocks",
 			gomock.Any(),
 			bytes.NewBuffer(blindedDenebBytes),
 		)
@@ -275,7 +275,7 @@ func TestProposeBeaconBlock_NewerTypes_SSZMarshal(t *testing.T) {
 
 		handler.EXPECT().PostSSZ(
 			gomock.Any(),
-			"/eth/v2/beacon/blocks",
+			"/sila/v2/beacon/blocks",
 			gomock.Any(),
 			bytes.NewBuffer(electraBytes),
 		)
@@ -306,7 +306,7 @@ func TestProposeBeaconBlock_NewerTypes_SSZMarshal(t *testing.T) {
 
 		handler.EXPECT().PostSSZ(
 			gomock.Any(),
-			"/eth/v2/beacon/blinded_blocks",
+			"/sila/v2/beacon/blinded_blocks",
 			gomock.Any(),
 			bytes.NewBuffer(blindedElectraBytes),
 		)
@@ -337,7 +337,7 @@ func TestProposeBeaconBlock_NewerTypes_SSZMarshal(t *testing.T) {
 
 		handler.EXPECT().PostSSZ(
 			gomock.Any(),
-			"/eth/v2/beacon/blocks",
+			"/sila/v2/beacon/blocks",
 			gomock.Any(),
 			bytes.NewBuffer(fuluBytes),
 		)
@@ -368,7 +368,7 @@ func TestProposeBeaconBlock_NewerTypes_SSZMarshal(t *testing.T) {
 
 		handler.EXPECT().PostSSZ(
 			gomock.Any(),
-			"/eth/v2/beacon/blinded_blocks",
+			"/sila/v2/beacon/blinded_blocks",
 			gomock.Any(),
 			bytes.NewBuffer(blindedFuluBytes),
 		)
@@ -575,7 +575,7 @@ func TestProposeBeaconBlock_SSZFails_406_FallbackToJSON(t *testing.T) {
 		{
 			name:             "phase0",
 			consensusVersion: "phase0",
-			endpoint:         "/eth/v2/beacon/blocks",
+			endpoint:         "/sila/v2/beacon/blocks",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
@@ -629,7 +629,7 @@ func TestProposeBeaconBlock_SSZFails_406_JSONFallbackFails(t *testing.T) {
 
 	handler.EXPECT().PostSSZ(
 		gomock.Any(),
-		"/eth/v2/beacon/blocks",
+		"/sila/v2/beacon/blocks",
 		gomock.Any(),
 		gomock.Any(),
 	).Return(
@@ -641,7 +641,7 @@ func TestProposeBeaconBlock_SSZFails_406_JSONFallbackFails(t *testing.T) {
 
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v2/beacon/blocks",
+		"/sila/v2/beacon/blocks",
 		gomock.Any(),
 		gomock.Any(),
 		nil,
@@ -666,7 +666,7 @@ func TestProposeBeaconBlock_SSZFails_Non406_NoFallback(t *testing.T) {
 		{
 			name:             "phase0",
 			consensusVersion: "phase0",
-			endpoint:         "/eth/v2/beacon/blocks",
+			endpoint:         "/sila/v2/beacon/blocks",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},

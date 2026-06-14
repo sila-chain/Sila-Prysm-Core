@@ -20,9 +20,9 @@ import (
 func TestSubmitAggregateSelectionProof(t *testing.T) {
 	const (
 		pubkeyStr                    = "0x8000091c2ae64ee414a54c1cc1fc67dec663408bc636cb86756e0200e41a75c8f86603f104f02c856983d2783116be13"
-		syncingEndpoint              = "/eth/v1/node/syncing"
-		attestationDataEndpoint      = "/eth/v1/validator/attestation_data"
-		aggregateAttestationEndpoint = "/eth/v2/validator/aggregate_attestation"
+		syncingEndpoint              = "/sila/v1/node/syncing"
+		attestationDataEndpoint      = "/sila/v1/validator/attestation_data"
+		aggregateAttestationEndpoint = "/sila/v2/validator/aggregate_attestation"
 		validatorIndex               = primitives.ValidatorIndex(55293)
 		slotSignature                = "0x8776a37d6802c4797d113169c5fcfda50e68a32058eb6356a6f00d06d7da64c841a00c7c38b9b94a204751eca53707bd03523ce4797827d9bacff116a6e776a20bbccff4b683bf5201b610797ed0502557a58a65c8395f8a1649b976c3112d15"
 		slot                         = primitives.Slot(123)
@@ -188,9 +188,9 @@ func TestSubmitAggregateSelectionProof(t *testing.T) {
 func TestSubmitAggregateSelectionProofElectra(t *testing.T) {
 	const (
 		pubkeyStr                    = "0x8000091c2ae64ee414a54c1cc1fc67dec663408bc636cb86756e0200e41a75c8f86603f104f02c856983d2783116be13"
-		syncingEndpoint              = "/eth/v1/node/syncing"
-		attestationDataEndpoint      = "/eth/v1/validator/attestation_data"
-		aggregateAttestationEndpoint = "/eth/v2/validator/aggregate_attestation"
+		syncingEndpoint              = "/sila/v1/node/syncing"
+		attestationDataEndpoint      = "/sila/v1/validator/attestation_data"
+		aggregateAttestationEndpoint = "/sila/v2/validator/aggregate_attestation"
 		validatorIndex               = primitives.ValidatorIndex(55293)
 		slotSignature                = "0x8776a37d6802c4797d113169c5fcfda50e68a32058eb6356a6f00d06d7da64c841a00c7c38b9b94a204751eca53707bd03523ce4797827d9bacff116a6e776a20bbccff4b683bf5201b610797ed0502557a58a65c8395f8a1649b976c3112d15"
 		slot                         = primitives.Slot(123)

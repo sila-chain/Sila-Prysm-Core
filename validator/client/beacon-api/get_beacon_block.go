@@ -32,7 +32,7 @@ func (c *beaconApiValidatorClient) beaconBlock(ctx context.Context, slot primiti
 		return c.beaconBlockV4(ctx, slot, queryParams)
 	}
 
-	queryUrl := apiutil.BuildURL(fmt.Sprintf("/eth/v3/validator/blocks/%d", slot), queryParams)
+	queryUrl := apiutil.BuildURL(fmt.Sprintf("/sila/v3/validator/blocks/%d", slot), queryParams)
 	data, header, err := c.handler.GetSSZ(ctx, queryUrl)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (c *beaconApiValidatorClient) beaconBlock(ctx context.Context, slot primiti
 
 func (c *beaconApiValidatorClient) beaconBlockV4(ctx context.Context, slot primitives.Slot, queryParams neturl.Values) (*ethpb.GenericBeaconBlock, error) {
 	queryParams.Set("include_payload", strconv.FormatBool(c.stateless))
-	queryUrl := apiutil.BuildURL(fmt.Sprintf("/eth/v4/validator/blocks/%d", slot), queryParams)
+	queryUrl := apiutil.BuildURL(fmt.Sprintf("/sila/v4/validator/blocks/%d", slot), queryParams)
 	data, header, err := c.handler.GetSSZ(ctx, queryUrl)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not get v4 beacon block")

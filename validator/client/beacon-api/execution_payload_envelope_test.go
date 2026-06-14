@@ -88,7 +88,7 @@ func TestGetExecutionPayloadEnvelope_StatefulFetchesBlinded(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().GetSSZ(
 		gomock.Any(),
-		fmt.Sprintf("/eth/v1/validator/execution_payload_envelopes/100/%s", hexutil.Encode(root[:])),
+		fmt.Sprintf("/sila/v1/validator/execution_payload_envelopes/100/%s", hexutil.Encode(root[:])),
 	).Return(body, respHeader, nil)
 
 	client := &beaconApiValidatorClient{handler: handler, envelopeCache: newExecutionPayloadEnvelopeCache()}
@@ -117,7 +117,7 @@ func TestPublishBlindedExecutionPayloadEnvelope(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().PostSSZ(
 		gomock.Any(),
-		"/eth/v1/beacon/execution_payload_envelopes",
+		"/sila/v1/beacon/execution_payload_envelopes",
 		expectedHeaders,
 		bytes.NewBuffer(expectedBody),
 	).Return(nil, nil, nil)
@@ -153,7 +153,7 @@ func TestPublishBlindedExecutionPayloadEnvelope_JSONFallbackOn406(t *testing.T) 
 	).Return(nil, nil, &httputil.DefaultJsonError{Code: http.StatusNotAcceptable, Message: "not acceptable"})
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v1/beacon/execution_payload_envelopes",
+		"/sila/v1/beacon/execution_payload_envelopes",
 		expectedHeaders,
 		bytes.NewBuffer(expectedJSON),
 		nil,
@@ -191,7 +191,7 @@ func TestPublishExecutionPayloadEnvelope_StatelessSendsContents(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().PostSSZ(
 		gomock.Any(),
-		"/eth/v1/beacon/execution_payload_envelopes",
+		"/sila/v1/beacon/execution_payload_envelopes",
 		expectedHeaders,
 		bytes.NewBuffer(expectedBody),
 	).Return(nil, nil, nil)

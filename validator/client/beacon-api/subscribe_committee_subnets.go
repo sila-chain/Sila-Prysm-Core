@@ -38,7 +38,7 @@ func (c *beaconApiValidatorClient) subscribeCommitteeSubnets(ctx context.Context
 
 	return c.handler.Post(
 		ctx,
-		"/eth/v1/validator/beacon_committee_subscriptions",
+		"/sila/v1/validator/beacon_committee_subscriptions",
 		nil,
 		bytes.NewBuffer(committeeSubscriptionsBytes),
 		nil,

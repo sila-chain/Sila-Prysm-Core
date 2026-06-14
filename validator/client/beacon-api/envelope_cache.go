@@ -8,7 +8,7 @@ import (
 )
 
 // envelopeContents bundles the cached execution payload envelope with the raw
-// blobs and KZG proofs returned from /eth/v4/validator/blocks?include_payload=true,
+// blobs and KZG proofs returned from /sila/v4/validator/blocks?include_payload=true,
 // so the stateless publish path can submit them together to the beacon node.
 type envelopeContents struct {
 	envelope  *ethpb.ExecutionPayloadEnvelope
@@ -18,9 +18,9 @@ type envelopeContents struct {
 
 // executionPayloadEnvelopeCache is a small slot-keyed cache used by the
 // stateless block production path to carry the execution payload envelope and
-// its associated blob data from the /eth/v4/validator/blocks response to the
+// its associated blob data from the /sila/v4/validator/blocks response to the
 // self-build envelope publisher, avoiding a redundant
-// /eth/v1/validator/execution_payload_envelopes fetch.
+// /sila/v1/validator/execution_payload_envelopes fetch.
 type executionPayloadEnvelopeCache struct {
 	mu      sync.Mutex
 	entries map[primitives.Slot]*envelopeContents

@@ -199,7 +199,7 @@ func TestPost(t *testing.T) {
 
 func TestGetStatusCode(t *testing.T) {
 	ctx := t.Context()
-	const endpoint = "/eth/v1/node/health"
+	const endpoint = "/sila/v1/node/health"
 
 	testCases := []struct {
 		name               string

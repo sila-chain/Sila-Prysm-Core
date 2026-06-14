@@ -33,7 +33,7 @@ func (c *beaconApiValidatorClient) getExecutionPayloadEnvelope(
 		return envelope, nil, nil
 	}
 
-	endpoint := fmt.Sprintf("/eth/v1/validator/execution_payload_envelopes/%d/%s", slot, hexutil.Encode(beaconBlockRoot[:]))
+	endpoint := fmt.Sprintf("/sila/v1/validator/execution_payload_envelopes/%d/%s", slot, hexutil.Encode(beaconBlockRoot[:]))
 	body, header, err := c.handler.GetSSZ(ctx, endpoint)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "could not get blinded execution payload envelope")
@@ -66,7 +66,7 @@ func (c *beaconApiValidatorClient) publishExecutionPayloadEnvelope(
 	ctx context.Context,
 	envelope *ethpb.SignedExecutionPayloadEnvelope,
 ) (*empty.Empty, error) {
-	const endpoint = "/eth/v1/beacon/execution_payload_envelopes"
+	const endpoint = "/sila/v1/beacon/execution_payload_envelopes"
 	if envelope == nil || envelope.Message == nil || envelope.Message.Payload == nil {
 		return nil, errors.New("nil signed envelope or payload")
 	}
@@ -104,7 +104,7 @@ func (c *beaconApiValidatorClient) publishBlindedExecutionPayloadEnvelope(
 	ctx context.Context,
 	signed *ethpb.SignedWireBlindedExecutionPayloadEnvelope,
 ) (*empty.Empty, error) {
-	const endpoint = "/eth/v1/beacon/execution_payload_envelopes"
+	const endpoint = "/sila/v1/beacon/execution_payload_envelopes"
 	if signed == nil || signed.Message == nil {
 		return nil, errors.New("nil signed blinded envelope")
 	}

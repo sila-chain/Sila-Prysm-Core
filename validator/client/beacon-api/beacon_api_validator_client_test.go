@@ -35,7 +35,7 @@ func TestBeaconApiValidatorClient_GetAttestationDataValid(t *testing.T) {
 	produceAttestationDataResponseJson := structs.GetAttestationDataResponse{}
 	handler.EXPECT().Get(
 		gomock.Any(),
-		fmt.Sprintf("/eth/v1/validator/attestation_data?committee_index=%d&slot=%d", committeeIndex, slot),
+		fmt.Sprintf("/sila/v1/validator/attestation_data?committee_index=%d&slot=%d", committeeIndex, slot),
 		&produceAttestationDataResponseJson,
 	).Return(
 		nil,
@@ -69,7 +69,7 @@ func TestBeaconApiValidatorClient_GetAttestationDataError(t *testing.T) {
 	produceAttestationDataResponseJson := structs.GetAttestationDataResponse{}
 	handler.EXPECT().Get(
 		gomock.Any(),
-		fmt.Sprintf("/eth/v1/validator/attestation_data?committee_index=%d&slot=%d", committeeIndex, slot),
+		fmt.Sprintf("/sila/v1/validator/attestation_data?committee_index=%d&slot=%d", committeeIndex, slot),
 		&produceAttestationDataResponseJson,
 	).Return(
 		errors.New("some specific json error"),
@@ -142,7 +142,7 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockValid(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().PostSSZ(
 		gomock.Any(),
-		"/eth/v2/beacon/blocks",
+		"/sila/v2/beacon/blocks",
 		gomock.Any(),
 		gomock.Any(),
 	).Return(
@@ -169,7 +169,7 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockError_ThenPass(t *testing.T)
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().PostSSZ(
 		gomock.Any(),
-		"/eth/v2/beacon/blocks",
+		"/sila/v2/beacon/blocks",
 		gomock.Any(),
 		gomock.Any(),
 	).Return(
@@ -181,7 +181,7 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockError_ThenPass(t *testing.T)
 
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v2/beacon/blocks",
+		"/sila/v2/beacon/blocks",
 		gomock.Any(),
 		gomock.Any(),
 		gomock.Any(),
@@ -213,84 +213,84 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockAllTypes(t *testing.T) {
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Altair block",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedAltairBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Bellatrix block",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBellatrixBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Capella block",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedCapellaBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Bellatrix block",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedBellatrixBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blinded_blocks",
+			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Blinded Capella block",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedCapellaBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blinded_blocks",
+			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Deneb block",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedDenebBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Deneb block",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedDenebBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blinded_blocks",
+			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Electra block",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedElectraBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Electra block",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedElectraBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blinded_blocks",
+			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Fulu block",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedFuluBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Fulu block",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedFuluBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blinded_blocks",
+			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Unsupported block type",
@@ -370,7 +370,7 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockHTTPErrors(t *testing.T) {
 
 			handler.EXPECT().PostSSZ(
 				gomock.Any(),
-				"/eth/v2/beacon/blocks",
+				"/sila/v2/beacon/blocks",
 				gomock.Any(),
 				gomock.Any(),
 			).Return(nil, nil, tt.sszError).Times(1)
@@ -379,7 +379,7 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockHTTPErrors(t *testing.T) {
 				// When SSZ fails, it falls back to JSON
 				handler.EXPECT().Post(
 					gomock.Any(),
-					"/eth/v2/beacon/blocks",
+					"/sila/v2/beacon/blocks",
 					gomock.Any(),
 					gomock.Any(),
 					gomock.Any(),
@@ -411,91 +411,91 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockJSONFallback(t *testing.T) {
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Altair block JSON fallback success",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedAltairBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Bellatrix block JSON fallback success",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBellatrixBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Capella block JSON fallback success",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedCapellaBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Bellatrix block JSON fallback success",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedBellatrixBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blinded_blocks",
+			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Blinded Capella block JSON fallback success",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedCapellaBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blinded_blocks",
+			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Deneb block JSON fallback success",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedDenebBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Deneb block JSON fallback success",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedDenebBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blinded_blocks",
+			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Electra block JSON fallback success",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedElectraBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Electra block JSON fallback success",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedElectraBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blinded_blocks",
+			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Fulu block JSON fallback success",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedFuluBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Fulu block JSON fallback success",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedFuluBlock(),
 			},
-			expectedPath: "/eth/v2/beacon/blinded_blocks",
+			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "JSON fallback fails",
 			block: &ethpb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
-			expectedPath: "/eth/v2/beacon/blocks",
+			expectedPath: "/sila/v2/beacon/blocks",
 			jsonError:    errors.New("json post failed"),
 			wantErr:      true,
 		},

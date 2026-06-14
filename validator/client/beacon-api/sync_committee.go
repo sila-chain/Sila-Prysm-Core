@@ -17,7 +17,7 @@ import (
 )
 
 func (c *beaconApiValidatorClient) submitSyncMessage(ctx context.Context, syncMessage *ethpb.SyncCommitteeMessage) error {
-	const endpoint = "/eth/v1/beacon/pool/sync_committees"
+	const endpoint = "/sila/v1/beacon/pool/sync_committees"
 
 	jsonSyncCommitteeMessage := &structs.SyncCommitteeMessage{
 		Slot:            strconv.FormatUint(uint64(syncMessage.Slot), 10),
@@ -37,7 +37,7 @@ func (c *beaconApiValidatorClient) submitSyncMessage(ctx context.Context, syncMe
 func (c *beaconApiValidatorClient) syncMessageBlockRoot(ctx context.Context) (*ethpb.SyncMessageBlockRootResponse, error) {
 	// Get head beacon block root.
 	var resp structs.BlockRootResponse
-	if err := c.handler.Get(ctx, "/eth/v1/beacon/blocks/head/root", &resp); err != nil {
+	if err := c.handler.Get(ctx, "/sila/v1/beacon/blocks/head/root", &resp); err != nil {
 		return nil, err
 	}
 
@@ -82,7 +82,7 @@ func (c *beaconApiValidatorClient) syncCommitteeContribution(
 	params.Add("beacon_block_root", blockRoot)
 
 	var resp structs.ProduceSyncCommitteeContributionResponse
-	if err = c.handler.Get(ctx, apiutil.BuildURL("/eth/v1/validator/sync_committee_contribution", params), &resp); err != nil {
+	if err = c.handler.Get(ctx, apiutil.BuildURL("/sila/v1/validator/sync_committee_contribution", params), &resp); err != nil {
 		return nil, err
 	}
 

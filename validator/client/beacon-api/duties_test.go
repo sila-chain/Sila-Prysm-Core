@@ -19,10 +19,10 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-const getAttesterDutiesTestEndpoint = "/eth/v1/validator/duties/attester"
-const getProposerDutiesTestEndpoint = "/eth/v1/validator/duties/proposer"
-const getSyncDutiesTestEndpoint = "/eth/v1/validator/duties/sync"
-const getCommitteesTestEndpoint = "/eth/v1/beacon/states/head/committees"
+const getAttesterDutiesTestEndpoint = "/sila/v1/validator/duties/attester"
+const getProposerDutiesTestEndpoint = "/sila/v1/validator/duties/proposer"
+const getSyncDutiesTestEndpoint = "/sila/v1/validator/duties/sync"
+const getCommitteesTestEndpoint = "/sila/v1/beacon/states/head/committees"
 
 func TestGetAttesterDuties_Valid(t *testing.T) {
 	stringValidatorIndices := []string{"2", "9"}

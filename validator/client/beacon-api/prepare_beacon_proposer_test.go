@@ -15,7 +15,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-const prepareBeaconProposerTestEndpoint = "/eth/v1/validator/prepare_beacon_proposer"
+const prepareBeaconProposerTestEndpoint = "/sila/v1/validator/prepare_beacon_proposer"
 
 func TestPrepareBeaconProposer_Valid(t *testing.T) {
 	const feeRecipient1 = "0xca008b199c03a2a2f6bc2ed52d6404c4d8510b35"

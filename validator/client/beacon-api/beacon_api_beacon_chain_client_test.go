@@ -20,7 +20,7 @@ import (
 )
 
 func TestListValidators(t *testing.T) {
-	const blockHeaderEndpoint = "/eth/v1/beacon/headers/head"
+	const blockHeaderEndpoint = "/sila/v1/beacon/headers/head"
 
 	t.Run("invalid token", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
@@ -577,8 +577,8 @@ func TestListValidators(t *testing.T) {
 }
 
 func TestGetChainHead(t *testing.T) {
-	const finalityCheckpointsEndpoint = "/eth/v1/beacon/states/head/finality_checkpoints"
-	const headBlockHeadersEndpoint = "/eth/v1/beacon/headers/head"
+	const finalityCheckpointsEndpoint = "/sila/v1/beacon/states/head/finality_checkpoints"
+	const headBlockHeadersEndpoint = "/sila/v1/beacon/headers/head"
 
 	generateValidFinalityCheckpointsResponse := func() structs.GetFinalityCheckpointsResponse {
 		return structs.GetFinalityCheckpointsResponse{

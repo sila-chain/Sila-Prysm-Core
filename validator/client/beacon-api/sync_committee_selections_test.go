@@ -104,7 +104,7 @@ func TestGetAggregatedSyncSelections(t *testing.T) {
 			ctx := t.Context()
 			handler.EXPECT().Post(
 				gomock.Any(),
-				"/eth/v1/validator/sync_committee_selections",
+				"/sila/v1/validator/sync_committee_selections",
 				nil,
 				bytes.NewBuffer(reqBody),
 				&aggregatedSyncSelectionResponse{},

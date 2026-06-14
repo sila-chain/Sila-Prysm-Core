@@ -64,12 +64,12 @@ func (c *beaconApiValidatorClient) waitForChainStart(ctx context.Context) (*ethp
 	return chainStartResponse, nil
 }
 
-// GetGenesis gets the genesis information from the beacon node via the /eth/v1/beacon/genesis endpoint
+// GetGenesis gets the genesis information from the beacon node via the /sila/v1/beacon/genesis endpoint
 func (c *beaconApiGenesisProvider) Genesis(ctx context.Context) (*structs.Genesis, error) {
 	genesisJson := &structs.GetGenesisResponse{}
 	var doErr error
 	c.once.Do(func() {
-		if err := c.handler.Get(ctx, "/eth/v1/beacon/genesis", genesisJson); err != nil {
+		if err := c.handler.Get(ctx, "/sila/v1/beacon/genesis", genesisJson); err != nil {
 			doErr = err
 			return
 		}

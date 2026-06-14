@@ -160,10 +160,10 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 		return nil, err
 	}
 
-	endpoint := "/eth/v2/beacon/blocks"
+	endpoint := "/sila/v2/beacon/blocks"
 
 	if res.blinded {
-		endpoint = "/eth/v2/beacon/blinded_blocks"
+		endpoint = "/sila/v2/beacon/blinded_blocks"
 	}
 
 	headers := map[string]string{"Eth-Consensus-Version": res.consensusVersion}

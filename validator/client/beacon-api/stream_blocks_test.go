@@ -214,7 +214,7 @@ func TestStreamBlocks_Phase0Valid(t *testing.T) {
 
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v2/beacon/blocks/head",
+				"/sila/v2/beacon/blocks/head",
 				&signedBlockResponseJson,
 			).Return(
 				nil,
@@ -251,7 +251,7 @@ func TestStreamBlocks_Phase0Valid(t *testing.T) {
 
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v2/beacon/blocks/head",
+				"/sila/v2/beacon/blocks/head",
 				&signedBlockResponseJson,
 			).Return(
 				nil,
@@ -278,7 +278,7 @@ func TestStreamBlocks_Phase0Valid(t *testing.T) {
 			if testCase.verifiedOnly {
 				handler.EXPECT().Get(
 					gomock.Any(),
-					"/eth/v2/beacon/blocks/head",
+					"/sila/v2/beacon/blocks/head",
 					&signedBlockResponseJson,
 				).Return(
 					nil,
@@ -375,7 +375,7 @@ func TestStreamBlocks_AltairValid(t *testing.T) {
 
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v2/beacon/blocks/head",
+				"/sila/v2/beacon/blocks/head",
 				&signedBlockResponseJson,
 			).Return(
 				nil,
@@ -412,7 +412,7 @@ func TestStreamBlocks_AltairValid(t *testing.T) {
 
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v2/beacon/blocks/head",
+				"/sila/v2/beacon/blocks/head",
 				&signedBlockResponseJson,
 			).Return(
 				nil,
@@ -439,7 +439,7 @@ func TestStreamBlocks_AltairValid(t *testing.T) {
 			if testCase.verifiedOnly {
 				handler.EXPECT().Get(
 					gomock.Any(),
-					"/eth/v2/beacon/blocks/head",
+					"/sila/v2/beacon/blocks/head",
 					&signedBlockResponseJson,
 				).Return(
 					nil,
@@ -536,7 +536,7 @@ func TestStreamBlocks_BellatrixValid(t *testing.T) {
 
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v2/beacon/blocks/head",
+				"/sila/v2/beacon/blocks/head",
 				&signedBlockResponseJson,
 			).Return(
 				nil,
@@ -573,7 +573,7 @@ func TestStreamBlocks_BellatrixValid(t *testing.T) {
 
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v2/beacon/blocks/head",
+				"/sila/v2/beacon/blocks/head",
 				&signedBlockResponseJson,
 			).Return(
 				nil,
@@ -600,7 +600,7 @@ func TestStreamBlocks_BellatrixValid(t *testing.T) {
 			if testCase.verifiedOnly {
 				handler.EXPECT().Get(
 					gomock.Any(),
-					"/eth/v2/beacon/blocks/head",
+					"/sila/v2/beacon/blocks/head",
 					&signedBlockResponseJson,
 				).Return(
 					nil,
@@ -697,7 +697,7 @@ func TestStreamBlocks_CapellaValid(t *testing.T) {
 
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v2/beacon/blocks/head",
+				"/sila/v2/beacon/blocks/head",
 				&signedBlockResponseJson,
 			).Return(
 				nil,
@@ -734,7 +734,7 @@ func TestStreamBlocks_CapellaValid(t *testing.T) {
 
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v2/beacon/blocks/head",
+				"/sila/v2/beacon/blocks/head",
 				&signedBlockResponseJson,
 			).Return(
 				nil,
@@ -761,7 +761,7 @@ func TestStreamBlocks_CapellaValid(t *testing.T) {
 			if testCase.verifiedOnly {
 				handler.EXPECT().Get(
 					gomock.Any(),
-					"/eth/v2/beacon/blocks/head",
+					"/sila/v2/beacon/blocks/head",
 					&signedBlockResponseJson,
 				).Return(
 					nil,
@@ -858,7 +858,7 @@ func TestStreamBlocks_DenebValid(t *testing.T) {
 			require.NoError(t, err)
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v2/beacon/blocks/head",
+				"/sila/v2/beacon/blocks/head",
 				&signedBlockResponseJson,
 			).Return(
 				nil,
@@ -887,7 +887,7 @@ func TestStreamBlocks_DenebValid(t *testing.T) {
 
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v2/beacon/blocks/head",
+				"/sila/v2/beacon/blocks/head",
 				&signedBlockResponseJson,
 			).Return(
 				nil,
@@ -904,7 +904,7 @@ func TestStreamBlocks_DenebValid(t *testing.T) {
 			if testCase.verifiedOnly {
 				handler.EXPECT().Get(
 					gomock.Any(),
-					"/eth/v2/beacon/blocks/head",
+					"/sila/v2/beacon/blocks/head",
 					&signedBlockResponseJson,
 				).Return(
 					nil,

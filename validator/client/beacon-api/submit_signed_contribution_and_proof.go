@@ -49,7 +49,7 @@ func (c *beaconApiValidatorClient) submitSignedContributionAndProof(ctx context.
 
 	return c.handler.Post(
 		ctx,
-		"/eth/v1/validator/contribution_and_proofs",
+		"/sila/v1/validator/contribution_and_proofs",
 		nil,
 		bytes.NewBuffer(jsonContributionAndProofsBytes),
 		nil,

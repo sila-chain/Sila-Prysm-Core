@@ -32,7 +32,7 @@ func TestPayloadAttestationData(t *testing.T) {
 	resp := structs.GetPayloadAttestationDataResponse{}
 	handler.EXPECT().Get(
 		gomock.Any(),
-		fmt.Sprintf("/eth/v1/validator/payload_attestation_data/%d", slot),
+		fmt.Sprintf("/sila/v1/validator/payload_attestation_data/%d", slot),
 		&resp,
 	).Return(nil).SetArg(2, structs.GetPayloadAttestationDataResponse{
 		Version: version.String(version.Gloas),
@@ -131,7 +131,7 @@ func TestSubmitPayloadAttestation(t *testing.T) {
 			headers := map[string]string{api.VersionHeader: version.String(version.Gloas)}
 			handler.EXPECT().Post(
 				gomock.Any(),
-				"/eth/v1/beacon/pool/payload_attestations",
+				"/sila/v1/beacon/pool/payload_attestations",
 				headers,
 				bytes.NewBuffer(body),
 				nil,

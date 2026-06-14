@@ -27,7 +27,7 @@ type beaconApiNodeClient struct {
 
 func (c *beaconApiNodeClient) SyncStatus(ctx context.Context, _ *empty.Empty) (*ethpb.SyncStatus, error) {
 	syncingResponse := structs.SyncStatusResponse{}
-	if err := c.handler.Get(ctx, "/eth/v1/node/syncing", &syncingResponse); err != nil {
+	if err := c.handler.Get(ctx, "/sila/v1/node/syncing", &syncingResponse); err != nil {
 		return nil, err
 	}
 
@@ -57,7 +57,7 @@ func (c *beaconApiNodeClient) Genesis(ctx context.Context, _ *empty.Empty) (*eth
 	}
 
 	depositContractJson := structs.GetDepositContractResponse{}
-	if err = c.handler.Get(ctx, "/eth/v1/config/deposit_contract", &depositContractJson); err != nil {
+	if err = c.handler.Get(ctx, "/sila/v1/config/deposit_contract", &depositContractJson); err != nil {
 		return nil, err
 	}
 
@@ -81,7 +81,7 @@ func (c *beaconApiNodeClient) Genesis(ctx context.Context, _ *empty.Empty) (*eth
 
 func (c *beaconApiNodeClient) Version(ctx context.Context, _ *empty.Empty) (*ethpb.Version, error) {
 	var versionResponse structs.GetVersionResponse
-	if err := c.handler.Get(ctx, "/eth/v1/node/version", &versionResponse); err != nil {
+	if err := c.handler.Get(ctx, "/sila/v1/node/version", &versionResponse); err != nil {
 		return nil, err
 	}
 
@@ -106,7 +106,7 @@ func (c *beaconApiNodeClient) Peers(ctx context.Context, in *empty.Empty) (*ethp
 // IsReady returns true only if the node is fully synced (200 OK).
 // A 206 Partial Content response indicates the node is syncing and not ready.
 func (c *beaconApiNodeClient) IsReady(ctx context.Context) bool {
-	statusCode, err := c.handler.GetStatusCode(ctx, "/eth/v1/node/health")
+	statusCode, err := c.handler.GetStatusCode(ctx, "/sila/v1/node/health")
 	if err != nil {
 		log.WithError(err).WithField("url", c.handler.Host()).Error("failed to get health of node")
 		return false

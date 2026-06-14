@@ -16,7 +16,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-const subscribeCommitteeSubnetsTestEndpoint = "/eth/v1/validator/beacon_committee_subscriptions"
+const subscribeCommitteeSubnetsTestEndpoint = "/sila/v1/validator/beacon_committee_subscriptions"
 
 func TestSubscribeCommitteeSubnets_Valid(t *testing.T) {
 	subscribeSlots := []primitives.Slot{0, 1, 100}

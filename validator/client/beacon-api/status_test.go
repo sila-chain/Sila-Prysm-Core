@@ -64,7 +64,7 @@ func TestValidatorStatus_Nominal(t *testing.T) {
 	var nodeVersionResponse structs.GetVersionResponse
 	handler.EXPECT().Get(
 		gomock.Any(),
-		"/eth/v1/node/version",
+		"/sila/v1/node/version",
 		&nodeVersionResponse,
 	).Return(
 		iface.ErrNotSupported,
@@ -171,7 +171,7 @@ func TestMultipleValidatorStatus_Nominal(t *testing.T) {
 	var nodeVersionResponse structs.GetVersionResponse
 	handler.EXPECT().Get(
 		gomock.Any(),
-		"/eth/v1/node/version",
+		"/sila/v1/node/version",
 		&nodeVersionResponse,
 	).Return(
 		iface.ErrNotSupported,
@@ -323,7 +323,7 @@ func TestGetValidatorsStatusResponse_Nominal_SomeActiveValidators(t *testing.T) 
 	var nodeVersionResponse structs.GetVersionResponse
 	handler.EXPECT().Get(
 		gomock.Any(),
-		"/eth/v1/node/version",
+		"/sila/v1/node/version",
 		&nodeVersionResponse,
 	).Return(
 		nil,
@@ -335,7 +335,7 @@ func TestGetValidatorsStatusResponse_Nominal_SomeActiveValidators(t *testing.T) 
 	var validatorCountResponse structs.GetValidatorCountResponse
 	handler.EXPECT().Get(
 		gomock.Any(),
-		"/eth/v1/beacon/states/head/validator_count?",
+		"/sila/v1/beacon/states/head/validator_count?",
 		&validatorCountResponse,
 	).Return(
 		nil,
@@ -471,7 +471,7 @@ func TestGetValidatorsStatusResponse_Nominal_NoActiveValidators(t *testing.T) {
 	var nodeVersionResponse structs.GetVersionResponse
 	handler.EXPECT().Get(
 		gomock.Any(),
-		"/eth/v1/node/version",
+		"/sila/v1/node/version",
 		&nodeVersionResponse,
 	).Return(
 		iface.ErrNotSupported,
@@ -710,7 +710,7 @@ func TestValidatorStatusResponse_InvalidData(t *testing.T) {
 				var nodeVersionResponse structs.GetVersionResponse
 				handler.EXPECT().Get(
 					gomock.Any(),
-					"/eth/v1/node/version",
+					"/sila/v1/node/version",
 					&nodeVersionResponse,
 				).Return(
 					iface.ErrNotSupported,

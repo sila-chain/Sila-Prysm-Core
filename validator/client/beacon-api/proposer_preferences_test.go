@@ -15,7 +15,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-const proposerPreferencesEndpoint = "/eth/v1/validator/proposer_preferences"
+const proposerPreferencesEndpoint = "/sila/v1/validator/proposer_preferences"
 
 func TestSubmitSignedProposerPreferences_Valid(t *testing.T) {
 	ctrl := gomock.NewController(t)

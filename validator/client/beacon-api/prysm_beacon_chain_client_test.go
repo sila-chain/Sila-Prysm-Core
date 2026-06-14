@@ -122,7 +122,7 @@ func TestGetValidatorCount(t *testing.T) {
 			var nodeVersionResponse structs.GetVersionResponse
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v1/node/version",
+				"/sila/v1/node/version",
 				&nodeVersionResponse,
 			).Return(
 				test.versionEndpointError,
@@ -134,7 +134,7 @@ func TestGetValidatorCount(t *testing.T) {
 			var validatorCountResponse structs.GetValidatorCountResponse
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v1/beacon/states/head/validator_count?status=active",
+				"/sila/v1/beacon/states/head/validator_count?status=active",
 				&validatorCountResponse,
 			).Return(
 				test.validatorCountEndpointError,
@@ -182,7 +182,7 @@ func Test_beaconApiBeaconChainClient_GetValidatorPerformance(t *testing.T) {
 	var nodeVersionResponse structs.GetVersionResponse
 	handler.EXPECT().Get(
 		gomock.Any(),
-		"/eth/v1/node/version",
+		"/sila/v1/node/version",
 		&nodeVersionResponse,
 	).Return(
 		nil,

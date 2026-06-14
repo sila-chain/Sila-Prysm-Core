@@ -402,7 +402,7 @@ func (c *beaconApiValidatorClient) validatorsForDuties(ctx context.Context, pubk
 func (c beaconApiDutiesProvider) Committees(ctx context.Context, epoch primitives.Epoch) ([]*structs.Committee, error) {
 	committeeParams := url.Values{}
 	committeeParams.Add("epoch", strconv.FormatUint(uint64(epoch), 10))
-	committeesRequest := apiutil.BuildURL("/eth/v1/beacon/states/head/committees", committeeParams)
+	committeesRequest := apiutil.BuildURL("/sila/v1/beacon/states/head/committees", committeeParams)
 
 	var stateCommittees structs.GetCommitteesResponse
 	if err := c.handler.Get(ctx, committeesRequest, &stateCommittees); err != nil {
@@ -437,7 +437,7 @@ func (c beaconApiDutiesProvider) AttesterDuties(ctx context.Context, epoch primi
 	attesterDuties := &structs.GetAttesterDutiesResponse{}
 	if err = c.handler.Post(
 		ctx,
-		fmt.Sprintf("/eth/v1/validator/duties/attester/%d", epoch),
+		fmt.Sprintf("/sila/v1/validator/duties/attester/%d", epoch),
 		nil,
 		bytes.NewBuffer(validatorIndicesBytes),
 		attesterDuties,
@@ -457,7 +457,7 @@ func (c beaconApiDutiesProvider) AttesterDuties(ctx context.Context, epoch primi
 // ProposerDuties retrieves the proposer duties for the given epoch
 func (c beaconApiDutiesProvider) ProposerDuties(ctx context.Context, epoch primitives.Epoch) (*structs.GetProposerDutiesResponse, error) {
 	proposerDuties := &structs.GetProposerDutiesResponse{}
-	if err := c.handler.Get(ctx, fmt.Sprintf("/eth/v1/validator/duties/proposer/%d", epoch), proposerDuties); err != nil {
+	if err := c.handler.Get(ctx, fmt.Sprintf("/sila/v1/validator/duties/proposer/%d", epoch), proposerDuties); err != nil {
 		return nil, err
 	}
 
@@ -489,7 +489,7 @@ func (c beaconApiDutiesProvider) SyncDuties(ctx context.Context, epoch primitive
 	syncDuties := structs.GetSyncCommitteeDutiesResponse{}
 	if err = c.handler.Post(
 		ctx,
-		fmt.Sprintf("/eth/v1/validator/duties/sync/%d", epoch),
+		fmt.Sprintf("/sila/v1/validator/duties/sync/%d", epoch),
 		nil,
 		bytes.NewBuffer(validatorIndicesBytes),
 		&syncDuties,
@@ -524,7 +524,7 @@ func (c beaconApiDutiesProvider) PTCDuties(ctx context.Context, epoch primitives
 	ptcDuties := structs.GetPTCDutiesResponse{}
 	if err = c.handler.Post(
 		ctx,
-		fmt.Sprintf("/eth/v1/validator/duties/ptc/%d", epoch),
+		fmt.Sprintf("/sila/v1/validator/duties/ptc/%d", epoch),
 		nil,
 		bytes.NewBuffer(validatorIndicesBytes),
 		&ptcDuties,

@@ -15,7 +15,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-const submitSignedContributionAndProofTestEndpoint = "/eth/v1/validator/contribution_and_proofs"
+const submitSignedContributionAndProofTestEndpoint = "/sila/v1/validator/contribution_and_proofs"
 
 func TestSubmitSignedContributionAndProof_Valid(t *testing.T) {
 	ctrl := gomock.NewController(t)

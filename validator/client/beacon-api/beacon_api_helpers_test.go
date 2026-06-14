@@ -13,7 +13,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-const forkEndpoint = "/eth/v1/beacon/states/head/fork"
+const forkEndpoint = "/sila/v1/beacon/states/head/fork"
 
 func TestGetFork_Nominal(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -76,7 +76,7 @@ func TestGetFork_Invalid(t *testing.T) {
 	require.ErrorContains(t, "custom error", err)
 }
 
-const headersEndpoint = "/eth/v1/beacon/headers"
+const headersEndpoint = "/sila/v1/beacon/headers"
 
 func TestGetHeaders_Nominal(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -143,7 +143,7 @@ func TestGetHeaders_Invalid(t *testing.T) {
 	require.ErrorContains(t, "custom error", err)
 }
 
-const livenessEndpoint = "/eth/v1/validator/liveness/42"
+const livenessEndpoint = "/sila/v1/validator/liveness/42"
 
 func TestGetLiveness_Nominal(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -214,7 +214,7 @@ func TestGetLiveness_Invalid(t *testing.T) {
 	require.ErrorContains(t, "custom error", err)
 }
 
-const syncingEndpoint = "/eth/v1/node/syncing"
+const syncingEndpoint = "/sila/v1/node/syncing"
 
 func TestGetIsSyncing_Nominal(t *testing.T) {
 	testCases := []struct {

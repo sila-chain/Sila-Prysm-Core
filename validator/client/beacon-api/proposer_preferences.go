@@ -27,5 +27,5 @@ func (c *beaconApiValidatorClient) submitSignedProposerPreferences(ctx context.C
 	}
 
 	headers := map[string]string{api.VersionHeader: version.String(version.Gloas)}
-	return c.handler.Post(ctx, "/eth/v1/validator/proposer_preferences", headers, bytes.NewBuffer(body), nil)
+	return c.handler.Post(ctx, "/sila/v1/validator/proposer_preferences", headers, bytes.NewBuffer(body), nil)
 }

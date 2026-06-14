@@ -11,7 +11,7 @@ import (
 )
 
 func (c *beaconApiValidatorClient) submitValidatorRegistrations(ctx context.Context, registrations []*ethpb.SignedValidatorRegistrationV1) error {
-	const endpoint = "/eth/v1/validator/register_validator"
+	const endpoint = "/sila/v1/validator/register_validator"
 
 	jsonRegistration := make([]*structs.SignedValidatorRegistration, len(registrations))
 

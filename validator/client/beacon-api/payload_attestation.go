@@ -15,7 +15,7 @@ import (
 )
 
 func (c *beaconApiValidatorClient) payloadAttestationData(ctx context.Context, slot primitives.Slot) (*ethpb.PayloadAttestationData, error) {
-	endpoint := fmt.Sprintf("/eth/v1/validator/payload_attestation_data/%d", slot)
+	endpoint := fmt.Sprintf("/sila/v1/validator/payload_attestation_data/%d", slot)
 	var resp structs.GetPayloadAttestationDataResponse
 	if err := c.handler.Get(ctx, endpoint, &resp); err != nil {
 		return nil, errors.Wrap(err, "could not get execution payload attestation data")
@@ -36,5 +36,5 @@ func (c *beaconApiValidatorClient) submitPayloadAttestation(ctx context.Context,
 		return errors.Wrap(err, "failed to marshal payload attestation message")
 	}
 	headers := map[string]string{api.VersionHeader: version.String(version.Gloas)}
-	return c.handler.Post(ctx, "/eth/v1/beacon/pool/payload_attestations", headers, bytes.NewBuffer(body), nil)
+	return c.handler.Post(ctx, "/sila/v1/beacon/pool/payload_attestations", headers, bytes.NewBuffer(body), nil)
 }

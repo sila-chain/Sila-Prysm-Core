@@ -24,7 +24,7 @@ type beaconApiChainClient struct {
 
 func (c beaconApiChainClient) headBlockHeaders(ctx context.Context) (*structs.GetBlockHeaderResponse, error) {
 	blockHeader := structs.GetBlockHeaderResponse{}
-	err := c.handler.Get(ctx, "/eth/v1/beacon/headers/head", &blockHeader)
+	err := c.handler.Get(ctx, "/sila/v1/beacon/headers/head", &blockHeader)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (c beaconApiChainClient) headBlockHeaders(ctx context.Context) (*structs.Ge
 }
 
 func (c beaconApiChainClient) ChainHead(ctx context.Context, _ *empty.Empty) (*ethpb.ChainHead, error) {
-	const endpoint = "/eth/v1/beacon/states/head/finality_checkpoints"
+	const endpoint = "/sila/v1/beacon/states/head/finality_checkpoints"
 
 	finalityCheckpoints := structs.GetFinalityCheckpointsResponse{}
 	if err := c.handler.Get(ctx, endpoint, &finalityCheckpoints); err != nil {

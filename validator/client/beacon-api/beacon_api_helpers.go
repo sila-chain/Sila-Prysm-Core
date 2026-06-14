@@ -25,7 +25,7 @@ var beaconAPITogRPCValidatorStatus = map[string]ethpb.ValidatorStatus{
 }
 
 func (c *beaconApiValidatorClient) fork(ctx context.Context) (*structs.GetStateForkResponse, error) {
-	const endpoint = "/eth/v1/beacon/states/head/fork"
+	const endpoint = "/sila/v1/beacon/states/head/fork"
 
 	stateForkResponseJson := &structs.GetStateForkResponse{}
 
@@ -37,7 +37,7 @@ func (c *beaconApiValidatorClient) fork(ctx context.Context) (*structs.GetStateF
 }
 
 func (c *beaconApiValidatorClient) headers(ctx context.Context) (*structs.GetBlockHeadersResponse, error) {
-	const endpoint = "/eth/v1/beacon/headers"
+	const endpoint = "/sila/v1/beacon/headers"
 
 	blockHeadersResponseJson := &structs.GetBlockHeadersResponse{}
 
@@ -49,7 +49,7 @@ func (c *beaconApiValidatorClient) headers(ctx context.Context) (*structs.GetBlo
 }
 
 func (c *beaconApiValidatorClient) liveness(ctx context.Context, epoch primitives.Epoch, validatorIndexes []string) (*structs.GetLivenessResponse, error) {
-	const endpoint = "/eth/v1/validator/liveness/"
+	const endpoint = "/sila/v1/validator/liveness/"
 	url := endpoint + strconv.FormatUint(uint64(epoch), 10)
 
 	livenessResponseJson := &structs.GetLivenessResponse{}
@@ -67,7 +67,7 @@ func (c *beaconApiValidatorClient) liveness(ctx context.Context, epoch primitive
 }
 
 func (c *beaconApiValidatorClient) syncing(ctx context.Context) (*structs.SyncStatusResponse, error) {
-	const endpoint = "/eth/v1/node/syncing"
+	const endpoint = "/sila/v1/node/syncing"
 
 	syncingResponseJson := &structs.SyncStatusResponse{}
 

@@ -121,7 +121,7 @@ func TestProposeAttestation(t *testing.T) {
 			headers := map[string]string{"Eth-Consensus-Version": version.String(test.attestation.Version())}
 			handler.EXPECT().Post(
 				gomock.Any(),
-				"/eth/v2/beacon/pool/attestations",
+				"/sila/v2/beacon/pool/attestations",
 				headers,
 				bytes.NewBuffer(marshalledAttestations),
 				nil,
@@ -270,7 +270,7 @@ func TestProposeAttestationElectra(t *testing.T) {
 			}
 			handler.EXPECT().Post(
 				gomock.Any(),
-				"/eth/v2/beacon/pool/attestations",
+				"/sila/v2/beacon/pool/attestations",
 				headerMatcher,
 				bytes.NewBuffer(marshalledAttestations),
 				nil,

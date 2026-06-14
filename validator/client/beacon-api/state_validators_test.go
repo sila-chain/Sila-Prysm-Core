@@ -71,7 +71,7 @@ func TestGetStateValidators_Nominal_POST(t *testing.T) {
 
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v1/beacon/states/head/validators",
+		"/sila/v1/beacon/states/head/validators",
 		nil,
 		bytes.NewBuffer(reqBytes),
 		&stateValidatorsResponseJson,
@@ -158,7 +158,7 @@ func TestGetStateValidators_Nominal_GET(t *testing.T) {
 	// First return an error from POST call.
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v1/beacon/states/head/validators",
+		"/sila/v1/beacon/states/head/validators",
 		nil,
 		bytes.NewBuffer(reqBytes),
 		&stateValidatorsResponseJson,
@@ -175,7 +175,7 @@ func TestGetStateValidators_Nominal_GET(t *testing.T) {
 		queryParams.Add("status", st)
 	}
 
-	query := apiutil.BuildURL("/eth/v1/beacon/states/head/validators", queryParams)
+	query := apiutil.BuildURL("/sila/v1/beacon/states/head/validators", queryParams)
 
 	handler.EXPECT().Get(
 		gomock.Any(),
@@ -227,7 +227,7 @@ func TestGetStateValidators_GetRestJsonResponseOnError(t *testing.T) {
 	// First call POST.
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v1/beacon/states/head/validators",
+		"/sila/v1/beacon/states/head/validators",
 		nil,
 		bytes.NewBuffer(reqBytes),
 		&stateValidatorsResponseJson,
@@ -244,7 +244,7 @@ func TestGetStateValidators_GetRestJsonResponseOnError(t *testing.T) {
 		queryParams.Add("status", st)
 	}
 
-	query := apiutil.BuildURL("/eth/v1/beacon/states/head/validators", queryParams)
+	query := apiutil.BuildURL("/sila/v1/beacon/states/head/validators", queryParams)
 
 	handler.EXPECT().Get(
 		gomock.Any(),
@@ -281,7 +281,7 @@ func TestGetStateValidators_DataIsNil_POST(t *testing.T) {
 
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v1/beacon/states/head/validators",
+		"/sila/v1/beacon/states/head/validators",
 		nil, bytes.NewBuffer(reqBytes),
 		&stateValidatorsResponseJson,
 	).Return(
@@ -321,7 +321,7 @@ func TestGetStateValidators_DataIsNil_GET(t *testing.T) {
 	// First call POST which will return an error.
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v1/beacon/states/head/validators",
+		"/sila/v1/beacon/states/head/validators",
 		nil,
 		bytes.NewBuffer(reqBytes),
 		&stateValidatorsResponseJson,
@@ -338,7 +338,7 @@ func TestGetStateValidators_DataIsNil_GET(t *testing.T) {
 		queryParams.Add("status", st)
 	}
 
-	query := apiutil.BuildURL("/eth/v1/beacon/states/head/validators", queryParams)
+	query := apiutil.BuildURL("/sila/v1/beacon/states/head/validators", queryParams)
 
 	handler.EXPECT().Get(
 		gomock.Any(),

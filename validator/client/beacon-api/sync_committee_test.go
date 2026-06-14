@@ -47,7 +47,7 @@ func TestSubmitSyncMessage_Valid(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v1/beacon/pool/sync_committees",
+		"/sila/v1/beacon/pool/sync_committees",
 		nil,
 		bytes.NewBuffer(marshalledJsonRegistrations),
 		nil,
@@ -76,7 +76,7 @@ func TestSubmitSyncMessage_BadRequest(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().Post(
 		gomock.Any(),
-		"/eth/v1/beacon/pool/sync_committees",
+		"/sila/v1/beacon/pool/sync_committees",
 		nil,
 		gomock.Any(),
 		nil,
@@ -140,7 +140,7 @@ func TestGetSyncMessageBlockRoot(t *testing.T) {
 			handler := mock.NewMockJsonRestHandler(ctrl)
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v1/beacon/blocks/head/root",
+				"/sila/v1/beacon/blocks/head/root",
 				&structs.BlockRootResponse{},
 			).SetArg(
 				2,
@@ -210,7 +210,7 @@ func TestGetSyncCommitteeContribution(t *testing.T) {
 			handler := mock.NewMockJsonRestHandler(ctrl)
 			handler.EXPECT().Get(
 				gomock.Any(),
-				"/eth/v1/beacon/blocks/head/root",
+				"/sila/v1/beacon/blocks/head/root",
 				&structs.BlockRootResponse{},
 			).SetArg(
 				2,
@@ -225,7 +225,7 @@ func TestGetSyncCommitteeContribution(t *testing.T) {
 
 			handler.EXPECT().Get(
 				gomock.Any(),
-				fmt.Sprintf("/eth/v1/validator/sync_committee_contribution?beacon_block_root=%s&slot=%d&subcommittee_index=%d",
+				fmt.Sprintf("/sila/v1/validator/sync_committee_contribution?beacon_block_root=%s&slot=%d&subcommittee_index=%d",
 					blockRoot, uint64(request.Slot), request.SubnetId),
 				&structs.ProduceSyncCommitteeContributionResponse{},
 			).SetArg(
@@ -253,8 +253,8 @@ func TestGetSyncCommitteeContribution(t *testing.T) {
 func TestGetSyncSubCommitteeIndex(t *testing.T) {
 	const (
 		pubkeyStr          = "0x8000091c2ae64ee414a54c1cc1fc67dec663408bc636cb86756e0200e41a75c8f86603f104f02c856983d2783116be13"
-		syncDutiesEndpoint = "/eth/v1/validator/duties/sync"
-		validatorsEndpoint = "/eth/v1/beacon/states/head/validators"
+		syncDutiesEndpoint = "/sila/v1/validator/duties/sync"
+		validatorsEndpoint = "/sila/v1/beacon/states/head/validators"
 		validatorIndex     = "55293"
 		slot               = primitives.Slot(123)
 	)
@@ -348,7 +348,7 @@ func TestGetSyncSubCommitteeIndex(t *testing.T) {
 					queryParams.Add("status", st)
 				}
 
-				query := apiutil.BuildURL("/eth/v1/beacon/states/head/validators", queryParams)
+				query := apiutil.BuildURL("/sila/v1/beacon/states/head/validators", queryParams)
 
 				handler.EXPECT().Get(
 					gomock.Any(),

@@ -126,7 +126,7 @@ func (c *beaconApiValidatorClient) aggregateAttestation(
 	params.Add("slot", strconv.FormatUint(uint64(slot), 10))
 	params.Add("attestation_data_root", hexutil.Encode(attestationDataRoot))
 	params.Add("committee_index", strconv.FormatUint(uint64(committeeIndex), 10))
-	endpoint := apiutil.BuildURL("/eth/v2/validator/aggregate_attestation", params)
+	endpoint := apiutil.BuildURL("/sila/v2/validator/aggregate_attestation", params)
 
 	var aggregateAttestationResponse structs.AggregateAttestationResponse
 	err := c.handler.Get(ctx, endpoint, &aggregateAttestationResponse)
@@ -147,7 +147,7 @@ func (c *beaconApiValidatorClient) aggregateAttestationElectra(
 	params.Add("slot", strconv.FormatUint(uint64(slot), 10))
 	params.Add("attestation_data_root", hexutil.Encode(attestationDataRoot))
 	params.Add("committee_index", strconv.FormatUint(uint64(committeeIndex), 10))
-	endpoint := apiutil.BuildURL("/eth/v2/validator/aggregate_attestation", params)
+	endpoint := apiutil.BuildURL("/sila/v2/validator/aggregate_attestation", params)
 
 	var aggregateAttestationResponse structs.AggregateAttestationResponse
 	if err := c.handler.Get(ctx, endpoint, &aggregateAttestationResponse); err != nil {

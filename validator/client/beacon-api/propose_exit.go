@@ -36,7 +36,7 @@ func (c *beaconApiValidatorClient) proposeExit(ctx context.Context, signedVolunt
 
 	if err = c.handler.Post(
 		ctx,
-		"/eth/v1/beacon/pool/voluntary_exits",
+		"/sila/v1/beacon/pool/voluntary_exits",
 		nil,
 		bytes.NewBuffer(marshalledSignedVoluntaryExit),
 		nil,

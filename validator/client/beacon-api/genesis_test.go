@@ -21,7 +21,7 @@ func TestGetGenesis_ValidGenesis(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().Get(
 		gomock.Any(),
-		"/eth/v1/beacon/genesis",
+		"/sila/v1/beacon/genesis",
 		&genesisResponseJson,
 	).Return(
 		nil,
@@ -53,7 +53,7 @@ func TestGetGenesis_NilData(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().Get(
 		gomock.Any(),
-		"/eth/v1/beacon/genesis",
+		"/sila/v1/beacon/genesis",
 		&genesisResponseJson,
 	).Return(
 		nil,
@@ -77,7 +77,7 @@ func TestGetGenesis_EndpointCalledOnlyOnce(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().Get(
 		gomock.Any(),
-		"/eth/v1/beacon/genesis",
+		"/sila/v1/beacon/genesis",
 		&genesisResponseJson,
 	).Return(
 		nil,
@@ -111,14 +111,14 @@ func TestGetGenesis_EndpointCanBeCalledAgainAfterError(t *testing.T) {
 	handler := mock.NewMockJsonRestHandler(ctrl)
 	handler.EXPECT().Get(
 		gomock.Any(),
-		"/eth/v1/beacon/genesis",
+		"/sila/v1/beacon/genesis",
 		&genesisResponseJson,
 	).Return(
 		errors.New("foo"),
 	).Times(1)
 	handler.EXPECT().Get(
 		gomock.Any(),
-		"/eth/v1/beacon/genesis",
+		"/sila/v1/beacon/genesis",
 		&genesisResponseJson,
 	).Return(
 		nil,

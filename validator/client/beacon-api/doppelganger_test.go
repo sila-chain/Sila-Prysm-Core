@@ -238,7 +238,7 @@ func TestCheckDoppelGanger_Nominal(t *testing.T) {
 				output             *structs.GetLivenessResponse
 			}{
 				{
-					inputUrl: "/eth/v1/validator/liveness/99", // previous epoch
+					inputUrl: "/sila/v1/validator/liveness/99", // previous epoch
 					inputStringIndexes: []string{
 						// No "11111" since corresponding validator is recent
 						"22222", // not recent - duplicate on previous epoch
@@ -259,7 +259,7 @@ func TestCheckDoppelGanger_Nominal(t *testing.T) {
 					},
 				},
 				{
-					inputUrl: "/eth/v1/validator/liveness/100", // current epoch
+					inputUrl: "/sila/v1/validator/liveness/100", // current epoch
 					inputStringIndexes: []string{
 						// No "11111" since corresponding validator is recent
 						"22222", // not recent - duplicate on previous epoch
@@ -592,7 +592,7 @@ func TestCheckDoppelGanger_Errors(t *testing.T) {
 				err                error
 			}{
 				{
-					inputUrl:           "/eth/v1/validator/liveness/30",
+					inputUrl:           "/sila/v1/validator/liveness/30",
 					inputStringIndexes: []string{"42"},
 					output:             &structs.GetLivenessResponse{},
 					err:                errors.New("custom error"),
@@ -614,7 +614,7 @@ func TestCheckDoppelGanger_Errors(t *testing.T) {
 				err                error
 			}{
 				{
-					inputUrl:           "/eth/v1/validator/liveness/30",
+					inputUrl:           "/sila/v1/validator/liveness/30",
 					inputStringIndexes: []string{"42"},
 					output: &structs.GetLivenessResponse{
 						Data: []*structs.Liveness{nil},
@@ -637,14 +637,14 @@ func TestCheckDoppelGanger_Errors(t *testing.T) {
 				err                error
 			}{
 				{
-					inputUrl:           "/eth/v1/validator/liveness/30",
+					inputUrl:           "/sila/v1/validator/liveness/30",
 					inputStringIndexes: []string{"42"},
 					output: &structs.GetLivenessResponse{
 						Data: []*structs.Liveness{},
 					},
 				},
 				{
-					inputUrl:           "/eth/v1/validator/liveness/31",
+					inputUrl:           "/sila/v1/validator/liveness/31",
 					inputStringIndexes: []string{"42"},
 					output:             &structs.GetLivenessResponse{},
 					err:                errors.New("custom error"),
@@ -666,14 +666,14 @@ func TestCheckDoppelGanger_Errors(t *testing.T) {
 				err                error
 			}{
 				{
-					inputUrl:           "/eth/v1/validator/liveness/30",
+					inputUrl:           "/sila/v1/validator/liveness/30",
 					inputStringIndexes: []string{"42"},
 					output: &structs.GetLivenessResponse{
 						Data: []*structs.Liveness{},
 					},
 				},
 				{
-					inputUrl:           "/eth/v1/validator/liveness/31",
+					inputUrl:           "/sila/v1/validator/liveness/31",
 					inputStringIndexes: []string{"42"},
 					output: &structs.GetLivenessResponse{
 						Data: []*structs.Liveness{},
@@ -696,7 +696,7 @@ func TestCheckDoppelGanger_Errors(t *testing.T) {
 				err                error
 			}{
 				{
-					inputUrl:           "/eth/v1/validator/liveness/30",
+					inputUrl:           "/sila/v1/validator/liveness/30",
 					inputStringIndexes: []string{"42"},
 					output: &structs.GetLivenessResponse{
 						Data: []*structs.Liveness{
@@ -707,7 +707,7 @@ func TestCheckDoppelGanger_Errors(t *testing.T) {
 					},
 				},
 				{
-					inputUrl:           "/eth/v1/validator/liveness/31",
+					inputUrl:           "/sila/v1/validator/liveness/31",
 					inputStringIndexes: []string{"42"},
 					output: &structs.GetLivenessResponse{
 						Data: []*structs.Liveness{},
