@@ -112,7 +112,7 @@ function get_prysm_version() {
     else
         # Find the latest Prysm version available for download.
         readonly reason="automatically selected latest available version"
-        prysm_version=$(curl -f -s https://prysmaticlabs.com/releases/latest) || (color "31" "Starting prysm requires an internet connection. If you are being blocked by your antivirus, you can download the beacon chain and validator executables from our releases page on Github here https://github.com/OffchainLabs/prysm/releases/" && exit 1)
+        prysm_version=$(curl -f -s https://prysmaticlabs.com/releases/latest) || (color "31" "Starting Sila-Prysm requires an internet connection. If you are being blocked by your antivirus, you can download the beacon chain and validator executables from our releases page on Github here https://github.com/OffchainLabs/prysm/releases/" && exit 1)
         readonly prysm_version
     fi
 }
@@ -191,7 +191,7 @@ if [[ $1 == beacon-chain ]]; then
         fi
         res=$(curl -w '%{http_code}\n' -f -L "https://prysmaticlabs.com/releases/${file}"  -o "$BEACON_CHAIN_REAL" | ( grep 404 || true ) )
         if [[ $res == 404 ]];then
-            echo "No prysm beacon chain found for ${prysm_version},(${file}) exit"
+            echo "No Sila-Prysm beacon chain found for ${prysm_version},(${file}) exit"
             exit 1
         fi
         curl --silent -L "https://prysmaticlabs.com/releases/${file}.sha256" -o "${wrapper_dir}/${file}.sha256"
@@ -258,7 +258,7 @@ if [[ $1 == prysmctl ]]; then
 fi
 
 if [[ $1 == slasher ]]; then
-    color "41" "The slasher binary is no longer available. Please use the --slasher flag with your beacon node. See: https://docs.prylabs.network/docs/prysm-usage/slasher/"
+    color "41" "The slasher binary is no longer available. Please use the --slasher flag with your beacon node. See: https://github.com/medo202225/Sila-Prysm-Core"
     exit 1
 fi
 
