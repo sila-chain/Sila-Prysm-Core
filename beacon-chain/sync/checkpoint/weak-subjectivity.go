@@ -13,16 +13,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-// ComputeWeakSubjectivityCheckpoint attempts to use the prysm weak_subjectivity api
+// ComputeWeakSubjectivityCheckpoint attempts to use the Sila weak_subjectivity api
 // to obtain the current weak_subjectivity checkpoint.
-// For non-prysm nodes, the same computation will be performed with extra steps,
+// For non-Sila nodes, the same computation will be performed with extra steps,
 // using the head state downloaded from the beacon node api.
 func ComputeWeakSubjectivityCheckpoint(ctx context.Context, client *beacon.Client) (*beacon.WeakSubjectivityData, error) {
 	ws, err := client.GetWeakSubjectivity(ctx)
 	if err != nil {
 		// a 404/405 is expected if querying an endpoint that doesn't support the weak subjectivity checkpoint api
 		if !errors.Is(err, base.ErrNotOK) {
-			return nil, errors.Wrap(err, "unexpected API response for prysm-only weak subjectivity checkpoint API")
+			return nil, errors.Wrap(err, "unexpected API response for Sila-only weak subjectivity checkpoint API")
 		}
 		// fall back to vanilla Beacon Node API method
 		return computeBackwardsCompatible(ctx, client)
@@ -102,7 +102,7 @@ func computeBackwardsCompatible(ctx context.Context, client *beacon.Client) (*be
 }
 
 // this method downloads the head state, which can be used to find the correct chain config
-// and use prysm's helper methods to compute the latest weak subjectivity epoch.
+// and use Sila helper methods to compute the latest weak subjectivity epoch.
 func getWeakSubjectivityEpochFromHead(ctx context.Context, client *beacon.Client) (primitives.Epoch, error) {
 	headBytes, err := client.GetState(ctx, beacon.IdHead)
 	if err != nil {
