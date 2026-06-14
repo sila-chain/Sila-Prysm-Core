@@ -2,7 +2,7 @@
 
 Note: The latest and most up-to-date documentation can be found on our [docs portal](https://github.com/medo202225/Sila-Prysm-Core).
 
-Excited by our work and want to get involved in building out our sharding releases? Or maybe you haven't learned as much about the Ethereum protocol but are a savvy developer? 
+Excited by our work and want to get involved in building out our sharding releases? Or maybe you haven't learned as much about the Sila protocol but are a savvy developer? 
 
 You can explore our [Open Issues](https://github.com/medo202225/Sila-Prysm-Core/issues) in-the works for our different releases. Feel free to fork our repo and start creating PR’s after assigning yourself to an issue of interest. We are always chatting on [Discord](https://discord.gg/qEZK94mFXP) drop us a line there if you want to get more involved or have any questions on our implementation!
 
@@ -216,4 +216,4 @@ Core contributors are remote contractors of Sila-Prysm, LLC. and are considered 
 
 We love working with people that are autonomous, bring independent thoughts to the team, and are excited for their work! We believe in a merit-based approach to becoming a core contributor, and any part-time contributor that puts in the time, work, and drive can become a core member of our team.
 
-![eth](https://steemitimages.com/DQmV1NASyCJYusDjY1WCvpoWiXh32HyumQHFQhY8zYZ6WDH/source.gif)
+![SILA](https://steemitimages.com/DQmV1NASyCJYusDjY1WCvpoWiXh32HyumQHFQhY8zYZ6WDH/source.gif)

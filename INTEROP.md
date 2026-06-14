@@ -22,13 +22,13 @@ using the `--genesis-state` flag and providing a path to the genesis.ssz file.
 
 To setup the necessary files for these quick starts, Prysm provides a tool to generate a `genesis.ssz` from
 a deterministically generated set of validator private keys following the official interop YAML format 
-[here](https://github.com/ethereum/eth2.0-pm/blob/master/interop/mocked_start).
+[here](https://github.com/Sila/eth2.0-pm/blob/master/interop/mocked_start).
 
 You can use `prysmctl` to create a deterministic genesis state for interop.
 
 ```sh
 # Download (or create) a chain config file.
-curl https://raw.githubusercontent.com/ethereum/consensus-specs/refs/heads/dev/configs/minimal.yaml -o /tmp/minimal.yaml
+curl https://raw.githubusercontent.com/Sila/consensus-specs/refs/heads/dev/configs/minimal.yaml -o /tmp/minimal.yaml
 
 # Run prysmctl to generate genesis with a 2 minute genesis delay and 256 validators. 
 bazel run //cmd/prysmctl --config=minimal -- \
