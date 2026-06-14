@@ -3,7 +3,7 @@
 Due to the project structure of [blst](https://github.com/supranational/blst) having go bindings 
 and cdeps in different directories, [gazelle](https://github.com/bazel-contrib/bazel-gazelle) 
 is unable to appropriately generate the BUILD.bazel files for this repository. We have hand written
-the BUILD.bazel file here by the name `blst.BUILD`. PR [#6539](https://github.com/OffchainLabs/prysm/pull/6539)
+the BUILD.bazel file here by the name `blst.BUILD`. PR [#6539](https://github.com/medo202225/Sila-Prysm-Core)
 added build support for blst, but relied on an [http_archive](https://bazel.build/rules/lib/repo/http#http_archive)
 repository rule to provide blst as a dependency. This pattern worked, but gazelle would not keep the 
 dependency in sync with go.mod. There was a risk that go and bazel builds would include different versions
