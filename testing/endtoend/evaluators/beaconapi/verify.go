@@ -32,9 +32,9 @@ var MultiClientVerifyIntegrity = e2etypes.Evaluator{
 }
 
 const (
-	v1PathTemplate = "http://localhost:%d/eth/v1"
-	v2PathTemplate = "http://localhost:%d/eth/v2"
-	v3PathTemplate = "http://localhost:%d/eth/v3"
+	v1PathTemplate = "http://localhost:%d/sila/v1"
+	v2PathTemplate = "http://localhost:%d/sila/v2"
+	v3PathTemplate = "http://localhost:%d/sila/v3"
 )
 
 func verify(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
