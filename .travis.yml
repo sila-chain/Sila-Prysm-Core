@@ -1,5 +1,5 @@
 language: go
-go_import_path: github.com/OffchainLabs/prysm
+go_import_path: github.com/medo202225/Sila-Prysm-Core
 sudo: false
 matrix:
   include:

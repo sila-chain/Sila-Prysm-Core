@@ -11,7 +11,7 @@ name = "go"
 enabled = true
 
 [analyzers.meta]
-import_paths = ["github.com/OffchainLabs/prysm/v7"]
+import_paths = ["github.com/medo202225/Sila-Prysm-Core/v7"]
 
 [[analyzers]]
 name = "test-coverage"
