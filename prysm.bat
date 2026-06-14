@@ -52,7 +52,7 @@ if %WinOS%==64BIT (
 mkdir %wrapper_dir%
 
 REM get_prysm_version - Find the latest Prysm version available for download.
-(for /f %%i in ('curl -f -s https://prysmaticlabs.com/releases/latest') do set prysm_version=%%i) || (echo [31mERROR: Starting prysm requires an internet connection. If you are being blocked by your antivirus, you can download the beacon chain and validator executables from our releases page on Github here https://github.com/prysmaticlabs/prysm/releases/ [0m && exit /b 1)
+(for /f %%i in ('curl -f -s https://prysmaticlabs.com/releases/latest') do set prysm_version=%%i) || (echo [31mERROR: Starting Sila-Prysm requires an internet connection. If you are being blocked by your antivirus, you can download the beacon chain and validator executables from our releases page on Github here https://github.com/prysmaticlabs/prysm/releases/ [0m && exit /b 1)
 echo [37mLatest prysm release is %prysm_version%.[0m
 IF defined USE_PRYSM_VERSION (
     echo [33mdetected variable USE_PRYSM_VERSION=%USE_PRYSM_VERSION%[0m
@@ -82,7 +82,7 @@ if "%~1"=="beacon-chain" (
 			for /f "delims=" %%i in ('curl --silent -o nul -w "%%{http_code}" https://prysmaticlabs.com/releases/beacon-chain-%prysm_version%-%system%-%arch% ') do set "http=%%i" && echo %%i
 		)
 		if "!http!"=="404" (
-			echo [35mNo prysm beacon chain found for %prysm_version%[0m
+			echo [35mNo Sila-Prysm beacon chain found for %prysm_version%[0m
 			exit /b 1
 		)	
 		if defined USE_PRYSM_MODERN (
@@ -131,7 +131,7 @@ if "%~1"=="client-stats" (
 )
 
 if "%~1"=="slasher" (
-    echo [31mThe slasher binary is no longer available. Please use the --slasher flag with your beacon node. See: https://docs.prylabs.network/docs/prysm-usage/slasher/[0m
+    echo [31mThe slasher binary is no longer available. Please use the --slasher flag with your beacon node. See: https://github.com/medo202225/Sila-Prysm-Core[0m
     exit /b 1
 )
 
