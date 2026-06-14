@@ -41,7 +41,7 @@ also be updated and checked in as frequently.
 
 ### Caveat 3: Compile-time optimizations 
 
-When Prysmatic Labs builds production binaries, they use the "release" configuration of bazel to
+When Sila-Prysm builds production binaries, they use the "release" configuration of bazel to
 compile with several compiler optimizations and recommended production build configurations.
 Additionally, the release build properly stamps the built binaries to include helpful metadata
 about how and when the binary was built. 

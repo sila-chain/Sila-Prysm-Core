@@ -1,4 +1,4 @@
-# Prysm Client Interoperability Guide
+# Sila-Sila-Prysm Client Interoperability Guide
 
 This README details how to setup Prysm for interop testing for usage with other Sila consensus clients.
 
