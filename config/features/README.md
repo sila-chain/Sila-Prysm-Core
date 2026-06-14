@@ -32,8 +32,8 @@ releasing your feature. In general, try to create a single PR for each step of t
 1. Add your feature flag to `shared/featureconfig/flags.go`, use the flag to toggle a boolean in the
 feature config in shared/featureconfig/config.go. It is a good idea to use the `enable` prefix for
 your flag since you're going to invert the flag in a later step. i.e you will use `disable` prefix
-later. For example, `--enable-my-feature`. Additionally, [create a feature flag tracking issue](https://github.com/prysmaticlabs/prysm/issues/new?template=feature_flag.md) 
-for your feature using the appropriate issue template.
+later. For example, `--enable-my-feature`. Additionally, create a feature flag tracking issue
+for your feature using the Sila-Prysm issue templates.
 2. Use the feature throughout the application to enable your new functionality and be sure to write
 tests carefully and thoughtfully to ensure you have tested all of your new functionality without losing
 coverage on the existing functionality. This is considered an opt-in feature flag. Example usage:
