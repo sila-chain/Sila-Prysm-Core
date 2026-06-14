@@ -16,7 +16,7 @@ syntax = "proto3";
 package sila.eth.v1;
 
 import "google/protobuf/descriptor.proto";
-import "proto/sila/ext/options.proto";
+import "proto/eth/ext/options.proto";
 
 option csharp_namespace = "Sila.Eth.v1";
 option go_package = "github.com/OffchainLabs/prysm/v7/proto/sila/v1";
@@ -28,24 +28,24 @@ option php_namespace = "Sila\\Eth\\v1";
 message EventHead {
   // Slot of the new chain head.
   uint64 slot = 1 [
-    (Sila.Eth.ext.cast_type) =
+    (ethereum.eth.ext.cast_type) =
         "github.com/OffchainLabs/prysm/v7/consensus-types/primitives.Slot"
   ];
 
   // Block root of the new chain head.
-  bytes block = 2 [ (Sila.Eth.ext.ssz_size) = "32" ];
+  bytes block = 2 [ (ethereum.eth.ext.ssz_size) = "32" ];
 
   // State root of the new chain head.
-  bytes state = 3 [ (Sila.Eth.ext.ssz_size) = "32" ];
+  bytes state = 3 [ (ethereum.eth.ext.ssz_size) = "32" ];
 
   // Whether or not the new chain head is at an epoch transition.
   bool epoch_transition = 4;
 
   // The previous dependent root.
-  bytes previous_duty_dependent_root = 5 [ (Sila.Eth.ext.ssz_size) = "32" ];
+  bytes previous_duty_dependent_root = 5 [ (ethereum.eth.ext.ssz_size) = "32" ];
 
   // The current dependent root.
-  bytes current_duty_dependent_root = 6 [ (Sila.Eth.ext.ssz_size) = "32" ];
+  bytes current_duty_dependent_root = 6 [ (ethereum.eth.ext.ssz_size) = "32" ];
 
   // Information about optimistic sync.
   bool execution_optimistic = 7;
@@ -54,12 +54,12 @@ message EventHead {
 message EventBlock {
   // The slot of the observed block.
   uint64 slot = 1 [
-    (Sila.Eth.ext.cast_type) =
+    (ethereum.eth.ext.cast_type) =
         "github.com/OffchainLabs/prysm/v7/consensus-types/primitives.Slot"
   ];
 
   // The root of the observed block.
-  bytes block = 2 [ (Sila.Eth.ext.ssz_size) = "32" ];
+  bytes block = 2 [ (ethereum.eth.ext.ssz_size) = "32" ];
 
   // Information about optimistic sync.
   bool execution_optimistic = 3;
@@ -68,7 +68,7 @@ message EventBlock {
 message EventChainReorg {
   // The slot of the observed reorg.
   uint64 slot = 1 [
-    (Sila.Eth.ext.cast_type) =
+    (ethereum.eth.ext.cast_type) =
         "github.com/OffchainLabs/prysm/v7/consensus-types/primitives.Slot"
   ];
 
@@ -76,20 +76,20 @@ message EventChainReorg {
   uint64 depth = 2;
 
   // Block root of the old head.
-  bytes old_head_block = 3 [ (Sila.Eth.ext.ssz_size) = "32" ];
+  bytes old_head_block = 3 [ (ethereum.eth.ext.ssz_size) = "32" ];
 
   // Block root of the new head.
-  bytes new_head_block = 4 [ (Sila.Eth.ext.ssz_size) = "32" ];
+  bytes new_head_block = 4 [ (ethereum.eth.ext.ssz_size) = "32" ];
 
   // State root of the old state.
-  bytes old_head_state = 5 [ (Sila.Eth.ext.ssz_size) = "32" ];
+  bytes old_head_state = 5 [ (ethereum.eth.ext.ssz_size) = "32" ];
 
   // State root of the new state.
-  bytes new_head_state = 6 [ (Sila.Eth.ext.ssz_size) = "32" ];
+  bytes new_head_state = 6 [ (ethereum.eth.ext.ssz_size) = "32" ];
 
   // Epoch of the observed reorg.
   uint64 epoch = 7 [
-    (Sila.Eth.ext.cast_type) =
+    (ethereum.eth.ext.cast_type) =
         "github.com/OffchainLabs/prysm/v7/consensus-types/primitives.Epoch"
   ];
 
@@ -99,14 +99,14 @@ message EventChainReorg {
 
 message EventFinalizedCheckpoint {
   // Block root of the finalized checkpoint.
-  bytes block = 1 [ (Sila.Eth.ext.ssz_size) = "32" ];
+  bytes block = 1 [ (ethereum.eth.ext.ssz_size) = "32" ];
 
   // State root of the finalized checkpoint.
-  bytes state = 2 [ (Sila.Eth.ext.ssz_size) = "32" ];
+  bytes state = 2 [ (ethereum.eth.ext.ssz_size) = "32" ];
 
   // Epoch the checkpoint references.
   uint64 epoch = 3 [
-    (Sila.Eth.ext.cast_type) =
+    (ethereum.eth.ext.cast_type) =
         "github.com/OffchainLabs/prysm/v7/consensus-types/primitives.Epoch"
   ];
 

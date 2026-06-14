@@ -15,7 +15,7 @@ syntax = "proto3";
 
 package Sila.Eth.v1alpha1;
 
-import "proto/sila/ext/options.proto";
+import "proto/eth/ext/options.proto";
 import "proto/prysm/v1alpha1/beacon_block.proto";
 
 option csharp_namespace = "Sila.Eth.v1alpha1";
@@ -28,19 +28,19 @@ option php_namespace = "Sila\\Eth\\v1alpha1";
 message DataColumnSidecar {
   uint64 index = 1;
   repeated bytes column = 2 [
-    (Sila.Eth.ext.ssz_size) = "?,bytes_per_cell.size",
-    (Sila.Eth.ext.ssz_max) = "max_blob_commitments.size"
+    (ethereum.eth.ext.ssz_size) = "?,bytes_per_cell.size",
+    (ethereum.eth.ext.ssz_max) = "max_blob_commitments.size"
   ];
   repeated bytes kzg_commitments = 3 [
-    (Sila.Eth.ext.ssz_size) = "?,48",
-    (Sila.Eth.ext.ssz_max) = "max_blob_commitments.size"
+    (ethereum.eth.ext.ssz_size) = "?,48",
+    (ethereum.eth.ext.ssz_max) = "max_blob_commitments.size"
   ];
   repeated bytes kzg_proofs = 4 [
-    (Sila.Eth.ext.ssz_size) = "?,48",
-    (Sila.Eth.ext.ssz_max) = "max_blob_commitments.size"
+    (ethereum.eth.ext.ssz_size) = "?,48",
+    (ethereum.eth.ext.ssz_max) = "max_blob_commitments.size"
   ];
   SignedBeaconBlockHeader signed_block_header = 5;
   repeated bytes kzg_commitments_inclusion_proof = 6
-      [ (Sila.Eth.ext.ssz_size) =
+      [ (ethereum.eth.ext.ssz_size) =
             "kzg_commitments_inclusion_proof_depth.size,32" ];
 }
