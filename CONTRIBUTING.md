@@ -29,14 +29,14 @@ $ cd $GOPATH/src/github.com/medo202225/Sila-Prysm-Core
 **4. Link your local clone to the fork on your GitHub repo.**
 
 ```
-$ git remote add myprysmrepo https://github.com/<your_github_user_name>/prysm.git
+$ git remote add my-sila-prysm-repo https://github.com/<your_github_user_name>/Sila-Prysm-Core.git
 ```
 
 **5. Link your local clone to the Sila-Prysm repo so that you can easily fetch future changes to the Sila-Prysm repo.**
 
 ```
-$ git remote add prysm https://github.com/medo202225/Sila-Prysm-Core.git
-$ git remote -v (you should see myrepo and prysm in the list of remotes)
+$ git remote add sila-prysm https://github.com/medo202225/Sila-Prysm-Core.git
+$ git remote -v (you should see my-sila-prysm-repo and sila-prysm in the list of remotes)
 ```
 
 **6. Find an issue to work on.**
@@ -84,7 +84,7 @@ You can use the –amend flag to include previous commits that have not yet been
 **12. Fetch any changes that have occurred in the Sila-Prysm repo since you started work.**
 
 ```
-$ git fetch prysm
+$ git fetch sila-prysm
 ```
 
 **13. Pull latest version of Sila-Prysm.**
@@ -140,7 +140,7 @@ Core Contributors may ask questions and request that you make edits. If you set 
  You can do this with an interactive rebase. Start by running the following command to determine the commit that is the base of your branch...
 
 ```
-$ git merge-base feature-in-progress-branch prysm/master
+$ git merge-base feature-in-progress-branch sila-prysm/main
 ```
 
 **20. The previous command will return a commit-hash that you should use in the following command.**

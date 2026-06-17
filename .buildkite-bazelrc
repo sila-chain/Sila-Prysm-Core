@@ -8,7 +8,7 @@
 #build:remote-cache --strategy=Closure=standalone
 #build:remote-cache --strategy=Genrule=standalone
 
-# Prysm specific remote-cache properties.
+# Sila-Prysm specific remote-cache properties.
 build:remote-cache --remote_download_minimal
 build:remote-cache --remote_build_event_upload=minimal
 build:remote-cache --remote_cache=grpc://bazel-remote-cache:9092
