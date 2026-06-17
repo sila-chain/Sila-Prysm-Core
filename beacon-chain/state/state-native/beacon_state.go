@@ -20,7 +20,7 @@ import (
 //
 // Note: genesisTime is time.Time.Unix(). i.e. the number of seconds elapsed since January 1, 1970 UTC.
 // This is preferred over time.Time in the state to avoid unnecessary conversions and precision issues
-// that may break spec compliance. Other areas of Prysm should use time.Time, except when complying
+// that may break spec compliance. Other areas of Sila-Prysm should use time.Time, except when complying
 // with spec.
 type BeaconState struct {
 	version                             int

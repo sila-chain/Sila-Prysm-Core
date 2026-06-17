@@ -1,5 +1,5 @@
 // Package slasherkv defines a bolt-db, key-value store implementation
-// of the slasher database interface for Prysm.
+// of the slasher database interface for Sila-Prysm.
 package slasherkv
 
 import (

@@ -1,6 +1,6 @@
 # Sila-Prysm Client Interoperability Guide
 
-This README details how to setup Prysm for interop testing for usage with other Sila consensus clients.
+This README details how to setup Sila-Prysm for interop testing for usage with other Sila consensus clients.
 
 > [!IMPORTANT]  
 > This guide is likely to be outdated. The Sila-Prysm maintainers do not have capacity to troubleshoot
@@ -41,7 +41,7 @@ bazel run //cmd/prysmctl --config=minimal -- \
 
 The flags are explained below:
 - `bazel run //cmd/prysmctl` is the bazel command to compile and run prysmctl.
-- `--config=minimal` is a bazel build time configuration flag to compile Prysm with minimal state constants.
+- `--config=minimal` is a bazel build time configuration flag to compile Sila-Prysm with minimal state constants.
 - `--` is an argument divider to tell bazel that everything after this divider should be passed as arguments to prysmctl. Without this divider, it isn't clear to bazel if the arguments are meant to be build time arguments or runtime arguments so the operation complains and fails to build without this divider.
 - `testnet` is the primary command argument for prysmctl.
 - `generate-genesis` is the subcommand to `testnet` in prysmctl.
