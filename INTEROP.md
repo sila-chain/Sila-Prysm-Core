@@ -1,9 +1,9 @@
-# Sila-Sila-Prysm Client Interoperability Guide
+# Sila-Prysm Client Interoperability Guide
 
 This README details how to setup Prysm for interop testing for usage with other Sila consensus clients.
 
 > [!IMPORTANT]  
-> This guide is likely to be outdated. The Prysm team does not have capacity to troubleshoot
+> This guide is likely to be outdated. The Sila-Prysm maintainers do not have capacity to troubleshoot
 > outdated interop guides or instructions. If you experience issues with this guide, please file an
 > issue for visibility and propose fixes, if possible.
 
@@ -15,12 +15,12 @@ This README details how to setup Prysm for interop testing for usage with other 
 
 ## Starting from Genesis
 
-Prysm can be started from a built-in mainnet genesis state, or started with a provided genesis state by
+Sila-Prysm can be started from a built-in mainnet genesis state, or started with a provided genesis state by
 using the `--genesis-state` flag and providing a path to the genesis.ssz file.
 
 ## Generating a Genesis State
 
-To setup the necessary files for these quick starts, Prysm provides a tool to generate a `genesis.ssz` from
+To setup the necessary files for these quick starts, Sila-Prysm provides a tool to generate a `genesis.ssz` from
 a deterministically generated set of validator private keys following the official interop YAML format 
 [here](https://github.com/Sila/eth2.0-pm/blob/master/interop/mocked_start).
 
@@ -79,7 +79,7 @@ This will start the system with 256 validators. The flags used can be explained 
 - `--bootstrap-node=` disables the default bootstrap nodes. This prevents the client from attempting to peer with mainnet nodes.
 - `--datadir=/tmp/beacon-chain-minimal-devnet` sets the data directory in a temporary location. Change this to your preferred destination.
 - `--force-clear-db` will delete the beaconchain.db file without confirming with the user. This is helpful for iteratively running local devnets without changing the datadir, but less helpful for one off runs where there was no database in the data directory.
-- `--min-sync-peers=0` allows the beacon node to skip initial sync without peers. This is essential because Prysm expects at least a few peers to start the blockchain.
+- `--min-sync-peers=0` allows the beacon node to skip initial sync without peers. This is essential because Sila-Prysm expects at least a few peers to start the blockchain.
 - `--genesis-state=/tmp/genesis.ssz` defines the path to the generated genesis ssz file. The beacon node will use this as the initial genesis state.
 - `--chain-config-file=/tmp/minimal.yaml` defines the path to the yaml file with the chain configuration.
 
