@@ -58,7 +58,7 @@ func NewHandler(client http.Client, host string) Handler {
 }
 
 // appendAcceptOverride enables the Accept header to be customized at runtime via an environment variable.
-// This is specified as an env var because it is a niche option that prysm may use for performance testing or debugging
+// This is specified as an env var because it is a niche option that Sila-Prysm may use for performance testing or debugging
 // bug which users are unlikely to need. Using an env var keeps the set of user-facing flags cleaner.
 func (c *handler) appendAcceptOverride() {
 	if accept := os.Getenv(params.EnvNameOverrideAccept); accept != "" {
