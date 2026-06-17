@@ -1,6 +1,6 @@
-# Prysm Feature Flags
+# Sila-Prysm Feature Flags
 
-Part of Prysm's feature development often involves use of feature flags which serve as a way to
+Part of Sila-Prysm's feature development often involves use of feature flags which serve as a way to
 toggle new features as they are introduced. Using this methodology, you are assured that your
 feature can be safely tested in production with a fall back option if any regression were to occur.
 This reduces the likelihood of an emergency release or rollback of a given feature due to
@@ -9,7 +9,7 @@ unforeseen issues.
 ## When to use a feature flag?
 
 It is best to use a feature flag any time you are adding or removing functionality in an existing
-critical application path. 
+critical application path.
 
 Examples of when to use a feature flag:
 
@@ -44,8 +44,8 @@ func someExistingMethod(ctx context.Context) error {
     }
     // Otherwise continue with the existing code path.
 }
-``` 
-3. Add the flag to the end to end tests. This set of flags can also be found in shared/featureconfig/flags.go. 
+```
+3. Add the flag to the end to end tests. This set of flags can also be found in shared/featureconfig/flags.go.
 4. Test the functionality locally and safely in production. Once you have enough confidence that
 your new function works and is safe to release then move onto the next step.
 5. Move your existing flag to the deprecated section of `shared/featureconfig/flags.go`. It is

@@ -1,6 +1,6 @@
 # Sila-Prysm Beacon Chain Implementation
 
-This is the main project folder for the Sila beacon chain implementation based on Prysm.
+This is the main project folder for the Sila beacon chain implementation based on Sila-Prysm.
 
 You can also read our main [README](https://github.com/medo202225/Sila-Prysm-Core/blob/main/README.md) and join our active chat room on Discord.
 

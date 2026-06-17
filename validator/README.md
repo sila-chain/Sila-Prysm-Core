@@ -1,6 +1,6 @@
-# Prysmatic Labs Validator Client Implementation
+# Sila Validator Client Implementation
 
-This is the main project folder for the Sila validator client implementation based on Prysm. A validator client attaches to a running beacon node in order to perform proposer/attester responsibilities.
+This is the main project folder for the Sila validator client implementation based on Sila-Prysm. A validator client attaches to a running beacon node in order to perform proposer/attester responsibilities.
 
 You can also read our main [README](https://github.com/medo202225/Sila-Prysm-Core/blob/main/README.md) and join our active chat room on Discord.
 

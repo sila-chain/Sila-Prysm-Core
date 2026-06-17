@@ -1,13 +1,13 @@
-## Pcli (Prysm CLI)
+## Pcli (Sila-Prysm CLI)
 
 This is a utility to help users perform Sila consensus specific commands.
 
 ### Usage
 
-*Name:*  
+*Name:*
    **pcli** - A command line utility to run Sila consensus specific commands
 
-*Usage:*  
+*Usage:*
    pcli [global options] command [command options] [arguments...]
 
 *Commands:*
@@ -16,7 +16,7 @@ This is a utility to help users perform Sila consensus specific commands.
      state-transition  Subcommand to run manual state transitions
 
 
-*Flags:*  
+*Flags:*
    --help, -h     show help (default: false)
    --version, -v  print the version (default: false)
 

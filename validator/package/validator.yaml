@@ -1,9 +1,9 @@
-# Configuration file for Prysm validator
+# Configuration file for Sila-Prysm validator
 
 # datadir: Location of slashing protection DB
 datadir: /var/lib/prysm/validator
 
-# wallet-dir: Path to a wallet directory on-disk for Prysm validator accounts.
+# wallet-dir: Path to a wallet directory on-disk for Sila-Prysm validator accounts.
 wallet-dir: /var/lib/prysm/validator
 
 # wallet-password-file: Path to a plain-text, .txt file containing your wallet password.

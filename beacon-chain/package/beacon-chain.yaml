@@ -1,4 +1,4 @@
-# Configuration file for Prysm beacon-chain
+# Configuration file for Sila-Prysm beacon-chain
 
 # datadir: Location of blockchain data
 datadir: /var/lib/prysm/beacon

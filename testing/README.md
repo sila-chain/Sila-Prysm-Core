@@ -1,4 +1,4 @@
-# Prysm Testing
+# Sila-Prysm Testing
 
 Special bazel tags:
 

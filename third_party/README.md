@@ -1,15 +1,15 @@
 # Third Party Package Patching
 
-This directory includes local patches to third party dependencies we use in Prysm. Sometimes,
-we need to make a small change to some dependency for ease of use in Prysm without wanting
+This directory includes local patches to third party dependencies we use in Sila-Prysm. Sometimes,
+we need to make a small change to some dependency for ease of use in Sila-Prysm without wanting
 to maintain our own fork of the dependency ourselves. Our build tool, [Bazel](https://bazel.build)
 allows us to include patches in a seamless manner based on simple diff rules.
 
-This README outlines how patching works in Prysm and an explanation of previously
-created patches. 
+This README outlines how patching works in Sila-Prysm and an explanation of previously
+created patches.
 
 **Given maintaining a patch can be difficult and tedious,
-patches are NOT the recommended way of modifying dependencies in Prysm 
+patches are NOT the recommended way of modifying dependencies in Sila-Prysm
 unless really needed**
 
 ## Table of Contents
@@ -26,7 +26,7 @@ unless really needed**
 ## Creating a Patch
 
 To create a patch, we need an original version of a dependency which we will refer to as `a`
-and the patched version referred to as `b`. 
+and the patched version referred to as `b`.
 
 ```
 cd /tmp
@@ -55,5 +55,5 @@ go_repository(
 )
 ```
 
-Now, when used in Prysm, the dependency you patched will have the patched modifications
+Now, when used in Sila-Prysm, the dependency you patched will have the patched modifications
 when you run your code.
