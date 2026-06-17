@@ -194,7 +194,7 @@ var appHelpFlagGroups = []flagGroup{
 		},
 	},
 	{
-		// Flags in the "log" section control how Prysm handles logging.
+		// Flags in the "log" section control how Sila-Prysm handles logging.
 		Name: "log",
 		Flags: []cli.Flag{
 			cmd.DisableLogColor,
@@ -222,7 +222,7 @@ var appHelpFlagGroups = []flagGroup{
 		Name:  "deprecated",
 		Flags: []cli.Flag{},
 	},
-	{ // Flags used in debugging Prysm. These are flags not usually run by end users.
+	{ // Flags used in debugging Sila-Prysm. These are flags not usually run by end users.
 		Name: "debug",
 		Flags: []cli.Flag{
 			cmd.MaxGoroutines,

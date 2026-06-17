@@ -36,12 +36,12 @@ func FlagOptions(c *cli.Context) ([]execution.Option, error) {
 }
 
 // Parses a JWT secret from a file path. This secret is required when connecting to execution nodes
-// over HTTP, and must be the same one used in Prysm and the execution node server Prysm is connecting to.
+// over HTTP, and must be the same one used in Sila-Prysm and the execution node server Sila-Prysm is connecting to.
 // The engine API specification here https://github.com/ethereum/execution-apis/blob/main/src/engine/authentication.md
 // Explains how we should validate this secret and the format of the file a user can specify.
 //
 // The secret must be stored as a hex-encoded string within a file in the filesystem.
-// If the --jwt-secret flag is provided to Prysm, but the file cannot be read, or does not contain a hex-encoded
+// If the --jwt-secret flag is provided to Sila-Prysm, but the file cannot be read, or does not contain a hex-encoded
 // key of 256 bits, the client should treat this as an error and abort the startup.
 func parseJWTSecretFromFile(c *cli.Context) ([]byte, error) {
 	jwtSecretFile := c.String(flags.ExecutionJWTSecretFlag.Name)

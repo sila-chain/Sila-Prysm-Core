@@ -111,8 +111,8 @@ func exportSlashingProtectionJSON(cliCtx *cli.Context) error {
 	if eipJSON == nil || len(eipJSON.Data) == 0 {
 		log.Fatal(
 			"No slashing protection data was found in your database. This is likely because an older version of " +
-				"Prysm would place your validator database in your wallet directory as a validator.db file. Now, " +
-				"Prysm keeps its validator database inside the direct/ or derived/ folder in your wallet directory. " +
+				"Sila-Prysm would place your validator database in your wallet directory as a validator.db file. Now, " +
+				"Sila-Prysm keeps its validator database inside the direct/ or derived/ folder in your wallet directory. " +
 				"Try running this command again, but add direct/ or derived/ to the path where your wallet " +
 				"directory is in and you should obtain your slashing protection history",
 		)
@@ -168,7 +168,7 @@ func writeToOutput(cliCtx *cli.Context, eipJSON *format.EIPSlashingProtectionFor
 	}
 
 	log.Infof(
-		"Successfully wrote %s. You can import this file using Prysm's "+
+		"Successfully wrote %s. You can import this file using Sila-Prysm's "+
 			"validator slashing-protection-history import command in another machine",
 		outputFilePath,
 	)

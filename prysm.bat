@@ -15,10 +15,10 @@ echo Usage: ./prysm.bat PROCESS FLAGS.
 echo.
 echo PROCESS can be beacon-chain, validator, or client-stats.
 echo FLAGS are the flags or arguments passed to the PROCESS.
-echo. 
-echo Use this script to download the latest Prysm release binaries.
+echo.
+echo Use this script to download the latest Sila-Prysm release binaries.
 echo Downloaded binaries are saved to .\dist
-echo. 
+echo.
 echo To specify a specific release version:
 echo  set USE_PRYSM_VERSION=v1.0.0-alpha3
 echo  to resume using the latest release:
@@ -28,12 +28,12 @@ echo To specify a non-portable version of BLST:
 echo  set USE_PRYSM_MODERN=1
 echo  to resume using the portable version:
 echo  unset USE_PRYSM_MODERN=
-echo. 
+echo.
 echo To automatically restart crashed processes:
 echo  set PRYSM_AUTORESTART=true^& .\prysm.bat beacon-chain
 echo  to stop autorestart run:
 echo   set PRYSM_AUTORESTART=
-echo. 
+echo.
 exit /B 1
 :validprocess
 
@@ -51,7 +51,7 @@ if %WinOS%==64BIT (
 
 mkdir %wrapper_dir%
 
-REM get_prysm_version - Find the latest Prysm version available for download.
+REM get_prysm_version - Find the latest Sila-Prysm version available for download.
 (for /f %%i in ('curl -f -s https://prysmaticlabs.com/releases/latest') do set prysm_version=%%i) || (echo [31mERROR: Starting Sila-Prysm requires an internet connection. If you are being blocked by your antivirus, you can download the beacon chain and validator executables from our releases page on Github here https://github.com/medo202225/Sila-Prysm-Core/releases/ [0m && exit /b 1)
 echo [37mLatest prysm release is %prysm_version%.[0m
 IF defined USE_PRYSM_VERSION (
@@ -84,7 +84,7 @@ if "%~1"=="beacon-chain" (
 		if "!http!"=="404" (
 			echo [35mNo Sila-Prysm beacon chain found for %prysm_version%[0m
 			exit /b 1
-		)	
+		)
 		if defined USE_PRYSM_MODERN (
 			curl -L https://prysmaticlabs.com/releases/beacon-chain-%prysm_version%-modern-%system%-%arch% -o %BEACON_CHAIN_REAL%
 			curl --silent -L https://prysmaticlabs.com/releases/beacon-chain-%prysm_version%-modern-%system%-%arch%.sha256 -o %wrapper_dir%\beacon-chain-%prysm_version%-modern-%system%-%arch%.sha256
@@ -136,7 +136,7 @@ if "%~1"=="slasher" (
 )
 
 if "%~1"=="beacon-chain" ( set process=%BEACON_CHAIN_REAL%)
-if "%~1"=="validator" ( set process=%VALIDATOR_REAL%) 
+if "%~1"=="validator" ( set process=%VALIDATOR_REAL%)
 if "%~1"=="client-stats" ( set process=%CLIENT_STATS_REAL%)
 
 REM GPG not natively available on Windows, external module required
@@ -151,11 +151,11 @@ set /p ExpectedSHA256=<%process%.sha256
 if "%ExpectedSHA256:~0,64%"=="%SHA256Hash%" (
     echo [32mSHA256 Hash Match![0m
 ) else if "%PRYSM_ALLOW_UNVERIFIED_BINARIES%"=="1" (
-    echo [31mWARNING Failed to verify Prysm binary.[0m 
+    echo [31mWARNING Failed to verify Sila-Prysm binary.[0m
     echo Detected PRYSM_ALLOW_UNVERIFIED_BINARIES=1
     echo Proceeding...
 ) else (
-    echo [31mERROR Failed to verify Prysm binary. Please erase downloads in the
+    echo [31mERROR Failed to verify Sila-Prysm binary. Please erase downloads in the
     echo dist directory and run this script again. Alternatively, you can use a
     echo A prior version by specifying environment variable USE_PRYSM_VERSION
     echo with the specific version, as desired. Example: set USE_PRYSM_VERSION=v1.0.0-alpha.5
@@ -165,12 +165,12 @@ if "%ExpectedSHA256:~0,64%"=="%SHA256Hash%" (
 )
 
 set processargs=%*
-echo Starting Prysm %processargs%
+echo Starting Sila-Prysm %processargs%
 
 set "processargs=!processargs:*%1=!" & REM remove process from the list of arguments
 
 :autorestart
-    %process% %processargs% 
+    %process% %processargs%
     if ERRORLEVEL 1 goto :ERROR
     REM process terminated gracefully
     pause

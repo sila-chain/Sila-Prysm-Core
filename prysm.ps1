@@ -9,7 +9,7 @@ Usage: ./prysm.sh1 PROCESS FLAGS.
 PROCESS can be beacon-chain, validator, or client-stats.
 FLAGS are the flags or arguments passed to the PROCESS.
  
-Use this script to download the latest Prysm release binaries.
+Use this script to download the latest Sila-Prysm release binaries.
 Downloaded binaries are saved to .\dist
  
 To specify a specific release version:

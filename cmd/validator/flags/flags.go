@@ -152,7 +152,7 @@ var (
 		Value:   filepath.Join(filepath.Join(DefaultValidatorDir(), WalletDefaultDirName), api.AuthTokenFileName),
 		Aliases: []string{"validator-api-bearer-file"},
 	}
-	// WalletDirFlag defines the path to a wallet directory for Prysm accounts.
+	// WalletDirFlag defines the path to a wallet directory for Sila-Prysm accounts.
 	WalletDirFlag = &cli.StringFlag{
 		Name:  "wallet-dir",
 		Usage: "Path to a wallet directory on-disk for Sila-Prysm validator accounts.",

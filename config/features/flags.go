@@ -11,22 +11,22 @@ var (
 	// SepoliaTestnet flag for the multiclient Sila consensus testnet.
 	SepoliaTestnet = &cli.BoolFlag{
 		Name:  "sepolia",
-		Usage: "Runs Prysm configured for the Sepolia test network.",
+		Usage: "Runs Sila-Prysm configured for the Sepolia test network.",
 	}
 	// SilaMainnet flag for the Sila main network.
 	SilaMainnet = &cli.BoolFlag{
 		Name:  "sila",
-		Usage: "Runs Prysm configured for the Sila main network.",
+		Usage: "Runs Sila-Prysm configured for the Sila main network.",
 	}
 	// HoleskyTestnet flag for the multiclient Sila consensus testnet.
 	HoleskyTestnet = &cli.BoolFlag{
 		Name:  "holesky",
-		Usage: "Runs Prysm configured for the Holesky test network.",
+		Usage: "Runs Sila-Prysm configured for the Holesky test network.",
 	}
 	// HoodiTestnet flag for Sila testnet.
 	HoodiTestnet = &cli.BoolFlag{
 		Name:  "hoodi",
-		Usage: "Runs Prysm configured for the Hoodi test network.",
+		Usage: "Runs Sila-Prysm configured for the Hoodi test network.",
 	}
 	// Mainnet flag for easier tooling, no-op
 	Mainnet = &cli.BoolFlag{
@@ -61,7 +61,7 @@ var (
 	}
 	writeWalletPasswordOnWebOnboarding = &cli.BoolFlag{
 		Name: "write-wallet-password-on-web-onboarding",
-		Usage: `(Danger): Writes the wallet password to the wallet directory on completing Prysm web onboarding.
+		Usage: `(Danger): Writes the wallet password to the wallet directory on completing Sila-Prysm web onboarding.
 	We recommend against this flag unless you are an advanced user.`,
 	}
 	aggregateFirstInterval = &cli.DurationFlag{
@@ -209,7 +209,7 @@ var (
 		Usage: "Forces use of get duties endpoint instead of v2.",
 	}
 
-	// EnableWebFlag enables controlling the validator client via the Prysm web ui. This is a work in progress.
+	// EnableWebFlag enables controlling the validator client via the Sila-Prysm web UI. This is a work in progress.
 	EnableWebFlag = &cli.BoolFlag{
 		Name:  "web",
 		Usage: "(Work in progress): Enables the web portal for the validator client.",

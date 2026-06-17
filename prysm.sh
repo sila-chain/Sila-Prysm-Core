@@ -2,7 +2,7 @@
 
 set -eu
 
-# Use this script to download the latest Prysm release binary.
+# Use this script to download the latest Sila-Prysm release binary.
 # Usage: ./prysm.sh PROCESS [--download-only] FLAGS
 #   PROCESS can be one of beacon-chain or validator.
 #   FLAGS are the flags or arguments passed to the PROCESS.
@@ -110,7 +110,7 @@ function get_prysm_version() {
         readonly reason="specified in \$USE_PRYSM_VERSION"
         readonly prysm_version="${USE_PRYSM_VERSION}"
     else
-        # Find the latest Prysm version available for download.
+        # Find the latest Sila-Prysm version available for download.
         readonly reason="automatically selected latest available version"
         prysm_version=$(curl -f -s https://prysmaticlabs.com/releases/latest) || (color "31" "Starting Sila-Prysm requires an internet connection. If you are being blocked by your antivirus, you can download the beacon chain and validator executables from our releases page on Github here https://github.com/medo202225/Sila-Prysm-Core/releases/" && exit 1)
         readonly prysm_version
@@ -155,7 +155,7 @@ function verify() {
 function failed_verification() {
     MSG=$(
         cat <<-END
-Failed to verify Prysm binary. Please erase downloads in the
+Failed to verify Sila-Prysm binary. Please erase downloads in the
 dist directory and run this script again. Alternatively, you can use a
 A prior version by specifying environment variable USE_PRYSM_VERSION
 with the specific version, as desired. Example: USE_PRYSM_VERSION=v1.0.0-alpha.5
@@ -169,7 +169,7 @@ END
 
 get_prysm_version
 
-color "37" "Latest Prysm version is $prysm_version."
+color "37" "Latest Sila-Prysm version is $prysm_version."
 
 if [ "${USE_PRYSM_MODERN:=false}" = "true" ]; then
     BEACON_CHAIN_REAL="${wrapper_dir}/beacon-chain-${prysm_version}-modern-${system}-${arch}"
@@ -253,7 +253,7 @@ if [[ $1 == prysmctl ]]; then
         curl --silent -L "https://prysmaticlabs.com/releases/${file}.sig" -o "${wrapper_dir}/${file}.sig"
         chmod +x "$PRYSMCTL_REAL"
     else
-        color "37" "Prysmctl is up to date."
+        color "37" "Sila-Prysmctl is up to date."
     fi
 fi
 
@@ -295,5 +295,5 @@ if [[ "$#" -gt 1 ]] && [[ $2 == --download-only ]]; then
     exit 0
 fi
 
-color "36" "Starting Prysm $1 ${*:2}"
+color "36" "Starting Sila-Prysm $1 ${*:2}"
 exec -a "$0" "${process}" "${@:2}"

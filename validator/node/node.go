@@ -155,7 +155,7 @@ func (c *ValidatorClient) Close() {
 		defer c.lock.Unlock()
 
 		c.services.StopAll()
-		log.Info("Stopping Prysm validator")
+		log.Info("Stopping Sila-Prysm validator")
 		c.cancel()
 		close(c.stop)
 	})
@@ -517,7 +517,7 @@ func (c *ValidatorClient) registerRPCService(cliCtx *cli.Context) error {
 
 	if serveWebUI {
 		if cliCtx.IsSet(flags.Web3SignerURLFlag.Name) || cliCtx.IsSet(flags.Web3SignerPublicValidatorKeysFlag.Name) {
-			log.Warn("Remote Keymanager API enabled. Prysm web does not properly support web3signer at this time")
+			log.Warn("Remote Keymanager API enabled. Sila-Prysm web does not properly support web3signer at this time")
 		}
 	}
 
