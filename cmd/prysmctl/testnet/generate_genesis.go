@@ -104,19 +104,19 @@ var (
 				Value:       false,
 			},
 			&cli.StringFlag{
-				Name:        "geth-genesis-json-in",
+				Name: "sila-genesis-json-in", Aliases: []string{"geth-genesis-json-in"},
 				Destination: &generateGenesisStateFlags.GethGenesisJsonIn,
-				Usage:       "Path to a \"genesis.json\" file, containing a json representation of Geth's core.Genesis",
+				Usage:       "Path to a \"genesis.json\" file, containing a JSON representation of Sila execution genesis",
 			},
 			&cli.StringFlag{
-				Name:        "geth-genesis-json-out",
+				Name: "sila-genesis-json-out", Aliases: []string{"geth-genesis-json-out"},
 				Destination: &generateGenesisStateFlags.GethGenesisJsonOut,
-				Usage:       "Path to write generated \"genesis.json\" file, containing a json representation of Geth's core.Genesis",
+				Usage:       "Path to write generated \"genesis.json\" file, containing a JSON representation of Sila execution genesis",
 			},
 			&cli.StringFlag{
 				Name:        "execution-endpoint",
 				Destination: &generateGenesisStateFlags.ExecutionEndpoint,
-				Usage:       "Endpoint to preferred execution client. If unset, defaults to Geth",
+				Usage:       "Endpoint to preferred Sila execution client. If unset, defaults to local Sila execution RPC",
 				Value:       "http://localhost:8545",
 			},
 			flags.EnumValue{
@@ -282,6 +282,8 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 		gen.Config.CancunTime = interop.GethCancunTime(genesis, params.BeaconConfig())
 		gen.Config.PragueTime = interop.GethPragueTime(genesis, params.BeaconConfig())
 		gen.Config.OsakaTime = interop.GethOsakaTime(genesis, params.BeaconConfig())
+		gen.Config.BPO1Time = gen.Config.OsakaTime
+		gen.Config.BPO2Time = gen.Config.OsakaTime
 
 		fields := logrus.Fields{}
 		if gen.Config.ShanghaiTime != nil {
