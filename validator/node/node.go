@@ -86,7 +86,11 @@ func NewValidatorClient(cliCtx *cli.Context) (*ValidatorClient, error) {
 
 	if cliCtx.IsSet(cmd.ChainConfigFileFlag.Name) {
 		chainConfigFileName := cliCtx.String(cmd.ChainConfigFileFlag.Name)
-		if err := params.LoadChainConfigFile(chainConfigFileName, nil); err != nil {
+		if chainConfigFileName == params.SilaMainnetName {
+			if err := params.SetActive(params.SilaMainnetConfig()); err != nil {
+				return nil, err
+			}
+		} else if err := params.LoadChainConfigFile(chainConfigFileName, nil); err != nil {
 			return nil, err
 		}
 	}
