@@ -26,6 +26,9 @@ func configureTracing(cliCtx *cli.Context) error {
 func configureChainConfig(cliCtx *cli.Context) error {
 	if cliCtx.IsSet(cmd.ChainConfigFileFlag.Name) {
 		chainConfigFileName := cliCtx.String(cmd.ChainConfigFileFlag.Name)
+		if chainConfigFileName == params.SilaMainnetName {
+			return params.SetActive(params.SilaMainnetConfig())
+		}
 		return params.LoadChainConfigFile(chainConfigFileName, nil)
 	}
 	return nil
