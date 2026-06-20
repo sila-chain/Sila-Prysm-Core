@@ -13,7 +13,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// FaultyExecutionChain defines an incorrectly functioning powchain service.
+// FaultyExecutionChain defines an incorrectly functioning execution chain service.
 type FaultyExecutionChain struct {
 	ChainFeed      *event.Feed
 	HashesByHeight map[int][]byte

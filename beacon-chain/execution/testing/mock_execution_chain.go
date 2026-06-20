@@ -1,4 +1,4 @@
-// Package testing provides useful mocks for an eth1 powchain
+// Package testing provides useful mocks for an execution chain
 // service as needed by unit tests for the beacon node.
 package testing
 
@@ -23,7 +23,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Chain defines a properly functioning mock for the powchain service.
+// Chain defines a properly functioning mock for the execution chain service.
 type Chain struct {
 	ChainFeed         *event.Feed
 	LatestBlockNumber *big.Int
