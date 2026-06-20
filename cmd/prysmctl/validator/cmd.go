@@ -166,6 +166,7 @@ var Commands = []*cli.Command{
 					flags.ForceExitFlag,
 					flags.VoluntaryExitJSONOutputPathFlag,
 					features.Mainnet,
+					features.SilaMainnet,
 					features.SepoliaTestnet,
 					features.HoleskyTestnet,
 					features.HoodiTestnet,
