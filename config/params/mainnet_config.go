@@ -23,6 +23,7 @@ func SilaMainnetConfig() *BeaconChainConfig {
 	cfg.ConfigName = SilaMainnetName
 	cfg.DepositChainID = 2026
 	cfg.DepositNetworkID = 2026
+	cfg.DepositContractAddress = "0x4242424242424242424242424242424242424242"
 	cfg.GenesisForkVersion = []byte{0x07, 0xea, 0x00, 0x00}
 	cfg.AltairForkVersion = []byte{0x07, 0xea, 0x00, 0x01}
 	cfg.BellatrixForkVersion = []byte{0x07, 0xea, 0x00, 0x02}
@@ -36,7 +37,7 @@ func SilaMainnetConfig() *BeaconChainConfig {
 	cfg.CapellaForkEpoch = genesisForkEpoch
 	cfg.DenebForkEpoch = genesisForkEpoch
 	cfg.ElectraForkEpoch = genesisForkEpoch
-	cfg.FuluForkEpoch = genesisForkEpoch
+	cfg.FuluForkEpoch = mainnetGloasForkEpoch
 	cfg.GloasForkEpoch = mainnetGloasForkEpoch
 	cfg.InitializeForkSchedule()
 	return cfg

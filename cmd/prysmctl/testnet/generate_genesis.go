@@ -18,7 +18,9 @@ import (
 	ethpb "github.com/OffchainLabs/prysm/v7/proto/prysm/v1alpha1"
 	"github.com/OffchainLabs/prysm/v7/runtime/interop"
 	"github.com/OffchainLabs/prysm/v7/runtime/version"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/ghodss/yaml"
@@ -215,6 +217,42 @@ func setGlobalParams() error {
 	return errors.New("No chain config file was provided. Use `--chain-config-file` to provide a chain config.")
 }
 
+func applyDefaultDepositContractAllocation(gen *core.Genesis) error {
+	if gen == nil {
+		return errors.New("nil execution genesis")
+	}
+
+	cfg := params.BeaconConfig()
+	if cfg.DepositContractAddress == "" {
+		return errors.New("empty deposit contract address")
+	}
+
+	code := common.FromHex(interop.DepositContractCode)
+	if len(code) == 0 {
+		return errors.New("empty deposit contract code")
+	}
+
+	if gen.Alloc == nil {
+		gen.Alloc = types.GenesisAlloc{}
+	}
+
+	addr := common.HexToAddress(cfg.DepositContractAddress)
+	account := gen.Alloc[addr]
+	if account.Balance == nil {
+		account.Balance = big.NewInt(0)
+	}
+	account.Code = code
+	if account.Storage == nil {
+		account.Storage = map[common.Hash]common.Hash{}
+	}
+	for k, v := range interop.DefaultDepositContractStorage {
+		account.Storage[common.HexToHash(k)] = common.HexToHash(v)
+	}
+
+	gen.Alloc[addr] = account
+	log.WithField("address", cfg.DepositContractAddress).Info("Added default Sila deposit contract allocation to execution genesis")
+	return nil
+}
 func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 	f := &generateGenesisStateFlags
 
@@ -315,6 +353,9 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 		gen = interop.GethTestnetGenesis(time.Unix(int64(f.GenesisTime), 0), params.BeaconConfig())
 	}
 
+	if err := applyDefaultDepositContractAllocation(gen); err != nil {
+		return nil, err
+	}
 	if f.GethGenesisJsonOut != "" {
 		gbytes, err := json.MarshalIndent(gen, "", "\t")
 		if err != nil {
