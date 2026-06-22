@@ -19,6 +19,9 @@ func TestSilaPublicTestnetConfig(t *testing.T) {
 	if cfg.DepositNetworkID != 20263001 {
 		t.Fatalf("unexpected deposit network id: got %d want %d", cfg.DepositNetworkID, uint64(20263001))
 	}
+	if cfg.TerminalTotalDifficulty != "0" {
+		t.Fatalf("unexpected terminal total difficulty: got %q want %q", cfg.TerminalTotalDifficulty, "0")
+	}
 
 	expected := [][]byte{
 		{0x01, 0x35, 0x30, 0x59},

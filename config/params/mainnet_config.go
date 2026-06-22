@@ -48,6 +48,7 @@ func SilaPublicTestnetConfig() *BeaconChainConfig {
 	cfg.ConfigName = SilaPublicTestnetName
 	cfg.DepositChainID = 20263001
 	cfg.DepositNetworkID = 20263001
+	cfg.TerminalTotalDifficulty = "0"
 
 	cfg.GenesisForkVersion = []byte{0x01, 0x35, 0x30, 0x59}
 	cfg.AltairForkVersion = []byte{0x01, 0x35, 0x30, 0x5a}
