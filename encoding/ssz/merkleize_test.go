@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -68,7 +68,7 @@ func TestDepthOfOne(t *testing.T) {
 
 func Test_MerkleizeVectorSSZ(t *testing.T) {
 	t.Run("empty vector", func(t *testing.T) {
-		attList := make([]*ethpb.Attestation, 0)
+		attList := make([]*silapb.Attestation, 0)
 		expected := [32]byte{83, 109, 152, 131, 127, 45, 209, 101, 165, 93, 94, 234, 233, 20, 133, 149, 68, 114, 213, 111, 36, 109, 242, 86, 191, 60, 174, 25, 53, 42, 18, 60}
 		length := uint64(16)
 		root, err := ssz.MerkleizeVectorSSZ(attList, length)
@@ -78,15 +78,15 @@ func Test_MerkleizeVectorSSZ(t *testing.T) {
 	t.Run("non empty vector", func(t *testing.T) {
 		sig := make([]byte, 96)
 		br := make([]byte, 32)
-		attList := make([]*ethpb.Attestation, 1)
-		attList[0] = &ethpb.Attestation{
+		attList := make([]*silapb.Attestation, 1)
+		attList[0] = &silapb.Attestation{
 			AggregationBits: bitfield.Bitlist{0x01},
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				BeaconBlockRoot: br,
-				Source: &ethpb.Checkpoint{
+				Source: &silapb.Checkpoint{
 					Root: br,
 				},
-				Target: &ethpb.Checkpoint{
+				Target: &silapb.Checkpoint{
 					Root: br,
 				},
 			},
@@ -102,7 +102,7 @@ func Test_MerkleizeVectorSSZ(t *testing.T) {
 
 func Test_MerkleizeListSSZ(t *testing.T) {
 	t.Run("empty vector", func(t *testing.T) {
-		attList := make([]*ethpb.Attestation, 0)
+		attList := make([]*silapb.Attestation, 0)
 		expected := [32]byte{121, 41, 48, 187, 213, 186, 172, 67, 188, 199, 152, 238, 73, 170, 129, 133, 239, 118, 187, 59, 68, 186, 98, 185, 29, 134, 174, 86, 158, 75, 181, 53}
 		length := uint64(16)
 		root, err := ssz.MerkleizeListSSZ(attList, length)
@@ -112,15 +112,15 @@ func Test_MerkleizeListSSZ(t *testing.T) {
 	t.Run("non empty vector", func(t *testing.T) {
 		sig := make([]byte, 96)
 		br := make([]byte, 32)
-		attList := make([]*ethpb.Attestation, 1)
-		attList[0] = &ethpb.Attestation{
+		attList := make([]*silapb.Attestation, 1)
+		attList[0] = &silapb.Attestation{
 			AggregationBits: bitfield.Bitlist{0x01},
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				BeaconBlockRoot: br,
-				Source: &ethpb.Checkpoint{
+				Source: &silapb.Checkpoint{
 					Root: br,
 				},
-				Target: &ethpb.Checkpoint{
+				Target: &silapb.Checkpoint{
 					Root: br,
 				},
 			},

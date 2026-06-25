@@ -16,7 +16,7 @@ import (
 	blocktest "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz/detect"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -292,7 +292,7 @@ func defaultTestHeadState(t *testing.T, cfg *params.BeaconChainConfig) (state.Be
 
 	var validatorCount, avgBalance uint64 = 100, 35
 	require.NoError(t, populateValidators(cfg, st, validatorCount, avgBalance))
-	require.NoError(t, st.SetFinalizedCheckpoint(&ethpb.Checkpoint{
+	require.NoError(t, st.SetFinalizedCheckpoint(&silapb.Checkpoint{
 		Epoch: fork.Epoch - 10,
 		Root:  make([]byte, 32),
 	}))
@@ -304,10 +304,10 @@ func defaultTestHeadState(t *testing.T, cfg *params.BeaconChainConfig) (state.Be
 
 // TODO(10429): refactor beacon state options in testing/util to take a state.BeaconState so this can become an option
 func populateValidators(cfg *params.BeaconChainConfig, st state.BeaconState, valCount, avgBalance uint64) error {
-	validators := make([]*ethpb.Validator, valCount)
+	validators := make([]*silapb.Validator, valCount)
 	balances := make([]uint64, len(validators))
 	for i := range valCount {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             make([]byte, cfg.BLSPubkeyLength),
 			WithdrawalCredentials: make([]byte, 32),
 			EffectiveBalance:      avgBalance * 1e9,

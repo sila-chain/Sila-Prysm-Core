@@ -6,13 +6,13 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
 
 // Retrieve chain head information from the DB and the current beacon state.
-func (s *Service) ChainHead(ctx context.Context) (*ethpb.ChainHead, *RpcError) {
+func (s *Service) ChainHead(ctx context.Context) (*silapb.ChainHead, *RpcError) {
 	headBlock, err := s.HeadFetcher.HeadBlock(ctx)
 	if err != nil {
 		return nil, &RpcError{
@@ -42,7 +42,7 @@ func (s *Service) ChainHead(ctx context.Context) (*ethpb.ChainHead, *RpcError) {
 	}
 
 	validGenesis := false
-	validateCP := func(cp *ethpb.Checkpoint, name string) error {
+	validateCP := func(cp *silapb.Checkpoint, name string) error {
 		if bytesutil.ToBytes32(cp.Root) == params.BeaconConfig().ZeroHash && cp.Epoch == 0 {
 			if validGenesis {
 				return nil
@@ -110,7 +110,7 @@ func (s *Service) ChainHead(ctx context.Context) (*ethpb.ChainHead, *RpcError) {
 			Reason: Internal,
 		}
 	}
-	return &ethpb.ChainHead{
+	return &silapb.ChainHead{
 		HeadSlot:                   headBlock.Block().Slot(),
 		HeadEpoch:                  slots.ToEpoch(headBlock.Block().Slot()),
 		HeadBlockRoot:              headBlockRoot[:],

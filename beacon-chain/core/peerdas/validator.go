@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -64,7 +64,7 @@ type (
 	}
 
 	blockInfo struct {
-		signedBlockHeader *ethpb.SignedBeaconBlockHeader
+		signedBlockHeader *silapb.SignedBeaconBlockHeader
 		kzgCommitments    [][]byte
 		kzgInclusionProof [][]byte
 	}
@@ -135,7 +135,7 @@ func DataColumnSidecars(cellsPerBlob [][]kzg.Cell, proofsPerBlob [][]kzg.Proof, 
 	roSidecars := make([]blocks.RODataColumn, 0, numberOfColumns)
 	if isGloas {
 		for idx := range numberOfColumns {
-			sidecar := &ethpb.DataColumnSidecarGloas{
+			sidecar := &silapb.DataColumnSidecarGloas{
 				Index:           idx,
 				Column:          cells[idx],
 				KzgProofs:       proofs[idx],
@@ -157,7 +157,7 @@ func DataColumnSidecars(cellsPerBlob [][]kzg.Cell, proofsPerBlob [][]kzg.Proof, 
 			return nil, errors.Wrap(err, "extract block info")
 		}
 		for idx := range numberOfColumns {
-			sidecar := &ethpb.DataColumnSidecar{
+			sidecar := &silapb.DataColumnSidecar{
 				Index:                        idx,
 				Column:                       cells[idx],
 				KzgCommitments:               info.kzgCommitments,
@@ -199,7 +199,7 @@ func DataColumnSidecarsGloas(
 	}
 	roSidecars := make([]blocks.RODataColumn, 0, numberOfColumns)
 	for idx := range numberOfColumns {
-		sidecar := &ethpb.DataColumnSidecarGloas{
+		sidecar := &silapb.DataColumnSidecarGloas{
 			Index:           idx,
 			Column:          cells[idx],
 			KzgProofs:       proofs[idx],

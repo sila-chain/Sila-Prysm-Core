@@ -3,13 +3,13 @@ package kv
 import (
 	"fmt"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/pkg/errors"
 )
 
 // SaveBlockAttestation saves an block attestation in cache.
-func (c *AttCaches) SaveBlockAttestation(att ethpb.Att) error {
+func (c *AttCaches) SaveBlockAttestation(att silapb.Att) error {
 	if att == nil || att.IsNil() {
 		return nil
 	}
@@ -23,7 +23,7 @@ func (c *AttCaches) SaveBlockAttestation(att ethpb.Att) error {
 	defer c.blockAttLock.Unlock()
 	atts, ok := c.blockAtt[id]
 	if !ok {
-		atts = make([]ethpb.Att, 0, 1)
+		atts = make([]silapb.Att, 0, 1)
 	}
 
 	// Ensure that this attestation is not already fully contained in an existing attestation.
@@ -41,8 +41,8 @@ func (c *AttCaches) SaveBlockAttestation(att ethpb.Att) error {
 }
 
 // BlockAttestations returns the block attestations in cache.
-func (c *AttCaches) BlockAttestations() []ethpb.Att {
-	atts := make([]ethpb.Att, 0)
+func (c *AttCaches) BlockAttestations() []silapb.Att {
+	atts := make([]silapb.Att, 0)
 
 	c.blockAttLock.RLock()
 	defer c.blockAttLock.RUnlock()
@@ -54,7 +54,7 @@ func (c *AttCaches) BlockAttestations() []ethpb.Att {
 }
 
 // DeleteBlockAttestation deletes a block attestation in cache.
-func (c *AttCaches) DeleteBlockAttestation(att ethpb.Att) error {
+func (c *AttCaches) DeleteBlockAttestation(att silapb.Att) error {
 	if att == nil || att.IsNil() {
 		return nil
 	}

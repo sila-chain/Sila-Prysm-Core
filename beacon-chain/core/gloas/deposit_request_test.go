@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -63,7 +63,7 @@ func TestProcessDepositRequest_ExistingBuilderIncreasesBalance(t *testing.T) {
 	require.NoError(t, err)
 
 	pubkey := sk.PublicKey().Marshal()
-	builders := []*ethpb.Builder{
+	builders := []*silapb.Builder{
 		{
 			Pubkey:            pubkey,
 			Version:           []byte{0},
@@ -102,7 +102,7 @@ func TestProcessDepositRequest_BuilderDepositWithExistingPendingDepositStaysPend
 	req := depositRequestFromPending(stateTesting.GeneratePendingDeposit(t, sk, 200, builderCred, 1), 9)
 
 	st := newGloasState(t, nil, nil)
-	require.NoError(t, st.SetPendingDeposits([]*ethpb.PendingDeposit{existingPending}))
+	require.NoError(t, st.SetPendingDeposits([]*silapb.PendingDeposit{existingPending}))
 
 	err = processDepositRequest(st, req, nil)
 	require.NoError(t, err)
@@ -222,14 +222,14 @@ func TestProcessDepositRequests_PrefetchedValidBypassesBLS(t *testing.T) {
 	require.Equal(t, true, ok)
 }
 
-func newGloasState(t *testing.T, validators []*ethpb.Validator, builders []*ethpb.Builder) state.BeaconState {
+func newGloasState(t *testing.T, validators []*silapb.Validator, builders []*silapb.Builder) state.BeaconState {
 	t.Helper()
 
-	st, err := state_native.InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+	st, err := state_native.InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 		DepositRequestsStartIndex: params.BeaconConfig().UnsetDepositRequestsStartIndex,
 		Validators:                validators,
 		Balances:                  make([]uint64, len(validators)),
-		PendingDeposits:           []*ethpb.PendingDeposit{},
+		PendingDeposits:           []*silapb.PendingDeposit{},
 		Builders:                  builders,
 	})
 	require.NoError(t, err)
@@ -237,7 +237,7 @@ func newGloasState(t *testing.T, validators []*ethpb.Validator, builders []*ethp
 	return st
 }
 
-func depositRequestFromPending(pd *ethpb.PendingDeposit, index uint64) *enginev1.DepositRequest {
+func depositRequestFromPending(pd *silapb.PendingDeposit, index uint64) *enginev1.DepositRequest {
 	return &enginev1.DepositRequest{
 		Pubkey:                pd.PublicKey,
 		WithdrawalCredentials: pd.WithdrawalCredentials,

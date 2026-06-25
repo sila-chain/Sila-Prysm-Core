@@ -4,11 +4,11 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // HydrateSyncCommittee hydrates the provided sync committee message.
-func HydrateSyncCommittee(s *ethpb.SyncCommitteeMessage) *ethpb.SyncCommitteeMessage {
+func HydrateSyncCommittee(s *silapb.SyncCommitteeMessage) *silapb.SyncCommitteeMessage {
 	if s.Signature == nil {
 		s.Signature = make([]byte, 96)
 	}
@@ -20,7 +20,7 @@ func HydrateSyncCommittee(s *ethpb.SyncCommitteeMessage) *ethpb.SyncCommitteeMes
 
 // ConvertToCommittee takes a list of pubkeys and returns a SyncCommittee with
 // these keys as members. Some keys may appear repeated
-func ConvertToCommittee(inputKeys [][]byte) *ethpb.SyncCommittee {
+func ConvertToCommittee(inputKeys [][]byte) *silapb.SyncCommittee {
 	var pubKeys [][]byte
 	for i := uint64(0); i < params.BeaconConfig().SyncCommitteeSize; i++ {
 		if i < uint64(len(inputKeys)) {
@@ -30,7 +30,7 @@ func ConvertToCommittee(inputKeys [][]byte) *ethpb.SyncCommittee {
 		}
 	}
 
-	return &ethpb.SyncCommittee{
+	return &silapb.SyncCommittee{
 		Pubkeys:         pubKeys,
 		AggregatePubkey: bytesutil.PadTo([]byte{}, params.BeaconConfig().BLSPubkeyLength),
 	}

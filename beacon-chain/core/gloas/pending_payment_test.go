@@ -9,7 +9,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -17,11 +17,11 @@ func TestBuilderQuorumThreshold(t *testing.T) {
 	helpers.ClearCache()
 	cfg := params.BeaconConfig()
 
-	validators := []*ethpb.Validator{
+	validators := []*silapb.Validator{
 		{EffectiveBalance: cfg.MaxEffectiveBalance, ActivationEpoch: 0, ExitEpoch: 1},
 		{EffectiveBalance: cfg.MaxEffectiveBalance, ActivationEpoch: 0, ExitEpoch: 1},
 	}
-	st, err := state_native.InitializeFromProtoUnsafeGloas(&ethpb.BeaconStateGloas{Validators: validators})
+	st, err := state_native.InitializeFromProtoUnsafeGloas(&silapb.BeaconStateGloas{Validators: validators})
 	require.NoError(t, err)
 
 	got, err := builderQuorumThreshold(t.Context(), st)
@@ -37,11 +37,11 @@ func TestProcessBuilderPendingPayments(t *testing.T) {
 	helpers.ClearCache()
 	cfg := params.BeaconConfig()
 
-	buildPayments := func(weights ...primitives.Gwei) []*ethpb.BuilderPendingPayment {
-		p := make([]*ethpb.BuilderPendingPayment, 2*int(cfg.SlotsPerEpoch))
+	buildPayments := func(weights ...primitives.Gwei) []*silapb.BuilderPendingPayment {
+		p := make([]*silapb.BuilderPendingPayment, 2*int(cfg.SlotsPerEpoch))
 		for i := range p {
-			p[i] = &ethpb.BuilderPendingPayment{
-				Withdrawal: &ethpb.BuilderPendingWithdrawal{FeeRecipient: make([]byte, 20)},
+			p[i] = &silapb.BuilderPendingPayment{
+				Withdrawal: &silapb.BuilderPendingWithdrawal{FeeRecipient: make([]byte, 20)},
 			}
 		}
 		for i, w := range weights {
@@ -51,11 +51,11 @@ func TestProcessBuilderPendingPayments(t *testing.T) {
 		return p
 	}
 
-	validators := []*ethpb.Validator{
+	validators := []*silapb.Validator{
 		{EffectiveBalance: cfg.MaxEffectiveBalance, ActivationEpoch: 0, ExitEpoch: 1},
 		{EffectiveBalance: cfg.MaxEffectiveBalance, ActivationEpoch: 0, ExitEpoch: 1},
 	}
-	pbSt, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Validators: validators})
+	pbSt, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Validators: validators})
 	require.NoError(t, err)
 
 	total := uint64(len(validators)) * cfg.MaxEffectiveBalance
@@ -91,15 +91,15 @@ func TestProcessBuilderPendingPayments(t *testing.T) {
 
 type testProcessState struct {
 	state.BeaconState
-	payments    []*ethpb.BuilderPendingPayment
-	withdrawals []*ethpb.BuilderPendingWithdrawal
+	payments    []*silapb.BuilderPendingPayment
+	withdrawals []*silapb.BuilderPendingWithdrawal
 }
 
-func (t *testProcessState) BuilderPendingPayments() ([]*ethpb.BuilderPendingPayment, error) {
+func (t *testProcessState) BuilderPendingPayments() ([]*silapb.BuilderPendingPayment, error) {
 	return t.payments, nil
 }
 
-func (t *testProcessState) AppendBuilderPendingWithdrawals(withdrawals []*ethpb.BuilderPendingWithdrawal) error {
+func (t *testProcessState) AppendBuilderPendingWithdrawals(withdrawals []*silapb.BuilderPendingWithdrawal) error {
 	t.withdrawals = append(t.withdrawals, withdrawals...)
 	return nil
 }
@@ -108,8 +108,8 @@ func (t *testProcessState) RotateBuilderPendingPayments() error {
 	slotsPerEpoch := int(params.BeaconConfig().SlotsPerEpoch)
 	rotated := slices.Clone(t.payments[slotsPerEpoch:])
 	for range slotsPerEpoch {
-		rotated = append(rotated, &ethpb.BuilderPendingPayment{
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+		rotated = append(rotated, &silapb.BuilderPendingPayment{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 			},
 		})

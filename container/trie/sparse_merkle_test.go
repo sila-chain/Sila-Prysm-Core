@@ -10,7 +10,7 @@ import (
 	contracts "github.com/sila-chain/Sila-Consensus-Core/v7/contracts/deposit/mock"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/accounts/abi/bind"
@@ -18,29 +18,29 @@ import (
 
 func TestCreateTrieFromProto_Validation(t *testing.T) {
 	h := hash.Hash([]byte("hi"))
-	genValidLayers := func(num int) []*ethpb.TrieLayer {
-		l := make([]*ethpb.TrieLayer, num)
+	genValidLayers := func(num int) []*silapb.TrieLayer {
+		l := make([]*silapb.TrieLayer, num)
 		for i := range num {
-			l[i] = &ethpb.TrieLayer{
+			l[i] = &silapb.TrieLayer{
 				Layer: [][]byte{h[:]},
 			}
 		}
 		return l
 	}
 	tests := []struct {
-		trie      *ethpb.SparseMerkleTrie
+		trie      *silapb.SparseMerkleTrie
 		errString string
 	}{
 		{
-			trie: &ethpb.SparseMerkleTrie{
-				Layers: []*ethpb.TrieLayer{},
+			trie: &silapb.SparseMerkleTrie{
+				Layers: []*silapb.TrieLayer{},
 				Depth:  0,
 			},
 			errString: "no branches",
 		},
 		{
-			trie: &ethpb.SparseMerkleTrie{
-				Layers: []*ethpb.TrieLayer{
+			trie: &silapb.SparseMerkleTrie{
+				Layers: []*silapb.TrieLayer{
 					{
 						Layer: [][]byte{h[:]},
 					},
@@ -56,14 +56,14 @@ func TestCreateTrieFromProto_Validation(t *testing.T) {
 			errString: "invalid branches provided",
 		},
 		{
-			trie: &ethpb.SparseMerkleTrie{
+			trie: &silapb.SparseMerkleTrie{
 				Layers: genValidLayers(3),
 				Depth:  12,
 			},
 			errString: "depth is greater than or equal to number of branches",
 		},
 		{
-			trie: &ethpb.SparseMerkleTrie{
+			trie: &silapb.SparseMerkleTrie{
 				Layers: genValidLayers(66),
 				Depth:  63,
 			},
@@ -97,9 +97,9 @@ func TestMarshalDepositWithProof(t *testing.T) {
 	someRoot := [32]byte{1, 2, 3, 4}
 	someSig := [96]byte{1, 2, 3, 4}
 	someKey := [fieldparams.BLSPubkeyLength]byte{1, 2, 3, 4}
-	dep := &ethpb.Deposit{
+	dep := &silapb.Deposit{
 		Proof: proof,
-		Data: &ethpb.Deposit_Data{
+		Data: &silapb.Deposit_Data{
 			PublicKey:             someKey[:],
 			WithdrawalCredentials: someRoot[:],
 			Amount:                32,
@@ -108,15 +108,15 @@ func TestMarshalDepositWithProof(t *testing.T) {
 	}
 	enc, err := dep.MarshalSSZ()
 	require.NoError(t, err)
-	dec := &ethpb.Deposit{}
+	dec := &silapb.Deposit{}
 	require.NoError(t, dec.UnmarshalSSZ(enc))
 	require.DeepEqual(t, dec, dep)
 }
 
 func TestMerkleTrie_MerkleProofOutOfRange(t *testing.T) {
 	h := hash.Hash([]byte("hi"))
-	m, err := trie.CreateTrieFromProto(&ethpb.SparseMerkleTrie{
-		Layers: []*ethpb.TrieLayer{
+	m, err := trie.CreateTrieFromProto(&silapb.SparseMerkleTrie{
+		Layers: []*silapb.TrieLayer{
 			{
 				Layer: [][]byte{h[:]},
 			},

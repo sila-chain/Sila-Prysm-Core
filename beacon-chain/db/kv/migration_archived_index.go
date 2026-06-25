@@ -6,7 +6,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	bolt "go.etcd.io/bbolt"
 )
 
@@ -37,7 +37,7 @@ func migrateArchivedIndex(ctx context.Context, db *bolt.DB) error {
 			if b == nil {
 				continue
 			}
-			blk := &ethpb.SignedBeaconBlock{}
+			blk := &silapb.SignedBeaconBlock{}
 			if err := decode(context.TODO(), b, blk); err != nil {
 				return err
 			}

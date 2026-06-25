@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -16,7 +16,7 @@ import (
 // to the P2P gossip network.
 func (vs *Server) SubmitSignedExecutionPayloadBid(
 	ctx context.Context,
-	req *ethpb.SignedExecutionPayloadBid,
+	req *silapb.SignedExecutionPayloadBid,
 ) (*emptypb.Empty, error) {
 	ctx, span := trace.StartSpan(ctx, "ValidatorServer.SubmitSignedExecutionPayloadBid")
 	defer span.End()

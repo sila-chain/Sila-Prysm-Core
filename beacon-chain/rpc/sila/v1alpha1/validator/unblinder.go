@@ -7,12 +7,12 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
 
-func unblindBlobsSidecars(block interfaces.SignedBeaconBlock, bundle enginev1.BlobsBundler) ([]*ethpb.BlobSidecar, error) {
+func unblindBlobsSidecars(block interfaces.SignedBeaconBlock, bundle enginev1.BlobsBundler) ([]*silapb.BlobSidecar, error) {
 	if block.Version() < version.Deneb {
 		return nil, nil
 	}
@@ -55,13 +55,13 @@ func unblindBlobsSidecars(block interfaces.SignedBeaconBlock, bundle enginev1.Bl
 		}
 	}
 
-	sidecars := make([]*ethpb.BlobSidecar, len(blobs))
+	sidecars := make([]*silapb.BlobSidecar, len(blobs))
 	for i, b := range blobs {
 		proof, err := consensusblocks.MerkleProofKZGCommitment(body, i)
 		if err != nil {
 			return nil, err
 		}
-		sidecars[i] = &ethpb.BlobSidecar{
+		sidecars[i] = &silapb.BlobSidecar{
 			Index:                    uint64(i),
 			Blob:                     bytesutil.SafeCopyBytes(b),
 			KzgCommitment:            bytesutil.SafeCopyBytes(kzgCommitments[i]),

@@ -31,7 +31,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	accountsiface "github.com/sila-chain/Sila-Consensus-Core/v7/validator/accounts/iface"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/accounts/wallet"
@@ -77,7 +77,7 @@ type validator struct {
 	cachedAttestationDataLock    sync.RWMutex
 	submittedPrefSlotsLock       sync.RWMutex
 	domainDataLock               sync.RWMutex
-	cachedAttestationData        *ethpb.AttestationData
+	cachedAttestationData        *silapb.AttestationData
 	graffitiOrderedIndex         uint64
 	walletInitializedFeed        *event.Feed
 	walletInitializedChan        chan *wallet.Wallet
@@ -102,7 +102,7 @@ type validator struct {
 	eventsChannel                chan *eventClient.Event
 	payloadAvailability          *payloadAvailability
 	pubkeyToStatus               map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus
-	signedValidatorRegistrations map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1
+	signedValidatorRegistrations map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1
 	aggSelector                  aggregatorSelector
 	validatorClient              iface.ValidatorClient
 	chainClient                  iface.ChainClient
@@ -120,7 +120,7 @@ type validator struct {
 
 type validatorStatus struct {
 	publicKey []byte
-	status    *ethpb.ValidatorStatusResponse
+	status    *silapb.ValidatorStatusResponse
 	index     primitives.ValidatorIndex
 }
 
@@ -404,20 +404,20 @@ func (v *validator) checkAndLogValidatorStatus() bool {
 			ValidatorStatusesGaugeVec.WithLabelValues(fmtKey, fmtIndex).Set(float64(s.status.Status))
 		}
 		switch s.status.Status {
-		case ethpb.ValidatorStatus_UNKNOWN_STATUS:
+		case silapb.ValidatorStatus_UNKNOWN_STATUS:
 			log.Info("Waiting for deposit to be observed by beacon node")
-		case ethpb.ValidatorStatus_DEPOSITED:
+		case silapb.ValidatorStatus_DEPOSITED:
 			log.Info("Validator deposited, entering activation queue after finalization")
-		case ethpb.ValidatorStatus_PENDING:
+		case silapb.ValidatorStatus_PENDING:
 			log.Info("Waiting for activation... Check validator queue status in a block explorer")
-		case ethpb.ValidatorStatus_ACTIVE, ethpb.ValidatorStatus_EXITING:
+		case silapb.ValidatorStatus_ACTIVE, silapb.ValidatorStatus_EXITING:
 			someAreActive = true
 			log.WithFields(logrus.Fields{
 				"index": s.index,
 			}).Info("Validator activated")
-		case ethpb.ValidatorStatus_EXITED:
+		case silapb.ValidatorStatus_EXITED:
 			log.Info("Validator exited")
-		case ethpb.ValidatorStatus_INVALID:
+		case silapb.ValidatorStatus_INVALID:
 			log.Warn("Invalid Eth1 deposit")
 		default:
 			log.WithFields(logrus.Fields{
@@ -457,7 +457,7 @@ func (v *validator) CheckDoppelGanger(ctx context.Context) error {
 	if len(pubkeys) == 0 {
 		return nil
 	}
-	req := &ethpb.DoppelGangerRequest{ValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{}}
+	req := &silapb.DoppelGangerRequest{ValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{}}
 	for _, pkey := range pubkeys {
 		copiedKey := pkey
 		attRec, err := v.db.AttestationHistoryForPubKey(ctx, copiedKey)
@@ -468,7 +468,7 @@ func (v *validator) CheckDoppelGanger(ctx context.Context) error {
 			// If no history exists we simply send in a zero
 			// value for the request epoch and root.
 			req.ValidatorRequests = append(req.ValidatorRequests,
-				&ethpb.DoppelGangerRequest_ValidatorRequest{
+				&silapb.DoppelGangerRequest_ValidatorRequest{
 					PublicKey:  copiedKey[:],
 					Epoch:      0,
 					SignedRoot: make([]byte, fieldparams.RootLength),
@@ -480,7 +480,7 @@ func (v *validator) CheckDoppelGanger(ctx context.Context) error {
 			return errors.New("attestation record mismatched public key")
 		}
 		req.ValidatorRequests = append(req.ValidatorRequests,
-			&ethpb.DoppelGangerRequest_ValidatorRequest{
+			&silapb.DoppelGangerRequest_ValidatorRequest{
 				PublicKey:  r.PubKey[:],
 				Epoch:      r.Target,
 				SignedRoot: r.SigningRoot,
@@ -498,7 +498,7 @@ func (v *validator) CheckDoppelGanger(ctx context.Context) error {
 	return buildDuplicateError(resp.Responses)
 }
 
-func buildDuplicateError(response []*ethpb.DoppelGangerResponse_ValidatorResponse) error {
+func buildDuplicateError(response []*silapb.DoppelGangerResponse_ValidatorResponse) error {
 	duplicates := make([][]byte, 0)
 	for _, valRes := range response {
 		if valRes.DuplicateExists {
@@ -687,13 +687,13 @@ func (v *validator) UpdateDomainDataCaches(ctx context.Context, slot primitives.
 	}
 }
 
-func (v *validator) domainData(ctx context.Context, epoch primitives.Epoch, domain []byte) (*ethpb.DomainResponse, error) {
+func (v *validator) domainData(ctx context.Context, epoch primitives.Epoch, domain []byte) (*silapb.DomainResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.domainData")
 	defer span.End()
 
 	v.domainDataLock.RLock()
 
-	req := &ethpb.DomainRequest{
+	req := &silapb.DomainRequest{
 		Epoch:  epoch,
 		Domain: domain,
 	}
@@ -702,7 +702,7 @@ func (v *validator) domainData(ctx context.Context, epoch primitives.Epoch, doma
 
 	if val, ok := v.domainDataCache.Get(key); ok {
 		v.domainDataLock.RUnlock()
-		return proto.Clone(val).(*ethpb.DomainResponse), nil
+		return proto.Clone(val).(*silapb.DomainResponse), nil
 	}
 	v.domainDataLock.RUnlock()
 
@@ -714,7 +714,7 @@ func (v *validator) domainData(ctx context.Context, epoch primitives.Epoch, doma
 	// the same domain data, the cache might have been filled while we were waiting
 	// to acquire the lock.
 	if val, ok := v.domainDataCache.Get(key); ok {
-		return proto.Clone(val).(*ethpb.DomainResponse), nil
+		return proto.Clone(val).(*silapb.DomainResponse), nil
 	}
 
 	res, err := v.validatorClient.DomainData(ctx, req)
@@ -729,7 +729,7 @@ func (v *validator) domainData(ctx context.Context, epoch primitives.Epoch, doma
 // getAttestationData fetches attestation data from the beacon node with caching for Electra.
 // During Electra (pre-Gloas), attestation data is identical for all validators in the same slot
 // (committee index is always 0), so we cache it to avoid redundant beacon node requests.
-func (v *validator) getAttestationData(ctx context.Context, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) (*ethpb.AttestationData, error) {
+func (v *validator) getAttestationData(ctx context.Context, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) (*silapb.AttestationData, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.getAttestationData")
 	defer span.End()
 
@@ -739,7 +739,7 @@ func (v *validator) getAttestationData(ctx context.Context, slot primitives.Slot
 	// Pre-Electra: committee index varies per validator.
 	// Post-Gloas: index signals payload status.
 	if !postElectra {
-		return v.validatorClient.AttestationData(ctx, &ethpb.AttestationDataRequest{
+		return v.validatorClient.AttestationData(ctx, &silapb.AttestationDataRequest{
 			Slot:           slot,
 			CommitteeIndex: committeeIndex,
 		})
@@ -763,7 +763,7 @@ func (v *validator) getAttestationData(ctx context.Context, slot primitives.Slot
 		return v.cachedAttestationData, nil
 	}
 
-	data, err := v.validatorClient.AttestationData(ctx, &ethpb.AttestationDataRequest{
+	data, err := v.validatorClient.AttestationData(ctx, &silapb.AttestationDataRequest{
 		Slot:           slot,
 		CommitteeIndex: 0,
 	})
@@ -832,7 +832,7 @@ func (v *validator) PushProposerSettings(ctx context.Context, slot primitives.Sl
 	}
 
 	// TODO(gloas): add gloas flag to stop needing prepare beacon proposer post gloas
-	if _, err := v.validatorClient.PrepareBeaconProposer(ctx, &ethpb.PrepareBeaconProposerRequest{
+	if _, err := v.validatorClient.PrepareBeaconProposer(ctx, &silapb.PrepareBeaconProposerRequest{
 		Recipients: proposerReqs,
 	}); err != nil {
 		return err
@@ -844,7 +844,7 @@ func (v *validator) PushProposerSettings(ctx context.Context, slot primitives.Sl
 		delay := time.Duration(params.BeaconConfig().SecondsPerSlot/2) * time.Second
 		go func() {
 			time.Sleep(delay)
-			if _, err := v.validatorClient.SubmitSignedProposerPreferences(ctx, &ethpb.SubmitSignedProposerPreferencesRequest{
+			if _, err := v.validatorClient.SubmitSignedProposerPreferences(ctx, &silapb.SubmitSignedProposerPreferencesRequest{
 				SignedProposerPreferences: prefs,
 			}); err != nil {
 				log.WithError(err).Warn("Failed to submit proposer preferences")
@@ -974,7 +974,7 @@ func (v *validator) updateValidatorStatusCache(ctx context.Context, pubkeys [][f
 	for _, k := range pubkeys {
 		statusRequestKeys = append(statusRequestKeys, k[:])
 	}
-	resp, err := v.validatorClient.MultipleValidatorStatus(ctx, &ethpb.MultipleValidatorStatusRequest{
+	resp, err := v.validatorClient.MultipleValidatorStatus(ctx, &silapb.MultipleValidatorStatusRequest{
 		PublicKeys: statusRequestKeys,
 	})
 	if err != nil {
@@ -1007,8 +1007,8 @@ func (v *validator) updateValidatorStatusCache(ctx context.Context, pubkeys [][f
 // post-Gloas, signed proposer preferences from the same validator settings.
 func (v *validator) buildProposerSettingsRequests(
 	activePubkeys [][fieldparams.BLSPubkeyLength]byte,
-) []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer {
-	var prepareProposerReqs []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer
+) []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer {
+	var prepareProposerReqs []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer
 	ps := v.ProposerSettings()
 	for _, k := range activePubkeys {
 		s, ok := v.pubkeyToStatus[k]
@@ -1026,7 +1026,7 @@ func (v *validator) buildProposerSettingsRequests(
 			}
 		}
 
-		prepareProposerReqs = append(prepareProposerReqs, &ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+		prepareProposerReqs = append(prepareProposerReqs, &silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 			ValidatorIndex: s.index,
 			FeeRecipient:   feeRecipient[:],
 		})
@@ -1051,7 +1051,7 @@ func (v *validator) buildProposerPreferences(
 	km keymanager.IKeymanager,
 	slot primitives.Slot,
 	force bool,
-) []*ethpb.SignedProposerPreferences {
+) []*silapb.SignedProposerPreferences {
 	currentEpoch := slots.ToEpoch(slot)
 	gloasEpoch := params.BeaconConfig().GloasForkEpoch
 	if currentEpoch+1 < gloasEpoch {
@@ -1080,7 +1080,7 @@ func (v *validator) buildProposerPreferences(
 		return nil
 	}
 
-	var signedPrefs []*ethpb.SignedProposerPreferences
+	var signedPrefs []*silapb.SignedProposerPreferences
 	var sigFailCount int
 
 	// Per Gloas spec, dependent_root for a proposal in epoch E is the duty
@@ -1138,11 +1138,11 @@ func (v *validator) buildProposerPreferences(
 func (v *validator) processProposerDuties(
 	ctx context.Context,
 	km keymanager.IKeymanager,
-	duties iter.Seq2[pubkey, *ethpb.ValidatorDuty],
+	duties iter.Seq2[pubkey, *silapb.ValidatorDuty],
 	slot primitives.Slot,
 	dependentRoot []byte,
 	isNextEpoch bool,
-) (signedPrefs []*ethpb.SignedProposerPreferences, sigFailCount int) {
+) (signedPrefs []*silapb.SignedProposerPreferences, sigFailCount int) {
 	if len(dependentRoot) != fieldparams.RootLength {
 		return nil, 0
 	}
@@ -1151,7 +1151,7 @@ func (v *validator) processProposerDuties(
 		if len(duty.ProposerSlots) == 0 {
 			continue
 		}
-		if duty.Status != ethpb.ValidatorStatus_ACTIVE && duty.Status != ethpb.ValidatorStatus_EXITING {
+		if duty.Status != silapb.ValidatorStatus_ACTIVE && duty.Status != silapb.ValidatorStatus_EXITING {
 			continue
 		}
 
@@ -1167,7 +1167,7 @@ func (v *validator) processProposerDuties(
 				continue
 			}
 
-			pref := &ethpb.ProposerPreferences{
+			pref := &silapb.ProposerPreferences{
 				DependentRoot:  dependentRoot,
 				ProposalSlot:   proposalSlot,
 				ValidatorIndex: duty.ValidatorIndex,
@@ -1261,7 +1261,7 @@ func (v *validator) submitProposerPreferences(ctx context.Context) {
 	delay := time.Duration(params.BeaconConfig().SecondsPerSlot/2) * time.Second
 	go func() {
 		time.Sleep(delay)
-		if _, err := v.validatorClient.SubmitSignedProposerPreferences(ctx, &ethpb.SubmitSignedProposerPreferencesRequest{
+		if _, err := v.validatorClient.SubmitSignedProposerPreferences(ctx, &silapb.SubmitSignedProposerPreferencesRequest{
 			SignedProposerPreferences: prefs,
 		}); err != nil {
 			log.WithError(err).Warn("Failed to resubmit proposer preferences after duty change")
@@ -1277,11 +1277,11 @@ func (v *validator) buildSignedRegReqs(
 	signer iface.SigningFunc,
 	slot primitives.Slot,
 	forceFullPush bool,
-) []*ethpb.SignedValidatorRegistrationV1 {
+) []*silapb.SignedValidatorRegistrationV1 {
 	ctx, span := trace.StartSpan(ctx, "validator.buildSignedRegReqs")
 	defer span.End()
 
-	var signedValRegRequests []*ethpb.SignedValidatorRegistrationV1
+	var signedValRegRequests []*silapb.SignedValidatorRegistrationV1
 	if v.ProposerSettings() == nil {
 		return signedValRegRequests
 	}
@@ -1336,7 +1336,7 @@ func (v *validator) buildSignedRegReqs(
 			continue
 		}
 
-		req := &ethpb.ValidatorRegistrationV1{
+		req := &silapb.ValidatorRegistrationV1{
 			FeeRecipient: feeRecipient[:],
 			GasLimit:     gasLimit,
 			Timestamp:    uint64(time.Now().UTC().Unix()),

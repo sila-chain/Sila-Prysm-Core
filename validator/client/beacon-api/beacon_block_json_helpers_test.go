@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila/common/hexutil"
 )
@@ -25,9 +25,9 @@ func TestBeaconBlockJsonHelpers_JsonifyTransactions(t *testing.T) {
 }
 
 func TestBeaconBlockJsonHelpers_JsonifyBlsToExecutionChanges(t *testing.T) {
-	input := []*ethpb.SignedBLSToExecutionChange{
+	input := []*silapb.SignedBLSToExecutionChange{
 		{
-			Message: &ethpb.BLSToExecutionChange{
+			Message: &silapb.BLSToExecutionChange{
 				ValidatorIndex:     1,
 				FromBlsPubkey:      []byte{2},
 				ToExecutionAddress: []byte{3},
@@ -35,7 +35,7 @@ func TestBeaconBlockJsonHelpers_JsonifyBlsToExecutionChanges(t *testing.T) {
 			Signature: []byte{7},
 		},
 		{
-			Message: &ethpb.BLSToExecutionChange{
+			Message: &silapb.BLSToExecutionChange{
 				ValidatorIndex:     4,
 				FromBlsPubkey:      []byte{5},
 				ToExecutionAddress: []byte{6},
@@ -67,7 +67,7 @@ func TestBeaconBlockJsonHelpers_JsonifyBlsToExecutionChanges(t *testing.T) {
 }
 
 func TestBeaconBlockJsonHelpers_JsonifyEth1Data(t *testing.T) {
-	input := &ethpb.Eth1Data{
+	input := &silapb.Eth1Data{
 		DepositRoot:  []byte{1},
 		DepositCount: 2,
 		BlockHash:    []byte{3},
@@ -84,18 +84,18 @@ func TestBeaconBlockJsonHelpers_JsonifyEth1Data(t *testing.T) {
 }
 
 func TestBeaconBlockJsonHelpers_JsonifyAttestations(t *testing.T) {
-	input := []*ethpb.Attestation{
+	input := []*silapb.Attestation{
 		{
 			AggregationBits: []byte{1},
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				Slot:            2,
 				CommitteeIndex:  3,
 				BeaconBlockRoot: []byte{4},
-				Source: &ethpb.Checkpoint{
+				Source: &silapb.Checkpoint{
 					Epoch: 5,
 					Root:  []byte{6},
 				},
-				Target: &ethpb.Checkpoint{
+				Target: &silapb.Checkpoint{
 					Epoch: 7,
 					Root:  []byte{8},
 				},
@@ -104,15 +104,15 @@ func TestBeaconBlockJsonHelpers_JsonifyAttestations(t *testing.T) {
 		},
 		{
 			AggregationBits: []byte{10},
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				Slot:            11,
 				CommitteeIndex:  12,
 				BeaconBlockRoot: []byte{13},
-				Source: &ethpb.Checkpoint{
+				Source: &silapb.Checkpoint{
 					Epoch: 14,
 					Root:  []byte{15},
 				},
-				Target: &ethpb.Checkpoint{
+				Target: &silapb.Checkpoint{
 					Epoch: 16,
 					Root:  []byte{17},
 				},
@@ -163,16 +163,16 @@ func TestBeaconBlockJsonHelpers_JsonifyAttestations(t *testing.T) {
 }
 
 func TestBeaconBlockJsonHelpers_JsonifySignedVoluntaryExits(t *testing.T) {
-	input := []*ethpb.SignedVoluntaryExit{
+	input := []*silapb.SignedVoluntaryExit{
 		{
-			Exit: &ethpb.VoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				Epoch:          1,
 				ValidatorIndex: 2,
 			},
 			Signature: []byte{3},
 		},
 		{
-			Exit: &ethpb.VoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				Epoch:          4,
 				ValidatorIndex: 5,
 			},
@@ -202,8 +202,8 @@ func TestBeaconBlockJsonHelpers_JsonifySignedVoluntaryExits(t *testing.T) {
 }
 
 func TestBeaconBlockJsonHelpers_JsonifySignedBeaconBlockHeader(t *testing.T) {
-	input := &ethpb.SignedBeaconBlockHeader{
-		Header: &ethpb.BeaconBlockHeader{
+	input := &silapb.SignedBeaconBlockHeader{
+		Header: &silapb.BeaconBlockHeader{
 			Slot:          1,
 			ProposerIndex: 2,
 			ParentRoot:    []byte{3},
@@ -229,17 +229,17 @@ func TestBeaconBlockJsonHelpers_JsonifySignedBeaconBlockHeader(t *testing.T) {
 }
 
 func TestBeaconBlockJsonHelpers_JsonifyIndexedAttestation(t *testing.T) {
-	input := &ethpb.IndexedAttestation{
+	input := &silapb.IndexedAttestation{
 		AttestingIndices: []uint64{1, 2},
-		Data: &ethpb.AttestationData{
+		Data: &silapb.AttestationData{
 			Slot:            3,
 			CommitteeIndex:  4,
 			BeaconBlockRoot: []byte{5},
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: 6,
 				Root:  []byte{7},
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 8,
 				Root:  []byte{9},
 			},
@@ -270,15 +270,15 @@ func TestBeaconBlockJsonHelpers_JsonifyIndexedAttestation(t *testing.T) {
 }
 
 func TestBeaconBlockJsonHelpers_JsonifyAttestationData(t *testing.T) {
-	input := &ethpb.AttestationData{
+	input := &silapb.AttestationData{
 		Slot:            1,
 		CommitteeIndex:  2,
 		BeaconBlockRoot: []byte{3},
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: 4,
 			Root:  []byte{5},
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: 6,
 			Root:  []byte{7},
 		},

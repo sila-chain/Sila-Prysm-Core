@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/async/event"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/logs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/accounts/wallet"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client"
 	iface "github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
@@ -67,7 +67,7 @@ type Server struct {
 	beaconApiEndpoint         string
 	beaconApiHeaders          map[string][]string
 	beaconNodeEndpoint        string
-	healthClient              ethpb.HealthClient
+	healthClient              silapb.HealthClient
 	nodeClient                iface.NodeClient
 	chainClient               iface.ChainClient
 	beaconNodeValidatorClient iface.ValidatorClient
@@ -182,22 +182,22 @@ func (s *Server) InitializeRoutes() error {
 	}
 	// Register all services, HandleFunc calls, etc.
 	// ...
-	s.router.HandleFunc("GET /eth/v1/keystores", s.ListKeystores)
-	s.router.HandleFunc("POST /eth/v1/keystores", s.ImportKeystores)
-	s.router.HandleFunc("DELETE /eth/v1/keystores", s.DeleteKeystores)
-	s.router.HandleFunc("GET /eth/v1/remotekeys", s.ListRemoteKeys)
-	s.router.HandleFunc("POST /eth/v1/remotekeys", s.ImportRemoteKeys)
-	s.router.HandleFunc("DELETE /eth/v1/remotekeys", s.DeleteRemoteKeys)
-	s.router.HandleFunc("GET /eth/v1/validator/{pubkey}/gas_limit", s.GetGasLimit)
-	s.router.HandleFunc("POST /eth/v1/validator/{pubkey}/gas_limit", s.SetGasLimit)
-	s.router.HandleFunc("DELETE /eth/v1/validator/{pubkey}/gas_limit", s.DeleteGasLimit)
-	s.router.HandleFunc("GET /eth/v1/validator/{pubkey}/feerecipient", s.ListFeeRecipientByPubkey)
-	s.router.HandleFunc("POST /eth/v1/validator/{pubkey}/feerecipient", s.SetFeeRecipientByPubkey)
-	s.router.HandleFunc("DELETE /eth/v1/validator/{pubkey}/feerecipient", s.DeleteFeeRecipientByPubkey)
-	s.router.HandleFunc("POST /eth/v1/validator/{pubkey}/voluntary_exit", s.SetVoluntaryExit)
-	s.router.HandleFunc("GET /eth/v1/validator/{pubkey}/graffiti", s.GetGraffiti)
-	s.router.HandleFunc("POST /eth/v1/validator/{pubkey}/graffiti", s.SetGraffiti)
-	s.router.HandleFunc("DELETE /eth/v1/validator/{pubkey}/graffiti", s.DeleteGraffiti)
+	s.router.HandleFunc("GET /sila/v1/keystores", s.ListKeystores)
+	s.router.HandleFunc("POST /sila/v1/keystores", s.ImportKeystores)
+	s.router.HandleFunc("DELETE /sila/v1/keystores", s.DeleteKeystores)
+	s.router.HandleFunc("GET /sila/v1/remotekeys", s.ListRemoteKeys)
+	s.router.HandleFunc("POST /sila/v1/remotekeys", s.ImportRemoteKeys)
+	s.router.HandleFunc("DELETE /sila/v1/remotekeys", s.DeleteRemoteKeys)
+	s.router.HandleFunc("GET /sila/v1/validator/{pubkey}/gas_limit", s.GetGasLimit)
+	s.router.HandleFunc("POST /sila/v1/validator/{pubkey}/gas_limit", s.SetGasLimit)
+	s.router.HandleFunc("DELETE /sila/v1/validator/{pubkey}/gas_limit", s.DeleteGasLimit)
+	s.router.HandleFunc("GET /sila/v1/validator/{pubkey}/feerecipient", s.ListFeeRecipientByPubkey)
+	s.router.HandleFunc("POST /sila/v1/validator/{pubkey}/feerecipient", s.SetFeeRecipientByPubkey)
+	s.router.HandleFunc("DELETE /sila/v1/validator/{pubkey}/feerecipient", s.DeleteFeeRecipientByPubkey)
+	s.router.HandleFunc("POST /sila/v1/validator/{pubkey}/voluntary_exit", s.SetVoluntaryExit)
+	s.router.HandleFunc("GET /sila/v1/validator/{pubkey}/graffiti", s.GetGraffiti)
+	s.router.HandleFunc("POST /sila/v1/validator/{pubkey}/graffiti", s.SetGraffiti)
+	s.router.HandleFunc("DELETE /sila/v1/validator/{pubkey}/graffiti", s.DeleteGraffiti)
 	s.router.HandleFunc("GET /sila/v1/keystores", s.ListKeystores)
 	s.router.HandleFunc("POST /sila/v1/keystores", s.ImportKeystores)
 	s.router.HandleFunc("DELETE /sila/v1/keystores", s.DeleteKeystores)

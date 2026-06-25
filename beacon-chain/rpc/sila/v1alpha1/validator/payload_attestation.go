@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
@@ -22,8 +22,8 @@ import (
 // PayloadAttestationData returns payload attestation data for the given slot.
 func (vs *Server) PayloadAttestationData(
 	ctx context.Context,
-	req *ethpb.PayloadAttestationDataRequest,
-) (*ethpb.PayloadAttestationData, error) {
+	req *silapb.PayloadAttestationDataRequest,
+) (*silapb.PayloadAttestationData, error) {
 	ctx, span := trace.StartSpan(ctx, "grpc.PayloadAttestationData")
 	defer span.End()
 	if req == nil {
@@ -43,7 +43,7 @@ func (vs *Server) PayloadAttestationData(
 // and applies it locally.
 func (vs *Server) SubmitPayloadAttestation(
 	ctx context.Context,
-	msg *ethpb.PayloadAttestationMessage,
+	msg *silapb.PayloadAttestationMessage,
 ) (*emptypb.Empty, error) {
 	ctx, span := trace.StartSpan(ctx, "PTCServer.SubmitPayloadAttestation")
 	defer span.End()
@@ -96,7 +96,7 @@ func (vs *Server) SubmitPayloadAttestation(
 	return &emptypb.Empty{}, nil
 }
 
-func (vs *Server) payloadAttestationCommitteeIndex(ctx context.Context, msg *ethpb.PayloadAttestationMessage) (uint64, error) {
+func (vs *Server) payloadAttestationCommitteeIndex(ctx context.Context, msg *silapb.PayloadAttestationMessage) (uint64, error) {
 	root := bytesutil.ToBytes32(msg.Data.BeaconBlockRoot)
 	st, err := vs.PayloadAttestationReceiver.PtcLookupState(ctx, root, msg.Data.Slot)
 	if err != nil {

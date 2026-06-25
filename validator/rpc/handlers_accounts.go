@@ -11,7 +11,7 @@ import (
 	"strconv"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/pagination"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/shared"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/shared"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"

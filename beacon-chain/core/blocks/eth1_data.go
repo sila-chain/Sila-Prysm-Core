@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // ProcessEth1DataInBlock is an operation performed on each
@@ -21,7 +21,7 @@ import (
 //	 state.eth1_data_votes.append(body.eth1_data)
 //	 if state.eth1_data_votes.count(body.eth1_data) * 2 > EPOCHS_PER_ETH1_VOTING_PERIOD * SLOTS_PER_EPOCH:
 //	     state.eth1_data = body.eth1_data
-func ProcessEth1DataInBlock(ctx context.Context, beaconState state.BeaconState, eth1Data *ethpb.Eth1Data) (state.BeaconState, error) {
+func ProcessEth1DataInBlock(ctx context.Context, beaconState state.BeaconState, eth1Data *silapb.Eth1Data) (state.BeaconState, error) {
 	_, span := trace.StartSpan(ctx, "blocks.ProcessEth1DataInBlock")
 	defer span.End()
 
@@ -44,7 +44,7 @@ func ProcessEth1DataInBlock(ctx context.Context, beaconState state.BeaconState, 
 }
 
 // AreEth1DataEqual checks equality between two eth1 data objects.
-func AreEth1DataEqual(a, b *ethpb.Eth1Data) bool {
+func AreEth1DataEqual(a, b *silapb.Eth1Data) bool {
 	if a == nil && b == nil {
 		return true
 	}
@@ -60,7 +60,7 @@ func AreEth1DataEqual(a, b *ethpb.Eth1Data) bool {
 // eth1 voting period. A vote is cast by including eth1data in a block and part of state processing
 // appends eth1data to the state in the Eth1DataVotes list. Iterating through this list checks the
 // votes to see if they match the eth1data.
-func Eth1DataHasEnoughSupport(beaconState state.ReadOnlyBeaconState, data *ethpb.Eth1Data) (bool, error) {
+func Eth1DataHasEnoughSupport(beaconState state.ReadOnlyBeaconState, data *silapb.Eth1Data) (bool, error) {
 	voteCount := uint64(0)
 
 	for _, vote := range beaconState.Eth1DataVotes() {

@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/core"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -32,7 +32,7 @@ func (s *Server) GetPerformance(w http.ResponseWriter, r *http.Request) {
 
 	computed, rpcError := s.CoreService.ComputeValidatorPerformance(
 		ctx,
-		&ethpb.ValidatorPerformanceRequest{
+		&silapb.ValidatorPerformanceRequest{
 			PublicKeys: req.PublicKeys,
 			Indices:    req.Indices,
 		},

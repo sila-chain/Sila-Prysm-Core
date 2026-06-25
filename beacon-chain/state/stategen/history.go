@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -45,9 +45,9 @@ type CanonicalHistory struct {
 func (c *CanonicalHistory) executionPayloadEnvelope(
 	ctx context.Context,
 	blockRoot [32]byte,
-) (*ethpb.SignedBlindedExecutionPayloadEnvelope, error) {
+) (*silapb.SignedBlindedExecutionPayloadEnvelope, error) {
 	reader, ok := c.h.(interface {
-		ExecutionPayloadEnvelope(ctx context.Context, blockRoot [32]byte) (*ethpb.SignedBlindedExecutionPayloadEnvelope, error)
+		ExecutionPayloadEnvelope(ctx context.Context, blockRoot [32]byte) (*silapb.SignedBlindedExecutionPayloadEnvelope, error)
 	})
 	if !ok {
 		return nil, nil

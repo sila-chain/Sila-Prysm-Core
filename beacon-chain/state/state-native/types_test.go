@@ -9,7 +9,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/interop"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -23,8 +23,8 @@ func TestBeaconState_ProtoBeaconStateCompatibility(t *testing.T) {
 	genesis := setupGenesisState(t, 64)
 	customState, err := statenative.InitializeFromProtoPhase0(genesis)
 	require.NoError(t, err)
-	cloned, ok := proto.Clone(genesis).(*ethpb.BeaconState)
-	assert.Equal(t, true, ok, "Object is not of type *ethpb.BeaconState")
+	cloned, ok := proto.Clone(genesis).(*silapb.BeaconState)
+	assert.Equal(t, true, ok, "Object is not of type *silapb.BeaconState")
 	custom := customState.ToProto()
 	assert.DeepSSZEqual(t, cloned, custom)
 
@@ -50,7 +50,7 @@ func TestBeaconState_ProtoBeaconStateCompatibility(t *testing.T) {
 	assert.Equal(t, r1, r2, "Mismatched roots")
 }
 
-func setupGenesisState(t testing.TB, count uint64) *ethpb.BeaconState {
+func setupGenesisState(t testing.TB, count uint64) *silapb.BeaconState {
 	genesisState, _, err := interop.GenerateGenesisState(t.Context(), 0, count)
 	require.NoError(t, err, "Could not generate genesis beacon state")
 	for i := uint64(1); i < count; i++ {
@@ -58,7 +58,7 @@ func setupGenesisState(t testing.TB, count uint64) *ethpb.BeaconState {
 		var someKey [fieldparams.BLSPubkeyLength]byte
 		copy(someRoot[:], strconv.Itoa(int(i)))
 		copy(someKey[:], strconv.Itoa(int(i)))
-		genesisState.Validators = append(genesisState.Validators, &ethpb.Validator{
+		genesisState.Validators = append(genesisState.Validators, &silapb.Validator{
 			PublicKey:                  someKey[:],
 			WithdrawalCredentials:      someRoot[:],
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,
@@ -75,11 +75,11 @@ func setupGenesisState(t testing.TB, count uint64) *ethpb.BeaconState {
 
 func BenchmarkCloneValidators_Proto(b *testing.B) {
 
-	validators := make([]*ethpb.Validator, 16384)
+	validators := make([]*silapb.Validator, 16384)
 	somePubKey := [fieldparams.BLSPubkeyLength]byte{1, 2, 3}
 	someRoot := [32]byte{3, 4, 5}
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:                  somePubKey[:],
 			WithdrawalCredentials:      someRoot[:],
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,
@@ -98,11 +98,11 @@ func BenchmarkCloneValidators_Proto(b *testing.B) {
 
 func BenchmarkCloneValidators_Manual(b *testing.B) {
 
-	validators := make([]*ethpb.Validator, 16384)
+	validators := make([]*silapb.Validator, 16384)
 	somePubKey := [fieldparams.BLSPubkeyLength]byte{1, 2, 3}
 	someRoot := [32]byte{3, 4, 5}
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:                  somePubKey[:],
 			WithdrawalCredentials:      someRoot[:],
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,
@@ -126,8 +126,8 @@ func BenchmarkStateClone_Proto(b *testing.B) {
 	genesis := setupGenesisState(b, 64)
 
 	for b.Loop() {
-		_, ok := proto.Clone(genesis).(*ethpb.BeaconState)
-		assert.Equal(b, true, ok, "Entity is not of type *ethpb.BeaconState")
+		_, ok := proto.Clone(genesis).(*silapb.BeaconState)
+		assert.Equal(b, true, ok, "Entity is not of type *silapb.BeaconState")
 	}
 }
 
@@ -144,23 +144,23 @@ func BenchmarkStateClone_Manual(b *testing.B) {
 	}
 }
 
-func cloneValidatorsWithProto(vals []*ethpb.Validator) []*ethpb.Validator {
+func cloneValidatorsWithProto(vals []*silapb.Validator) []*silapb.Validator {
 	var ok bool
-	res := make([]*ethpb.Validator, len(vals))
+	res := make([]*silapb.Validator, len(vals))
 	for i := range res {
-		res[i], ok = proto.Clone(vals[i]).(*ethpb.Validator)
+		res[i], ok = proto.Clone(vals[i]).(*silapb.Validator)
 		if !ok {
-			log.Debug("Entity is not of type *ethpb.Validator")
+			log.Debug("Entity is not of type *silapb.Validator")
 		}
 	}
 	return res
 }
 
-func cloneValidatorsManually(vals []*ethpb.Validator) []*ethpb.Validator {
-	res := make([]*ethpb.Validator, len(vals))
+func cloneValidatorsManually(vals []*silapb.Validator) []*silapb.Validator {
+	res := make([]*silapb.Validator, len(vals))
 	for i := range res {
 		val := vals[i]
-		res[i] = &ethpb.Validator{
+		res[i] = &silapb.Validator{
 			PublicKey:                  val.PublicKey,
 			WithdrawalCredentials:      val.WithdrawalCredentials,
 			EffectiveBalance:           val.EffectiveBalance,
@@ -191,7 +191,7 @@ func TestBeaconState_ImmutabilityWithSharedResources(t *testing.T) {
 
 	// Validators
 	require.DeepEqual(t, a.Validators(), b.Validators(), "Test precondition failed, fields are not equal")
-	require.NoError(t, a.UpdateValidatorAtIndex(1, &ethpb.Validator{Slashed: true}))
+	require.NoError(t, a.UpdateValidatorAtIndex(1, &silapb.Validator{Slashed: true}))
 	if reflect.DeepEqual(a.Validators(), b.Validators()) {
 		t.Error("Expect a.Validators() to be different from b.Validators()")
 	}
@@ -217,7 +217,7 @@ func TestForkManualCopy_OK(t *testing.T) {
 	genesis := setupGenesisState(t, 64)
 	a, err := statenative.InitializeFromProtoPhase0(genesis)
 	require.NoError(t, err)
-	wantedFork := &ethpb.Fork{
+	wantedFork := &silapb.Fork{
 		PreviousVersion: []byte{'a', 'b', 'c'},
 		CurrentVersion:  []byte{'d', 'e', 'f'},
 		Epoch:           0,

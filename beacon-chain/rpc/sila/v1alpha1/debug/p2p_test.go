@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	mockP2p "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/testing"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -19,12 +19,12 @@ func TestDebugServer_GetPeer(t *testing.T) {
 	}
 	firstPeer := peersProvider.Peers().All()[0]
 
-	res, err := ds.GetPeer(t.Context(), &ethpb.PeerRequest{PeerId: firstPeer.String()})
+	res, err := ds.GetPeer(t.Context(), &silapb.PeerRequest{PeerId: firstPeer.String()})
 	require.NoError(t, err)
 	require.Equal(t, firstPeer.String(), res.PeerId, "Unexpected peer ID")
 
-	assert.Equal(t, int(ethpb.PeerDirection_INBOUND), int(res.Direction), "Expected 1st peer to be an inbound connection")
-	assert.Equal(t, ethpb.ConnectionState_CONNECTED, res.ConnectionState, "Expected peer to be connected")
+	assert.Equal(t, int(silapb.PeerDirection_INBOUND), int(res.Direction), "Expected 1st peer to be an inbound connection")
+	assert.Equal(t, silapb.ConnectionState_CONNECTED, res.ConnectionState, "Expected peer to be connected")
 }
 
 func TestDebugServer_ListPeers(t *testing.T) {
@@ -43,11 +43,11 @@ func TestDebugServer_ListPeers(t *testing.T) {
 	direction2 := res.Responses[1].Direction
 	assert.Equal(t,
 		true,
-		direction1 == ethpb.PeerDirection_INBOUND || direction2 == ethpb.PeerDirection_INBOUND,
+		direction1 == silapb.PeerDirection_INBOUND || direction2 == silapb.PeerDirection_INBOUND,
 		"Expected an inbound peer")
 	assert.Equal(t,
 		true,
-		direction1 == ethpb.PeerDirection_OUTBOUND || direction2 == ethpb.PeerDirection_OUTBOUND,
+		direction1 == silapb.PeerDirection_OUTBOUND || direction2 == silapb.PeerDirection_OUTBOUND,
 		"Expected an outbound peer")
 	if len(res.Responses[0].ListeningAddresses) == 0 {
 		t.Errorf("Expected 1st peer to have a multiaddress, instead they have no addresses")

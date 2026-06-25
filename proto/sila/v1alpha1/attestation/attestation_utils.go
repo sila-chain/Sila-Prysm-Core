@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
@@ -38,7 +38,7 @@ import (
 //	     data=attestation.data,
 //	     signature=attestation.signature,
 //	 )
-func ConvertToIndexed(_ context.Context, attestation ethpb.Att, committees ...[]primitives.ValidatorIndex) (ethpb.IndexedAtt, error) {
+func ConvertToIndexed(_ context.Context, attestation silapb.Att, committees ...[]primitives.ValidatorIndex) (silapb.IndexedAtt, error) {
 	attIndices, err := AttestingIndices(attestation, committees...)
 	if err != nil {
 		return nil, err
@@ -47,13 +47,13 @@ func ConvertToIndexed(_ context.Context, attestation ethpb.Att, committees ...[]
 	slices.Sort(attIndices)
 
 	if attestation.Version() >= version.Electra {
-		return &ethpb.IndexedAttestationElectra{
+		return &silapb.IndexedAttestationElectra{
 			Data:             attestation.GetData(),
 			Signature:        attestation.GetSignature(),
 			AttestingIndices: attIndices,
 		}, nil
 	}
-	return &ethpb.IndexedAttestation{
+	return &silapb.IndexedAttestation{
 		Data:             attestation.GetData(),
 		Signature:        attestation.GetSignature(),
 		AttestingIndices: attIndices,
@@ -82,7 +82,7 @@ func ConvertToIndexed(_ context.Context, attestation ethpb.Att, committees ...[]
 //	        committee_offset += len(committee)
 //
 //	    return output
-func AttestingIndices(att ethpb.Att, committees ...[]primitives.ValidatorIndex) ([]uint64, error) {
+func AttestingIndices(att silapb.Att, committees ...[]primitives.ValidatorIndex) ([]uint64, error) {
 	if len(committees) == 0 {
 		return []uint64{}, nil
 	}
@@ -144,7 +144,7 @@ func AttestingIndices(att ethpb.Att, committees ...[]primitives.ValidatorIndex) 
 //	 domain = get_domain(state, DOMAIN_BEACON_ATTESTER, indexed_attestation.data.target.epoch)
 //	 signing_root = compute_signing_root(indexed_attestation.data, domain)
 //	 return bls.FastAggregateVerify(pubkeys, signing_root, indexed_attestation.signature)
-func VerifyIndexedAttestationSig(ctx context.Context, indexedAtt ethpb.IndexedAtt, pubKeys []bls.PublicKey, domain []byte) error {
+func VerifyIndexedAttestationSig(ctx context.Context, indexedAtt silapb.IndexedAtt, pubKeys []bls.PublicKey, domain []byte) error {
 	_, span := trace.StartSpan(ctx, "attestationutil.VerifyIndexedAttestationSig")
 	defer span.End()
 	indices := indexedAtt.GetAttestingIndices()
@@ -189,7 +189,7 @@ func VerifyIndexedAttestationSig(ctx context.Context, indexedAtt ethpb.IndexedAt
 //	  domain = get_domain(state, DOMAIN_BEACON_ATTESTER, indexed_attestation.data.target.epoch)
 //	  signing_root = compute_signing_root(indexed_attestation.data, domain)
 //	  return bls.FastAggregateVerify(pubkeys, signing_root, indexed_attestation.signature)
-func IsValidAttestationIndices(ctx context.Context, indexedAttestation ethpb.IndexedAtt, committeeValMax, maxCommittees uint64) error {
+func IsValidAttestationIndices(ctx context.Context, indexedAttestation silapb.IndexedAtt, committeeValMax, maxCommittees uint64) error {
 	_, span := trace.StartSpan(ctx, "attestationutil.IsValidAttestationIndices")
 	defer span.End()
 
@@ -221,7 +221,7 @@ func IsValidAttestationIndices(ctx context.Context, indexedAttestation ethpb.Ind
 }
 
 // AttDataIsEqual this function performs an equality check between 2 attestation data, if they're unequal, it will return false.
-func AttDataIsEqual(attData1, attData2 *ethpb.AttestationData) bool {
+func AttDataIsEqual(attData1, attData2 *silapb.AttestationData) bool {
 	if attData1.Slot != attData2.Slot {
 		return false
 	}
@@ -247,7 +247,7 @@ func AttDataIsEqual(attData1, attData2 *ethpb.AttestationData) bool {
 }
 
 // CheckPointIsEqual performs an equality check between 2 check points, returns false if unequal.
-func CheckPointIsEqual(checkPt1, checkPt2 *ethpb.Checkpoint) bool {
+func CheckPointIsEqual(checkPt1, checkPt2 *silapb.Checkpoint) bool {
 	if checkPt1.Epoch != checkPt2.Epoch {
 		return false
 	}

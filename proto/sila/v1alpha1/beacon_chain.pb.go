@@ -12,7 +12,7 @@ import (
 	sync "sync"
 
 	github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/ext"
+	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/ext"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"

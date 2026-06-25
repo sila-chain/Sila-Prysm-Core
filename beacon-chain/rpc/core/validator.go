@@ -26,7 +26,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -42,8 +42,8 @@ var errOptimisticMode = errors.New("the node is currently optimistic and cannot 
 // rewards and penalties throughout its lifecycle in the beacon chain.
 func (s *Service) ComputeValidatorPerformance(
 	ctx context.Context,
-	req *ethpb.ValidatorPerformanceRequest,
-) (*ethpb.ValidatorPerformanceResponse, *RpcError) {
+	req *silapb.ValidatorPerformanceRequest,
+) (*silapb.ValidatorPerformanceResponse, *RpcError) {
 	ctx, span := trace.StartSpan(ctx, "coreService.ComputeValidatorPerformance")
 	defer span.End()
 
@@ -181,7 +181,7 @@ func (s *Service) ComputeValidatorPerformance(
 		}
 	}
 
-	return &ethpb.ValidatorPerformanceResponse{
+	return &silapb.ValidatorPerformanceResponse{
 		PublicKeys:                    pubKeys,
 		CorrectlyVotedSource:          correctlyVotedSource,
 		CorrectlyVotedTarget:          correctlyVotedTarget, // In altair, when this is true then the attestation was definitely included.
@@ -197,8 +197,8 @@ func (s *Service) ComputeValidatorPerformance(
 // IndividualVotes retrieves individual voting status of validators.
 func (s *Service) IndividualVotes(
 	ctx context.Context,
-	req *ethpb.IndividualVotesRequest,
-) (*ethpb.IndividualVotesRespond, *RpcError) {
+	req *silapb.IndividualVotesRequest,
+) (*silapb.IndividualVotesRespond, *RpcError) {
 	currentEpoch := slots.ToEpoch(s.GenesisTimeFetcher.CurrentSlot())
 	if req.Epoch > currentEpoch {
 		return nil, &RpcError{
@@ -221,12 +221,12 @@ func (s *Service) IndividualVotes(
 	// Track filtered validators to prevent duplication in the response.
 	filtered := map[primitives.ValidatorIndex]bool{}
 	filteredIndices := make([]primitives.ValidatorIndex, 0)
-	votes := make([]*ethpb.IndividualVotesRespond_IndividualVote, 0, len(req.Indices)+len(req.PublicKeys))
+	votes := make([]*silapb.IndividualVotesRespond_IndividualVote, 0, len(req.Indices)+len(req.PublicKeys))
 	// Filter out assignments by public keys.
 	for _, pubKey := range req.PublicKeys {
 		index, ok := st.ValidatorIndexByPubkey(bytesutil.ToBytes48(pubKey))
 		if !ok {
-			votes = append(votes, &ethpb.IndividualVotesRespond_IndividualVote{PublicKey: pubKey, ValidatorIndex: primitives.ValidatorIndex(^uint64(0))})
+			votes = append(votes, &silapb.IndividualVotesRespond_IndividualVote{PublicKey: pubKey, ValidatorIndex: primitives.ValidatorIndex(^uint64(0))})
 			continue
 		}
 		filtered[index] = true
@@ -281,7 +281,7 @@ func (s *Service) IndividualVotes(
 
 	for _, index := range filteredIndices {
 		if uint64(index) >= uint64(len(v)) {
-			votes = append(votes, &ethpb.IndividualVotesRespond_IndividualVote{ValidatorIndex: index})
+			votes = append(votes, &silapb.IndividualVotesRespond_IndividualVote{ValidatorIndex: index})
 			continue
 		}
 		val, err := st.ValidatorAtIndexReadOnly(index)
@@ -292,7 +292,7 @@ func (s *Service) IndividualVotes(
 			}
 		}
 		pb := val.PublicKey()
-		votes = append(votes, &ethpb.IndividualVotesRespond_IndividualVote{
+		votes = append(votes, &silapb.IndividualVotesRespond_IndividualVote{
 			Epoch:                            req.Epoch,
 			PublicKey:                        pb[:],
 			ValidatorIndex:                   index,
@@ -312,7 +312,7 @@ func (s *Service) IndividualVotes(
 		})
 	}
 
-	return &ethpb.IndividualVotesRespond{
+	return &silapb.IndividualVotesRespond{
 		IndividualVotes: votes,
 	}, nil
 }
@@ -321,7 +321,7 @@ func (s *Service) IndividualVotes(
 // to submit signed contribution and proof object.
 func (s *Service) SubmitSignedContributionAndProof(
 	ctx context.Context,
-	req *ethpb.SignedContributionAndProof,
+	req *silapb.SignedContributionAndProof,
 ) *RpcError {
 	ctx, span := trace.StartSpan(ctx, "coreService.SubmitSignedContributionAndProof")
 	defer span.End()
@@ -357,7 +357,7 @@ func (s *Service) SubmitSignedContributionAndProof(
 // SubmitSignedAggregateSelectionProof verifies given aggregate and proofs and publishes them on appropriate gossipsub topic.
 func (s *Service) SubmitSignedAggregateSelectionProof(
 	ctx context.Context,
-	agg ethpb.SignedAggregateAttAndProof,
+	agg silapb.SignedAggregateAttAndProof,
 ) *RpcError {
 	ctx, span := trace.StartSpan(ctx, "coreService.SubmitSignedAggregateSelectionProof")
 	defer span.End()
@@ -424,10 +424,10 @@ func (s *Service) SubmitSignedAggregateSelectionProof(
 // associated with a particular set of sync committee messages.
 func (s *Service) AggregatedSigAndAggregationBits(
 	ctx context.Context,
-	req *ethpb.AggregatedSigAndAggregationBitsRequest) ([]byte, []byte, error) {
+	req *silapb.AggregatedSigAndAggregationBitsRequest) ([]byte, []byte, error) {
 	subCommitteeSize := params.BeaconConfig().SyncCommitteeSize / params.BeaconConfig().SyncCommitteeSubnetCount
 	sigs := make([][]byte, 0, subCommitteeSize)
-	bits := ethpb.NewSyncCommitteeAggregationBits()
+	bits := silapb.NewSyncCommitteeAggregationBits()
 	for _, msg := range req.Msgs {
 		if bytes.Equal(req.BlockRoot, msg.BlockRoot) {
 			headSyncCommitteeIndices, err := s.HeadFetcher.HeadSyncCommitteeIndices(ctx, msg.ValidatorIndex, req.Slot)
@@ -460,8 +460,8 @@ func (s *Service) AggregatedSigAndAggregationBits(
 // GetAttestationData requests that the beacon node produces attestation data for
 // the requested committee index and slot based on the nodes current head.
 func (s *Service) GetAttestationData(
-	ctx context.Context, req *ethpb.AttestationDataRequest,
-) (*ethpb.AttestationData, *RpcError) {
+	ctx context.Context, req *silapb.AttestationDataRequest,
+) (*silapb.AttestationData, *RpcError) {
 	ctx, span := trace.StartSpan(ctx, "coreService.GetAttestationData")
 	defer span.End()
 
@@ -480,15 +480,15 @@ func (s *Service) GetAttestationData(
 	res := s.AttestationCache.Get()
 	if res != nil && res.Slot == req.Slot {
 		s.AttestationCache.RUnlock()
-		return &ethpb.AttestationData{
+		return &silapb.AttestationData{
 			Slot:            res.Slot,
 			CommitteeIndex:  attestationDataIndex(req, res.IsPayloadFull),
 			BeaconBlockRoot: res.HeadRoot,
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: res.Source.Epoch,
 				Root:  res.Source.Root[:],
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: res.Target.Epoch,
 				Root:  res.Target.Root[:],
 			},
@@ -504,15 +504,15 @@ func (s *Service) GetAttestationData(
 	// to acquire the lock.
 	res = s.AttestationCache.Get()
 	if res != nil && res.Slot == req.Slot {
-		return &ethpb.AttestationData{
+		return &silapb.AttestationData{
 			Slot:            res.Slot,
 			CommitteeIndex:  attestationDataIndex(req, res.IsPayloadFull),
 			BeaconBlockRoot: res.HeadRoot,
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: res.Source.Epoch,
 				Root:  res.Source.Root[:],
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: res.Target.Epoch,
 				Root:  res.Target.Root[:],
 			},
@@ -576,15 +576,15 @@ func (s *Service) GetAttestationData(
 		log.WithError(err).Error("Failed to put attestation data into cache")
 	}
 
-	return &ethpb.AttestationData{
+	return &silapb.AttestationData{
 		Slot:            req.Slot,
 		CommitteeIndex:  attestationDataIndex(req, isPayloadFull),
 		BeaconBlockRoot: headRoot,
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: justifiedCheckpoint.Epoch,
 			Root:  justifiedCheckpoint.Root,
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: targetEpoch,
 			Root:  targetRoot[:],
 		},
@@ -595,7 +595,7 @@ func (s *Service) GetAttestationData(
 // Pre-Electra: uses the requested committee index.
 // Electra to Gloas: always 0.
 // Post-Gloas: signals payload status of the attested head block.
-func attestationDataIndex(req *ethpb.AttestationDataRequest, isPayloadFull bool) primitives.CommitteeIndex {
+func attestationDataIndex(req *silapb.AttestationDataRequest, isPayloadFull bool) primitives.CommitteeIndex {
 	epoch := slots.ToEpoch(req.Slot)
 	if epoch < params.BeaconConfig().ElectraForkEpoch {
 		return req.CommitteeIndex
@@ -612,7 +612,7 @@ func attestationDataIndex(req *ethpb.AttestationDataRequest, isPayloadFull bool)
 
 // SubmitSyncMessage submits the sync committee message to the network.
 // It also saves the sync committee message into the pending pool for block inclusion.
-func (s *Service) SubmitSyncMessage(ctx context.Context, msg *ethpb.SyncCommitteeMessage) *RpcError {
+func (s *Service) SubmitSyncMessage(ctx context.Context, msg *silapb.SyncCommitteeMessage) *RpcError {
 	ctx, span := trace.StartSpan(ctx, "coreService.SubmitSyncMessage")
 	defer span.End()
 
@@ -655,7 +655,7 @@ func RegisterSyncSubnetCurrentPeriod(s beaconState.BeaconState, epoch primitives
 }
 
 // RegisterSyncSubnetCurrentPeriodProto registers a persistent subnet for the current sync committee period.
-func RegisterSyncSubnetCurrentPeriodProto(s beaconState.BeaconState, epoch primitives.Epoch, pubKey []byte, status ethpb.ValidatorStatus) error {
+func RegisterSyncSubnetCurrentPeriodProto(s beaconState.BeaconState, epoch primitives.Epoch, pubKey []byte, status silapb.ValidatorStatus) error {
 	committee, err := s.CurrentSyncCommittee()
 	if err != nil {
 		return err
@@ -677,7 +677,7 @@ func RegisterSyncSubnetNextPeriod(s beaconState.BeaconState, epoch primitives.Ep
 }
 
 // RegisterSyncSubnetNextPeriodProto registers a persistent subnet for the next sync committee period.
-func RegisterSyncSubnetNextPeriodProto(s beaconState.BeaconState, epoch primitives.Epoch, pubKey []byte, status ethpb.ValidatorStatus) error {
+func RegisterSyncSubnetNextPeriodProto(s beaconState.BeaconState, epoch primitives.Epoch, pubKey []byte, status silapb.ValidatorStatus) error {
 	committee, err := s.NextSyncCommittee()
 	if err != nil {
 		return err
@@ -693,7 +693,7 @@ func registerSyncSubnet(
 	currEpoch primitives.Epoch,
 	syncPeriod uint64,
 	pubkey []byte,
-	syncCommittee *ethpb.SyncCommittee,
+	syncCommittee *silapb.SyncCommittee,
 	status validator.Status,
 ) {
 	if status != validator.Active && status != validator.ActiveExiting {
@@ -706,10 +706,10 @@ func registerSyncSubnetProto(
 	currEpoch primitives.Epoch,
 	syncPeriod uint64,
 	pubkey []byte,
-	syncCommittee *ethpb.SyncCommittee,
-	status ethpb.ValidatorStatus,
+	syncCommittee *silapb.SyncCommittee,
+	status silapb.ValidatorStatus,
 ) {
-	if status != ethpb.ValidatorStatus_ACTIVE && status != ethpb.ValidatorStatus_EXITING {
+	if status != silapb.ValidatorStatus_ACTIVE && status != silapb.ValidatorStatus_EXITING {
 		return
 	}
 	registerSyncSubnetInternal(currEpoch, syncPeriod, pubkey, syncCommittee)
@@ -719,7 +719,7 @@ func registerSyncSubnetInternal(
 	currEpoch primitives.Epoch,
 	syncPeriod uint64,
 	pubkey []byte,
-	syncCommittee *ethpb.SyncCommittee,
+	syncCommittee *silapb.SyncCommittee,
 ) {
 	startEpoch := primitives.Epoch(syncPeriod * uint64(params.BeaconConfig().EpochsPerSyncCommitteePeriod))
 	currPeriod := slots.SyncCommitteePeriod(currEpoch)
@@ -752,7 +752,7 @@ func registerSyncSubnetInternal(
 }
 
 // subnetsFromCommittee retrieves the relevant subnets for the chosen validator.
-func subnetsFromCommittee(pubkey []byte, comm *ethpb.SyncCommittee) []uint64 {
+func subnetsFromCommittee(pubkey []byte, comm *silapb.SyncCommittee) []uint64 {
 	positions := make([]uint64, 0)
 	for i, pkey := range comm.Pubkeys {
 		if bytes.Equal(pubkey, pkey) {
@@ -769,7 +769,7 @@ func (s *Service) ValidatorParticipation(
 	ctx context.Context,
 	requestedEpoch primitives.Epoch,
 ) (
-	*ethpb.ValidatorParticipationResponse,
+	*silapb.ValidatorParticipationResponse,
 	*RpcError,
 ) {
 	currentSlot := s.GenesisTimeFetcher.CurrentSlot()
@@ -826,10 +826,10 @@ func (s *Service) ValidatorParticipation(
 	}
 
 	cp := s.FinalizedFetcher.FinalizedCheckpt()
-	p := &ethpb.ValidatorParticipationResponse{
+	p := &silapb.ValidatorParticipationResponse{
 		Epoch:     requestedEpoch,
 		Finalized: requestedEpoch <= cp.Epoch,
-		Participation: &ethpb.ValidatorParticipation{
+		Participation: &silapb.ValidatorParticipation{
 			// TODO(7130): Remove these three deprecated fields.
 			GlobalParticipationRate:          float32(b.PrevEpochTargetAttested) / float32(b.ActivePrevEpoch),
 			VotedEther:                       b.PrevEpochTargetAttested,
@@ -854,7 +854,7 @@ func (s *Service) ValidatorActiveSetChanges(
 	ctx context.Context,
 	requestedEpoch primitives.Epoch,
 ) (
-	*ethpb.ActiveSetChanges,
+	*silapb.ActiveSetChanges,
 	*RpcError,
 ) {
 	currentEpoch := slots.ToEpoch(s.GenesisTimeFetcher.CurrentSlot())
@@ -919,7 +919,7 @@ func (s *Service) ValidatorActiveSetChanges(
 		ejectedKeys = append(ejectedKeys, publicKey[:])
 	}
 
-	return &ethpb.ActiveSetChanges{
+	return &silapb.ActiveSetChanges{
 		Epoch:               requestedEpoch,
 		ActivatedPublicKeys: activatedKeys,
 		ActivatedIndices:    activatedIndices,
@@ -938,7 +938,7 @@ func (s *Service) ValidatorActiveSetChanges(
 func (s *Service) PayloadAttestationData(
 	ctx context.Context,
 	slot primitives.Slot,
-) (*ethpb.PayloadAttestationData, *RpcError) {
+) (*silapb.PayloadAttestationData, *RpcError) {
 	_, span := trace.StartSpan(ctx, "coreService.PayloadAttestationData")
 	defer span.End()
 
@@ -982,7 +982,7 @@ func (s *Service) PayloadAttestationData(
 		return nil, &RpcError{Reason: Internal, Err: sfErr}
 	}
 	switch r := v.(type) {
-	case *ethpb.PayloadAttestationData:
+	case *silapb.PayloadAttestationData:
 		return r, nil
 	case *RpcError:
 		return nil, r
@@ -991,7 +991,7 @@ func (s *Service) PayloadAttestationData(
 	}
 }
 
-func (s *Service) buildPayloadAttestationData(slot primitives.Slot) (*ethpb.PayloadAttestationData, *RpcError) {
+func (s *Service) buildPayloadAttestationData(slot primitives.Slot) (*silapb.PayloadAttestationData, *RpcError) {
 	highestReceivedSlot := s.ForkchoiceFetcher.HighestReceivedBlockSlot()
 	if highestReceivedSlot != slot {
 		return nil, &RpcError{Reason: Unavailable, Err: fmt.Errorf("no valid block root for slot %d, highest received block slot is %d", slot, highestReceivedSlot)}
@@ -1001,7 +1001,7 @@ func (s *Service) buildPayloadAttestationData(slot primitives.Slot) (*ethpb.Payl
 		return nil, &RpcError{Reason: Internal, Err: fmt.Errorf("could not retrieve highest received block root for slot %d", slot)}
 	}
 	payloadEarly, _ := s.ForkchoiceFetcher.PayloadEarly(root)
-	return &ethpb.PayloadAttestationData{
+	return &silapb.PayloadAttestationData{
 		BeaconBlockRoot:   root[:],
 		Slot:              slot,
 		PayloadPresent:    payloadEarly,

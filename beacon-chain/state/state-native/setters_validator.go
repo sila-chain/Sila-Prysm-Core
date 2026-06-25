@@ -6,14 +6,14 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stateutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
 
 // SetValidators for the beacon state. Updates the entire
 // to a new value by overwriting the previous one.
-func (b *BeaconState) SetValidators(val []*ethpb.Validator) error {
+func (b *BeaconState) SetValidators(val []*silapb.Validator) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
@@ -30,7 +30,7 @@ func (b *BeaconState) SetValidators(val []*ethpb.Validator) error {
 
 // ApplyToEveryValidator applies the provided callback function to each validator in the
 // validator registry.
-func (b *BeaconState) ApplyToEveryValidator(f func(idx int, val state.ReadOnlyValidator) (*ethpb.Validator, error)) error {
+func (b *BeaconState) ApplyToEveryValidator(f func(idx int, val state.ReadOnlyValidator) (*silapb.Validator, error)) error {
 	var changedVals []uint64
 	l := b.validatorsMultiValue.Len(b)
 	ro := new(readOnlyValidator)
@@ -65,7 +65,7 @@ func (b *BeaconState) ApplyToEveryValidator(f func(idx int, val state.ReadOnlyVa
 
 // UpdateValidatorAtIndex for the beacon state. Updates the validator
 // at a specific index to a new value.
-func (b *BeaconState) UpdateValidatorAtIndex(idx primitives.ValidatorIndex, val *ethpb.Validator) error {
+func (b *BeaconState) UpdateValidatorAtIndex(idx primitives.ValidatorIndex, val *silapb.Validator) error {
 	compactValidator := stateutil.CompactValidatorFromProto(val)
 	if err := b.validatorsMultiValue.UpdateAt(b, uint64(idx), compactValidator); err != nil {
 		return errors.Wrap(err, "could not update validator")
@@ -150,7 +150,7 @@ func (b *BeaconState) UpdateSlashingsAtIndex(idx, val uint64) error {
 
 // AppendValidator for the beacon state. Appends the new value
 // to the end of list.
-func (b *BeaconState) AppendValidator(val *ethpb.Validator) error {
+func (b *BeaconState) AppendValidator(val *silapb.Validator) error {
 	compactValidator := stateutil.CompactValidatorFromProto(val)
 	b.validatorsMultiValue.Append(b, compactValidator)
 	valIdx := primitives.ValidatorIndex(b.validatorsMultiValue.Len(b) - 1)

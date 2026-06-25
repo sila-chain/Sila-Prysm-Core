@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/math"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/fuzz"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -28,17 +28,17 @@ import (
 )
 
 func TestProcessAttestations_InclusionDelayFailure(t *testing.T) {
-	attestations := []*ethpb.Attestation{
-		util.HydrateAttestation(&ethpb.Attestation{
-			Data: &ethpb.AttestationData{
-				Target: &ethpb.Checkpoint{Epoch: 0, Root: make([]byte, fieldparams.RootLength)},
+	attestations := []*silapb.Attestation{
+		util.HydrateAttestation(&silapb.Attestation{
+			Data: &silapb.AttestationData{
+				Target: &silapb.Checkpoint{Epoch: 0, Root: make([]byte, fieldparams.RootLength)},
 				Slot:   5,
 			},
 		}),
 	}
 	b := util.NewBeaconBlockAltair()
-	b.Block = &ethpb.BeaconBlockAltair{
-		Body: &ethpb.BeaconBlockBodyAltair{
+	b.Block = &silapb.BeaconBlockAltair{
+		Body: &silapb.BeaconBlockBodyAltair{
 			Attestations: attestations,
 		},
 	}
@@ -57,15 +57,15 @@ func TestProcessAttestations_InclusionDelayFailure(t *testing.T) {
 }
 
 func TestProcessAttestations_NeitherCurrentNorPrevEpoch(t *testing.T) {
-	att := util.HydrateAttestation(&ethpb.Attestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: 0, Root: []byte("hello-world")},
-			Target: &ethpb.Checkpoint{Epoch: 0}}})
+	att := util.HydrateAttestation(&silapb.Attestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: 0, Root: []byte("hello-world")},
+			Target: &silapb.Checkpoint{Epoch: 0}}})
 
 	b := util.NewBeaconBlockAltair()
-	b.Block = &ethpb.BeaconBlockAltair{
-		Body: &ethpb.BeaconBlockBodyAltair{
-			Attestations: []*ethpb.Attestation{att},
+	b.Block = &silapb.BeaconBlockAltair{
+		Body: &silapb.BeaconBlockBodyAltair{
+			Attestations: []*silapb.Attestation{att},
 		},
 	}
 	beaconState, _ := util.DeterministicGenesisStateAltair(t, 100)
@@ -88,18 +88,18 @@ func TestProcessAttestations_NeitherCurrentNorPrevEpoch(t *testing.T) {
 }
 
 func TestProcessAttestations_CurrentEpochFFGDataMismatches(t *testing.T) {
-	attestations := []*ethpb.Attestation{
+	attestations := []*silapb.Attestation{
 		{
-			Data: &ethpb.AttestationData{
-				Target: &ethpb.Checkpoint{Epoch: 0, Root: make([]byte, fieldparams.RootLength)},
-				Source: &ethpb.Checkpoint{Epoch: 1, Root: make([]byte, fieldparams.RootLength)},
+			Data: &silapb.AttestationData{
+				Target: &silapb.Checkpoint{Epoch: 0, Root: make([]byte, fieldparams.RootLength)},
+				Source: &silapb.Checkpoint{Epoch: 1, Root: make([]byte, fieldparams.RootLength)},
 			},
 			AggregationBits: bitfield.Bitlist{0x09},
 		},
 	}
 	b := util.NewBeaconBlockAltair()
-	b.Block = &ethpb.BeaconBlockAltair{
-		Body: &ethpb.BeaconBlockBodyAltair{
+	b.Block = &silapb.BeaconBlockAltair{
+		Body: &silapb.BeaconBlockBodyAltair{
 			Attestations: attestations,
 		},
 	}
@@ -127,19 +127,19 @@ func TestProcessAttestations_PrevEpochFFGDataMismatches(t *testing.T) {
 
 	aggBits := bitfield.NewBitlist(3)
 	aggBits.SetBitAt(0, true)
-	attestations := []*ethpb.Attestation{
+	attestations := []*silapb.Attestation{
 		{
-			Data: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Epoch: 1, Root: make([]byte, fieldparams.RootLength)},
-				Target: &ethpb.Checkpoint{Epoch: 1, Root: make([]byte, fieldparams.RootLength)},
+			Data: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Epoch: 1, Root: make([]byte, fieldparams.RootLength)},
+				Target: &silapb.Checkpoint{Epoch: 1, Root: make([]byte, fieldparams.RootLength)},
 				Slot:   params.BeaconConfig().SlotsPerEpoch,
 			},
 			AggregationBits: aggBits,
 		},
 	}
 	b := util.NewBeaconBlockAltair()
-	b.Block = &ethpb.BeaconBlockAltair{
-		Body: &ethpb.BeaconBlockBodyAltair{
+	b.Block = &silapb.BeaconBlockAltair{
+		Body: &silapb.BeaconBlockBodyAltair{
 			Attestations: attestations,
 		},
 	}
@@ -168,17 +168,17 @@ func TestProcessAttestations_InvalidAggregationBitsLength(t *testing.T) {
 	beaconState, _ := util.DeterministicGenesisStateAltair(t, 100)
 
 	aggBits := bitfield.NewBitlist(4)
-	att := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: 0, Root: []byte("hello-world")},
-			Target: &ethpb.Checkpoint{Epoch: 0}},
+	att := &silapb.Attestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: 0, Root: []byte("hello-world")},
+			Target: &silapb.Checkpoint{Epoch: 0}},
 		AggregationBits: aggBits,
 	}
 
 	b := util.NewBeaconBlockAltair()
-	b.Block = &ethpb.BeaconBlockAltair{
-		Body: &ethpb.BeaconBlockBodyAltair{
-			Attestations: []*ethpb.Attestation{att},
+	b.Block = &silapb.BeaconBlockAltair{
+		Body: &silapb.BeaconBlockBodyAltair{
+			Attestations: []*silapb.Attestation{att},
 		},
 	}
 
@@ -204,10 +204,10 @@ func TestProcessAttestations_OK(t *testing.T) {
 		aggBits.SetBitAt(0, true)
 		var mockRoot [32]byte
 		copy(mockRoot[:], "hello-world")
-		att := util.HydrateAttestation(&ethpb.Attestation{
-			Data: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Root: mockRoot[:]},
-				Target: &ethpb.Checkpoint{Root: mockRoot[:]},
+		att := util.HydrateAttestation(&silapb.Attestation{
+			Data: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Root: mockRoot[:]},
+				Target: &silapb.Checkpoint{Root: mockRoot[:]},
 			},
 			AggregationBits: aggBits,
 		})
@@ -231,7 +231,7 @@ func TestProcessAttestations_OK(t *testing.T) {
 		att.Signature = bls.AggregateSignatures(sigs).Marshal()
 
 		block := util.NewBeaconBlockAltair()
-		block.Block.Body.Attestations = []*ethpb.Attestation{att}
+		block.Block.Body.Attestations = []*silapb.Attestation{att}
 
 		err = beaconState.SetSlot(beaconState.Slot() + params.BeaconConfig().MinAttestationInclusionDelay)
 		require.NoError(t, err)
@@ -249,10 +249,10 @@ func TestProcessAttestations_OK(t *testing.T) {
 		committeeBits.SetBitAt(0, true)
 		var mockRoot [32]byte
 		copy(mockRoot[:], "hello-world")
-		att := util.HydrateAttestationElectra(&ethpb.AttestationElectra{
-			Data: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Root: mockRoot[:]},
-				Target: &ethpb.Checkpoint{Root: mockRoot[:]},
+		att := util.HydrateAttestationElectra(&silapb.AttestationElectra{
+			Data: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Root: mockRoot[:]},
+				Target: &silapb.Checkpoint{Root: mockRoot[:]},
 			},
 			AggregationBits: aggBits,
 			CommitteeBits:   committeeBits,
@@ -277,7 +277,7 @@ func TestProcessAttestations_OK(t *testing.T) {
 		att.Signature = bls.AggregateSignatures(sigs).Marshal()
 
 		block := util.NewBeaconBlockElectra()
-		block.Block.Body.Attestations = []*ethpb.AttestationElectra{att}
+		block.Block.Body.Attestations = []*silapb.AttestationElectra{att}
 
 		err = beaconState.SetSlot(beaconState.Slot() + params.BeaconConfig().MinAttestationInclusionDelay)
 		require.NoError(t, err)
@@ -298,11 +298,11 @@ func TestProcessAttestationNoVerify_SourceTargetHead(t *testing.T) {
 	aggBits.SetBitAt(1, true)
 	r, err := helpers.BlockRootAtSlot(beaconState, 0)
 	require.NoError(t, err)
-	att := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
+	att := &silapb.Attestation{
+		Data: &silapb.AttestationData{
 			BeaconBlockRoot: r,
-			Source:          &ethpb.Checkpoint{Epoch: 0, Root: make([]byte, fieldparams.RootLength)},
-			Target:          &ethpb.Checkpoint{Epoch: 0, Root: make([]byte, fieldparams.RootLength)},
+			Source:          &silapb.Checkpoint{Epoch: 0, Root: make([]byte, fieldparams.RootLength)},
+			Target:          &silapb.Checkpoint{Epoch: 0, Root: make([]byte, fieldparams.RootLength)},
 		},
 		AggregationBits: aggBits,
 	}
@@ -461,13 +461,13 @@ func TestValidatorFlag_Add_ExceedsLength(t *testing.T) {
 
 func TestFuzzProcessAttestationsNoVerify_10000(t *testing.T) {
 	fuzzer := gofuzz.NewWithSeed(0)
-	st := &ethpb.BeaconStateAltair{}
-	b := &ethpb.SignedBeaconBlockAltair{Block: &ethpb.BeaconBlockAltair{}}
+	st := &silapb.BeaconStateAltair{}
+	b := &silapb.SignedBeaconBlockAltair{Block: &silapb.BeaconBlockAltair{}}
 	for i := range 10000 {
 		fuzzer.Fuzz(st)
 		fuzzer.Fuzz(b)
 		if b.Block == nil {
-			b.Block = &ethpb.BeaconBlockAltair{}
+			b.Block = &silapb.BeaconBlockAltair{}
 		}
 		s, err := state_native.InitializeFromProtoUnsafeAltair(st)
 		require.NoError(t, err)
@@ -558,7 +558,7 @@ func TestSetParticipationAndRewardProposer(t *testing.T) {
 
 			b, err := helpers.TotalActiveBalance(t.Context(), beaconState)
 			require.NoError(t, err)
-			st, err := altair.SetParticipationAndRewardProposer(t.Context(), beaconState, test.epoch, test.indices, test.participatedFlags, b, &ethpb.Attestation{})
+			st, err := altair.SetParticipationAndRewardProposer(t.Context(), beaconState, test.epoch, test.indices, test.participatedFlags, b, &silapb.Attestation{})
 			require.NoError(t, err)
 
 			i, err := helpers.BeaconProposerIndex(t.Context(), st)
@@ -687,7 +687,7 @@ func TestAttestationParticipationFlagIndices(t *testing.T) {
 	tests := []struct {
 		name                 string
 		inputState           state.BeaconState
-		inputData            *ethpb.AttestationData
+		inputData            *silapb.AttestationData
 		inputDelay           primitives.Slot
 		participationIndices map[uint8]bool
 	}{
@@ -696,9 +696,9 @@ func TestAttestationParticipationFlagIndices(t *testing.T) {
 			inputState: func() state.BeaconState {
 				return beaconState
 			}(),
-			inputData: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
-				Target: &ethpb.Checkpoint{},
+			inputData: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+				Target: &silapb.Checkpoint{},
 			},
 			inputDelay:           params.BeaconConfig().SlotsPerEpoch,
 			participationIndices: map[uint8]bool{},
@@ -708,9 +708,9 @@ func TestAttestationParticipationFlagIndices(t *testing.T) {
 			inputState: func() state.BeaconState {
 				return beaconState
 			}(),
-			inputData: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
-				Target: &ethpb.Checkpoint{},
+			inputData: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+				Target: &silapb.Checkpoint{},
 			},
 			inputDelay: primitives.Slot(math.IntegerSquareRoot(uint64(cfg.SlotsPerEpoch)) - 1),
 			participationIndices: map[uint8]bool{
@@ -722,9 +722,9 @@ func TestAttestationParticipationFlagIndices(t *testing.T) {
 			inputState: func() state.BeaconState {
 				return beaconState
 			}(),
-			inputData: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
-				Target: &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+			inputData: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+				Target: &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
 			},
 			inputDelay: primitives.Slot(math.IntegerSquareRoot(uint64(cfg.SlotsPerEpoch)) - 1),
 			participationIndices: map[uint8]bool{
@@ -737,9 +737,9 @@ func TestAttestationParticipationFlagIndices(t *testing.T) {
 			inputState: func() state.BeaconState {
 				return beaconState
 			}(),
-			inputData: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
-				Target: &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+			inputData: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+				Target: &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
 			},
 			inputDelay: params.BeaconConfig().SlotsPerEpoch + 1,
 			participationIndices: map[uint8]bool{
@@ -751,9 +751,9 @@ func TestAttestationParticipationFlagIndices(t *testing.T) {
 			inputState: func() state.BeaconState {
 				return denebState
 			}(),
-			inputData: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
-				Target: &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+			inputData: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+				Target: &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
 			},
 			inputDelay: params.BeaconConfig().SlotsPerEpoch + 1,
 			participationIndices: map[uint8]bool{
@@ -765,10 +765,10 @@ func TestAttestationParticipationFlagIndices(t *testing.T) {
 			inputState: func() state.BeaconState {
 				return beaconState
 			}(),
-			inputData: &ethpb.AttestationData{
+			inputData: &silapb.AttestationData{
 				BeaconBlockRoot: params.BeaconConfig().ZeroHash[:],
-				Source:          &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
-				Target:          &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+				Source:          &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+				Target:          &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
 			},
 			inputDelay: 1,
 			participationIndices: map[uint8]bool{
@@ -787,12 +787,12 @@ func TestAttestationParticipationFlagIndices(t *testing.T) {
 				prevRoot := bytes.Repeat([]byte{0xCC}, 32)
 				return buildGloasStateForFlags(t, stateSlot, slot, targetRoot, headRoot, prevRoot, 0, 0)
 			}(),
-			inputData: &ethpb.AttestationData{
+			inputData: &silapb.AttestationData{
 				Slot:            3,
 				CommitteeIndex:  1, // invalid for same-slot
 				BeaconBlockRoot: bytes.Repeat([]byte{0xBB}, 32),
-				Source:          &ethpb.Checkpoint{Root: bytes.Repeat([]byte{0xDD}, 32)},
-				Target: &ethpb.Checkpoint{
+				Source:          &silapb.Checkpoint{Root: bytes.Repeat([]byte{0xDD}, 32)},
+				Target: &silapb.Checkpoint{
 					Epoch: 0,
 					Root:  bytes.Repeat([]byte{0xAA}, 32),
 				},
@@ -810,12 +810,12 @@ func TestAttestationParticipationFlagIndices(t *testing.T) {
 				// Same prev root to make SameSlotAttestation false and use payload availability.
 				return buildGloasStateForFlags(t, stateSlot, slot, targetRoot, headRoot, headRoot, 1, slot)
 			}(),
-			inputData: &ethpb.AttestationData{
+			inputData: &silapb.AttestationData{
 				Slot:            3,
 				CommitteeIndex:  1,
 				BeaconBlockRoot: bytes.Repeat([]byte{0xBB}, 32),
-				Source:          &ethpb.Checkpoint{Root: bytes.Repeat([]byte{0xDD}, 32)},
-				Target: &ethpb.Checkpoint{
+				Source:          &silapb.Checkpoint{Root: bytes.Repeat([]byte{0xDD}, 32)},
+				Target: &silapb.Checkpoint{
 					Epoch: 0,
 					Root:  bytes.Repeat([]byte{0xAA}, 32),
 				},
@@ -847,8 +847,8 @@ func TestMatchingStatus(t *testing.T) {
 	tests := []struct {
 		name          string
 		inputState    state.BeaconState
-		inputData     *ethpb.AttestationData
-		inputCheckpt  *ethpb.Checkpoint
+		inputData     *silapb.AttestationData
+		inputCheckpt  *silapb.Checkpoint
 		matchedSource bool
 		matchedTarget bool
 		matchedHead   bool
@@ -856,52 +856,52 @@ func TestMatchingStatus(t *testing.T) {
 		{
 			name:       "non matched",
 			inputState: beaconState,
-			inputData: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Epoch: 1},
-				Target: &ethpb.Checkpoint{},
+			inputData: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Epoch: 1},
+				Target: &silapb.Checkpoint{},
 			},
-			inputCheckpt: &ethpb.Checkpoint{},
+			inputCheckpt: &silapb.Checkpoint{},
 		},
 		{
 			name:       "source matched",
 			inputState: beaconState,
-			inputData: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{},
-				Target: &ethpb.Checkpoint{},
+			inputData: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{},
+				Target: &silapb.Checkpoint{},
 			},
-			inputCheckpt:  &ethpb.Checkpoint{},
+			inputCheckpt:  &silapb.Checkpoint{},
 			matchedSource: true,
 		},
 		{
 			name:       "target matched",
 			inputState: beaconState,
-			inputData: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Epoch: 1},
-				Target: &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+			inputData: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Epoch: 1},
+				Target: &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
 			},
-			inputCheckpt:  &ethpb.Checkpoint{},
+			inputCheckpt:  &silapb.Checkpoint{},
 			matchedTarget: true,
 		},
 		{
 			name:       "head matched",
 			inputState: beaconState,
-			inputData: &ethpb.AttestationData{
-				Source:          &ethpb.Checkpoint{Epoch: 1},
-				Target:          &ethpb.Checkpoint{},
+			inputData: &silapb.AttestationData{
+				Source:          &silapb.Checkpoint{Epoch: 1},
+				Target:          &silapb.Checkpoint{},
 				BeaconBlockRoot: params.BeaconConfig().ZeroHash[:],
 			},
-			inputCheckpt: &ethpb.Checkpoint{},
+			inputCheckpt: &silapb.Checkpoint{},
 			matchedHead:  true,
 		},
 		{
 			name:       "everything matched",
 			inputState: beaconState,
-			inputData: &ethpb.AttestationData{
-				Source:          &ethpb.Checkpoint{},
-				Target:          &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+			inputData: &silapb.AttestationData{
+				Source:          &silapb.Checkpoint{},
+				Target:          &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
 				BeaconBlockRoot: params.BeaconConfig().ZeroHash[:],
 			},
-			inputCheckpt:  &ethpb.Checkpoint{},
+			inputCheckpt:  &silapb.Checkpoint{},
 			matchedSource: true,
 			matchedTarget: true,
 			matchedHead:   true,
@@ -944,9 +944,9 @@ func buildGloasStateForFlags(t *testing.T, stateSlot, slot primitives.Slot, targ
 	}
 
 	checkpointRoot := bytes.Repeat([]byte{0xDD}, fieldparams.RootLength)
-	justified := &ethpb.Checkpoint{Root: checkpointRoot}
+	justified := &silapb.Checkpoint{Root: checkpointRoot}
 
-	stProto := &ethpb.BeaconStateGloas{
+	stProto := &silapb.BeaconStateGloas{
 		Slot:                         stateSlot,
 		GenesisValidatorsRoot:        bytes.Repeat([]byte{0x11}, fieldparams.RootLength),
 		BlockRoots:                   blockRoots,
@@ -955,15 +955,15 @@ func buildGloasStateForFlags(t *testing.T, stateSlot, slot primitives.Slot, targ
 		ExecutionPayloadAvailability: execPayloadAvailability,
 		CurrentJustifiedCheckpoint:   justified,
 		PreviousJustifiedCheckpoint:  justified,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{
 				EffectiveBalance:      cfg.MinActivationBalance,
 				WithdrawalCredentials: append([]byte{cfg.ETH1AddressWithdrawalPrefixByte}, bytes.Repeat([]byte{0x01}, 31)...),
 			},
 		},
 		Balances:               []uint64{cfg.MinActivationBalance},
-		BuilderPendingPayments: make([]*ethpb.BuilderPendingPayment, cfg.SlotsPerEpoch*2),
-		Fork: &ethpb.Fork{
+		BuilderPendingPayments: make([]*silapb.BuilderPendingPayment, cfg.SlotsPerEpoch*2),
+		Fork: &silapb.Fork{
 			CurrentVersion:  bytes.Repeat([]byte{0x01}, 4),
 			PreviousVersion: bytes.Repeat([]byte{0x01}, 4),
 			Epoch:           0,

@@ -8,13 +8,13 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
 
 // Validators participating in consensus on the beacon chain.
-func (b *BeaconState) Validators() []*ethpb.Validator {
+func (b *BeaconState) Validators() []*silapb.Validator {
 	b.lock.RLock()
 	defer b.lock.RUnlock()
 
@@ -29,7 +29,7 @@ func (b *BeaconState) ValidatorsReadOnly() []state.ReadOnlyValidator {
 	return b.validatorsReadOnlyVal()
 }
 
-func (b *BeaconState) validatorsVal() []*ethpb.Validator {
+func (b *BeaconState) validatorsVal() []*silapb.Validator {
 	if b.validatorsMultiValue == nil {
 		return nil
 	}
@@ -68,7 +68,7 @@ func (b *BeaconState) validatorsLen() int {
 }
 
 // ValidatorAtIndex is the validator at the provided index.
-func (b *BeaconState) ValidatorAtIndex(idx primitives.ValidatorIndex) (*ethpb.Validator, error) {
+func (b *BeaconState) ValidatorAtIndex(idx primitives.ValidatorIndex) (*silapb.Validator, error) {
 	b.lock.RLock()
 	defer b.lock.RUnlock()
 
@@ -109,9 +109,9 @@ func (b *BeaconState) EffectiveBalanceAtIndex(idx primitives.ValidatorIndex) (ui
 	return v.EffectiveBalance, nil
 }
 
-func (b *BeaconState) validatorAtIndex(idx primitives.ValidatorIndex) (*ethpb.Validator, error) {
+func (b *BeaconState) validatorAtIndex(idx primitives.ValidatorIndex) (*silapb.Validator, error) {
 	if b.validatorsMultiValue == nil {
-		return &ethpb.Validator{}, nil
+		return &silapb.Validator{}, nil
 	}
 	v, err := b.validatorsMultiValue.At(b, uint64(idx))
 	if err != nil {

@@ -6,15 +6,15 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
 type submittedAttData struct {
 	beaconBlockRoot []byte
-	source          *ethpb.Checkpoint
-	target          *ethpb.Checkpoint
+	source          *silapb.Checkpoint
+	target          *silapb.Checkpoint
 }
 
 type submittedAtt struct {
@@ -29,7 +29,7 @@ type submittedAtt struct {
 //   - AttestationData.Target.HashTreeRoot()
 type submittedAttKey [96]byte
 
-func (k submittedAttKey) FromAttData(data *ethpb.AttestationData) error {
+func (k submittedAttKey) FromAttData(data *silapb.AttestationData) error {
 	sourceRoot, err := data.Source.HashTreeRoot()
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func (k submittedAttKey) FromAttData(data *ethpb.AttestationData) error {
 
 // saveSubmittedAtt saves the submitted attestation data along with the attester's pubkey.
 // The purpose of this is to display combined attesting logs for all keys managed by the validator client.
-func (v *validator) saveSubmittedAtt(att ethpb.Att, pubkey []byte, isAggregate bool) error {
+func (v *validator) saveSubmittedAtt(att silapb.Att, pubkey []byte, isAggregate bool) error {
 	v.attLogsLock.Lock()
 	defer v.attLogsLock.Unlock()
 	data := att.GetData()

@@ -12,21 +12,21 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	multi_value_slice "github.com/sila-chain/Sila-Consensus-Core/v7/container/multi-value-slice"
 	mvslice "github.com/sila-chain/Sila-Consensus-Core/v7/container/multi-value-slice"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common/hexutil"
 )
 
 func Test_handlePendingAttestation_OutOfRange(t *testing.T) {
-	items := make([]*ethpb.PendingAttestation, 1)
+	items := make([]*silapb.PendingAttestation, 1)
 	indices := []uint64{3}
 	_, err := handlePendingAttestationSlice(items, indices)
 	assert.ErrorContains(t, "index 3 greater than number of pending attestations 1", err)
 }
 
 func Test_handleEth1DataSlice_OutOfRange(t *testing.T) {
-	items := make([]*ethpb.Eth1Data, 1)
+	items := make([]*silapb.Eth1Data, 1)
 	indices := []uint64{3}
 	_, err := handleEth1DataSlice(items, indices)
 	assert.ErrorContains(t, "index 3 greater than number of items in eth1 data slice 1", err)
@@ -209,7 +209,7 @@ func TestFieldTrie_NativeState_fieldConvertersNative(t *testing.T) {
 			name: "Eth1DataVotes all",
 			args: &args{
 				field: types.FieldIndex(9),
-				elements: []*ethpb.Eth1Data{
+				elements: []*silapb.Eth1Data{
 					{
 						DepositRoot:  make([]byte, fieldparams.RootLength),
 						DepositCount: 1,
@@ -223,7 +223,7 @@ func TestFieldTrie_NativeState_fieldConvertersNative(t *testing.T) {
 			args: &args{
 				field:   types.FieldIndex(9),
 				indices: []uint64{1},
-				elements: []*ethpb.Eth1Data{
+				elements: []*silapb.Eth1Data{
 					{
 						DepositRoot:  make([]byte, fieldparams.RootLength),
 						DepositCount: 2,
@@ -243,7 +243,7 @@ func TestFieldTrie_NativeState_fieldConvertersNative(t *testing.T) {
 				elements: 123,
 			},
 			wantHex: nil,
-			errMsg:  fmt.Sprintf("Wanted type of %T", []*ethpb.Eth1Data{}),
+			errMsg:  fmt.Sprintf("Wanted type of %T", []*silapb.Eth1Data{}),
 		},
 		{
 			name: "Balance",
@@ -278,7 +278,7 @@ func TestFieldTrie_NativeState_fieldConvertersNative(t *testing.T) {
 			name: "Attestations all",
 			args: &args{
 				field: types.FieldIndex(15),
-				elements: []*ethpb.PendingAttestation{
+				elements: []*silapb.PendingAttestation{
 					{
 						ProposerIndex: 1,
 					},
@@ -291,7 +291,7 @@ func TestFieldTrie_NativeState_fieldConvertersNative(t *testing.T) {
 			args: &args{
 				field:   types.FieldIndex(15),
 				indices: []uint64{1},
-				elements: []*ethpb.PendingAttestation{
+				elements: []*silapb.PendingAttestation{
 					{
 						ProposerIndex: 0,
 					},
@@ -306,7 +306,7 @@ func TestFieldTrie_NativeState_fieldConvertersNative(t *testing.T) {
 			name: "Type not found",
 			args: &args{
 				field: types.FieldIndex(999),
-				elements: []*ethpb.PendingAttestation{
+				elements: []*silapb.PendingAttestation{
 					{
 						ProposerIndex: 1,
 					},

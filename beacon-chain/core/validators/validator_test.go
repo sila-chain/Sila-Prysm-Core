@@ -9,7 +9,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -18,7 +18,7 @@ import (
 
 func TestHasVoted_OK(t *testing.T) {
 	// Setting bitlist to 11111111.
-	pendingAttestation := &ethpb.Attestation{
+	pendingAttestation := &silapb.Attestation{
 		AggregationBits: []byte{0xFF, 0x01},
 	}
 
@@ -27,7 +27,7 @@ func TestHasVoted_OK(t *testing.T) {
 	}
 
 	// Setting bit field to 10101010.
-	pendingAttestation = &ethpb.Attestation{
+	pendingAttestation = &silapb.Attestation{
 		AggregationBits: []byte{0xAA, 0x1},
 	}
 
@@ -44,7 +44,7 @@ func TestHasVoted_OK(t *testing.T) {
 
 func TestInitiateValidatorExit_AlreadyExited(t *testing.T) {
 	exitEpoch := primitives.Epoch(199)
-	base := &ethpb.BeaconState{Validators: []*ethpb.Validator{{
+	base := &silapb.BeaconState{Validators: []*silapb.Validator{{
 		ExitEpoch: exitEpoch},
 	}}
 	state, err := state_native.InitializeFromProtoPhase0(base)
@@ -62,7 +62,7 @@ func TestInitiateValidatorExit_AlreadyExited(t *testing.T) {
 func TestInitiateValidatorExit_ProperExit(t *testing.T) {
 	exitedEpoch := primitives.Epoch(100)
 	idx := primitives.ValidatorIndex(3)
-	base := &ethpb.BeaconState{Validators: []*ethpb.Validator{
+	base := &silapb.BeaconState{Validators: []*silapb.Validator{
 		{ExitEpoch: exitedEpoch},
 		{ExitEpoch: exitedEpoch + 1},
 		{ExitEpoch: exitedEpoch + 2},
@@ -83,7 +83,7 @@ func TestInitiateValidatorExit_ProperExit(t *testing.T) {
 func TestInitiateValidatorExit_ChurnOverflow(t *testing.T) {
 	exitedEpoch := primitives.Epoch(100)
 	idx := primitives.ValidatorIndex(4)
-	base := &ethpb.BeaconState{Validators: []*ethpb.Validator{
+	base := &silapb.BeaconState{Validators: []*silapb.Validator{
 		{ExitEpoch: exitedEpoch + 2},
 		{ExitEpoch: exitedEpoch + 2},
 		{ExitEpoch: exitedEpoch + 2},
@@ -110,7 +110,7 @@ func TestInitiateValidatorExit_ChurnOverflow(t *testing.T) {
 }
 
 func TestInitiateValidatorExit_WithdrawalOverflows(t *testing.T) {
-	base := &ethpb.BeaconState{Validators: []*ethpb.Validator{
+	base := &silapb.BeaconState{Validators: []*silapb.Validator{
 		{ExitEpoch: params.BeaconConfig().FarFutureEpoch - 1},
 		{EffectiveBalance: params.BeaconConfig().EjectionBalance, ExitEpoch: params.BeaconConfig().FarFutureEpoch},
 	}}
@@ -124,9 +124,9 @@ func TestInitiateValidatorExit_WithdrawalOverflows(t *testing.T) {
 func TestInitiateValidatorExit_ProperExit_Electra(t *testing.T) {
 	exitedEpoch := primitives.Epoch(100)
 	idx := primitives.ValidatorIndex(3)
-	base := &ethpb.BeaconStateElectra{
+	base := &silapb.BeaconStateElectra{
 		Slot: slots.UnsafeEpochStart(exitedEpoch + 1),
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{
 				ExitEpoch:        exitedEpoch,
 				EffectiveBalance: params.BeaconConfig().MinActivationBalance,
@@ -170,10 +170,10 @@ func TestInitiateValidatorExit_ProperExit_Electra(t *testing.T) {
 
 func TestSlashValidator_OK(t *testing.T) {
 	validatorCount := 100
-	registry := make([]*ethpb.Validator, 0, validatorCount)
+	registry := make([]*silapb.Validator, 0, validatorCount)
 	balances := make([]uint64, 0, validatorCount)
 	for range validatorCount {
-		registry = append(registry, &ethpb.Validator{
+		registry = append(registry, &silapb.Validator{
 			ActivationEpoch:  0,
 			ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 			EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance,
@@ -181,7 +181,7 @@ func TestSlashValidator_OK(t *testing.T) {
 		balances = append(balances, params.BeaconConfig().MaxEffectiveBalance)
 	}
 
-	base := &ethpb.BeaconState{
+	base := &silapb.BeaconState{
 		Validators:  registry,
 		Slashings:   make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -224,10 +224,10 @@ func TestSlashValidator_OK(t *testing.T) {
 func TestSlashValidator_Electra(t *testing.T) {
 	helpers.ClearCache()
 	validatorCount := 100
-	registry := make([]*ethpb.Validator, 0, validatorCount)
+	registry := make([]*silapb.Validator, 0, validatorCount)
 	balances := make([]uint64, 0, validatorCount)
 	for range validatorCount {
-		registry = append(registry, &ethpb.Validator{
+		registry = append(registry, &silapb.Validator{
 			ActivationEpoch:  0,
 			ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 			EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance,
@@ -235,7 +235,7 @@ func TestSlashValidator_Electra(t *testing.T) {
 		balances = append(balances, params.BeaconConfig().MaxEffectiveBalance)
 	}
 
-	base := &ethpb.BeaconStateElectra{
+	base := &silapb.BeaconStateElectra{
 		Validators:  registry,
 		Slashings:   make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -277,13 +277,13 @@ func TestSlashValidator_Electra(t *testing.T) {
 
 func TestValidatorMaxExitEpochAndChurn(t *testing.T) {
 	tests := []struct {
-		state       *ethpb.BeaconState
+		state       *silapb.BeaconState
 		wantedEpoch primitives.Epoch
 		wantedChurn uint64
 	}{
 		{
-			state: &ethpb.BeaconState{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconState{
+				Validators: []*silapb.Validator{
 					{
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance,
 						ExitEpoch:         0,
@@ -305,8 +305,8 @@ func TestValidatorMaxExitEpochAndChurn(t *testing.T) {
 			wantedChurn: 3,
 		},
 		{
-			state: &ethpb.BeaconState{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconState{
+				Validators: []*silapb.Validator{
 					{
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance,
 						ExitEpoch:         params.BeaconConfig().FarFutureEpoch,
@@ -318,8 +318,8 @@ func TestValidatorMaxExitEpochAndChurn(t *testing.T) {
 			wantedChurn: 0,
 		},
 		{
-			state: &ethpb.BeaconState{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconState{
+				Validators: []*silapb.Validator{
 					{
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance,
 						ExitEpoch:         1,

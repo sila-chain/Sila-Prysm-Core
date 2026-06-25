@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -27,13 +27,13 @@ func TestProcessRandao_IncorrectProposerFailsVerification(t *testing.T) {
 	binary.LittleEndian.PutUint64(buf, uint64(epoch))
 	domain, err := signing.Domain(beaconState.Fork(), epoch, params.BeaconConfig().DomainRandao, beaconState.GenesisValidatorsRoot())
 	require.NoError(t, err)
-	root, err := (&ethpb.SigningData{ObjectRoot: buf, Domain: domain}).HashTreeRoot()
+	root, err := (&silapb.SigningData{ObjectRoot: buf, Domain: domain}).HashTreeRoot()
 	require.NoError(t, err)
 	// We make the previous validator's index sign the message instead of the proposer.
 	epochSignature := privKeys[proposerIdx-1].Sign(root[:])
 	b := util.NewBeaconBlock()
-	b.Block = &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
+	b.Block = &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
 			RandaoReveal: epochSignature.Marshal(),
 		},
 	}
@@ -53,8 +53,8 @@ func TestProcessRandao_SignatureVerifiesAndUpdatesLatestStateMixes(t *testing.T)
 	require.NoError(t, err)
 
 	b := util.NewBeaconBlock()
-	b.Block = &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
+	b.Block = &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
 			RandaoReveal: epochSignature,
 		},
 	}
@@ -78,8 +78,8 @@ func TestRandaoSignatureSet_OK(t *testing.T) {
 	epochSignature, err := util.RandaoReveal(beaconState, epoch, privKeys)
 	require.NoError(t, err)
 
-	block := &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
+	block := &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
 			RandaoReveal: epochSignature,
 		},
 	}

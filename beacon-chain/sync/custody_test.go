@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -55,9 +55,9 @@ func setupCustodyTest(t *testing.T, withChain bool) *testSetup {
 
 	if withChain {
 		const headSlot = primitives.Slot(100)
-		block, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlock{
-			Block: &ethpb.BeaconBlock{
-				Body: &ethpb.BeaconBlockBody{},
+		block, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlock{
+			Block: &silapb.BeaconBlock{
+				Body: &silapb.BeaconBlockBody{},
 				Slot: headSlot,
 			},
 		})
@@ -66,7 +66,7 @@ func setupCustodyTest(t *testing.T, withChain bool) *testSetup {
 		cfg.chain = &mock.ChainService{
 			Genesis:          time.Now(),
 			ValidAttestation: true,
-			FinalizedCheckPoint: &ethpb.Checkpoint{
+			FinalizedCheckPoint: &silapb.Checkpoint{
 				Epoch: 0,
 			},
 			Block: block,

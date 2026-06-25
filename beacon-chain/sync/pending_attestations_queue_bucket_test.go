@@ -6,7 +6,7 @@ import (
 
 	mockChain "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -21,7 +21,7 @@ func TestProcessAttestationBucket(t *testing.T) {
 		s.processAttestationBucket(context.Background(), nil)
 
 		emptyBucket := &attestationBucket{
-			attestations: []ethpb.Att{},
+			attestations: []silapb.Att{},
 		}
 		s.processAttestationBucket(context.Background(), emptyBucket)
 
@@ -40,13 +40,13 @@ func TestProcessAttestationBucket(t *testing.T) {
 			},
 		}
 
-		attData := &ethpb.AttestationData{
+		attData := &silapb.AttestationData{
 			BeaconBlockRoot: bytesutil.PadTo([]byte("blockroot"), 32),
 		}
 
 		bucket := &attestationBucket{
 			data:         attData,
-			attestations: []ethpb.Att{util.NewAttestation()},
+			attestations: []silapb.Att{util.NewAttestation()},
 		}
 
 		s.processAttestationBucket(context.Background(), bucket)
@@ -73,9 +73,9 @@ func TestProcessAttestationBucket(t *testing.T) {
 			},
 		}
 
-		attData := &ethpb.AttestationData{
+		attData := &silapb.AttestationData{
 			BeaconBlockRoot: bytesutil.PadTo([]byte("blockroot"), 32),
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 1,
 				Root:  bytesutil.PadTo([]byte("blockroot"), 32),
 			},
@@ -87,7 +87,7 @@ func TestProcessAttestationBucket(t *testing.T) {
 
 		bucket := &attestationBucket{
 			data:         attData,
-			attestations: []ethpb.Att{att},
+			attestations: []silapb.Att{att},
 		}
 
 		s.processAttestationBucket(context.Background(), bucket)
@@ -99,9 +99,9 @@ func TestProcessAttestationBucket(t *testing.T) {
 	t.Run("FFGConsistencyFailure", func(t *testing.T) {
 		hook := logTest.NewGlobal()
 
-		validators := make([]*ethpb.Validator, 64)
+		validators := make([]*silapb.Validator, 64)
 		for i := range validators {
-			validators[i] = &ethpb.Validator{
+			validators[i] = &silapb.Validator{
 				ExitEpoch:        1000000,
 				EffectiveBalance: 32000000000,
 			}
@@ -122,9 +122,9 @@ func TestProcessAttestationBucket(t *testing.T) {
 			},
 		}
 
-		attData := &ethpb.AttestationData{
+		attData := &silapb.AttestationData{
 			BeaconBlockRoot: bytesutil.PadTo([]byte("blockroot"), 32),
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 1,
 				Root:  bytesutil.PadTo([]byte("different_target"), 32), // Different from BeaconBlockRoot to trigger FFG failure
 			},
@@ -135,7 +135,7 @@ func TestProcessAttestationBucket(t *testing.T) {
 
 		bucket := &attestationBucket{
 			data:         attData,
-			attestations: []ethpb.Att{att},
+			attestations: []silapb.Att{att},
 		}
 
 		s.processAttestationBucket(context.Background(), bucket)
@@ -146,9 +146,9 @@ func TestProcessAttestationBucket(t *testing.T) {
 
 	t.Run("ProcessingSuccess", func(t *testing.T) {
 		hook := logTest.NewGlobal()
-		validators := make([]*ethpb.Validator, 64)
+		validators := make([]*silapb.Validator, 64)
 		for i := range validators {
-			validators[i] = &ethpb.Validator{
+			validators[i] = &silapb.Validator{
 				ExitEpoch:        1000000,
 				EffectiveBalance: 32000000000,
 			}
@@ -179,7 +179,7 @@ func TestProcessAttestationBucket(t *testing.T) {
 
 			bucket := &attestationBucket{
 				data:         phase0Att.GetData(),
-				attestations: []ethpb.Att{phase0Att},
+				attestations: []silapb.Att{phase0Att},
 			}
 
 			s.processAttestationBucket(context.Background(), bucket)
@@ -188,21 +188,21 @@ func TestProcessAttestationBucket(t *testing.T) {
 		// Test with SingleAttestation
 		t.Run("Electra_NoError", func(t *testing.T) {
 			hook.Reset() // Reset logs before test
-			attData := &ethpb.AttestationData{
+			attData := &silapb.AttestationData{
 				Slot:            1,
 				CommitteeIndex:  0,
 				BeaconBlockRoot: bytesutil.PadTo([]byte("blockroot"), 32),
-				Source: &ethpb.Checkpoint{
+				Source: &silapb.Checkpoint{
 					Epoch: 0,
 					Root:  bytesutil.PadTo([]byte("source"), 32),
 				},
-				Target: &ethpb.Checkpoint{
+				Target: &silapb.Checkpoint{
 					Epoch: 1,
 					Root:  bytesutil.PadTo([]byte("blockroot"), 32), // Same as BeaconBlockRoot for LMD/FFG consistency
 				},
 			}
 
-			singleAtt := &ethpb.SingleAttestation{
+			singleAtt := &silapb.SingleAttestation{
 				CommitteeId:   0,
 				AttesterIndex: 0,
 				Data:          attData,
@@ -211,7 +211,7 @@ func TestProcessAttestationBucket(t *testing.T) {
 
 			bucket := &attestationBucket{
 				data:         singleAtt.GetData(),
-				attestations: []ethpb.Att{singleAtt},
+				attestations: []silapb.Att{singleAtt},
 			}
 
 			s.processAttestationBucket(context.Background(), bucket)
@@ -226,7 +226,7 @@ func TestBucketAttestationsByData(t *testing.T) {
 		require.Equal(t, 0, len(buckets))
 		require.Equal(t, 0, len(hook.Entries))
 
-		buckets = bucketAttestationsByData([]ethpb.Att{})
+		buckets = bucketAttestationsByData([]silapb.Att{})
 		require.Equal(t, 0, len(buckets))
 		require.Equal(t, 0, len(hook.Entries))
 	})
@@ -237,7 +237,7 @@ func TestBucketAttestationsByData(t *testing.T) {
 		att.Data.Slot = 1
 		att.Data.CommitteeIndex = 0
 
-		buckets := bucketAttestationsByData([]ethpb.Att{att})
+		buckets := bucketAttestationsByData([]silapb.Att{att})
 
 		require.Equal(t, 1, len(buckets))
 		var bucket *attestationBucket
@@ -263,7 +263,7 @@ func TestBucketAttestationsByData(t *testing.T) {
 		att2.Data = att1.Data             // Same data
 		att2.Signature = make([]byte, 96) // Different signature
 
-		buckets := bucketAttestationsByData([]ethpb.Att{att1, att2})
+		buckets := bucketAttestationsByData([]silapb.Att{att1, att2})
 
 		require.Equal(t, 1, len(buckets), "Should have one bucket for same data")
 		var bucket *attestationBucket
@@ -288,7 +288,7 @@ func TestBucketAttestationsByData(t *testing.T) {
 		att2.Data.Slot = 2 // Different slot
 		att2.Data.CommitteeIndex = 1
 
-		buckets := bucketAttestationsByData([]ethpb.Att{att1, att2})
+		buckets := bucketAttestationsByData([]silapb.Att{att1, att2})
 
 		require.Equal(t, 2, len(buckets), "Should have two buckets for different data")
 		bucketCount := 0
@@ -308,14 +308,14 @@ func TestBucketAttestationsByData(t *testing.T) {
 		phase0Att.Data.Slot = 1
 		phase0Att.Data.CommitteeIndex = 0
 
-		electraAtt := &ethpb.SingleAttestation{
+		electraAtt := &silapb.SingleAttestation{
 			CommitteeId:   0,
 			AttesterIndex: 1,
 			Data:          phase0Att.Data, // Same data
 			Signature:     make([]byte, 96),
 		}
 
-		buckets := bucketAttestationsByData([]ethpb.Att{phase0Att, electraAtt})
+		buckets := bucketAttestationsByData([]silapb.Att{phase0Att, electraAtt})
 
 		require.Equal(t, 1, len(buckets), "Should have one bucket for same data")
 		var bucket *attestationBucket
@@ -337,7 +337,7 @@ func TestBatchVerifyAttestationSignatures(t *testing.T) {
 		beaconState, err := util.NewBeaconState()
 		require.NoError(t, err)
 
-		result := s.batchVerifyAttestationSignatures(context.Background(), []ethpb.Att{}, beaconState)
+		result := s.batchVerifyAttestationSignatures(context.Background(), []silapb.Att{}, beaconState)
 
 		// Empty input should return empty output
 		require.Equal(t, 0, len(result))
@@ -345,9 +345,9 @@ func TestBatchVerifyAttestationSignatures(t *testing.T) {
 
 	t.Run("BatchVerificationWithState", func(t *testing.T) {
 		hook := logTest.NewGlobal()
-		validators := make([]*ethpb.Validator, 64)
+		validators := make([]*silapb.Validator, 64)
 		for i := range validators {
-			validators[i] = &ethpb.Validator{
+			validators[i] = &silapb.Validator{
 				ExitEpoch:        1000000,
 				EffectiveBalance: 32000000000,
 			}
@@ -362,7 +362,7 @@ func TestBatchVerifyAttestationSignatures(t *testing.T) {
 
 		att := util.NewAttestation()
 		att.Data.Slot = 1
-		attestations := []ethpb.Att{att}
+		attestations := []silapb.Att{att}
 
 		result := s.batchVerifyAttestationSignatures(context.Background(), attestations, beaconState)
 		require.NotNil(t, result)
@@ -398,7 +398,7 @@ func TestBatchVerifyAttestationSignatures(t *testing.T) {
 
 		att := util.NewAttestation()
 		att.Data.Slot = 1
-		attestations := []ethpb.Att{att}
+		attestations := []silapb.Att{att}
 
 		result := s.batchVerifyAttestationSignatures(context.Background(), attestations, beaconState)
 

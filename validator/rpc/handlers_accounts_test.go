@@ -15,7 +15,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/validator/flags"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	validatormock "github.com/sila-chain/Sila-Consensus-Core/v7/testing/validator-mock"
@@ -242,11 +242,11 @@ func TestServer_VoluntaryExit(t *testing.T) {
 
 	mockValidatorClient.EXPECT().
 		ValidatorIndex(gomock.Any(), gomock.Any()).
-		Return(&ethpb.ValidatorIndexResponse{Index: 0}, nil)
+		Return(&silapb.ValidatorIndexResponse{Index: 0}, nil)
 
 	mockValidatorClient.EXPECT().
 		ValidatorIndex(gomock.Any(), gomock.Any()).
-		Return(&ethpb.ValidatorIndexResponse{Index: 1}, nil)
+		Return(&silapb.ValidatorIndexResponse{Index: 1}, nil)
 
 	// Any time in the past will suffice
 	genesisTime := &timestamppb.Timestamp{
@@ -255,17 +255,17 @@ func TestServer_VoluntaryExit(t *testing.T) {
 
 	mockNodeClient.EXPECT().
 		Genesis(gomock.Any(), gomock.Any()).
-		Return(&ethpb.Genesis{GenesisTime: genesisTime}, nil)
+		Return(&silapb.Genesis{GenesisTime: genesisTime}, nil)
 
 	mockValidatorClient.EXPECT().
 		DomainData(gomock.Any(), gomock.Any()).
 		Times(2).
-		Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
+		Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
 
 	mockValidatorClient.EXPECT().
-		ProposeExit(gomock.Any(), gomock.AssignableToTypeOf(&ethpb.SignedVoluntaryExit{})).
+		ProposeExit(gomock.Any(), gomock.AssignableToTypeOf(&silapb.SignedVoluntaryExit{})).
 		Times(2).
-		Return(&ethpb.ProposeExitResponse{}, nil)
+		Return(&silapb.ProposeExitResponse{}, nil)
 
 	localWalletDir := setupWalletDir(t)
 	defaultWalletPath = localWalletDir

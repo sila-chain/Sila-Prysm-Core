@@ -9,7 +9,7 @@ import (
 	mockstategen "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen/mock"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -30,10 +30,10 @@ func TestCorrect_ActiveValidatorsCount(t *testing.T) {
 		ctx: t.Context(),
 		cfg: &Config{DB: wrappedDB, StateGen: stateGen},
 	}
-	bState, err := util.NewBeaconState(func(state *ethpb.BeaconState) error {
-		validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
+	bState, err := util.NewBeaconState(func(state *silapb.BeaconState) error {
+		validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
 		for i := range validators {
-			validators[i] = &ethpb.Validator{
+			validators[i] = &silapb.Validator{
 				PublicKey:             make([]byte, 48),
 				WithdrawalCredentials: make([]byte, 32),
 				ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
@@ -54,7 +54,7 @@ func TestCorrect_ActiveValidatorsCount(t *testing.T) {
 	assert.NoError(t, err, "genesis state not retrieved")
 	assert.Equal(t, int(params.BeaconConfig().MinGenesisActiveValidatorCount), int(vals), "mainnet genesis active count isn't accurate")
 	for range 100 {
-		require.NoError(t, bState.AppendValidator(&ethpb.Validator{
+		require.NoError(t, bState.AppendValidator(&silapb.Validator{
 			PublicKey:             make([]byte, 48),
 			WithdrawalCredentials: make([]byte, 32),
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
@@ -64,7 +64,7 @@ func TestCorrect_ActiveValidatorsCount(t *testing.T) {
 	require.NoError(t, bState.SetSlot(10000))
 	rootA := [32]byte{'a'}
 	require.NoError(t, db.SaveState(s.ctx, bState, rootA))
-	wrappedDB.finalized = &ethpb.Checkpoint{Root: rootA[:]}
+	wrappedDB.finalized = &silapb.Checkpoint{Root: rootA[:]}
 	stateGen.AddStateForRoot(bState, rootA)
 	// Reset count
 	s.activeValidatorCount = 0
@@ -93,10 +93,10 @@ func TestLoggingParameters(_ *testing.T) {
 
 type finalizedCheckpointDB struct {
 	iface.ReadOnlyDatabaseWithSeqNum
-	finalized *ethpb.Checkpoint
+	finalized *silapb.Checkpoint
 }
 
-func (f *finalizedCheckpointDB) FinalizedCheckpoint(ctx context.Context) (*ethpb.Checkpoint, error) {
+func (f *finalizedCheckpointDB) FinalizedCheckpoint(ctx context.Context) (*silapb.Checkpoint, error) {
 	if f.finalized != nil {
 		return f.finalized, nil
 	}

@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -24,7 +24,7 @@ func TestUint64Root(t *testing.T) {
 func TestForkRoot(t *testing.T) {
 	tests := []struct {
 		name     string
-		fork     *ethpb.Fork
+		fork     *silapb.Fork
 		expected [32]byte
 	}{
 		{
@@ -34,7 +34,7 @@ func TestForkRoot(t *testing.T) {
 		},
 		{
 			name: "valid fork",
-			fork: &ethpb.Fork{
+			fork: &silapb.Fork{
 				PreviousVersion: []byte{123, 0, 0, 0},
 				CurrentVersion:  []byte{124, 0, 0, 0},
 				Epoch:           1234567890,
@@ -54,7 +54,7 @@ func TestForkRoot(t *testing.T) {
 func TestCheckPointRoot(t *testing.T) {
 	tests := []struct {
 		name       string
-		checkpoint *ethpb.Checkpoint
+		checkpoint *silapb.Checkpoint
 		expected   [32]byte
 	}{
 		{
@@ -64,7 +64,7 @@ func TestCheckPointRoot(t *testing.T) {
 		},
 		{
 			name: "valid checkpoint",
-			checkpoint: &ethpb.Checkpoint{
+			checkpoint: &silapb.Checkpoint{
 				Epoch: 1234567890,
 				Root:  []byte{222, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			},

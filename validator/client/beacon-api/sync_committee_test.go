@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/apiutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -55,7 +55,7 @@ func TestSubmitSyncMessage_Valid(t *testing.T) {
 		nil,
 	).Times(1)
 
-	protoSyncCommitteeMessage := ethpb.SyncCommitteeMessage{
+	protoSyncCommitteeMessage := silapb.SyncCommitteeMessage{
 		Slot:           primitives.Slot(42),
 		BlockRoot:      decodedBeaconBlockRoot,
 		ValidatorIndex: primitives.ValidatorIndex(12345),
@@ -85,7 +85,7 @@ func TestSubmitSyncMessage_BadRequest(t *testing.T) {
 	).Times(1)
 
 	validatorClient := &beaconApiValidatorClient{handler: handler}
-	_, err := validatorClient.SubmitSyncMessage(t.Context(), &ethpb.SyncCommitteeMessage{})
+	_, err := validatorClient.SubmitSyncMessage(t.Context(), &silapb.SyncCommitteeMessage{})
 	assert.ErrorContains(t, "foo error", err)
 }
 
@@ -173,7 +173,7 @@ func TestGetSyncCommitteeContribution(t *testing.T) {
 
 	const blockRoot = "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"
 
-	request := &ethpb.SyncCommitteeContributionRequest{
+	request := &silapb.SyncCommitteeContributionRequest{
 		Slot:      primitives.Slot(1),
 		PublicKey: nil,
 		SubnetId:  1,
@@ -259,7 +259,7 @@ func TestGetSyncSubCommitteeIndex(t *testing.T) {
 		slot               = primitives.Slot(123)
 	)
 
-	expectedResponse := &ethpb.SyncSubcommitteeIndexResponse{
+	expectedResponse := &silapb.SyncSubcommitteeIndexResponse{
 		Indices: []primitives.CommitteeIndex{123, 456},
 	}
 
@@ -394,7 +394,7 @@ func TestGetSyncSubCommitteeIndex(t *testing.T) {
 					handler: handler,
 				},
 			}
-			actualResponse, err := validatorClient.syncSubcommitteeIndex(ctx, &ethpb.SyncSubcommitteeIndexRequest{
+			actualResponse, err := validatorClient.syncSubcommitteeIndex(ctx, &silapb.SyncSubcommitteeIndexRequest{
 				PublicKey: pubkey,
 				Slot:      slot,
 			})

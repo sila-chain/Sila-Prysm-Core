@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/apiutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -74,7 +74,7 @@ func TestIndex_Nominal(t *testing.T) {
 
 	validatorIndex, err := validatorClient.ValidatorIndex(
 		ctx,
-		&ethpb.ValidatorIndexRequest{
+		&silapb.ValidatorIndexRequest{
 			PublicKey: pubKey,
 		},
 	)
@@ -116,7 +116,7 @@ func TestIndex_UnexistingValidator(t *testing.T) {
 
 	_, err := validatorClient.ValidatorIndex(
 		ctx,
-		&ethpb.ValidatorIndexRequest{
+		&silapb.ValidatorIndexRequest{
 			PublicKey: pubKey,
 		},
 	)
@@ -166,7 +166,7 @@ func TestIndex_BadIndexError(t *testing.T) {
 
 	_, err := validatorClient.ValidatorIndex(
 		ctx,
-		&ethpb.ValidatorIndexRequest{
+		&silapb.ValidatorIndexRequest{
 			PublicKey: pubKey,
 		},
 	)
@@ -223,7 +223,7 @@ func TestIndex_JsonResponseError(t *testing.T) {
 
 	_, err := validatorClient.ValidatorIndex(
 		ctx,
-		&ethpb.ValidatorIndexRequest{
+		&silapb.ValidatorIndexRequest{
 			PublicKey: pubKey,
 		},
 	)

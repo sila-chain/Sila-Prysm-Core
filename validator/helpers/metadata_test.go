@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/proposer"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/iface"
@@ -105,7 +105,7 @@ func (db *ValidatorDBMock) AttestedPublicKeys(ctx context.Context) ([][fieldpara
 }
 
 func (db *ValidatorDBMock) SlashableAttestationCheck(
-	ctx context.Context, indexedAtt ethpb.IndexedAtt, pubKey [fieldparams.BLSPubkeyLength]byte,
+	ctx context.Context, indexedAtt silapb.IndexedAtt, pubKey [fieldparams.BLSPubkeyLength]byte,
 	signingRoot32 [32]byte,
 	emitAccountMetrics bool,
 	validatorAttestFailVec *prometheus.CounterVec,
@@ -114,13 +114,13 @@ func (db *ValidatorDBMock) SlashableAttestationCheck(
 }
 
 func (db *ValidatorDBMock) SaveAttestationForPubKey(
-	ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoot [fieldparams.RootLength]byte, att ethpb.IndexedAtt,
+	ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoot [fieldparams.RootLength]byte, att silapb.IndexedAtt,
 ) error {
 	panic("not implemented")
 }
 
 func (db *ValidatorDBMock) SaveAttestationsForPubKey(
-	ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoots [][]byte, atts []*ethpb.IndexedAttestation,
+	ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoots [][]byte, atts []*silapb.IndexedAttestation,
 ) error {
 	panic("not implemented")
 }

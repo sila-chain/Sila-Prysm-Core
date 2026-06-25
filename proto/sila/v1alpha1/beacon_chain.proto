@@ -18,7 +18,7 @@ package ethereum.eth.v1alpha1;
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
-import "proto/eth/ext/options.proto";
+import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1alpha1/attestation.proto";
 import "proto/sila/v1alpha1/beacon_block.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
@@ -47,7 +47,7 @@ service BeaconChain {
       returns (ListAttestationsResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/attestations"
+      get : "/sila/v1alpha1/beacon/attestations"
     };
   }
 
@@ -61,7 +61,7 @@ service BeaconChain {
       returns (ListAttestationsElectraResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/attestations_electra"
+      get : "/sila/v1alpha1/beacon/attestations_electra"
     };
   }
 
@@ -75,7 +75,7 @@ service BeaconChain {
       returns (ListIndexedAttestationsResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/attestations/indexed"
+      get : "/sila/v1alpha1/beacon/attestations/indexed"
     };
   }
 
@@ -89,7 +89,7 @@ service BeaconChain {
       returns (ListIndexedAttestationsElectraResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/attestations/indexed_electra"
+      get : "/sila/v1alpha1/beacon/attestations/indexed_electra"
     };
   }
 
@@ -106,7 +106,7 @@ service BeaconChain {
       returns (AttestationPoolResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/attestations/pool"
+      get : "/sila/v1alpha1/beacon/attestations/pool"
     };
   }
 
@@ -123,7 +123,7 @@ service BeaconChain {
       returns (AttestationPoolElectraResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/attestations/pool_electra"
+      get : "/sila/v1alpha1/beacon/attestations/pool_electra"
     };
   }
 
@@ -138,7 +138,7 @@ service BeaconChain {
   rpc ListBeaconBlocks(ListBlocksRequest) returns (ListBeaconBlocksResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha2/beacon/blocks"
+      get : "/sila/v1alpha2/beacon/blocks"
     };
   }
 
@@ -147,12 +147,12 @@ service BeaconChain {
   //
   // This includes the head block slot and root as well as information about
   // the most recent finalized and justified slots.
-  // DEPRECATED: This endpoint is superseded by the /eth/v1/beacon Beacon API
+  // DEPRECATED: This endpoint is superseded by the /sila/v1/beacon Beacon API
   // endpoint
   rpc GetChainHead(google.protobuf.Empty) returns (ChainHead) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/chainhead"
+      get : "/sila/v1alpha1/beacon/chainhead"
     };
   }
 
@@ -165,7 +165,7 @@ service BeaconChain {
   rpc ListBeaconCommittees(ListCommitteesRequest) returns (BeaconCommittees) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/committees"
+      get : "/sila/v1alpha1/beacon/committees"
     };
   }
 
@@ -176,7 +176,7 @@ service BeaconChain {
       returns (ValidatorBalances) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validators/balances"
+      get : "/sila/v1alpha1/validators/balances"
     };
   }
 
@@ -188,7 +188,7 @@ service BeaconChain {
   rpc ListValidators(ListValidatorsRequest) returns (Validators) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validators"
+      get : "/sila/v1alpha1/validators"
     };
   }
 
@@ -198,7 +198,7 @@ service BeaconChain {
   rpc GetValidator(GetValidatorRequest) returns (Validator) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator"
+      get : "/sila/v1alpha1/validator"
     };
   }
 
@@ -211,7 +211,7 @@ service BeaconChain {
       returns (ActiveSetChanges) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validators/activesetchanges"
+      get : "/sila/v1alpha1/validators/activesetchanges"
     };
   }
 
@@ -219,7 +219,7 @@ service BeaconChain {
   rpc GetValidatorQueue(google.protobuf.Empty) returns (ValidatorQueue) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validators/queue"
+      get : "/sila/v1alpha1/validators/queue"
     };
   }
 
@@ -231,7 +231,7 @@ service BeaconChain {
       returns (ValidatorPerformanceResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validators/performance"
+      get : "/sila/v1alpha1/validators/performance"
     };
   }
 
@@ -244,7 +244,7 @@ service BeaconChain {
       returns (ValidatorAssignments) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validators/assignments"
+      get : "/sila/v1alpha1/validators/assignments"
     };
   }
 
@@ -257,7 +257,7 @@ service BeaconChain {
       returns (ValidatorParticipationResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validators/participation"
+      get : "/sila/v1alpha1/validators/participation"
     };
   }
 
@@ -265,7 +265,7 @@ service BeaconChain {
   rpc GetBeaconConfig(google.protobuf.Empty) returns (BeaconConfig) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/config"
+      get : "/sila/v1alpha1/beacon/config"
     };
   }
 
@@ -274,7 +274,7 @@ service BeaconChain {
       returns (SubmitSlashingResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/slashings/attester/submit"
+      get : "/sila/v1alpha1/beacon/slashings/attester/submit"
     };
   }
 
@@ -283,7 +283,7 @@ service BeaconChain {
       returns (SubmitSlashingResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/slashings/attester/submit_electra"
+      get : "/sila/v1alpha1/beacon/slashings/attester/submit_electra"
     };
   }
 
@@ -292,7 +292,7 @@ service BeaconChain {
       returns (SubmitSlashingResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/slashings/proposer/submit"
+      get : "/sila/v1alpha1/beacon/slashings/proposer/submit"
     };
   }
 
@@ -301,7 +301,7 @@ service BeaconChain {
       returns (IndividualVotesRespond) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/beacon/individual_votes"
+      get : "/sila/v1alpha1/beacon/individual_votes"
     };
   }
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -51,7 +51,7 @@ var ErrCouldNotVerifyBlockHeader = errors.New("could not verify beacon block hea
 func ProcessProposerSlashings(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	slashings []*ethpb.ProposerSlashing,
+	slashings []*silapb.ProposerSlashing,
 	exitInfo *validators.ExitInfo,
 ) (state.BeaconState, error) {
 	ctx, span := trace.StartSpan(ctx, "blocks.ProcessProposerSlashings")
@@ -78,7 +78,7 @@ func ProcessProposerSlashings(
 func ProcessProposerSlashingsNoVerify(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	slashings []*ethpb.ProposerSlashing,
+	slashings []*silapb.ProposerSlashing,
 	exitInfo *validators.ExitInfo,
 ) (state.BeaconState, error) {
 	if exitInfo == nil && len(slashings) > 0 {
@@ -98,7 +98,7 @@ func ProcessProposerSlashingsNoVerify(
 func ProcessProposerSlashing(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	slashing *ethpb.ProposerSlashing,
+	slashing *silapb.ProposerSlashing,
 	exitInfo *validators.ExitInfo,
 ) (state.BeaconState, error) {
 	if slashing == nil {
@@ -116,7 +116,7 @@ func ProcessProposerSlashing(
 func ProcessProposerSlashingNoVerify(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	slashing *ethpb.ProposerSlashing,
+	slashing *silapb.ProposerSlashing,
 	exitInfo *validators.ExitInfo,
 ) (state.BeaconState, error) {
 	if slashing == nil {
@@ -128,7 +128,7 @@ func ProcessProposerSlashingNoVerify(
 func processProposerSlashing(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	slashing *ethpb.ProposerSlashing,
+	slashing *silapb.ProposerSlashing,
 	exitInfo *validators.ExitInfo,
 ) (state.BeaconState, error) {
 	if exitInfo == nil {
@@ -154,7 +154,7 @@ func processProposerSlashing(
 // VerifyProposerSlashing verifies that the data provided from slashing is valid.
 func VerifyProposerSlashing(
 	beaconState state.ReadOnlyBeaconState,
-	slashing *ethpb.ProposerSlashing,
+	slashing *silapb.ProposerSlashing,
 ) error {
 	if slashing.Header_1 == nil || slashing.Header_1.Header == nil || slashing.Header_2 == nil || slashing.Header_2.Header == nil {
 		return errors.New("nil header cannot be verified")
@@ -177,7 +177,7 @@ func VerifyProposerSlashing(
 	if !helpers.IsSlashableValidatorUsingTrie(proposer, time.CurrentEpoch(beaconState)) {
 		return fmt.Errorf("validator with key %#x is not slashable", proposer.PublicKey())
 	}
-	headers := []*ethpb.SignedBeaconBlockHeader{slashing.Header_1, slashing.Header_2}
+	headers := []*silapb.SignedBeaconBlockHeader{slashing.Header_1, slashing.Header_2}
 	for _, header := range headers {
 		if err := signing.ComputeDomainVerifySigningRoot(beaconState, pIdx, slots.ToEpoch(hSlot),
 			header.Header, params.BeaconConfig().DomainBeaconProposer, header.Signature); err != nil {

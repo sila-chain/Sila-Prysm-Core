@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -28,13 +28,13 @@ func TestValidatorStatus_Active(t *testing.T) {
 
 	pubkey := generatePubkey(1)
 
-	depData := &ethpb.Deposit_Data{
+	depData := &silapb.Deposit_Data{
 		PublicKey:             pubkey,
 		Signature:             bytesutil.PadTo([]byte("hi"), 96),
 		WithdrawalCredentials: bytesutil.PadTo([]byte("hey"), 32),
 	}
 
-	deposit := &ethpb.Deposit{
+	deposit := &silapb.Deposit{
 		Data: depData,
 	}
 	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
@@ -53,10 +53,10 @@ func TestValidatorStatus_Active(t *testing.T) {
 	genesisRoot, err := block.Block.HashTreeRoot()
 	require.NoError(t, err, "Could not get signing root")
 
-	st := &ethpb.BeaconState{
+	st := &silapb.BeaconState{
 		GenesisTime: uint64(time.Unix(0, 0).Unix()),
 		Slot:        10000,
-		Validators: []*ethpb.Validator{{
+		Validators: []*silapb.Validator{{
 			ActivationEpoch:   activeEpoch,
 			ExitEpoch:         params.BeaconConfig().FarFutureEpoch,
 			WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
@@ -78,14 +78,14 @@ func TestValidatorStatus_Active(t *testing.T) {
 		DepositFetcher:    depositCache,
 		HeadFetcher:       &mockChain.ChainService{State: stateObj, Root: genesisRoot[:]},
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pubkey,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
 
-	expected := &ethpb.ValidatorStatusResponse{
-		Status:          ethpb.ValidatorStatus_ACTIVE,
+	expected := &silapb.ValidatorStatusResponse{
+		Status:          silapb.ValidatorStatus_ACTIVE,
 		ActivationEpoch: 5,
 	}
 	if !proto.Equal(resp, expected) {

@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
 	v11 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -181,7 +181,7 @@ func (l *TestLightClient) setupTestAltair() *TestLightClient {
 		// Set the finalized checkpoint
 		finalizedBlockRoot, err := signedFinalizedBlock.Block().HashTreeRoot()
 		require.NoError(l.T, err)
-		finalizedCheckpoint := &ethpb.Checkpoint{
+		finalizedCheckpoint := &silapb.Checkpoint{
 			Epoch: slots.ToEpoch(finalizedSlot),
 			Root:  finalizedBlockRoot[:],
 		}
@@ -322,7 +322,7 @@ func (l *TestLightClient) setupTestBellatrix() *TestLightClient {
 		// Set the finalized checkpoint
 		finalizedBlockRoot, err := signedFinalizedBlock.Block().HashTreeRoot()
 		require.NoError(l.T, err)
-		finalizedCheckpoint := &ethpb.Checkpoint{
+		finalizedCheckpoint := &silapb.Checkpoint{
 			Epoch: slots.ToEpoch(finalizedSlot),
 			Root:  finalizedBlockRoot[:],
 		}
@@ -498,7 +498,7 @@ func (l *TestLightClient) setupTestCapella() *TestLightClient {
 		// Set the finalized checkpoint
 		finalizedBlockRoot, err := signedFinalizedBlock.Block().HashTreeRoot()
 		require.NoError(l.T, err)
-		finalizedCheckpoint := &ethpb.Checkpoint{
+		finalizedCheckpoint := &silapb.Checkpoint{
 			Epoch: slots.ToEpoch(finalizedSlot),
 			Root:  finalizedBlockRoot[:],
 		}
@@ -676,7 +676,7 @@ func (l *TestLightClient) setupTestDeneb() *TestLightClient {
 		// Set the finalized checkpoint
 		finalizedBlockRoot, err := signedFinalizedBlock.Block().HashTreeRoot()
 		require.NoError(l.T, err)
-		finalizedCheckpoint := &ethpb.Checkpoint{
+		finalizedCheckpoint := &silapb.Checkpoint{
 			Epoch: slots.ToEpoch(finalizedSlot),
 			Root:  finalizedBlockRoot[:],
 		}
@@ -854,7 +854,7 @@ func (l *TestLightClient) setupTestElectra() *TestLightClient {
 		// Set the finalized checkpoint
 		finalizedBlockRoot, err := signedFinalizedBlock.Block().HashTreeRoot()
 		require.NoError(l.T, err)
-		finalizedCheckpoint := &ethpb.Checkpoint{
+		finalizedCheckpoint := &silapb.Checkpoint{
 			Epoch: slots.ToEpoch(finalizedSlot),
 			Root:  finalizedBlockRoot[:],
 		}
@@ -1032,7 +1032,7 @@ func (l *TestLightClient) setupTestFulu() *TestLightClient {
 		// Set the finalized checkpoint
 		finalizedBlockRoot, err := signedFinalizedBlock.Block().HashTreeRoot()
 		require.NoError(l.T, err)
-		finalizedCheckpoint := &ethpb.Checkpoint{
+		finalizedCheckpoint := &silapb.Checkpoint{
 			Epoch: slots.ToEpoch(finalizedSlot),
 			Root:  finalizedBlockRoot[:],
 		}
@@ -1257,7 +1257,7 @@ func (l *TestLightClient) CheckAttestedHeader(header interfaces.LightClientHeade
 	}
 }
 
-func (l *TestLightClient) CheckSyncAggregate(sa *ethpb.SyncAggregate) {
+func (l *TestLightClient) CheckSyncAggregate(sa *silapb.SyncAggregate) {
 	syncAggregate, err := l.Block.Block().Body().SyncAggregate()
 	require.NoError(l.T, err)
 	require.DeepSSZEqual(l.T, syncAggregate.SyncCommitteeBits, sa.SyncCommitteeBits, "SyncAggregate bits is not equal")
@@ -1265,16 +1265,16 @@ func (l *TestLightClient) CheckSyncAggregate(sa *ethpb.SyncAggregate) {
 }
 
 func MockOptimisticUpdate() (interfaces.LightClientOptimisticUpdate, error) {
-	pbUpdate := &ethpb.LightClientOptimisticUpdateAltair{
-		AttestedHeader: &ethpb.LightClientHeaderAltair{
-			Beacon: &ethpb.BeaconBlockHeader{
+	pbUpdate := &silapb.LightClientOptimisticUpdateAltair{
+		AttestedHeader: &silapb.LightClientHeaderAltair{
+			Beacon: &silapb.BeaconBlockHeader{
 				Slot:       primitives.Slot(32),
 				ParentRoot: make([]byte, 32),
 				StateRoot:  make([]byte, 32),
 				BodyRoot:   make([]byte, 32),
 			},
 		},
-		SyncAggregate: &ethpb.SyncAggregate{
+		SyncAggregate: &silapb.SyncAggregate{
 			SyncCommitteeBits:      make([]byte, 64),
 			SyncCommitteeSignature: make([]byte, 96),
 		},
@@ -1289,9 +1289,9 @@ func MockFinalityUpdate() (interfaces.LightClientFinalityUpdate, error) {
 		finalityBranch[i] = make([]byte, 32)
 	}
 
-	pbUpdate := &ethpb.LightClientFinalityUpdateAltair{
-		FinalizedHeader: &ethpb.LightClientHeaderAltair{
-			Beacon: &ethpb.BeaconBlockHeader{
+	pbUpdate := &silapb.LightClientFinalityUpdateAltair{
+		FinalizedHeader: &silapb.LightClientHeaderAltair{
+			Beacon: &silapb.BeaconBlockHeader{
 				Slot:       primitives.Slot(31),
 				ParentRoot: make([]byte, 32),
 				StateRoot:  make([]byte, 32),
@@ -1299,15 +1299,15 @@ func MockFinalityUpdate() (interfaces.LightClientFinalityUpdate, error) {
 			},
 		},
 		FinalityBranch: finalityBranch,
-		AttestedHeader: &ethpb.LightClientHeaderAltair{
-			Beacon: &ethpb.BeaconBlockHeader{
+		AttestedHeader: &silapb.LightClientHeaderAltair{
+			Beacon: &silapb.BeaconBlockHeader{
 				Slot:       primitives.Slot(32),
 				ParentRoot: make([]byte, 32),
 				StateRoot:  make([]byte, 32),
 				BodyRoot:   make([]byte, 32),
 			},
 		},
-		SyncAggregate: &ethpb.SyncAggregate{
+		SyncAggregate: &silapb.SyncAggregate{
 			SyncCommitteeBits:      make([]byte, 64),
 			SyncCommitteeSignature: make([]byte, 96),
 		},

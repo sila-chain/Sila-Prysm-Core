@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	attaggregation "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
@@ -31,7 +31,7 @@ import (
 func TestSubmitAggregateAndProof_Syncing(t *testing.T) {
 	ctx := t.Context()
 
-	s, err := state_native.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{})
+	s, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{})
 	require.NoError(t, err)
 
 	aggregatorServer := &Server{
@@ -39,7 +39,7 @@ func TestSubmitAggregateAndProof_Syncing(t *testing.T) {
 		SyncChecker: &mockSync.Sync{IsSyncing: true},
 	}
 
-	req := &ethpb.AggregateSelectionRequest{CommitteeIndex: 1}
+	req := &silapb.AggregateSelectionRequest{CommitteeIndex: 1}
 	wanted := "Syncing to latest head, not ready to respond"
 	_, err = aggregatorServer.SubmitAggregateSelectionProof(ctx, req)
 	assert.ErrorContains(t, wanted, err)
@@ -48,7 +48,7 @@ func TestSubmitAggregateAndProof_Syncing(t *testing.T) {
 func TestSubmitAggregateAndProof_CantFindValidatorIndex(t *testing.T) {
 	ctx := t.Context()
 
-	s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
 	require.NoError(t, err)
@@ -62,7 +62,7 @@ func TestSubmitAggregateAndProof_CantFindValidatorIndex(t *testing.T) {
 	priv, err := bls.RandKey()
 	require.NoError(t, err)
 	sig := priv.Sign([]byte{'A'})
-	req := &ethpb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey(3)}
+	req := &silapb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey(3)}
 	wanted := "Could not locate validator index in DB"
 	_, err = server.SubmitAggregateSelectionProof(ctx, req)
 	assert.ErrorContains(t, wanted, err)
@@ -71,9 +71,9 @@ func TestSubmitAggregateAndProof_CantFindValidatorIndex(t *testing.T) {
 func TestSubmitAggregateAndProof_IsAggregatorAndNoAtts(t *testing.T) {
 	ctx := t.Context()
 
-	s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{PublicKey: pubKey(0), ExitEpoch: params.BeaconConfig().FarFutureEpoch},
 			{PublicKey: pubKey(1), ExitEpoch: params.BeaconConfig().FarFutureEpoch},
 		},
@@ -93,7 +93,7 @@ func TestSubmitAggregateAndProof_IsAggregatorAndNoAtts(t *testing.T) {
 	v, err := s.ValidatorAtIndex(1)
 	require.NoError(t, err)
 	pubKey := v.PublicKey
-	req := &ethpb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
+	req := &silapb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
 
 	_, err = server.SubmitAggregateSelectionProof(ctx, req)
 	assert.ErrorContains(t, "Could not find attestation for slot and committee in pool", err)
@@ -127,7 +127,7 @@ func TestSubmitAggregateAndProof_UnaggregateOk(t *testing.T) {
 	v, err := beaconState.ValidatorAtIndex(1)
 	require.NoError(t, err)
 	pubKey := v.PublicKey
-	req := &ethpb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
+	req := &silapb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
 
 	require.NoError(t, aggregatorServer.AttPool.SaveUnaggregatedAttestation(att0))
 	_, err = aggregatorServer.SubmitAggregateSelectionProof(ctx, req)
@@ -165,7 +165,7 @@ func TestSubmitAggregateAndProof_AggregateOk(t *testing.T) {
 	v, err := beaconState.ValidatorAtIndex(1)
 	require.NoError(t, err)
 	pubKey := v.PublicKey
-	req := &ethpb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
+	req := &silapb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
 
 	require.NoError(t, aggregatorServer.AttPool.SaveAggregatedAttestation(att0))
 	require.NoError(t, aggregatorServer.AttPool.SaveAggregatedAttestation(att1))
@@ -205,7 +205,7 @@ func TestSubmitAggregateAndProof_AggregateNotOk(t *testing.T) {
 	v, err := beaconState.ValidatorAtIndex(1)
 	require.NoError(t, err)
 	pubKey := v.PublicKey
-	req := &ethpb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
+	req := &silapb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
 
 	_, err = aggregatorServer.SubmitAggregateSelectionProof(ctx, req)
 	assert.ErrorContains(t, "Could not find attestation for slot and committee in pool", err)
@@ -214,12 +214,12 @@ func TestSubmitAggregateAndProof_AggregateNotOk(t *testing.T) {
 	assert.Equal(t, 0, len(aggregatedAtts), "Wanted aggregated attestation")
 }
 
-func generateAtt(state state.ReadOnlyBeaconState, index uint64, privKeys []bls.SecretKey) (*ethpb.Attestation, error) {
+func generateAtt(state state.ReadOnlyBeaconState, index uint64, privKeys []bls.SecretKey) (*silapb.Attestation, error) {
 	aggBits := bitfield.NewBitlist(4)
 	aggBits.SetBitAt(index, true)
 	aggBits.SetBitAt(index+1, true)
-	att := util.HydrateAttestation(&ethpb.Attestation{
-		Data:            &ethpb.AttestationData{CommitteeIndex: 1},
+	att := util.HydrateAttestation(&silapb.Attestation{
+		Data:            &silapb.AttestationData{CommitteeIndex: 1},
 		AggregationBits: aggBits,
 	})
 	committee, err := helpers.BeaconCommitteeFromState(context.TODO(), state, att.Data.Slot, att.Data.CommitteeIndex)
@@ -252,11 +252,11 @@ func generateAtt(state state.ReadOnlyBeaconState, index uint64, privKeys []bls.S
 	return att, nil
 }
 
-func generateUnaggregatedAtt(state state.ReadOnlyBeaconState, index uint64, privKeys []bls.SecretKey) (*ethpb.Attestation, error) {
+func generateUnaggregatedAtt(state state.ReadOnlyBeaconState, index uint64, privKeys []bls.SecretKey) (*silapb.Attestation, error) {
 	aggBits := bitfield.NewBitlist(4)
 	aggBits.SetBitAt(index, true)
-	att := util.HydrateAttestation(&ethpb.Attestation{
-		Data: &ethpb.AttestationData{
+	att := util.HydrateAttestation(&silapb.Attestation{
+		Data: &silapb.AttestationData{
 			CommitteeIndex: 1,
 		},
 		AggregationBits: aggBits,
@@ -334,9 +334,9 @@ func TestSubmitAggregateAndProof_PreferOwnAttestation(t *testing.T) {
 	v, err := beaconState.ValidatorAtIndex(1)
 	require.NoError(t, err)
 	pubKey := v.PublicKey
-	req := &ethpb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
+	req := &silapb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
 
-	err = aggregatorServer.AttPool.SaveAggregatedAttestations([]ethpb.Att{
+	err = aggregatorServer.AttPool.SaveAggregatedAttestations([]silapb.Att{
 		att0,
 		att1,
 		att2,
@@ -385,9 +385,9 @@ func TestSubmitAggregateAndProof_SelectsMostBitsWhenOwnAttestationNotPresent(t *
 	v, err := beaconState.ValidatorAtIndex(1)
 	require.NoError(t, err)
 	pubKey := v.PublicKey
-	req := &ethpb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
+	req := &silapb.AggregateSelectionRequest{CommitteeIndex: 1, SlotSignature: sig.Marshal(), PublicKey: pubKey}
 
-	err = aggregatorServer.AttPool.SaveAggregatedAttestations([]ethpb.Att{
+	err = aggregatorServer.AttPool.SaveAggregatedAttestations([]silapb.Att{
 		att0,
 		att1,
 	})
@@ -404,12 +404,12 @@ func TestSubmitSignedAggregateSelectionProof_ZeroHashesSignatures(t *testing.T) 
 			GenesisTimeFetcher: &mock.ChainService{Genesis: time.Now()},
 		},
 	}
-	req := &ethpb.SignedAggregateSubmitRequest{
-		SignedAggregateAndProof: &ethpb.SignedAggregateAttestationAndProof{
+	req := &silapb.SignedAggregateSubmitRequest{
+		SignedAggregateAndProof: &silapb.SignedAggregateAttestationAndProof{
 			Signature: make([]byte, fieldparams.BLSSignatureLength),
-			Message: &ethpb.AggregateAttestationAndProof{
-				Aggregate: &ethpb.Attestation{
-					Data: &ethpb.AttestationData{},
+			Message: &silapb.AggregateAttestationAndProof{
+				Aggregate: &silapb.Attestation{
+					Data: &silapb.AttestationData{},
 				},
 			},
 		},
@@ -417,12 +417,12 @@ func TestSubmitSignedAggregateSelectionProof_ZeroHashesSignatures(t *testing.T) 
 	_, err := aggregatorServer.SubmitSignedAggregateSelectionProof(t.Context(), req)
 	require.ErrorContains(t, "signed signatures can't be zero hashes", err)
 
-	req = &ethpb.SignedAggregateSubmitRequest{
-		SignedAggregateAndProof: &ethpb.SignedAggregateAttestationAndProof{
+	req = &silapb.SignedAggregateSubmitRequest{
+		SignedAggregateAndProof: &silapb.SignedAggregateAttestationAndProof{
 			Signature: []byte{'a'},
-			Message: &ethpb.AggregateAttestationAndProof{
-				Aggregate: &ethpb.Attestation{
-					Data: &ethpb.AttestationData{},
+			Message: &silapb.AggregateAttestationAndProof{
+				Aggregate: &silapb.Attestation{
+					Data: &silapb.AttestationData{},
 				},
 				SelectionProof: make([]byte, fieldparams.BLSSignatureLength),
 			},
@@ -439,13 +439,13 @@ func TestSubmitSignedAggregateSelectionProof_InvalidSlot(t *testing.T) {
 			GenesisTimeFetcher: c,
 		},
 	}
-	req := &ethpb.SignedAggregateSubmitRequest{
-		SignedAggregateAndProof: &ethpb.SignedAggregateAttestationAndProof{
+	req := &silapb.SignedAggregateSubmitRequest{
+		SignedAggregateAndProof: &silapb.SignedAggregateAttestationAndProof{
 			Signature: []byte{'a'},
-			Message: &ethpb.AggregateAttestationAndProof{
+			Message: &silapb.AggregateAttestationAndProof{
 				SelectionProof: []byte{'a'},
-				Aggregate: &ethpb.Attestation{
-					Data: &ethpb.AttestationData{Slot: 1000},
+				Aggregate: &silapb.Attestation{
+					Data: &silapb.AttestationData{Slot: 1000},
 				},
 			},
 		},
@@ -465,12 +465,12 @@ func TestSubmitSignedAggregateSelectionProofElectra_ZeroHashesSignatures(t *test
 			GenesisTimeFetcher: &mock.ChainService{Genesis: time.Now()},
 		},
 	}
-	req := &ethpb.SignedAggregateSubmitElectraRequest{
-		SignedAggregateAndProof: &ethpb.SignedAggregateAttestationAndProofElectra{
+	req := &silapb.SignedAggregateSubmitElectraRequest{
+		SignedAggregateAndProof: &silapb.SignedAggregateAttestationAndProofElectra{
 			Signature: make([]byte, fieldparams.BLSSignatureLength),
-			Message: &ethpb.AggregateAttestationAndProofElectra{
-				Aggregate: &ethpb.AttestationElectra{
-					Data: &ethpb.AttestationData{},
+			Message: &silapb.AggregateAttestationAndProofElectra{
+				Aggregate: &silapb.AttestationElectra{
+					Data: &silapb.AttestationData{},
 				},
 			},
 		},
@@ -478,12 +478,12 @@ func TestSubmitSignedAggregateSelectionProofElectra_ZeroHashesSignatures(t *test
 	_, err := aggregatorServer.SubmitSignedAggregateSelectionProofElectra(t.Context(), req)
 	require.ErrorContains(t, "signed signatures can't be zero hashes", err)
 
-	req = &ethpb.SignedAggregateSubmitElectraRequest{
-		SignedAggregateAndProof: &ethpb.SignedAggregateAttestationAndProofElectra{
+	req = &silapb.SignedAggregateSubmitElectraRequest{
+		SignedAggregateAndProof: &silapb.SignedAggregateAttestationAndProofElectra{
 			Signature: []byte{'a'},
-			Message: &ethpb.AggregateAttestationAndProofElectra{
-				Aggregate: &ethpb.AttestationElectra{
-					Data: &ethpb.AttestationData{},
+			Message: &silapb.AggregateAttestationAndProofElectra{
+				Aggregate: &silapb.AttestationElectra{
+					Data: &silapb.AttestationData{},
 				},
 				SelectionProof: make([]byte, fieldparams.BLSSignatureLength),
 			},
@@ -505,13 +505,13 @@ func TestSubmitSignedAggregateSelectionProofElectra_InvalidSlot(t *testing.T) {
 			GenesisTimeFetcher: c,
 		},
 	}
-	req := &ethpb.SignedAggregateSubmitElectraRequest{
-		SignedAggregateAndProof: &ethpb.SignedAggregateAttestationAndProofElectra{
+	req := &silapb.SignedAggregateSubmitElectraRequest{
+		SignedAggregateAndProof: &silapb.SignedAggregateAttestationAndProofElectra{
 			Signature: []byte{'a'},
-			Message: &ethpb.AggregateAttestationAndProofElectra{
+			Message: &silapb.AggregateAttestationAndProofElectra{
 				SelectionProof: []byte{'a'},
-				Aggregate: &ethpb.AttestationElectra{
-					Data: &ethpb.AttestationData{Slot: 1000},
+				Aggregate: &silapb.AttestationElectra{
+					Data: &silapb.AttestationData{Slot: 1000},
 				},
 			},
 		},
@@ -523,33 +523,33 @@ func TestSubmitSignedAggregateSelectionProofElectra_InvalidSlot(t *testing.T) {
 func Test_bestAggregate(t *testing.T) {
 	type testCase struct {
 		name string
-		atts []*ethpb.Attestation
-		best *ethpb.Attestation
+		atts []*silapb.Attestation
+		best *silapb.Attestation
 	}
 
 	var testCases []testCase
 
 	tc := testCase{
 		name: "single attestation",
-		atts: []*ethpb.Attestation{{}},
+		atts: []*silapb.Attestation{{}},
 	}
 	tc.best = tc.atts[0]
 	testCases = append(testCases, tc)
 
 	tc = testCase{
 		name: "choose attestation with most aggregation bits",
-		atts: []*ethpb.Attestation{
+		atts: []*silapb.Attestation{
 			{
 				AggregationBits: bitfield.Bitlist{0b10001},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 0},
+				Data:            &silapb.AttestationData{CommitteeIndex: 0},
 			},
 			{
 				AggregationBits: bitfield.Bitlist{0b11111},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 0},
+				Data:            &silapb.AttestationData{CommitteeIndex: 0},
 			},
 			{
 				AggregationBits: bitfield.Bitlist{0b10101},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 0},
+				Data:            &silapb.AttestationData{CommitteeIndex: 0},
 			},
 		},
 	}
@@ -558,18 +558,18 @@ func Test_bestAggregate(t *testing.T) {
 
 	tc = testCase{
 		name: "do not choose attestation with other committee index",
-		atts: []*ethpb.Attestation{
+		atts: []*silapb.Attestation{
 			{
 				AggregationBits: bitfield.Bitlist{0b10001},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 0},
+				Data:            &silapb.AttestationData{CommitteeIndex: 0},
 			},
 			{
 				AggregationBits: bitfield.Bitlist{0b11111},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 1},
+				Data:            &silapb.AttestationData{CommitteeIndex: 1},
 			},
 			{
 				AggregationBits: bitfield.Bitlist{0b10101},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 0},
+				Data:            &silapb.AttestationData{CommitteeIndex: 0},
 			},
 		},
 	}
@@ -578,18 +578,18 @@ func Test_bestAggregate(t *testing.T) {
 
 	tc = testCase{
 		name: "do not choose attestation with other index in committee",
-		atts: []*ethpb.Attestation{
+		atts: []*silapb.Attestation{
 			{
 				AggregationBits: bitfield.Bitlist{0b10001},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 0},
+				Data:            &silapb.AttestationData{CommitteeIndex: 0},
 			},
 			{
 				AggregationBits: bitfield.Bitlist{0b11110},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 0},
+				Data:            &silapb.AttestationData{CommitteeIndex: 0},
 			},
 			{
 				AggregationBits: bitfield.Bitlist{0b10101},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 0},
+				Data:            &silapb.AttestationData{CommitteeIndex: 0},
 			},
 		},
 	}
@@ -598,18 +598,18 @@ func Test_bestAggregate(t *testing.T) {
 
 	tc = testCase{
 		name: "no attestation with correct index in committee - choose max att bits",
-		atts: []*ethpb.Attestation{
+		atts: []*silapb.Attestation{
 			{
 				AggregationBits: bitfield.Bitlist{0b11000},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 0},
+				Data:            &silapb.AttestationData{CommitteeIndex: 0},
 			},
 			{
 				AggregationBits: bitfield.Bitlist{0b11110},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 0},
+				Data:            &silapb.AttestationData{CommitteeIndex: 0},
 			},
 			{
 				AggregationBits: bitfield.Bitlist{0b10110},
-				Data:            &ethpb.AttestationData{CommitteeIndex: 0},
+				Data:            &silapb.AttestationData{CommitteeIndex: 0},
 			},
 		},
 	}

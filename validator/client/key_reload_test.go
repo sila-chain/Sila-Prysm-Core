@@ -5,7 +5,7 @@ import (
 	"time"
 
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	validatormock "github.com/sila-chain/Sila-Consensus-Core/v7/testing/validator-mock"
@@ -38,11 +38,11 @@ func TestValidator_HandleKeyReload(t *testing.T) {
 		}
 
 		resp := testutil.GenerateMultipleValidatorStatusResponse([][]byte{inactive.pub[:], active.pub[:]})
-		resp.Statuses[0].Status = ethpb.ValidatorStatus_UNKNOWN_STATUS
-		resp.Statuses[1].Status = ethpb.ValidatorStatus_ACTIVE
+		resp.Statuses[0].Status = silapb.ValidatorStatus_UNKNOWN_STATUS
+		resp.Statuses[1].Status = silapb.ValidatorStatus_ACTIVE
 		client.EXPECT().MultipleValidatorStatus(
 			gomock.Any(),
-			&ethpb.MultipleValidatorStatusRequest{
+			&silapb.MultipleValidatorStatusRequest{
 				PublicKeys: [][]byte{inactive.pub[:], active.pub[:]},
 			},
 		).Return(resp, nil)
@@ -71,10 +71,10 @@ func TestValidator_HandleKeyReload(t *testing.T) {
 		}
 
 		resp := testutil.GenerateMultipleValidatorStatusResponse([][]byte{kp.pub[:]})
-		resp.Statuses[0].Status = ethpb.ValidatorStatus_UNKNOWN_STATUS
+		resp.Statuses[0].Status = silapb.ValidatorStatus_UNKNOWN_STATUS
 		client.EXPECT().MultipleValidatorStatus(
 			gomock.Any(),
-			&ethpb.MultipleValidatorStatusRequest{
+			&silapb.MultipleValidatorStatusRequest{
 				PublicKeys: [][]byte{kp.pub[:]},
 			},
 		).Return(resp, nil)
@@ -98,7 +98,7 @@ func TestValidator_HandleKeyReload(t *testing.T) {
 
 		client.EXPECT().MultipleValidatorStatus(
 			gomock.Any(),
-			&ethpb.MultipleValidatorStatusRequest{
+			&silapb.MultipleValidatorStatusRequest{
 				PublicKeys: [][]byte{kp.pub[:]},
 			},
 		).Return(nil, errors.New("error"))

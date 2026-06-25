@@ -27,7 +27,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -149,7 +149,7 @@ func TestValidateExecutionPayloadEnvelope_GossipEvent(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, pubsub.ValidationAccept, result)
 
-		signed, ok := msg.ValidatorData.(*ethpb.SignedExecutionPayloadEnvelope)
+		signed, ok := msg.ValidatorData.(*silapb.SignedExecutionPayloadEnvelope)
 		require.Equal(t, true, ok)
 
 		select {
@@ -182,7 +182,7 @@ func TestValidateExecutionPayloadEnvelope_GossipEvent(t *testing.T) {
 
 func TestExecutionPayloadEnvelopeSubscriber_WrongMessage(t *testing.T) {
 	s := &Service{cfg: &config{}}
-	err := s.executionPayloadEnvelopeSubscriber(context.Background(), &ethpb.BeaconBlock{})
+	err := s.executionPayloadEnvelopeSubscriber(context.Background(), &silapb.BeaconBlock{})
 	require.ErrorIs(t, errWrongMessage, err)
 }
 
@@ -260,13 +260,13 @@ func setupExecutionPayloadEnvelopeService(t *testing.T, envelopeSlot, blockSlot 
 	p := p2ptest.NewTestP2P(t)
 	chainService := &mock.ChainService{
 		Genesis:             time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{},
+		FinalizedCheckPoint: &silapb.Checkpoint{},
 		DB:                  db,
 	}
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	s := &Service{
 		seenPayloadEnvelopeCache: lruwrpr.New(10),
-		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 		cfg: &config{
 			p2p:               p,
 			initialSync:       &mockSync.Sync{},
@@ -300,14 +300,14 @@ func setupExecutionPayloadEnvelopeService(t *testing.T, envelopeSlot, blockSlot 
 	return s, msg, primitives.BuilderIndex(bid.Message.BuilderIndex), root
 }
 
-func envelopeToPubsub(t *testing.T, s *Service, p p2p.P2P, env *ethpb.SignedExecutionPayloadEnvelope) *pubsub.Message {
+func envelopeToPubsub(t *testing.T, s *Service, p p2p.P2P, env *silapb.SignedExecutionPayloadEnvelope) *pubsub.Message {
 	t.Helper()
 
 	buf := new(bytes.Buffer)
 	_, err := p.Encoding().EncodeGossip(buf, env)
 	require.NoError(t, err)
 
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedExecutionPayloadEnvelope]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedExecutionPayloadEnvelope]()]
 	digest, err := s.currentForkDigest()
 	require.NoError(t, err)
 	topic = s.addDigestToTopic(topic, digest)
@@ -345,7 +345,7 @@ func TestQueuePendingPayloadEnvelope_SelfBuildInvalidSignature(t *testing.T) {
 			p := p2ptest.NewTestP2P(t)
 			chainService := &mock.ChainService{
 				Genesis:             time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
-				FinalizedCheckPoint: &ethpb.Checkpoint{},
+				FinalizedCheckPoint: &silapb.Checkpoint{},
 			}
 			st, err := util.NewBeaconStateFulu()
 			require.NoError(t, err)
@@ -353,7 +353,7 @@ func TestQueuePendingPayloadEnvelope_SelfBuildInvalidSignature(t *testing.T) {
 
 			s := &Service{
 				seenPayloadEnvelopeCache: lruwrpr.New(10),
-				pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+				pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 				cfg: &config{
 					p2p:         p,
 					initialSync: &mockSync.Sync{},
@@ -382,7 +382,7 @@ func TestQueuePendingPayloadEnvelope_SelfBuildInvalidSignature(t *testing.T) {
 	}
 }
 
-func testSignedExecutionPayloadEnvelope(t *testing.T, slot primitives.Slot, builderIdx primitives.BuilderIndex, root, blockHash [32]byte) *ethpb.SignedExecutionPayloadEnvelope {
+func testSignedExecutionPayloadEnvelope(t *testing.T, slot primitives.Slot, builderIdx primitives.BuilderIndex, root, blockHash [32]byte) *silapb.SignedExecutionPayloadEnvelope {
 	t.Helper()
 
 	payload := &enginev1.ExecutionPayloadGloas{
@@ -405,8 +405,8 @@ func testSignedExecutionPayloadEnvelope(t *testing.T, slot primitives.Slot, buil
 		SlotNumber:    slot,
 	}
 
-	return &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+	return &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload: payload,
 			ExecutionRequests: &enginev1.ExecutionRequests{
 				Deposits: []*enginev1.DepositRequest{},

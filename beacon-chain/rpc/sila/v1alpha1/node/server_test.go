@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/testutil"
 	mockSync "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync/initial-sync/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -85,7 +85,7 @@ func TestNodeServer_GetImplementedServices(t *testing.T) {
 	ns := &Server{
 		Server: server,
 	}
-	ethpb.RegisterNodeServer(server, ns)
+	silapb.RegisterNodeServer(server, ns)
 	reflection.Register(server)
 
 	res, err := ns.ListImplementedServices(t.Context(), &emptypb.Empty{})
@@ -111,7 +111,7 @@ func TestNodeServer_GetHost(t *testing.T) {
 		PeerManager:  &mockP2p.MockPeerManager{BHost: mP2P.BHost, Enr: record, PID: mP2P.BHost.ID()},
 		PeersFetcher: peersProvider,
 	}
-	ethpb.RegisterNodeServer(server, ns)
+	silapb.RegisterNodeServer(server, ns)
 	reflection.Register(server)
 	h, err := ns.GetHost(t.Context(), &emptypb.Empty{})
 	require.NoError(t, err)
@@ -125,14 +125,14 @@ func TestNodeServer_GetPeer(t *testing.T) {
 	ns := &Server{
 		PeersFetcher: peersProvider,
 	}
-	ethpb.RegisterNodeServer(server, ns)
+	silapb.RegisterNodeServer(server, ns)
 	reflection.Register(server)
 
-	res, err := ns.GetPeer(t.Context(), &ethpb.PeerRequest{PeerId: mockP2p.MockRawPeerId0})
+	res, err := ns.GetPeer(t.Context(), &silapb.PeerRequest{PeerId: mockP2p.MockRawPeerId0})
 	require.NoError(t, err)
 	assert.Equal(t, "16Uiu2HAkyWZ4Ni1TpvDS8dPxsozmHY85KaiFjodQuV6Tz5tkHVeR" /* first peer's raw id */, res.PeerId, "Unexpected peer ID")
-	assert.Equal(t, int(ethpb.PeerDirection_INBOUND), int(res.Direction), "Expected 1st peer to be an inbound connection")
-	assert.Equal(t, int(ethpb.ConnectionState_CONNECTED), int(res.ConnectionState), "Expected peer to be connected")
+	assert.Equal(t, int(silapb.PeerDirection_INBOUND), int(res.Direction), "Expected 1st peer to be an inbound connection")
+	assert.Equal(t, int(silapb.ConnectionState_CONNECTED), int(res.ConnectionState), "Expected peer to be connected")
 }
 
 func TestNodeServer_ListPeers(t *testing.T) {
@@ -141,7 +141,7 @@ func TestNodeServer_ListPeers(t *testing.T) {
 	ns := &Server{
 		PeersFetcher: peersProvider,
 	}
-	ethpb.RegisterNodeServer(server, ns)
+	silapb.RegisterNodeServer(server, ns)
 	reflection.Register(server)
 
 	res, err := ns.ListPeers(t.Context(), &emptypb.Empty{})
@@ -149,8 +149,8 @@ func TestNodeServer_ListPeers(t *testing.T) {
 	assert.Equal(t, 2, len(res.Peers))
 
 	var (
-		firstPeer  *ethpb.Peer
-		secondPeer *ethpb.Peer
+		firstPeer  *silapb.Peer
+		secondPeer *silapb.Peer
 	)
 
 	for _, p := range res.Peers {
@@ -164,8 +164,8 @@ func TestNodeServer_ListPeers(t *testing.T) {
 
 	assert.NotNil(t, firstPeer)
 	assert.NotNil(t, secondPeer)
-	assert.Equal(t, int(ethpb.PeerDirection_INBOUND), int(firstPeer.Direction))
-	assert.Equal(t, int(ethpb.PeerDirection_OUTBOUND), int(secondPeer.Direction))
+	assert.Equal(t, int(silapb.PeerDirection_INBOUND), int(firstPeer.Direction))
+	assert.Equal(t, int(silapb.PeerDirection_OUTBOUND), int(secondPeer.Direction))
 }
 
 func TestNodeServer_GetETH1ConnectionStatus(t *testing.T) {
@@ -180,7 +180,7 @@ func TestNodeServer_GetETH1ConnectionStatus(t *testing.T) {
 	ns := &Server{
 		POWChainInfoFetcher: mockFetcher,
 	}
-	ethpb.RegisterNodeServer(server, ns)
+	silapb.RegisterNodeServer(server, ns)
 	reflection.Register(server)
 
 	res, err := ns.GetETH1ConnectionStatus(t.Context(), &emptypb.Empty{})
@@ -246,14 +246,14 @@ func TestNodeServer_GetHealth(t *testing.T) {
 				SyncChecker:           tt.input,
 				OptimisticModeFetcher: &mock.ChainService{Optimistic: tt.isOptimistic},
 			}
-			ethpb.RegisterNodeServer(server, ns)
+			silapb.RegisterNodeServer(server, ns)
 			reflection.Register(server)
 
 			// Create context with mock transport stream so grpc.SetHeader works
 			stream := &mockServerTransportStream{headers: make(map[string][]string)}
 			ctx := grpc.NewContextWithServerTransportStream(t.Context(), stream)
 
-			_, err := ns.GetHealth(ctx, &ethpb.HealthRequest{})
+			_, err := ns.GetHealth(ctx, &silapb.HealthRequest{})
 			if tt.wantedErr == "" {
 				require.NoError(t, err)
 				return

@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/golang/snappy"
 )
 
@@ -40,7 +40,7 @@ func Has(name string) bool {
 
 // load a compressed ssz state file into a beacon state struct.
 func load(b []byte) (state.BeaconState, error) {
-	st := &ethpb.BeaconState{}
+	st := &silapb.BeaconState{}
 	b, err := snappy.Decode(nil /*dst*/, b)
 	if err != nil {
 		return nil, err

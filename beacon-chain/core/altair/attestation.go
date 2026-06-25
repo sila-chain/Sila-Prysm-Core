@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/pkg/errors"
 )
@@ -55,7 +55,7 @@ func ProcessAttestationsNoVerifySignature(
 func ProcessAttestationNoVerifySignature(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	att ethpb.Att,
+	att silapb.Att,
 	totalBalance uint64,
 ) (state.BeaconState, error) {
 	ctx, span := trace.StartSpan(ctx, "altair.ProcessAttestationNoVerifySignature")
@@ -118,7 +118,7 @@ func SetParticipationAndRewardProposer(
 	indices []uint64,
 	participatedFlags map[uint8]bool,
 	totalBalance uint64,
-	att ethpb.Att) (state.BeaconState, error) {
+	att silapb.Att) (state.BeaconState, error) {
 	var proposerRewardNumerator uint64
 	currentEpoch := time.CurrentEpoch(beaconState)
 	var stateErr error
@@ -280,9 +280,9 @@ func RewardProposer(ctx context.Context, beaconState state.BeaconState, proposer
 //	    participation_flag_indices.append(TIMELY_HEAD_FLAG_INDEX)
 //
 //	return participation_flag_indices
-func AttestationParticipationFlagIndices(beaconState state.ReadOnlyBeaconState, data *ethpb.AttestationData, delay primitives.Slot) (map[uint8]bool, error) {
+func AttestationParticipationFlagIndices(beaconState state.ReadOnlyBeaconState, data *silapb.AttestationData, delay primitives.Slot) (map[uint8]bool, error) {
 	currEpoch := time.CurrentEpoch(beaconState)
-	var justifiedCheckpt *ethpb.Checkpoint
+	var justifiedCheckpt *silapb.Checkpoint
 	if data.Target.Epoch == currEpoch {
 		justifiedCheckpt = beaconState.CurrentJustifiedCheckpoint()
 	} else {
@@ -338,7 +338,7 @@ func AttestationParticipationFlagIndices(beaconState state.ReadOnlyBeaconState, 
 //	is_matching_source = data.source == justified_checkpoint
 //	is_matching_target = is_matching_source and data.target.root == get_block_root(state, data.target.epoch)
 //	is_matching_head = is_matching_target and data.beacon_block_root == get_block_root_at_slot(state, data.slot)
-func MatchingStatus(beaconState state.ReadOnlyBeaconState, data *ethpb.AttestationData, cp *ethpb.Checkpoint) (matchedSrc, matchedTgt, matchedHead bool, err error) {
+func MatchingStatus(beaconState state.ReadOnlyBeaconState, data *silapb.AttestationData, cp *silapb.Checkpoint) (matchedSrc, matchedTgt, matchedHead bool, err error) {
 	matchedSrc = attestation.CheckPointIsEqual(data.Source, cp)
 
 	r, err := helpers.BlockRoot(beaconState, data.Target.Epoch)

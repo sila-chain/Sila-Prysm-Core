@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -28,7 +28,7 @@ func TestGenerateGenesisStateBellatrix(t *testing.T) {
 		BlockHash:     make([]byte, 32),
 		Transactions:  make([][]byte, 0),
 	}
-	e1d := &ethpb.Eth1Data{
+	e1d := &silapb.Eth1Data{
 		DepositRoot:  make([]byte, 32),
 		DepositCount: 0,
 		BlockHash:    make([]byte, 32),

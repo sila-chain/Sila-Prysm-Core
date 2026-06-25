@@ -7,12 +7,12 @@ import (
 	"strconv"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 )
 
-func (c *beaconApiValidatorClient) prepareBeaconProposer(ctx context.Context, recipients []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer) error {
+func (c *beaconApiValidatorClient) prepareBeaconProposer(ctx context.Context, recipients []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer) error {
 	jsonRecipients := make([]*structs.FeeRecipient, len(recipients))
 	for index, recipient := range recipients {
 		jsonRecipients[index] = &structs.FeeRecipient{

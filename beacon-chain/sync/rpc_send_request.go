@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/libp2p/go-libp2p/core/network"
@@ -67,7 +67,7 @@ type BeaconBlockProcessor func(block interfaces.ReadOnlySignedBeaconBlock) error
 // SendBeaconBlocksByRangeRequest sends BeaconBlocksByRange and returns fetched blocks, if any.
 func SendBeaconBlocksByRangeRequest(
 	ctx context.Context, tor blockchain.TemporalOracle, p2pProvider p2p.SenderEncoder, pid peer.ID,
-	req *ethpb.BeaconBlocksByRangeRequest, blockProcessor BeaconBlockProcessor,
+	req *silapb.BeaconBlocksByRangeRequest, blockProcessor BeaconBlockProcessor,
 ) ([]interfaces.ReadOnlySignedBeaconBlock, error) {
 	topic, err := p2p.TopicFromMessage(p2p.BeaconBlocksByRangeMessageName, slots.ToEpoch(tor.CurrentSlot()))
 	if err != nil {
@@ -236,7 +236,7 @@ func SendBeaconBlocksByRootRequest(
 // that was received from a peer in response to an rpc request.
 type BlobResponseValidation func(blocks.ROBlob) error
 
-func SendBlobsByRangeRequest(ctx context.Context, tor blockchain.TemporalOracle, p2pApi p2p.SenderEncoder, pid peer.ID, ctxMap ContextByteVersions, req *ethpb.BlobSidecarsByRangeRequest, bvs ...BlobResponseValidation) ([]blocks.ROBlob, error) {
+func SendBlobsByRangeRequest(ctx context.Context, tor blockchain.TemporalOracle, p2pApi p2p.SenderEncoder, pid peer.ID, ctxMap ContextByteVersions, req *silapb.BlobSidecarsByRangeRequest, bvs ...BlobResponseValidation) ([]blocks.ROBlob, error) {
 	topic, err := p2p.TopicFromMessage(p2p.BlobSidecarsByRangeName, slots.ToEpoch(tor.CurrentSlot()))
 	if err != nil {
 		return nil, err
@@ -384,7 +384,7 @@ func blobValidatorFromRootReq(req *p2ptypes.BlobSidecarsByRootReq) BlobResponseV
 	}
 }
 
-func blobValidatorFromRangeReq(req *ethpb.BlobSidecarsByRangeRequest) BlobResponseValidation {
+func blobValidatorFromRangeReq(req *silapb.BlobSidecarsByRangeRequest) BlobResponseValidation {
 	end := req.StartSlot + primitives.Slot(req.Count)
 	return func(sc blocks.ROBlob) error {
 		if sc.Slot() < req.StartSlot || sc.Slot() >= end {
@@ -420,7 +420,7 @@ func readChunkEncodedBlobs(stream network.Stream, encoding encoder.NetworkEncodi
 
 func readChunkedBlobSidecar(stream network.Stream, encoding encoder.NetworkEncoding, ctxMap ContextByteVersions, vf BlobResponseValidation) (blocks.ROBlob, error) {
 	var b blocks.ROBlob
-	pb := &ethpb.BlobSidecar{}
+	pb := &silapb.BlobSidecar{}
 	decode := encoding.DecodeWithMaxLength
 	var (
 		code uint8
@@ -471,7 +471,7 @@ func readChunkedBlobSidecar(stream network.Stream, encoding encoder.NetworkEncod
 func SendDataColumnSidecarsByRangeRequest(
 	p DataColumnSidecarsParams,
 	pid peer.ID,
-	request *ethpb.DataColumnSidecarsByRangeRequest,
+	request *silapb.DataColumnSidecarsByRangeRequest,
 	vfs ...DataColumnResponseValidation,
 ) ([]blocks.RODataColumn, error) {
 	// Return early if nothing to request.
@@ -578,7 +578,7 @@ func SendDataColumnSidecarsByRangeRequest(
 }
 
 // isSidecarSlotRequested verifies that the slot of the data column sidecar is within the bounds of the request.
-func isSidecarSlotRequested(request *ethpb.DataColumnSidecarsByRangeRequest) (DataColumnResponseValidation, error) {
+func isSidecarSlotRequested(request *silapb.DataColumnSidecarsByRangeRequest) (DataColumnResponseValidation, error) {
 	// endSlot is exclusive (while request.StartSlot is inclusive).
 	endSlot, err := request.StartSlot.SafeAdd(request.Count)
 	if err != nil {
@@ -622,7 +622,7 @@ func areSidecarsOrdered() DataColumnResponseValidation {
 }
 
 // isSidecarIndexRequested verifies that the index of the data column sidecar is found in the requested indices.
-func isSidecarIndexRequested(request *ethpb.DataColumnSidecarsByRangeRequest) DataColumnResponseValidation {
+func isSidecarIndexRequested(request *silapb.DataColumnSidecarsByRangeRequest) DataColumnResponseValidation {
 	requestedIndices := make(map[uint64]bool)
 	for _, col := range request.Columns {
 		requestedIndices[col] = true
@@ -790,13 +790,13 @@ func readChunkedDataColumnSidecar(
 
 	var roDataColumn blocks.RODataColumn
 	if msgVersion >= version.Gloas {
-		dc := new(ethpb.DataColumnSidecarGloas)
+		dc := new(silapb.DataColumnSidecarGloas)
 		if err := p2pApi.Encoding().DecodeWithMaxLength(stream, dc); err != nil {
 			return nil, errors.Wrap(err, "failed to decode Gloas DataColumnSidecar from RPC chunk stream")
 		}
 		roDataColumn, err = blocks.NewRODataColumnGloas(dc)
 	} else {
-		dc := new(ethpb.DataColumnSidecar)
+		dc := new(silapb.DataColumnSidecar)
 		if err := p2pApi.Encoding().DecodeWithMaxLength(stream, dc); err != nil {
 			return nil, errors.Wrap(err, "failed to decode Fulu DataColumnSidecar from RPC chunk stream")
 		}
@@ -835,7 +835,7 @@ func downscorePeer(p2p p2p.P2P, peerID peer.ID, reason string, fields ...logrus.
 func SendExecutionPayloadEnvelopesByRootRequest(
 	ctx context.Context, tor blockchain.TemporalOracle, p2pApi p2p.P2P, pid peer.ID,
 	ctxMap ContextByteVersions, req *p2ptypes.ExecutionPayloadEnvelopesByRootReq,
-) ([]*ethpb.SignedExecutionPayloadEnvelope, error) {
+) ([]*silapb.SignedExecutionPayloadEnvelope, error) {
 	if uint64(len(*req)) > params.BeaconConfig().MaxRequestPayloads {
 		return nil, errors.Wrapf(p2ptypes.ErrMaxPayloadEnvelopeReqExceeded, "length=%d", len(*req))
 	}
@@ -859,7 +859,7 @@ func SendExecutionPayloadEnvelopesByRootRequest(
 		pendingRoots[root]++
 	}
 
-	envelopes := make([]*ethpb.SignedExecutionPayloadEnvelope, 0, len(*req))
+	envelopes := make([]*silapb.SignedExecutionPayloadEnvelope, 0, len(*req))
 	for i := range max + 1 {
 		envelope, err := readChunkedExecutionPayloadEnvelope(stream, p2pApi.Encoding(), ctxMap)
 		if errors.Is(err, io.EOF) {
@@ -890,7 +890,7 @@ func readChunkedExecutionPayloadEnvelope(
 	stream network.Stream,
 	encoding encoder.NetworkEncoding,
 	ctxMap ContextByteVersions,
-) (*ethpb.SignedExecutionPayloadEnvelope, error) {
+) (*silapb.SignedExecutionPayloadEnvelope, error) {
 	code, msg, err := ReadStatusCode(stream, encoding)
 	if err != nil {
 		return nil, err
@@ -910,18 +910,18 @@ func readChunkedExecutionPayloadEnvelope(
 	if v < version.Gloas {
 		return nil, errors.Errorf("unexpected context bytes for ExecutionPayloadEnvelope, ctx=%#x, v=%s", ctxb, version.String(v))
 	}
-	envelope := &ethpb.SignedExecutionPayloadEnvelope{}
+	envelope := &silapb.SignedExecutionPayloadEnvelope{}
 	if err := encoding.DecodeWithMaxLength(stream, envelope); err != nil {
 		return nil, errors.Wrap(err, "failed to decode execution payload envelope from RPC chunk stream")
 	}
 	return envelope, nil
 }
 
-func DataColumnSidecarsByRangeRequest(columns []uint64, start, end primitives.Slot) (*ethpb.DataColumnSidecarsByRangeRequest, error) {
+func DataColumnSidecarsByRangeRequest(columns []uint64, start, end primitives.Slot) (*silapb.DataColumnSidecarsByRangeRequest, error) {
 	if end < start {
 		return nil, errors.Errorf("end slot %d is before start slot %d", end, start)
 	}
-	return &ethpb.DataColumnSidecarsByRangeRequest{
+	return &silapb.DataColumnSidecarsByRangeRequest{
 		StartSlot: start,
 		Count:     uint64(end-start) + 1,
 		Columns:   columns,
@@ -935,8 +935,8 @@ func SendExecutionPayloadEnvelopesByRangeRequest(
 	p2pProvider p2p.SenderEncoder,
 	pid peer.ID,
 	ctxMap ContextByteVersions,
-	req *ethpb.ExecutionPayloadEnvelopesByRangeRequest,
-) ([]*ethpb.SignedExecutionPayloadEnvelope, error) {
+	req *silapb.ExecutionPayloadEnvelopesByRangeRequest,
+) ([]*silapb.SignedExecutionPayloadEnvelope, error) {
 	topic, err := p2p.TopicFromMessage(p2p.ExecutionPayloadEnvelopesByRangeName, slots.ToEpoch(tor.CurrentSlot()))
 	if err != nil {
 		return nil, err
@@ -954,7 +954,7 @@ func SendExecutionPayloadEnvelopesByRangeRequest(
 
 	max := min(req.Count, params.BeaconConfig().MaxRequestPayloads)
 
-	envelopes := make([]*ethpb.SignedExecutionPayloadEnvelope, 0, max)
+	envelopes := make([]*silapb.SignedExecutionPayloadEnvelope, 0, max)
 	var prevSlot primitives.Slot
 	var prevHash []byte
 	for i := uint64(0); i < max+1; i++ {
@@ -981,8 +981,8 @@ func SendExecutionPayloadEnvelopesByRangeRequest(
 }
 
 func validateExecutionPayloadEnvelopeByRangeResponse(
-	env *ethpb.SignedExecutionPayloadEnvelope,
-	req *ethpb.ExecutionPayloadEnvelopesByRangeRequest,
+	env *silapb.SignedExecutionPayloadEnvelope,
+	req *silapb.ExecutionPayloadEnvelopesByRangeRequest,
 	prevSlot primitives.Slot,
 	prevHash []byte,
 	hasPrevious bool,

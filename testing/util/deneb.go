@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/random"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	GoKZG "github.com/crate-crypto/go-kzg-4844"
@@ -164,10 +164,10 @@ func GenerateTestDenebBlockWithSidecar(t *testing.T, parent [32]byte, slot primi
 	return rob, sidecars
 }
 
-func GenerateTestDenebBlobSidecar(t *testing.T, root [32]byte, header *ethpb.SignedBeaconBlockHeader, index int, commitment []byte, incProof [][]byte) blocks.ROBlob {
+func GenerateTestDenebBlobSidecar(t *testing.T, root [32]byte, header *silapb.SignedBeaconBlockHeader, index int, commitment []byte, incProof [][]byte) blocks.ROBlob {
 	blob := make([]byte, fieldparams.BlobSize)
 	binary.LittleEndian.PutUint64(blob, uint64(index))
-	pb := &ethpb.BlobSidecar{
+	pb := &silapb.BlobSidecar{
 		SignedBlockHeader: header,
 		Index:             uint64(index),
 		Blob:              blob,
@@ -183,7 +183,7 @@ func GenerateTestDenebBlobSidecar(t *testing.T, root [32]byte, header *ethpb.Sig
 	return r
 }
 
-func fakeEmptyProof(_ *testing.T, _ *ethpb.BlobSidecar) [][]byte {
+func fakeEmptyProof(_ *testing.T, _ *silapb.BlobSidecar) [][]byte {
 	r := make([][]byte, fieldparams.KzgCommitmentInclusionProofDepth)
 	for i := range r {
 		r[i] = make([]byte, fieldparams.RootLength)

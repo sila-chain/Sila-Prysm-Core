@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/proto"
@@ -163,48 +163,48 @@ const (
 )
 
 // InitializeFromProtoPhase0 the beacon state from a protobuf representation.
-func InitializeFromProtoPhase0(st *ethpb.BeaconState) (state.BeaconState, error) {
-	return InitializeFromProtoUnsafePhase0(proto.Clone(st).(*ethpb.BeaconState))
+func InitializeFromProtoPhase0(st *silapb.BeaconState) (state.BeaconState, error) {
+	return InitializeFromProtoUnsafePhase0(proto.Clone(st).(*silapb.BeaconState))
 }
 
 // InitializeFromProtoAltair the beacon state from a protobuf representation.
-func InitializeFromProtoAltair(st *ethpb.BeaconStateAltair) (state.BeaconState, error) {
-	return InitializeFromProtoUnsafeAltair(proto.Clone(st).(*ethpb.BeaconStateAltair))
+func InitializeFromProtoAltair(st *silapb.BeaconStateAltair) (state.BeaconState, error) {
+	return InitializeFromProtoUnsafeAltair(proto.Clone(st).(*silapb.BeaconStateAltair))
 }
 
 // InitializeFromProtoBellatrix the beacon state from a protobuf representation.
-func InitializeFromProtoBellatrix(st *ethpb.BeaconStateBellatrix) (state.BeaconState, error) {
-	return InitializeFromProtoUnsafeBellatrix(proto.Clone(st).(*ethpb.BeaconStateBellatrix))
+func InitializeFromProtoBellatrix(st *silapb.BeaconStateBellatrix) (state.BeaconState, error) {
+	return InitializeFromProtoUnsafeBellatrix(proto.Clone(st).(*silapb.BeaconStateBellatrix))
 }
 
 // InitializeFromProtoCapella the beacon state from a protobuf representation.
-func InitializeFromProtoCapella(st *ethpb.BeaconStateCapella) (state.BeaconState, error) {
-	return InitializeFromProtoUnsafeCapella(proto.Clone(st).(*ethpb.BeaconStateCapella))
+func InitializeFromProtoCapella(st *silapb.BeaconStateCapella) (state.BeaconState, error) {
+	return InitializeFromProtoUnsafeCapella(proto.Clone(st).(*silapb.BeaconStateCapella))
 }
 
 // InitializeFromProtoDeneb the beacon state from a protobuf representation.
-func InitializeFromProtoDeneb(st *ethpb.BeaconStateDeneb) (state.BeaconState, error) {
-	return InitializeFromProtoUnsafeDeneb(proto.Clone(st).(*ethpb.BeaconStateDeneb))
+func InitializeFromProtoDeneb(st *silapb.BeaconStateDeneb) (state.BeaconState, error) {
+	return InitializeFromProtoUnsafeDeneb(proto.Clone(st).(*silapb.BeaconStateDeneb))
 }
 
 // InitializeFromProtoElectra the beacon state from a protobuf representation.
-func InitializeFromProtoElectra(st *ethpb.BeaconStateElectra) (state.BeaconState, error) {
-	return InitializeFromProtoUnsafeElectra(proto.Clone(st).(*ethpb.BeaconStateElectra))
+func InitializeFromProtoElectra(st *silapb.BeaconStateElectra) (state.BeaconState, error) {
+	return InitializeFromProtoUnsafeElectra(proto.Clone(st).(*silapb.BeaconStateElectra))
 }
 
 // InitializeFromProtoFulu the beacon state from a protobuf representation.
-func InitializeFromProtoFulu(st *ethpb.BeaconStateFulu) (state.BeaconState, error) {
-	return InitializeFromProtoUnsafeFulu(proto.Clone(st).(*ethpb.BeaconStateFulu))
+func InitializeFromProtoFulu(st *silapb.BeaconStateFulu) (state.BeaconState, error) {
+	return InitializeFromProtoUnsafeFulu(proto.Clone(st).(*silapb.BeaconStateFulu))
 }
 
 // InitializeFromProtoGloas the beacon state from a protobuf representation.
-func InitializeFromProtoGloas(st *ethpb.BeaconStateGloas) (state.BeaconState, error) {
-	return InitializeFromProtoUnsafeGloas(proto.Clone(st).(*ethpb.BeaconStateGloas))
+func InitializeFromProtoGloas(st *silapb.BeaconStateGloas) (state.BeaconState, error) {
+	return InitializeFromProtoUnsafeGloas(proto.Clone(st).(*silapb.BeaconStateGloas))
 }
 
 // InitializeFromProtoUnsafePhase0 directly uses the beacon state protobuf fields
 // and sets them as fields of the BeaconState type.
-func InitializeFromProtoUnsafePhase0(st *ethpb.BeaconState) (state.BeaconState, error) {
+func InitializeFromProtoUnsafePhase0(st *silapb.BeaconState) (state.BeaconState, error) {
 	if st == nil {
 		return nil, errors.New("received nil state")
 	}
@@ -280,7 +280,7 @@ func InitializeFromProtoUnsafePhase0(st *ethpb.BeaconState) (state.BeaconState, 
 
 // InitializeFromProtoUnsafeAltair directly uses the beacon state protobuf fields
 // and sets them as fields of the BeaconState type.
-func InitializeFromProtoUnsafeAltair(st *ethpb.BeaconStateAltair) (state.BeaconState, error) {
+func InitializeFromProtoUnsafeAltair(st *silapb.BeaconStateAltair) (state.BeaconState, error) {
 	if st == nil {
 		return nil, errors.New("received nil state")
 	}
@@ -359,7 +359,7 @@ func InitializeFromProtoUnsafeAltair(st *ethpb.BeaconStateAltair) (state.BeaconS
 
 // InitializeFromProtoUnsafeBellatrix directly uses the beacon state protobuf fields
 // and sets them as fields of the BeaconState type.
-func InitializeFromProtoUnsafeBellatrix(st *ethpb.BeaconStateBellatrix) (state.BeaconState, error) {
+func InitializeFromProtoUnsafeBellatrix(st *silapb.BeaconStateBellatrix) (state.BeaconState, error) {
 	if st == nil {
 		return nil, errors.New("received nil state")
 	}
@@ -440,7 +440,7 @@ func InitializeFromProtoUnsafeBellatrix(st *ethpb.BeaconStateBellatrix) (state.B
 
 // InitializeFromProtoUnsafeCapella directly uses the beacon state protobuf fields
 // and sets them as fields of the BeaconState type.
-func InitializeFromProtoUnsafeCapella(st *ethpb.BeaconStateCapella) (state.BeaconState, error) {
+func InitializeFromProtoUnsafeCapella(st *silapb.BeaconStateCapella) (state.BeaconState, error) {
 	if st == nil {
 		return nil, errors.New("received nil state")
 	}
@@ -525,7 +525,7 @@ func InitializeFromProtoUnsafeCapella(st *ethpb.BeaconStateCapella) (state.Beaco
 
 // InitializeFromProtoUnsafeDeneb directly uses the beacon state protobuf fields
 // and sets them as fields of the BeaconState type.
-func InitializeFromProtoUnsafeDeneb(st *ethpb.BeaconStateDeneb) (state.BeaconState, error) {
+func InitializeFromProtoUnsafeDeneb(st *silapb.BeaconStateDeneb) (state.BeaconState, error) {
 	if st == nil {
 		return nil, errors.New("received nil state")
 	}
@@ -608,7 +608,7 @@ func InitializeFromProtoUnsafeDeneb(st *ethpb.BeaconStateDeneb) (state.BeaconSta
 
 // InitializeFromProtoUnsafeElectra directly uses the beacon state protobuf fields
 // and sets them as fields of the BeaconState type.
-func InitializeFromProtoUnsafeElectra(st *ethpb.BeaconStateElectra) (state.BeaconState, error) {
+func InitializeFromProtoUnsafeElectra(st *silapb.BeaconStateElectra) (state.BeaconState, error) {
 	if st == nil {
 		return nil, errors.New("received nil state")
 	}
@@ -703,7 +703,7 @@ func InitializeFromProtoUnsafeElectra(st *ethpb.BeaconStateElectra) (state.Beaco
 
 // InitializeFromProtoUnsafeFulu directly uses the beacon state protobuf fields
 // and sets them as fields of the BeaconState type.
-func InitializeFromProtoUnsafeFulu(st *ethpb.BeaconStateFulu) (state.BeaconState, error) {
+func InitializeFromProtoUnsafeFulu(st *silapb.BeaconStateFulu) (state.BeaconState, error) {
 	if st == nil {
 		return nil, errors.New("received nil state")
 	}
@@ -809,7 +809,7 @@ func InitializeFromProtoUnsafeFulu(st *ethpb.BeaconStateFulu) (state.BeaconState
 
 // InitializeFromProtoUnsafeGloas directly uses the beacon state protobuf fields
 // and sets them as fields of the BeaconState type.
-func InitializeFromProtoUnsafeGloas(st *ethpb.BeaconStateGloas) (state.BeaconState, error) {
+func InitializeFromProtoUnsafeGloas(st *silapb.BeaconStateGloas) (state.BeaconState, error) {
 	if st == nil {
 		return nil, errors.New("received nil state")
 	}

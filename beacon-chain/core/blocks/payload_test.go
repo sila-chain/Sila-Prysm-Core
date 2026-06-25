@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -599,7 +599,7 @@ func Test_ProcessPayload(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			body, err := consensusblocks.NewBeaconBlockBody(&ethpb.BeaconBlockBodyBellatrix{
+			body, err := consensusblocks.NewBeaconBlockBody(&silapb.BeaconBlockBodyBellatrix{
 				ExecutionPayload: tt.payload,
 			})
 			require.NoError(t, err)
@@ -630,7 +630,7 @@ func Test_ProcessPayloadCapella(t *testing.T) {
 	random, err := helpers.RandaoMix(st, time.CurrentEpoch(st))
 	require.NoError(t, err)
 	payload.PrevRandao = random
-	body, err := consensusblocks.NewBeaconBlockBody(&ethpb.BeaconBlockBodyCapella{
+	body, err := consensusblocks.NewBeaconBlockBody(&silapb.BeaconBlockBodyCapella{
 		ExecutionPayload: payload,
 	})
 	require.NoError(t, err)
@@ -687,7 +687,7 @@ func Test_ProcessPayload_Blinded(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			p, ok := tt.header.Proto().(*enginev1.ExecutionPayloadHeader)
 			require.Equal(t, true, ok)
-			body, err := consensusblocks.NewBeaconBlockBody(&ethpb.BlindedBeaconBlockBodyBellatrix{
+			body, err := consensusblocks.NewBeaconBlockBody(&silapb.BlindedBeaconBlockBodyBellatrix{
 				ExecutionPayloadHeader: p,
 			})
 			require.NoError(t, err)
@@ -934,14 +934,14 @@ func emptyPayloadCapella() *enginev1.ExecutionPayloadCapella {
 }
 
 func TestVerifyBlobCommitmentCount(t *testing.T) {
-	b := &ethpb.BeaconBlockDeneb{Body: &ethpb.BeaconBlockBodyDeneb{}}
+	b := &silapb.BeaconBlockDeneb{Body: &silapb.BeaconBlockBodyDeneb{}}
 	rb, err := consensusblocks.NewBeaconBlock(b)
 	require.NoError(t, err)
 	require.NoError(t, blocks.VerifyBlobCommitmentCount(rb.Slot(), rb.Body()))
 
 	maxCommitmentsPerBlock := params.BeaconConfig().MaxBlobsPerBlock(rb.Slot())
 
-	b = &ethpb.BeaconBlockDeneb{Body: &ethpb.BeaconBlockBodyDeneb{BlobKzgCommitments: make([][]byte, maxCommitmentsPerBlock+1)}}
+	b = &silapb.BeaconBlockDeneb{Body: &silapb.BeaconBlockBodyDeneb{BlobKzgCommitments: make([][]byte, maxCommitmentsPerBlock+1)}}
 	rb, err = consensusblocks.NewBeaconBlock(b)
 	require.NoError(t, err)
 	require.ErrorContains(t, fmt.Sprintf("too many kzg commitments in block: actual count %d - max allowed %d", maxCommitmentsPerBlock+1, maxCommitmentsPerBlock), blocks.VerifyBlobCommitmentCount(rb.Slot(), rb.Body()))

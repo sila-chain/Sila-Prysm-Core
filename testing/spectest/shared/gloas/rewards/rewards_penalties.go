@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/electra"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/utils"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -62,7 +62,7 @@ func runPrecomputeRewardsAndPenaltiesTest(t *testing.T, testFolderPath string) {
 	require.NoError(t, err)
 	preBeaconStateSSZ, err := snappy.Decode(nil /* dst */, preBeaconStateFile)
 	require.NoError(t, err, "Failed to decompress")
-	preBeaconStateBase := &ethpb.BeaconStateGloas{}
+	preBeaconStateBase := &silapb.BeaconStateGloas{}
 	require.NoError(t, preBeaconStateBase.UnmarshalSSZ(preBeaconStateSSZ), "Failed to unmarshal")
 	preBeaconState, err := state_native.InitializeFromProtoUnsafeGloas(preBeaconStateBase)
 	require.NoError(t, err)

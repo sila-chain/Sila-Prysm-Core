@@ -6,7 +6,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // UpgradeToCapella updates a generic state to return the version Capella state.
@@ -42,11 +42,11 @@ func UpgradeToCapella(state state.BeaconState) (state.BeaconState, error) {
 		return nil, err
 	}
 
-	s := &ethpb.BeaconStateCapella{
+	s := &silapb.BeaconStateCapella{
 		GenesisTime:           uint64(state.GenesisTime().Unix()),
 		GenesisValidatorsRoot: state.GenesisValidatorsRoot(),
 		Slot:                  state.Slot(),
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: state.Fork().CurrentVersion,
 			CurrentVersion:  params.BeaconConfig().CapellaForkVersion,
 			Epoch:           epoch,
@@ -90,7 +90,7 @@ func UpgradeToCapella(state state.BeaconState) (state.BeaconState, error) {
 		},
 		NextWithdrawalIndex:          0,
 		NextWithdrawalValidatorIndex: 0,
-		HistoricalSummaries:          make([]*ethpb.HistoricalSummary, 0),
+		HistoricalSummaries:          make([]*silapb.HistoricalSummary, 0),
 	}
 
 	return state_native.InitializeFromProtoUnsafeCapella(s)

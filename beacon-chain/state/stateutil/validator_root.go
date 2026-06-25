@@ -6,13 +6,13 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
 // ValidatorRootWithHasher describes a method from which the hash tree root
 // of a validator is returned.
-func ValidatorRootWithHasher(validator *ethpb.Validator) ([32]byte, error) {
+func ValidatorRootWithHasher(validator *silapb.Validator) ([32]byte, error) {
 	fieldRoots, err := ValidatorFieldRoots(validator)
 	if err != nil {
 		return [32]byte{}, err
@@ -22,7 +22,7 @@ func ValidatorRootWithHasher(validator *ethpb.Validator) ([32]byte, error) {
 
 // ValidatorFieldRoots describes a method from which the hash tree root
 // of a validator is returned.
-func ValidatorFieldRoots(validator *ethpb.Validator) ([][32]byte, error) {
+func ValidatorFieldRoots(validator *silapb.Validator) ([][32]byte, error) {
 	var fieldRoots [][32]byte
 	if validator != nil {
 		pubkey := bytesutil.ToBytes48(validator.PublicKey)

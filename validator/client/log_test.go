@@ -5,7 +5,7 @@ import (
 
 	field_params "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -18,7 +18,7 @@ func TestLogSubmittedAtts(t *testing.T) {
 		v := validator{
 			submittedAtts: make(map[submittedAttKey]*submittedAtt),
 		}
-		att := util.HydrateAttestation(&ethpb.Attestation{})
+		att := util.HydrateAttestation(&silapb.Attestation{})
 		att.Data.CommitteeIndex = 12
 		require.NoError(t, v.saveSubmittedAtt(att, make([]byte, field_params.BLSPubkeyLength), false))
 		v.LogSubmittedAtts(0)
@@ -29,7 +29,7 @@ func TestLogSubmittedAtts(t *testing.T) {
 		v := validator{
 			submittedAtts: make(map[submittedAttKey]*submittedAtt),
 		}
-		att := util.HydrateAttestationElectra(&ethpb.AttestationElectra{})
+		att := util.HydrateAttestationElectra(&silapb.AttestationElectra{})
 		att.Data.CommitteeIndex = 0
 		att.CommitteeBits = primitives.NewAttestationCommitteeBits()
 		att.CommitteeBits.SetBitAt(44, true)
@@ -42,12 +42,12 @@ func TestLogSubmittedAtts(t *testing.T) {
 		v := validator{
 			submittedAtts: make(map[submittedAttKey]*submittedAtt),
 		}
-		att := util.HydrateAttestationElectra(&ethpb.AttestationElectra{})
+		att := util.HydrateAttestationElectra(&silapb.AttestationElectra{})
 		att.Data.CommitteeIndex = 0
 		att.CommitteeBits = primitives.NewAttestationCommitteeBits()
 		att.CommitteeBits.SetBitAt(23, true)
 		require.NoError(t, v.saveSubmittedAtt(att, make([]byte, field_params.BLSPubkeyLength), false))
-		att2 := util.HydrateAttestationElectra(&ethpb.AttestationElectra{})
+		att2 := util.HydrateAttestationElectra(&silapb.AttestationElectra{})
 		att2.Data.CommitteeIndex = 0
 		att2.CommitteeBits = primitives.NewAttestationCommitteeBits()
 		att2.CommitteeBits.SetBitAt(2, true)
@@ -60,8 +60,8 @@ func TestLogSubmittedAtts(t *testing.T) {
 		v := validator{
 			submittedAggregates: make(map[submittedAttKey]*submittedAtt),
 		}
-		agg := &ethpb.AggregateAttestationAndProof{}
-		agg.Aggregate = util.HydrateAttestation(&ethpb.Attestation{})
+		agg := &silapb.AggregateAttestationAndProof{}
+		agg.Aggregate = util.HydrateAttestation(&silapb.Attestation{})
 		agg.Aggregate.Data.CommitteeIndex = 12
 		require.NoError(t, v.saveSubmittedAtt(agg.AggregateVal(), make([]byte, field_params.BLSPubkeyLength), true))
 		v.LogSubmittedAtts(0)
@@ -72,8 +72,8 @@ func TestLogSubmittedAtts(t *testing.T) {
 		v := validator{
 			submittedAggregates: make(map[submittedAttKey]*submittedAtt),
 		}
-		agg := &ethpb.AggregateAttestationAndProofElectra{}
-		agg.Aggregate = util.HydrateAttestationElectra(&ethpb.AttestationElectra{})
+		agg := &silapb.AggregateAttestationAndProofElectra{}
+		agg.Aggregate = util.HydrateAttestationElectra(&silapb.AttestationElectra{})
 		agg.Aggregate.Data.CommitteeIndex = 0
 		agg.Aggregate.CommitteeBits = primitives.NewAttestationCommitteeBits()
 		agg.Aggregate.CommitteeBits.SetBitAt(63, true)

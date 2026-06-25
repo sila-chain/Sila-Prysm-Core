@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -71,11 +71,11 @@ func ConvertToElectra(beaconState state.BeaconState) (state.BeaconState, error) 
 		return nil, err
 	}
 
-	s := &ethpb.BeaconStateElectra{
+	s := &silapb.BeaconStateElectra{
 		GenesisTime:           uint64(beaconState.GenesisTime().Unix()),
 		GenesisValidatorsRoot: beaconState.GenesisValidatorsRoot(),
 		Slot:                  beaconState.Slot(),
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: beaconState.Fork().CurrentVersion,
 			CurrentVersion:  params.BeaconConfig().ElectraForkVersion,
 			Epoch:           time.CurrentEpoch(beaconState),
@@ -126,9 +126,9 @@ func ConvertToElectra(beaconState state.BeaconState) (state.BeaconState, error) 
 		DepositRequestsStartIndex:  params.BeaconConfig().UnsetDepositRequestsStartIndex,
 		DepositBalanceToConsume:    0,
 		EarliestConsolidationEpoch: helpers.ActivationExitEpoch(slots.ToEpoch(beaconState.Slot())),
-		PendingDeposits:            make([]*ethpb.PendingDeposit, 0),
-		PendingPartialWithdrawals:  make([]*ethpb.PendingPartialWithdrawal, 0),
-		PendingConsolidations:      make([]*ethpb.PendingConsolidation, 0),
+		PendingDeposits:            make([]*silapb.PendingDeposit, 0),
+		PendingPartialWithdrawals:  make([]*silapb.PendingPartialWithdrawal, 0),
+		PendingConsolidations:      make([]*silapb.PendingConsolidation, 0),
 	}
 
 	// need to cast the beaconState to use in helper functions

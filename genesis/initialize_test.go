@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -69,19 +69,19 @@ func createTestGenesisState(t *testing.T, numValidators uint64, slot primitives.
 	require.NoError(t, err)
 
 	// Create a minimal beacon state directly
-	pb := &ethpb.BeaconState{
+	pb := &silapb.BeaconState{
 		Slot:                  slot,
 		GenesisTime:           uint64(time.Unix(2000000000, 0).Unix()), // Use a different time than mainnet
 		GenesisValidatorsRoot: []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32},
 		Eth1Data:              eth1Data,
-		Validators:            make([]*ethpb.Validator, numValidators),
+		Validators:            make([]*silapb.Validator, numValidators),
 		Balances:              make([]uint64, numValidators),
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			Epoch:           0,
 		},
-		LatestBlockHeader: &ethpb.BeaconBlockHeader{
+		LatestBlockHeader: &silapb.BeaconBlockHeader{
 			Slot:       0,
 			ParentRoot: make([]byte, 32),
 			StateRoot:  make([]byte, 32),
@@ -92,14 +92,14 @@ func createTestGenesisState(t *testing.T, numValidators uint64, slot primitives.
 		RandaoMixes:                 make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 		Slashings:                   make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		JustificationBits:           []byte{0},
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, 32)},
-		CurrentJustifiedCheckpoint:  &ethpb.Checkpoint{Root: make([]byte, 32)},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, 32)},
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, 32)},
+		CurrentJustifiedCheckpoint:  &silapb.Checkpoint{Root: make([]byte, 32)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, 32)},
 	}
 
 	// Initialize validators and balances
 	for i := range numValidators {
-		pb.Validators[i] = &ethpb.Validator{
+		pb.Validators[i] = &silapb.Validator{
 			PublicKey:                  deposits[i].Data.PublicKey,
 			WithdrawalCredentials:      deposits[i].Data.WithdrawalCredentials,
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,

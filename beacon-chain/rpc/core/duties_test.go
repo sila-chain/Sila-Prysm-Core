@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/transition"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -92,7 +92,7 @@ func TestSyncCommitteeDuties(t *testing.T) {
 	st, _ := util.DeterministicGenesisStateAltair(t, numVals)
 	vals := st.Validators()
 
-	currCommittee := &ethpb.SyncCommittee{AggregatePubkey: make([]byte, 48)}
+	currCommittee := &silapb.SyncCommittee{AggregatePubkey: make([]byte, 48)}
 	for i := range 5 {
 		currCommittee.Pubkeys = append(currCommittee.Pubkeys, vals[i].PublicKey)
 	}
@@ -100,7 +100,7 @@ func TestSyncCommitteeDuties(t *testing.T) {
 	currCommittee.Pubkeys = append(currCommittee.Pubkeys, vals[0].PublicKey)
 	require.NoError(t, st.SetCurrentSyncCommittee(currCommittee))
 
-	nextCommittee := &ethpb.SyncCommittee{AggregatePubkey: make([]byte, 48)}
+	nextCommittee := &silapb.SyncCommittee{AggregatePubkey: make([]byte, 48)}
 	for i := 5; i < 10; i++ {
 		nextCommittee.Pubkeys = append(nextCommittee.Pubkeys, vals[i].PublicKey)
 	}

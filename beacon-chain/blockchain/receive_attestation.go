@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -27,18 +27,18 @@ const reorgLateBlockCountAttestations = 2 * time.Second
 // AttestationStateFetcher allows for retrieving a beacon state corresponding to the block
 // root of an attestation's target checkpoint.
 type AttestationStateFetcher interface {
-	AttestationTargetState(ctx context.Context, target *ethpb.Checkpoint) (state.ReadOnlyBeaconState, error)
+	AttestationTargetState(ctx context.Context, target *silapb.Checkpoint) (state.ReadOnlyBeaconState, error)
 }
 
 // AttestationReceiver interface defines the methods of chain service receive and processing new attestations.
 type AttestationReceiver interface {
 	AttestationStateFetcher
-	VerifyLmdFfgConsistency(ctx context.Context, att ethpb.Att) error
+	VerifyLmdFfgConsistency(ctx context.Context, att silapb.Att) error
 	InForkchoice([32]byte) bool
 }
 
 // AttestationTargetState returns the pre state of attestation.
-func (s *Service) AttestationTargetState(ctx context.Context, target *ethpb.Checkpoint) (state.ReadOnlyBeaconState, error) {
+func (s *Service) AttestationTargetState(ctx context.Context, target *silapb.Checkpoint) (state.ReadOnlyBeaconState, error) {
 	ss, err := slots.EpochStart(target.Epoch)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (s *Service) AttestationTargetState(ctx context.Context, target *ethpb.Chec
 }
 
 // VerifyLmdFfgConsistency verifies that attestation's LMD and FFG votes are consistency to each other.
-func (s *Service) VerifyLmdFfgConsistency(ctx context.Context, a ethpb.Att) error {
+func (s *Service) VerifyLmdFfgConsistency(ctx context.Context, a silapb.Att) error {
 	r, err := s.TargetRootForEpoch([32]byte(a.GetData().BeaconBlockRoot), a.GetData().Target.Epoch)
 	if err != nil {
 		return err
@@ -175,7 +175,7 @@ func (s *Service) UpdateHead(ctx context.Context, proposingSlot primitives.Slot)
 
 // This processes fork choice attestations from the pool to account for validator votes and fork choice.
 func (s *Service) processAttestations(ctx context.Context, disparity time.Duration) {
-	var atts []ethpb.Att
+	var atts []silapb.Att
 	if features.Get().EnableExperimentalAttestationPool {
 		atts = s.cfg.AttestationCache.ForkchoiceAttestations()
 	} else {
@@ -239,7 +239,7 @@ func (s *Service) processAttestations(ctx context.Context, disparity time.Durati
 //  1. Validate attestation, update validator's latest vote
 //  2. Apply fork choice to the processed attestation
 //  3. Save latest head info
-func (s *Service) receiveAttestationNoPubsub(ctx context.Context, att ethpb.Att, disparity time.Duration) error {
+func (s *Service) receiveAttestationNoPubsub(ctx context.Context, att silapb.Att, disparity time.Duration) error {
 	ctx, span := trace.StartSpan(ctx, "beacon-chain.blockchain.receiveAttestationNoPubsub")
 	defer span.End()
 

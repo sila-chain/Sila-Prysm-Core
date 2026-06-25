@@ -5,12 +5,12 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func BenchmarkAppendBalance(b *testing.B) {
-	st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{})
+	st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{})
 	require.NoError(b, err)
 
 	max := uint64(16777216)
@@ -27,7 +27,7 @@ func BenchmarkAppendBalance(b *testing.B) {
 }
 
 func BenchmarkAppendInactivityScore(b *testing.B) {
-	st, err := state_native.InitializeFromProtoCapella(&ethpb.BeaconStateCapella{})
+	st, err := state_native.InitializeFromProtoCapella(&silapb.BeaconStateCapella{})
 	require.NoError(b, err)
 
 	max := uint64(16777216)
@@ -48,12 +48,12 @@ func BenchmarkAppendInactivityScore(b *testing.B) {
 func BenchmarkApplyToEveryValidator(b *testing.B) {
 	const n = 2_300_000 // ~ number of validators on mainnet at the time of writing
 
-	vals := make([]*ethpb.Validator, n)
+	vals := make([]*silapb.Validator, n)
 	for i := range vals {
 		pk := make([]byte, 48)
 		wc := make([]byte, 32)
 		pk[0] = byte(i)
-		vals[i] = &ethpb.Validator{
+		vals[i] = &silapb.Validator{
 			PublicKey:             pk,
 			WithdrawalCredentials: wc,
 			EffectiveBalance:      32_000_000_000,
@@ -61,14 +61,14 @@ func BenchmarkApplyToEveryValidator(b *testing.B) {
 			ActivationEpoch:       1,
 		}
 	}
-	st, err := state_native.InitializeFromProtoUnsafeDeneb(&ethpb.BeaconStateDeneb{Validators: vals})
+	st, err := state_native.InitializeFromProtoUnsafeDeneb(&silapb.BeaconStateDeneb{Validators: vals})
 	require.NoError(b, err)
 
 	b.ReportAllocs()
 	for b.Loop() {
 		// Returning nil signals "no change", isolating the per-validator wrapper cost
 		// from the validator-update path.
-		require.NoError(b, st.ApplyToEveryValidator(func(_ int, v state.ReadOnlyValidator) (*ethpb.Validator, error) {
+		require.NoError(b, st.ApplyToEveryValidator(func(_ int, v state.ReadOnlyValidator) (*silapb.Validator, error) {
 			_ = v.EffectiveBalance()
 			return nil, nil
 		}))

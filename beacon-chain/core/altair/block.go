@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -45,7 +45,7 @@ import (
 //	        increase_balance(state, get_beacon_proposer_index(state), proposer_reward)
 //	    else:
 //	        decrease_balance(state, participant_index, participant_reward)
-func ProcessSyncAggregate(ctx context.Context, s state.BeaconState, sync *ethpb.SyncAggregate) (state.BeaconState, uint64, error) {
+func ProcessSyncAggregate(ctx context.Context, s state.BeaconState, sync *silapb.SyncAggregate) (state.BeaconState, uint64, error) {
 	ctx, span := trace.StartSpan(ctx, "altair.ProcessSyncAggregate")
 	defer span.End()
 
@@ -61,7 +61,7 @@ func ProcessSyncAggregate(ctx context.Context, s state.BeaconState, sync *ethpb.
 
 // ProcessSyncAggregateNoVerifySig processes the sync aggregate without verifying the sync committee signature.
 // This is useful in scenarios such as block reward calculation, where we can assume the data in the block is valid.
-func ProcessSyncAggregateNoVerifySig(ctx context.Context, s state.BeaconState, sync *ethpb.SyncAggregate) (state.BeaconState, uint64, error) {
+func ProcessSyncAggregateNoVerifySig(ctx context.Context, s state.BeaconState, sync *silapb.SyncAggregate) (state.BeaconState, uint64, error) {
 	s, _, reward, err := processSyncAggregate(ctx, s, sync)
 	if err != nil {
 		return nil, 0, errors.Wrap(err, "could not filter sync committee votes")
@@ -73,7 +73,7 @@ func ProcessSyncAggregateNoVerifySig(ctx context.Context, s state.BeaconState, s
 // verifying the BLS signatures. It returns the modified beacons state, the list of validators'
 // public keys that voted (for future signature verification) and the proposer reward for including
 // sync aggregate messages.
-func processSyncAggregate(ctx context.Context, s state.BeaconState, sync *ethpb.SyncAggregate) (
+func processSyncAggregate(ctx context.Context, s state.BeaconState, sync *silapb.SyncAggregate) (
 	state.BeaconState,
 	[]bls.PublicKey,
 	uint64,

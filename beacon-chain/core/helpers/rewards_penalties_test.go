@@ -9,7 +9,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -17,7 +17,7 @@ import (
 func TestTotalBalance_OK(t *testing.T) {
 	helpers.ClearCache()
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Validators: []*ethpb.Validator{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Validators: []*silapb.Validator{
 		{EffectiveBalance: 27 * 1e9}, {EffectiveBalance: 28 * 1e9},
 		{EffectiveBalance: 32 * 1e9}, {EffectiveBalance: 40 * 1e9},
 	}})
@@ -32,7 +32,7 @@ func TestTotalBalance_OK(t *testing.T) {
 func TestTotalBalance_ReturnsEffectiveBalanceIncrement(t *testing.T) {
 	helpers.ClearCache()
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Validators: []*ethpb.Validator{}})
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Validators: []*silapb.Validator{}})
 	require.NoError(t, err)
 
 	balance := helpers.TotalBalance(state, []primitives.ValidatorIndex{})
@@ -54,7 +54,7 @@ func TestGetBalance_OK(t *testing.T) {
 	for _, test := range tests {
 		helpers.ClearCache()
 
-		state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Balances: test.b})
+		state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Balances: test.b})
 		require.NoError(t, err)
 		assert.Equal(t, test.b[test.i], state.Balances()[test.i], "Incorrect Validator balance")
 	}
@@ -71,11 +71,11 @@ func TestTotalActiveBalance(t *testing.T) {
 	for _, test := range tests {
 		helpers.ClearCache()
 
-		validators := make([]*ethpb.Validator, 0)
+		validators := make([]*silapb.Validator, 0)
 		for i := 0; i < test.vCount; i++ {
-			validators = append(validators, &ethpb.Validator{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: 1})
+			validators = append(validators, &silapb.Validator{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: 1})
 		}
-		state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Validators: validators})
+		state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Validators: validators})
 		require.NoError(t, err)
 		bal, err := helpers.TotalActiveBalance(t.Context(), state)
 		require.NoError(t, err)
@@ -94,11 +94,11 @@ func TestTotalActiveBal_ReturnMin(t *testing.T) {
 	for _, test := range tests {
 		helpers.ClearCache()
 
-		validators := make([]*ethpb.Validator, 0)
+		validators := make([]*silapb.Validator, 0)
 		for i := 0; i < test.vCount; i++ {
-			validators = append(validators, &ethpb.Validator{EffectiveBalance: 1, ExitEpoch: 1})
+			validators = append(validators, &silapb.Validator{EffectiveBalance: 1, ExitEpoch: 1})
 		}
-		state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Validators: validators})
+		state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Validators: validators})
 		require.NoError(t, err)
 		bal, err := helpers.TotalActiveBalance(t.Context(), state)
 		require.NoError(t, err)
@@ -118,11 +118,11 @@ func TestTotalActiveBalance_WithCache(t *testing.T) {
 	for _, test := range tests {
 		helpers.ClearCache()
 
-		validators := make([]*ethpb.Validator, 0)
+		validators := make([]*silapb.Validator, 0)
 		for i := 0; i < test.vCount; i++ {
-			validators = append(validators, &ethpb.Validator{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: 1})
+			validators = append(validators, &silapb.Validator{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: 1})
 		}
-		state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Validators: validators})
+		state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Validators: validators})
 		require.NoError(t, err)
 		bal, err := helpers.TotalActiveBalance(t.Context(), state)
 		require.NoError(t, err)
@@ -144,8 +144,8 @@ func TestIncreaseBalance_OK(t *testing.T) {
 	for _, test := range tests {
 		helpers.ClearCache()
 
-		state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-			Validators: []*ethpb.Validator{
+		state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+			Validators: []*silapb.Validator{
 				{EffectiveBalance: 4}, {EffectiveBalance: 4}, {EffectiveBalance: 4}},
 			Balances: test.b,
 		})
@@ -170,8 +170,8 @@ func TestDecreaseBalance_OK(t *testing.T) {
 	for _, test := range tests {
 		helpers.ClearCache()
 
-		state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-			Validators: []*ethpb.Validator{
+		state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+			Validators: []*silapb.Validator{
 				{EffectiveBalance: 4}, {EffectiveBalance: 4}, {EffectiveBalance: 4}, {EffectiveBalance: 3}},
 			Balances: test.b,
 		})
@@ -185,7 +185,7 @@ func TestFinalityDelay(t *testing.T) {
 	helpers.ClearCache()
 
 	base := buildState(params.BeaconConfig().SlotsPerEpoch*10, 1)
-	base.FinalizedCheckpoint = &ethpb.Checkpoint{Epoch: 3}
+	base.FinalizedCheckpoint = &silapb.Checkpoint{Epoch: 3}
 	beaconState, err := state_native.InitializeFromProtoPhase0(base)
 	require.NoError(t, err)
 	prevEpoch := primitives.Epoch(0)
@@ -200,13 +200,13 @@ func TestFinalityDelay(t *testing.T) {
 	w := time.PrevEpoch(beaconState) - beaconState.FinalizedCheckpointEpoch()
 	assert.Equal(t, w, d, "Did not get wanted finality delay")
 
-	require.NoError(t, beaconState.SetFinalizedCheckpoint(&ethpb.Checkpoint{Epoch: 4}))
+	require.NoError(t, beaconState.SetFinalizedCheckpoint(&silapb.Checkpoint{Epoch: 4}))
 	setVal()
 	d = helpers.FinalityDelay(prevEpoch, finalizedEpoch)
 	w = time.PrevEpoch(beaconState) - beaconState.FinalizedCheckpointEpoch()
 	assert.Equal(t, w, d, "Did not get wanted finality delay")
 
-	require.NoError(t, beaconState.SetFinalizedCheckpoint(&ethpb.Checkpoint{Epoch: 5}))
+	require.NoError(t, beaconState.SetFinalizedCheckpoint(&silapb.Checkpoint{Epoch: 5}))
 	setVal()
 	d = helpers.FinalityDelay(prevEpoch, finalizedEpoch)
 	w = time.PrevEpoch(beaconState) - beaconState.FinalizedCheckpointEpoch()
@@ -217,7 +217,7 @@ func TestIsInInactivityLeak(t *testing.T) {
 	helpers.ClearCache()
 
 	base := buildState(params.BeaconConfig().SlotsPerEpoch*10, 1)
-	base.FinalizedCheckpoint = &ethpb.Checkpoint{Epoch: 3}
+	base.FinalizedCheckpoint = &silapb.Checkpoint{Epoch: 3}
 	beaconState, err := state_native.InitializeFromProtoPhase0(base)
 	require.NoError(t, err)
 	prevEpoch := primitives.Epoch(0)
@@ -229,18 +229,18 @@ func TestIsInInactivityLeak(t *testing.T) {
 	}
 	setVal()
 	assert.Equal(t, true, helpers.IsInInactivityLeak(prevEpoch, finalizedEpoch), "Wanted inactivity leak true")
-	require.NoError(t, beaconState.SetFinalizedCheckpoint(&ethpb.Checkpoint{Epoch: 4}))
+	require.NoError(t, beaconState.SetFinalizedCheckpoint(&silapb.Checkpoint{Epoch: 4}))
 	setVal()
 	assert.Equal(t, true, helpers.IsInInactivityLeak(prevEpoch, finalizedEpoch), "Wanted inactivity leak true")
-	require.NoError(t, beaconState.SetFinalizedCheckpoint(&ethpb.Checkpoint{Epoch: 5}))
+	require.NoError(t, beaconState.SetFinalizedCheckpoint(&silapb.Checkpoint{Epoch: 5}))
 	setVal()
 	assert.Equal(t, false, helpers.IsInInactivityLeak(prevEpoch, finalizedEpoch), "Wanted inactivity leak false")
 }
 
-func buildState(slot primitives.Slot, validatorCount uint64) *ethpb.BeaconState {
-	validators := make([]*ethpb.Validator, validatorCount)
+func buildState(slot primitives.Slot, validatorCount uint64) *silapb.BeaconState {
+	validators := make([]*silapb.Validator, validatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 			EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance,
 		}
@@ -263,16 +263,16 @@ func buildState(slot primitives.Slot, validatorCount uint64) *ethpb.BeaconState 
 	for i := range latestRandaoMixes {
 		latestRandaoMixes[i] = params.BeaconConfig().ZeroHash[:]
 	}
-	return &ethpb.BeaconState{
+	return &silapb.BeaconState{
 		Slot:                        slot,
 		Balances:                    validatorBalances,
 		Validators:                  validators,
 		RandaoMixes:                 make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 		Slashings:                   make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		BlockRoots:                  make([][]byte, params.BeaconConfig().SlotsPerEpoch*10),
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, 32)},
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, 32)},
-		CurrentJustifiedCheckpoint:  &ethpb.Checkpoint{Root: make([]byte, 32)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, 32)},
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, 32)},
+		CurrentJustifiedCheckpoint:  &silapb.Checkpoint{Root: make([]byte, 32)},
 	}
 }
 
@@ -288,8 +288,8 @@ func TestIncreaseBadBalance_NotOK(t *testing.T) {
 	for _, test := range tests {
 		helpers.ClearCache()
 
-		state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-			Validators: []*ethpb.Validator{
+		state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+			Validators: []*silapb.Validator{
 				{EffectiveBalance: 4}, {EffectiveBalance: 4}, {EffectiveBalance: 4}},
 			Balances: test.b,
 		})
@@ -302,12 +302,12 @@ func TestUpdateTotalActiveBalanceCache(t *testing.T) {
 	helpers.ClearCache()
 
 	// Create a test state with some validators
-	validators := []*ethpb.Validator{
+	validators := []*silapb.Validator{
 		{EffectiveBalance: 32 * 1e9, ExitEpoch: params.BeaconConfig().FarFutureEpoch, ActivationEpoch: 0},
 		{EffectiveBalance: 32 * 1e9, ExitEpoch: params.BeaconConfig().FarFutureEpoch, ActivationEpoch: 0},
 		{EffectiveBalance: 31 * 1e9, ExitEpoch: params.BeaconConfig().FarFutureEpoch, ActivationEpoch: 0},
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators: validators,
 		Slot:       0,
 	})

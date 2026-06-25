@@ -19,7 +19,7 @@ proto_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//proto/eth/ext:proto",
+        "//proto/silaapi/ext:proto",
         "@googleapis//google/api:annotations_proto",
     ],
 )
@@ -65,7 +65,7 @@ go_proto_library(
     visibility = ["//visibility:public"],
     deps = [
         "//consensus-types/primitives:go_default_library",
-        "//proto/eth/ext:go_default_library",
+        "//proto/silaapi/ext:go_default_library",
         "@com_github_golang_protobuf//proto:go_default_library",
         "@googleapis//google/api:annotations_go_proto",
         "@io_bazel_rules_go//proto/wkt:descriptor_go_proto",
@@ -94,7 +94,7 @@ go_library(
         "//config/fieldparams:go_default_library",
         "//consensus-types/primitives:go_default_library",
         "//encoding/bytesutil:go_default_library",
-        "//proto/eth/ext:go_default_library",
+        "//proto/silaapi/ext:go_default_library",
         "//runtime/version:go_default_library",
         "@com_github_sila_chain_sila//common:go_default_library",
         "@com_github_sila_chain_sila//common/hexutil:go_default_library",

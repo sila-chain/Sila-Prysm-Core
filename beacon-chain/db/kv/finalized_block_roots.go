@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 	bolt "go.etcd.io/bbolt"
 )
@@ -38,7 +38,7 @@ var containerFinalizedButNotCanonical = []byte("recent block needs reindexing to
 //
 // This method ensures that all blocks from the current finalized epoch are considered "final" while
 // maintaining only canonical and finalized blocks older than the current finalized epoch.
-func (s *Store) updateFinalizedBlockRoots(ctx context.Context, tx *bolt.Tx, checkpoint *ethpb.Checkpoint) error {
+func (s *Store) updateFinalizedBlockRoots(ctx context.Context, tx *bolt.Tx, checkpoint *silapb.Checkpoint) error {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.updateFinalizedBlockRoots")
 	defer span.End()
 
@@ -50,7 +50,7 @@ func (s *Store) updateFinalizedBlockRoots(ctx context.Context, tx *bolt.Tx, chec
 	initCheckpointRoot := tx.Bucket(blocksBucket).Get(originCheckpointBlockRootKey)
 
 	// De-index recent finalized block roots, to be re-indexed.
-	previousFinalizedCheckpoint := &ethpb.Checkpoint{}
+	previousFinalizedCheckpoint := &silapb.Checkpoint{}
 	if b := bkt.Get(previousFinalizedCheckpointKey); b != nil {
 		if err := decode(ctx, b, previousFinalizedCheckpoint); err != nil {
 			tracing.AnnotateError(span, err)
@@ -92,7 +92,7 @@ func (s *Store) updateFinalizedBlockRoots(ctx context.Context, tx *bolt.Tx, chec
 		block := signedBlock.Block()
 
 		parentRoot := block.ParentRoot()
-		container := &ethpb.FinalizedBlockRootContainer{
+		container := &silapb.FinalizedBlockRootContainer{
 			ParentRoot: parentRoot[:],
 			ChildRoot:  previousRoot,
 		}
@@ -116,7 +116,7 @@ func (s *Store) updateFinalizedBlockRoots(ctx context.Context, tx *bolt.Tx, chec
 		// Found parent, loop exit condition.
 		pr := block.ParentRoot()
 		if parentBytes := bkt.Get(pr[:]); parentBytes != nil {
-			parent := &ethpb.FinalizedBlockRootContainer{}
+			parent := &silapb.FinalizedBlockRootContainer{}
 			if err := decode(ctx, parentBytes, parent); err != nil {
 				tracing.AnnotateError(span, err)
 				return err
@@ -174,11 +174,11 @@ func (s *Store) BackfillFinalizedIndex(ctx context.Context, blocks []blocks.ROBl
 		return errEmptyBlockSlice
 	}
 
-	fbrs := make([]*ethpb.FinalizedBlockRootContainer, len(blocks))
+	fbrs := make([]*silapb.FinalizedBlockRootContainer, len(blocks))
 	encs := make([][]byte, len(blocks))
 	for i := range blocks {
 		pr := blocks[i].Block().ParentRoot()
-		fbrs[i] = &ethpb.FinalizedBlockRootContainer{
+		fbrs[i] = &silapb.FinalizedBlockRootContainer{
 			ParentRoot: pr[:],
 			// ChildRoot: will be filled in on the next iteration when we look at the descendent block.
 		}
@@ -221,7 +221,7 @@ func (s *Store) BackfillFinalizedIndex(ctx context.Context, blocks []blocks.ROBl
 		if len(child) == 0 {
 			return errFinalizedChildNotFound
 		}
-		fcc := &ethpb.FinalizedBlockRootContainer{}
+		fcc := &silapb.FinalizedBlockRootContainer{}
 		if err := decode(ctx, child, fcc); err != nil {
 			return errors.Wrapf(err, "unable to decode finalized block root container for root=%#x", finalizedChildRoot)
 		}
@@ -280,7 +280,7 @@ func (s *Store) FinalizedChildBlock(ctx context.Context, blockRoot [32]byte) (in
 		if bytes.Equal(blkBytes, containerFinalizedButNotCanonical) {
 			return nil
 		}
-		ctr := &ethpb.FinalizedBlockRootContainer{}
+		ctr := &silapb.FinalizedBlockRootContainer{}
 		if err := decode(ctx, blkBytes, ctr); err != nil {
 			tracing.AnnotateError(span, err)
 			return err

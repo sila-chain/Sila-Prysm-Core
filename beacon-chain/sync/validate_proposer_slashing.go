@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/core/peer"
 )
@@ -38,7 +38,7 @@ func (s *Service) validateProposerSlashing(ctx context.Context, pid peer.ID, msg
 		return pubsub.ValidationReject, err
 	}
 
-	slashing, ok := m.(*ethpb.ProposerSlashing)
+	slashing, ok := m.(*silapb.ProposerSlashing)
 	if !ok {
 		return pubsub.ValidationReject, errWrongMessage
 	}

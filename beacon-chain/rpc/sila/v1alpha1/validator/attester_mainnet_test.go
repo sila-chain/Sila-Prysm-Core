@@ -10,7 +10,7 @@ import (
 	mockSync "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync/initial-sync/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -52,7 +52,7 @@ func TestAttestationDataAtSlot_HandlesFarAwayJustifiedEpoch(t *testing.T) {
 	beaconState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetSlot(slot))
-	justifiedCheckpoint := &ethpb.Checkpoint{
+	justifiedCheckpoint := &silapb.Checkpoint{
 		Epoch: slots.ToEpoch(1500),
 		Root:  justifiedBlockRoot[:],
 	}
@@ -72,21 +72,21 @@ func TestAttestationDataAtSlot_HandlesFarAwayJustifiedEpoch(t *testing.T) {
 		},
 	}
 
-	req := &ethpb.AttestationDataRequest{
+	req := &silapb.AttestationDataRequest{
 		CommitteeIndex: 0,
 		Slot:           10000,
 	}
 	res, err := attesterServer.GetAttestationData(t.Context(), req)
 	require.NoError(t, err, "Could not get attestation info at slot")
 
-	expectedInfo := &ethpb.AttestationData{
+	expectedInfo := &silapb.AttestationData{
 		Slot:            req.Slot,
 		BeaconBlockRoot: blockRoot[:],
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: slots.ToEpoch(1500),
 			Root:  justifiedBlockRoot[:],
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: 312,
 			Root:  blockRoot[:],
 		},

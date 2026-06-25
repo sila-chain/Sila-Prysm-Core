@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -50,8 +50,8 @@ func TestProposeExit_Valid(t *testing.T) {
 	decodedSignature, err := hexutil.Decode(signature)
 	require.NoError(t, err)
 
-	protoSignedVoluntaryExit := &ethpb.SignedVoluntaryExit{
-		Exit: &ethpb.VoluntaryExit{
+	protoSignedVoluntaryExit := &silapb.SignedVoluntaryExit{
+		Exit: &silapb.VoluntaryExit{
 			Epoch:          1,
 			ValidatorIndex: 2,
 		},
@@ -75,7 +75,7 @@ func TestProposeExit_NilSignedVoluntaryExit(t *testing.T) {
 
 func TestProposeExit_NilExit(t *testing.T) {
 	validatorClient := &beaconApiValidatorClient{}
-	_, err := validatorClient.proposeExit(t.Context(), &ethpb.SignedVoluntaryExit{})
+	_, err := validatorClient.proposeExit(t.Context(), &silapb.SignedVoluntaryExit{})
 	assert.ErrorContains(t, "exit is nil", err)
 }
 
@@ -96,8 +96,8 @@ func TestProposeExit_BadRequest(t *testing.T) {
 		errors.New("foo error"),
 	).Times(1)
 
-	protoSignedVoluntaryExit := &ethpb.SignedVoluntaryExit{
-		Exit: &ethpb.VoluntaryExit{
+	protoSignedVoluntaryExit := &silapb.SignedVoluntaryExit{
+		Exit: &silapb.VoluntaryExit{
 			Epoch:          1,
 			ValidatorIndex: 2,
 		},

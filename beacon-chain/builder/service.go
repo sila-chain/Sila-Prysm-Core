@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -27,8 +27,8 @@ type BlockBuilder interface {
 	SubmitBlindedBlock(ctx context.Context, block interfaces.ReadOnlySignedBeaconBlock) (interfaces.ExecutionData, v1.BlobsBundler, error)
 	SubmitBlindedBlockPostFulu(ctx context.Context, block interfaces.ReadOnlySignedBeaconBlock) error
 	GetHeader(ctx context.Context, slot primitives.Slot, parentHash [32]byte, pubKey [48]byte) (builder.SignedBid, error)
-	RegisterValidator(ctx context.Context, reg []*ethpb.SignedValidatorRegistrationV1) error
-	RegistrationByValidatorID(ctx context.Context, id primitives.ValidatorIndex) (*ethpb.ValidatorRegistrationV1, error)
+	RegisterValidator(ctx context.Context, reg []*silapb.SignedValidatorRegistrationV1) error
+	RegistrationByValidatorID(ctx context.Context, id primitives.ValidatorIndex) (*silapb.ValidatorRegistrationV1, error)
 	Configured() bool
 }
 
@@ -148,7 +148,7 @@ func (s *Service) Status() error {
 
 // RegisterValidator registers a validator with the builder relay network.
 // It also saves the registration object to the DB.
-func (s *Service) RegisterValidator(ctx context.Context, reg []*ethpb.SignedValidatorRegistrationV1) error {
+func (s *Service) RegisterValidator(ctx context.Context, reg []*silapb.SignedValidatorRegistrationV1) error {
 	ctx, span := trace.StartSpan(ctx, "builder.RegisterValidator")
 	defer span.End()
 	start := time.Now()
@@ -161,11 +161,11 @@ func (s *Service) RegisterValidator(ctx context.Context, reg []*ethpb.SignedVali
 
 	// should be removed if db is removed
 	idxs := make([]primitives.ValidatorIndex, 0)
-	msgs := make([]*ethpb.ValidatorRegistrationV1, 0)
+	msgs := make([]*silapb.ValidatorRegistrationV1, 0)
 
-	indexToRegistration := make(map[primitives.ValidatorIndex]*ethpb.ValidatorRegistrationV1)
+	indexToRegistration := make(map[primitives.ValidatorIndex]*silapb.ValidatorRegistrationV1)
 
-	valid := make([]*ethpb.SignedValidatorRegistrationV1, 0)
+	valid := make([]*silapb.SignedValidatorRegistrationV1, 0)
 	for i := range reg {
 		r := reg[i]
 		nx, exists := s.cfg.headFetcher.HeadPublicKeyToValidatorIndex(bytesutil.ToBytes48(r.Message.Pubkey))
@@ -196,7 +196,7 @@ func (s *Service) RegisterValidator(ctx context.Context, reg []*ethpb.SignedVali
 }
 
 // RegistrationByValidatorID returns either the values from the cache or db.
-func (s *Service) RegistrationByValidatorID(ctx context.Context, id primitives.ValidatorIndex) (*ethpb.ValidatorRegistrationV1, error) {
+func (s *Service) RegistrationByValidatorID(ctx context.Context, id primitives.ValidatorIndex) (*silapb.ValidatorRegistrationV1, error) {
 	if s.registrationCache != nil {
 		return s.registrationCache.RegistrationByIndex(id)
 	} else {

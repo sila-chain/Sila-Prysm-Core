@@ -19,7 +19,7 @@ import (
 	contracts "github.com/sila-chain/Sila-Consensus-Core/v7/contracts/deposit"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila"
 	"github.com/sila-chain/Sila/accounts/abi/bind"
@@ -132,7 +132,7 @@ func (s *Service) ProcessDepositLog(ctx context.Context, depositLog *gethtypes.L
 
 	// We then decode the deposit input in order to create a deposit object
 	// we can store in our persistent DB.
-	depositData := &ethpb.Deposit_Data{
+	depositData := &silapb.Deposit_Data{
 		Amount:                bytesutil.FromBytes8(amount),
 		PublicKey:             pubkey,
 		Signature:             signature,
@@ -150,7 +150,7 @@ func (s *Service) ProcessDepositLog(ctx context.Context, depositLog *gethtypes.L
 	if err = s.depositTrie.Insert(depositHash[:], int(index)); err != nil {
 		return err
 	}
-	deposit := &ethpb.Deposit{
+	deposit := &silapb.Deposit{
 		Data: depositData,
 	}
 	// Only generate the proofs during pre-genesis.
@@ -178,7 +178,7 @@ func (s *Service) ProcessDepositLog(ctx context.Context, depositLog *gethtypes.L
 		if err != nil {
 			return errors.Wrap(err, "unable to determine root of deposit trie")
 		}
-		eth1Data := &ethpb.Eth1Data{
+		eth1Data := &silapb.Eth1Data{
 			DepositRoot:  root[:],
 			DepositCount: uint64(len(s.chainStartData.ChainstartDeposits)),
 		}
@@ -258,7 +258,7 @@ func (s *Service) ProcessChainStart(genesisTime uint64, eth1BlockHash [32]byte, 
 		log.WithError(err).Error("Unable to determine root of deposit trie, aborting chain start")
 		return
 	}
-	s.chainStartData.Eth1Data = &ethpb.Eth1Data{
+	s.chainStartData.Eth1Data = &silapb.Eth1Data{
 		DepositCount: uint64(len(s.chainStartData.ChainstartDeposits)),
 		DepositRoot:  root[:],
 		BlockHash:    eth1BlockHash[:],
@@ -569,7 +569,7 @@ func (s *Service) savePowchainData(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	eth1Data := &ethpb.ETH1ChainData{
+	eth1Data := &silapb.ETH1ChainData{
 		CurrentEth1Data:   s.latestEth1Data,
 		ChainstartData:    s.chainStartData,
 		BeaconState:       pbState, // I promise not to mutate it!

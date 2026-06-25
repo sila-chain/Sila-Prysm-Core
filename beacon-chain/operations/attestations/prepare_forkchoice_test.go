@@ -7,7 +7,7 @@ import (
 
 	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	attaggregation "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -24,66 +24,66 @@ func TestBatchAttestations_Multiple(t *testing.T) {
 	sig := priv.Sign([]byte("dummy_test_data"))
 	var mockRoot [32]byte
 
-	unaggregatedAtts := []ethpb.Att{
-		&ethpb.Attestation{Data: &ethpb.AttestationData{
+	unaggregatedAtts := []silapb.Att{
+		&silapb.Attestation{Data: &silapb.AttestationData{
 			Slot:            2,
 			BeaconBlockRoot: mockRoot[:],
-			Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-			Target:          &ethpb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100100}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: &ethpb.AttestationData{
+			Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+			Target:          &silapb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100100}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: &silapb.AttestationData{
 			Slot:            1,
 			BeaconBlockRoot: mockRoot[:],
-			Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-			Target:          &ethpb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b101000}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: &ethpb.AttestationData{
+			Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+			Target:          &silapb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b101000}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: &silapb.AttestationData{
 			Slot:            0,
 			BeaconBlockRoot: mockRoot[:],
-			Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-			Target:          &ethpb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100010}, Signature: sig.Marshal()},
+			Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+			Target:          &silapb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100010}, Signature: sig.Marshal()},
 	}
-	aggregatedAtts := []ethpb.Att{
-		&ethpb.Attestation{Data: &ethpb.AttestationData{
+	aggregatedAtts := []silapb.Att{
+		&silapb.Attestation{Data: &silapb.AttestationData{
 			Slot:            2,
 			BeaconBlockRoot: mockRoot[:],
-			Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-			Target:          &ethpb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b111000}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: &ethpb.AttestationData{
+			Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+			Target:          &silapb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b111000}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: &silapb.AttestationData{
 			Slot:            1,
 			BeaconBlockRoot: mockRoot[:],
-			Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-			Target:          &ethpb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100011}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: &ethpb.AttestationData{
+			Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+			Target:          &silapb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100011}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: &silapb.AttestationData{
 			Slot:            0,
 			BeaconBlockRoot: mockRoot[:],
-			Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-			Target:          &ethpb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b110001}, Signature: sig.Marshal()},
+			Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+			Target:          &silapb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b110001}, Signature: sig.Marshal()},
 	}
-	blockAtts := []*ethpb.Attestation{
-		{Data: &ethpb.AttestationData{
+	blockAtts := []*silapb.Attestation{
+		{Data: &silapb.AttestationData{
 			Slot:            2,
 			BeaconBlockRoot: mockRoot[:],
-			Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-			Target:          &ethpb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100001}, Signature: sig.Marshal()},
-		{Data: &ethpb.AttestationData{
+			Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+			Target:          &silapb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100001}, Signature: sig.Marshal()},
+		{Data: &silapb.AttestationData{
 			Slot:            1,
 			BeaconBlockRoot: mockRoot[:],
-			Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-			Target:          &ethpb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100100}, Signature: sig.Marshal()},
-		{Data: &ethpb.AttestationData{
+			Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+			Target:          &silapb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100100}, Signature: sig.Marshal()},
+		{Data: &silapb.AttestationData{
 			Slot:            0,
 			BeaconBlockRoot: mockRoot[:],
-			Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-			Target:          &ethpb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100100}, Signature: sig.Marshal()},
-		{Data: &ethpb.AttestationData{
+			Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+			Target:          &silapb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100100}, Signature: sig.Marshal()},
+		{Data: &silapb.AttestationData{
 			Slot:            2,
 			BeaconBlockRoot: mockRoot[:],
-			Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-			Target:          &ethpb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b111000}, Signature: sig.Marshal()}, // Duplicated
-		{Data: &ethpb.AttestationData{
+			Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+			Target:          &silapb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b111000}, Signature: sig.Marshal()}, // Duplicated
+		{Data: &silapb.AttestationData{
 			Slot:            1,
 			BeaconBlockRoot: mockRoot[:],
-			Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-			Target:          &ethpb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100011}, Signature: sig.Marshal()}, // Duplicated
+			Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+			Target:          &silapb.Checkpoint{Root: mockRoot[:]}}, AggregationBits: bitfield.Bitlist{0b100011}, Signature: sig.Marshal()}, // Duplicated
 	}
 	require.NoError(t, s.cfg.Pool.SaveUnaggregatedAttestations(unaggregatedAtts))
 	require.NoError(t, s.cfg.Pool.SaveAggregatedAttestations(aggregatedAtts))
@@ -92,12 +92,12 @@ func TestBatchAttestations_Multiple(t *testing.T) {
 	}
 	require.NoError(t, s.batchForkChoiceAtts(t.Context()))
 
-	wanted, err := attaggregation.Aggregate([]ethpb.Att{aggregatedAtts[0], blockAtts[0]})
+	wanted, err := attaggregation.Aggregate([]silapb.Att{aggregatedAtts[0], blockAtts[0]})
 	require.NoError(t, err)
-	aggregated, err := attaggregation.Aggregate([]ethpb.Att{aggregatedAtts[1], blockAtts[1]})
+	aggregated, err := attaggregation.Aggregate([]silapb.Att{aggregatedAtts[1], blockAtts[1]})
 	require.NoError(t, err)
 	wanted = append(wanted, aggregated...)
-	aggregated, err = attaggregation.Aggregate([]ethpb.Att{aggregatedAtts[2], blockAtts[2]})
+	aggregated, err = attaggregation.Aggregate([]silapb.Att{aggregatedAtts[2], blockAtts[2]})
 	require.NoError(t, err)
 
 	wanted = append(wanted, aggregated...)
@@ -122,24 +122,24 @@ func TestBatchAttestations_Single(t *testing.T) {
 	require.NoError(t, err)
 	sig := priv.Sign([]byte("dummy_test_data"))
 	var mockRoot [32]byte
-	d := &ethpb.AttestationData{
+	d := &silapb.AttestationData{
 		BeaconBlockRoot: mockRoot[:],
-		Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-		Target:          &ethpb.Checkpoint{Root: mockRoot[:]},
+		Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+		Target:          &silapb.Checkpoint{Root: mockRoot[:]},
 	}
 
-	unaggregatedAtts := []ethpb.Att{
-		&ethpb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b101000}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b100100}, Signature: sig.Marshal()},
+	unaggregatedAtts := []silapb.Att{
+		&silapb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b101000}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b100100}, Signature: sig.Marshal()},
 	}
-	aggregatedAtts := []ethpb.Att{
-		&ethpb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b101100}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b110010}, Signature: sig.Marshal()},
+	aggregatedAtts := []silapb.Att{
+		&silapb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b101100}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b110010}, Signature: sig.Marshal()},
 	}
-	blockAtts := []ethpb.Att{
-		&ethpb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b110010}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b100010}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b110010}, Signature: sig.Marshal()}, // Duplicated
+	blockAtts := []silapb.Att{
+		&silapb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b110010}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b100010}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b110010}, Signature: sig.Marshal()}, // Duplicated
 	}
 	require.NoError(t, s.cfg.Pool.SaveUnaggregatedAttestations(unaggregatedAtts))
 	require.NoError(t, s.cfg.Pool.SaveAggregatedAttestations(aggregatedAtts))
@@ -167,15 +167,15 @@ func TestAggregateAndSaveForkChoiceAtts_Single(t *testing.T) {
 	require.NoError(t, err)
 	sig := priv.Sign([]byte("dummy_test_data"))
 	var mockRoot [32]byte
-	d := &ethpb.AttestationData{
+	d := &silapb.AttestationData{
 		BeaconBlockRoot: mockRoot[:],
-		Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-		Target:          &ethpb.Checkpoint{Root: mockRoot[:]},
+		Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+		Target:          &silapb.Checkpoint{Root: mockRoot[:]},
 	}
 
-	atts := []ethpb.Att{
-		&ethpb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b101}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b110}, Signature: sig.Marshal()}}
+	atts := []silapb.Att{
+		&silapb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b101}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b110}, Signature: sig.Marshal()}}
 	require.NoError(t, s.aggregateAndSaveForkChoiceAtts(atts))
 
 	wanted, err := attaggregation.Aggregate(atts)
@@ -191,31 +191,31 @@ func TestAggregateAndSaveForkChoiceAtts_Multiple(t *testing.T) {
 	require.NoError(t, err)
 	sig := priv.Sign([]byte("dummy_test_data"))
 	var mockRoot [32]byte
-	d := &ethpb.AttestationData{
+	d := &silapb.AttestationData{
 		BeaconBlockRoot: mockRoot[:],
-		Source:          &ethpb.Checkpoint{Root: mockRoot[:]},
-		Target:          &ethpb.Checkpoint{Root: mockRoot[:]},
+		Source:          &silapb.Checkpoint{Root: mockRoot[:]},
+		Target:          &silapb.Checkpoint{Root: mockRoot[:]},
 	}
-	d1, ok := proto.Clone(d).(*ethpb.AttestationData)
-	require.Equal(t, true, ok, "Entity is not of type *ethpb.AttestationData")
+	d1, ok := proto.Clone(d).(*silapb.AttestationData)
+	require.Equal(t, true, ok, "Entity is not of type *silapb.AttestationData")
 	d1.Slot = 1
-	d2, ok := proto.Clone(d).(*ethpb.AttestationData)
-	require.Equal(t, true, ok, "Entity is not of type *ethpb.AttestationData")
+	d2, ok := proto.Clone(d).(*silapb.AttestationData)
+	require.Equal(t, true, ok, "Entity is not of type *silapb.AttestationData")
 	d2.Slot = 2
 
-	atts1 := []ethpb.Att{
-		&ethpb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b101}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b110}, Signature: sig.Marshal()},
+	atts1 := []silapb.Att{
+		&silapb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b101}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: d, AggregationBits: bitfield.Bitlist{0b110}, Signature: sig.Marshal()},
 	}
 	require.NoError(t, s.aggregateAndSaveForkChoiceAtts(atts1))
-	atts2 := []ethpb.Att{
-		&ethpb.Attestation{Data: d1, AggregationBits: bitfield.Bitlist{0b10110}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: d1, AggregationBits: bitfield.Bitlist{0b11100}, Signature: sig.Marshal()},
-		&ethpb.Attestation{Data: d1, AggregationBits: bitfield.Bitlist{0b11000}, Signature: sig.Marshal()},
+	atts2 := []silapb.Att{
+		&silapb.Attestation{Data: d1, AggregationBits: bitfield.Bitlist{0b10110}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: d1, AggregationBits: bitfield.Bitlist{0b11100}, Signature: sig.Marshal()},
+		&silapb.Attestation{Data: d1, AggregationBits: bitfield.Bitlist{0b11000}, Signature: sig.Marshal()},
 	}
 	require.NoError(t, s.aggregateAndSaveForkChoiceAtts(atts2))
-	att3 := []ethpb.Att{
-		&ethpb.Attestation{Data: d2, AggregationBits: bitfield.Bitlist{0b1100}, Signature: sig.Marshal()},
+	att3 := []silapb.Att{
+		&silapb.Attestation{Data: d2, AggregationBits: bitfield.Bitlist{0b1100}, Signature: sig.Marshal()},
 	}
 	require.NoError(t, s.aggregateAndSaveForkChoiceAtts(att3))
 
@@ -240,70 +240,70 @@ func TestSeenAttestations_PresentInCache(t *testing.T) {
 	s, err := NewService(t.Context(), &Config{Pool: NewPool()})
 	require.NoError(t, err)
 
-	ad1 := util.HydrateAttestationData(&ethpb.AttestationData{})
-	att1 := &ethpb.Attestation{Data: ad1, Signature: []byte{'A'}, AggregationBits: bitfield.Bitlist{0x13} /* 0b00010011 */}
+	ad1 := util.HydrateAttestationData(&silapb.AttestationData{})
+	att1 := &silapb.Attestation{Data: ad1, Signature: []byte{'A'}, AggregationBits: bitfield.Bitlist{0x13} /* 0b00010011 */}
 	got, err := s.seen(att1)
 	require.NoError(t, err)
 	assert.Equal(t, false, got)
 
-	att2 := &ethpb.Attestation{Data: ad1, Signature: []byte{'A'}, AggregationBits: bitfield.Bitlist{0x17} /* 0b00010111 */}
+	att2 := &silapb.Attestation{Data: ad1, Signature: []byte{'A'}, AggregationBits: bitfield.Bitlist{0x17} /* 0b00010111 */}
 	got, err = s.seen(att2)
 	require.NoError(t, err)
 	assert.Equal(t, false, got)
 
-	att3 := &ethpb.Attestation{Data: ad1, Signature: []byte{'A'}, AggregationBits: bitfield.Bitlist{0x17} /* 0b00010111 */}
+	att3 := &silapb.Attestation{Data: ad1, Signature: []byte{'A'}, AggregationBits: bitfield.Bitlist{0x17} /* 0b00010111 */}
 	got, err = s.seen(att3)
 	require.NoError(t, err)
 	assert.Equal(t, true, got)
 }
 
 func TestService_seen(t *testing.T) {
-	ad1 := util.HydrateAttestationData(&ethpb.AttestationData{Slot: 1})
+	ad1 := util.HydrateAttestationData(&silapb.AttestationData{Slot: 1})
 
-	ad2 := util.HydrateAttestationData(&ethpb.AttestationData{Slot: 2})
+	ad2 := util.HydrateAttestationData(&silapb.AttestationData{Slot: 2})
 
 	// Attestation are checked in order of this list.
 	tests := []struct {
-		att  *ethpb.Attestation
+		att  *silapb.Attestation
 		want bool
 	}{
 		{
-			att: &ethpb.Attestation{
+			att: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b11011},
 				Data:            ad1,
 			},
 			want: false,
 		},
 		{
-			att: &ethpb.Attestation{
+			att: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b11011},
 				Data:            ad1,
 			},
 			want: true, // Exact same attestation should return true
 		},
 		{
-			att: &ethpb.Attestation{
+			att: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b10101},
 				Data:            ad1,
 			},
 			want: false, // Haven't seen the bit at index 2 yet.
 		},
 		{
-			att: &ethpb.Attestation{
+			att: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b11111},
 				Data:            ad1,
 			},
 			want: true, // We've full committee at this point.
 		},
 		{
-			att: &ethpb.Attestation{
+			att: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b11111},
 				Data:            ad2,
 			},
 			want: false, // Different root is different bitlist.
 		},
 		{
-			att: &ethpb.Attestation{
+			att: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b11111001},
 				Data:            ad1,
 			},

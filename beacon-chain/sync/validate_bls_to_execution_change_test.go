@@ -20,7 +20,7 @@ import (
 	mockSync "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync/initial-sync/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/verification"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -43,13 +43,13 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 	var emptySig [96]byte
 	type args struct {
 		pid   peer.ID
-		msg   *ethpb.SignedBLSToExecutionChange
+		msg   *silapb.SignedBLSToExecutionChange
 		topic string
 	}
 	tests := []struct {
 		name     string
 		svcopts  []Option
-		setupSvc func(s *Service, msg *ethpb.SignedBLSToExecutionChange, topic string) (*Service, string)
+		setupSvc func(s *Service, msg *silapb.SignedBLSToExecutionChange, topic string) (*Service, string)
 		clock    *startup.Clock
 		args     args
 		want     pubsub.ValidationResult
@@ -63,7 +63,7 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 				WithOperationNotifier(chainService.OperationNotifier()),
 				WithStateNotifier(chainService.StateNotifier()),
 			},
-			setupSvc: func(s *Service, msg *ethpb.SignedBLSToExecutionChange, topic string) (*Service, string) {
+			setupSvc: func(s *Service, msg *silapb.SignedBLSToExecutionChange, topic string) (*Service, string) {
 				s.cfg.stateGen = stategen.New(beaconDB, doublylinkedtree.New())
 				s.cfg.beaconDB = beaconDB
 				s.cfg.clock = startup.NewClock(time.Now(), [32]byte{'A'})
@@ -73,8 +73,8 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 			args: args{
 				pid:   "random",
 				topic: "junk",
-				msg: &ethpb.SignedBLSToExecutionChange{
-					Message: &ethpb.BLSToExecutionChange{
+				msg: &silapb.SignedBLSToExecutionChange{
+					Message: &silapb.BLSToExecutionChange{
 						ValidatorIndex:     0,
 						FromBlsPubkey:      make([]byte, 48),
 						ToExecutionAddress: make([]byte, 20),
@@ -92,7 +92,7 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 				WithOperationNotifier(chainService.OperationNotifier()),
 				WithStateNotifier(chainService.StateNotifier()),
 			},
-			setupSvc: func(s *Service, msg *ethpb.SignedBLSToExecutionChange, topic string) (*Service, string) {
+			setupSvc: func(s *Service, msg *silapb.SignedBLSToExecutionChange, topic string) (*Service, string) {
 				s.cfg.stateGen = stategen.New(beaconDB, doublylinkedtree.New())
 				s.cfg.beaconDB = beaconDB
 				s.cfg.clock = startup.NewClock(time.Now(), [32]byte{'A'})
@@ -102,8 +102,8 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 			args: args{
 				pid:   "random",
 				topic: "junk",
-				msg: &ethpb.SignedBLSToExecutionChange{
-					Message: &ethpb.BLSToExecutionChange{
+				msg: &silapb.SignedBLSToExecutionChange{
+					Message: &silapb.BLSToExecutionChange{
 						ValidatorIndex:     0,
 						FromBlsPubkey:      make([]byte, 48),
 						ToExecutionAddress: make([]byte, 20),
@@ -122,13 +122,13 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 				WithBlsToExecPool(blstoexec.NewPool()),
 				WithStateNotifier(chainService.StateNotifier()),
 			},
-			setupSvc: func(s *Service, msg *ethpb.SignedBLSToExecutionChange, topic string) (*Service, string) {
+			setupSvc: func(s *Service, msg *silapb.SignedBLSToExecutionChange, topic string) (*Service, string) {
 				s.cfg.stateGen = stategen.New(beaconDB, doublylinkedtree.New())
 				s.cfg.beaconDB = beaconDB
 				s.cfg.clock = startup.NewClock(time.Now(), [32]byte{'A'})
 				s.initCaches()
-				s.cfg.blsToExecPool.InsertBLSToExecChange(&ethpb.SignedBLSToExecutionChange{
-					Message: &ethpb.BLSToExecutionChange{
+				s.cfg.blsToExecPool.InsertBLSToExecChange(&silapb.SignedBLSToExecutionChange{
+					Message: &silapb.BLSToExecutionChange{
 						ValidatorIndex:     10,
 						FromBlsPubkey:      make([]byte, 48),
 						ToExecutionAddress: make([]byte, 20),
@@ -140,8 +140,8 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 			args: args{
 				pid:   "random",
 				topic: fmt.Sprintf(defaultTopic, fakeDigest),
-				msg: &ethpb.SignedBLSToExecutionChange{
-					Message: &ethpb.BLSToExecutionChange{
+				msg: &silapb.SignedBLSToExecutionChange{
+					Message: &silapb.BLSToExecutionChange{
 						ValidatorIndex:     10,
 						FromBlsPubkey:      make([]byte, 48),
 						ToExecutionAddress: make([]byte, 20),
@@ -162,7 +162,7 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 				WithStateNotifier(chainService.StateNotifier()),
 			},
 			clock: startup.NewClock(time.Now().Add(-time.Second*time.Duration(params.BeaconConfig().SecondsPerSlot*10)), [32]byte{'A'}),
-			setupSvc: func(s *Service, msg *ethpb.SignedBLSToExecutionChange, topic string) (*Service, string) {
+			setupSvc: func(s *Service, msg *silapb.SignedBLSToExecutionChange, topic string) (*Service, string) {
 				s.cfg.stateGen = stategen.New(beaconDB, doublylinkedtree.New())
 				s.cfg.beaconDB = beaconDB
 				s.cfg.clock = startup.NewClock(time.Now(), [32]byte{'A'})
@@ -188,8 +188,8 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 			args: args{
 				pid:   "random",
 				topic: fmt.Sprintf(defaultTopic, fakeDigest),
-				msg: &ethpb.SignedBLSToExecutionChange{
-					Message: &ethpb.BLSToExecutionChange{
+				msg: &silapb.SignedBLSToExecutionChange{
+					Message: &silapb.BLSToExecutionChange{
 						ValidatorIndex:     0,
 						FromBlsPubkey:      make([]byte, 48),
 						ToExecutionAddress: make([]byte, 20),
@@ -209,7 +209,7 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 				WithStateNotifier(chainService.StateNotifier()),
 			},
 			clock: startup.NewClock(time.Now().Add(-time.Second*time.Duration(params.BeaconConfig().SecondsPerSlot)*time.Duration(10)), [32]byte{'A'}),
-			setupSvc: func(s *Service, msg *ethpb.SignedBLSToExecutionChange, topic string) (*Service, string) {
+			setupSvc: func(s *Service, msg *silapb.SignedBLSToExecutionChange, topic string) (*Service, string) {
 				s.cfg.stateGen = stategen.New(beaconDB, doublylinkedtree.New())
 				s.cfg.beaconDB = beaconDB
 				s.cfg.clock = startup.NewClock(time.Now(), [32]byte{'A'})
@@ -226,8 +226,8 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 			args: args{
 				pid:   "random",
 				topic: fmt.Sprintf(defaultTopic, fakeDigest),
-				msg: &ethpb.SignedBLSToExecutionChange{
-					Message: &ethpb.BLSToExecutionChange{
+				msg: &silapb.SignedBLSToExecutionChange{
+					Message: &silapb.BLSToExecutionChange{
 						ValidatorIndex:     0,
 						FromBlsPubkey:      make([]byte, 48),
 						ToExecutionAddress: make([]byte, 20),
@@ -247,7 +247,7 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 				WithStateNotifier(chainService.StateNotifier()),
 			},
 			clock: startup.NewClock(time.Now().Add(-time.Second*time.Duration(params.BeaconConfig().SecondsPerSlot)*time.Duration(10)), [32]byte{'A'}),
-			setupSvc: func(s *Service, msg *ethpb.SignedBLSToExecutionChange, topic string) (*Service, string) {
+			setupSvc: func(s *Service, msg *silapb.SignedBLSToExecutionChange, topic string) (*Service, string) {
 				s.cfg.stateGen = stategen.New(beaconDB, doublylinkedtree.New())
 				s.cfg.beaconDB = beaconDB
 				s.cfg.clock = startup.NewClock(time.Now(), [32]byte{'A'})
@@ -267,8 +267,8 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 			args: args{
 				pid:   "random",
 				topic: fmt.Sprintf(defaultTopic, fakeDigest),
-				msg: &ethpb.SignedBLSToExecutionChange{
-					Message: &ethpb.BLSToExecutionChange{
+				msg: &silapb.SignedBLSToExecutionChange{
+					Message: &silapb.BLSToExecutionChange{
 						ValidatorIndex:     0,
 						FromBlsPubkey:      make([]byte, 48),
 						ToExecutionAddress: make([]byte, 20),
@@ -288,13 +288,13 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 				WithStateNotifier(chainService.StateNotifier()),
 			},
 			clock: startup.NewClock(time.Now().Add(-time.Second*time.Duration(params.BeaconConfig().SecondsPerSlot)*time.Duration(10)), [32]byte{'A'}),
-			setupSvc: func(s *Service, msg *ethpb.SignedBLSToExecutionChange, topic string) (*Service, string) {
+			setupSvc: func(s *Service, msg *silapb.SignedBLSToExecutionChange, topic string) (*Service, string) {
 				s.cfg.stateGen = stategen.New(beaconDB, doublylinkedtree.New())
 				s.cfg.beaconDB = beaconDB
 				s.cfg.clock = startup.NewClock(time.Now(), [32]byte{'A'})
 				s.initCaches()
 				st, keys := util.DeterministicGenesisStateCapella(t, 128)
-				assert.NoError(t, st.ApplyToEveryValidator(func(idx int, val state.ReadOnlyValidator) (*ethpb.Validator, error) {
+				assert.NoError(t, st.ApplyToEveryValidator(func(idx int, val state.ReadOnlyValidator) (*silapb.Validator, error) {
 					newCreds := make([]byte, 32)
 					newCreds[0] = params.BeaconConfig().ETH1AddressWithdrawalPrefixByte
 					copy(newCreds[12:], wantedExecAddress)
@@ -316,8 +316,8 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 			args: args{
 				pid:   "random",
 				topic: fmt.Sprintf(defaultTopic, fakeDigest),
-				msg: &ethpb.SignedBLSToExecutionChange{
-					Message: &ethpb.BLSToExecutionChange{
+				msg: &silapb.SignedBLSToExecutionChange{
+					Message: &silapb.BLSToExecutionChange{
 						ValidatorIndex:     0,
 						FromBlsPubkey:      make([]byte, 48),
 						ToExecutionAddress: make([]byte, 20),
@@ -337,7 +337,7 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 				WithStateNotifier(chainService.StateNotifier()),
 			},
 			clock: startup.NewClock(time.Now().Add(-time.Second*time.Duration(params.BeaconConfig().SecondsPerSlot)*time.Duration(10)), [32]byte{'A'}),
-			setupSvc: func(s *Service, msg *ethpb.SignedBLSToExecutionChange, topic string) (*Service, string) {
+			setupSvc: func(s *Service, msg *silapb.SignedBLSToExecutionChange, topic string) (*Service, string) {
 				s.cfg.stateGen = stategen.New(beaconDB, doublylinkedtree.New())
 				s.cfg.beaconDB = beaconDB
 				s.cfg.clock = startup.NewClock(time.Now(), [32]byte{'A'})
@@ -360,8 +360,8 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 			args: args{
 				pid:   "random",
 				topic: fmt.Sprintf(defaultTopic, fakeDigest),
-				msg: &ethpb.SignedBLSToExecutionChange{
-					Message: &ethpb.BLSToExecutionChange{
+				msg: &silapb.SignedBLSToExecutionChange{
+					Message: &silapb.BLSToExecutionChange{
 						ValidatorIndex:     0,
 						FromBlsPubkey:      make([]byte, 48),
 						ToExecutionAddress: make([]byte, 20),
@@ -381,7 +381,7 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 				WithStateNotifier(chainService.StateNotifier()),
 			},
 			clock: startup.NewClock(time.Now().Add(-time.Second*time.Duration(params.BeaconConfig().SecondsPerSlot)*time.Duration(10)), [32]byte{'A'}),
-			setupSvc: func(s *Service, msg *ethpb.SignedBLSToExecutionChange, topic string) (*Service, string) {
+			setupSvc: func(s *Service, msg *silapb.SignedBLSToExecutionChange, topic string) (*Service, string) {
 				s.cfg.stateGen = stategen.New(beaconDB, doublylinkedtree.New())
 				s.cfg.beaconDB = beaconDB
 				s.cfg.clock = startup.NewClock(time.Now(), [32]byte{'A'})
@@ -407,8 +407,8 @@ func TestService_ValidateBlsToExecutionChange(t *testing.T) {
 			args: args{
 				pid:   "random",
 				topic: fmt.Sprintf(defaultTopic, fakeDigest),
-				msg: &ethpb.SignedBLSToExecutionChange{
-					Message: &ethpb.BLSToExecutionChange{
+				msg: &silapb.SignedBLSToExecutionChange{
+					Message: &silapb.BLSToExecutionChange{
 						ValidatorIndex:     0,
 						FromBlsPubkey:      make([]byte, 48),
 						ToExecutionAddress: make([]byte, 20),

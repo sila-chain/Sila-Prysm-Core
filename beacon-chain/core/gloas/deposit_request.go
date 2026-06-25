@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -113,7 +113,7 @@ func processDepositRequest(beaconState state.BeaconState, request *enginev1.Depo
 		return nil
 	}
 
-	if err := beaconState.AppendPendingDeposit(&ethpb.PendingDeposit{
+	if err := beaconState.AppendPendingDeposit(&silapb.PendingDeposit{
 		PublicKey:             request.Pubkey,
 		WithdrawalCredentials: request.WithdrawalCredentials,
 		Amount:                request.Amount,
@@ -203,7 +203,7 @@ func applyDepositForNewBuilder(
 		valid = *prefetchedValid
 	} else {
 		var err error
-		valid, err = helpers.IsValidDepositSignature(&ethpb.Deposit_Data{
+		valid, err = helpers.IsValidDepositSignature(&silapb.Deposit_Data{
 			PublicKey:             pubkey,
 			WithdrawalCredentials: withdrawalCredentials,
 			Amount:                amount,

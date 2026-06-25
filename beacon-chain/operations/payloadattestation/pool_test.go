@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"google.golang.org/protobuf/proto"
@@ -30,9 +30,9 @@ func TestPool_PendingPayloadAttestations(t *testing.T) {
 	t.Run("returns requested slot", func(t *testing.T) {
 		pool := NewPool()
 		sig := bls.NewAggregateSignature().Marshal()
-		msg1 := &ethpb.PayloadAttestationMessage{
+		msg1 := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 0,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   make([]byte, 32),
 				Slot:              1,
 				PayloadPresent:    true,
@@ -40,9 +40,9 @@ func TestPool_PendingPayloadAttestations(t *testing.T) {
 			},
 			Signature: sig,
 		}
-		msg2 := &ethpb.PayloadAttestationMessage{
+		msg2 := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 1,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   make([]byte, 32),
 				Slot:              2,
 				PayloadPresent:    false,
@@ -61,9 +61,9 @@ func TestPool_PendingPayloadAttestations(t *testing.T) {
 	t.Run("slot filtering keeps future entries", func(t *testing.T) {
 		pool := NewPool()
 		sig := bls.NewAggregateSignature().Marshal()
-		msg2 := &ethpb.PayloadAttestationMessage{
+		msg2 := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 1,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   make([]byte, 32),
 				Slot:              2,
 				PayloadPresent:    false,
@@ -90,9 +90,9 @@ func TestPool_PendingPayloadAttestations(t *testing.T) {
 	t.Run("future slot request does not prune", func(t *testing.T) {
 		pool := NewPool()
 		sig := bls.NewAggregateSignature().Marshal()
-		msg1 := &ethpb.PayloadAttestationMessage{
+		msg1 := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 0,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   bytesutil.PadTo([]byte("r1"), 32),
 				Slot:              1,
 				PayloadPresent:    true,
@@ -100,9 +100,9 @@ func TestPool_PendingPayloadAttestations(t *testing.T) {
 			},
 			Signature: sig,
 		}
-		msg2 := &ethpb.PayloadAttestationMessage{
+		msg2 := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 1,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   bytesutil.PadTo([]byte("r2"), 32),
 				Slot:              2,
 				PayloadPresent:    true,
@@ -128,15 +128,15 @@ func TestPool_InsertPayloadAttestation(t *testing.T) {
 
 	t.Run("nil data", func(t *testing.T) {
 		pool := NewPool()
-		err := pool.InsertPayloadAttestation(&ethpb.PayloadAttestationMessage{}, 0)
+		err := pool.InsertPayloadAttestation(&silapb.PayloadAttestationMessage{}, 0)
 		require.ErrorContains(t, "nil payload attestation message", err)
 	})
 
 	t.Run("invalid beacon block root length", func(t *testing.T) {
 		pool := NewPool()
-		msg := &ethpb.PayloadAttestationMessage{
+		msg := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 0,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   []byte{0x01, 0x02}, // invalid length
 				Slot:              1,
 				PayloadPresent:    true,
@@ -153,9 +153,9 @@ func TestPool_InsertPayloadAttestation(t *testing.T) {
 		pool := NewPool()
 		sig := bls.NewAggregateSignature().Marshal()
 		idx := uint64(5)
-		msg := &ethpb.PayloadAttestationMessage{
+		msg := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 0,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   make([]byte, 32),
 				Slot:              1,
 				PayloadPresent:    true,
@@ -173,9 +173,9 @@ func TestPool_InsertPayloadAttestation(t *testing.T) {
 	t.Run("out-of-range index returns error and does not insert", func(t *testing.T) {
 		pool := NewPool()
 		sig := bls.NewAggregateSignature().Marshal()
-		msg := &ethpb.PayloadAttestationMessage{
+		msg := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 0,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   make([]byte, 32),
 				Slot:              1,
 				PayloadPresent:    true,
@@ -192,9 +192,9 @@ func TestPool_InsertPayloadAttestation(t *testing.T) {
 		pool := NewPool()
 		sig := bls.NewAggregateSignature().Marshal()
 		idx := uint64(3)
-		msg := &ethpb.PayloadAttestationMessage{
+		msg := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 0,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   make([]byte, 32),
 				Slot:              1,
 				PayloadPresent:    true,
@@ -218,18 +218,18 @@ func TestPool_InsertPayloadAttestation(t *testing.T) {
 		sig := bls.NewAggregateSignature().Marshal()
 		root := make([]byte, 32)
 		root[0] = 'r'
-		data := &ethpb.PayloadAttestationData{
+		data := &silapb.PayloadAttestationData{
 			BeaconBlockRoot:   root,
 			Slot:              1,
 			PayloadPresent:    true,
 			BlobDataAvailable: false,
 		}
-		msg1 := &ethpb.PayloadAttestationMessage{
+		msg1 := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 0,
 			Data:           data,
 			Signature:      sig,
 		}
-		msg2 := &ethpb.PayloadAttestationMessage{
+		msg2 := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 1,
 			Data:           data,
 			Signature:      sig,
@@ -248,9 +248,9 @@ func TestPool_InsertPayloadAttestation(t *testing.T) {
 	t.Run("different data creates separate entries", func(t *testing.T) {
 		pool := NewPool()
 		sig := bls.NewAggregateSignature().Marshal()
-		msg1 := &ethpb.PayloadAttestationMessage{
+		msg1 := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 0,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   make([]byte, 32),
 				Slot:              1,
 				PayloadPresent:    true,
@@ -258,9 +258,9 @@ func TestPool_InsertPayloadAttestation(t *testing.T) {
 			},
 			Signature: sig,
 		}
-		msg2 := &ethpb.PayloadAttestationMessage{
+		msg2 := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 1,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   make([]byte, 32),
 				Slot:              1,
 				PayloadPresent:    false, // different
@@ -277,9 +277,9 @@ func TestPool_InsertPayloadAttestation(t *testing.T) {
 	t.Run("inserting newer slot prunes older slots", func(t *testing.T) {
 		pool := NewPool()
 		sig := bls.NewAggregateSignature().Marshal()
-		msg1 := &ethpb.PayloadAttestationMessage{
+		msg1 := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 0,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   bytesutil.PadTo([]byte("older"), 32),
 				Slot:              1,
 				PayloadPresent:    true,
@@ -287,9 +287,9 @@ func TestPool_InsertPayloadAttestation(t *testing.T) {
 			},
 			Signature: sig,
 		}
-		msg2 := &ethpb.PayloadAttestationMessage{
+		msg2 := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 1,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   bytesutil.PadTo([]byte("newer"), 32),
 				Slot:              2,
 				PayloadPresent:    true,
@@ -312,7 +312,7 @@ func TestPool_InsertPayloadAttestation(t *testing.T) {
 func TestPool_Seen(t *testing.T) {
 	pool := NewPool()
 	sig := bls.NewAggregateSignature().Marshal()
-	data := &ethpb.PayloadAttestationData{
+	data := &silapb.PayloadAttestationData{
 		BeaconBlockRoot:   make([]byte, 32),
 		Slot:              1,
 		PayloadPresent:    true,
@@ -321,7 +321,7 @@ func TestPool_Seen(t *testing.T) {
 
 	assert.Equal(t, false, pool.Seen(data, 5))
 
-	msg := &ethpb.PayloadAttestationMessage{
+	msg := &silapb.PayloadAttestationMessage{
 		ValidatorIndex: 0,
 		Data:           data,
 		Signature:      sig,
@@ -332,7 +332,7 @@ func TestPool_Seen(t *testing.T) {
 	assert.Equal(t, false, pool.Seen(data, 6))
 	assert.Equal(t, false, pool.Seen(nil, 5))
 
-	assert.Equal(t, false, pool.Seen(&ethpb.PayloadAttestationData{
+	assert.Equal(t, false, pool.Seen(&silapb.PayloadAttestationData{
 		BeaconBlockRoot: []byte{0x01}, // invalid
 		Slot:            1,
 	}, 5))
@@ -345,7 +345,7 @@ func pendingCount(pool *Pool) int {
 }
 
 func BenchmarkPayloadAttestationDataKeyStrategies(b *testing.B) {
-	data := &ethpb.PayloadAttestationData{
+	data := &silapb.PayloadAttestationData{
 		BeaconBlockRoot:   bytesutil.PadTo([]byte("benchmark-root"), 32),
 		Slot:              primitives.Slot(12345),
 		PayloadPresent:    true,
@@ -386,7 +386,7 @@ func BenchmarkPayloadAttestationDataKeyStrategies(b *testing.B) {
 	})
 }
 
-func dataKeyProtoMarshal(data *ethpb.PayloadAttestationData) ([32]byte, error) {
+func dataKeyProtoMarshal(data *silapb.PayloadAttestationData) ([32]byte, error) {
 	enc, err := proto.Marshal(data)
 	if err != nil {
 		return [32]byte{}, err

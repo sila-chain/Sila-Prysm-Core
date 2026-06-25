@@ -7,7 +7,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
@@ -24,7 +24,7 @@ var (
 
 // InsertDeposit into the database. If deposit or block number are nil
 // then this method does nothing.
-func (c *Cache) InsertDeposit(ctx context.Context, d *ethpb.Deposit, blockNum uint64, index int64, depositRoot [32]byte) error {
+func (c *Cache) InsertDeposit(ctx context.Context, d *silapb.Deposit, blockNum uint64, index int64, depositRoot [32]byte) error {
 	ctx, span := trace.StartSpan(ctx, "Cache.InsertDeposit")
 	defer span.End()
 	if ctx.Err() != nil {
@@ -47,9 +47,9 @@ func (c *Cache) InsertDeposit(ctx context.Context, d *ethpb.Deposit, blockNum ui
 	}
 	// Keep the slice sorted on insertion in order to avoid costly sorting on retrieval.
 	heightIdx := sort.Search(len(c.deposits), func(i int) bool { return c.deposits[i].Index >= index })
-	depCtr := &ethpb.DepositContainer{Deposit: d, Eth1BlockHeight: blockNum, DepositRoot: depositRoot[:], Index: index}
+	depCtr := &silapb.DepositContainer{Deposit: d, Eth1BlockHeight: blockNum, DepositRoot: depositRoot[:], Index: index}
 	newDeposits := append(
-		[]*ethpb.DepositContainer{depCtr},
+		[]*silapb.DepositContainer{depCtr},
 		c.deposits[heightIdx:]...)
 	c.deposits = append(c.deposits[:heightIdx], newDeposits...)
 	// Append the deposit to our map, in the event no deposits
@@ -61,7 +61,7 @@ func (c *Cache) InsertDeposit(ctx context.Context, d *ethpb.Deposit, blockNum ui
 }
 
 // InsertDepositContainers inserts a set of deposit containers into our deposit cache.
-func (c *Cache) InsertDepositContainers(ctx context.Context, ctrs []*ethpb.DepositContainer) {
+func (c *Cache) InsertDepositContainers(ctx context.Context, ctrs []*silapb.DepositContainer) {
 	_, span := trace.StartSpan(ctx, "Cache.InsertDepositContainers")
 	defer span.End()
 	c.depositsLock.Lock()
@@ -69,7 +69,7 @@ func (c *Cache) InsertDepositContainers(ctx context.Context, ctrs []*ethpb.Depos
 
 	// Initialize slice if nil object provided.
 	if ctrs == nil {
-		ctrs = make([]*ethpb.DepositContainer, 0)
+		ctrs = make([]*silapb.DepositContainer, 0)
 	}
 	sort.SliceStable(ctrs, func(i int, j int) bool { return ctrs[i].Index < ctrs[j].Index })
 	c.deposits = ctrs

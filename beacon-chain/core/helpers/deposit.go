@@ -13,12 +13,12 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
 // ActivateValidatorWithEffectiveBalance updates validator's effective balance, and if it's above MaxEffectiveBalance, validator becomes active in genesis.
-func ActivateValidatorWithEffectiveBalance(beaconState state.BeaconState, deposits []*ethpb.Deposit) (state.BeaconState, error) {
+func ActivateValidatorWithEffectiveBalance(beaconState state.BeaconState, deposits []*silapb.Deposit) (state.BeaconState, error) {
 	for _, d := range deposits {
 		pubkey := d.Data.PublicKey
 		index, ok := beaconState.ValidatorIndexByPubkey(bytesutil.ToBytes48(pubkey))
@@ -49,7 +49,7 @@ func ActivateValidatorWithEffectiveBalance(beaconState state.BeaconState, deposi
 }
 
 // BatchVerifyDepositsSignatures batch verifies deposit signatures.
-func BatchVerifyDepositsSignatures(ctx context.Context, deposits []*ethpb.Deposit) (bool, error) {
+func BatchVerifyDepositsSignatures(ctx context.Context, deposits []*silapb.Deposit) (bool, error) {
 	var err error
 	domain, err := signing.ComputeDomain(params.BeaconConfig().DomainDeposit, nil, nil)
 	if err != nil {
@@ -64,7 +64,7 @@ func BatchVerifyDepositsSignatures(ctx context.Context, deposits []*ethpb.Deposi
 }
 
 // BatchVerifyPendingDepositsSignatures batch verifies pending deposit signatures.
-func BatchVerifyPendingDepositsSignatures(ctx context.Context, deposits []*ethpb.PendingDeposit) (bool, error) {
+func BatchVerifyPendingDepositsSignatures(ctx context.Context, deposits []*silapb.PendingDeposit) (bool, error) {
 	var err error
 	domain, err := signing.ComputeDomain(params.BeaconConfig().DomainDeposit, nil, nil)
 	if err != nil {
@@ -98,7 +98,7 @@ func BatchVerifyPendingDepositsSignatures(ctx context.Context, deposits []*ethpb
 //	            return True
 //	    return False
 //	</spec>
-func IsPendingValidator(pendingDeposits []*ethpb.PendingDeposit, pubkey []byte) (bool, error) {
+func IsPendingValidator(pendingDeposits []*silapb.PendingDeposit, pubkey []byte) (bool, error) {
 	for _, deposit := range pendingDeposits {
 		if deposit == nil {
 			continue
@@ -106,7 +106,7 @@ func IsPendingValidator(pendingDeposits []*ethpb.PendingDeposit, pubkey []byte) 
 		if !bytes.Equal(deposit.PublicKey, pubkey) {
 			continue
 		}
-		valid, err := IsValidDepositSignature(&ethpb.Deposit_Data{
+		valid, err := IsValidDepositSignature(&silapb.Deposit_Data{
 			PublicKey:             deposit.PublicKey,
 			WithdrawalCredentials: deposit.WithdrawalCredentials,
 			Amount:                deposit.Amount,
@@ -142,7 +142,7 @@ func BatchVerifyDepositRequestSignatures(ctx context.Context, requests []*engine
 //	domain = compute_domain(DOMAIN_DEPOSIT)  # Fork-agnostic domain since deposits are valid across forks
 //	signing_root = compute_signing_root(deposit_message, domain)
 //	return bls.Verify(pubkey, signing_root, signature)
-func IsValidDepositSignature(data *ethpb.Deposit_Data) (bool, error) {
+func IsValidDepositSignature(data *silapb.Deposit_Data) (bool, error) {
 	domain, err := signing.ComputeDomain(params.BeaconConfig().DomainDeposit, nil, nil)
 	if err != nil {
 		return false, err
@@ -156,7 +156,7 @@ func IsValidDepositSignature(data *ethpb.Deposit_Data) (bool, error) {
 }
 
 // VerifyDeposit verifies the deposit data and signature given the beacon state and deposit information
-func VerifyDeposit(beaconState state.ReadOnlyBeaconState, deposit *ethpb.Deposit) error {
+func VerifyDeposit(beaconState state.ReadOnlyBeaconState, deposit *silapb.Deposit) error {
 	// Verify Merkle proof of deposit and deposit trie root.
 	if deposit == nil || deposit.Data == nil {
 		return errors.New("received nil deposit or nil deposit data")
@@ -187,11 +187,11 @@ func VerifyDeposit(beaconState state.ReadOnlyBeaconState, deposit *ethpb.Deposit
 	return nil
 }
 
-func verifyDepositDataSigningRoot(obj *ethpb.Deposit_Data, domain []byte) error {
+func verifyDepositDataSigningRoot(obj *silapb.Deposit_Data, domain []byte) error {
 	return deposit.VerifyDepositSignature(obj, domain)
 }
 
-func verifyDepositDataWithDomain(ctx context.Context, deps []*ethpb.Deposit, domain []byte) error {
+func verifyDepositDataWithDomain(ctx context.Context, deps []*silapb.Deposit, domain []byte) error {
 	if len(deps) == 0 {
 		return nil
 	}
@@ -211,7 +211,7 @@ func verifyDepositDataWithDomain(ctx context.Context, deps []*ethpb.Deposit, dom
 		}
 		pks[i] = dpk
 		sigs[i] = dep.Data.Signature
-		depositMessage := &ethpb.DepositMessage{
+		depositMessage := &silapb.DepositMessage{
 			PublicKey:             dep.Data.PublicKey,
 			WithdrawalCredentials: dep.Data.WithdrawalCredentials,
 			Amount:                dep.Data.Amount,
@@ -252,7 +252,7 @@ func verifyDepositRequestDataWithDomain(ctx context.Context, reqs []*enginev1.De
 		}
 		pks[i] = pk
 		sigs[i] = req.Signature
-		sr, err := signing.ComputeSigningRoot(&ethpb.DepositMessage{
+		sr, err := signing.ComputeSigningRoot(&silapb.DepositMessage{
 			PublicKey:             req.Pubkey,
 			WithdrawalCredentials: req.WithdrawalCredentials,
 			Amount:                req.Amount,
@@ -300,7 +300,7 @@ func verifyDepositRequestsDC(ctx context.Context, reqs []*enginev1.DepositReques
 	return append(left, right...), nil
 }
 
-func verifyPendingDepositDataWithDomain(ctx context.Context, deps []*ethpb.PendingDeposit, domain []byte) error {
+func verifyPendingDepositDataWithDomain(ctx context.Context, deps []*silapb.PendingDeposit, domain []byte) error {
 	if len(deps) == 0 {
 		return nil
 	}
@@ -320,7 +320,7 @@ func verifyPendingDepositDataWithDomain(ctx context.Context, deps []*ethpb.Pendi
 		}
 		pks[i] = dpk
 		sigs[i] = dep.Signature
-		depositMessage := &ethpb.DepositMessage{
+		depositMessage := &silapb.DepositMessage{
 			PublicKey:             dep.PublicKey,
 			WithdrawalCredentials: dep.WithdrawalCredentials,
 			Amount:                dep.Amount,

@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
@@ -24,7 +24,7 @@ import (
 func SubmitValidatorRegistrations(
 	ctx context.Context,
 	validatorClient iface.ValidatorClient,
-	signedRegs []*ethpb.SignedValidatorRegistrationV1,
+	signedRegs []*silapb.SignedValidatorRegistrationV1,
 	validatorRegsBatchSize int,
 ) error {
 	ctx, span := trace.StartSpan(ctx, "validator.SubmitValidatorRegistrations")
@@ -38,7 +38,7 @@ func SubmitValidatorRegistrations(
 	var lastErr error
 
 	for _, chunk := range chunks {
-		innerSignerRegs := ethpb.SignedValidatorRegistrationsV1{
+		innerSignerRegs := silapb.SignedValidatorRegistrationsV1{
 			Messages: chunk,
 		}
 
@@ -64,7 +64,7 @@ func SubmitValidatorRegistrations(
 }
 
 // Sings validator registration obj with the proposer domain and private key.
-func signValidatorRegistration(ctx context.Context, signer iface.SigningFunc, reg *ethpb.ValidatorRegistrationV1) ([]byte, error) {
+func signValidatorRegistration(ctx context.Context, signer iface.SigningFunc, reg *silapb.ValidatorRegistrationV1) ([]byte, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.signValidatorRegistration")
 	defer span.End()
 
@@ -99,8 +99,8 @@ func (v *validator) signProposerPreferences(
 	ctx context.Context,
 	km keymanager.IKeymanager,
 	pubkey [fieldparams.BLSPubkeyLength]byte,
-	pref *ethpb.ProposerPreferences,
-) (*ethpb.SignedProposerPreferences, error) {
+	pref *silapb.ProposerPreferences,
+) (*silapb.SignedProposerPreferences, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.signProposerPreferences")
 	defer span.End()
 
@@ -126,14 +126,14 @@ func (v *validator) signProposerPreferences(
 		return nil, errors.Wrap(err, "could not sign proposer preferences")
 	}
 
-	return &ethpb.SignedProposerPreferences{
+	return &silapb.SignedProposerPreferences{
 		Message:   pref,
 		Signature: sig.Marshal(),
 	}, nil
 }
 
 // SignValidatorRegistrationRequest compares and returns either the cached validator registration request or signs a new one.
-func (v *validator) SignValidatorRegistrationRequest(ctx context.Context, signer iface.SigningFunc, newValidatorRegistration *ethpb.ValidatorRegistrationV1) (*ethpb.SignedValidatorRegistrationV1, bool /* isCached */, error) {
+func (v *validator) SignValidatorRegistrationRequest(ctx context.Context, signer iface.SigningFunc, newValidatorRegistration *silapb.ValidatorRegistrationV1) (*silapb.SignedValidatorRegistrationV1, bool /* isCached */, error) {
 	signedReg, ok := v.signedValidatorRegistrations[bytesutil.ToBytes48(newValidatorRegistration.Pubkey)]
 	if ok && isValidatorRegistrationSame(signedReg.Message, newValidatorRegistration) {
 		return signedReg, true, nil
@@ -142,7 +142,7 @@ func (v *validator) SignValidatorRegistrationRequest(ctx context.Context, signer
 		if err != nil {
 			return nil, false, err
 		}
-		newRequest := &ethpb.SignedValidatorRegistrationV1{
+		newRequest := &silapb.SignedValidatorRegistrationV1{
 			Message:   newValidatorRegistration,
 			Signature: sig,
 		}
@@ -151,7 +151,7 @@ func (v *validator) SignValidatorRegistrationRequest(ctx context.Context, signer
 	}
 }
 
-func isValidatorRegistrationSame(cachedVR *ethpb.ValidatorRegistrationV1, newVR *ethpb.ValidatorRegistrationV1) bool {
+func isValidatorRegistrationSame(cachedVR *silapb.ValidatorRegistrationV1, newVR *silapb.ValidatorRegistrationV1) bool {
 	isSame := true
 	if cachedVR.GasLimit != newVR.GasLimit {
 		isSame = false
@@ -163,7 +163,7 @@ func isValidatorRegistrationSame(cachedVR *ethpb.ValidatorRegistrationV1, newVR 
 }
 
 // chunkSignedValidatorRegistrationV1 chunks regs into chunks of size chunkSize (the last chunk may be smaller). If chunkSize is non-positive, returns only one chunk.
-func chunkSignedValidatorRegistrationV1(regs []*ethpb.SignedValidatorRegistrationV1, chunkSize int) [][]*ethpb.SignedValidatorRegistrationV1 {
+func chunkSignedValidatorRegistrationV1(regs []*silapb.SignedValidatorRegistrationV1, chunkSize int) [][]*silapb.SignedValidatorRegistrationV1 {
 	if chunkSize <= 0 {
 		chunkSize = len(regs)
 	}
@@ -177,13 +177,13 @@ func chunkSignedValidatorRegistrationV1(regs []*ethpb.SignedValidatorRegistratio
 		lastChunkSize = chunkSize
 	}
 
-	chunks := make([][]*ethpb.SignedValidatorRegistrationV1, chunksCount)
+	chunks := make([][]*silapb.SignedValidatorRegistrationV1, chunksCount)
 
 	for i := 0; i < chunksCount-1; i++ {
-		chunks[i] = make([]*ethpb.SignedValidatorRegistrationV1, chunkSize)
+		chunks[i] = make([]*silapb.SignedValidatorRegistrationV1, chunkSize)
 	}
 
-	chunks[chunksCount-1] = make([]*ethpb.SignedValidatorRegistrationV1, lastChunkSize)
+	chunks[chunksCount-1] = make([]*silapb.SignedValidatorRegistrationV1, lastChunkSize)
 
 	for i, reg := range regs {
 		chunkIndex := i / chunkSize

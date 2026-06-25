@@ -3,24 +3,24 @@ package attmap
 import (
 	"sync"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/pkg/errors"
 )
 
 // Attestations --
 type Attestations struct {
-	atts map[attestation.Id]ethpb.Att
+	atts map[attestation.Id]silapb.Att
 	sync.RWMutex
 }
 
 // New creates a new instance of the map.
 func New() *Attestations {
-	return &Attestations{atts: make(map[attestation.Id]ethpb.Att)}
+	return &Attestations{atts: make(map[attestation.Id]silapb.Att)}
 }
 
 // Save stores an attestation in the map.
-func (a *Attestations) Save(att ethpb.Att) error {
+func (a *Attestations) Save(att silapb.Att) error {
 	if att == nil || att.IsNil() {
 		return nil
 	}
@@ -38,7 +38,7 @@ func (a *Attestations) Save(att ethpb.Att) error {
 }
 
 // SaveMany stores multiple attestation in the map.
-func (a *Attestations) SaveMany(atts []ethpb.Att) error {
+func (a *Attestations) SaveMany(atts []silapb.Att) error {
 	for _, att := range atts {
 		if err := a.Save(att); err != nil {
 			return err
@@ -49,11 +49,11 @@ func (a *Attestations) SaveMany(atts []ethpb.Att) error {
 }
 
 // GetAll retrieves all attestations that are in the map.
-func (a *Attestations) GetAll() []ethpb.Att {
+func (a *Attestations) GetAll() []silapb.Att {
 	a.RLock()
 	defer a.RUnlock()
 
-	atts := make([]ethpb.Att, len(a.atts))
+	atts := make([]silapb.Att, len(a.atts))
 	i := 0
 	for _, att := range a.atts {
 		atts[i] = att.Clone()
@@ -64,7 +64,7 @@ func (a *Attestations) GetAll() []ethpb.Att {
 }
 
 // Delete removes an attestation from the map.
-func (a *Attestations) Delete(att ethpb.Att) error {
+func (a *Attestations) Delete(att silapb.Att) error {
 	if att == nil || att.IsNil() {
 		return nil
 	}

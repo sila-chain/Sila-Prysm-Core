@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/metadata"
 	"github.com/sila-chain/Sila/p2p/enr"
 	"github.com/libp2p/go-libp2p/core/network"
@@ -24,7 +24,7 @@ var (
 )
 
 // ConnectionState is the state of the connection.
-type ConnectionState ethpb.ConnectionState
+type ConnectionState silapb.ConnectionState
 
 // StoreConfig holds peer store parameters.
 type StoreConfig struct {
@@ -54,7 +54,7 @@ type PeerData struct {
 	NextValidTime time.Time
 	// Chain related data.
 	MetaData                  metadata.Metadata
-	ChainState                *ethpb.StatusV2
+	ChainState                *silapb.StatusV2
 	ChainStateLastUpdated     time.Time
 	ChainStateValidationError error
 	// Scorers internal data.
@@ -62,7 +62,7 @@ type PeerData struct {
 	ProcessedBlocks      uint64
 	BlockProviderUpdated time.Time
 	// Gossip Scoring data.
-	TopicScores      map[string]*ethpb.TopicScoreSnapshot
+	TopicScores      map[string]*silapb.TopicScoreSnapshot
 	GossipScore      float64
 	BehaviourPenalty float64
 }

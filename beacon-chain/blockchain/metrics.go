@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
@@ -264,7 +264,7 @@ var (
 )
 
 // reportSlotMetrics reports slot related metrics.
-func reportSlotMetrics(stateSlot, headSlot, clockSlot primitives.Slot, finalizedCheckpoint *ethpb.Checkpoint) {
+func reportSlotMetrics(stateSlot, headSlot, clockSlot primitives.Slot, finalizedCheckpoint *silapb.Checkpoint) {
 	clockTimeSlot.Set(float64(clockSlot))
 	beaconSlot.Set(float64(stateSlot))
 	beaconHeadSlot.Set(float64(headSlot))

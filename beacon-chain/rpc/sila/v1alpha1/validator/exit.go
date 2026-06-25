@@ -8,7 +8,7 @@ import (
 	opfeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/operation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -17,7 +17,7 @@ import (
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // ProposeExit proposes an exit for a validator.
-func (vs *Server) ProposeExit(ctx context.Context, req *ethpb.SignedVoluntaryExit) (*ethpb.ProposeExitResponse, error) {
+func (vs *Server) ProposeExit(ctx context.Context, req *silapb.SignedVoluntaryExit) (*silapb.ProposeExitResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "nil request")
 	}
@@ -65,7 +65,7 @@ func (vs *Server) ProposeExit(ctx context.Context, req *ethpb.SignedVoluntaryExi
 		return nil, status.Errorf(codes.Internal, "Could not get tree hash of exit: %v", err)
 	}
 
-	return &ethpb.ProposeExitResponse{
+	return &silapb.ProposeExitResponse{
 		ExitRoot: r[:],
 	}, vs.P2P.Broadcast(ctx, req)
 }

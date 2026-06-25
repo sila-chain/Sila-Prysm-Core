@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/shared"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/shared"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -58,7 +58,7 @@ func (s *Server) GetBeaconStatus(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetValidatorPerformance is a wrapper around the /eth/v1alpha1 endpoint of the same name.
+// GetValidatorPerformance is a wrapper around the /sila/v1alpha1 endpoint of the same name.
 func (s *Server) GetValidatorPerformance(w http.ResponseWriter, r *http.Request) {
 	ctx, span := trace.StartSpan(r.Context(), "validator.web.beacon.ValidatorPerformance")
 	defer span.End()
@@ -83,7 +83,7 @@ func (s *Server) GetValidatorPerformance(w http.ResponseWriter, r *http.Request)
 		pubkeys[i] = pk
 	}
 
-	req := &ethpb.ValidatorPerformanceRequest{
+	req := &silapb.ValidatorPerformanceRequest{
 		PublicKeys: pubkeys,
 	}
 	validatorPerformance, err := s.chainClient.ValidatorPerformance(ctx, req)
@@ -94,7 +94,7 @@ func (s *Server) GetValidatorPerformance(w http.ResponseWriter, r *http.Request)
 	httputil.WriteJson(w, ValidatorPerformanceResponseFromConsensus(validatorPerformance))
 }
 
-// GetValidatorBalances is a wrapper around the /eth/v1alpha1 endpoint of the same name.
+// GetValidatorBalances is a wrapper around the /sila/v1alpha1 endpoint of the same name.
 func (s *Server) GetValidatorBalances(w http.ResponseWriter, r *http.Request) {
 	ctx, span := trace.StartSpan(r.Context(), "validator.web.beacon.GetValidatorBalances")
 	defer span.End()
@@ -129,7 +129,7 @@ func (s *Server) GetValidatorBalances(w http.ResponseWriter, r *http.Request) {
 		}
 		pubkeys[i] = pk
 	}
-	req := &ethpb.ListValidatorBalancesRequest{
+	req := &silapb.ListValidatorBalancesRequest{
 		PublicKeys: pubkeys,
 		PageSize:   int32(ps),
 		PageToken:  pageToken,
@@ -147,7 +147,7 @@ func (s *Server) GetValidatorBalances(w http.ResponseWriter, r *http.Request) {
 	httputil.WriteJson(w, response)
 }
 
-// GetValidators is a wrapper around the /eth/v1alpha1 endpoint of the same name.
+// GetValidators is a wrapper around the /sila/v1alpha1 endpoint of the same name.
 func (s *Server) GetValidators(w http.ResponseWriter, r *http.Request) {
 	ctx, span := trace.StartSpan(r.Context(), "validator.web.beacon.GetValidators")
 	defer span.End()
@@ -183,7 +183,7 @@ func (s *Server) GetValidators(w http.ResponseWriter, r *http.Request) {
 		httputil.HandleError(w, "no pubkeys provided", http.StatusBadRequest)
 		return
 	}
-	req := &ethpb.ListValidatorsRequest{
+	req := &silapb.ListValidatorsRequest{
 		PublicKeys: pubkeys,
 		PageSize:   int32(ps),
 		PageToken:  pageToken,
@@ -201,7 +201,7 @@ func (s *Server) GetValidators(w http.ResponseWriter, r *http.Request) {
 	httputil.WriteJson(w, response)
 }
 
-// GetPeers is a wrapper around the /eth/v1alpha1 endpoint of the same name.
+// GetPeers is a wrapper around the /sila/v1alpha1 endpoint of the same name.
 func (s *Server) GetPeers(w http.ResponseWriter, r *http.Request) {
 	ctx, span := trace.StartSpan(r.Context(), "validator.web.beacon.GetPeers")
 	defer span.End()

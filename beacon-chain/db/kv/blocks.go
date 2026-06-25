@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/slice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
@@ -870,7 +870,7 @@ func (s *Store) FeeRecipientByValidatorID(ctx context.Context, id primitives.Val
 			if enc == nil {
 				return errors.Wrapf(ErrNotFoundFeeRecipient, "validator id %d", id)
 			}
-			reg := &ethpb.ValidatorRegistrationV1{}
+			reg := &silapb.ValidatorRegistrationV1{}
 			if err := decode(ctx, enc, reg); err != nil {
 				return err
 			}
@@ -904,10 +904,10 @@ func (s *Store) SaveFeeRecipientsByValidatorIDs(ctx context.Context, ids []primi
 
 // RegistrationByValidatorID returns the validator registration object for a validator id.
 // `ErrNotFoundFeeRecipient` is returned if the validator id is not found.
-func (s *Store) RegistrationByValidatorID(ctx context.Context, id primitives.ValidatorIndex) (*ethpb.ValidatorRegistrationV1, error) {
+func (s *Store) RegistrationByValidatorID(ctx context.Context, id primitives.ValidatorIndex) (*silapb.ValidatorRegistrationV1, error) {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.RegistrationByValidatorID")
 	defer span.End()
-	reg := &ethpb.ValidatorRegistrationV1{}
+	reg := &silapb.ValidatorRegistrationV1{}
 	err := s.db.View(func(tx *bolt.Tx) error {
 		bkt := tx.Bucket(registrationBucket)
 		enc := bkt.Get(bytesutil.Uint64ToBytesBigEndian(uint64(id)))
@@ -921,7 +921,7 @@ func (s *Store) RegistrationByValidatorID(ctx context.Context, id primitives.Val
 
 // SaveRegistrationsByValidatorIDs saves the validator registrations for validator ids.
 // Error is returned if `ids` and `registrations` are not the same length.
-func (s *Store) SaveRegistrationsByValidatorIDs(ctx context.Context, ids []primitives.ValidatorIndex, regs []*ethpb.ValidatorRegistrationV1) error {
+func (s *Store) SaveRegistrationsByValidatorIDs(ctx context.Context, ids []primitives.ValidatorIndex, regs []*silapb.ValidatorRegistrationV1) error {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.SaveRegistrationsByValidatorIDs")
 	defer span.End()
 
@@ -1241,69 +1241,69 @@ func unmarshalBlock(_ context.Context, enc []byte) (interfaces.ReadOnlySignedBea
 	switch {
 	case hasAltairKey(enc):
 		// Marshal block bytes to altair beacon block.
-		rawBlock = &ethpb.SignedBeaconBlockAltair{}
+		rawBlock = &silapb.SignedBeaconBlockAltair{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(altairKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Altair block")
 		}
 	case hasBellatrixKey(enc):
-		rawBlock = &ethpb.SignedBeaconBlockBellatrix{}
+		rawBlock = &silapb.SignedBeaconBlockBellatrix{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(bellatrixKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Bellatrix block")
 		}
 	case hasBellatrixBlindKey(enc):
-		rawBlock = &ethpb.SignedBlindedBeaconBlockBellatrix{}
+		rawBlock = &silapb.SignedBlindedBeaconBlockBellatrix{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(bellatrixBlindKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal blinded Bellatrix block")
 		}
 	case hasCapellaKey(enc):
-		rawBlock = &ethpb.SignedBeaconBlockCapella{}
+		rawBlock = &silapb.SignedBeaconBlockCapella{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(capellaKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Capella block")
 		}
 	case hasCapellaBlindKey(enc):
-		rawBlock = &ethpb.SignedBlindedBeaconBlockCapella{}
+		rawBlock = &silapb.SignedBlindedBeaconBlockCapella{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(capellaBlindKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal blinded Capella block")
 		}
 	case hasDenebKey(enc):
-		rawBlock = &ethpb.SignedBeaconBlockDeneb{}
+		rawBlock = &silapb.SignedBeaconBlockDeneb{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(denebKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Deneb block")
 		}
 	case hasDenebBlindKey(enc):
-		rawBlock = &ethpb.SignedBlindedBeaconBlockDeneb{}
+		rawBlock = &silapb.SignedBlindedBeaconBlockDeneb{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(denebBlindKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal blinded Deneb block")
 		}
 	case HasElectraKey(enc):
-		rawBlock = &ethpb.SignedBeaconBlockElectra{}
+		rawBlock = &silapb.SignedBeaconBlockElectra{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(ElectraKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Electra block")
 		}
 	case hasElectraBlindKey(enc):
-		rawBlock = &ethpb.SignedBlindedBeaconBlockElectra{}
+		rawBlock = &silapb.SignedBlindedBeaconBlockElectra{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(electraBlindKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal blinded Electra block")
 		}
 	case hasFuluKey(enc):
-		rawBlock = &ethpb.SignedBeaconBlockFulu{}
+		rawBlock = &silapb.SignedBeaconBlockFulu{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(fuluKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Fulu block")
 		}
 	case hasFuluBlindKey(enc):
-		rawBlock = &ethpb.SignedBlindedBeaconBlockFulu{}
+		rawBlock = &silapb.SignedBlindedBeaconBlockFulu{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(fuluBlindKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal blinded Fulu block")
 		}
 	case hasGloasKey(enc):
 		// post Gloas we save the full beacon block as EIP-7732 separates beacon block and payload
-		rawBlock = &ethpb.SignedBeaconBlockGloas{}
+		rawBlock = &silapb.SignedBeaconBlockGloas{}
 		if err := rawBlock.UnmarshalSSZ(enc[len(gloasKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Gloas block")
 		}
 	default:
 		// Marshal block bytes to phase 0 beacon block.
-		rawBlock = &ethpb.SignedBeaconBlock{}
+		rawBlock = &silapb.SignedBeaconBlock{}
 		if err := rawBlock.UnmarshalSSZ(enc); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Phase0 block")
 		}

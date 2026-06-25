@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ethereum.eth.v1alpha1;
 
-import "proto/eth/ext/options.proto";
+import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1alpha1/node.proto";
 import "proto/sila/v1alpha1/p2p_messages.proto";
 import "google/api/annotations.proto";
@@ -26,35 +26,35 @@ service Debug {
   rpc GetBeaconState(BeaconStateRequest) returns (SSZResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/debug/state"
+      get : "/sila/v1alpha1/debug/state"
     };
   }
   // Returns a beacon state by filter criteria from the beacon node.
   rpc GetBlock(BlockRequestByRoot) returns (SSZResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/debug/block"
+      get : "/sila/v1alpha1/debug/block"
     };
   }
   // SetLoggingLevel sets the log-level of the beacon node programmatically.
   rpc SetLoggingLevel(LoggingLevelRequest) returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/debug/logging"
+      post : "/sila/v1alpha1/debug/logging"
     };
   }
   // Returns all the related data for every peer tracked by the host node.
   rpc ListPeers(google.protobuf.Empty) returns (DebugPeerResponses) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/debug/peers"
+      get : "/sila/v1alpha1/debug/peers"
     };
   }
   // Returns requested peer with specified peer id if it exists.
   rpc GetPeer(ethereum.eth.v1alpha1.PeerRequest) returns (DebugPeerResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/debug/peer"
+      get : "/sila/v1alpha1/debug/peer"
     };
   }
 }

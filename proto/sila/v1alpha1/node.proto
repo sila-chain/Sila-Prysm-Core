@@ -19,7 +19,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-import "proto/eth/ext/options.proto";
+import "proto/silaapi/ext/options.proto";
 
 option csharp_namespace = "Ethereum.Eth.v1alpha1";
 option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
@@ -37,7 +37,7 @@ service Node {
   rpc GetSyncStatus(google.protobuf.Empty) returns (SyncStatus) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/node/syncing"
+      get : "/sila/v1alpha1/node/syncing"
     };
   }
 
@@ -45,7 +45,7 @@ service Node {
   rpc GetGenesis(google.protobuf.Empty) returns (Genesis) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/node/genesis"
+      get : "/sila/v1alpha1/node/genesis"
     };
   }
 
@@ -53,7 +53,7 @@ service Node {
   rpc GetVersion(google.protobuf.Empty) returns (Version) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/node/version"
+      get : "/sila/v1alpha1/node/version"
     };
   }
 
@@ -61,7 +61,7 @@ service Node {
   rpc GetHealth(HealthRequest) returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/node/health"
+      get : "/sila/v1alpha1/node/health"
     };
   }
 
@@ -74,7 +74,7 @@ service Node {
       returns (ImplementedServices) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/node/services"
+      get : "/sila/v1alpha1/node/services"
     };
   }
 
@@ -82,7 +82,7 @@ service Node {
   rpc GetHost(google.protobuf.Empty) returns (HostData) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/node/p2p"
+      get : "/sila/v1alpha1/node/p2p"
     };
   }
 
@@ -90,7 +90,7 @@ service Node {
   rpc GetPeer(PeerRequest) returns (Peer) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/node/peer"
+      get : "/sila/v1alpha1/node/peer"
     };
   }
 
@@ -98,7 +98,7 @@ service Node {
   rpc ListPeers(google.protobuf.Empty) returns (Peers) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/node/peers"
+      get : "/sila/v1alpha1/node/peers"
     };
   }
 
@@ -107,7 +107,7 @@ service Node {
       returns (ETH1ConnectionStatus) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/node/eth1/connections"
+      get : "/sila/v1alpha1/node/eth1/connections"
     };
   }
 }

@@ -28,7 +28,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -230,8 +230,8 @@ func (s *Service) onBlockBatch(ctx context.Context, blks []consensusblocks.ROBlo
 		return errors.Wrap(err, "could not fill in missing blocks to forkchoice")
 	}
 
-	jCheckpoints := make([]*ethpb.Checkpoint, len(blks))
-	fCheckpoints := make([]*ethpb.Checkpoint, len(blks))
+	jCheckpoints := make([]*silapb.Checkpoint, len(blks))
+	fCheckpoints := make([]*silapb.Checkpoint, len(blks))
 	preVersionAndHeaders := make([]*versionAndHeader, len(blks))
 	postVersionAndHeaders := make([]*versionAndHeader, len(blks))
 	var set *bls.SignatureBatch
@@ -361,8 +361,8 @@ func (s *Service) notifyEngineAndSaveData(
 	avs das.AvailabilityChecker,
 	preVersionAndHeaders []*versionAndHeader,
 	postVersionAndHeaders []*versionAndHeader,
-	jCheckpoints []*ethpb.Checkpoint,
-	fCheckpoints []*ethpb.Checkpoint,
+	jCheckpoints []*silapb.Checkpoint,
+	fCheckpoints []*silapb.Checkpoint,
 ) ([]*forkchoicetypes.BlockAndCheckpoints, bool, error) {
 	span := trace.FromContext(ctx)
 	pendingNodes := make([]*forkchoicetypes.BlockAndCheckpoints, len(blks))
@@ -421,7 +421,7 @@ func (s *Service) notifyEngineAndSaveData(
 			tracing.AnnotateError(span, err)
 			return nil, false, err
 		}
-		if err := s.cfg.BeaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{
+		if err := s.cfg.BeaconDB.SaveStateSummary(ctx, &silapb.StateSummary{
 			Slot: b.Block().Slot(),
 			Root: root[:],
 		}); err != nil {
@@ -656,7 +656,7 @@ func (s *Service) handleBlockPayloadAttestations(ctx context.Context, blk interf
 // InsertSlashingsToForkChoiceStore inserts attester slashing indices to fork choice store.
 // To call this function, it's caller's responsibility to ensure the slashing object is valid.
 // This function requires a write lock on forkchoice.
-func (s *Service) InsertSlashingsToForkChoiceStore(ctx context.Context, slashings []ethpb.AttSlashing) {
+func (s *Service) InsertSlashingsToForkChoiceStore(ctx context.Context, slashings []silapb.AttSlashing) {
 	for _, slashing := range slashings {
 		indices := blocks.SlashableAttesterIndices(slashing)
 		for _, index := range indices {
@@ -699,7 +699,7 @@ func (s *Service) pruneAttsFromPool(ctx context.Context, headState state.BeaconS
 	}
 }
 
-func (s *Service) pruneCoveredAttsFromPool(ctx context.Context, headState state.BeaconState, att ethpb.Att) error {
+func (s *Service) pruneCoveredAttsFromPool(ctx context.Context, headState state.BeaconState, att silapb.Att) error {
 	switch {
 	case !att.IsAggregated():
 		return s.cfg.AttPool.DeleteUnaggregatedAttestation(att)
@@ -722,7 +722,7 @@ func (s *Service) pruneCoveredAttsFromPool(ctx context.Context, headState state.
 // aggregate accounting for one committee. This allows us to compare aggregates in the same way it's done for
 // Phase0. Even though we can't provide a valid signature for the dummy aggregate, it does not matter because
 // signatures play no part in pruning attestations.
-func (s *Service) pruneCoveredElectraAttsFromPool(ctx context.Context, headState state.BeaconState, att ethpb.Att) error {
+func (s *Service) pruneCoveredElectraAttsFromPool(ctx context.Context, headState state.BeaconState, att silapb.Att) error {
 	if att.Version() == version.Phase0 {
 		log.Error("Called pruneCoveredElectraAttsFromPool with a Phase0 attestation")
 		return nil
@@ -759,7 +759,7 @@ func (s *Service) pruneCoveredElectraAttsFromPool(ctx context.Context, headState
 		cb := primitives.NewAttestationCommitteeBits()
 		cb.SetBitAt(uint64(committeeIndices[i]), true)
 
-		a := &ethpb.AttestationElectra{
+		a := &silapb.AttestationElectra{
 			AggregationBits: ab,
 			Data:            att.GetData(),
 			CommitteeBits:   cb,

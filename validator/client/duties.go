@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -48,14 +48,14 @@ func (v *validator) nonBlacklistedKeys(ctx context.Context) ([][fieldparams.BLSP
 // validator currently has duties to perform — i.e. it is in (or about to be
 // in) the beacon-state active set. Shared by filteredKeysAndIndices and
 // filterAndCacheActiveKeys so both call sites agree on the same predicate.
-func isActiveForDuties(s *ethpb.ValidatorStatusResponse, currEpoch primitives.Epoch) bool {
+func isActiveForDuties(s *silapb.ValidatorStatusResponse, currEpoch primitives.Epoch) bool {
 	if s == nil {
 		return false
 	}
 	switch s.Status {
-	case ethpb.ValidatorStatus_ACTIVE, ethpb.ValidatorStatus_EXITING:
+	case silapb.ValidatorStatus_ACTIVE, silapb.ValidatorStatus_EXITING:
 		return true
-	case ethpb.ValidatorStatus_PENDING:
+	case silapb.ValidatorStatus_PENDING:
 		// Cache may be stale: include validators whose activation epoch has
 		// already arrived but whose status hasn't been refreshed yet.
 		return currEpoch >= s.ActivationEpoch
@@ -121,7 +121,7 @@ func (v *validator) UpdateDuties(ctx context.Context) error {
 
 // updateDutiesCombined uses the combined Duties() endpoint (pre-GLOAS).
 func (v *validator) updateDutiesCombined(ctx context.Context, epoch primitives.Epoch, filteredKeys [][fieldparams.BLSPubkeyLength]byte) error {
-	req := &ethpb.DutiesRequest{
+	req := &silapb.DutiesRequest{
 		Epoch:      epoch,
 		PublicKeys: bytesutil.FromBytes48Array(filteredKeys),
 	}
@@ -162,12 +162,12 @@ func depRootsDiverged(epoch primitives.Epoch, res dutiesFetchResult) bool {
 }
 
 // allCurrentDutiesExited reports whether there is at least one duty and all are EXITED.
-func allCurrentDutiesExited(duties []*ethpb.ValidatorDuty) bool {
+func allCurrentDutiesExited(duties []*silapb.ValidatorDuty) bool {
 	if len(duties) == 0 {
 		return false
 	}
 	for _, d := range duties {
-		if d.Status != ethpb.ValidatorStatus_EXITED {
+		if d.Status != silapb.ValidatorStatus_EXITED {
 			return false
 		}
 	}
@@ -177,13 +177,13 @@ func allCurrentDutiesExited(duties []*ethpb.ValidatorDuty) bool {
 // dutiesFetchResult holds the successful results from fetching or
 // promoting current-epoch duties plus raw next-epoch API responses.
 type dutiesFetchResult struct {
-	currentDuties []*ethpb.ValidatorDuty
+	currentDuties []*silapb.ValidatorDuty
 	prevDepRoot   []byte
 	currDepRoot   []byte
-	attNext       *ethpb.AttesterDutiesResponse
-	propNext      *ethpb.ProposerDutiesResponse
-	syncNext      *ethpb.SyncCommitteeDutiesResponse
-	ptcNext       *ethpb.PTCDutiesResponse
+	attNext       *silapb.AttesterDutiesResponse
+	propNext      *silapb.ProposerDutiesResponse
+	syncNext      *silapb.SyncCommitteeDutiesResponse
+	ptcNext       *silapb.PTCDutiesResponse
 	missingNext   missingNextDuties
 }
 
@@ -247,7 +247,7 @@ func (v *validator) updateDutiesSplit(ctx context.Context, epoch primitives.Epoc
 	nextDuties := v.buildNextDuties(res)
 
 	var data dutyStoreData
-	data.setFromContainer(&ethpb.ValidatorDutiesContainer{
+	data.setFromContainer(&silapb.ValidatorDutiesContainer{
 		PrevDependentRoot:  res.prevDepRoot,
 		CurrDependentRoot:  res.currDepRoot,
 		CurrentEpochDuties: res.currentDuties,
@@ -269,7 +269,7 @@ func (v *validator) updateDutiesSplit(ctx context.Context, epoch primitives.Epoc
 // fetch, so no current-epoch refetch is needed.
 func (v *validator) promoteDuties(ctx context.Context, epoch primitives.Epoch, indices []primitives.ValidatorIndex) (dutiesFetchResult, error) {
 	snap := v.duties.snapshot()
-	currentDuties := make([]*ethpb.ValidatorDuty, 0, snap.nextDutyCount())
+	currentDuties := make([]*silapb.ValidatorDuty, 0, snap.nextDutyCount())
 	for _, d := range snap.nextDuties() {
 		if d == nil {
 			continue
@@ -338,7 +338,7 @@ func (v *validator) promoteDuties(ctx context.Context, epoch primitives.Epoch, i
 
 // missingNextMask reports which next-epoch duty types are missing post-fetch.
 // Only types that were expected at nextEpoch (per fork gating) are flagged.
-func missingNextMask(nextEpoch primitives.Epoch, prop *ethpb.ProposerDutiesResponse, sync *ethpb.SyncCommitteeDutiesResponse, ptc *ethpb.PTCDutiesResponse) missingNextDuties {
+func missingNextMask(nextEpoch primitives.Epoch, prop *silapb.ProposerDutiesResponse, sync *silapb.SyncCommitteeDutiesResponse, ptc *silapb.PTCDutiesResponse) missingNextDuties {
 	var m missingNextDuties
 	if prop == nil && nextEpoch >= params.BeaconConfig().FuluForkEpoch {
 		m |= missingNextProposer
@@ -356,10 +356,10 @@ func missingNextMask(nextEpoch primitives.Epoch, prop *ethpb.ProposerDutiesRespo
 func (v *validator) fetchAllDuties(ctx context.Context, epoch primitives.Epoch, indices []primitives.ValidatorIndex) (dutiesFetchResult, error) {
 	var (
 		res             dutiesFetchResult
-		attCurr         *ethpb.AttesterDutiesResponse
-		propCurr        *ethpb.ProposerDutiesResponse
-		syncCurr        *ethpb.SyncCommitteeDutiesResponse
-		ptcCurr         *ethpb.PTCDutiesResponse
+		attCurr         *silapb.AttesterDutiesResponse
+		propCurr        *silapb.ProposerDutiesResponse
+		syncCurr        *silapb.SyncCommitteeDutiesResponse
+		ptcCurr         *silapb.PTCDutiesResponse
 		attErr, propErr error
 		syncErr, ptcErr error
 		wg              sync.WaitGroup
@@ -408,7 +408,7 @@ func (v *validator) fetchAllDuties(ctx context.Context, epoch primitives.Epoch, 
 
 // buildNextDuties constructs next-epoch ValidatorDuty entries from
 // the raw API responses in the fetch result.
-func (v *validator) buildNextDuties(res dutiesFetchResult) []*ethpb.ValidatorDuty {
+func (v *validator) buildNextDuties(res dutiesFetchResult) []*silapb.ValidatorDuty {
 	return v.assembleDuties(res.attNext, res.propNext, res.syncNext, res.ptcNext)
 }
 
@@ -417,11 +417,11 @@ func (v *validator) buildNextDuties(res dutiesFetchResult) []*ethpb.ValidatorDut
 // assignment. Used by fetchAllDuties (current epoch) and buildNextDuties
 // (next epoch).
 func (v *validator) assembleDuties(
-	att *ethpb.AttesterDutiesResponse,
-	prop *ethpb.ProposerDutiesResponse,
-	sync *ethpb.SyncCommitteeDutiesResponse,
-	ptc *ethpb.PTCDutiesResponse,
-) []*ethpb.ValidatorDuty {
+	att *silapb.AttesterDutiesResponse,
+	prop *silapb.ProposerDutiesResponse,
+	sync *silapb.SyncCommitteeDutiesResponse,
+	ptc *silapb.PTCDutiesResponse,
+) []*silapb.ValidatorDuty {
 	proposerSlots := make(map[primitives.ValidatorIndex][]primitives.Slot)
 	if prop != nil {
 		for _, d := range prop.Duties {
@@ -443,9 +443,9 @@ func (v *validator) assembleDuties(
 	if att == nil {
 		return nil
 	}
-	duties := make([]*ethpb.ValidatorDuty, 0, len(att.Duties))
+	duties := make([]*silapb.ValidatorDuty, 0, len(att.Duties))
 	for _, d := range att.Duties {
-		duties = append(duties, &ethpb.ValidatorDuty{
+		duties = append(duties, &silapb.ValidatorDuty{
 			PublicKey:               d.Pubkey,
 			ValidatorIndex:          d.ValidatorIndex,
 			CommitteeIndex:          d.CommitteeIndex,
@@ -463,13 +463,13 @@ func (v *validator) assembleDuties(
 }
 
 // statusForPubkey returns the cached validator status for a pubkey.
-func (v *validator) statusForPubkey(pk []byte) ethpb.ValidatorStatus {
+func (v *validator) statusForPubkey(pk []byte) silapb.ValidatorStatus {
 	if v.pubkeyToStatus == nil {
-		return ethpb.ValidatorStatus_UNKNOWN_STATUS
+		return silapb.ValidatorStatus_UNKNOWN_STATUS
 	}
 	st, ok := v.pubkeyToStatus[bytesutil.ToBytes48(pk)]
 	if !ok || st.status == nil {
-		return ethpb.ValidatorStatus_UNKNOWN_STATUS
+		return silapb.ValidatorStatus_UNKNOWN_STATUS
 	}
 	return st.status.Status
 }
@@ -477,7 +477,7 @@ func (v *validator) statusForPubkey(pk []byte) ethpb.ValidatorStatus {
 // fetchAttesterDuties fetches attester duties for current and next epoch in parallel.
 func (v *validator) fetchAttesterDuties(
 	ctx context.Context, epoch primitives.Epoch, indices []primitives.ValidatorIndex,
-) (current, next *ethpb.AttesterDutiesResponse, err error) {
+) (current, next *silapb.AttesterDutiesResponse, err error) {
 	var (
 		currErr, nextErr error
 		wg               sync.WaitGroup
@@ -504,7 +504,7 @@ func (v *validator) fetchAttesterDuties(
 // Pre-fulu, next-epoch proposer duties are not deterministic and not fetched.
 func (v *validator) fetchProposerDuties(
 	ctx context.Context, epoch primitives.Epoch,
-) (current, next *ethpb.ProposerDutiesResponse, err error) {
+) (current, next *silapb.ProposerDutiesResponse, err error) {
 	var (
 		currErr, nextErr error
 		wg               sync.WaitGroup
@@ -531,7 +531,7 @@ func (v *validator) fetchProposerDuties(
 // fetchSyncDuties fetches sync committee duties for current and next epoch.
 func (v *validator) fetchSyncDuties(
 	ctx context.Context, epoch primitives.Epoch, indices []primitives.ValidatorIndex,
-) (current, next *ethpb.SyncCommitteeDutiesResponse, err error) {
+) (current, next *silapb.SyncCommitteeDutiesResponse, err error) {
 	if epoch < params.BeaconConfig().AltairForkEpoch {
 		return nil, nil, nil
 	}
@@ -560,7 +560,7 @@ func (v *validator) fetchSyncDuties(
 // fetchPtcDuties fetches PTC duties for the current and next epoch in parallel.
 func (v *validator) fetchPtcDuties(
 	ctx context.Context, epoch primitives.Epoch, indices []primitives.ValidatorIndex,
-) (current, next *ethpb.PTCDutiesResponse, err error) {
+) (current, next *silapb.PTCDutiesResponse, err error) {
 	if epoch < params.BeaconConfig().GloasForkEpoch {
 		return nil, nil, nil
 	}
@@ -622,7 +622,7 @@ func (v *validator) logDuties(slot primitives.Slot) {
 		if v.emitAccountMetrics {
 			ValidatorStatusesGaugeVec.WithLabelValues(pk, fmt.Sprintf("%#x", duty.ValidatorIndex)).Set(float64(duty.Status))
 		}
-		if duty.Status != ethpb.ValidatorStatus_ACTIVE && duty.Status != ethpb.ValidatorStatus_EXITING {
+		if duty.Status != silapb.ValidatorStatus_ACTIVE && duty.Status != silapb.ValidatorStatus_EXITING {
 			continue
 		}
 
@@ -670,7 +670,7 @@ func (v *validator) logDuties(slot primitives.Slot) {
 	}
 	for _, duty := range snap.nextDuties() {
 		pk := fmt.Sprintf("%#x", duty.PublicKey)
-		if duty.Status != ethpb.ValidatorStatus_ACTIVE && duty.Status != ethpb.ValidatorStatus_EXITING {
+		if duty.Status != silapb.ValidatorStatus_ACTIVE && duty.Status != silapb.ValidatorStatus_EXITING {
 			continue
 		}
 		if v.emitAccountMetrics && duty.IsSyncCommittee {

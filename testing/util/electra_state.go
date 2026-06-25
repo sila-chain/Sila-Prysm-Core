@@ -13,15 +13,15 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
 
-type ElectraStateOption func(*ethpb.BeaconStateElectra) error
+type ElectraStateOption func(*silapb.BeaconStateElectra) error
 
 func WithElectraStateSlot(slot primitives.Slot) ElectraStateOption {
-	return func(s *ethpb.BeaconStateElectra) error {
+	return func(s *silapb.BeaconStateElectra) error {
 		s.Slot = slot
 		return nil
 	}
@@ -50,7 +50,7 @@ func DeterministicGenesisStateElectra(t testing.TB, numValidators uint64, opts .
 
 // setKeysToActive is a function to set the validators to active post electra, electra no longer processes deposits based on eth1data
 func setKeysToActive(beaconState state.BeaconState) error {
-	vals := make([]*ethpb.Validator, len(beaconState.Validators()))
+	vals := make([]*silapb.Validator, len(beaconState.Validators()))
 	for i, val := range beaconState.Validators() {
 		val.ActivationEpoch = 0
 		val.EffectiveBalance = params.BeaconConfig().MinActivationBalance
@@ -60,7 +60,7 @@ func setKeysToActive(beaconState state.BeaconState) error {
 }
 
 // genesisBeaconStateElectra returns the genesis beacon state.
-func genesisBeaconStateElectra(ctx context.Context, deposits []*ethpb.Deposit, genesisTime uint64, eth1Data *ethpb.Eth1Data, opts ...ElectraStateOption) (state.BeaconState, error) {
+func genesisBeaconStateElectra(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, eth1Data *silapb.Eth1Data, opts ...ElectraStateOption) (state.BeaconState, error) {
 	st, err := emptyGenesisStateElectra()
 	if err != nil {
 		return nil, err
@@ -82,16 +82,16 @@ func genesisBeaconStateElectra(ctx context.Context, deposits []*ethpb.Deposit, g
 
 // emptyGenesisStateElectra returns an empty genesis state in Electra format.
 func emptyGenesisStateElectra() (state.BeaconState, error) {
-	st := &ethpb.BeaconStateElectra{
+	st := &silapb.BeaconStateElectra{
 		// Misc fields.
 		Slot: 0,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().DenebForkVersion,
 			CurrentVersion:  params.BeaconConfig().ElectraForkVersion,
 			Epoch:           0,
 		},
 		// Validator registry fields.
-		Validators:       []*ethpb.Validator{},
+		Validators:       []*silapb.Validator{},
 		Balances:         []uint64{},
 		InactivityScores: []uint64{},
 
@@ -101,8 +101,8 @@ func emptyGenesisStateElectra() (state.BeaconState, error) {
 		PreviousEpochParticipation: []byte{},
 
 		// Eth1 data.
-		Eth1Data:         &ethpb.Eth1Data{},
-		Eth1DataVotes:    []*ethpb.Eth1Data{},
+		Eth1Data:         &silapb.Eth1Data{},
+		Eth1DataVotes:    []*silapb.Eth1Data{},
 		Eth1DepositIndex: 0,
 
 		LatestExecutionPayloadHeader: &enginev1.ExecutionPayloadHeaderDeneb{},
@@ -114,7 +114,7 @@ func emptyGenesisStateElectra() (state.BeaconState, error) {
 	return state_native.InitializeFromProtoUnsafeElectra(st)
 }
 
-func buildGenesisBeaconStateElectra(ctx context.Context, genesisTime uint64, preState state.BeaconState, eth1Data *ethpb.Eth1Data, opts ...ElectraStateOption) (state.BeaconState, error) {
+func buildGenesisBeaconStateElectra(ctx context.Context, genesisTime uint64, preState state.BeaconState, eth1Data *silapb.Eth1Data, opts ...ElectraStateOption) (state.BeaconState, error) {
 	if eth1Data == nil {
 		return nil, errors.New("no eth1data provided for genesis state")
 	}
@@ -167,13 +167,13 @@ func buildGenesisBeaconStateElectra(ctx context.Context, genesisTime uint64, pre
 	if err != nil {
 		return nil, err
 	}
-	st := &ethpb.BeaconStateElectra{
+	st := &silapb.BeaconStateElectra{
 		// Misc fields.
 		Slot:                  0,
 		GenesisTime:           genesisTime,
 		GenesisValidatorsRoot: genesisValidatorsRoot[:],
 
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			Epoch:           0,
@@ -190,16 +190,16 @@ func buildGenesisBeaconStateElectra(ctx context.Context, genesisTime uint64, pre
 		RandaoMixes: randaoMixes,
 
 		// Finality.
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
 		JustificationBits: []byte{0},
-		FinalizedCheckpoint: &ethpb.Checkpoint{
+		FinalizedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
@@ -211,7 +211,7 @@ func buildGenesisBeaconStateElectra(ctx context.Context, genesisTime uint64, pre
 
 		// Eth1 data.
 		Eth1Data:         eth1Data,
-		Eth1DataVotes:    []*ethpb.Eth1Data{},
+		Eth1DataVotes:    []*silapb.Eth1Data{},
 		Eth1DepositIndex: preState.Eth1DepositIndex(),
 
 		// Electra Data
@@ -219,9 +219,9 @@ func buildGenesisBeaconStateElectra(ctx context.Context, genesisTime uint64, pre
 		ExitBalanceToConsume:          helpers.ActivationExitChurnLimit(primitives.Gwei(tab)),
 		EarliestConsolidationEpoch:    helpers.ActivationExitEpoch(slots.ToEpoch(preState.Slot())),
 		ConsolidationBalanceToConsume: helpers.ConsolidationChurnLimit(primitives.Gwei(tab)),
-		PendingDeposits:               make([]*ethpb.PendingDeposit, 0),
-		PendingPartialWithdrawals:     make([]*ethpb.PendingPartialWithdrawal, 0),
-		PendingConsolidations:         make([]*ethpb.PendingConsolidation, 0),
+		PendingDeposits:               make([]*silapb.PendingDeposit, 0),
+		PendingPartialWithdrawals:     make([]*silapb.PendingPartialWithdrawal, 0),
+		PendingConsolidations:         make([]*silapb.PendingConsolidation, 0),
 	}
 	for _, opt := range opts {
 		if err := opt(st); err != nil {
@@ -230,14 +230,14 @@ func buildGenesisBeaconStateElectra(ctx context.Context, genesisTime uint64, pre
 	}
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
-	bodyRoot, err := (&ethpb.BeaconBlockBodyElectra{
+	bodyRoot, err := (&silapb.BeaconBlockBodyElectra{
 		RandaoReveal: make([]byte, 96),
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},
 		Graffiti: make([]byte, 32),
-		SyncAggregate: &ethpb.SyncAggregate{
+		SyncAggregate: &silapb.SyncAggregate{
 			SyncCommitteeBits:      scBits[:],
 			SyncCommitteeSignature: make([]byte, 96),
 		},
@@ -263,7 +263,7 @@ func buildGenesisBeaconStateElectra(ctx context.Context, genesisTime uint64, pre
 		return nil, errors.Wrap(err, "could not hash tree root empty block body")
 	}
 
-	st.LatestBlockHeader = &ethpb.BeaconBlockHeader{
+	st.LatestBlockHeader = &silapb.BeaconBlockHeader{
 		ParentRoot: zeroHash,
 		StateRoot:  zeroHash,
 		BodyRoot:   bodyRoot[:],
@@ -279,11 +279,11 @@ func buildGenesisBeaconStateElectra(ctx context.Context, genesisTime uint64, pre
 	if err != nil {
 		return nil, err
 	}
-	st.CurrentSyncCommittee = &ethpb.SyncCommittee{
+	st.CurrentSyncCommittee = &silapb.SyncCommittee{
 		Pubkeys:         pubKeys,
 		AggregatePubkey: aggregated.Marshal(),
 	}
-	st.NextSyncCommittee = &ethpb.SyncCommittee{
+	st.NextSyncCommittee = &silapb.SyncCommittee{
 		Pubkeys:         pubKeys,
 		AggregatePubkey: aggregated.Marshal(),
 	}

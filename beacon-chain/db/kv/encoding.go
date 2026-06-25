@@ -6,7 +6,7 @@ import (
 	"reflect"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/golang/snappy"
 	fastssz "github.com/sila-chain/fastssz"
 	"google.golang.org/protobuf/proto"
@@ -60,25 +60,25 @@ func encode(ctx context.Context, msg proto.Message) ([]byte, error) {
 // isSSZStorageFormat returns true if the object type should be saved in SSZ encoded format.
 func isSSZStorageFormat(obj any) bool {
 	switch obj.(type) {
-	case *ethpb.BeaconState:
+	case *silapb.BeaconState:
 		return true
-	case *ethpb.SignedBeaconBlock:
+	case *silapb.SignedBeaconBlock:
 		return true
-	case *ethpb.SignedAggregateAttestationAndProof:
+	case *silapb.SignedAggregateAttestationAndProof:
 		return true
-	case *ethpb.BeaconBlock:
+	case *silapb.BeaconBlock:
 		return true
-	case *ethpb.Attestation, *ethpb.AttestationElectra:
+	case *silapb.Attestation, *silapb.AttestationElectra:
 		return true
-	case *ethpb.Deposit:
+	case *silapb.Deposit:
 		return true
-	case *ethpb.AttesterSlashing, *ethpb.AttesterSlashingElectra:
+	case *silapb.AttesterSlashing, *silapb.AttesterSlashingElectra:
 		return true
-	case *ethpb.ProposerSlashing:
+	case *silapb.ProposerSlashing:
 		return true
-	case *ethpb.VoluntaryExit:
+	case *silapb.VoluntaryExit:
 		return true
-	case *ethpb.ValidatorRegistrationV1:
+	case *silapb.ValidatorRegistrationV1:
 		return true
 	default:
 		return false

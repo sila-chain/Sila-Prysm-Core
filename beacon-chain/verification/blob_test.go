@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -184,7 +184,7 @@ func TestValidProposerSignature_CacheMiss(t *testing.T) {
 			return nil
 		},
 	}
-	ini := Initializer{shared: &sharedResources{sc: sc, sr: sbrForValOverride(b.ProposerIndex(), &ethpb.Validator{})}}
+	ini := Initializer{shared: &sharedResources{sc: sc, sr: sbrForValOverride(b.ProposerIndex(), &silapb.Validator{})}}
 	v := ini.NewBlobVerifier(b, GossipBlobSidecarRequirements)
 	require.NoError(t, v.ValidProposerSignature(ctx))
 	require.Equal(t, true, v.results.executed(RequireValidProposerSignature))
@@ -198,7 +198,7 @@ func TestValidProposerSignature_CacheMiss(t *testing.T) {
 	require.NotNil(t, v.results.result(RequireValidProposerSignature))
 
 	// simulate successful state lookup, but sig failure
-	sbr := sbrForValOverride(b.ProposerIndex(), &ethpb.Validator{})
+	sbr := sbrForValOverride(b.ProposerIndex(), &silapb.Validator{})
 	sc = &mockSignatureCache{
 		svcb: sc.svcb,
 		vscb: func(sig signatureData, v validatorAtIndexer) (err error) {
@@ -484,7 +484,7 @@ func TestSidecarProposerExpected(t *testing.T) {
 				return b.ProposerIndex(), nil
 			},
 		}
-		ini := Initializer{shared: &sharedResources{sr: sbrForValOverride(b.ProposerIndex(), &ethpb.Validator{}), pc: pc, fc: &mockForkchoicer{TargetRootForEpochCB: fcReturnsTargetRoot([32]byte{})}}}
+		ini := Initializer{shared: &sharedResources{sr: sbrForValOverride(b.ProposerIndex(), &silapb.Validator{}), pc: pc, fc: &mockForkchoicer{TargetRootForEpochCB: fcReturnsTargetRoot([32]byte{})}}}
 		v := ini.NewBlobVerifier(b, GossipBlobSidecarRequirements)
 		require.NoError(t, v.SidecarProposerExpected(ctx))
 		require.Equal(t, true, v.results.executed(RequireSidecarProposerExpected))
@@ -499,7 +499,7 @@ func TestSidecarProposerExpected(t *testing.T) {
 				return b.ProposerIndex() + 1, nil
 			},
 		}
-		ini := Initializer{shared: &sharedResources{sr: sbrForValOverride(b.ProposerIndex(), &ethpb.Validator{}), pc: pc, fc: &mockForkchoicer{TargetRootForEpochCB: fcReturnsTargetRoot([32]byte{})}}}
+		ini := Initializer{shared: &sharedResources{sr: sbrForValOverride(b.ProposerIndex(), &silapb.Validator{}), pc: pc, fc: &mockForkchoicer{TargetRootForEpochCB: fcReturnsTargetRoot([32]byte{})}}}
 		v := ini.NewBlobVerifier(b, GossipBlobSidecarRequirements)
 		require.ErrorIs(t, v.SidecarProposerExpected(ctx), errSidecarUnexpectedProposer)
 		require.Equal(t, true, v.results.executed(RequireSidecarProposerExpected))
@@ -514,7 +514,7 @@ func TestSidecarProposerExpected(t *testing.T) {
 				return 0, errors.New("ComputeProposer failed")
 			},
 		}
-		ini := Initializer{shared: &sharedResources{sr: sbrForValOverride(b.ProposerIndex(), &ethpb.Validator{}), pc: pc, fc: &mockForkchoicer{TargetRootForEpochCB: fcReturnsTargetRoot([32]byte{})}}}
+		ini := Initializer{shared: &sharedResources{sr: sbrForValOverride(b.ProposerIndex(), &silapb.Validator{}), pc: pc, fc: &mockForkchoicer{TargetRootForEpochCB: fcReturnsTargetRoot([32]byte{})}}}
 		v := ini.NewBlobVerifier(b, GossipBlobSidecarRequirements)
 		require.ErrorIs(t, v.SidecarProposerExpected(ctx), errSidecarUnexpectedProposer)
 		require.Equal(t, true, v.results.executed(RequireSidecarProposerExpected))
@@ -704,11 +704,11 @@ func sbrReturnsState(st state.BeaconState) *mockStateByRooter {
 	}}
 }
 
-func sbrForValOverride(idx primitives.ValidatorIndex, val *ethpb.Validator) *mockStateByRooter {
+func sbrForValOverride(idx primitives.ValidatorIndex, val *silapb.Validator) *mockStateByRooter {
 	return sbrForValOverrideWithT(nil, idx, val)
 }
 
-func sbrForValOverrideWithT(t testing.TB, idx primitives.ValidatorIndex, val *ethpb.Validator) *mockStateByRooter {
+func sbrForValOverrideWithT(t testing.TB, idx primitives.ValidatorIndex, val *silapb.Validator) *mockStateByRooter {
 	return &mockStateByRooter{sbr: func(_ context.Context, root [32]byte) (state.BeaconState, error) {
 		// Use a real deterministic state so that helpers.BeaconProposerIndexAtSlot works correctly
 		numValidators := max(uint64(idx+1), 64)
@@ -721,7 +721,7 @@ func sbrForValOverrideWithT(t testing.TB, idx primitives.ValidatorIndex, val *et
 			// Fallback for blob tests that don't need the full state
 			return &validxStateOverride{
 				slot: 0,
-				vals: map[primitives.ValidatorIndex]*ethpb.Validator{
+				vals: map[primitives.ValidatorIndex]*silapb.Validator{
 					idx: val,
 				},
 			}, nil
@@ -752,12 +752,12 @@ func sbrForValOverrideWithT(t testing.TB, idx primitives.ValidatorIndex, val *et
 type validxStateOverride struct {
 	state.BeaconState
 	slot primitives.Slot
-	vals map[primitives.ValidatorIndex]*ethpb.Validator
+	vals map[primitives.ValidatorIndex]*silapb.Validator
 }
 
 var _ state.BeaconState = &validxStateOverride{}
 
-func (v *validxStateOverride) ValidatorAtIndex(idx primitives.ValidatorIndex) (*ethpb.Validator, error) {
+func (v *validxStateOverride) ValidatorAtIndex(idx primitives.ValidatorIndex) (*silapb.Validator, error) {
 	val, ok := v.vals[idx]
 	if !ok {
 		return nil, fmt.Errorf("validxStateOverride does not know index %d", idx)
@@ -774,7 +774,7 @@ func (v *validxStateOverride) Version() int {
 	return 6
 }
 
-func (v *validxStateOverride) Validators() []*ethpb.Validator {
+func (v *validxStateOverride) Validators() []*silapb.Validator {
 	// Return all validators in the map as a slice
 	maxIdx := primitives.ValidatorIndex(0)
 	for idx := range v.vals {
@@ -784,13 +784,13 @@ func (v *validxStateOverride) Validators() []*ethpb.Validator {
 	}
 	// Ensure we have at least 64 validators for a valid beacon state
 	numValidators := max(maxIdx+1, 64)
-	validators := make([]*ethpb.Validator, numValidators)
+	validators := make([]*silapb.Validator, numValidators)
 	for i := range validators {
 		if val, ok := v.vals[primitives.ValidatorIndex(i)]; ok {
 			validators[i] = val
 		} else {
 			// Default validator for indices we don't care about
-			validators[i] = &ethpb.Validator{
+			validators[i] = &silapb.Validator{
 				ActivationEpoch:  0,
 				ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 				EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance,
@@ -821,9 +821,9 @@ func (v *validxStateOverride) IsNil() bool {
 	return false
 }
 
-func (v *validxStateOverride) LatestBlockHeader() *ethpb.BeaconBlockHeader {
+func (v *validxStateOverride) LatestBlockHeader() *silapb.BeaconBlockHeader {
 	// Return a minimal block header for tests
-	return &ethpb.BeaconBlockHeader{
+	return &silapb.BeaconBlockHeader{
 		Slot:          v.slot,
 		ProposerIndex: 0,
 		ParentRoot:    make([]byte, 32),
@@ -842,7 +842,7 @@ func (v *validxStateOverride) UpdateStateRootAtIndex(idx uint64, stateRoot [32]b
 	return nil
 }
 
-func (v *validxStateOverride) SetLatestBlockHeader(val *ethpb.BeaconBlockHeader) error {
+func (v *validxStateOverride) SetLatestBlockHeader(val *silapb.BeaconBlockHeader) error {
 	// No-op for mock - we don't track block headers
 	return nil
 }

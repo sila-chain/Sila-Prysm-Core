@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -23,7 +23,7 @@ func TestLatestBlockHash(t *testing.T) {
 	})
 
 	t.Run("returns zero hash when unset", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{})
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{})
 		require.NoError(t, err)
 
 		got, err := st.LatestBlockHash()
@@ -36,7 +36,7 @@ func TestLatestBlockHash(t *testing.T) {
 		var want [32]byte
 		copy(want[:], hashBytes)
 
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			LatestBlockHash: hashBytes,
 		})
 		require.NoError(t, err)
@@ -65,7 +65,7 @@ func TestIsAttestationSameSlot(t *testing.T) {
 			blockRoots[slot%cfg.SlotsPerHistoricalRoot] = root
 		}
 
-		stIface, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		stIface, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			Slot:       stateSlot,
 			BlockRoots: blockRoots,
 		})
@@ -150,8 +150,8 @@ func TestBuilderPubkey(t *testing.T) {
 
 	t.Run("returns pubkey copy", func(t *testing.T) {
 		pubkey := bytes.Repeat([]byte{0xAA}, 48)
-		stIface, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{
+		stIface, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{
 				{
 					Pubkey:            pubkey,
 					Balance:           42,
@@ -174,8 +174,8 @@ func TestBuilderPubkey(t *testing.T) {
 	})
 
 	t.Run("out of range returns error", func(t *testing.T) {
-		stIface, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{},
+		stIface, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{},
 		})
 		require.NoError(t, err)
 
@@ -187,15 +187,15 @@ func TestBuilderPubkey(t *testing.T) {
 
 func TestBuilderHelpers(t *testing.T) {
 	t.Run("is active builder", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{
 				{
 					Balance:           10,
 					DepositEpoch:      0,
 					WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
 				},
 			},
-			FinalizedCheckpoint: &ethpb.Checkpoint{Epoch: 1},
+			FinalizedCheckpoint: &silapb.Checkpoint{Epoch: 1},
 		})
 		require.NoError(t, err)
 
@@ -204,15 +204,15 @@ func TestBuilderHelpers(t *testing.T) {
 		require.Equal(t, true, active)
 
 		// Not active when withdrawable epoch is set.
-		stProto := &ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{
+		stProto := &silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{
 				{
 					Balance:           10,
 					DepositEpoch:      0,
 					WithdrawableEpoch: 1,
 				},
 			},
-			FinalizedCheckpoint: &ethpb.Checkpoint{Epoch: 2},
+			FinalizedCheckpoint: &silapb.Checkpoint{Epoch: 2},
 		}
 		stInactive, err := InitializeFromProtoGloas(stProto)
 		require.NoError(t, err)
@@ -223,21 +223,21 @@ func TestBuilderHelpers(t *testing.T) {
 	})
 
 	t.Run("can builder cover bid", func(t *testing.T) {
-		stIface, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{
+		stIface, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{
 				{
 					Balance:           primitives.Gwei(params.BeaconConfig().MinDepositAmount + 50),
 					DepositEpoch:      0,
 					WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
 				},
 			},
-			BuilderPendingWithdrawals: []*ethpb.BuilderPendingWithdrawal{
+			BuilderPendingWithdrawals: []*silapb.BuilderPendingWithdrawal{
 				{Amount: 10, BuilderIndex: 0},
 			},
-			BuilderPendingPayments: []*ethpb.BuilderPendingPayment{
-				{Withdrawal: &ethpb.BuilderPendingWithdrawal{Amount: 15, BuilderIndex: 0}},
+			BuilderPendingPayments: []*silapb.BuilderPendingPayment{
+				{Withdrawal: &silapb.BuilderPendingWithdrawal{Amount: 15, BuilderIndex: 0}},
 			},
-			FinalizedCheckpoint: &ethpb.Checkpoint{Epoch: 1},
+			FinalizedCheckpoint: &silapb.Checkpoint{Epoch: 1},
 		})
 		require.NoError(t, err)
 
@@ -253,7 +253,7 @@ func TestBuilderHelpers(t *testing.T) {
 }
 
 func TestBuilderPendingPayments_UnsupportedVersion(t *testing.T) {
-	stIface, err := InitializeFromProtoElectra(&ethpb.BeaconStateElectra{})
+	stIface, err := InitializeFromProtoElectra(&silapb.BeaconStateElectra{})
 	require.NoError(t, err)
 	st := stIface.(*BeaconState)
 
@@ -272,7 +272,7 @@ func TestWithdrawalsMatchPayloadExpected(t *testing.T) {
 		withdrawals := []*enginev1.Withdrawal{
 			{Index: 0, ValidatorIndex: 1, Address: bytes.Repeat([]byte{0x01}, 20), Amount: 10},
 		}
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			PayloadExpectedWithdrawals: withdrawals,
 		})
 		require.NoError(t, err)
@@ -290,7 +290,7 @@ func TestWithdrawalsMatchPayloadExpected(t *testing.T) {
 			{Index: 0, ValidatorIndex: 1, Address: bytes.Repeat([]byte{0x01}, 20), Amount: 11},
 		}
 
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			PayloadExpectedWithdrawals: expected,
 		})
 		require.NoError(t, err)
@@ -303,7 +303,7 @@ func TestWithdrawalsMatchPayloadExpected(t *testing.T) {
 
 func TestBuilder(t *testing.T) {
 	t.Run("nil builders returns error", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			Builders: nil,
 		})
 		require.NoError(t, err)
@@ -313,8 +313,8 @@ func TestBuilder(t *testing.T) {
 	})
 
 	t.Run("out of bounds returns error", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{{}},
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{{}},
 		})
 		require.NoError(t, err)
 
@@ -324,8 +324,8 @@ func TestBuilder(t *testing.T) {
 
 	t.Run("returns copy", func(t *testing.T) {
 		pubkey := bytes.Repeat([]byte{0xAA}, fieldparams.BLSPubkeyLength)
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{
 				{
 					Pubkey:            pubkey,
 					Balance:           42,
@@ -338,7 +338,7 @@ func TestBuilder(t *testing.T) {
 
 		got1, err := st.Builder(0)
 		require.NoError(t, err)
-		require.NotEqual(t, (*ethpb.Builder)(nil), got1)
+		require.NotEqual(t, (*silapb.Builder)(nil), got1)
 		require.Equal(t, primitives.Gwei(42), got1.Balance)
 		require.DeepEqual(t, pubkey, got1.Pubkey)
 
@@ -352,8 +352,8 @@ func TestBuilder(t *testing.T) {
 
 func TestBuilderIndexByPubkey(t *testing.T) {
 	t.Run("not found returns false", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{
 				{Pubkey: bytes.Repeat([]byte{0x11}, fieldparams.BLSPubkeyLength)},
 			},
 		})
@@ -370,8 +370,8 @@ func TestBuilderIndexByPubkey(t *testing.T) {
 		wantIdx := primitives.BuilderIndex(1)
 		wantPkBytes := bytes.Repeat([]byte{0xAB}, fieldparams.BLSPubkeyLength)
 
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{
 				nil,
 				{Pubkey: wantPkBytes},
 			},
@@ -386,7 +386,7 @@ func TestBuilderIndexByPubkey(t *testing.T) {
 	})
 
 	t.Run("AddBuilderFromDeposit populates map", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{})
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{})
 		require.NoError(t, err)
 
 		var pk [fieldparams.BLSPubkeyLength]byte
@@ -401,8 +401,8 @@ func TestBuilderIndexByPubkey(t *testing.T) {
 
 	t.Run("reused slot evicts old pubkey", func(t *testing.T) {
 		oldPk := bytes.Repeat([]byte{0x11}, fieldparams.BLSPubkeyLength)
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{
 				{
 					Pubkey:            oldPk,
 					WithdrawableEpoch: 0,
@@ -430,8 +430,8 @@ func TestBuilderIndexByPubkey(t *testing.T) {
 	})
 
 	t.Run("SetBuilders rebuilds map", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{
 				{Pubkey: bytes.Repeat([]byte{0x11}, fieldparams.BLSPubkeyLength)},
 			},
 		})
@@ -440,7 +440,7 @@ func TestBuilderIndexByPubkey(t *testing.T) {
 		var oldPk [fieldparams.BLSPubkeyLength]byte
 		copy(oldPk[:], bytes.Repeat([]byte{0x11}, fieldparams.BLSPubkeyLength))
 		newPkBytes := bytes.Repeat([]byte{0x33}, fieldparams.BLSPubkeyLength)
-		require.NoError(t, st.SetBuilders([]*ethpb.Builder{{Pubkey: newPkBytes}}))
+		require.NoError(t, st.SetBuilders([]*silapb.Builder{{Pubkey: newPkBytes}}))
 
 		_, ok := st.BuilderIndexByPubkey(oldPk)
 		require.Equal(t, false, ok)
@@ -453,15 +453,15 @@ func TestBuilderIndexByPubkey(t *testing.T) {
 
 	t.Run("UpdateBuilderAtIndex swaps pubkey mapping", func(t *testing.T) {
 		oldPk := bytes.Repeat([]byte{0x11}, fieldparams.BLSPubkeyLength)
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{
 				{Pubkey: oldPk},
 			},
 		})
 		require.NoError(t, err)
 
 		newPkBytes := bytes.Repeat([]byte{0x44}, fieldparams.BLSPubkeyLength)
-		require.NoError(t, st.UpdateBuilderAtIndex(0, &ethpb.Builder{Pubkey: newPkBytes}))
+		require.NoError(t, st.UpdateBuilderAtIndex(0, &silapb.Builder{Pubkey: newPkBytes}))
 
 		var oldPkArr [fieldparams.BLSPubkeyLength]byte
 		copy(oldPkArr[:], oldPk)
@@ -475,8 +475,8 @@ func TestBuilderIndexByPubkey(t *testing.T) {
 	})
 
 	t.Run("Copy yields independent maps", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{
 				{Pubkey: bytes.Repeat([]byte{0x55}, fieldparams.BLSPubkeyLength)},
 			},
 		})
@@ -498,11 +498,11 @@ func TestBuilderIndexByPubkey(t *testing.T) {
 func TestBuilderPendingPayment(t *testing.T) {
 	t.Run("returns copy", func(t *testing.T) {
 		slotsPerEpoch := params.BeaconConfig().SlotsPerEpoch
-		payments := make([]*ethpb.BuilderPendingPayment, 2*slotsPerEpoch)
+		payments := make([]*silapb.BuilderPendingPayment, 2*slotsPerEpoch)
 		target := uint64(slotsPerEpoch + 1)
-		payments[target] = &ethpb.BuilderPendingPayment{Weight: 10}
+		payments[target] = &silapb.BuilderPendingPayment{Weight: 10}
 
-		st, err := InitializeFromProtoUnsafeGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoUnsafeGloas(&silapb.BeaconStateGloas{
 			BuilderPendingPayments: payments,
 		})
 		require.NoError(t, err)
@@ -519,7 +519,7 @@ func TestBuilderPendingPayment(t *testing.T) {
 	})
 
 	t.Run("unsupported version", func(t *testing.T) {
-		stIface, err := InitializeFromProtoElectra(&ethpb.BeaconStateElectra{})
+		stIface, err := InitializeFromProtoElectra(&silapb.BeaconStateElectra{})
 		require.NoError(t, err)
 		st := stIface.(*BeaconState)
 
@@ -528,8 +528,8 @@ func TestBuilderPendingPayment(t *testing.T) {
 	})
 
 	t.Run("out of range", func(t *testing.T) {
-		stIface, err := InitializeFromProtoUnsafeGloas(&ethpb.BeaconStateGloas{
-			BuilderPendingPayments: []*ethpb.BuilderPendingPayment{},
+		stIface, err := InitializeFromProtoUnsafeGloas(&silapb.BeaconStateGloas{
+			BuilderPendingPayments: []*silapb.BuilderPendingPayment{},
 		})
 		require.NoError(t, err)
 
@@ -540,7 +540,7 @@ func TestBuilderPendingPayment(t *testing.T) {
 
 func TestExecutionPayloadAvailability(t *testing.T) {
 	t.Run("unsupported version", func(t *testing.T) {
-		stIface, err := InitializeFromProtoElectra(&ethpb.BeaconStateElectra{})
+		stIface, err := InitializeFromProtoElectra(&silapb.BeaconStateElectra{})
 		require.NoError(t, err)
 		st := stIface.(*BeaconState)
 
@@ -556,7 +556,7 @@ func TestExecutionPayloadAvailability(t *testing.T) {
 		slot := primitives.Slot(9) // byteIndex=1, bitIndex=1
 		availability[1] = 0b00000010
 
-		stIface, err := InitializeFromProtoUnsafeGloas(&ethpb.BeaconStateGloas{
+		stIface, err := InitializeFromProtoUnsafeGloas(&silapb.BeaconStateGloas{
 			ExecutionPayloadAvailability: availability,
 		})
 		require.NoError(t, err)
@@ -589,7 +589,7 @@ func TestLatestBlockHashMatchesBidBlockHash(t *testing.T) {
 		hash := bytes.Repeat([]byte{0xAB}, 32)
 		st := &BeaconState{
 			version: version.Gloas,
-			latestExecutionPayloadBid: &ethpb.ExecutionPayloadBid{
+			latestExecutionPayloadBid: &silapb.ExecutionPayloadBid{
 				BlockHash: hash,
 			},
 			latestBlockHash: hash,
@@ -605,7 +605,7 @@ func TestLatestBlockHashMatchesBidBlockHash(t *testing.T) {
 		other := bytes.Repeat([]byte{0xCD}, 32)
 		st := &BeaconState{
 			version: version.Gloas,
-			latestExecutionPayloadBid: &ethpb.ExecutionPayloadBid{
+			latestExecutionPayloadBid: &silapb.ExecutionPayloadBid{
 				BlockHash: hash,
 			},
 			latestBlockHash: other,
@@ -632,7 +632,7 @@ func TestAppendBuilderWithdrawals(t *testing.T) {
 
 	t.Run("appends builder withdrawals and increments index", func(t *testing.T) {
 		st := &BeaconState{
-			builderPendingWithdrawals: []*ethpb.BuilderPendingWithdrawal{
+			builderPendingWithdrawals: []*silapb.BuilderPendingWithdrawal{
 				{BuilderIndex: 1, FeeRecipient: []byte{0x01}, Amount: 11},
 				{BuilderIndex: 2, FeeRecipient: []byte{0x02}, Amount: 22},
 				{BuilderIndex: 3, FeeRecipient: []byte{0x03}, Amount: 33},
@@ -671,7 +671,7 @@ func TestAppendBuilderWithdrawals(t *testing.T) {
 	t.Run("respects per-payload limit", func(t *testing.T) {
 		limit := params.BeaconConfig().MaxWithdrawalsPerPayload - 1
 		st := &BeaconState{
-			builderPendingWithdrawals: []*ethpb.BuilderPendingWithdrawal{
+			builderPendingWithdrawals: []*silapb.BuilderPendingWithdrawal{
 				{BuilderIndex: 4, FeeRecipient: []byte{0x04}, Amount: 44},
 				{BuilderIndex: 5, FeeRecipient: []byte{0x05}, Amount: 55},
 			},
@@ -697,7 +697,7 @@ func TestAppendBuilderWithdrawals(t *testing.T) {
 			t.Skip("withdrawals limit too small")
 		}
 		st := &BeaconState{
-			builderPendingWithdrawals: []*ethpb.BuilderPendingWithdrawal{
+			builderPendingWithdrawals: []*silapb.BuilderPendingWithdrawal{
 				{BuilderIndex: 6, FeeRecipient: []byte{0x06}, Amount: 66},
 			},
 		}
@@ -743,7 +743,7 @@ func TestAppendBuildersSweepWithdrawals(t *testing.T) {
 		st := &BeaconState{
 			slot:                       slots.UnsafeEpochStart(epoch),
 			nextWithdrawalBuilderIndex: 2,
-			builders: []*ethpb.Builder{
+			builders: []*silapb.Builder{
 				{ExecutionAddress: []byte{0x01}, Balance: 0, WithdrawableEpoch: epoch},
 				{ExecutionAddress: []byte{0x02}, Balance: 10, WithdrawableEpoch: epoch + 1},
 				{ExecutionAddress: []byte{0x03}, Balance: 20, WithdrawableEpoch: epoch},
@@ -768,9 +768,9 @@ func TestAppendBuildersSweepWithdrawals(t *testing.T) {
 		cfg := params.BeaconConfig()
 		max := int(cfg.MaxBuildersPerWithdrawalsSweep)
 		epoch := primitives.Epoch(1)
-		builders := make([]*ethpb.Builder, max+2)
+		builders := make([]*silapb.Builder, max+2)
 		for i := range builders {
-			builders[i] = &ethpb.Builder{
+			builders[i] = &silapb.Builder{
 				ExecutionAddress:  []byte{byte(i + 1)},
 				Balance:           1,
 				WithdrawableEpoch: epoch,
@@ -801,7 +801,7 @@ func TestAppendBuildersSweepWithdrawals(t *testing.T) {
 			t.Skip("withdrawals limit too small")
 		}
 		epoch := primitives.Epoch(2)
-		builders := []*ethpb.Builder{
+		builders := []*silapb.Builder{
 			{ExecutionAddress: []byte{0x0A}, Balance: 3, WithdrawableEpoch: epoch},
 			{ExecutionAddress: []byte{0x0B}, Balance: 4, WithdrawableEpoch: epoch},
 		}
@@ -822,7 +822,7 @@ func TestAppendBuildersSweepWithdrawals(t *testing.T) {
 
 func TestBuilderPendingWithdrawals(t *testing.T) {
 	t.Run("returns error before gloas", func(t *testing.T) {
-		stIface, err := InitializeFromProtoElectra(&ethpb.BeaconStateElectra{})
+		stIface, err := InitializeFromProtoElectra(&silapb.BeaconStateElectra{})
 		require.NoError(t, err)
 		st := stIface.(*BeaconState)
 
@@ -831,10 +831,10 @@ func TestBuilderPendingWithdrawals(t *testing.T) {
 	})
 
 	t.Run("returns copy", func(t *testing.T) {
-		original := []*ethpb.BuilderPendingWithdrawal{
+		original := []*silapb.BuilderPendingWithdrawal{
 			{Amount: 10, BuilderIndex: 1},
 		}
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			BuilderPendingWithdrawals: original,
 		})
 		require.NoError(t, err)
@@ -857,7 +857,7 @@ func TestBuilderPendingWithdrawals(t *testing.T) {
 
 func TestBuildersGetter(t *testing.T) {
 	t.Run("returns error before gloas", func(t *testing.T) {
-		stIface, err := InitializeFromProtoElectra(&ethpb.BeaconStateElectra{})
+		stIface, err := InitializeFromProtoElectra(&silapb.BeaconStateElectra{})
 		require.NoError(t, err)
 		st := stIface.(*BeaconState)
 
@@ -867,14 +867,14 @@ func TestBuildersGetter(t *testing.T) {
 
 	t.Run("returns copy", func(t *testing.T) {
 		pubkey := bytes.Repeat([]byte{0xAB}, fieldparams.BLSPubkeyLength)
-		buildr := &ethpb.Builder{
+		buildr := &silapb.Builder{
 			Pubkey:            pubkey,
 			Balance:           42,
 			DepositEpoch:      3,
 			WithdrawableEpoch: 4,
 		}
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			Builders: []*ethpb.Builder{buildr},
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			Builders: []*silapb.Builder{buildr},
 		})
 		require.NoError(t, err)
 
@@ -891,7 +891,7 @@ func TestBuildersGetter(t *testing.T) {
 
 func TestNextWithdrawalBuilderIndex(t *testing.T) {
 	t.Run("returns error before gloas", func(t *testing.T) {
-		stIface, err := InitializeFromProtoElectra(&ethpb.BeaconStateElectra{})
+		stIface, err := InitializeFromProtoElectra(&silapb.BeaconStateElectra{})
 		require.NoError(t, err)
 		st := stIface.(*BeaconState)
 
@@ -900,7 +900,7 @@ func TestNextWithdrawalBuilderIndex(t *testing.T) {
 	})
 
 	t.Run("returns configured value", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			NextWithdrawalBuilderIndex: 2,
 		})
 		require.NoError(t, err)
@@ -913,7 +913,7 @@ func TestNextWithdrawalBuilderIndex(t *testing.T) {
 
 func TestPayloadExpectedWithdrawals(t *testing.T) {
 	t.Run("returns error before gloas", func(t *testing.T) {
-		stIface, err := InitializeFromProtoElectra(&ethpb.BeaconStateElectra{})
+		stIface, err := InitializeFromProtoElectra(&silapb.BeaconStateElectra{})
 		require.NoError(t, err)
 		st := stIface.(*BeaconState)
 
@@ -928,7 +928,7 @@ func TestPayloadExpectedWithdrawals(t *testing.T) {
 			Address:        bytes.Repeat([]byte{0x01}, 20),
 			Amount:         10,
 		}
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			PayloadExpectedWithdrawals: []*enginev1.Withdrawal{&original},
 		})
 		require.NoError(t, err)
@@ -956,8 +956,8 @@ func TestWithdrawalsForPayload(t *testing.T) {
 			{Index: 5, ValidatorIndex: 10, Address: bytes.Repeat([]byte{0x26}, 20), Amount: 100},
 		}
 		// Parent is empty: bid block hash differs from latest block hash.
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			LatestExecutionPayloadBid: &ethpb.ExecutionPayloadBid{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			LatestExecutionPayloadBid: &silapb.ExecutionPayloadBid{
 				BlockHash: bytes.Repeat([]byte{0xAA}, 32),
 			},
 			LatestBlockHash:            bytes.Repeat([]byte{0xBB}, 32),
@@ -977,8 +977,8 @@ func TestWithdrawalsForPayload(t *testing.T) {
 		}
 		// Parent is full: bid block hash == latest block hash.
 		// With no validators/pending withdrawals, fresh computation returns empty.
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
-			LatestExecutionPayloadBid: &ethpb.ExecutionPayloadBid{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
+			LatestExecutionPayloadBid: &silapb.ExecutionPayloadBid{
 				BlockHash: hash,
 			},
 			LatestBlockHash:            hash,
@@ -995,7 +995,7 @@ func TestWithdrawalsForPayload(t *testing.T) {
 
 func TestExecutionPayloadAvailabilityVector(t *testing.T) {
 	t.Run("returns error before gloas", func(t *testing.T) {
-		stIface, err := InitializeFromProtoElectra(&ethpb.BeaconStateElectra{})
+		stIface, err := InitializeFromProtoElectra(&silapb.BeaconStateElectra{})
 		require.NoError(t, err)
 		st := stIface.(*BeaconState)
 
@@ -1005,7 +1005,7 @@ func TestExecutionPayloadAvailabilityVector(t *testing.T) {
 
 	t.Run("returns copy", func(t *testing.T) {
 		availability := []byte{0xAA, 0xBB, 0xCC}
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			ExecutionPayloadAvailability: availability,
 		})
 		require.NoError(t, err)
@@ -1023,14 +1023,14 @@ func TestExecutionPayloadAvailabilityVector(t *testing.T) {
 
 // testPTCWindow creates a PTC window of the expected size where each slot's
 // first validator index encodes the slot offset for easy identification.
-func testPTCWindow(t *testing.T) []*ethpb.PTCs {
+func testPTCWindow(t *testing.T) []*silapb.PTCs {
 	t.Helper()
 	size := int(expectedPTCWindowSize())
-	window := make([]*ethpb.PTCs, size)
+	window := make([]*silapb.PTCs, size)
 	for i := range window {
 		indices := make([]primitives.ValidatorIndex, fieldparams.PTCSize)
 		indices[0] = primitives.ValidatorIndex(i) + 1 // non-zero marker
-		window[i] = &ethpb.PTCs{ValidatorIndices: indices}
+		window[i] = &silapb.PTCs{ValidatorIndices: indices}
 	}
 	return window
 }
@@ -1141,16 +1141,16 @@ func TestSetPTCWindow(t *testing.T) {
 	})
 
 	t.Run("rejects wrong size", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			PtcWindow: testPTCWindow(t),
 		})
 		require.NoError(t, err)
-		err = st.SetPTCWindow(make([]*ethpb.PTCs, 10))
+		err = st.SetPTCWindow(make([]*silapb.PTCs, 10))
 		require.ErrorContains(t, "invalid size", err)
 	})
 
 	t.Run("sets and copies window", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			PtcWindow: testPTCWindow(t),
 		})
 		require.NoError(t, err)
@@ -1182,27 +1182,27 @@ func TestRotatePTCWindow(t *testing.T) {
 	})
 
 	t.Run("rejects wrong new epoch size", func(t *testing.T) {
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			PtcWindow: testPTCWindow(t),
 		})
 		require.NoError(t, err)
-		err = st.RotatePTCWindow(make([]*ethpb.PTCs, 5))
+		err = st.RotatePTCWindow(make([]*silapb.PTCs, 5))
 		require.ErrorContains(t, "invalid new epoch slots size", err)
 	})
 
 	t.Run("rotates window correctly", func(t *testing.T) {
 		origWindow := testPTCWindow(t)
-		st, err := InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			PtcWindow: origWindow,
 		})
 		require.NoError(t, err)
 
 		// Build new epoch slots with distinct markers.
-		newEpoch := make([]*ethpb.PTCs, slotsPerEpoch)
+		newEpoch := make([]*silapb.PTCs, slotsPerEpoch)
 		for i := range newEpoch {
 			indices := make([]primitives.ValidatorIndex, fieldparams.PTCSize)
 			indices[0] = primitives.ValidatorIndex(1000 + i)
-			newEpoch[i] = &ethpb.PTCs{ValidatorIndices: indices}
+			newEpoch[i] = &silapb.PTCs{ValidatorIndices: indices}
 		}
 		require.NoError(t, st.RotatePTCWindow(newEpoch))
 

@@ -3,7 +3,7 @@ package state_native
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
 
@@ -22,7 +22,7 @@ func (b *BeaconState) DepositBalanceToConsume() (primitives.Gwei, error) {
 // PendingDeposits is a non-mutating call to the beacon state which returns a deep copy of
 // the pending balance deposit slice. This method requires access to the RLock on the state and
 // only applies in electra or later.
-func (b *BeaconState) PendingDeposits() ([]*ethpb.PendingDeposit, error) {
+func (b *BeaconState) PendingDeposits() ([]*silapb.PendingDeposit, error) {
 	if b.version < version.Electra {
 		return nil, errNotSupported("PendingDeposits", b.version)
 	}
@@ -42,10 +42,10 @@ func (b *BeaconState) IsPendingValidator(pubkey []byte) (bool, error) {
 	return helpers.IsPendingValidator(b.pendingDeposits, pubkey)
 }
 
-func (b *BeaconState) pendingDepositsVal() []*ethpb.PendingDeposit {
+func (b *BeaconState) pendingDepositsVal() []*silapb.PendingDeposit {
 	if b.pendingDeposits == nil {
 		return nil
 	}
 
-	return ethpb.CopySlice(b.pendingDeposits)
+	return silapb.CopySlice(b.pendingDeposits)
 }

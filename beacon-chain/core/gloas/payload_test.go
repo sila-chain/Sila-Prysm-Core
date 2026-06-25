@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"google.golang.org/protobuf/proto"
@@ -22,13 +22,13 @@ import (
 type payloadFixture struct {
 	state       state.BeaconState
 	signed      interfaces.ROSignedExecutionPayloadEnvelope
-	signedProto *ethpb.SignedExecutionPayloadEnvelope
-	envelope    *ethpb.ExecutionPayloadEnvelope
+	signedProto *silapb.SignedExecutionPayloadEnvelope
+	envelope    *silapb.ExecutionPayloadEnvelope
 	payload     *enginev1.ExecutionPayloadGloas
 	slot        primitives.Slot
 }
 
-func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.ExecutionPayloadGloas, bid *ethpb.ExecutionPayloadBid, envelope *ethpb.ExecutionPayloadEnvelope)) payloadFixture {
+func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.ExecutionPayloadGloas, bid *silapb.ExecutionPayloadBid, envelope *silapb.ExecutionPayloadEnvelope)) payloadFixture {
 	t.Helper()
 
 	cfg := params.BeaconConfig()
@@ -70,7 +70,7 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.ExecutionPa
 
 	emptyRequestsRoot, err := enginev1.EmptyExecutionRequestsHashTreeRoot()
 	require.NoError(t, err)
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       parentHash,
 		ParentBlockRoot:       bytes.Repeat([]byte{0xDD}, 32),
 		BlockHash:             blockHash,
@@ -84,7 +84,7 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.ExecutionPa
 		ExecutionRequestsRoot: emptyRequestsRoot[:],
 	}
 
-	header := &ethpb.BeaconBlockHeader{
+	header := &silapb.BeaconBlockHeader{
 		Slot:       slot,
 		ParentRoot: bytes.Repeat([]byte{0x11}, 32),
 		StateRoot:  bytes.Repeat([]byte{0x22}, 32),
@@ -93,7 +93,7 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.ExecutionPa
 	headerRoot, err := header.HashTreeRoot()
 	require.NoError(t, err)
 
-	envelope := &ethpb.ExecutionPayloadEnvelope{
+	envelope := &silapb.ExecutionPayloadEnvelope{
 		BuilderIndex:          builderIdx,
 		BeaconBlockRoot:       headerRoot[:],
 		ParentBeaconBlockRoot: header.ParentRoot,
@@ -120,13 +120,13 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.ExecutionPa
 	withdrawalCreds := make([]byte, 32)
 	withdrawalCreds[0] = cfg.ETH1AddressWithdrawalPrefixByte
 
-	eth1Data := &ethpb.Eth1Data{
+	eth1Data := &silapb.Eth1Data{
 		DepositRoot:  bytes.Repeat([]byte{0x66}, 32),
 		DepositCount: 0,
 		BlockHash:    bytes.Repeat([]byte{0x77}, 32),
 	}
 
-	vals := []*ethpb.Validator{
+	vals := []*silapb.Validator{
 		{
 			PublicKey:             pk,
 			WithdrawalCredentials: withdrawalCreds,
@@ -135,10 +135,10 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.ExecutionPa
 	}
 	balances := []uint64{cfg.MinActivationBalance + 1_000}
 
-	payments := make([]*ethpb.BuilderPendingPayment, cfg.SlotsPerEpoch*2)
+	payments := make([]*silapb.BuilderPendingPayment, cfg.SlotsPerEpoch*2)
 	for i := range payments {
-		payments[i] = &ethpb.BuilderPendingPayment{
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+		payments[i] = &silapb.BuilderPendingPayment{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 			},
 		}
@@ -146,8 +146,8 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.ExecutionPa
 
 	executionPayloadAvailability := make([]byte, cfg.SlotsPerHistoricalRoot/8)
 
-	builders := make([]*ethpb.Builder, builderIdx+1)
-	builders[builderIdx] = &ethpb.Builder{
+	builders := make([]*silapb.Builder, builderIdx+1)
+	builders[builderIdx] = &silapb.Builder{
 		Pubkey:            pk,
 		Version:           []byte{0},
 		ExecutionAddress:  bytes.Repeat([]byte{0x09}, 20),
@@ -162,11 +162,11 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.ExecutionPa
 		genesisTime = payload.Timestamp - slotSeconds
 	}
 
-	stProto := &ethpb.BeaconStateGloas{
+	stProto := &silapb.BeaconStateGloas{
 		Slot:                  slot,
 		GenesisTime:           genesisTime,
 		GenesisValidatorsRoot: genesisRoot,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			CurrentVersion:  bytes.Repeat([]byte{0x01}, 4),
 			PreviousVersion: bytes.Repeat([]byte{0x01}, 4),
 			Epoch:           0,
@@ -182,7 +182,7 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.ExecutionPa
 		LatestExecutionPayloadBid:    bid,
 		BuilderPendingPayments:       payments,
 		ExecutionPayloadAvailability: executionPayloadAvailability,
-		BuilderPendingWithdrawals:    []*ethpb.BuilderPendingWithdrawal{},
+		BuilderPendingWithdrawals:    []*silapb.BuilderPendingWithdrawal{},
 		PayloadExpectedWithdrawals:   payload.Withdrawals,
 		Builders:                     builders,
 	}
@@ -197,7 +197,7 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.ExecutionPa
 	require.NoError(t, err)
 	signature := sk.Sign(signingRoot[:]).Marshal()
 
-	signedProto := &ethpb.SignedExecutionPayloadEnvelope{
+	signedProto := &silapb.SignedExecutionPayloadEnvelope{
 		Message:   envelope,
 		Signature: signature,
 	}
@@ -244,14 +244,14 @@ func TestVerifyExecutionPayloadEnvelopeSignature(t *testing.T) {
 		require.NoError(t, err)
 		proposerPk := proposerSk.PublicKey().Marshal()
 
-		stPb, ok := fixture.state.ToProtoUnsafe().(*ethpb.BeaconStateGloas)
+		stPb, ok := fixture.state.ToProtoUnsafe().(*silapb.BeaconStateGloas)
 		require.Equal(t, true, ok)
-		stPb = proto.Clone(stPb).(*ethpb.BeaconStateGloas)
+		stPb = proto.Clone(stPb).(*silapb.BeaconStateGloas)
 		stPb.Validators[0].PublicKey = proposerPk
 		st, err := state_native.InitializeFromProtoUnsafeGloas(stPb)
 		require.NoError(t, err)
 
-		msg := proto.Clone(fixture.signedProto.Message).(*ethpb.ExecutionPayloadEnvelope)
+		msg := proto.Clone(fixture.signedProto.Message).(*silapb.ExecutionPayloadEnvelope)
 		msg.BuilderIndex = params.BeaconConfig().BuilderIndexSelfBuild
 
 		epoch := slots.ToEpoch(msg.Payload.SlotNumber)
@@ -261,7 +261,7 @@ func TestVerifyExecutionPayloadEnvelopeSignature(t *testing.T) {
 		require.NoError(t, err)
 		signature := proposerSk.Sign(signingRoot[:]).Marshal()
 
-		signedProto := &ethpb.SignedExecutionPayloadEnvelope{
+		signedProto := &silapb.SignedExecutionPayloadEnvelope{
 			Message:   msg,
 			Signature: signature,
 		}
@@ -284,17 +284,17 @@ func TestVerifyExecutionPayloadEnvelopeSignature(t *testing.T) {
 			require.NoError(t, err)
 			proposerPk := proposerSk.PublicKey().Marshal()
 
-			stPb, ok := fixture.state.ToProtoUnsafe().(*ethpb.BeaconStateGloas)
+			stPb, ok := fixture.state.ToProtoUnsafe().(*silapb.BeaconStateGloas)
 			require.Equal(t, true, ok)
-			stPb = proto.Clone(stPb).(*ethpb.BeaconStateGloas)
+			stPb = proto.Clone(stPb).(*silapb.BeaconStateGloas)
 			stPb.Validators[0].PublicKey = proposerPk
 			st, err := state_native.InitializeFromProtoUnsafeGloas(stPb)
 			require.NoError(t, err)
 
-			msg := proto.Clone(fixture.signedProto.Message).(*ethpb.ExecutionPayloadEnvelope)
+			msg := proto.Clone(fixture.signedProto.Message).(*silapb.ExecutionPayloadEnvelope)
 			msg.BuilderIndex = params.BeaconConfig().BuilderIndexSelfBuild
 
-			signedProto := &ethpb.SignedExecutionPayloadEnvelope{
+			signedProto := &silapb.SignedExecutionPayloadEnvelope{
 				Message:   msg,
 				Signature: bytes.Repeat([]byte{0xFF}, 96),
 			}
@@ -306,7 +306,7 @@ func TestVerifyExecutionPayloadEnvelopeSignature(t *testing.T) {
 		})
 
 		t.Run("builder", func(t *testing.T) {
-			signedProto := &ethpb.SignedExecutionPayloadEnvelope{
+			signedProto := &silapb.SignedExecutionPayloadEnvelope{
 				Message:   fixture.signedProto.Message,
 				Signature: bytes.Repeat([]byte{0xFF}, 96),
 			}

@@ -11,7 +11,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/stretchr/testify/require"
 )
@@ -28,7 +28,7 @@ func TestProcessSlot_GloasClearsNextPayloadAvailability(t *testing.T) {
 	_, err := ProcessSlot(context.Background(), st)
 	require.NoError(t, err)
 
-	post := st.ToProto().(*ethpb.BeaconStateGloas)
+	post := st.ToProto().(*silapb.BeaconStateGloas)
 	require.Equal(t, byte(0xFF)&^bitMask, post.ExecutionPayloadAvailability[byteIdx])
 }
 
@@ -41,7 +41,7 @@ func TestProcessSlot_GloasClearsNextPayloadAvailability_Wrap(t *testing.T) {
 	_, err := ProcessSlot(context.Background(), st)
 	require.NoError(t, err)
 
-	post := st.ToProto().(*ethpb.BeaconStateGloas)
+	post := st.ToProto().(*silapb.BeaconStateGloas)
 	require.Equal(t, byte(0xFE), post.ExecutionPayloadAvailability[0])
 }
 
@@ -64,15 +64,15 @@ func newGloasState(t *testing.T, slot primitives.Slot, availability []byte) stat
 	t.Helper()
 
 	cfg := params.BeaconConfig()
-	protoState := &ethpb.BeaconStateGloas{
+	protoState := &silapb.BeaconStateGloas{
 		Slot:                         slot,
 		LatestBlockHeader:            testBeaconBlockHeader(),
 		BlockRoots:                   make([][]byte, cfg.SlotsPerHistoricalRoot),
 		StateRoots:                   make([][]byte, cfg.SlotsPerHistoricalRoot),
 		RandaoMixes:                  make([][]byte, fieldparams.RandaoMixesLength),
 		ExecutionPayloadAvailability: availability,
-		BuilderPendingPayments:       make([]*ethpb.BuilderPendingPayment, int(cfg.SlotsPerEpoch*2)),
-		LatestExecutionPayloadBid: &ethpb.ExecutionPayloadBid{
+		BuilderPendingPayments:       make([]*silapb.BuilderPendingPayment, int(cfg.SlotsPerEpoch*2)),
+		LatestExecutionPayloadBid: &silapb.ExecutionPayloadBid{
 			ParentBlockHash:       make([]byte, 32),
 			ParentBlockRoot:       make([]byte, 32),
 			BlockHash:             make([]byte, 32),
@@ -81,18 +81,18 @@ func newGloasState(t *testing.T, slot primitives.Slot, availability []byte) stat
 			BlobKzgCommitments:    [][]byte{make([]byte, 48)},
 			ExecutionRequestsRoot: make([]byte, 32),
 		},
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},
 		PreviousEpochParticipation:  []byte{},
 		CurrentEpochParticipation:   []byte{},
 		JustificationBits:           []byte{0},
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, 32)},
-		CurrentJustifiedCheckpoint:  &ethpb.Checkpoint{Root: make([]byte, 32)},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, 32)},
-		CurrentSyncCommittee:        &ethpb.SyncCommittee{},
-		NextSyncCommittee:           &ethpb.SyncCommittee{},
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, 32)},
+		CurrentJustifiedCheckpoint:  &silapb.Checkpoint{Root: make([]byte, 32)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, 32)},
+		CurrentSyncCommittee:        &silapb.SyncCommittee{},
+		NextSyncCommittee:           &silapb.SyncCommittee{},
 	}
 
 	for i := range protoState.BlockRoots {
@@ -106,8 +106,8 @@ func newGloasState(t *testing.T, slot primitives.Slot, availability []byte) stat
 	}
 
 	for i := range protoState.BuilderPendingPayments {
-		protoState.BuilderPendingPayments[i] = &ethpb.BuilderPendingPayment{
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+		protoState.BuilderPendingPayments[i] = &silapb.BuilderPendingPayment{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 			},
 		}
@@ -118,11 +118,11 @@ func newGloasState(t *testing.T, slot primitives.Slot, availability []byte) stat
 		pubkeys[i] = make([]byte, fieldparams.BLSPubkeyLength)
 	}
 	aggPubkey := make([]byte, fieldparams.BLSPubkeyLength)
-	protoState.CurrentSyncCommittee = &ethpb.SyncCommittee{
+	protoState.CurrentSyncCommittee = &silapb.SyncCommittee{
 		Pubkeys:         pubkeys,
 		AggregatePubkey: aggPubkey,
 	}
-	protoState.NextSyncCommittee = &ethpb.SyncCommittee{
+	protoState.NextSyncCommittee = &silapb.SyncCommittee{
 		Pubkeys:         pubkeys,
 		AggregatePubkey: aggPubkey,
 	}
@@ -133,8 +133,8 @@ func newGloasState(t *testing.T, slot primitives.Slot, availability []byte) stat
 	return st
 }
 
-func testBeaconBlockHeader() *ethpb.BeaconBlockHeader {
-	return &ethpb.BeaconBlockHeader{
+func testBeaconBlockHeader() *silapb.BeaconBlockHeader {
+	return &silapb.BeaconBlockHeader{
 		ParentRoot: make([]byte, 32),
 		StateRoot:  make([]byte, 32),
 		BodyRoot:   make([]byte, 32),

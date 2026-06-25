@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -31,7 +31,7 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		require.NoError(t, err)
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &ethpb.BLSToExecutionChange{
+		message := &silapb.BLSToExecutionChange{
 			ToExecutionAddress: []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13},
 			ValidatorIndex:     0,
 			FromBlsPubkey:      pubkey,
@@ -41,14 +41,14 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		digest := hashFn.Hash(pubkey)
 		digest[0] = params.BeaconConfig().BLSWithdrawalPrefixByte
 
-		registry := []*ethpb.Validator{
+		registry := []*silapb.Validator{
 			{
 				WithdrawalCredentials: digest[:],
 			},
 		}
-		st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Validators: registry,
-			Fork: &ethpb.Fork{
+			Fork: &silapb.Fork{
 				CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 				PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			},
@@ -59,7 +59,7 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, priv)
 		require.NoError(t, err)
 
-		signed := &ethpb.SignedBLSToExecutionChange{
+		signed := &silapb.SignedBLSToExecutionChange{
 			Message:   message,
 			Signature: signature,
 		}
@@ -77,7 +77,7 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		require.NoError(t, err)
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &ethpb.BLSToExecutionChange{
+		message := &silapb.BLSToExecutionChange{
 			ToExecutionAddress: []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13},
 			ValidatorIndex:     0,
 			FromBlsPubkey:      pubkey,
@@ -87,14 +87,14 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		digest := hashFn.Hash(pubkey)
 		digest[0] = params.BeaconConfig().BLSWithdrawalPrefixByte
 
-		registry := []*ethpb.Validator{
+		registry := []*silapb.Validator{
 			{
 				WithdrawalCredentials: digest[:],
 			},
 		}
-		st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Validators: registry,
-			Fork: &ethpb.Fork{
+			Fork: &silapb.Fork{
 				CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 				PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			},
@@ -105,7 +105,7 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, priv)
 		require.NoError(t, err)
 
-		signed := &ethpb.SignedBLSToExecutionChange{
+		signed := &silapb.SignedBLSToExecutionChange{
 			Message:   message,
 			Signature: signature,
 		}
@@ -118,18 +118,18 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		require.NoError(t, err)
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &ethpb.BLSToExecutionChange{
+		message := &silapb.BLSToExecutionChange{
 			ToExecutionAddress: []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13},
 			ValidatorIndex:     0,
 			FromBlsPubkey:      pubkey,
 		}
 
-		registry := []*ethpb.Validator{
+		registry := []*silapb.Validator{
 			nil,
 		}
-		st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Validators: registry,
-			Fork: &ethpb.Fork{
+			Fork: &silapb.Fork{
 				CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 				PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			},
@@ -140,7 +140,7 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, priv)
 		require.NoError(t, err)
 
-		signed := &ethpb.SignedBLSToExecutionChange{
+		signed := &silapb.SignedBLSToExecutionChange{
 			Message:   message,
 			Signature: signature,
 		}
@@ -154,7 +154,7 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		require.NoError(t, err)
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &ethpb.BLSToExecutionChange{
+		message := &silapb.BLSToExecutionChange{
 			ToExecutionAddress: []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13},
 			ValidatorIndex:     1,
 			FromBlsPubkey:      pubkey,
@@ -164,14 +164,14 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		digest := hashFn.Hash(pubkey)
 		digest[0] = params.BeaconConfig().BLSWithdrawalPrefixByte
 
-		registry := []*ethpb.Validator{
+		registry := []*silapb.Validator{
 			{
 				WithdrawalCredentials: digest[:],
 			},
 		}
-		st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Validators: registry,
-			Fork: &ethpb.Fork{
+			Fork: &silapb.Fork{
 				CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 				PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			},
@@ -182,7 +182,7 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, priv)
 		require.NoError(t, err)
 
-		signed := &ethpb.SignedBLSToExecutionChange{
+		signed := &silapb.SignedBLSToExecutionChange{
 			Message:   message,
 			Signature: signature,
 		}
@@ -196,20 +196,20 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		require.NoError(t, err)
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &ethpb.BLSToExecutionChange{
+		message := &silapb.BLSToExecutionChange{
 			ToExecutionAddress: []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13},
 			ValidatorIndex:     0,
 			FromBlsPubkey:      pubkey,
 		}
 
-		registry := []*ethpb.Validator{
+		registry := []*silapb.Validator{
 			{
 				WithdrawalCredentials: params.BeaconConfig().ZeroHash[:],
 			},
 		}
-		st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Validators: registry,
-			Fork: &ethpb.Fork{
+			Fork: &silapb.Fork{
 				CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 				PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			},
@@ -220,7 +220,7 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, priv)
 		require.NoError(t, err)
 
-		signed := &ethpb.SignedBLSToExecutionChange{
+		signed := &silapb.SignedBLSToExecutionChange{
 			Message:   message,
 			Signature: signature,
 		}
@@ -234,7 +234,7 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		require.NoError(t, err)
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &ethpb.BLSToExecutionChange{
+		message := &silapb.BLSToExecutionChange{
 			ToExecutionAddress: []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13},
 			ValidatorIndex:     0,
 			FromBlsPubkey:      pubkey,
@@ -243,16 +243,16 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		digest := hashFn.Hash(pubkey)
 		digest[0] = params.BeaconConfig().BLSWithdrawalPrefixByte
 
-		registry := []*ethpb.Validator{
+		registry := []*silapb.Validator{
 			{
 				WithdrawalCredentials: digest[:],
 			},
 		}
 		registry[0].WithdrawalCredentials[0] = params.BeaconConfig().ETH1AddressWithdrawalPrefixByte
 
-		st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Validators: registry,
-			Fork: &ethpb.Fork{
+			Fork: &silapb.Fork{
 				CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 				PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			},
@@ -263,7 +263,7 @@ func TestProcessBLSToExecutionChange(t *testing.T) {
 		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, priv)
 		require.NoError(t, err)
 
-		signed := &ethpb.SignedBLSToExecutionChange{
+		signed := &silapb.SignedBLSToExecutionChange{
 			Message:   message,
 			Signature: signature,
 		}
@@ -628,11 +628,11 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 		}
 	}
 
-	prepareValidators := func(st *ethpb.BeaconStateCapella, arguments args) (state.BeaconState, error) {
-		validators := make([]*ethpb.Validator, numValidators)
+	prepareValidators := func(st *silapb.BeaconStateCapella, arguments args) (state.BeaconState, error) {
+		validators := make([]*silapb.Validator, numValidators)
 		st.Balances = make([]uint64, numValidators)
 		for i := range validators {
-			v := &ethpb.Validator{}
+			v := &silapb.Validator{}
 			v.EffectiveBalance = maxEffectiveBalance
 			v.WithdrawableEpoch = epochInFuture
 			v.WithdrawalCredentials = make([]byte, 32)
@@ -670,7 +670,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 			}
 			slot, err := slots.EpochStart(currentEpoch)
 			require.NoError(t, err)
-			spb := &ethpb.BeaconStateCapella{
+			spb := &silapb.BeaconStateCapella{
 				Slot:                         slot,
 				NextWithdrawalValidatorIndex: test.Args.NextWithdrawalValidatorIndex,
 				NextWithdrawalIndex:          test.Args.NextWithdrawalIndex,
@@ -712,7 +712,7 @@ func TestProcessWithdrawals(t *testing.T) {
 		FullWithdrawalIndices           []primitives.ValidatorIndex
 		PendingPartialWithdrawalIndices []primitives.ValidatorIndex
 		Withdrawals                     []*enginev1.Withdrawal
-		PendingPartialWithdrawals       []*ethpb.PendingPartialWithdrawal // Electra
+		PendingPartialWithdrawals       []*silapb.PendingPartialWithdrawal // Electra
 	}
 	type control struct {
 		NextWithdrawalValidatorIndex primitives.ValidatorIndex
@@ -896,7 +896,7 @@ func TestProcessWithdrawals(t *testing.T) {
 					fullWithdrawal(7, 25), PendingPartialWithdrawal(15, 26), fullWithdrawal(19, 27),
 					fullWithdrawal(28, 28),
 				},
-				PendingPartialWithdrawals: []*ethpb.PendingPartialWithdrawal{
+				PendingPartialWithdrawals: []*silapb.PendingPartialWithdrawal{
 					{
 						Index:  11,
 						Amount: withdrawalAmount(11) - maxEffectiveBalance,
@@ -1080,12 +1080,12 @@ func TestProcessWithdrawals(t *testing.T) {
 	}
 
 	prepareValidators := func(st state.BeaconState, arguments args) error {
-		validators := make([]*ethpb.Validator, numValidators)
+		validators := make([]*silapb.Validator, numValidators)
 		if err := st.SetBalances(make([]uint64, numValidators)); err != nil {
 			return err
 		}
 		for i := range validators {
-			v := &ethpb.Validator{}
+			v := &silapb.Validator{}
 			v.EffectiveBalance = maxEffectiveBalance
 			v.WithdrawableEpoch = epochInFuture
 			v.WithdrawalCredentials = make([]byte, 32)
@@ -1134,7 +1134,7 @@ func TestProcessWithdrawals(t *testing.T) {
 					var p interfaces.ExecutionData
 					switch fork {
 					case version.Capella:
-						spb := &ethpb.BeaconStateCapella{
+						spb := &silapb.BeaconStateCapella{
 							Slot:                         slot,
 							NextWithdrawalValidatorIndex: test.Args.NextWithdrawalValidatorIndex,
 							NextWithdrawalIndex:          test.Args.NextWithdrawalIndex,
@@ -1144,7 +1144,7 @@ func TestProcessWithdrawals(t *testing.T) {
 						p, err = consensusblocks.WrappedExecutionPayloadCapella(&enginev1.ExecutionPayloadCapella{Withdrawals: test.Args.Withdrawals})
 						require.NoError(t, err)
 					case version.Electra:
-						spb := &ethpb.BeaconStateElectra{
+						spb := &silapb.BeaconStateElectra{
 							Slot:                         slot,
 							NextWithdrawalValidatorIndex: test.Args.NextWithdrawalValidatorIndex,
 							NextWithdrawalIndex:          test.Args.NextWithdrawalIndex,
@@ -1175,22 +1175,22 @@ func TestProcessWithdrawals(t *testing.T) {
 }
 
 func TestProcessBLSToExecutionChanges(t *testing.T) {
-	spb := &ethpb.BeaconStateCapella{
-		Fork: &ethpb.Fork{
+	spb := &silapb.BeaconStateCapella{
+		Fork: &silapb.Fork{
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 		},
 	}
 	numValidators := 10
-	validators := make([]*ethpb.Validator, numValidators)
-	blsChanges := make([]*ethpb.BLSToExecutionChange, numValidators)
+	validators := make([]*silapb.Validator, numValidators)
+	blsChanges := make([]*silapb.BLSToExecutionChange, numValidators)
 	spb.Balances = make([]uint64, numValidators)
 	privKeys := make([]common.SecretKey, numValidators)
 	maxEffectiveBalance := params.BeaconConfig().MaxEffectiveBalance
 	executionAddress := []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13}
 
 	for i := range validators {
-		v := &ethpb.Validator{}
+		v := &silapb.Validator{}
 		v.EffectiveBalance = maxEffectiveBalance
 		v.WithdrawableEpoch = params.BeaconConfig().FarFutureEpoch
 		v.WithdrawalCredentials = make([]byte, 32)
@@ -1199,7 +1199,7 @@ func TestProcessBLSToExecutionChanges(t *testing.T) {
 		privKeys[i] = priv
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &ethpb.BLSToExecutionChange{
+		message := &silapb.BLSToExecutionChange{
 			ToExecutionAddress: executionAddress,
 			ValidatorIndex:     primitives.ValidatorIndex(i),
 			FromBlsPubkey:      pubkey,
@@ -1216,22 +1216,22 @@ func TestProcessBLSToExecutionChanges(t *testing.T) {
 	st, err := state_native.InitializeFromProtoCapella(spb)
 	require.NoError(t, err)
 
-	signedChanges := make([]*ethpb.SignedBLSToExecutionChange, numValidators)
+	signedChanges := make([]*silapb.SignedBLSToExecutionChange, numValidators)
 	for i, message := range blsChanges {
 		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, privKeys[i])
 		require.NoError(t, err)
 
-		signed := &ethpb.SignedBLSToExecutionChange{
+		signed := &silapb.SignedBLSToExecutionChange{
 			Message:   message,
 			Signature: signature,
 		}
 		signedChanges[i] = signed
 	}
 
-	body := &ethpb.BeaconBlockBodyCapella{
+	body := &silapb.BeaconBlockBodyCapella{
 		BlsToExecutionChanges: signedChanges,
 	}
-	bpb := &ethpb.BeaconBlockCapella{
+	bpb := &silapb.BeaconBlockCapella{
 		Body: body,
 	}
 	bb, err := consensusblocks.NewBeaconBlock(bpb)
@@ -1246,22 +1246,22 @@ func TestProcessBLSToExecutionChanges(t *testing.T) {
 }
 
 func TestBLSChangesSignatureBatch(t *testing.T) {
-	spb := &ethpb.BeaconStateCapella{
-		Fork: &ethpb.Fork{
+	spb := &silapb.BeaconStateCapella{
+		Fork: &silapb.Fork{
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 		},
 	}
 	numValidators := 10
-	validators := make([]*ethpb.Validator, numValidators)
-	blsChanges := make([]*ethpb.BLSToExecutionChange, numValidators)
+	validators := make([]*silapb.Validator, numValidators)
+	blsChanges := make([]*silapb.BLSToExecutionChange, numValidators)
 	spb.Balances = make([]uint64, numValidators)
 	privKeys := make([]common.SecretKey, numValidators)
 	maxEffectiveBalance := params.BeaconConfig().MaxEffectiveBalance
 	executionAddress := []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13}
 
 	for i := range validators {
-		v := &ethpb.Validator{}
+		v := &silapb.Validator{}
 		v.EffectiveBalance = maxEffectiveBalance
 		v.WithdrawableEpoch = params.BeaconConfig().FarFutureEpoch
 		v.WithdrawalCredentials = make([]byte, 32)
@@ -1270,7 +1270,7 @@ func TestBLSChangesSignatureBatch(t *testing.T) {
 		privKeys[i] = priv
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &ethpb.BLSToExecutionChange{
+		message := &silapb.BLSToExecutionChange{
 			ToExecutionAddress: executionAddress,
 			ValidatorIndex:     primitives.ValidatorIndex(i),
 			FromBlsPubkey:      pubkey,
@@ -1287,12 +1287,12 @@ func TestBLSChangesSignatureBatch(t *testing.T) {
 	st, err := state_native.InitializeFromProtoCapella(spb)
 	require.NoError(t, err)
 
-	signedChanges := make([]*ethpb.SignedBLSToExecutionChange, numValidators)
+	signedChanges := make([]*silapb.SignedBLSToExecutionChange, numValidators)
 	for i, message := range blsChanges {
 		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, privKeys[i])
 		require.NoError(t, err)
 
-		signed := &ethpb.SignedBLSToExecutionChange{
+		signed := &silapb.SignedBLSToExecutionChange{
 			Message:   message,
 			Signature: signature,
 		}
@@ -1309,23 +1309,23 @@ func TestBLSChangesSignatureBatch(t *testing.T) {
 }
 
 func TestBLSChangesSignatureBatchWrongFork(t *testing.T) {
-	spb := &ethpb.BeaconStateCapella{
-		Fork: &ethpb.Fork{
+	spb := &silapb.BeaconStateCapella{
+		Fork: &silapb.Fork{
 			CurrentVersion:  params.BeaconConfig().CapellaForkVersion,
 			PreviousVersion: params.BeaconConfig().BellatrixForkVersion,
 			Epoch:           params.BeaconConfig().CapellaForkEpoch,
 		},
 	}
 	numValidators := 10
-	validators := make([]*ethpb.Validator, numValidators)
-	blsChanges := make([]*ethpb.BLSToExecutionChange, numValidators)
+	validators := make([]*silapb.Validator, numValidators)
+	blsChanges := make([]*silapb.BLSToExecutionChange, numValidators)
 	spb.Balances = make([]uint64, numValidators)
 	privKeys := make([]common.SecretKey, numValidators)
 	maxEffectiveBalance := params.BeaconConfig().MaxEffectiveBalance
 	executionAddress := []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13}
 
 	for i := range validators {
-		v := &ethpb.Validator{}
+		v := &silapb.Validator{}
 		v.EffectiveBalance = maxEffectiveBalance
 		v.WithdrawableEpoch = params.BeaconConfig().FarFutureEpoch
 		v.WithdrawalCredentials = make([]byte, 32)
@@ -1334,7 +1334,7 @@ func TestBLSChangesSignatureBatchWrongFork(t *testing.T) {
 		privKeys[i] = priv
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &ethpb.BLSToExecutionChange{
+		message := &silapb.BLSToExecutionChange{
 			ToExecutionAddress: executionAddress,
 			ValidatorIndex:     primitives.ValidatorIndex(i),
 			FromBlsPubkey:      pubkey,
@@ -1351,12 +1351,12 @@ func TestBLSChangesSignatureBatchWrongFork(t *testing.T) {
 	st, err := state_native.InitializeFromProtoCapella(spb)
 	require.NoError(t, err)
 
-	signedChanges := make([]*ethpb.SignedBLSToExecutionChange, numValidators)
+	signedChanges := make([]*silapb.SignedBLSToExecutionChange, numValidators)
 	for i, message := range blsChanges {
 		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, privKeys[i])
 		require.NoError(t, err)
 
-		signed := &ethpb.SignedBLSToExecutionChange{
+		signed := &silapb.SignedBLSToExecutionChange{
 			Message:   message,
 			Signature: signature,
 		}
@@ -1378,16 +1378,16 @@ func TestBLSChangesSignatureBatchFromBellatrix(t *testing.T) {
 	cfg.CapellaForkEpoch = cfg.BellatrixForkEpoch.AddEpoch(2)
 	params.OverrideBeaconConfig(cfg)
 
-	spb := &ethpb.BeaconStateBellatrix{
-		Fork: &ethpb.Fork{
+	spb := &silapb.BeaconStateBellatrix{
+		Fork: &silapb.Fork{
 			CurrentVersion:  params.BeaconConfig().BellatrixForkVersion,
 			PreviousVersion: params.BeaconConfig().AltairForkVersion,
 			Epoch:           params.BeaconConfig().BellatrixForkEpoch,
 		},
 	}
 	numValidators := 10
-	validators := make([]*ethpb.Validator, numValidators)
-	blsChanges := make([]*ethpb.BLSToExecutionChange, numValidators)
+	validators := make([]*silapb.Validator, numValidators)
+	blsChanges := make([]*silapb.BLSToExecutionChange, numValidators)
 	spb.Balances = make([]uint64, numValidators)
 	slot, err := slots.EpochStart(params.BeaconConfig().BellatrixForkEpoch)
 	require.NoError(t, err)
@@ -1398,7 +1398,7 @@ func TestBLSChangesSignatureBatchFromBellatrix(t *testing.T) {
 	executionAddress := []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13}
 
 	for i := range validators {
-		v := &ethpb.Validator{}
+		v := &silapb.Validator{}
 		v.EffectiveBalance = maxEffectiveBalance
 		v.WithdrawableEpoch = params.BeaconConfig().FarFutureEpoch
 		v.WithdrawalCredentials = make([]byte, 32)
@@ -1407,7 +1407,7 @@ func TestBLSChangesSignatureBatchFromBellatrix(t *testing.T) {
 		privKeys[i] = priv
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &ethpb.BLSToExecutionChange{
+		message := &silapb.BLSToExecutionChange{
 			ToExecutionAddress: executionAddress,
 			ValidatorIndex:     primitives.ValidatorIndex(i),
 			FromBlsPubkey:      pubkey,
@@ -1424,9 +1424,9 @@ func TestBLSChangesSignatureBatchFromBellatrix(t *testing.T) {
 	st, err := state_native.InitializeFromProtoBellatrix(spb)
 	require.NoError(t, err)
 
-	signedChanges := make([]*ethpb.SignedBLSToExecutionChange, numValidators)
-	spc := &ethpb.BeaconStateCapella{
-		Fork: &ethpb.Fork{
+	signedChanges := make([]*silapb.SignedBLSToExecutionChange, numValidators)
+	spc := &silapb.BeaconStateCapella{
+		Fork: &silapb.Fork{
 			CurrentVersion:  params.BeaconConfig().CapellaForkVersion,
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			Epoch:           params.BeaconConfig().CapellaForkEpoch,
@@ -1443,7 +1443,7 @@ func TestBLSChangesSignatureBatchFromBellatrix(t *testing.T) {
 		signature, err := signing.ComputeDomainAndSign(stc, 0, message, params.BeaconConfig().DomainBLSToExecutionChange, privKeys[i])
 		require.NoError(t, err)
 
-		signed := &ethpb.SignedBLSToExecutionChange{
+		signed := &silapb.SignedBLSToExecutionChange{
 			Message:   message,
 			Signature: signature,
 		}

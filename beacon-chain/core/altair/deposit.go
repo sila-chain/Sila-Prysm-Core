@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
@@ -17,7 +17,7 @@ import (
 func ProcessPreGenesisDeposits(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	deposits []*ethpb.Deposit,
+	deposits []*silapb.Deposit,
 ) (state.BeaconState, error) {
 	var err error
 	beaconState, err = ProcessDeposits(ctx, beaconState, deposits)
@@ -35,7 +35,7 @@ func ProcessPreGenesisDeposits(
 func ProcessDeposits(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	deposits []*ethpb.Deposit,
+	deposits []*silapb.Deposit,
 ) (state.BeaconState, error) {
 	ctx, span := trace.StartSpan(ctx, "altair.ProcessDeposits")
 	defer span.End()
@@ -86,7 +86,7 @@ func ProcessDeposits(
 //	  amount=deposit.data.amount,
 //	  signature=deposit.data.signature,
 //	 )
-func ProcessDeposit(beaconState state.BeaconState, deposit *ethpb.Deposit, allSignaturesVerified bool) (state.BeaconState, error) {
+func ProcessDeposit(beaconState state.BeaconState, deposit *silapb.Deposit, allSignaturesVerified bool) (state.BeaconState, error) {
 	if err := helpers.VerifyDeposit(beaconState, deposit); err != nil {
 		if deposit == nil || deposit.Data == nil {
 			return nil, err
@@ -120,7 +120,7 @@ func ProcessDeposit(beaconState state.BeaconState, deposit *ethpb.Deposit, allSi
 //	    # Increase balance by deposit amount
 //	    index = ValidatorIndex(validator_pubkeys.index(pubkey))
 //	    increase_balance(state, index, amount)
-func ApplyDeposit(beaconState state.BeaconState, data *ethpb.Deposit_Data, allSignaturesVerified bool) (state.BeaconState, error) {
+func ApplyDeposit(beaconState state.BeaconState, data *silapb.Deposit_Data, allSignaturesVerified bool) (state.BeaconState, error) {
 	pubKey := data.PublicKey
 	amount := data.Amount
 	withdrawalCredentials := data.WithdrawalCredentials
@@ -199,10 +199,10 @@ func AddValidatorToRegistry(beaconState state.BeaconState, pubKey []byte, withdr
 //	    exit_epoch=FAR_FUTURE_EPOCH,
 //	    withdrawable_epoch=FAR_FUTURE_EPOCH,
 //	)
-func GetValidatorFromDeposit(pubKey []byte, withdrawalCredentials []byte, amount uint64) *ethpb.Validator {
+func GetValidatorFromDeposit(pubKey []byte, withdrawalCredentials []byte, amount uint64) *silapb.Validator {
 	effectiveBalance := min(params.BeaconConfig().MaxEffectiveBalance, amount-(amount%params.BeaconConfig().EffectiveBalanceIncrement))
 
-	return &ethpb.Validator{
+	return &silapb.Validator{
 		PublicKey:                  pubKey,
 		WithdrawalCredentials:      withdrawalCredentials,
 		EffectiveBalance:           effectiveBalance,

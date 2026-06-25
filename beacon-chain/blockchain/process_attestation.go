@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -39,7 +39,7 @@ import (
 //
 //	 # Update latest messages for attesting indices
 //	 update_latest_messages(store, indexed_attestation.attesting_indices, attestation)
-func (s *Service) OnAttestation(ctx context.Context, a ethpb.Att, disparity time.Duration) error {
+func (s *Service) OnAttestation(ctx context.Context, a silapb.Att, disparity time.Duration) error {
 	ctx, span := trace.StartSpan(ctx, "blockChain.onAttestation")
 	defer span.End()
 

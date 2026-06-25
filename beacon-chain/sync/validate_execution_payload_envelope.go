@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -47,7 +47,7 @@ func (s *Service) validateExecutionPayloadEnvelope(ctx context.Context, pid peer
 		return pubsub.ValidationReject, err
 	}
 
-	signedEnvelope, ok := m.(*ethpb.SignedExecutionPayloadEnvelope)
+	signedEnvelope, ok := m.(*silapb.SignedExecutionPayloadEnvelope)
 	if !ok {
 		return pubsub.ValidationReject, errWrongMessage
 	}
@@ -166,7 +166,7 @@ func (s *Service) queuePendingPayloadEnvelope(
 	ctx context.Context,
 	v verification.ExecutionPayloadEnvelopeVerifier,
 	env interfaces.ROExecutionPayloadEnvelope,
-	signedEnvelope *ethpb.SignedExecutionPayloadEnvelope,
+	signedEnvelope *silapb.SignedExecutionPayloadEnvelope,
 ) (pubsub.ValidationResult, error) {
 	currentSlot := s.cfg.clock.CurrentSlot()
 	if env.Slot() != currentSlot {
@@ -218,7 +218,7 @@ func (s *Service) queuePendingPayloadEnvelope(
 		return pubsub.ValidationIgnore, nil
 	}
 	if !rootExists {
-		inner = make(map[uint64]*ethpb.SignedExecutionPayloadEnvelope)
+		inner = make(map[uint64]*silapb.SignedExecutionPayloadEnvelope)
 		s.pendingPayloadEnvelopes[root] = inner
 	} else {
 		for existingBuilderIdx, existing := range inner {
@@ -254,7 +254,7 @@ func (s *Service) queuePendingPayloadEnvelope(
 }
 
 func (s *Service) executionPayloadEnvelopeSubscriber(ctx context.Context, msg proto.Message) error {
-	e, ok := msg.(*ethpb.SignedExecutionPayloadEnvelope)
+	e, ok := msg.(*silapb.SignedExecutionPayloadEnvelope)
 	if !ok {
 		return errWrongMessage
 	}

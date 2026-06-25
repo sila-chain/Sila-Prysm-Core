@@ -10,7 +10,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -22,19 +22,19 @@ func TestProcessJustificationAndFinalizationPreCompute_ConsecutiveEpochs(t *test
 	for i := range blockRoots {
 		blockRoots[i] = []byte{byte(i)}
 	}
-	base := &ethpb.BeaconState{
+	base := &silapb.BeaconState{
 		Slot: params.BeaconConfig().SlotsPerEpoch*2 + 1,
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		FinalizedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 		JustificationBits:   bitfield.Bitvector4{0x0F}, // 0b1111
-		Validators:          []*ethpb.Validator{{ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}},
+		Validators:          []*silapb.Validator{{ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}},
 		Balances:            []uint64{a, a, a, a}, // validator total balance should be 128000000000
 		BlockRoots:          blockRoots,
 	}
@@ -59,19 +59,19 @@ func TestProcessJustificationAndFinalizationPreCompute_JustifyCurrentEpoch(t *te
 	for i := range blockRoots {
 		blockRoots[i] = []byte{byte(i)}
 	}
-	base := &ethpb.BeaconState{
+	base := &silapb.BeaconState{
 		Slot: params.BeaconConfig().SlotsPerEpoch*2 + 1,
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		FinalizedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 		JustificationBits:   bitfield.Bitvector4{0x03}, // 0b0011
-		Validators:          []*ethpb.Validator{{ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}},
+		Validators:          []*silapb.Validator{{ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}},
 		Balances:            []uint64{a, a, a, a}, // validator total balance should be 128000000000
 		BlockRoots:          blockRoots,
 	}
@@ -96,20 +96,20 @@ func TestProcessJustificationAndFinalizationPreCompute_JustifyPrevEpoch(t *testi
 	for i := range blockRoots {
 		blockRoots[i] = []byte{byte(i)}
 	}
-	base := &ethpb.BeaconState{
+	base := &silapb.BeaconState{
 		Slot: params.BeaconConfig().SlotsPerEpoch*2 + 1,
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
 		JustificationBits: bitfield.Bitvector4{0x03}, // 0b0011
-		Validators:        []*ethpb.Validator{{ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}},
+		Validators:        []*silapb.Validator{{ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}, {ExitEpoch: e}},
 		Balances:          []uint64{a, a, a, a}, // validator total balance should be 128000000000
-		BlockRoots:        blockRoots, FinalizedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		BlockRoots:        blockRoots, FinalizedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 	}
 	state, err := state_native.InitializeFromProtoPhase0(base)
 	require.NoError(t, err)
@@ -126,10 +126,10 @@ func TestProcessJustificationAndFinalizationPreCompute_JustifyPrevEpoch(t *testi
 }
 
 func TestUnrealizedCheckpoints(t *testing.T) {
-	validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
+	validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
 	balances := make([]uint64, len(validators))
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 			EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance,
 		}
@@ -139,9 +139,9 @@ func TestUnrealizedCheckpoints(t *testing.T) {
 	cjr := [32]byte{'c'}
 	je := primitives.Epoch(3)
 	fe := primitives.Epoch(2)
-	pjcp := &ethpb.Checkpoint{Root: pjr[:], Epoch: fe}
-	cjcp := &ethpb.Checkpoint{Root: cjr[:], Epoch: je}
-	fcp := &ethpb.Checkpoint{Root: pjr[:], Epoch: fe}
+	pjcp := &silapb.Checkpoint{Root: pjr[:], Epoch: fe}
+	cjcp := &silapb.Checkpoint{Root: cjr[:], Epoch: je}
+	fcp := &silapb.Checkpoint{Root: pjr[:], Epoch: fe}
 	tests := []struct {
 		name                                 string
 		slot                                 primitives.Slot
@@ -207,7 +207,7 @@ func TestUnrealizedCheckpoints(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			base := &ethpb.BeaconStateAltair{
+			base := &silapb.BeaconStateAltair{
 				RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 
 				Validators:                  validators,
@@ -250,9 +250,9 @@ func TestUnrealizedCheckpoints(t *testing.T) {
 }
 
 func Test_ComputeCheckpoints_CantUpdateToLower(t *testing.T) {
-	st, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+	st, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 		Slot: params.BeaconConfig().SlotsPerEpoch * 2,
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 2,
 		},
 	})

@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -22,7 +22,7 @@ func TestReceivePayloadAttestationMessage_NilMessage(t *testing.T) {
 
 func TestReceivePayloadAttestationMessage_NilData(t *testing.T) {
 	s, _ := setupGloasService(t, &mockExecution.EngineClient{})
-	msg := &ethpb.PayloadAttestationMessage{}
+	msg := &silapb.PayloadAttestationMessage{}
 	err := s.ReceivePayloadAttestationMessage(t.Context(), msg)
 	require.ErrorContains(t, "nil payload attestation message", err)
 }
@@ -66,9 +66,9 @@ func TestReceivePayloadAttestationMessage_ValidatorNotInPTC(t *testing.T) {
 		}
 	}
 
-	msg := &ethpb.PayloadAttestationMessage{
+	msg := &silapb.PayloadAttestationMessage{
 		ValidatorIndex: notInPTC,
-		Data: &ethpb.PayloadAttestationData{
+		Data: &silapb.PayloadAttestationData{
 			BeaconBlockRoot: blockRoot[:],
 			Slot:            1,
 		},
@@ -103,9 +103,9 @@ func TestReceivePayloadAttestationMessage_OK(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEqual(t, 0, len(ptc))
 
-	msg := &ethpb.PayloadAttestationMessage{
+	msg := &silapb.PayloadAttestationMessage{
 		ValidatorIndex: ptc[0],
-		Data: &ethpb.PayloadAttestationData{
+		Data: &silapb.PayloadAttestationData{
 			BeaconBlockRoot:   blockRoot[:],
 			Slot:              1,
 			PayloadPresent:    true,
@@ -119,10 +119,10 @@ func TestReceivePayloadAttestationMessage_OK(t *testing.T) {
 // for PTC committee computation.
 func gloasStateWithValidators(t *testing.T, slot primitives.Slot, numVals int) state.BeaconState {
 	t.Helper()
-	validators := make([]*ethpb.Validator, numVals)
+	validators := make([]*silapb.Validator, numVals)
 	balances := make([]uint64, numVals)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             make([]byte, 48),
 			WithdrawalCredentials: make([]byte, 32),
 			EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalanceElectra,
@@ -131,7 +131,7 @@ func gloasStateWithValidators(t *testing.T, slot primitives.Slot, numVals int) s
 		}
 		balances[i] = params.BeaconConfig().MaxEffectiveBalanceElectra
 	}
-	st, err := util.NewBeaconStateGloas(func(s *ethpb.BeaconStateGloas) error {
+	st, err := util.NewBeaconStateGloas(func(s *silapb.BeaconStateGloas) error {
 		s.Slot = slot
 		s.Validators = validators
 		s.Balances = balances

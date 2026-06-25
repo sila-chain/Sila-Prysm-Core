@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -24,7 +24,7 @@ type payloadAttestationBlockReceiver struct {
 	received bool
 }
 
-func (r *payloadAttestationBlockReceiver) ReceivePayloadAttestationMessage(_ context.Context, _ *ethpb.PayloadAttestationMessage) error {
+func (r *payloadAttestationBlockReceiver) ReceivePayloadAttestationMessage(_ context.Context, _ *silapb.PayloadAttestationMessage) error {
 	r.received = true
 	return nil
 }
@@ -55,7 +55,7 @@ func TestPayloadAttestationData_OK(t *testing.T) {
 		CoreService:       &core.Service{GenesisTimeFetcher: chain, ForkchoiceFetcher: chain},
 	}
 
-	resp, err := vs.PayloadAttestationData(t.Context(), &ethpb.PayloadAttestationDataRequest{Slot: slot})
+	resp, err := vs.PayloadAttestationData(t.Context(), &silapb.PayloadAttestationDataRequest{Slot: slot})
 	require.NoError(t, err)
 	require.DeepEqual(t, root, resp.BeaconBlockRoot)
 	assert.Equal(t, slot, resp.Slot)
@@ -96,9 +96,9 @@ func TestSubmitPayloadAttestation_OK(t *testing.T) {
 		OperationNotifier:          chain.OperationNotifier(),
 	}
 
-	msg := &ethpb.PayloadAttestationMessage{
+	msg := &silapb.PayloadAttestationMessage{
 		ValidatorIndex: ptc[0],
-		Data: &ethpb.PayloadAttestationData{
+		Data: &silapb.PayloadAttestationData{
 			BeaconBlockRoot: root,
 			Slot:            slot,
 		},
@@ -133,9 +133,9 @@ func TestSubmitPayloadAttestation_Syncing(t *testing.T) {
 		PayloadAttestationReceiver: chain,
 	}
 
-	msg := &ethpb.PayloadAttestationMessage{
+	msg := &silapb.PayloadAttestationMessage{
 		ValidatorIndex: 1,
-		Data: &ethpb.PayloadAttestationData{
+		Data: &silapb.PayloadAttestationData{
 			BeaconBlockRoot: root,
 			Slot:            slot,
 		},

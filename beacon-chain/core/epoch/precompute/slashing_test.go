@@ -7,16 +7,16 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/epoch/precompute"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"google.golang.org/protobuf/proto"
 )
 
 func TestProcessSlashingsPrecompute_NotSlashedWithSlashedTrue(t *testing.T) {
-	s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot:       0,
-		Validators: []*ethpb.Validator{{Slashed: true}},
+		Validators: []*silapb.Validator{{Slashed: true}},
 		Balances:   []uint64{params.BeaconConfig().MaxEffectiveBalance},
 		Slashings:  []uint64{0, 1e9},
 	})
@@ -29,9 +29,9 @@ func TestProcessSlashingsPrecompute_NotSlashedWithSlashedTrue(t *testing.T) {
 }
 
 func TestProcessSlashingsPrecompute_NotSlashedWithSlashedFalse(t *testing.T) {
-	s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot:       0,
-		Validators: []*ethpb.Validator{{}},
+		Validators: []*silapb.Validator{{}},
 		Balances:   []uint64{params.BeaconConfig().MaxEffectiveBalance},
 		Slashings:  []uint64{0, 1e9},
 	})
@@ -45,12 +45,12 @@ func TestProcessSlashingsPrecompute_NotSlashedWithSlashedFalse(t *testing.T) {
 
 func TestProcessSlashingsPrecompute_SlashedLess(t *testing.T) {
 	tests := []struct {
-		state *ethpb.BeaconState
+		state *silapb.BeaconState
 		want  uint64
 	}{
 		{
-			state: &ethpb.BeaconState{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconState{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance},
@@ -63,8 +63,8 @@ func TestProcessSlashingsPrecompute_SlashedLess(t *testing.T) {
 			want: uint64(31000000000), // 32 * 1e9 - 1000000000
 		},
 		{
-			state: &ethpb.BeaconState{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconState{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance},
@@ -79,8 +79,8 @@ func TestProcessSlashingsPrecompute_SlashedLess(t *testing.T) {
 			want: uint64(32000000000), // 32 * 1e9 - 500000000
 		},
 		{
-			state: &ethpb.BeaconState{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconState{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance},
@@ -95,8 +95,8 @@ func TestProcessSlashingsPrecompute_SlashedLess(t *testing.T) {
 			want: uint64(31000000000), // 32 * 1e9 - 1000000000
 		},
 		{
-			state: &ethpb.BeaconState{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconState{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance - params.BeaconConfig().EffectiveBalanceIncrement},

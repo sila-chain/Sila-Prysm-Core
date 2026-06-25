@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -20,17 +20,17 @@ import (
 )
 
 func TestProposeAttestation(t *testing.T) {
-	attestation := &ethpb.Attestation{
+	attestation := &silapb.Attestation{
 		AggregationBits: testhelpers.FillByteSlice(4, 74),
-		Data: &ethpb.AttestationData{
+		Data: &silapb.AttestationData{
 			Slot:            75,
 			CommitteeIndex:  76,
 			BeaconBlockRoot: testhelpers.FillByteSlice(32, 38),
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: 78,
 				Root:  testhelpers.FillByteSlice(32, 79),
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 80,
 				Root:  testhelpers.FillByteSlice(32, 81),
 			},
@@ -40,7 +40,7 @@ func TestProposeAttestation(t *testing.T) {
 
 	tests := []struct {
 		name                 string
-		attestation          *ethpb.Attestation
+		attestation          *silapb.Attestation
 		expectedErrorMessage string
 		endpointError        error
 		endpointCall         int
@@ -56,7 +56,7 @@ func TestProposeAttestation(t *testing.T) {
 		},
 		{
 			name: "nil attestation data",
-			attestation: &ethpb.Attestation{
+			attestation: &silapb.Attestation{
 				AggregationBits: testhelpers.FillByteSlice(4, 74),
 				Signature:       testhelpers.FillByteSlice(96, 82),
 			},
@@ -64,10 +64,10 @@ func TestProposeAttestation(t *testing.T) {
 		},
 		{
 			name: "nil source checkpoint",
-			attestation: &ethpb.Attestation{
+			attestation: &silapb.Attestation{
 				AggregationBits: testhelpers.FillByteSlice(4, 74),
-				Data: &ethpb.AttestationData{
-					Target: &ethpb.Checkpoint{},
+				Data: &silapb.AttestationData{
+					Target: &silapb.Checkpoint{},
 				},
 				Signature: testhelpers.FillByteSlice(96, 82),
 			},
@@ -75,10 +75,10 @@ func TestProposeAttestation(t *testing.T) {
 		},
 		{
 			name: "nil target checkpoint",
-			attestation: &ethpb.Attestation{
+			attestation: &silapb.Attestation{
 				AggregationBits: testhelpers.FillByteSlice(4, 74),
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{},
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{},
 				},
 				Signature: testhelpers.FillByteSlice(96, 82),
 			},
@@ -86,10 +86,10 @@ func TestProposeAttestation(t *testing.T) {
 		},
 		{
 			name: "nil aggregation bits",
-			attestation: &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{},
-					Target: &ethpb.Checkpoint{},
+			attestation: &silapb.Attestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{},
+					Target: &silapb.Checkpoint{},
 				},
 				Signature: testhelpers.FillByteSlice(96, 82),
 			},
@@ -111,7 +111,7 @@ func TestProposeAttestation(t *testing.T) {
 
 			var marshalledAttestations []byte
 			if helpers.ValidateNilAttestation(test.attestation) == nil {
-				b, err := json.Marshal(jsonifyAttestations([]*ethpb.Attestation{test.attestation}))
+				b, err := json.Marshal(jsonifyAttestations([]*silapb.Attestation{test.attestation}))
 				require.NoError(t, err)
 				marshalledAttestations = b
 			}
@@ -153,23 +153,23 @@ func TestProposeAttestationElectra(t *testing.T) {
 	params.BeaconConfig().ElectraForkEpoch = 0
 	params.BeaconConfig().FuluForkEpoch = 1
 
-	buildSingleAttestation := func(slot primitives.Slot) *ethpb.SingleAttestation {
+	buildSingleAttestation := func(slot primitives.Slot) *silapb.SingleAttestation {
 		targetEpoch := slots.ToEpoch(slot)
 		sourceEpoch := targetEpoch
 		if targetEpoch > 0 {
 			sourceEpoch = targetEpoch - 1
 		}
-		return &ethpb.SingleAttestation{
+		return &silapb.SingleAttestation{
 			AttesterIndex: 74,
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				Slot:            slot,
 				CommitteeIndex:  76,
 				BeaconBlockRoot: testhelpers.FillByteSlice(32, 38),
-				Source: &ethpb.Checkpoint{
+				Source: &silapb.Checkpoint{
 					Epoch: sourceEpoch,
 					Root:  testhelpers.FillByteSlice(32, 79),
 				},
-				Target: &ethpb.Checkpoint{
+				Target: &silapb.Checkpoint{
 					Epoch: targetEpoch,
 					Root:  testhelpers.FillByteSlice(32, 81),
 				},
@@ -184,7 +184,7 @@ func TestProposeAttestationElectra(t *testing.T) {
 
 	tests := []struct {
 		name                     string
-		attestation              *ethpb.SingleAttestation
+		attestation              *silapb.SingleAttestation
 		expectedConsensusVersion string
 		expectedErrorMessage     string
 		endpointError            error
@@ -208,7 +208,7 @@ func TestProposeAttestationElectra(t *testing.T) {
 		},
 		{
 			name: "nil attestation data",
-			attestation: &ethpb.SingleAttestation{
+			attestation: &silapb.SingleAttestation{
 				AttesterIndex: 74,
 				Signature:     testhelpers.FillByteSlice(96, 82),
 				CommitteeId:   83,
@@ -217,10 +217,10 @@ func TestProposeAttestationElectra(t *testing.T) {
 		},
 		{
 			name: "nil source checkpoint",
-			attestation: &ethpb.SingleAttestation{
+			attestation: &silapb.SingleAttestation{
 				AttesterIndex: 74,
-				Data: &ethpb.AttestationData{
-					Target: &ethpb.Checkpoint{},
+				Data: &silapb.AttestationData{
+					Target: &silapb.Checkpoint{},
 				},
 				Signature:   testhelpers.FillByteSlice(96, 82),
 				CommitteeId: 83,
@@ -229,10 +229,10 @@ func TestProposeAttestationElectra(t *testing.T) {
 		},
 		{
 			name: "nil target checkpoint",
-			attestation: &ethpb.SingleAttestation{
+			attestation: &silapb.SingleAttestation{
 				AttesterIndex: 74,
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{},
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{},
 				},
 				Signature:   testhelpers.FillByteSlice(96, 82),
 				CommitteeId: 83,
@@ -258,7 +258,7 @@ func TestProposeAttestationElectra(t *testing.T) {
 
 			var marshalledAttestations []byte
 			if helpers.ValidateNilAttestation(test.attestation) == nil {
-				b, err := json.Marshal(jsonifySingleAttestations([]*ethpb.SingleAttestation{test.attestation}))
+				b, err := json.Marshal(jsonifySingleAttestations([]*silapb.SingleAttestation{test.attestation}))
 				require.NoError(t, err)
 				marshalledAttestations = b
 			}

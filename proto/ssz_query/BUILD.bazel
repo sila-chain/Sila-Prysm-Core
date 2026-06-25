@@ -10,7 +10,7 @@ proto_library(
     srcs = ["response.proto"],
     visibility = ["//visibility:public"],
     deps = [
-        "//proto/eth/ext:proto",
+        "//proto/silaapi/ext:proto",
     ],
 )
 
@@ -23,7 +23,7 @@ go_proto_library(
     proto = ":proto",
     visibility = ["//visibility:public"],
     deps = [
-        "//proto/eth/ext:go_default_library",
+        "//proto/silaapi/ext:go_default_library",
         "@com_github_golang_protobuf//proto:go_default_library",
         "@org_golang_google_protobuf//reflect/protoreflect:go_default_library",
         "@org_golang_google_protobuf//runtime/protoimpl:go_default_library",
@@ -51,7 +51,7 @@ go_library(
     importpath = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/ssz_query",
     visibility = ["//visibility:public"],
     deps = SSZ_DEPS + [
-        "//proto/eth/ext:go_default_library",
+        "//proto/silaapi/ext:go_default_library",
         "@com_github_golang_protobuf//proto:go_default_library",
     ],
 )

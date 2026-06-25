@@ -7,7 +7,7 @@ import (
 
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	validatormock "github.com/sila-chain/Sila-Consensus-Core/v7/testing/validator-mock"
@@ -38,10 +38,10 @@ func TestWaitActivation_Exiting_OK(t *testing.T) {
 	}
 	ctx := t.Context()
 	resp := testutil.GenerateMultipleValidatorStatusResponse([][]byte{kp.pub[:]})
-	resp.Statuses[0].Status = ethpb.ValidatorStatus_EXITING
+	resp.Statuses[0].Status = silapb.ValidatorStatus_EXITING
 	validatorClient.EXPECT().MultipleValidatorStatus(
 		gomock.Any(),
-		&ethpb.MultipleValidatorStatusRequest{
+		&silapb.MultipleValidatorStatusRequest{
 			PublicKeys: [][]byte{kp.pub[:]},
 		},
 	).Return(resp, nil)
@@ -74,11 +74,11 @@ func TestWaitForActivation_RefetchKeys(t *testing.T) {
 		pubkeyToStatus:   make(map[[48]byte]*validatorStatus),
 	}
 	resp := testutil.GenerateMultipleValidatorStatusResponse([][]byte{kp.pub[:]})
-	resp.Statuses[0].Status = ethpb.ValidatorStatus_ACTIVE
+	resp.Statuses[0].Status = silapb.ValidatorStatus_ACTIVE
 
 	validatorClient.EXPECT().MultipleValidatorStatus(
 		gomock.Any(),
-		&ethpb.MultipleValidatorStatusRequest{
+		&silapb.MultipleValidatorStatusRequest{
 			PublicKeys: [][]byte{kp.pub[:]},
 		},
 	).Return(resp, nil)
@@ -129,15 +129,15 @@ func TestWaitForActivation_AccountsChanged(t *testing.T) {
 		}()
 
 		inactiveResp := testutil.GenerateMultipleValidatorStatusResponse([][]byte{inactive.pub[:]})
-		inactiveResp.Statuses[0].Status = ethpb.ValidatorStatus_UNKNOWN_STATUS
+		inactiveResp.Statuses[0].Status = silapb.ValidatorStatus_UNKNOWN_STATUS
 
 		activeResp := testutil.GenerateMultipleValidatorStatusResponse([][]byte{inactive.pub[:], active.pub[:]})
-		activeResp.Statuses[0].Status = ethpb.ValidatorStatus_UNKNOWN_STATUS
-		activeResp.Statuses[1].Status = ethpb.ValidatorStatus_ACTIVE
+		activeResp.Statuses[0].Status = silapb.ValidatorStatus_UNKNOWN_STATUS
+		activeResp.Statuses[1].Status = silapb.ValidatorStatus_ACTIVE
 		gomock.InOrder(
 			validatorClient.EXPECT().MultipleValidatorStatus(
 				gomock.Any(),
-				&ethpb.MultipleValidatorStatusRequest{
+				&silapb.MultipleValidatorStatusRequest{
 					PublicKeys: [][]byte{inactive.pub[:]},
 				},
 			).Return(inactiveResp, nil).Do(func(arg0, arg1 any) {
@@ -146,7 +146,7 @@ func TestWaitForActivation_AccountsChanged(t *testing.T) {
 			}),
 			validatorClient.EXPECT().MultipleValidatorStatus(
 				gomock.Any(),
-				&ethpb.MultipleValidatorStatusRequest{
+				&silapb.MultipleValidatorStatusRequest{
 					PublicKeys: [][]byte{inactive.pub[:], active.pub[:]},
 				},
 			).Return(activeResp, nil))
@@ -155,7 +155,7 @@ func TestWaitForActivation_AccountsChanged(t *testing.T) {
 			gomock.Any(),
 			gomock.Any(),
 		).Return(
-			&ethpb.ChainHead{HeadEpoch: 0},
+			&silapb.ChainHead{HeadEpoch: 0},
 			nil,
 		).AnyTimes()
 		assert.NoError(t, v.WaitForActivation(t.Context()))
@@ -201,18 +201,18 @@ func TestWaitForActivation_AccountsChanged(t *testing.T) {
 		}
 
 		inactiveResp := testutil.GenerateMultipleValidatorStatusResponse([][]byte{inactivePubKey[:]})
-		inactiveResp.Statuses[0].Status = ethpb.ValidatorStatus_UNKNOWN_STATUS
+		inactiveResp.Statuses[0].Status = silapb.ValidatorStatus_UNKNOWN_STATUS
 
 		activeResp := testutil.GenerateMultipleValidatorStatusResponse([][]byte{inactivePubKey[:], activePubKey[:]})
-		activeResp.Statuses[0].Status = ethpb.ValidatorStatus_UNKNOWN_STATUS
-		activeResp.Statuses[1].Status = ethpb.ValidatorStatus_ACTIVE
+		activeResp.Statuses[0].Status = silapb.ValidatorStatus_UNKNOWN_STATUS
+		activeResp.Statuses[1].Status = silapb.ValidatorStatus_ACTIVE
 		channel := make(chan [][fieldparams.BLSPubkeyLength]byte, 1)
 		km.SubscribeAccountChanges(channel)
 		v.accountsChangedChannel = channel
 		gomock.InOrder(
 			validatorClient.EXPECT().MultipleValidatorStatus(
 				gomock.Any(),
-				&ethpb.MultipleValidatorStatusRequest{
+				&silapb.MultipleValidatorStatusRequest{
 					PublicKeys: [][]byte{inactivePubKey[:]},
 				},
 			).Return(inactiveResp, nil).Do(func(arg0, arg1 any) {
@@ -225,7 +225,7 @@ func TestWaitForActivation_AccountsChanged(t *testing.T) {
 			}),
 			validatorClient.EXPECT().MultipleValidatorStatus(
 				gomock.Any(),
-				&ethpb.MultipleValidatorStatusRequest{
+				&silapb.MultipleValidatorStatusRequest{
 					PublicKeys: [][]byte{inactivePubKey[:], activePubKey[:]},
 				},
 			).Return(activeResp, nil))
@@ -234,7 +234,7 @@ func TestWaitForActivation_AccountsChanged(t *testing.T) {
 			gomock.Any(),
 			gomock.Any(),
 		).Return(
-			&ethpb.ChainHead{HeadEpoch: 0},
+			&silapb.ChainHead{HeadEpoch: 0},
 			nil,
 		).AnyTimes()
 		assert.NoError(t, v.WaitForActivation(t.Context()))
@@ -265,7 +265,7 @@ func TestWaitForActivation_AttemptsReconnectionOnFailure(t *testing.T) {
 	}
 	active := randKeypair(t)
 	activeResp := testutil.GenerateMultipleValidatorStatusResponse([][]byte{active.pub[:]})
-	activeResp.Statuses[0].Status = ethpb.ValidatorStatus_ACTIVE
+	activeResp.Statuses[0].Status = silapb.ValidatorStatus_ACTIVE
 	gomock.InOrder(
 		validatorClient.EXPECT().MultipleValidatorStatus(
 			gomock.Any(),
@@ -279,7 +279,7 @@ func TestWaitForActivation_AttemptsReconnectionOnFailure(t *testing.T) {
 		gomock.Any(),
 		gomock.Any(),
 	).Return(
-		&ethpb.ChainHead{HeadEpoch: 0},
+		&silapb.ChainHead{HeadEpoch: 0},
 		nil,
 	).AnyTimes()
 	assert.NoError(t, v.WaitForActivation(t.Context()))

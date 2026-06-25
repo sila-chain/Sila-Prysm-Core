@@ -15,7 +15,7 @@ syntax = "proto3";
 
 package ethereum.eth.v1alpha1;
 
-import "proto/eth/ext/options.proto";
+import "proto/silaapi/ext/options.proto";
 
 option csharp_namespace = "Ethereum.Eth.v1alpha1";
 option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";

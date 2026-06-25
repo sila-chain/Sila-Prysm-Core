@@ -10,17 +10,17 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 )
 
 func (c *beaconApiValidatorClient) submitAggregateSelectionProof(
 	ctx context.Context,
-	in *ethpb.AggregateSelectionRequest,
+	in *silapb.AggregateSelectionRequest,
 	index primitives.ValidatorIndex,
 	committeeLength uint64,
-) (*ethpb.AggregateSelectionResponse, error) {
+) (*silapb.AggregateSelectionResponse, error) {
 	attestationDataRoot, err := c.getAttestationDataRootFromRequest(ctx, in, committeeLength)
 	if err != nil {
 		return nil, err
@@ -41,8 +41,8 @@ func (c *beaconApiValidatorClient) submitAggregateSelectionProof(
 		return nil, errors.Wrap(err, "failed to convert aggregate attestation json to proto")
 	}
 
-	return &ethpb.AggregateSelectionResponse{
-		AggregateAndProof: &ethpb.AggregateAttestationAndProof{
+	return &silapb.AggregateSelectionResponse{
+		AggregateAndProof: &silapb.AggregateAttestationAndProof{
 			AggregatorIndex: index,
 			Aggregate:       aggregatedAttestation,
 			SelectionProof:  in.SlotSignature,
@@ -52,10 +52,10 @@ func (c *beaconApiValidatorClient) submitAggregateSelectionProof(
 
 func (c *beaconApiValidatorClient) submitAggregateSelectionProofElectra(
 	ctx context.Context,
-	in *ethpb.AggregateSelectionRequest,
+	in *silapb.AggregateSelectionRequest,
 	index primitives.ValidatorIndex,
 	committeeLength uint64,
-) (*ethpb.AggregateSelectionElectraResponse, error) {
+) (*silapb.AggregateSelectionElectraResponse, error) {
 	attestationDataRoot, err := c.getAttestationDataRootFromRequest(ctx, in, committeeLength)
 	if err != nil {
 		return nil, err
@@ -76,8 +76,8 @@ func (c *beaconApiValidatorClient) submitAggregateSelectionProofElectra(
 		return nil, errors.Wrap(err, "failed to convert aggregate attestation json to proto")
 	}
 
-	return &ethpb.AggregateSelectionElectraResponse{
-		AggregateAndProof: &ethpb.AggregateAttestationAndProofElectra{
+	return &silapb.AggregateSelectionElectraResponse{
+		AggregateAndProof: &silapb.AggregateAttestationAndProofElectra{
 			AggregatorIndex: index,
 			Aggregate:       aggregatedAttestation,
 			SelectionProof:  in.SlotSignature,
@@ -85,7 +85,7 @@ func (c *beaconApiValidatorClient) submitAggregateSelectionProofElectra(
 	}, nil
 }
 
-func (c *beaconApiValidatorClient) getAttestationDataRootFromRequest(ctx context.Context, in *ethpb.AggregateSelectionRequest, committeeLength uint64) ([]byte, error) {
+func (c *beaconApiValidatorClient) getAttestationDataRootFromRequest(ctx context.Context, in *silapb.AggregateSelectionRequest, committeeLength uint64) ([]byte, error) {
 	isOptimistic, err := c.isOptimistic(ctx)
 	if err != nil {
 		return nil, err

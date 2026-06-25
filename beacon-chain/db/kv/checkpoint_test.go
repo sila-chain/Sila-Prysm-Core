@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -17,7 +17,7 @@ func TestStore_JustifiedCheckpoint_CanSaveRetrieve(t *testing.T) {
 	db := setupDB(t)
 	ctx := t.Context()
 	root := bytesutil.ToBytes32([]byte{'A'})
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: 10,
 		Root:  root[:],
 	}
@@ -35,10 +35,10 @@ func TestStore_JustifiedCheckpoint_CanSaveRetrieve(t *testing.T) {
 func TestStore_JustifiedCheckpoint_Recover(t *testing.T) {
 	db := setupDB(t)
 	ctx := t.Context()
-	blk := util.HydrateSignedBeaconBlock(&ethpb.SignedBeaconBlock{})
+	blk := util.HydrateSignedBeaconBlock(&silapb.SignedBeaconBlock{})
 	r, err := blk.Block.HashTreeRoot()
 	require.NoError(t, err)
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: 2,
 		Root:  r[:],
 	}
@@ -65,7 +65,7 @@ func TestStore_FinalizedCheckpoint_CanSaveRetrieve(t *testing.T) {
 	root, err := blk.Block.HashTreeRoot()
 	require.NoError(t, err)
 
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: 5,
 		Root:  root[:],
 	}
@@ -90,10 +90,10 @@ func TestStore_FinalizedCheckpoint_CanSaveRetrieve(t *testing.T) {
 func TestStore_FinalizedCheckpoint_Recover(t *testing.T) {
 	db := setupDB(t)
 	ctx := t.Context()
-	blk := util.HydrateSignedBeaconBlock(&ethpb.SignedBeaconBlock{})
+	blk := util.HydrateSignedBeaconBlock(&silapb.SignedBeaconBlock{})
 	r, err := blk.Block.HashTreeRoot()
 	require.NoError(t, err)
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: 2,
 		Root:  r[:],
 	}
@@ -111,7 +111,7 @@ func TestStore_JustifiedCheckpoint_DefaultIsZeroHash(t *testing.T) {
 	db := setupDB(t)
 	ctx := t.Context()
 
-	cp := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	cp := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	retrieved, err := db.JustifiedCheckpoint(ctx)
 	require.NoError(t, err)
 	assert.Equal(t, true, proto.Equal(cp, retrieved), "Wanted %v, received %v", cp, retrieved)
@@ -121,7 +121,7 @@ func TestStore_FinalizedCheckpoint_DefaultIsZeroHash(t *testing.T) {
 	db := setupDB(t)
 	ctx := t.Context()
 
-	cp := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	cp := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	retrieved, err := db.FinalizedCheckpoint(ctx)
 	require.NoError(t, err)
 	assert.Equal(t, true, proto.Equal(cp, retrieved), "Wanted %v, received %v", cp, retrieved)
@@ -130,7 +130,7 @@ func TestStore_FinalizedCheckpoint_DefaultIsZeroHash(t *testing.T) {
 func TestStore_FinalizedCheckpoint_StateMustExist(t *testing.T) {
 	db := setupDB(t)
 	ctx := t.Context()
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: 5,
 		Root:  []byte{'B'},
 	}
@@ -145,7 +145,7 @@ func TestRecoverStateSummary_WritesToStateSummaryBucket(t *testing.T) {
 	ctx := t.Context()
 
 	// Create a block without saving a state or summary, so recovery is needed.
-	blk := util.HydrateSignedBeaconBlock(&ethpb.SignedBeaconBlock{})
+	blk := util.HydrateSignedBeaconBlock(&silapb.SignedBeaconBlock{})
 	root, err := blk.Block.HashTreeRoot()
 	require.NoError(t, err)
 	wsb, err := blocks.NewSignedBeaconBlock(blk)
@@ -156,7 +156,7 @@ func TestRecoverStateSummary_WritesToStateSummaryBucket(t *testing.T) {
 	require.Equal(t, false, db.HasStateSummary(ctx, root))
 
 	// Saving justified checkpoint should trigger recovery path calling recoverStateSummary.
-	cp := &ethpb.Checkpoint{Epoch: 2, Root: root[:]}
+	cp := &silapb.Checkpoint{Epoch: 2, Root: root[:]}
 	require.NoError(t, db.SaveJustifiedCheckpoint(ctx, cp))
 
 	// Postcondition: summary is visible via the public summary APIs (which read stateSummaryBucket).
@@ -164,5 +164,5 @@ func TestRecoverStateSummary_WritesToStateSummaryBucket(t *testing.T) {
 	summary, err := db.StateSummary(ctx, root)
 	require.NoError(t, err)
 	require.NotNil(t, summary)
-	assert.DeepEqual(t, &ethpb.StateSummary{Slot: blk.Block.Slot, Root: root[:]}, summary)
+	assert.DeepEqual(t, &silapb.StateSummary{Slot: blk.Block.Slot, Root: root[:]}, summary)
 }

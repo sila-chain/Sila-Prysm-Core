@@ -22,7 +22,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	mathutil "github.com/sila-chain/Sila-Consensus-Core/v7/math"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
@@ -303,7 +303,7 @@ func (s *Service) verifyBlkFinalizedSlot(b interfaces.ReadOnlyBeaconBlock) error
 // updateFinalized saves the init sync blocks, finalized checkpoint, migrates
 // to cold old states and saves the last validated checkpoint to DB. It returns
 // early if the new checkpoint is older than the one on db.
-func (s *Service) updateFinalized(ctx context.Context, cp *ethpb.Checkpoint) error {
+func (s *Service) updateFinalized(ctx context.Context, cp *silapb.Checkpoint) error {
 	ctx, span := trace.StartSpan(ctx, "blockChain.updateFinalized")
 	defer span.End()
 
@@ -376,7 +376,7 @@ func (s *Service) ancestorByDB(ctx context.Context, r [32]byte, slot primitives.
 // This retrieves missing blocks from DB (ie. the blocks that couldn't be received over sync) and inserts them to fork choice store.
 // This is useful for block tree visualizer and additional vote accounting.
 func (s *Service) fillInForkChoiceMissingBlocks(ctx context.Context, signed interfaces.ReadOnlySignedBeaconBlock,
-	fCheckpoint, jCheckpoint *ethpb.Checkpoint,
+	fCheckpoint, jCheckpoint *silapb.Checkpoint,
 ) error {
 	if fCheckpoint.Epoch > jCheckpoint.Epoch {
 		return ErrInvalidCheckpointArgs

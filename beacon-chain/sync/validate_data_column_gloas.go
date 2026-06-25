@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/logging"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -26,7 +26,7 @@ import (
 const maxPendingGloasRoots = 8
 
 type pendingColumnEntry struct {
-	sidecar *ethpb.DataColumnSidecarGloas
+	sidecar *silapb.DataColumnSidecarGloas
 	peer    peer.ID
 }
 

@@ -9,22 +9,22 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/transition"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
 
-func newGloasBlock(t *testing.T, body *ethpb.BeaconBlockBodyGloas) interfaces.ReadOnlyBeaconBlock {
+func newGloasBlock(t *testing.T, body *silapb.BeaconBlockBodyGloas) interfaces.ReadOnlyBeaconBlock {
 	t.Helper()
-	hydrated := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-		Block: &ethpb.BeaconBlockGloas{Body: body},
+	hydrated := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+		Block: &silapb.BeaconBlockGloas{Body: body},
 	})
 	signed, err := blocks.NewSignedBeaconBlock(hydrated)
 	require.NoError(t, err)
 	return signed.Block()
 }
 
-func emptyGloasBody() *ethpb.BeaconBlockBodyGloas {
+func emptyGloasBody() *silapb.BeaconBlockBodyGloas {
 	return util.HydrateBeaconBlockBodyGloas(nil)
 }
 
@@ -42,17 +42,17 @@ func TestGloasOperations_HappyPath(t *testing.T) {
 func TestGloasOperations_ProcessingErrors(t *testing.T) {
 	tests := []struct {
 		name        string
-		modifyBlk   func(*ethpb.BeaconBlockBodyGloas)
+		modifyBlk   func(*silapb.BeaconBlockBodyGloas)
 		errSentinel error
 		errSubstr   string
 	}{
 		{
 			name: "ErrProcessProposerSlashingsFailed – out-of-bounds proposer index",
-			modifyBlk: func(b *ethpb.BeaconBlockBodyGloas) {
-				b.ProposerSlashings = []*ethpb.ProposerSlashing{
+			modifyBlk: func(b *silapb.BeaconBlockBodyGloas) {
+				b.ProposerSlashings = []*silapb.ProposerSlashing{
 					{
-						Header_1: &ethpb.SignedBeaconBlockHeader{
-							Header: &ethpb.BeaconBlockHeader{
+						Header_1: &silapb.SignedBeaconBlockHeader{
+							Header: &silapb.BeaconBlockHeader{
 								Slot:          1,
 								ProposerIndex: 999999,
 								ParentRoot:    make([]byte, 32),
@@ -61,8 +61,8 @@ func TestGloasOperations_ProcessingErrors(t *testing.T) {
 							},
 							Signature: make([]byte, 96),
 						},
-						Header_2: &ethpb.SignedBeaconBlockHeader{
-							Header: &ethpb.BeaconBlockHeader{
+						Header_2: &silapb.SignedBeaconBlockHeader{
+							Header: &silapb.BeaconBlockHeader{
 								Slot:          1,
 								ProposerIndex: 999999,
 								ParentRoot:    make([]byte, 32),
@@ -79,16 +79,16 @@ func TestGloasOperations_ProcessingErrors(t *testing.T) {
 		},
 		{
 			name: "ErrProcessAttesterSlashingsFailed – out-of-bounds attesting index",
-			modifyBlk: func(b *ethpb.BeaconBlockBodyGloas) {
-				makeIndexed := func(root []byte) *ethpb.IndexedAttestationElectra {
-					return &ethpb.IndexedAttestationElectra{
+			modifyBlk: func(b *silapb.BeaconBlockBodyGloas) {
+				makeIndexed := func(root []byte) *silapb.IndexedAttestationElectra {
+					return &silapb.IndexedAttestationElectra{
 						AttestingIndices: []uint64{999999},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							Slot:            1,
 							CommitteeIndex:  0,
 							BeaconBlockRoot: root,
-							Source:          &ethpb.Checkpoint{Root: make([]byte, 32)},
-							Target:          &ethpb.Checkpoint{Root: make([]byte, 32)},
+							Source:          &silapb.Checkpoint{Root: make([]byte, 32)},
+							Target:          &silapb.Checkpoint{Root: make([]byte, 32)},
 						},
 						Signature: make([]byte, 96),
 					}
@@ -96,7 +96,7 @@ func TestGloasOperations_ProcessingErrors(t *testing.T) {
 				root1 := make([]byte, 32)
 				root2 := make([]byte, 32)
 				root2[0] = 0xff // different roots → slashable
-				b.AttesterSlashings = []*ethpb.AttesterSlashingElectra{
+				b.AttesterSlashings = []*silapb.AttesterSlashingElectra{
 					{
 						Attestation_1: makeIndexed(root1),
 						Attestation_2: makeIndexed(root2),
@@ -109,16 +109,16 @@ func TestGloasOperations_ProcessingErrors(t *testing.T) {
 
 		{
 			name: "ErrProcessAttestationsFailed – invalid committee index",
-			modifyBlk: func(b *ethpb.BeaconBlockBodyGloas) {
-				b.Attestations = []*ethpb.AttestationElectra{
+			modifyBlk: func(b *silapb.BeaconBlockBodyGloas) {
+				b.Attestations = []*silapb.AttestationElectra{
 					{
 						AggregationBits: []byte{0b00000001},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							Slot:            1,
 							CommitteeIndex:  999999, // no such committee
 							BeaconBlockRoot: make([]byte, 32),
-							Source:          &ethpb.Checkpoint{Root: make([]byte, 32)},
-							Target:          &ethpb.Checkpoint{Root: make([]byte, 32)},
+							Source:          &silapb.Checkpoint{Root: make([]byte, 32)},
+							Target:          &silapb.Checkpoint{Root: make([]byte, 32)},
 						},
 						CommitteeBits: []byte{0b00000001},
 						Signature:     make([]byte, 96),
@@ -131,11 +131,11 @@ func TestGloasOperations_ProcessingErrors(t *testing.T) {
 
 		{
 			name: "ErrProcessDepositsFailed – empty merkle proof",
-			modifyBlk: func(b *ethpb.BeaconBlockBodyGloas) {
-				b.Deposits = []*ethpb.Deposit{
+			modifyBlk: func(b *silapb.BeaconBlockBodyGloas) {
+				b.Deposits = []*silapb.Deposit{
 					{
 						Proof: [][]byte{}, // invalid: proof must not be empty
-						Data: &ethpb.Deposit_Data{
+						Data: &silapb.Deposit_Data{
 							PublicKey:             make([]byte, 48),
 							WithdrawalCredentials: make([]byte, 32),
 							Amount:                32_000_000_000,
@@ -150,10 +150,10 @@ func TestGloasOperations_ProcessingErrors(t *testing.T) {
 
 		{
 			name: "ErrProcessVoluntaryExitsFailed – out-of-bounds validator index",
-			modifyBlk: func(b *ethpb.BeaconBlockBodyGloas) {
-				b.VoluntaryExits = []*ethpb.SignedVoluntaryExit{
+			modifyBlk: func(b *silapb.BeaconBlockBodyGloas) {
+				b.VoluntaryExits = []*silapb.SignedVoluntaryExit{
 					{
-						Exit: &ethpb.VoluntaryExit{
+						Exit: &silapb.VoluntaryExit{
 							Epoch:          0,
 							ValidatorIndex: 999999,
 						},
@@ -167,10 +167,10 @@ func TestGloasOperations_ProcessingErrors(t *testing.T) {
 
 		{
 			name: "ErrProcessBLSChangesFailed – out-of-bounds validator index",
-			modifyBlk: func(b *ethpb.BeaconBlockBodyGloas) {
-				b.BlsToExecutionChanges = []*ethpb.SignedBLSToExecutionChange{
+			modifyBlk: func(b *silapb.BeaconBlockBodyGloas) {
+				b.BlsToExecutionChanges = []*silapb.SignedBLSToExecutionChange{
 					{
-						Message: &ethpb.BLSToExecutionChange{
+						Message: &silapb.BLSToExecutionChange{
 							ValidatorIndex:     999999,
 							FromBlsPubkey:      make([]byte, 48),
 							ToExecutionAddress: make([]byte, 20),
@@ -185,11 +185,11 @@ func TestGloasOperations_ProcessingErrors(t *testing.T) {
 
 		{
 			name: "ErrProcessPayloadAttestationsFailed – wrong beacon block root",
-			modifyBlk: func(b *ethpb.BeaconBlockBodyGloas) {
-				b.PayloadAttestations = []*ethpb.PayloadAttestation{
+			modifyBlk: func(b *silapb.BeaconBlockBodyGloas) {
+				b.PayloadAttestations = []*silapb.PayloadAttestation{
 					{
 						AggregationBits: bitfield.NewBitvector512(),
-						Data: &ethpb.PayloadAttestationData{
+						Data: &silapb.PayloadAttestationData{
 							BeaconBlockRoot: make([]byte, 32), // all-zeros ≠ header.parent_root
 							Slot:            0,
 						},
@@ -212,7 +212,7 @@ func TestGloasOperations_ProcessingErrors(t *testing.T) {
 			// header to have a non-zero parent root so the all-zeros root in the
 			// attestation definitely mismatches.
 			if tc.errSentinel == transition.ErrProcessPayloadAttestationsFailed {
-				hdr := &ethpb.BeaconBlockHeader{
+				hdr := &silapb.BeaconBlockHeader{
 					ParentRoot: make([]byte, 32),
 					StateRoot:  make([]byte, 32),
 					BodyRoot:   make([]byte, 32),

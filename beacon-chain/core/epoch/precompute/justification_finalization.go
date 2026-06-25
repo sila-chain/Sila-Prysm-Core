@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -16,7 +16,7 @@ var errNilState = errors.New("nil state")
 // UnrealizedCheckpoints returns the justification and finalization checkpoints of the
 // given state as if it was progressed with empty slots until the next epoch. It
 // also returns the total active balance during the epoch.
-func UnrealizedCheckpoints(st state.BeaconState) (*ethpb.Checkpoint, *ethpb.Checkpoint, error) {
+func UnrealizedCheckpoints(st state.BeaconState) (*silapb.Checkpoint, *silapb.Checkpoint, error) {
 	if st == nil || st.IsNil() {
 		return nil, nil, errNilState
 	}
@@ -150,7 +150,7 @@ func weighJustificationAndFinalization(state state.BeaconState, newBits bitfield
 //	# The 1st/2nd most recent epochs are justified, the 1st using the 2nd as source
 //	if all(bits[0:2]) and old_current_justified_checkpoint.epoch + 1 == current_epoch:
 //	    state.finalized_checkpoint = old_current_justified_checkpoint
-func computeCheckpoints(state state.BeaconState, newBits bitfield.Bitvector4) (*ethpb.Checkpoint, *ethpb.Checkpoint, error) {
+func computeCheckpoints(state state.BeaconState, newBits bitfield.Bitvector4) (*silapb.Checkpoint, *silapb.Checkpoint, error) {
 	prevEpoch := time.PrevEpoch(state)
 	currentEpoch := time.CurrentEpoch(state)
 	oldPrevJustifiedCheckpoint := state.PreviousJustifiedCheckpoint()

@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -81,9 +81,9 @@ func TestPayloadAttestationData_EndpointError(t *testing.T) {
 }
 
 func TestSubmitPayloadAttestation(t *testing.T) {
-	msg := &ethpb.PayloadAttestationMessage{
+	msg := &silapb.PayloadAttestationMessage{
 		ValidatorIndex: 7,
-		Data: &ethpb.PayloadAttestationData{
+		Data: &silapb.PayloadAttestationData{
 			BeaconBlockRoot:   testhelpers.FillByteSlice(32, 0x11),
 			Slot:              99,
 			PayloadPresent:    true,
@@ -106,14 +106,14 @@ func TestSubmitPayloadAttestation(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		msg           *ethpb.PayloadAttestationMessage
+		msg           *silapb.PayloadAttestationMessage
 		endpointError error
 		endpointCall  int
 		expectErr     string
 	}{
 		{name: "valid", msg: msg, endpointCall: 1},
 		{name: "nil message", msg: nil, expectErr: "payload attestation message is nil"},
-		{name: "nil data", msg: &ethpb.PayloadAttestationMessage{ValidatorIndex: 1}, expectErr: "payload attestation message is nil"},
+		{name: "nil data", msg: &silapb.PayloadAttestationMessage{ValidatorIndex: 1}, expectErr: "payload attestation message is nil"},
 		{name: "endpoint error", msg: msg, endpointError: errors.New("bad request"), endpointCall: 1, expectErr: "bad request"},
 	}
 

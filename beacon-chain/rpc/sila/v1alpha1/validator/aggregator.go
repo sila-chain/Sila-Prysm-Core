@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -22,7 +22,7 @@ import (
 // SubmitAggregateSelectionProof is called by a validator when its assigned to be an aggregator.
 // The aggregator submits the selection proof to obtain the aggregated attestation
 // object to sign over.
-func (vs *Server) SubmitAggregateSelectionProof(ctx context.Context, req *ethpb.AggregateSelectionRequest) (*ethpb.AggregateSelectionResponse, error) {
+func (vs *Server) SubmitAggregateSelectionProof(ctx context.Context, req *silapb.AggregateSelectionRequest) (*silapb.AggregateSelectionResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "AggregatorServer.SubmitAggregateSelectionProof")
 	defer span.End()
 	span.SetAttributes(trace.Int64Attribute("slot", int64(req.Slot)))
@@ -32,10 +32,10 @@ func (vs *Server) SubmitAggregateSelectionProof(ctx context.Context, req *ethpb.
 		return nil, err
 	}
 
-	var atts []*ethpb.Attestation
+	var atts []*silapb.Attestation
 
 	if features.Get().EnableExperimentalAttestationPool {
-		atts = cache.GetBySlotAndCommitteeIndex[*ethpb.Attestation](vs.AttestationCache, req.Slot, req.CommitteeIndex)
+		atts = cache.GetBySlotAndCommitteeIndex[*silapb.Attestation](vs.AttestationCache, req.Slot, req.CommitteeIndex)
 	} else {
 		atts = vs.AttPool.AggregatedAttestationsBySlotIndex(ctx, req.Slot, req.CommitteeIndex)
 		if len(atts) == 0 {
@@ -47,12 +47,12 @@ func (vs *Server) SubmitAggregateSelectionProof(ctx context.Context, req *ethpb.
 	}
 
 	best := bestAggregate(atts, req.CommitteeIndex, indexInCommittee)
-	attAndProof := &ethpb.AggregateAttestationAndProof{
+	attAndProof := &silapb.AggregateAttestationAndProof{
 		Aggregate:       best,
 		SelectionProof:  req.SlotSignature,
 		AggregatorIndex: validatorIndex,
 	}
-	return &ethpb.AggregateSelectionResponse{AggregateAndProof: attAndProof}, nil
+	return &silapb.AggregateSelectionResponse{AggregateAndProof: attAndProof}, nil
 }
 
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
@@ -62,8 +62,8 @@ func (vs *Server) SubmitAggregateSelectionProof(ctx context.Context, req *ethpb.
 // object to sign over.
 func (vs *Server) SubmitAggregateSelectionProofElectra(
 	ctx context.Context,
-	req *ethpb.AggregateSelectionRequest,
-) (*ethpb.AggregateSelectionElectraResponse, error) {
+	req *silapb.AggregateSelectionRequest,
+) (*silapb.AggregateSelectionElectraResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "AggregatorServer.SubmitAggregateSelectionProofElectra")
 	defer span.End()
 	span.SetAttributes(trace.Int64Attribute("slot", int64(req.Slot)))
@@ -73,10 +73,10 @@ func (vs *Server) SubmitAggregateSelectionProofElectra(
 		return nil, err
 	}
 
-	var atts []*ethpb.AttestationElectra
+	var atts []*silapb.AttestationElectra
 
 	if features.Get().EnableExperimentalAttestationPool {
-		atts = cache.GetBySlotAndCommitteeIndex[*ethpb.AttestationElectra](vs.AttestationCache, req.Slot, req.CommitteeIndex)
+		atts = cache.GetBySlotAndCommitteeIndex[*silapb.AttestationElectra](vs.AttestationCache, req.Slot, req.CommitteeIndex)
 	} else {
 		atts = vs.AttPool.AggregatedAttestationsBySlotIndexElectra(ctx, req.Slot, req.CommitteeIndex)
 		if len(atts) == 0 {
@@ -88,15 +88,15 @@ func (vs *Server) SubmitAggregateSelectionProofElectra(
 	}
 
 	best := bestAggregate(atts, req.CommitteeIndex, indexInCommittee)
-	attAndProof := &ethpb.AggregateAttestationAndProofElectra{
+	attAndProof := &silapb.AggregateAttestationAndProofElectra{
 		Aggregate:       best,
 		SelectionProof:  req.SlotSignature,
 		AggregatorIndex: validatorIndex,
 	}
-	return &ethpb.AggregateSelectionElectraResponse{AggregateAndProof: attAndProof}, nil
+	return &silapb.AggregateSelectionElectraResponse{AggregateAndProof: attAndProof}, nil
 }
 
-func (vs *Server) processAggregateSelection(ctx context.Context, req *ethpb.AggregateSelectionRequest) (uint64, primitives.ValidatorIndex, error) {
+func (vs *Server) processAggregateSelection(ctx context.Context, req *silapb.AggregateSelectionRequest) (uint64, primitives.ValidatorIndex, error) {
 	if vs.SyncChecker.Syncing() {
 		return 0, 0, status.Errorf(codes.Unavailable, "Syncing to latest head, not ready to respond")
 	}
@@ -155,12 +155,12 @@ func (vs *Server) processAggregateSelection(ctx context.Context, req *ethpb.Aggr
 // aggregated and proof object.
 func (vs *Server) SubmitSignedAggregateSelectionProof(
 	ctx context.Context,
-	req *ethpb.SignedAggregateSubmitRequest,
-) (*ethpb.SignedAggregateSubmitResponse, error) {
+	req *silapb.SignedAggregateSubmitRequest,
+) (*silapb.SignedAggregateSubmitResponse, error) {
 	if err := vs.CoreService.SubmitSignedAggregateSelectionProof(ctx, req.SignedAggregateAndProof); err != nil {
 		return nil, status.Errorf(core.ErrorReasonToGRPC(err.Reason), "Could not submit aggregate: %v", err.Err)
 	}
-	return &ethpb.SignedAggregateSubmitResponse{}, nil
+	return &silapb.SignedAggregateSubmitResponse{}, nil
 }
 
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
@@ -169,15 +169,15 @@ func (vs *Server) SubmitSignedAggregateSelectionProof(
 // aggregated and proof object.
 func (vs *Server) SubmitSignedAggregateSelectionProofElectra(
 	ctx context.Context,
-	req *ethpb.SignedAggregateSubmitElectraRequest,
-) (*ethpb.SignedAggregateSubmitResponse, error) {
+	req *silapb.SignedAggregateSubmitElectraRequest,
+) (*silapb.SignedAggregateSubmitResponse, error) {
 	if err := vs.CoreService.SubmitSignedAggregateSelectionProof(ctx, req.SignedAggregateAndProof); err != nil {
 		return nil, status.Errorf(core.ErrorReasonToGRPC(err.Reason), "Could not submit aggregate: %v", err.Err)
 	}
-	return &ethpb.SignedAggregateSubmitResponse{}, nil
+	return &silapb.SignedAggregateSubmitResponse{}, nil
 }
 
-func bestAggregate[T ethpb.Att](atts []T, committeeIndex primitives.CommitteeIndex, indexInCommittee uint64) T {
+func bestAggregate[T silapb.Att](atts []T, committeeIndex primitives.CommitteeIndex, indexInCommittee uint64) T {
 	best := atts[0]
 	for _, a := range atts[1:] {
 		// The aggregator should prefer an attestation that they have signed. We check this by

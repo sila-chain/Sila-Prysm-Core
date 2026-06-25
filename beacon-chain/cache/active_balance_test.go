@@ -11,7 +11,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -22,7 +22,7 @@ func TestBalanceCache_AddGetBalance(t *testing.T) {
 		binary.LittleEndian.PutUint64(b, uint64(i))
 		blockRoots[i] = b
 	}
-	raw := &ethpb.BeaconState{
+	raw := &silapb.BeaconState{
 		BlockRoots: blockRoots,
 	}
 	st, err := state_native.InitializeFromProtoPhase0(raw)
@@ -66,7 +66,7 @@ func TestBalanceCache_BalanceKey(t *testing.T) {
 		binary.LittleEndian.PutUint64(b, uint64(i))
 		blockRoots[i] = b
 	}
-	raw := &ethpb.BeaconState{
+	raw := &silapb.BeaconState{
 		BlockRoots: blockRoots,
 	}
 	st, err := state_native.InitializeFromProtoPhase0(raw)

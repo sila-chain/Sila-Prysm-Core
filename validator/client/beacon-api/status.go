@@ -6,13 +6,13 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 )
 
-func (c *beaconApiValidatorClient) validatorStatus(ctx context.Context, in *ethpb.ValidatorStatusRequest) (*ethpb.ValidatorStatusResponse, error) {
+func (c *beaconApiValidatorClient) validatorStatus(ctx context.Context, in *silapb.ValidatorStatusRequest) (*silapb.ValidatorStatusResponse, error) {
 	_, _, validatorsStatusResponse, err := c.validatorsStatusResponse(ctx, [][]byte{in.PublicKey}, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get validator status response")
@@ -27,7 +27,7 @@ func (c *beaconApiValidatorClient) validatorStatus(ctx context.Context, in *ethp
 	return validatorStatusResponse, nil
 }
 
-func (c *beaconApiValidatorClient) multipleValidatorStatus(ctx context.Context, in *ethpb.MultipleValidatorStatusRequest) (*ethpb.MultipleValidatorStatusResponse, error) {
+func (c *beaconApiValidatorClient) multipleValidatorStatus(ctx context.Context, in *silapb.MultipleValidatorStatusRequest) (*silapb.MultipleValidatorStatusResponse, error) {
 	indices := make([]primitives.ValidatorIndex, len(in.Indices))
 	for i, ix := range in.Indices {
 		indices[i] = primitives.ValidatorIndex(ix)
@@ -37,7 +37,7 @@ func (c *beaconApiValidatorClient) multipleValidatorStatus(ctx context.Context, 
 		return nil, errors.Wrap(err, "failed to get validators status response")
 	}
 
-	return &ethpb.MultipleValidatorStatusResponse{
+	return &silapb.MultipleValidatorStatusResponse{
 		PublicKeys: publicKeys,
 		Indices:    indices,
 		Statuses:   statuses,
@@ -47,12 +47,12 @@ func (c *beaconApiValidatorClient) multipleValidatorStatus(ctx context.Context, 
 func (c *beaconApiValidatorClient) validatorsStatusResponse(ctx context.Context, inPubKeys [][]byte, inIndexes []primitives.ValidatorIndex) (
 	[][]byte,
 	[]primitives.ValidatorIndex,
-	[]*ethpb.ValidatorStatusResponse,
+	[]*silapb.ValidatorStatusResponse,
 	error,
 ) {
 	// if no parameters are provided we should just return an empty response
 	if len(inPubKeys) == 0 && len(inIndexes) == 0 {
-		return [][]byte{}, []primitives.ValidatorIndex{}, []*ethpb.ValidatorStatusResponse{}, nil
+		return [][]byte{}, []primitives.ValidatorIndex{}, []*silapb.ValidatorStatusResponse{}, nil
 	}
 	// Represents the target set of keys
 	stringTargetPubKeysToPubKeys := make(map[string][]byte, len(inPubKeys))
@@ -68,7 +68,7 @@ func (c *beaconApiValidatorClient) validatorsStatusResponse(ctx context.Context,
 
 	outPubKeys := make([][]byte, totalLen)
 	outIndexes := make([]primitives.ValidatorIndex, totalLen)
-	outValidatorsStatuses := make([]*ethpb.ValidatorStatusResponse, totalLen)
+	outValidatorsStatuses := make([]*silapb.ValidatorStatusResponse, totalLen)
 
 	for index, publicKey := range inPubKeys {
 		stringPubKey := hexutil.Encode(publicKey)
@@ -121,7 +121,7 @@ func (c *beaconApiValidatorClient) validatorsStatusResponse(ctx context.Context,
 		}
 
 		outPubKeys[i] = pubKey
-		validatorStatus := &ethpb.ValidatorStatusResponse{}
+		validatorStatus := &silapb.ValidatorStatusResponse{}
 
 		// Set Status
 		status, ok := beaconAPITogRPCValidatorStatus[validatorContainer.Status]
@@ -141,7 +141,7 @@ func (c *beaconApiValidatorClient) validatorsStatusResponse(ctx context.Context,
 
 		// Set PositionInActivationQueue
 		switch status {
-		case ethpb.ValidatorStatus_PENDING, ethpb.ValidatorStatus_PARTIALLY_DEPOSITED, ethpb.ValidatorStatus_DEPOSITED:
+		case silapb.ValidatorStatus_PENDING, silapb.ValidatorStatus_PARTIALLY_DEPOSITED, silapb.ValidatorStatus_DEPOSITED:
 			if lastActivatedValidatorIndex >= 0 {
 				validatorStatus.PositionInActivationQueue = validatorIndex - uint64(lastActivatedValidatorIndex)
 			}
@@ -163,8 +163,8 @@ func (c *beaconApiValidatorClient) validatorsStatusResponse(ctx context.Context,
 		outPubKeys[nbStringRetrievedPubKeys+i] = missingPubKey
 		outIndexes[nbStringRetrievedPubKeys+i] = primitives.ValidatorIndex(^uint64(0))
 
-		outValidatorsStatuses[nbStringRetrievedPubKeys+i] = &ethpb.ValidatorStatusResponse{
-			Status:          ethpb.ValidatorStatus_UNKNOWN_STATUS,
+		outValidatorsStatuses[nbStringRetrievedPubKeys+i] = &silapb.ValidatorStatusResponse{
+			Status:          silapb.ValidatorStatus_UNKNOWN_STATUS,
 			ActivationEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}

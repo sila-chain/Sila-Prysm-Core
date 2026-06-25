@@ -7,12 +7,12 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // ValidatorIndexMap builds a lookup map for quickly determining the index of
 // a validator by their public key.
-func ValidatorIndexMap(validators []*ethpb.Validator) map[[fieldparams.BLSPubkeyLength]byte]primitives.ValidatorIndex {
+func ValidatorIndexMap(validators []*silapb.Validator) map[[fieldparams.BLSPubkeyLength]byte]primitives.ValidatorIndex {
 	m := make(map[[fieldparams.BLSPubkeyLength]byte]primitives.ValidatorIndex, len(validators))
 	if validators == nil {
 		return m

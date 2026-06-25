@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sirupsen/logrus"
@@ -63,8 +63,8 @@ type Simulator struct {
 	beaconBlocksFeed      *event.Feed
 	sentAttSlashingFeed   *event.Feed
 	sentBlockSlashingFeed *event.Feed
-	sentProposerSlashings map[[32]byte]*ethpb.ProposerSlashing
-	sentAttesterSlashings map[[32]byte]ethpb.AttSlashing
+	sentProposerSlashings map[[32]byte]*silapb.ProposerSlashing
+	sentAttesterSlashings map[[32]byte]silapb.AttSlashing
 	genesisTime           time.Time
 }
 
@@ -112,8 +112,8 @@ func New(ctx context.Context, srvConfig *ServiceConfig) (*Simulator, error) {
 		beaconBlocksFeed:      beaconBlocksFeed,
 		sentAttSlashingFeed:   sentAttSlashingFeed,
 		sentBlockSlashingFeed: sentBlockSlashingFeed,
-		sentProposerSlashings: make(map[[32]byte]*ethpb.ProposerSlashing),
-		sentAttesterSlashings: make(map[[32]byte]ethpb.AttSlashing),
+		sentProposerSlashings: make(map[[32]byte]*silapb.ProposerSlashing),
+		sentAttesterSlashings: make(map[[32]byte]silapb.AttSlashing),
 	}, nil
 }
 
@@ -239,8 +239,8 @@ func (s *Simulator) verifySlashingsWereDetected(ctx context.Context) {
 	poolAttesterSlashings := s.srvConfig.SlashingsPool.PendingAttesterSlashings(
 		ctx, nil, true, /* no limit */
 	)
-	detectedProposerSlashings := make(map[[32]byte]*ethpb.ProposerSlashing)
-	detectedAttesterSlashings := make(map[[32]byte]ethpb.AttSlashing)
+	detectedProposerSlashings := make(map[[32]byte]*silapb.ProposerSlashing)
+	detectedAttesterSlashings := make(map[[32]byte]silapb.AttSlashing)
 	for _, slashing := range poolProposerSlashings {
 		slashingRoot, err := slashing.HashTreeRoot()
 		if err != nil {

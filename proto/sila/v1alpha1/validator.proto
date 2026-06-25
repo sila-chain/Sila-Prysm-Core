@@ -19,7 +19,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
-import "proto/eth/ext/options.proto";
+import "proto/silaapi/ext/options.proto";
 
 import "proto/sila/v1alpha1/beacon_block.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
@@ -56,7 +56,7 @@ service BeaconNodeValidator {
   rpc GetDuties(DutiesRequest) returns (DutiesResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/duties"
+      get : "/sila/v1alpha1/validator/duties"
     };
   }
 
@@ -82,7 +82,7 @@ service BeaconNodeValidator {
   rpc GetDutiesV2(DutiesRequest) returns (DutiesV2Response) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/dutiesV2"
+      get : "/sila/v1alpha1/validator/dutiesV2"
     };
   }
 
@@ -90,7 +90,7 @@ service BeaconNodeValidator {
   rpc GetAttesterDuties(AttesterDutiesRequest) returns (AttesterDutiesResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/duties/attester"
+      get : "/sila/v1alpha1/validator/duties/attester"
     };
   }
 
@@ -98,7 +98,7 @@ service BeaconNodeValidator {
   rpc GetProposerDutiesV2(ProposerDutiesRequest) returns (ProposerDutiesResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/duties/proposer"
+      get : "/sila/v1alpha1/validator/duties/proposer"
     };
   }
 
@@ -106,7 +106,7 @@ service BeaconNodeValidator {
   rpc GetSyncCommitteeDuties(SyncCommitteeDutiesRequest) returns (SyncCommitteeDutiesResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/duties/sync_committee"
+      get : "/sila/v1alpha1/validator/duties/sync_committee"
     };
   }
 
@@ -114,7 +114,7 @@ service BeaconNodeValidator {
   rpc GetPTCDuties(PTCDutiesRequest) returns (PTCDutiesResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/duties/ptc"
+      get : "/sila/v1alpha1/validator/duties/ptc"
     };
   }
 
@@ -124,7 +124,7 @@ service BeaconNodeValidator {
   rpc DomainData(DomainRequest) returns (DomainResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/domain"
+      get : "/sila/v1alpha1/validator/domain"
     };
   }
 
@@ -138,7 +138,7 @@ service BeaconNodeValidator {
       returns (stream ChainStartResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/chainstart/stream"
+      get : "/sila/v1alpha1/validator/chainstart/stream"
     };
   }
 
@@ -154,7 +154,7 @@ service BeaconNodeValidator {
       returns (stream ValidatorActivationResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/activation/stream"
+      get : "/sila/v1alpha1/validator/activation/stream"
     };
   }
 
@@ -165,7 +165,7 @@ service BeaconNodeValidator {
   rpc ValidatorIndex(ValidatorIndexRequest) returns (ValidatorIndexResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/index"
+      get : "/sila/v1alpha1/validator/index"
     };
   }
 
@@ -185,7 +185,7 @@ service BeaconNodeValidator {
       returns (ValidatorStatusResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/status"
+      get : "/sila/v1alpha1/validator/status"
     };
   }
 
@@ -197,7 +197,7 @@ service BeaconNodeValidator {
       returns (MultipleValidatorStatusResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/statuses"
+      get : "/sila/v1alpha1/validator/statuses"
     };
   }
 
@@ -209,7 +209,7 @@ service BeaconNodeValidator {
   rpc GetBeaconBlock(BlockRequest) returns (GenericBeaconBlock) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha2/validator/block"
+      get : "/sila/v1alpha2/validator/block"
     };
   }
 
@@ -221,7 +221,7 @@ service BeaconNodeValidator {
   rpc ProposeBeaconBlock(GenericSignedBeaconBlock) returns (ProposeResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha2/validator/block"
+      post : "/sila/v1alpha2/validator/block"
       body : "*"
     };
   }
@@ -232,7 +232,7 @@ service BeaconNodeValidator {
       returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/prepare_beacon_proposer"
+      post : "/sila/v1alpha1/validator/prepare_beacon_proposer"
       body : "*"
     };
   }
@@ -243,7 +243,7 @@ service BeaconNodeValidator {
       returns (FeeRecipientByPubKeyResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/fee_recipient_by_pub_key"
+      post : "/sila/v1alpha1/validator/fee_recipient_by_pub_key"
       body : "*"
     };
   }
@@ -256,7 +256,7 @@ service BeaconNodeValidator {
   rpc GetAttestationData(AttestationDataRequest) returns (AttestationData) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/attestation"
+      get : "/sila/v1alpha1/validator/attestation"
     };
   }
 
@@ -268,7 +268,7 @@ service BeaconNodeValidator {
   rpc ProposeAttestation(Attestation) returns (AttestResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/attestation"
+      post : "/sila/v1alpha1/validator/attestation"
       body : "*"
     };
   }
@@ -281,7 +281,7 @@ service BeaconNodeValidator {
   rpc ProposeAttestationElectra(SingleAttestation) returns (AttestResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/attestation_electra"
+      post : "/sila/v1alpha1/validator/attestation_electra"
       body : "*"
     };
   }
@@ -293,7 +293,7 @@ service BeaconNodeValidator {
       returns (AggregateSelectionResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/aggregate"
+      post : "/sila/v1alpha1/validator/aggregate"
       body : "*"
     };
   }
@@ -305,7 +305,7 @@ service BeaconNodeValidator {
       returns (AggregateSelectionElectraResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/aggregate_electra"
+      post : "/sila/v1alpha1/validator/aggregate_electra"
       body : "*"
     };
   }
@@ -316,7 +316,7 @@ service BeaconNodeValidator {
       returns (SignedAggregateSubmitResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/aggregate"
+      post : "/sila/v1alpha1/validator/aggregate"
       body : "*"
     };
   }
@@ -328,7 +328,7 @@ service BeaconNodeValidator {
       returns (SignedAggregateSubmitResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/aggregate_electra"
+      post : "/sila/v1alpha1/validator/aggregate_electra"
       body : "*"
     };
   }
@@ -340,7 +340,7 @@ service BeaconNodeValidator {
   rpc ProposeExit(SignedVoluntaryExit) returns (ProposeExitResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/exit"
+      post : "/sila/v1alpha1/validator/exit"
       body : "*"
     };
   }
@@ -355,7 +355,7 @@ service BeaconNodeValidator {
       returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/subnet/subscribe"
+      post : "/sila/v1alpha1/validator/subnet/subscribe"
       body : "*"
     };
   }
@@ -365,7 +365,7 @@ service BeaconNodeValidator {
   rpc CheckDoppelGanger(DoppelGangerRequest) returns (DoppelGangerResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/doppelganger"
+      get : "/sila/v1alpha1/validator/doppelganger"
     };
   }
 
@@ -375,7 +375,7 @@ service BeaconNodeValidator {
       returns (SyncMessageBlockRootResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/sync_message_block_root"
+      get : "/sila/v1alpha1/validator/sync_message_block_root"
     };
   }
 
@@ -384,7 +384,7 @@ service BeaconNodeValidator {
   rpc SubmitSyncMessage(SyncCommitteeMessage) returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/sync_message"
+      post : "/sila/v1alpha1/validator/sync_message"
       body : "*"
     };
   }
@@ -399,7 +399,7 @@ service BeaconNodeValidator {
       returns (SyncSubcommitteeIndexResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/sync_subcommittee_index"
+      get : "/sila/v1alpha1/sync_subcommittee_index"
     };
   }
 
@@ -411,7 +411,7 @@ service BeaconNodeValidator {
       returns (SyncCommitteeContribution) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/contribution_and_proof"
+      post : "/sila/v1alpha1/validator/contribution_and_proof"
       body : "*"
     };
   }
@@ -422,31 +422,31 @@ service BeaconNodeValidator {
       returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/signed_contribution_and_proof"
+      post : "/sila/v1alpha1/validator/signed_contribution_and_proof"
       body : "*"
     };
   }
 
   // Server-side stream of all slots of valid blocks as they are received by
   // the beacon chain node.
-  // DEPRECATED: This endpoint is superseded by the /eth/v1/events Beacon API
+  // DEPRECATED: This endpoint is superseded by the /sila/v1/events Beacon API
   // endpoint
   rpc StreamSlots(StreamSlotsRequest) returns (stream StreamSlotsResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/blocks/stream_slots"
+      get : "/sila/v1alpha1/validator/blocks/stream_slots"
     };
   }
 
   // Server-side stream of all signed blocks as they are received by
   // the beacon chain node.
-  // DEPRECATED: This endpoint is superseded by the /eth/v1/events Beacon API
+  // DEPRECATED: This endpoint is superseded by the /sila/v1/events Beacon API
   // endpoint
   rpc StreamBlocksAltair(StreamBlocksRequest)
       returns (stream StreamBlocksResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/blocks/stream"
+      get : "/sila/v1alpha1/validator/blocks/stream"
     };
   }
 
@@ -454,7 +454,7 @@ service BeaconNodeValidator {
       returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/registration"
+      post : "/sila/v1alpha1/validator/registration"
       body : "*"
     };
   }
@@ -463,7 +463,7 @@ service BeaconNodeValidator {
       returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/blocks/assign_validator_to_subnet"
+      post : "/sila/v1alpha1/validator/blocks/assign_validator_to_subnet"
       body : "*"
     };
   }
@@ -472,7 +472,7 @@ service BeaconNodeValidator {
       returns (AggregatedSigAndAggregationBitsResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/blocks/aggregated_sig_and_aggregation_bits"
+      get : "/sila/v1alpha1/validator/blocks/aggregated_sig_and_aggregation_bits"
     };
   }
 
@@ -490,7 +490,7 @@ service BeaconNodeValidator {
       returns (ExecutionPayloadEnvelopeResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/execution_payload_envelope/{slot}"
+      get : "/sila/v1alpha1/validator/execution_payload_envelope/{slot}"
     };
   }
 
@@ -504,7 +504,7 @@ service BeaconNodeValidator {
       returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/execution_payload_envelope"
+      post : "/sila/v1alpha1/validator/execution_payload_envelope"
       body : "*"
     };
   }
@@ -514,7 +514,7 @@ service BeaconNodeValidator {
       returns (.ethereum.eth.v1alpha1.PayloadAttestationData) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/validator/payload_attestation_data/{slot}"
+      get : "/sila/v1alpha1/validator/payload_attestation_data/{slot}"
     };
   }
 
@@ -523,7 +523,7 @@ service BeaconNodeValidator {
       returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/payload_attestation"
+      post : "/sila/v1alpha1/validator/payload_attestation"
       body : "*"
     };
   }
@@ -534,7 +534,7 @@ service BeaconNodeValidator {
       returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/proposer_preferences"
+      post : "/sila/v1alpha1/validator/proposer_preferences"
       body : "*"
     };
   }
@@ -545,7 +545,7 @@ service BeaconNodeValidator {
       returns (google.protobuf.Empty) {
     option deprecated = true;
     option (google.api.http) = {
-      post : "/eth/v1alpha1/validator/execution_payload_bid"
+      post : "/sila/v1alpha1/validator/execution_payload_bid"
       body : "*"
     };
   }
@@ -606,7 +606,7 @@ message SyncSubcommitteeIndexResponse {
             "primitives.CommitteeIndex" ];
 }
 
-// DEPRECATED: This endpoint StreamSlots is superseded by the /eth/v1/events
+// DEPRECATED: This endpoint StreamSlots is superseded by the /sila/v1/events
 // Beacon API endpoint
 message StreamSlotsResponse {
   option deprecated = true;
@@ -619,7 +619,7 @@ message StreamSlotsResponse {
   bytes current_duty_dependent_root = 3 [ (ethereum.eth.ext.ssz_size) = "32" ];
 }
 
-// DEPRECATED: This endpoint StreamBlocks is superseded by the /eth/v1/events
+// DEPRECATED: This endpoint StreamBlocks is superseded by the /sila/v1/events
 // Beacon API endpoint
 message StreamBlocksResponse {
   option deprecated = true;
@@ -1179,7 +1179,7 @@ message DoppelGangerResponse {
 
 // Request to only return slots with blocks that where verified by the beacon
 // node. DEPRECATED: This endpoint StreamSlots is superseded by the
-// /eth/v1/events Beacon API endpoint.
+// /sila/v1/events Beacon API endpoint.
 message StreamSlotsRequest {
   option deprecated = true;
 
@@ -1187,7 +1187,7 @@ message StreamSlotsRequest {
 }
 
 // Request to only return blocks that is verified by the beacon node.
-// DEPRECATED: This endpoint StreamBlocks is superseded by the /eth/v1/events
+// DEPRECATED: This endpoint StreamBlocks is superseded by the /sila/v1/events
 // Beacon API endpoint
 message StreamBlocksRequest {
   option deprecated = true;

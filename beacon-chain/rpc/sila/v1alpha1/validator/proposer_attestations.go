@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation"
 	attaggregation "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/attestations"
@@ -27,13 +27,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type proposerAtts []ethpb.Att
+type proposerAtts []silapb.Att
 
-func (vs *Server) packAttestations(ctx context.Context, latestState state.BeaconState, blkSlot primitives.Slot) ([]ethpb.Att, error) {
+func (vs *Server) packAttestations(ctx context.Context, latestState state.BeaconState, blkSlot primitives.Slot) ([]silapb.Att, error) {
 	ctx, span := trace.StartSpan(ctx, "ProposerServer.packAttestations")
 	defer span.End()
 
-	var atts []ethpb.Att
+	var atts []silapb.Att
 
 	if features.Get().EnableExperimentalAttestationPool {
 		atts = vs.AttestationCache.GetAll()
@@ -51,7 +51,7 @@ func (vs *Server) packAttestations(ctx context.Context, latestState state.Beacon
 	// The head state will still be in Deneb while we are trying to build an Electra block.
 	postElectra := slots.ToEpoch(blkSlot) >= params.BeaconConfig().ElectraForkEpoch
 
-	versionAtts := make([]ethpb.Att, 0, len(atts))
+	versionAtts := make([]silapb.Att, 0, len(atts))
 	if postElectra {
 		for _, a := range atts {
 			if a.Version() == version.Electra {
@@ -75,7 +75,7 @@ func (vs *Server) packAttestations(ctx context.Context, latestState state.Beacon
 		return nil, err
 	}
 
-	attsById := make(map[attestation.Id][]ethpb.Att, len(versionAtts))
+	attsById := make(map[attestation.Id][]silapb.Att, len(versionAtts))
 	for _, att := range versionAtts {
 		id, err := attestation.NewId(att, attestation.Data)
 		if err != nil {
@@ -99,7 +99,7 @@ func (vs *Server) packAttestations(ctx context.Context, latestState state.Beacon
 			return nil, err
 		}
 	} else {
-		attsForInclusion = make([]ethpb.Att, 0)
+		attsForInclusion = make([]silapb.Att, 0)
 		for _, as := range attsById {
 			attsForInclusion = append(attsForInclusion, as...)
 		}
@@ -127,7 +127,7 @@ func (vs *Server) packAttestations(ctx context.Context, latestState state.Beacon
 	return vs.filterAttestationBySignature(ctx, atts, latestState)
 }
 
-func onChainAggregates(attsById map[attestation.Id][]ethpb.Att) (proposerAtts, error) {
+func onChainAggregates(attsById map[attestation.Id][]silapb.Att) (proposerAtts, error) {
 	var result proposerAtts
 	var err error
 
@@ -146,7 +146,7 @@ func onChainAggregates(attsById map[attestation.Id][]ethpb.Att) (proposerAtts, e
 	// We continue doing this until we run out of aggregates.
 	idx := 0
 	for {
-		topAggregates := make([]ethpb.Att, 0, len(attsById))
+		topAggregates := make([]silapb.Att, 0, len(attsById))
 		for _, as := range attsById {
 			// In case there are no more aggregates for an ID, we skip that ID.
 			if len(as) > idx {
@@ -175,8 +175,8 @@ func onChainAggregates(attsById map[attestation.Id][]ethpb.Att) (proposerAtts, e
 // The first group passes the all the required checks for attestation to be considered for proposing.
 // And attestations from the second group should be deleted.
 func (a proposerAtts) filter(ctx context.Context, st state.BeaconState) (proposerAtts, proposerAtts) {
-	validAtts := make([]ethpb.Att, 0, len(a))
-	invalidAtts := make([]ethpb.Att, 0, len(a))
+	validAtts := make([]silapb.Att, 0, len(a))
+	invalidAtts := make([]silapb.Att, 0, len(a))
 
 	for _, att := range a {
 		if err := blocks.VerifyAttestationNoVerifySignature(ctx, st, att); err == nil {
@@ -213,9 +213,9 @@ func (a proposerAtts) sortOnChainAggregates(ctx context.Context, st state.ReadOn
 	}
 
 	// Sort attestation by proposer reward numerator using a cache.
-	cache := make(map[ethpb.Att]uint64)
+	cache := make(map[silapb.Att]uint64)
 
-	getCachedReward := func(att ethpb.Att) uint64 {
+	getCachedReward := func(att silapb.Att) uint64 {
 		if val, ok := cache[att]; ok {
 			return val
 		}
@@ -228,7 +228,7 @@ func (a proposerAtts) sortOnChainAggregates(ctx context.Context, st state.ReadOn
 		return r
 	}
 
-	slices.SortFunc(a, func(a, b ethpb.Att) int {
+	slices.SortFunc(a, func(a, b silapb.Att) int {
 		r1 := getCachedReward(a)
 		r2 := getCachedReward(b)
 		return cmp.Compare(r2, r1)
@@ -322,12 +322,12 @@ func sortSlotAttestations(slotAtts map[primitives.CommitteeIndex]proposerAtts) p
 		attCount += len(committeeAtts)
 	}
 
-	sorted := make([]ethpb.Att, 0, attCount)
+	sorted := make([]silapb.Att, 0, attCount)
 
 	processedCount := 0
 	index := 0
 	for processedCount < attCount {
-		var atts []ethpb.Att
+		var atts []silapb.Att
 
 		for _, committeeAtts := range slotAtts {
 			if len(committeeAtts) > index {
@@ -372,7 +372,7 @@ func (a proposerAtts) dedup() (proposerAtts, error) {
 	if len(a) < 2 {
 		return a, nil
 	}
-	attsByDataRoot := make(map[attestation.Id][]ethpb.Att, len(a))
+	attsByDataRoot := make(map[attestation.Id][]silapb.Att, len(a))
 	for _, att := range a {
 		id, err := attestation.NewId(att, attestation.Data)
 		if err != nil {
@@ -381,7 +381,7 @@ func (a proposerAtts) dedup() (proposerAtts, error) {
 		attsByDataRoot[id] = append(attsByDataRoot[id], att)
 	}
 
-	uniqAtts := make([]ethpb.Att, 0, len(a))
+	uniqAtts := make([]silapb.Att, 0, len(a))
 	for _, atts := range attsByDataRoot {
 		for i := 0; i < len(atts); i++ {
 			a := atts[i]
@@ -414,7 +414,7 @@ func (a proposerAtts) dedup() (proposerAtts, error) {
 }
 
 // This filters the input attestations to return a list of valid attestations to be packaged inside a beacon block.
-func (vs *Server) validateAndDeleteAttsInPool(ctx context.Context, st state.BeaconState, atts []ethpb.Att) []ethpb.Att {
+func (vs *Server) validateAndDeleteAttsInPool(ctx context.Context, st state.BeaconState, atts []silapb.Att) []silapb.Att {
 	ctx, span := trace.StartSpan(ctx, "ProposerServer.validateAndDeleteAttsInPool")
 	defer span.End()
 
@@ -427,7 +427,7 @@ func (vs *Server) validateAndDeleteAttsInPool(ctx context.Context, st state.Beac
 
 // The input attestations are processed and seen by the node, this deletes them from pool
 // so proposers don't include them in a block for the future.
-func (vs *Server) deleteAttsInPool(ctx context.Context, atts []ethpb.Att) error {
+func (vs *Server) deleteAttsInPool(ctx context.Context, atts []silapb.Att) error {
 	ctx, span := trace.StartSpan(ctx, "ProposerServer.deleteAttsInPool")
 	defer span.End()
 
@@ -455,12 +455,12 @@ func (vs *Server) deleteAttsInPool(ctx context.Context, atts []ethpb.Att) error 
 }
 
 // isAttestationFromCurrentEpoch returns true if the attestation is from the current epoch.
-func (vs *Server) isAttestationFromCurrentEpoch(att ethpb.Att, currentEpoch primitives.Epoch) bool {
+func (vs *Server) isAttestationFromCurrentEpoch(att silapb.Att, currentEpoch primitives.Epoch) bool {
 	return att.GetData().Target.Epoch == currentEpoch
 }
 
 // isAttestationFromPreviousEpoch returns true if the attestation is from the previous epoch.
-func (vs *Server) isAttestationFromPreviousEpoch(att ethpb.Att, currentEpoch primitives.Epoch) bool {
+func (vs *Server) isAttestationFromPreviousEpoch(att silapb.Att, currentEpoch primitives.Epoch) bool {
 	return att.GetData().Target.Epoch+1 == currentEpoch
 }
 
@@ -469,7 +469,7 @@ func (vs *Server) isAttestationFromPreviousEpoch(att ethpb.Att, currentEpoch pri
 // 1. The attestation beacon block root is for a slot in the previous epoch (according to fork choice).
 // 2. The attestation target root is the same as the attestation beacon block root.
 // 3. The attestation beacon block root is canonical according to fork choice.
-func (vs *Server) filterCurrentEpochAttestationByForkchoice(ctx context.Context, att ethpb.Att, currentEpoch primitives.Epoch) (bool, error) {
+func (vs *Server) filterCurrentEpochAttestationByForkchoice(ctx context.Context, att silapb.Att, currentEpoch primitives.Epoch) (bool, error) {
 	if !vs.isAttestationFromCurrentEpoch(att, currentEpoch) {
 		return false, nil
 	}
@@ -496,7 +496,7 @@ func (vs *Server) filterCurrentEpochAttestationByForkchoice(ctx context.Context,
 // The conditions checked are:
 // 1. The attestation's target epoch matches the forkchoice target epoch.
 // 2. The attestation's target root matches the forkchoice target root.
-func (vs *Server) filterCurrentEpochAttestationByTarget(att ethpb.Att, targetRoot [32]byte, targetEpoch, currentEpoch primitives.Epoch) (bool, error) {
+func (vs *Server) filterCurrentEpochAttestationByTarget(att silapb.Att, targetRoot [32]byte, targetEpoch, currentEpoch primitives.Epoch) (bool, error) {
 	if !vs.isAttestationFromCurrentEpoch(att, currentEpoch) {
 		return false, nil
 	}
@@ -509,7 +509,7 @@ func (vs *Server) filterCurrentEpochAttestationByTarget(att ethpb.Att, targetRoo
 // The conditions checked are:
 // 1. The attestation's target epoch matches the forkchoice previous target epoch.
 // 2. The attestation's target root matches the forkchoice previous target root.
-func (vs *Server) filterPreviousEpochAttestationByTarget(att ethpb.Att, cp *ethpb.Checkpoint, currentEpoch primitives.Epoch) (bool, error) {
+func (vs *Server) filterPreviousEpochAttestationByTarget(att silapb.Att, cp *silapb.Checkpoint, currentEpoch primitives.Epoch) (bool, error) {
 	if !vs.isAttestationFromPreviousEpoch(att, currentEpoch) {
 		return false, nil
 	}
@@ -561,7 +561,7 @@ func (vs *Server) filterAttestationBySignature(ctx context.Context, atts propose
 			continue
 		}
 
-		ok, err = vs.filterPreviousEpochAttestationByTarget(att, &ethpb.Checkpoint{Root: prevTargetRoot[:], Epoch: prevTargetEpoch}, currentEpoch)
+		ok, err = vs.filterPreviousEpochAttestationByTarget(att, &silapb.Checkpoint{Root: prevTargetRoot[:], Epoch: prevTargetEpoch}, currentEpoch)
 		if err != nil {
 			log.WithFields(attestationFields(att)).WithError(err).Error("Could not filter previous epoch attestation by target")
 		}
@@ -615,7 +615,7 @@ func (a proposerAtts) filterBatchSignature(ctx context.Context, st state.BeaconS
 func (a proposerAtts) filterIndividualSignature(ctx context.Context, st state.BeaconState) proposerAtts {
 	var validAtts proposerAtts
 	for _, att := range a {
-		aSet, err := blocks.AttestationSignatureBatch(ctx, st, []ethpb.Att{att})
+		aSet, err := blocks.AttestationSignatureBatch(ctx, st, []silapb.Att{att})
 		if err != nil {
 			log.WithFields(attestationFields(att)).WithError(err).Error("Could not create individual attestation signature set")
 			continue
@@ -634,7 +634,7 @@ func (a proposerAtts) filterIndividualSignature(ctx context.Context, st state.Be
 	return validAtts
 }
 
-func attestationFields(att ethpb.Att) logrus.Fields {
+func attestationFields(att silapb.Att) logrus.Fields {
 	return logrus.Fields{
 		"slot":            att.GetData().Slot,
 		"index":           att.GetData().CommitteeIndex,

@@ -6,7 +6,7 @@ import (
 
 	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	aggtesting "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -44,10 +44,10 @@ func BenchmarkProposerAtts_sortByProfitability(b *testing.B) {
 		},
 	}
 
-	runner := func(atts []ethpb.Att) {
+	runner := func(atts []silapb.Att) {
 		attsCopy := make(proposerAtts, len(atts))
 		for i, att := range atts {
-			attsCopy[i] = att.(*ethpb.Attestation).Copy()
+			attsCopy[i] = att.(*silapb.Attestation).Copy()
 		}
 		_, err := attsCopy.sort()
 		require.NoError(b, err, "Could not sort attestations by profitability")

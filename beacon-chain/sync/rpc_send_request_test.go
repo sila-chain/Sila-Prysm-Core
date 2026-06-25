@@ -23,7 +23,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -42,12 +42,12 @@ func TestSendRequest_SendBeaconBlocksByRangeRequest(t *testing.T) {
 		bogusPeer := p2ptest.NewTestP2P(t)
 		p1.Connect(bogusPeer)
 
-		req := &ethpb.BeaconBlocksByRangeRequest{}
+		req := &silapb.BeaconBlocksByRangeRequest{}
 		_, err := SendBeaconBlocksByRangeRequest(ctx, startup.NewClock(time.Now(), [32]byte{}), p1, bogusPeer.PeerID(), req, nil)
 		assert.ErrorContains(t, "protocols not supported", err)
 	})
 
-	knownBlocks := make([]*ethpb.SignedBeaconBlock, 0)
+	knownBlocks := make([]*silapb.SignedBeaconBlock, 0)
 	genesisBlk := util.NewBeaconBlock()
 	genesisBlkRoot, err := genesisBlk.Block.HashTreeRoot()
 	require.NoError(t, err)
@@ -67,7 +67,7 @@ func TestSendRequest_SendBeaconBlocksByRangeRequest(t *testing.T) {
 				assert.NoError(t, stream.Close())
 			}()
 
-			req := &ethpb.BeaconBlocksByRangeRequest{}
+			req := &silapb.BeaconBlocksByRangeRequest{}
 			assert.NoError(t, p2pProvider.Encoding().DecodeWithMaxLength(stream, req))
 
 			for i := req.StartSlot; i < req.StartSlot.Add(req.Count*req.Step); i += primitives.Slot(req.Step) {
@@ -106,7 +106,7 @@ func TestSendRequest_SendBeaconBlocksByRangeRequest(t *testing.T) {
 		p1.Connect(p2)
 		p2.SetStreamHandler(pcl, knownBlocksProvider(p2, nil))
 
-		req := &ethpb.BeaconBlocksByRangeRequest{
+		req := &silapb.BeaconBlocksByRangeRequest{
 			StartSlot: 20,
 			Count:     128,
 			Step:      1,
@@ -123,7 +123,7 @@ func TestSendRequest_SendBeaconBlocksByRangeRequest(t *testing.T) {
 		p2.SetStreamHandler(pcl, knownBlocksProvider(p2, nil))
 
 		// No error from block processor.
-		req := &ethpb.BeaconBlocksByRangeRequest{
+		req := &silapb.BeaconBlocksByRangeRequest{
 			StartSlot: 20,
 			Count:     128,
 			Step:      1,
@@ -145,7 +145,7 @@ func TestSendRequest_SendBeaconBlocksByRangeRequest(t *testing.T) {
 		p2.SetStreamHandler(pcl, knownBlocksProvider(p2, nil))
 
 		// Send error from block processor.
-		req := &ethpb.BeaconBlocksByRangeRequest{
+		req := &silapb.BeaconBlocksByRangeRequest{
 			StartSlot: 20,
 			Count:     128,
 			Step:      1,
@@ -164,7 +164,7 @@ func TestSendRequest_SendBeaconBlocksByRangeRequest(t *testing.T) {
 		p2.SetStreamHandler(pcl, knownBlocksProvider(p2, nil))
 
 		// No cap on max roots.
-		req := &ethpb.BeaconBlocksByRangeRequest{
+		req := &silapb.BeaconBlocksByRangeRequest{
 			StartSlot: 20,
 			Count:     128,
 			Step:      1,
@@ -206,7 +206,7 @@ func TestSendRequest_SendBeaconBlocksByRangeRequest(t *testing.T) {
 			return nil
 		}))
 
-		req := &ethpb.BeaconBlocksByRangeRequest{
+		req := &silapb.BeaconBlocksByRangeRequest{
 			StartSlot: 20,
 			Count:     128,
 			Step:      1,
@@ -232,7 +232,7 @@ func TestSendRequest_SendBeaconBlocksByRangeRequest(t *testing.T) {
 				assert.NoError(t, stream.Close())
 			}()
 
-			req := &ethpb.BeaconBlocksByRangeRequest{}
+			req := &silapb.BeaconBlocksByRangeRequest{}
 			assert.NoError(t, p2.Encoding().DecodeWithMaxLength(stream, req))
 
 			for i := req.StartSlot; i < req.StartSlot.Add(req.Count*req.Step); i += primitives.Slot(req.Step) {
@@ -248,7 +248,7 @@ func TestSendRequest_SendBeaconBlocksByRangeRequest(t *testing.T) {
 			}
 		})
 
-		req := &ethpb.BeaconBlocksByRangeRequest{
+		req := &silapb.BeaconBlocksByRangeRequest{
 			StartSlot: 20,
 			Count:     128,
 			Step:      1,
@@ -275,7 +275,7 @@ func TestSendRequest_SendBeaconBlocksByRangeRequest(t *testing.T) {
 				assert.NoError(t, stream.Close())
 			}()
 
-			req := &ethpb.BeaconBlocksByRangeRequest{}
+			req := &silapb.BeaconBlocksByRangeRequest{}
 			assert.NoError(t, p2.Encoding().DecodeWithMaxLength(stream, req))
 
 			for i := req.StartSlot; i < req.StartSlot.Add(req.Count*req.Step); i += primitives.Slot(req.Step) {
@@ -291,7 +291,7 @@ func TestSendRequest_SendBeaconBlocksByRangeRequest(t *testing.T) {
 			}
 		})
 
-		req := &ethpb.BeaconBlocksByRangeRequest{
+		req := &silapb.BeaconBlocksByRangeRequest{
 			StartSlot: 20,
 			Count:     128,
 			Step:      10,
@@ -308,7 +308,7 @@ func TestSendRequest_SendBeaconBlocksByRootRequest(t *testing.T) {
 	defer cancel()
 	pcl := fmt.Sprintf("%s/ssz_snappy", p2p.RPCBlocksByRootTopicV1)
 
-	knownBlocks := make(map[[32]byte]*ethpb.SignedBeaconBlock)
+	knownBlocks := make(map[[32]byte]*silapb.SignedBeaconBlock)
 	knownRoots := make([][32]byte, 0)
 	for range 5 {
 		blk := util.NewBeaconBlock()
@@ -488,8 +488,8 @@ func TestSendRequest_SendBeaconBlocksByRootRequest(t *testing.T) {
 func TestBlobValidatorFromRootReq(t *testing.T) {
 	rootA := bytesutil.PadTo([]byte("valid"), 32)
 	rootB := bytesutil.PadTo([]byte("invalid"), 32)
-	header := &ethpb.SignedBeaconBlockHeader{
-		Header:    &ethpb.BeaconBlockHeader{Slot: 0},
+	header := &silapb.SignedBeaconBlockHeader{
+		Header:    &silapb.BeaconBlockHeader{Slot: 0},
 		Signature: make([]byte, fieldparams.BLSSignatureLength),
 	}
 	blobSidecarA0 := util.GenerateTestDenebBlobSidecar(t, bytesutil.ToBytes32(rootA), header, 0, []byte{}, make([][]byte, 0))
@@ -497,24 +497,24 @@ func TestBlobValidatorFromRootReq(t *testing.T) {
 	blobSidecarB0 := util.GenerateTestDenebBlobSidecar(t, bytesutil.ToBytes32(rootB), header, 0, []byte{}, make([][]byte, 0))
 	cases := []struct {
 		name     string
-		ids      []*ethpb.BlobIdentifier
+		ids      []*silapb.BlobIdentifier
 		response []blocks.ROBlob
 		err      error
 	}{
 		{
 			name:     "expected",
-			ids:      []*ethpb.BlobIdentifier{{BlockRoot: rootA, Index: 0}},
+			ids:      []*silapb.BlobIdentifier{{BlockRoot: rootA, Index: 0}},
 			response: []blocks.ROBlob{blobSidecarA0},
 		},
 		{
 			name:     "wrong root",
-			ids:      []*ethpb.BlobIdentifier{{BlockRoot: rootA, Index: 0}},
+			ids:      []*silapb.BlobIdentifier{{BlockRoot: rootA, Index: 0}},
 			response: []blocks.ROBlob{blobSidecarB0},
 			err:      errUnrequested,
 		},
 		{
 			name:     "wrong index",
-			ids:      []*ethpb.BlobIdentifier{{BlockRoot: rootA, Index: 0}},
+			ids:      []*silapb.BlobIdentifier{{BlockRoot: rootA, Index: 0}},
 			response: []blocks.ROBlob{blobSidecarA1},
 			err:      errUnrequested,
 		},
@@ -538,13 +538,13 @@ func TestBlobValidatorFromRootReq(t *testing.T) {
 func TestBlobValidatorFromRangeReq(t *testing.T) {
 	cases := []struct {
 		name         string
-		req          *ethpb.BlobSidecarsByRangeRequest
+		req          *silapb.BlobSidecarsByRangeRequest
 		responseSlot primitives.Slot
 		err          error
 	}{
 		{
 			name: "valid - count multi",
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: 10,
 				Count:     10,
 			},
@@ -552,7 +552,7 @@ func TestBlobValidatorFromRangeReq(t *testing.T) {
 		},
 		{
 			name: "valid - count 1",
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: 10,
 				Count:     1,
 			},
@@ -560,7 +560,7 @@ func TestBlobValidatorFromRangeReq(t *testing.T) {
 		},
 		{
 			name: "invalid - before",
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: 10,
 				Count:     1,
 			},
@@ -569,7 +569,7 @@ func TestBlobValidatorFromRangeReq(t *testing.T) {
 		},
 		{
 			name: "invalid - after, count 1",
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: 10,
 				Count:     1,
 			},
@@ -578,7 +578,7 @@ func TestBlobValidatorFromRangeReq(t *testing.T) {
 		},
 		{
 			name: "invalid - after, multi",
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: 10,
 				Count:     10,
 			},
@@ -587,7 +587,7 @@ func TestBlobValidatorFromRangeReq(t *testing.T) {
 		},
 		{
 			name: "invalid - after, at boundary, multi",
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: 10,
 				Count:     10,
 			},
@@ -598,8 +598,8 @@ func TestBlobValidatorFromRangeReq(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			vf := blobValidatorFromRangeReq(c.req)
-			header := &ethpb.SignedBeaconBlockHeader{
-				Header:    &ethpb.BeaconBlockHeader{Slot: c.responseSlot},
+			header := &silapb.SignedBeaconBlockHeader{
+				Header:    &silapb.BeaconBlockHeader{Slot: c.responseSlot},
 				Signature: make([]byte, fieldparams.BLSSignatureLength),
 			}
 			sc := util.GenerateTestDenebBlobSidecar(t, [32]byte{}, header, 0, []byte{}, make([][]byte, 0))
@@ -721,7 +721,7 @@ func TestSendBlobsByRangeRequest(t *testing.T) {
 				assert.NoError(t, stream.Close())
 			}()
 
-			req := &ethpb.BlobSidecarsByRangeRequest{}
+			req := &silapb.BlobSidecarsByRangeRequest{}
 			assert.NoError(t, p2.Encoding().DecodeWithMaxLength(stream, req))
 			assert.Equal(t, slot, req.StartSlot)
 			assert.Equal(t, uint64(1), req.Count)
@@ -729,7 +729,7 @@ func TestSendBlobsByRangeRequest(t *testing.T) {
 			// Create a sequential set of blobs with the appropriate header information.
 			var prevRoot [32]byte
 			for i := req.StartSlot; i < req.StartSlot+primitives.Slot(req.Count); i++ {
-				b := util.HydrateBlobSidecar(&ethpb.BlobSidecar{})
+				b := util.HydrateBlobSidecar(&silapb.BlobSidecar{})
 				b.SignedBlockHeader.Header.Slot = i
 				b.SignedBlockHeader.Header.ParentRoot = prevRoot[:]
 				ro, err := blocks.NewROBlob(b)
@@ -739,7 +739,7 @@ func TestSendBlobsByRangeRequest(t *testing.T) {
 				assert.NoError(t, WriteBlobSidecarChunk(stream, clock, p2.Encoding(), vro))
 			}
 		})
-		req := &ethpb.BlobSidecarsByRangeRequest{
+		req := &silapb.BlobSidecarsByRangeRequest{
 			StartSlot: slot,
 			Count:     1,
 		}
@@ -774,7 +774,7 @@ func TestSendBlobsByRangeRequest(t *testing.T) {
 				assert.NoError(t, stream.Close())
 			}()
 
-			req := &ethpb.BlobSidecarsByRangeRequest{}
+			req := &silapb.BlobSidecarsByRangeRequest{}
 			assert.NoError(t, p2.Encoding().DecodeWithMaxLength(stream, req))
 			assert.Equal(t, slot, req.StartSlot)
 			assert.Equal(t, uint64(params.BeaconConfig().SlotsPerEpoch)*3, req.Count)
@@ -784,7 +784,7 @@ func TestSendBlobsByRangeRequest(t *testing.T) {
 			for i := req.StartSlot; i < req.StartSlot+primitives.Slot(req.Count); i++ {
 				maxBlobsForSlot := cfg.MaxBlobsPerBlock(i)
 				parentRoot := prevRoot
-				header := util.HydrateSignedBeaconHeader(&ethpb.SignedBeaconBlockHeader{})
+				header := util.HydrateSignedBeaconHeader(&silapb.SignedBeaconBlockHeader{})
 				header.Header.Slot = i
 				header.Header.ParentRoot = parentRoot[:]
 				bRoot, err := header.Header.HashTreeRoot()
@@ -792,7 +792,7 @@ func TestSendBlobsByRangeRequest(t *testing.T) {
 				prevRoot = bRoot
 				// Send the maximum possible blobs per slot.
 				for j := range maxBlobsForSlot {
-					b := util.HydrateBlobSidecar(&ethpb.BlobSidecar{})
+					b := util.HydrateBlobSidecar(&silapb.BlobSidecar{})
 					b.SignedBlockHeader = header
 					b.Index = uint64(j)
 					ro, err := blocks.NewROBlob(b)
@@ -802,7 +802,7 @@ func TestSendBlobsByRangeRequest(t *testing.T) {
 				}
 			}
 		})
-		req := &ethpb.BlobSidecarsByRangeRequest{
+		req := &silapb.BlobSidecarsByRangeRequest{
 			StartSlot: slot,
 			Count:     uint64(params.BeaconConfig().SlotsPerEpoch) * 3,
 		}
@@ -842,7 +842,7 @@ func TestSendBlobsByRangeRequest(t *testing.T) {
 				assert.NoError(t, stream.Close())
 			}()
 
-			req := &ethpb.BlobSidecarsByRangeRequest{}
+			req := &silapb.BlobSidecarsByRangeRequest{}
 			assert.NoError(t, p2.Encoding().DecodeWithMaxLength(stream, req))
 			assert.Equal(t, slot, req.StartSlot)
 			assert.Equal(t, uint64(params.BeaconConfig().SlotsPerEpoch)*3, req.Count)
@@ -852,7 +852,7 @@ func TestSendBlobsByRangeRequest(t *testing.T) {
 			for i := req.StartSlot; i < req.StartSlot+primitives.Slot(req.Count); i++ {
 				maxBlobsForSlot := cfg.MaxBlobsPerBlock(i)
 				parentRoot := prevRoot
-				header := util.HydrateSignedBeaconHeader(&ethpb.SignedBeaconBlockHeader{})
+				header := util.HydrateSignedBeaconHeader(&silapb.SignedBeaconBlockHeader{})
 				header.Header.Slot = i
 				header.Header.ParentRoot = parentRoot[:]
 				bRoot, err := header.Header.HashTreeRoot()
@@ -860,7 +860,7 @@ func TestSendBlobsByRangeRequest(t *testing.T) {
 				prevRoot = bRoot
 				// Send the maximum possible blobs per slot.
 				for j := range maxBlobsForSlot {
-					b := util.HydrateBlobSidecar(&ethpb.BlobSidecar{})
+					b := util.HydrateBlobSidecar(&silapb.BlobSidecar{})
 					b.SignedBlockHeader = header
 					b.Index = uint64(j)
 					ro, err := blocks.NewROBlob(b)
@@ -870,7 +870,7 @@ func TestSendBlobsByRangeRequest(t *testing.T) {
 				}
 			}
 		})
-		req := &ethpb.BlobSidecarsByRangeRequest{
+		req := &silapb.BlobSidecarsByRangeRequest{
 			StartSlot: slot,
 			Count:     uint64(params.BeaconConfig().SlotsPerEpoch) * 3,
 		}
@@ -898,7 +898,7 @@ func TestSendDataColumnSidecarsByRangeRequest(t *testing.T) {
 	require.NoError(t, err)
 	nilTestCases := []struct {
 		name    string
-		request *ethpb.DataColumnSidecarsByRangeRequest
+		request *silapb.DataColumnSidecarsByRangeRequest
 	}{
 		{
 			name:    "nil request",
@@ -906,11 +906,11 @@ func TestSendDataColumnSidecarsByRangeRequest(t *testing.T) {
 		},
 		{
 			name:    "count is 0",
-			request: &ethpb.DataColumnSidecarsByRangeRequest{},
+			request: &silapb.DataColumnSidecarsByRangeRequest{},
 		},
 		{
 			name:    "columns is nil",
-			request: &ethpb.DataColumnSidecarsByRangeRequest{Count: 1},
+			request: &silapb.DataColumnSidecarsByRangeRequest{Count: 1},
 		},
 	}
 
@@ -928,7 +928,7 @@ func TestSendDataColumnSidecarsByRangeRequest(t *testing.T) {
 		cfg.MaxRequestDataColumnSidecars = 0
 		params.OverrideBeaconConfig(cfg)
 
-		request := &ethpb.DataColumnSidecarsByRangeRequest{Count: 1, Columns: []uint64{1, 2, 3}}
+		request := &silapb.DataColumnSidecarsByRangeRequest{Count: 1, Columns: []uint64{1, 2, 3}}
 		_, err := SendDataColumnSidecarsByRangeRequest(DataColumnSidecarsParams{Ctx: t.Context()}, "", request)
 		require.ErrorContains(t, errMaxRequestDataColumnSidecarsExceeded.Error(), err)
 	})
@@ -938,17 +938,17 @@ func TestSendDataColumnSidecarsByRangeRequest(t *testing.T) {
 		Index uint64
 	}
 
-	createSidecar := func(slotIndex slotIndex) *ethpb.DataColumnSidecar {
+	createSidecar := func(slotIndex slotIndex) *silapb.DataColumnSidecar {
 		const count = 4
 		kzgCommitmentsInclusionProof := make([][]byte, 0, count)
 		for range count {
 			kzgCommitmentsInclusionProof = append(kzgCommitmentsInclusionProof, make([]byte, 32))
 		}
 
-		return &ethpb.DataColumnSidecar{
+		return &silapb.DataColumnSidecar{
 			Index: slotIndex.Index,
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					Slot:       slotIndex.Slot,
 					ParentRoot: make([]byte, fieldparams.RootLength),
 					StateRoot:  make([]byte, fieldparams.RootLength),
@@ -1009,13 +1009,13 @@ func TestSendDataColumnSidecarsByRangeRequest(t *testing.T) {
 			p1, p2 := p2ptest.NewTestP2P(t), p2ptest.NewTestP2P(t)
 			p1.Connect(p2)
 
-			expected := make([]*ethpb.DataColumnSidecar, 0, len(tc.slotIndices))
+			expected := make([]*silapb.DataColumnSidecar, 0, len(tc.slotIndices))
 			for _, slotIndex := range tc.slotIndices {
 				sidecar := createSidecar(slotIndex)
 				expected = append(expected, sidecar)
 			}
 
-			requestSent := &ethpb.DataColumnSidecarsByRangeRequest{
+			requestSent := &silapb.DataColumnSidecarsByRangeRequest{
 				StartSlot: 0,
 				Count:     2,
 				Columns:   []uint64{1, 3, 2},
@@ -1027,7 +1027,7 @@ func TestSendDataColumnSidecarsByRangeRequest(t *testing.T) {
 			p2.SetStreamHandler(protocol, func(stream network.Stream) {
 				wg.Done()
 
-				requestReceived := new(ethpb.DataColumnSidecarsByRangeRequest)
+				requestReceived := new(silapb.DataColumnSidecarsByRangeRequest)
 				err := p2.Encoding().DecodeWithMaxLength(stream, requestReceived)
 				assert.NoError(t, err)
 				assert.DeepSSZEqual(t, requestSent, requestReceived)
@@ -1069,7 +1069,7 @@ func TestSendDataColumnSidecarsByRangeRequest(t *testing.T) {
 }
 
 func TestIsSidecarSlotWithinBounds(t *testing.T) {
-	request := &ethpb.DataColumnSidecarsByRangeRequest{
+	request := &silapb.DataColumnSidecarsByRangeRequest{
 		StartSlot: 10,
 		Count:     10,
 	}
@@ -1107,9 +1107,9 @@ func TestIsSidecarSlotWithinBounds(t *testing.T) {
 				kzgCommitmentsInclusionProof = append(kzgCommitmentsInclusionProof, make([]byte, 32))
 			}
 
-			sidecarPb := &ethpb.DataColumnSidecar{
-				SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-					Header: &ethpb.BeaconBlockHeader{
+			sidecarPb := &silapb.DataColumnSidecar{
+				SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+					Header: &silapb.BeaconBlockHeader{
 						Slot:       tc.slot,
 						ParentRoot: make([]byte, fieldparams.RootLength),
 						StateRoot:  make([]byte, fieldparams.RootLength),
@@ -1135,7 +1135,7 @@ func TestIsSidecarSlotWithinBounds(t *testing.T) {
 }
 
 func TestIsSidecarIndexRequested(t *testing.T) {
-	request := &ethpb.DataColumnSidecarsByRangeRequest{
+	request := &silapb.DataColumnSidecarsByRangeRequest{
 		Columns: []uint64{2, 9, 4},
 	}
 
@@ -1166,9 +1166,9 @@ func TestIsSidecarIndexRequested(t *testing.T) {
 				kzgCommitmentsInclusionProof = append(kzgCommitmentsInclusionProof, make([]byte, 32))
 			}
 
-			sidecarPb := &ethpb.DataColumnSidecar{
-				SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-					Header: &ethpb.BeaconBlockHeader{
+			sidecarPb := &silapb.DataColumnSidecar{
+				SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+					Header: &silapb.BeaconBlockHeader{
 						Slot:       0,
 						ParentRoot: make([]byte, fieldparams.RootLength),
 						StateRoot:  make([]byte, fieldparams.RootLength),
@@ -1251,10 +1251,10 @@ func TestSendDataColumnSidecarsByRootRequest(t *testing.T) {
 			kzgCommitmentsInclusionProof = append(kzgCommitmentsInclusionProof, make([]byte, 32))
 		}
 
-		sidecarPb := &ethpb.DataColumnSidecar{
+		sidecarPb := &silapb.DataColumnSidecar{
 			Index: rootIndex.Index,
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					ParentRoot: make([]byte, fieldparams.RootLength),
 					StateRoot:  make([]byte, fieldparams.RootLength),
 					BodyRoot:   make([]byte, fieldparams.RootLength),
@@ -1420,9 +1420,9 @@ func TestIsSidecarIndexRootRequested(t *testing.T) {
 				kzgCommitmentsInclusionProof = append(kzgCommitmentsInclusionProof, make([]byte, 32))
 			}
 
-			sidecarPb := &ethpb.DataColumnSidecar{
-				SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-					Header: &ethpb.BeaconBlockHeader{
+			sidecarPb := &silapb.DataColumnSidecar{
+				SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+					Header: &silapb.BeaconBlockHeader{
 						ParentRoot: make([]byte, fieldparams.RootLength),
 						StateRoot:  make([]byte, fieldparams.RootLength),
 						BodyRoot:   make([]byte, fieldparams.RootLength),
@@ -1581,9 +1581,9 @@ func TestReadChunkedDataColumnSidecar(t *testing.T) {
 		require.NoError(t, err)
 
 		// Sidecar.
-		_, err = p1.Encoding().EncodeWithMaxLength(stream, &ethpb.DataColumnSidecar{
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+		_, err = p1.Encoding().EncodeWithMaxLength(stream, &silapb.DataColumnSidecar{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					ParentRoot: make([]byte, fieldparams.RootLength),
 					StateRoot:  make([]byte, fieldparams.RootLength),
 					BodyRoot:   make([]byte, fieldparams.RootLength),
@@ -1608,9 +1608,9 @@ func TestReadChunkedDataColumnSidecar(t *testing.T) {
 			kzgCommitmentsInclusionProof = append(kzgCommitmentsInclusionProof, make([]byte, 32))
 		}
 
-		expected := &ethpb.DataColumnSidecar{
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+		expected := &silapb.DataColumnSidecar{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					ParentRoot: make([]byte, fieldparams.RootLength),
 					StateRoot:  make([]byte, fieldparams.RootLength),
 					BodyRoot:   make([]byte, fieldparams.RootLength),
@@ -1655,7 +1655,7 @@ func TestReadChunkedDataColumnSidecar(t *testing.T) {
 	t.Run("nominal gloas", func(t *testing.T) {
 		p1, p2 := p2ptest.NewTestP2P(t), p2ptest.NewTestP2P(t)
 
-		expected := &ethpb.DataColumnSidecarGloas{
+		expected := &silapb.DataColumnSidecarGloas{
 			Index:           7,
 			Column:          [][]byte{make([]byte, 2048)},
 			KzgProofs:       [][]byte{make([]byte, 48)},

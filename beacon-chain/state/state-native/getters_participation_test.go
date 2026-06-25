@@ -4,21 +4,21 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func TestState_UnrealizedCheckpointBalances(t *testing.T) {
-	validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
+	validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
 	balances := make([]uint64, params.BeaconConfig().MinGenesisActiveValidatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 			EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance,
 		}
 		balances[i] = params.BeaconConfig().MaxEffectiveBalance
 	}
-	base := &ethpb.BeaconStateAltair{
+	base := &silapb.BeaconStateAltair{
 		Slot:        66,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 

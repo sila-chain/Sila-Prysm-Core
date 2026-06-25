@@ -8,7 +8,7 @@ import (
 	dbtest "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/testing"
 	slashertypes "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/slasher/types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -214,7 +214,7 @@ func TestMinSpanChunksSlice_CheckSlashable_DifferentVersions(t *testing.T) {
 	slashing, err := chunk.CheckSlashable(ctx, slasherDB, validatorIdx, surroundingVote)
 	require.NoError(t, err)
 	// The old record should be converted to Electra and the resulting slashing should be an Electra slashing.
-	electraSlashing, ok := slashing.(*ethpb.AttesterSlashingElectra)
+	electraSlashing, ok := slashing.(*silapb.AttesterSlashingElectra)
 	require.Equal(t, true, ok, "slashing has the wrong type")
 	assert.NotNil(t, electraSlashing)
 }
@@ -353,7 +353,7 @@ func TestMaxSpanChunksSlice_CheckSlashable_DifferentVersions(t *testing.T) {
 	slashing, err := chunk.CheckSlashable(ctx, slasherDB, validatorIdx, surroundedVote)
 	require.NoError(t, err)
 	// The old record should be converted to Electra and the resulting slashing should be an Electra slashing.
-	electraSlashing, ok := slashing.(*ethpb.AttesterSlashingElectra)
+	electraSlashing, ok := slashing.(*silapb.AttesterSlashingElectra)
 	require.Equal(t, true, ok, "slashing has wrong type")
 	assert.NotNil(t, electraSlashing)
 }

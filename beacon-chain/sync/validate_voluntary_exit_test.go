@@ -22,29 +22,29 @@ import (
 	lruwrpr "github.com/sila-chain/Sila-Consensus-Core/v7/cache/lru"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	pubsubpb "github.com/libp2p/go-libp2p-pubsub/pb"
 )
 
-func setupValidExit(t *testing.T) (*ethpb.SignedVoluntaryExit, state.BeaconState) {
-	exit := &ethpb.SignedVoluntaryExit{
-		Exit: &ethpb.VoluntaryExit{
+func setupValidExit(t *testing.T) (*silapb.SignedVoluntaryExit, state.BeaconState) {
+	exit := &silapb.SignedVoluntaryExit{
+		Exit: &silapb.VoluntaryExit{
 			ValidatorIndex: 0,
 			Epoch:          1 + params.BeaconConfig().ShardCommitteePeriod,
 		},
 	}
-	registry := []*ethpb.Validator{
+	registry := []*silapb.Validator{
 		{
 			ExitEpoch:       params.BeaconConfig().FarFutureEpoch,
 			ActivationEpoch: 0,
 		},
 	}
-	st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators: registry,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 		},
@@ -101,7 +101,7 @@ func TestValidateVoluntaryExit_ValidExit(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err := p.Encoding().EncodeGossip(buf, exit)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedVoluntaryExit]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedVoluntaryExit]()]
 	d, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, d)
@@ -158,7 +158,7 @@ func TestValidateVoluntaryExit_InvalidExitSlot(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err := p.Encoding().EncodeGossip(buf, exit)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedVoluntaryExit]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedVoluntaryExit]()]
 	m := &pubsub.Message{
 		Message: &pubsubpb.Message{
 			Data:  buf.Bytes(),
@@ -189,7 +189,7 @@ func TestValidateVoluntaryExit_ValidExit_Syncing(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err := p.Encoding().EncodeGossip(buf, exit)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedVoluntaryExit]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedVoluntaryExit]()]
 	m := &pubsub.Message{
 		Message: &pubsubpb.Message{
 			Data:  buf.Bytes(),

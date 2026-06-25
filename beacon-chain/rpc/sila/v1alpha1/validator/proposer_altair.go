@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	synccontribution "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/sync_contribution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -30,7 +30,7 @@ func (vs *Server) setSyncAggregate(ctx context.Context, blk interfaces.SignedBea
 	if err != nil {
 		log.WithError(err).Error("Could not get sync aggregate")
 		emptySig := [96]byte{0xC0}
-		emptyAggregate := &ethpb.SyncAggregate{
+		emptyAggregate := &silapb.SyncAggregate{
 			SyncCommitteeBits:      make([]byte, params.BeaconConfig().SyncCommitteeSize/8),
 			SyncCommitteeSignature: emptySig[:],
 		}
@@ -48,7 +48,7 @@ func (vs *Server) setSyncAggregate(ctx context.Context, blk interfaces.SignedBea
 
 // getSyncAggregate retrieves the sync contributions from the pool to construct the sync aggregate object.
 // The contributions are filtered based on matching of the input root and slot then profitability.
-func (vs *Server) getSyncAggregate(ctx context.Context, slot primitives.Slot, root [32]byte, headState state.BeaconState) (*ethpb.SyncAggregate, error) {
+func (vs *Server) getSyncAggregate(ctx context.Context, slot primitives.Slot, root [32]byte, headState state.BeaconState) (*silapb.SyncAggregate, error) {
 	_, span := trace.StartSpan(ctx, "ProposerServer.getSyncAggregate")
 	defer span.End()
 
@@ -72,7 +72,7 @@ func (vs *Server) getSyncAggregate(ctx context.Context, slot primitives.Slot, ro
 	subcommitteeCount := params.BeaconConfig().SyncCommitteeSubnetCount
 	var bitsHolder [][]byte
 	for range subcommitteeCount {
-		bitsHolder = append(bitsHolder, ethpb.NewSyncCommitteeAggregationBits())
+		bitsHolder = append(bitsHolder, silapb.NewSyncCommitteeAggregationBits())
 	}
 	sigsHolder := make([]bls.Signature, 0, params.BeaconConfig().SyncCommitteeSize/subcommitteeCount)
 
@@ -113,7 +113,7 @@ func (vs *Server) getSyncAggregate(ctx context.Context, slot primitives.Slot, ro
 		syncSigBytes = bytesutil.ToBytes96(syncSig.Marshal())
 	}
 
-	return &ethpb.SyncAggregate{
+	return &silapb.SyncAggregate{
 		SyncCommitteeBits:      syncBits,
 		SyncCommitteeSignature: syncSigBytes[:],
 	}, nil
@@ -123,16 +123,16 @@ func (vs *Server) aggregatedSyncCommitteeMessages(
 	ctx context.Context,
 	slot primitives.Slot,
 	root [32]byte,
-	poolContributions []*ethpb.SyncCommitteeContribution,
+	poolContributions []*silapb.SyncCommitteeContribution,
 	st state.BeaconState,
-) ([]*ethpb.SyncCommitteeContribution, error) {
+) ([]*silapb.SyncCommitteeContribution, error) {
 	subcommitteeCount := params.BeaconConfig().SyncCommitteeSubnetCount
 	subcommitteeSize := params.BeaconConfig().SyncCommitteeSize / subcommitteeCount
 	sigsPerSubcommittee := make([][][]byte, subcommitteeCount)
 	bitsPerSubcommittee := make([]bitfield.Bitfield, subcommitteeCount)
 	for i := range subcommitteeCount {
 		sigsPerSubcommittee[i] = make([][]byte, 0, subcommitteeSize)
-		bitsPerSubcommittee[i] = ethpb.NewSyncCommitteeAggregationBits()
+		bitsPerSubcommittee[i] = silapb.NewSyncCommitteeAggregationBits()
 	}
 
 	// Get committee position(s) for each message's validator index.
@@ -179,7 +179,7 @@ func (vs *Server) aggregatedSyncCommitteeMessages(
 	}
 
 	// Aggregate.
-	result := make([]*ethpb.SyncCommitteeContribution, 0, subcommitteeCount)
+	result := make([]*silapb.SyncCommitteeContribution, 0, subcommitteeCount)
 	for i := range subcommitteeCount {
 		aggregatedSig := make([]byte, 96)
 		aggregatedSig[0] = 0xC0
@@ -203,7 +203,7 @@ func aggregateSyncSubcommitteeMessages(
 	subcommitteeIndex uint64,
 	bits bitfield.Bitfield,
 	sigs [][]byte,
-) (*ethpb.SyncCommitteeContribution, error) {
+) (*silapb.SyncCommitteeContribution, error) {
 	var err error
 	uncompressedSigs := make([]bls.Signature, len(sigs))
 	for i, sig := range sigs {
@@ -212,7 +212,7 @@ func aggregateSyncSubcommitteeMessages(
 			return nil, errors.Wrap(err, "could not create signature from bytes")
 		}
 	}
-	return &ethpb.SyncCommitteeContribution{
+	return &silapb.SyncCommitteeContribution{
 		Slot:              slot,
 		BlockRoot:         root[:],
 		SubcommitteeIndex: subcommitteeIndex,

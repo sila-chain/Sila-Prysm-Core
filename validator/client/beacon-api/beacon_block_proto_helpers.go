@@ -6,13 +6,13 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 )
 
-func convertProposerSlashingsToProto(jsonProposerSlashings []*structs.ProposerSlashing) ([]*ethpb.ProposerSlashing, error) {
-	proposerSlashings := make([]*ethpb.ProposerSlashing, len(jsonProposerSlashings))
+func convertProposerSlashingsToProto(jsonProposerSlashings []*structs.ProposerSlashing) ([]*silapb.ProposerSlashing, error) {
+	proposerSlashings := make([]*silapb.ProposerSlashing, len(jsonProposerSlashings))
 
 	for index, jsonProposerSlashing := range jsonProposerSlashings {
 		if jsonProposerSlashing == nil {
@@ -29,7 +29,7 @@ func convertProposerSlashingsToProto(jsonProposerSlashings []*structs.ProposerSl
 			return nil, errors.Wrap(err, "failed to get proposer header 2")
 		}
 
-		proposerSlashings[index] = &ethpb.ProposerSlashing{
+		proposerSlashings[index] = &silapb.ProposerSlashing{
 			Header_1: header1,
 			Header_2: header2,
 		}
@@ -38,7 +38,7 @@ func convertProposerSlashingsToProto(jsonProposerSlashings []*structs.ProposerSl
 	return proposerSlashings, nil
 }
 
-func convertProposerSlashingSignedHeaderToProto(signedHeader *structs.SignedBeaconBlockHeader) (*ethpb.SignedBeaconBlockHeader, error) {
+func convertProposerSlashingSignedHeaderToProto(signedHeader *structs.SignedBeaconBlockHeader) (*silapb.SignedBeaconBlockHeader, error) {
 	if signedHeader == nil {
 		return nil, errors.New("signed header is nil")
 	}
@@ -77,8 +77,8 @@ func convertProposerSlashingSignedHeaderToProto(signedHeader *structs.SignedBeac
 		return nil, errors.Wrapf(err, "failed to decode signature `%s`", signedHeader.Signature)
 	}
 
-	return &ethpb.SignedBeaconBlockHeader{
-		Header: &ethpb.BeaconBlockHeader{
+	return &silapb.SignedBeaconBlockHeader{
+		Header: &silapb.BeaconBlockHeader{
 			Slot:          primitives.Slot(slot),
 			ProposerIndex: primitives.ValidatorIndex(proposerIndex),
 			ParentRoot:    parentRoot,
@@ -89,8 +89,8 @@ func convertProposerSlashingSignedHeaderToProto(signedHeader *structs.SignedBeac
 	}, nil
 }
 
-func convertAttesterSlashingsToProto(jsonAttesterSlashings []*structs.AttesterSlashing) ([]*ethpb.AttesterSlashing, error) {
-	attesterSlashings := make([]*ethpb.AttesterSlashing, len(jsonAttesterSlashings))
+func convertAttesterSlashingsToProto(jsonAttesterSlashings []*structs.AttesterSlashing) ([]*silapb.AttesterSlashing, error) {
+	attesterSlashings := make([]*silapb.AttesterSlashing, len(jsonAttesterSlashings))
 
 	for index, jsonAttesterSlashing := range jsonAttesterSlashings {
 		if jsonAttesterSlashing == nil {
@@ -107,7 +107,7 @@ func convertAttesterSlashingsToProto(jsonAttesterSlashings []*structs.AttesterSl
 			return nil, errors.Wrap(err, "failed to get attestation 2")
 		}
 
-		attesterSlashings[index] = &ethpb.AttesterSlashing{
+		attesterSlashings[index] = &silapb.AttesterSlashing{
 			Attestation_1: attestation1,
 			Attestation_2: attestation2,
 		}
@@ -116,7 +116,7 @@ func convertAttesterSlashingsToProto(jsonAttesterSlashings []*structs.AttesterSl
 	return attesterSlashings, nil
 }
 
-func convertIndexedAttestationToProto(jsonAttestation *structs.IndexedAttestation) (*ethpb.IndexedAttestation, error) {
+func convertIndexedAttestationToProto(jsonAttestation *structs.IndexedAttestation) (*silapb.IndexedAttestation, error) {
 	if jsonAttestation == nil {
 		return nil, errors.New("indexed attestation is nil")
 	}
@@ -142,14 +142,14 @@ func convertIndexedAttestationToProto(jsonAttestation *structs.IndexedAttestatio
 		return nil, errors.Wrap(err, "failed to get attestation data")
 	}
 
-	return &ethpb.IndexedAttestation{
+	return &silapb.IndexedAttestation{
 		AttestingIndices: attestingIndices,
 		Data:             attestationData,
 		Signature:        signature,
 	}, nil
 }
 
-func convertCheckpointToProto(jsonCheckpoint *structs.Checkpoint) (*ethpb.Checkpoint, error) {
+func convertCheckpointToProto(jsonCheckpoint *structs.Checkpoint) (*silapb.Checkpoint, error) {
 	if jsonCheckpoint == nil {
 		return nil, errors.New("checkpoint is nil")
 	}
@@ -164,13 +164,13 @@ func convertCheckpointToProto(jsonCheckpoint *structs.Checkpoint) (*ethpb.Checkp
 		return nil, errors.Wrapf(err, "failed to decode checkpoint root `%s`", jsonCheckpoint.Root)
 	}
 
-	return &ethpb.Checkpoint{
+	return &silapb.Checkpoint{
 		Epoch: primitives.Epoch(epoch),
 		Root:  root,
 	}, nil
 }
 
-func convertAttestationToProto(jsonAttestation *structs.Attestation) (*ethpb.Attestation, error) {
+func convertAttestationToProto(jsonAttestation *structs.Attestation) (*silapb.Attestation, error) {
 	if jsonAttestation == nil {
 		return nil, errors.New("json attestation is nil")
 	}
@@ -190,14 +190,14 @@ func convertAttestationToProto(jsonAttestation *structs.Attestation) (*ethpb.Att
 		return nil, errors.Wrapf(err, "failed to decode attestation signature `%s`", jsonAttestation.Signature)
 	}
 
-	return &ethpb.Attestation{
+	return &silapb.Attestation{
 		AggregationBits: aggregationBits,
 		Data:            attestationData,
 		Signature:       signature,
 	}, nil
 }
 
-func convertAttestationElectraToProto(jsonAttestation *structs.AttestationElectra) (*ethpb.AttestationElectra, error) {
+func convertAttestationElectraToProto(jsonAttestation *structs.AttestationElectra) (*silapb.AttestationElectra, error) {
 	if jsonAttestation == nil {
 		return nil, errors.New("json attestation is nil")
 	}
@@ -222,7 +222,7 @@ func convertAttestationElectraToProto(jsonAttestation *structs.AttestationElectr
 		return nil, errors.Wrapf(err, "failed to decode committee bits `%s`", jsonAttestation.CommitteeBits)
 	}
 
-	return &ethpb.AttestationElectra{
+	return &silapb.AttestationElectra{
 		AggregationBits: aggregationBits,
 		Data:            attestationData,
 		Signature:       signature,
@@ -230,8 +230,8 @@ func convertAttestationElectraToProto(jsonAttestation *structs.AttestationElectr
 	}, nil
 }
 
-func convertAttestationsToProto(jsonAttestations []*structs.Attestation) ([]*ethpb.Attestation, error) {
-	var attestations []*ethpb.Attestation
+func convertAttestationsToProto(jsonAttestations []*structs.Attestation) ([]*silapb.Attestation, error) {
+	var attestations []*silapb.Attestation
 	for index, jsonAttestation := range jsonAttestations {
 		if jsonAttestation == nil {
 			return nil, errors.Errorf("attestation at index `%d` is nil", index)
@@ -248,7 +248,7 @@ func convertAttestationsToProto(jsonAttestations []*structs.Attestation) ([]*eth
 	return attestations, nil
 }
 
-func convertAttestationDataToProto(jsonAttestationData *structs.AttestationData) (*ethpb.AttestationData, error) {
+func convertAttestationDataToProto(jsonAttestationData *structs.AttestationData) (*silapb.AttestationData, error) {
 	if jsonAttestationData == nil {
 		return nil, errors.New("attestation data is nil")
 	}
@@ -278,7 +278,7 @@ func convertAttestationDataToProto(jsonAttestationData *structs.AttestationData)
 		return nil, errors.Wrap(err, "failed to get attestation target checkpoint")
 	}
 
-	return &ethpb.AttestationData{
+	return &silapb.AttestationData{
 		Slot:            primitives.Slot(slot),
 		CommitteeIndex:  primitives.CommitteeIndex(committeeIndex),
 		BeaconBlockRoot: beaconBlockRoot,
@@ -287,8 +287,8 @@ func convertAttestationDataToProto(jsonAttestationData *structs.AttestationData)
 	}, nil
 }
 
-func convertDepositsToProto(jsonDeposits []*structs.Deposit) ([]*ethpb.Deposit, error) {
-	deposits := make([]*ethpb.Deposit, len(jsonDeposits))
+func convertDepositsToProto(jsonDeposits []*structs.Deposit) ([]*silapb.Deposit, error) {
+	deposits := make([]*silapb.Deposit, len(jsonDeposits))
 
 	for depositIndex, jsonDeposit := range jsonDeposits {
 		if jsonDeposit == nil {
@@ -329,9 +329,9 @@ func convertDepositsToProto(jsonDeposits []*structs.Deposit) ([]*ethpb.Deposit, 
 			return nil, errors.Wrapf(err, "failed to decode signature `%s`", jsonDeposit.Data.Signature)
 		}
 
-		deposits[depositIndex] = &ethpb.Deposit{
+		deposits[depositIndex] = &silapb.Deposit{
 			Proof: proofs,
-			Data: &ethpb.Deposit_Data{
+			Data: &silapb.Deposit_Data{
 				PublicKey:             pubkey,
 				WithdrawalCredentials: withdrawalCredentials,
 				Amount:                amount,
@@ -343,8 +343,8 @@ func convertDepositsToProto(jsonDeposits []*structs.Deposit) ([]*ethpb.Deposit, 
 	return deposits, nil
 }
 
-func convertVoluntaryExitsToProto(jsonVoluntaryExits []*structs.SignedVoluntaryExit) ([]*ethpb.SignedVoluntaryExit, error) {
-	attestingIndices := make([]*ethpb.SignedVoluntaryExit, len(jsonVoluntaryExits))
+func convertVoluntaryExitsToProto(jsonVoluntaryExits []*structs.SignedVoluntaryExit) ([]*silapb.SignedVoluntaryExit, error) {
+	attestingIndices := make([]*silapb.SignedVoluntaryExit, len(jsonVoluntaryExits))
 
 	for index, jsonVoluntaryExit := range jsonVoluntaryExits {
 		if jsonVoluntaryExit == nil {
@@ -370,8 +370,8 @@ func convertVoluntaryExitsToProto(jsonVoluntaryExits []*structs.SignedVoluntaryE
 			return nil, errors.Wrapf(err, "failed to decode signature `%s`", jsonVoluntaryExit.Signature)
 		}
 
-		attestingIndices[index] = &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		attestingIndices[index] = &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				Epoch:          primitives.Epoch(epoch),
 				ValidatorIndex: primitives.ValidatorIndex(validatorIndex),
 			},
@@ -436,8 +436,8 @@ func convertWithdrawalsToProto(jsonWithdrawals []*structs.Withdrawal) ([]*engine
 	return withdrawals, nil
 }
 
-func convertBlsToExecutionChangesToProto(jsonSignedBlsToExecutionChanges []*structs.SignedBLSToExecutionChange) ([]*ethpb.SignedBLSToExecutionChange, error) {
-	signedBlsToExecutionChanges := make([]*ethpb.SignedBLSToExecutionChange, len(jsonSignedBlsToExecutionChanges))
+func convertBlsToExecutionChangesToProto(jsonSignedBlsToExecutionChanges []*structs.SignedBLSToExecutionChange) ([]*silapb.SignedBLSToExecutionChange, error) {
+	signedBlsToExecutionChanges := make([]*silapb.SignedBLSToExecutionChange, len(jsonSignedBlsToExecutionChanges))
 
 	for index, jsonBlsToExecutionChange := range jsonSignedBlsToExecutionChanges {
 		if jsonBlsToExecutionChange == nil {
@@ -468,8 +468,8 @@ func convertBlsToExecutionChangesToProto(jsonSignedBlsToExecutionChanges []*stru
 			return nil, errors.Wrapf(err, "failed to decode signature `%s`", jsonBlsToExecutionChange.Signature)
 		}
 
-		signedBlsToExecutionChanges[index] = &ethpb.SignedBLSToExecutionChange{
-			Message: &ethpb.BLSToExecutionChange{
+		signedBlsToExecutionChanges[index] = &silapb.SignedBLSToExecutionChange{
+			Message: &silapb.BLSToExecutionChange{
 				ValidatorIndex:     primitives.ValidatorIndex(validatorIndex),
 				FromBlsPubkey:      fromBlsPubkey,
 				ToExecutionAddress: toExecutionAddress,

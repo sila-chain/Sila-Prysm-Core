@@ -5,7 +5,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 
 	"github.com/spf13/afero"
@@ -17,7 +17,7 @@ func VerifiedROBlobFromDisk(fs afero.Fs, root [32]byte, path string) (blocks.Ver
 	if err != nil {
 		return VerifiedROBlobError(err)
 	}
-	s := &ethpb.BlobSidecar{}
+	s := &silapb.BlobSidecar{}
 	if err := s.UnmarshalSSZ(encoded); err != nil {
 		return VerifiedROBlobError(err)
 	}
@@ -42,13 +42,13 @@ func VerifiedRODataColumnFromDisk(file afero.File, root [fieldparams.RootLength]
 
 	var roDataColumnSidecar blocks.RODataColumn
 	if epoch >= params.BeaconConfig().GloasForkEpoch {
-		dc := &ethpb.DataColumnSidecarGloas{}
+		dc := &silapb.DataColumnSidecarGloas{}
 		if err := dc.UnmarshalSSZ(sszEncodedDataColumnSidecar); err != nil {
 			return VerifiedRODataColumnError(err)
 		}
 		roDataColumnSidecar, err = blocks.NewRODataColumnGloasWithRoot(dc, root)
 	} else {
-		dc := &ethpb.DataColumnSidecar{}
+		dc := &silapb.DataColumnSidecar{}
 		if err := dc.UnmarshalSSZ(sszEncodedDataColumnSidecar); err != nil {
 			return VerifiedRODataColumnError(err)
 		}

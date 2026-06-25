@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
 	"github.com/pkg/errors"
@@ -244,7 +244,7 @@ func (v *validator) LogValidatorGainsAndLosses(ctx context.Context, slot primiti
 	}
 	pubKeys := bytesutil.FromBytes48Array(pks)
 
-	req := &ethpb.ValidatorPerformanceRequest{
+	req := &silapb.ValidatorPerformanceRequest{
 		PublicKeys: pubKeys,
 	}
 	resp, err := v.silaChainClient.ValidatorPerformance(ctx, req)
@@ -282,7 +282,7 @@ func (v *validator) LogValidatorGainsAndLosses(ctx context.Context, slot primiti
 	return nil
 }
 
-func (v *validator) logForEachValidator(index int, pubKey []byte, resp *ethpb.ValidatorPerformanceResponse, slot primitives.Slot, prevEpoch primitives.Epoch) {
+func (v *validator) logForEachValidator(index int, pubKey []byte, resp *silapb.ValidatorPerformanceResponse, slot primitives.Slot, prevEpoch primitives.Epoch) {
 	truncatedKey := fmt.Sprintf("%#x", bytesutil.Trunc(pubKey))
 	pubKeyBytes := bytesutil.ToBytes48(pubKey)
 	if slot < params.BeaconConfig().SlotsPerEpoch {
@@ -386,7 +386,7 @@ func (v *validator) logForEachValidator(index int, pubKey []byte, resp *ethpb.Va
 }
 
 // UpdateLogAggregateStats updates and logs the voteStats struct of a validator using the RPC response obtained from LogValidatorGainsAndLosses.
-func (v *validator) UpdateLogAggregateStats(resp *ethpb.ValidatorPerformanceResponse, slot primitives.Slot) {
+func (v *validator) UpdateLogAggregateStats(resp *silapb.ValidatorPerformanceResponse, slot primitives.Slot) {
 	summary := &v.voteStats
 	currentEpoch := primitives.Epoch(slot / params.BeaconConfig().SlotsPerEpoch)
 	var attested, correctSource, correctTarget, correctHead, inactivityScore int

@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common"
 	"github.com/pkg/errors"
 )
@@ -49,13 +49,13 @@ func (*FaultyExecutionChain) BlockByTimestamp(context.Context, uint64) (*types.H
 }
 
 // ChainStartEth1Data --
-func (*FaultyExecutionChain) ChainStartEth1Data() *ethpb.Eth1Data {
-	return &ethpb.Eth1Data{}
+func (*FaultyExecutionChain) ChainStartEth1Data() *silapb.Eth1Data {
+	return &silapb.Eth1Data{}
 }
 
 // PreGenesisState --
 func (*FaultyExecutionChain) PreGenesisState() state.BeaconState {
-	s, err := state_native.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{})
+	s, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{})
 	if err != nil {
 		panic("could not initialize state") // lint:nopanic -- test code.
 	}

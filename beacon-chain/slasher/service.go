@@ -20,7 +20,7 @@ import (
 	beaconChainSync "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 )
 
@@ -49,8 +49,8 @@ type ServiceConfig struct {
 type Service struct {
 	params                         *Parameters
 	serviceCfg                     *ServiceConfig
-	indexedAttsChan                chan ethpb.IndexedAtt
-	beaconBlockHeadersChan         chan *ethpb.SignedBeaconBlockHeader
+	indexedAttsChan                chan silapb.IndexedAtt
+	beaconBlockHeadersChan         chan *silapb.SignedBeaconBlockHeader
 	attsQueue                      *attestationsQueue
 	blksQueue                      *blocksQueue
 	ctx                            context.Context
@@ -69,8 +69,8 @@ func New(ctx context.Context, srvCfg *ServiceConfig) (*Service, error) {
 	return &Service{
 		params:                         DefaultParams(),
 		serviceCfg:                     srvCfg,
-		indexedAttsChan:                make(chan ethpb.IndexedAtt, 1),
-		beaconBlockHeadersChan:         make(chan *ethpb.SignedBeaconBlockHeader, 1),
+		indexedAttsChan:                make(chan silapb.IndexedAtt, 1),
+		beaconBlockHeadersChan:         make(chan *silapb.SignedBeaconBlockHeader, 1),
 		attsQueue:                      newAttestationsQueue(),
 		blksQueue:                      newBlocksQueue(),
 		ctx:                            ctx,
@@ -119,7 +119,7 @@ func (s *Service) run() {
 	)
 
 	indexedAttsChan := make(chan *types.WrappedIndexedAtt, 1)
-	beaconBlockHeadersChan := make(chan *ethpb.SignedBeaconBlockHeader, 1)
+	beaconBlockHeadersChan := make(chan *silapb.SignedBeaconBlockHeader, 1)
 
 	// This section can be totally removed once Electra is on mainnet.
 	headSlot := s.serviceCfg.HeadStateFetcher.HeadSlot()

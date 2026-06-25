@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common/hexutil"
 )
@@ -23,7 +23,7 @@ import (
 // FillRootsNaturalOpt is meant to be used as an option when calling NewBeaconState.
 // It fills state and block roots with hex representations of natural numbers starting with 0.
 // Example: 16 becomes 0x00...0f.
-func FillRootsNaturalOpt(state *ethpb.BeaconState) error {
+func FillRootsNaturalOpt(state *silapb.BeaconState) error {
 	roots, err := PrepareRoots(int(params.BeaconConfig().SlotsPerHistoricalRoot))
 	if err != nil {
 		return err
@@ -36,7 +36,7 @@ func FillRootsNaturalOpt(state *ethpb.BeaconState) error {
 // FillRootsNaturalOptAltair is meant to be used as an option when calling NewBeaconStateAltair.
 // It fills state and block roots with hex representations of natural numbers starting with 0.
 // Example: 16 becomes 0x00...0f.
-func FillRootsNaturalOptAltair(state *ethpb.BeaconStateAltair) error {
+func FillRootsNaturalOptAltair(state *silapb.BeaconStateAltair) error {
 	roots, err := PrepareRoots(int(params.BeaconConfig().SlotsPerHistoricalRoot))
 	if err != nil {
 		return err
@@ -49,7 +49,7 @@ func FillRootsNaturalOptAltair(state *ethpb.BeaconStateAltair) error {
 // FillRootsNaturalOptBellatrix is meant to be used as an option when calling NewBeaconStateBellatrix.
 // It fills state and block roots with hex representations of natural numbers starting with 0.
 // Example: 16 becomes 0x00...0f.
-func FillRootsNaturalOptBellatrix(state *ethpb.BeaconStateBellatrix) error {
+func FillRootsNaturalOptBellatrix(state *silapb.BeaconStateBellatrix) error {
 	roots, err := PrepareRoots(int(params.BeaconConfig().SlotsPerHistoricalRoot))
 	if err != nil {
 		return err
@@ -62,7 +62,7 @@ func FillRootsNaturalOptBellatrix(state *ethpb.BeaconStateBellatrix) error {
 // FillRootsNaturalOptCapella is meant to be used as an option when calling NewBeaconStateCapella.
 // It fills state and block roots with hex representations of natural numbers starting with 0.
 // Example: 16 becomes 0x00...0f.
-func FillRootsNaturalOptCapella(state *ethpb.BeaconStateCapella) error {
+func FillRootsNaturalOptCapella(state *silapb.BeaconStateCapella) error {
 	roots, err := PrepareRoots(int(params.BeaconConfig().SlotsPerHistoricalRoot))
 	if err != nil {
 		return err
@@ -72,33 +72,33 @@ func FillRootsNaturalOptCapella(state *ethpb.BeaconStateCapella) error {
 	return nil
 }
 
-type NewBeaconStateOption func(state *ethpb.BeaconState) error
+type NewBeaconStateOption func(state *silapb.BeaconState) error
 
 // NewBeaconState creates a beacon state with minimum marshalable fields.
 func NewBeaconState(options ...NewBeaconStateOption) (state.BeaconState, error) {
-	seed := &ethpb.BeaconState{
+	seed := &silapb.BeaconState{
 		BlockRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		StateRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		Slashings:                  make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
-		Validators:                 make([]*ethpb.Validator, 0),
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		Eth1Data: &ethpb.Eth1Data{
+		Validators:                 make([]*silapb.Validator, 0),
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		Eth1DataVotes:               make([]*ethpb.Eth1Data, 0),
+		Eth1DataVotes:               make([]*silapb.Eth1Data, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		LatestBlockHeader:           HydrateBeaconHeader(&ethpb.BeaconBlockHeader{}),
-		PreviousEpochAttestations:   make([]*ethpb.PendingAttestation, 0),
-		CurrentEpochAttestations:    make([]*ethpb.PendingAttestation, 0),
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		LatestBlockHeader:           HydrateBeaconHeader(&silapb.BeaconBlockHeader{}),
+		PreviousEpochAttestations:   make([]*silapb.PendingAttestation, 0),
+		CurrentEpochAttestations:    make([]*silapb.PendingAttestation, 0),
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 	}
 
 	for _, opt := range options {
@@ -117,40 +117,40 @@ func NewBeaconState(options ...NewBeaconStateOption) (state.BeaconState, error) 
 }
 
 // NewBeaconStateAltair creates a beacon state with minimum marshalable fields.
-func NewBeaconStateAltair(options ...func(state *ethpb.BeaconStateAltair) error) (state.BeaconState, error) {
+func NewBeaconStateAltair(options ...func(state *silapb.BeaconStateAltair) error) (state.BeaconState, error) {
 	pubkeys := make([][]byte, 512)
 	for i := range pubkeys {
 		pubkeys[i] = make([]byte, 48)
 	}
 
-	seed := &ethpb.BeaconStateAltair{
+	seed := &silapb.BeaconStateAltair{
 		BlockRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		StateRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		Slashings:                  make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
-		Validators:                 make([]*ethpb.Validator, 0),
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		Eth1Data: &ethpb.Eth1Data{
+		Validators:                 make([]*silapb.Validator, 0),
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		Eth1DataVotes:               make([]*ethpb.Eth1Data, 0),
+		Eth1DataVotes:               make([]*silapb.Eth1Data, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		LatestBlockHeader:           HydrateBeaconHeader(&ethpb.BeaconBlockHeader{}),
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		LatestBlockHeader:           HydrateBeaconHeader(&silapb.BeaconBlockHeader{}),
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 		PreviousEpochParticipation:  make([]byte, 0),
 		CurrentEpochParticipation:   make([]byte, 0),
-		CurrentSyncCommittee: &ethpb.SyncCommittee{
+		CurrentSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		NextSyncCommittee: &ethpb.SyncCommittee{
+		NextSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
@@ -172,40 +172,40 @@ func NewBeaconStateAltair(options ...func(state *ethpb.BeaconStateAltair) error)
 }
 
 // NewBeaconStateBellatrix creates a beacon state with minimum marshalable fields.
-func NewBeaconStateBellatrix(options ...func(state *ethpb.BeaconStateBellatrix) error) (state.BeaconState, error) {
+func NewBeaconStateBellatrix(options ...func(state *silapb.BeaconStateBellatrix) error) (state.BeaconState, error) {
 	pubkeys := make([][]byte, 512)
 	for i := range pubkeys {
 		pubkeys[i] = make([]byte, 48)
 	}
 
-	seed := &ethpb.BeaconStateBellatrix{
+	seed := &silapb.BeaconStateBellatrix{
 		BlockRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		StateRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		Slashings:                  make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
-		Validators:                 make([]*ethpb.Validator, 0),
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		Eth1Data: &ethpb.Eth1Data{
+		Validators:                 make([]*silapb.Validator, 0),
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		Eth1DataVotes:               make([]*ethpb.Eth1Data, 0),
+		Eth1DataVotes:               make([]*silapb.Eth1Data, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		LatestBlockHeader:           HydrateBeaconHeader(&ethpb.BeaconBlockHeader{}),
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		LatestBlockHeader:           HydrateBeaconHeader(&silapb.BeaconBlockHeader{}),
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 		PreviousEpochParticipation:  make([]byte, 0),
 		CurrentEpochParticipation:   make([]byte, 0),
-		CurrentSyncCommittee: &ethpb.SyncCommittee{
+		CurrentSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		NextSyncCommittee: &ethpb.SyncCommittee{
+		NextSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
@@ -239,40 +239,40 @@ func NewBeaconStateBellatrix(options ...func(state *ethpb.BeaconStateBellatrix) 
 }
 
 // NewBeaconStateCapella creates a beacon state with minimum marshalable fields.
-func NewBeaconStateCapella(options ...func(state *ethpb.BeaconStateCapella) error) (state.BeaconState, error) {
+func NewBeaconStateCapella(options ...func(state *silapb.BeaconStateCapella) error) (state.BeaconState, error) {
 	pubkeys := make([][]byte, 512)
 	for i := range pubkeys {
 		pubkeys[i] = make([]byte, 48)
 	}
 
-	seed := &ethpb.BeaconStateCapella{
+	seed := &silapb.BeaconStateCapella{
 		BlockRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		StateRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		Slashings:                  make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
-		Validators:                 make([]*ethpb.Validator, 0),
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		Eth1Data: &ethpb.Eth1Data{
+		Validators:                 make([]*silapb.Validator, 0),
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		Eth1DataVotes:               make([]*ethpb.Eth1Data, 0),
-		HistoricalSummaries:         make([]*ethpb.HistoricalSummary, 0),
+		Eth1DataVotes:               make([]*silapb.Eth1Data, 0),
+		HistoricalSummaries:         make([]*silapb.HistoricalSummary, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		LatestBlockHeader:           HydrateBeaconHeader(&ethpb.BeaconBlockHeader{}),
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		LatestBlockHeader:           HydrateBeaconHeader(&silapb.BeaconBlockHeader{}),
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 		PreviousEpochParticipation:  make([]byte, 0),
 		CurrentEpochParticipation:   make([]byte, 0),
-		CurrentSyncCommittee: &ethpb.SyncCommittee{
+		CurrentSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		NextSyncCommittee: &ethpb.SyncCommittee{
+		NextSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
@@ -307,40 +307,40 @@ func NewBeaconStateCapella(options ...func(state *ethpb.BeaconStateCapella) erro
 }
 
 // NewBeaconStateDeneb creates a beacon state with minimum marshalable fields.
-func NewBeaconStateDeneb(options ...func(state *ethpb.BeaconStateDeneb) error) (state.BeaconState, error) {
+func NewBeaconStateDeneb(options ...func(state *silapb.BeaconStateDeneb) error) (state.BeaconState, error) {
 	pubkeys := make([][]byte, 512)
 	for i := range pubkeys {
 		pubkeys[i] = make([]byte, 48)
 	}
 
-	seed := &ethpb.BeaconStateDeneb{
+	seed := &silapb.BeaconStateDeneb{
 		BlockRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		StateRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		Slashings:                  make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
-		Validators:                 make([]*ethpb.Validator, 0),
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		Eth1Data: &ethpb.Eth1Data{
+		Validators:                 make([]*silapb.Validator, 0),
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		Eth1DataVotes:               make([]*ethpb.Eth1Data, 0),
+		Eth1DataVotes:               make([]*silapb.Eth1Data, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		LatestBlockHeader:           HydrateBeaconHeader(&ethpb.BeaconBlockHeader{}),
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		LatestBlockHeader:           HydrateBeaconHeader(&silapb.BeaconBlockHeader{}),
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 		PreviousEpochParticipation:  make([]byte, 0),
 		CurrentEpochParticipation:   make([]byte, 0),
-		CurrentSyncCommittee: &ethpb.SyncCommittee{
+		CurrentSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		NextSyncCommittee: &ethpb.SyncCommittee{
+		NextSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
@@ -375,40 +375,40 @@ func NewBeaconStateDeneb(options ...func(state *ethpb.BeaconStateDeneb) error) (
 }
 
 // NewBeaconStateElectra creates a beacon state with minimum marshalable fields.
-func NewBeaconStateElectra(options ...func(state *ethpb.BeaconStateElectra) error) (state.BeaconState, error) {
+func NewBeaconStateElectra(options ...func(state *silapb.BeaconStateElectra) error) (state.BeaconState, error) {
 	pubkeys := make([][]byte, 512)
 	for i := range pubkeys {
 		pubkeys[i] = make([]byte, 48)
 	}
 
-	seed := &ethpb.BeaconStateElectra{
+	seed := &silapb.BeaconStateElectra{
 		BlockRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		StateRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		Slashings:                  make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
-		Validators:                 make([]*ethpb.Validator, 0),
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		Eth1Data: &ethpb.Eth1Data{
+		Validators:                 make([]*silapb.Validator, 0),
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		Eth1DataVotes:               make([]*ethpb.Eth1Data, 0),
+		Eth1DataVotes:               make([]*silapb.Eth1Data, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		LatestBlockHeader:           HydrateBeaconHeader(&ethpb.BeaconBlockHeader{}),
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		LatestBlockHeader:           HydrateBeaconHeader(&silapb.BeaconBlockHeader{}),
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 		PreviousEpochParticipation:  make([]byte, 0),
 		CurrentEpochParticipation:   make([]byte, 0),
-		CurrentSyncCommittee: &ethpb.SyncCommittee{
+		CurrentSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		NextSyncCommittee: &ethpb.SyncCommittee{
+		NextSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
@@ -443,40 +443,40 @@ func NewBeaconStateElectra(options ...func(state *ethpb.BeaconStateElectra) erro
 }
 
 // NewBeaconStateFulu creates a beacon state with minimum marshalable fields.
-func NewBeaconStateFulu(options ...func(state *ethpb.BeaconStateFulu) error) (state.BeaconState, error) {
+func NewBeaconStateFulu(options ...func(state *silapb.BeaconStateFulu) error) (state.BeaconState, error) {
 	pubkeys := make([][]byte, 512)
 	for i := range pubkeys {
 		pubkeys[i] = make([]byte, 48)
 	}
 
-	seed := &ethpb.BeaconStateFulu{
+	seed := &silapb.BeaconStateFulu{
 		BlockRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		StateRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		Slashings:                  make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
-		Validators:                 make([]*ethpb.Validator, 0),
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		Eth1Data: &ethpb.Eth1Data{
+		Validators:                 make([]*silapb.Validator, 0),
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		Eth1DataVotes:               make([]*ethpb.Eth1Data, 0),
+		Eth1DataVotes:               make([]*silapb.Eth1Data, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		LatestBlockHeader:           HydrateBeaconHeader(&ethpb.BeaconBlockHeader{}),
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		LatestBlockHeader:           HydrateBeaconHeader(&silapb.BeaconBlockHeader{}),
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 		PreviousEpochParticipation:  make([]byte, 0),
 		CurrentEpochParticipation:   make([]byte, 0),
-		CurrentSyncCommittee: &ethpb.SyncCommittee{
+		CurrentSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		NextSyncCommittee: &ethpb.SyncCommittee{
+		NextSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
@@ -512,61 +512,61 @@ func NewBeaconStateFulu(options ...func(state *ethpb.BeaconStateFulu) error) (st
 }
 
 // NewBeaconStateGloas creates a beacon state with minimum marshalable fields.
-func NewBeaconStateGloas(options ...func(state *ethpb.BeaconStateGloas) error) (state.BeaconState, error) {
+func NewBeaconStateGloas(options ...func(state *silapb.BeaconStateGloas) error) (state.BeaconState, error) {
 	pubkeys := make([][]byte, 512)
 	for i := range pubkeys {
 		pubkeys[i] = make([]byte, 48)
 	}
 
-	builderPendingPayments := make([]*ethpb.BuilderPendingPayment, 64)
+	builderPendingPayments := make([]*silapb.BuilderPendingPayment, 64)
 	for i := range builderPendingPayments {
-		builderPendingPayments[i] = &ethpb.BuilderPendingPayment{
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+		builderPendingPayments[i] = &silapb.BuilderPendingPayment{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 			},
 		}
 	}
 
-	ptcWindow := make([]*ethpb.PTCs, 3*params.BeaconConfig().SlotsPerEpoch)
+	ptcWindow := make([]*silapb.PTCs, 3*params.BeaconConfig().SlotsPerEpoch)
 	for i := range ptcWindow {
-		ptcWindow[i] = &ethpb.PTCs{
+		ptcWindow[i] = &silapb.PTCs{
 			ValidatorIndices: make([]primitives.ValidatorIndex, fieldparams.PTCSize),
 		}
 	}
 
-	seed := &ethpb.BeaconStateGloas{
+	seed := &silapb.BeaconStateGloas{
 		BlockRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		StateRoots:                 filledByteSlice2D(uint64(params.BeaconConfig().SlotsPerHistoricalRoot), 32),
 		Slashings:                  make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
-		Validators:                 make([]*ethpb.Validator, 0),
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		Eth1Data: &ethpb.Eth1Data{
+		Validators:                 make([]*silapb.Validator, 0),
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		Eth1DataVotes:               make([]*ethpb.Eth1Data, 0),
+		Eth1DataVotes:               make([]*silapb.Eth1Data, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		LatestBlockHeader:           HydrateBeaconHeader(&ethpb.BeaconBlockHeader{}),
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		LatestBlockHeader:           HydrateBeaconHeader(&silapb.BeaconBlockHeader{}),
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 		PreviousEpochParticipation:  make([]byte, 0),
 		CurrentEpochParticipation:   make([]byte, 0),
-		CurrentSyncCommittee: &ethpb.SyncCommittee{
+		CurrentSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		NextSyncCommittee: &ethpb.SyncCommittee{
+		NextSyncCommittee: &silapb.SyncCommittee{
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
 		ProposerLookahead: make([]primitives.ValidatorIndex, 64),
-		LatestExecutionPayloadBid: &ethpb.ExecutionPayloadBid{
+		LatestExecutionPayloadBid: &silapb.ExecutionPayloadBid{
 			ParentBlockHash:       make([]byte, 32),
 			ParentBlockRoot:       make([]byte, 32),
 			BlockHash:             make([]byte, 32),
@@ -575,10 +575,10 @@ func NewBeaconStateGloas(options ...func(state *ethpb.BeaconStateGloas) error) (
 			BlobKzgCommitments:    [][]byte{make([]byte, 48)},
 			ExecutionRequestsRoot: make([]byte, 32),
 		},
-		Builders:                     make([]*ethpb.Builder, 0),
+		Builders:                     make([]*silapb.Builder, 0),
 		ExecutionPayloadAvailability: make([]byte, 1024),
 		BuilderPendingPayments:       builderPendingPayments,
-		BuilderPendingWithdrawals:    make([]*ethpb.BuilderPendingWithdrawal, 0),
+		BuilderPendingWithdrawals:    make([]*silapb.BuilderPendingWithdrawal, 0),
 		LatestBlockHash:              make([]byte, 32),
 		PayloadExpectedWithdrawals:   make([]*enginev1.Withdrawal, 0),
 		PtcWindow:                    ptcWindow,

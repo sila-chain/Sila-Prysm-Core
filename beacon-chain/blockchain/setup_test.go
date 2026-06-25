@@ -28,7 +28,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"google.golang.org/protobuf/proto"
@@ -64,17 +64,17 @@ func (mb *mockBroadcaster) Broadcast(_ context.Context, _ proto.Message) error {
 	return nil
 }
 
-func (mb *mockBroadcaster) BroadcastAttestation(_ context.Context, _ uint64, _ ethpb.Att) error {
+func (mb *mockBroadcaster) BroadcastAttestation(_ context.Context, _ uint64, _ silapb.Att) error {
 	mb.broadcastCalled = true
 	return nil
 }
 
-func (mb *mockBroadcaster) BroadcastSyncCommitteeMessage(_ context.Context, _ uint64, _ *ethpb.SyncCommitteeMessage) error {
+func (mb *mockBroadcaster) BroadcastSyncCommitteeMessage(_ context.Context, _ uint64, _ *silapb.SyncCommitteeMessage) error {
 	mb.broadcastCalled = true
 	return nil
 }
 
-func (mb *mockBroadcaster) BroadcastBlob(_ context.Context, _ uint64, _ *ethpb.BlobSidecar) error {
+func (mb *mockBroadcaster) BroadcastBlob(_ context.Context, _ uint64, _ *silapb.BlobSidecar) error {
 	mb.broadcastCalled = true
 	return nil
 }
@@ -99,7 +99,7 @@ func (mb *mockBroadcaster) BroadcastForEpoch(_ context.Context, _ proto.Message,
 	return nil
 }
 
-func (mb *mockBroadcaster) BroadcastBLSChanges(_ context.Context, _ []*ethpb.SignedBLSToExecutionChange) {
+func (mb *mockBroadcaster) BroadcastBLSChanges(_ context.Context, _ []*silapb.SignedBLSToExecutionChange) {
 }
 
 var _ p2p.Broadcaster = (*mockBroadcaster)(nil)

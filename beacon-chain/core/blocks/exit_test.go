@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -21,27 +21,27 @@ import (
 )
 
 func TestProcessVoluntaryExits_NotActiveLongEnoughToExit(t *testing.T) {
-	exits := []*ethpb.SignedVoluntaryExit{
+	exits := []*silapb.SignedVoluntaryExit{
 		{
-			Exit: &ethpb.VoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: 0,
 				Epoch:          0,
 			},
 		},
 	}
-	registry := []*ethpb.Validator{
+	registry := []*silapb.Validator{
 		{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		},
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators: registry,
 		Slot:       10,
 	})
 	require.NoError(t, err)
 	b := util.NewBeaconBlock()
-	b.Block = &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
+	b.Block = &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
 			VoluntaryExits: exits,
 		},
 	}
@@ -52,26 +52,26 @@ func TestProcessVoluntaryExits_NotActiveLongEnoughToExit(t *testing.T) {
 }
 
 func TestProcessVoluntaryExits_ExitAlreadySubmitted(t *testing.T) {
-	exits := []*ethpb.SignedVoluntaryExit{
+	exits := []*silapb.SignedVoluntaryExit{
 		{
-			Exit: &ethpb.VoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				Epoch: 10,
 			},
 		},
 	}
-	registry := []*ethpb.Validator{
+	registry := []*silapb.Validator{
 		{
 			ExitEpoch: 10,
 		},
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators: registry,
 		Slot:       0,
 	})
 	require.NoError(t, err)
 	b := util.NewBeaconBlock()
-	b.Block = &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
+	b.Block = &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
 			VoluntaryExits: exits,
 		},
 	}
@@ -82,23 +82,23 @@ func TestProcessVoluntaryExits_ExitAlreadySubmitted(t *testing.T) {
 }
 
 func TestProcessVoluntaryExits_AppliesCorrectStatus(t *testing.T) {
-	exits := []*ethpb.SignedVoluntaryExit{
+	exits := []*silapb.SignedVoluntaryExit{
 		{
-			Exit: &ethpb.VoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: 0,
 				Epoch:          0,
 			},
 		},
 	}
-	registry := []*ethpb.Validator{
+	registry := []*silapb.Validator{
 		{
 			ExitEpoch:       params.BeaconConfig().FarFutureEpoch,
 			ActivationEpoch: 0,
 		},
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators: registry,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 		},
@@ -119,8 +119,8 @@ func TestProcessVoluntaryExits_AppliesCorrectStatus(t *testing.T) {
 	require.NoError(t, err)
 
 	b := util.NewBeaconBlock()
-	b.Block = &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
+	b.Block = &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
 			VoluntaryExits: exits,
 		},
 	}
@@ -144,20 +144,20 @@ func TestVerifyExitAndSignature(t *testing.T) {
 	require.NoError(t, err)
 	tests := []struct {
 		name    string
-		setup   func() (*ethpb.Validator, *ethpb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error)
+		setup   func() (*silapb.Validator, *silapb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error)
 		wantErr string
 	}{
 		{
 			name: "Empty Exit",
-			setup: func() (*ethpb.Validator, *ethpb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error) {
-				fork := &ethpb.Fork{
+			setup: func() (*silapb.Validator, *silapb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error) {
+				fork := &silapb.Fork{
 					PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 					CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 					Epoch:           0,
 				}
 				genesisRoot := [32]byte{'a'}
 
-				st := &ethpb.BeaconState{
+				st := &silapb.BeaconState{
 					Slot:                  0,
 					Fork:                  fork,
 					GenesisValidatorsRoot: genesisRoot[:],
@@ -167,20 +167,20 @@ func TestVerifyExitAndSignature(t *testing.T) {
 				if err != nil {
 					return nil, nil, nil, err
 				}
-				return &ethpb.Validator{}, &ethpb.SignedVoluntaryExit{}, s, nil
+				return &silapb.Validator{}, &silapb.SignedVoluntaryExit{}, s, nil
 			},
 			wantErr: "nil exit",
 		},
 		{
 			name: "Happy Path phase0",
-			setup: func() (*ethpb.Validator, *ethpb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error) {
-				fork := &ethpb.Fork{
+			setup: func() (*silapb.Validator, *silapb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error) {
+				fork := &silapb.Fork{
 					PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 					CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 					Epoch:           0,
 				}
-				signedExit := &ethpb.SignedVoluntaryExit{
-					Exit: &ethpb.VoluntaryExit{
+				signedExit := &silapb.SignedVoluntaryExit{
+					Exit: &silapb.VoluntaryExit{
 						Epoch:          2,
 						ValidatorIndex: 0,
 					},
@@ -206,14 +206,14 @@ func TestVerifyExitAndSignature(t *testing.T) {
 		},
 		{
 			name: "bad signature",
-			setup: func() (*ethpb.Validator, *ethpb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error) {
-				fork := &ethpb.Fork{
+			setup: func() (*silapb.Validator, *silapb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error) {
+				fork := &silapb.Fork{
 					PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 					CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 					Epoch:           0,
 				}
-				signedExit := &ethpb.SignedVoluntaryExit{
-					Exit: &ethpb.VoluntaryExit{
+				signedExit := &silapb.SignedVoluntaryExit{
+					Exit: &silapb.VoluntaryExit{
 						Epoch:          2,
 						ValidatorIndex: 0,
 					},
@@ -245,20 +245,20 @@ func TestVerifyExitAndSignature(t *testing.T) {
 		},
 		{
 			name: "EIP-7044: deneb exits should verify with capella fork information",
-			setup: func() (*ethpb.Validator, *ethpb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error) {
-				fork := &ethpb.Fork{
+			setup: func() (*silapb.Validator, *silapb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error) {
+				fork := &silapb.Fork{
 					PreviousVersion: params.BeaconConfig().CapellaForkVersion,
 					CurrentVersion:  params.BeaconConfig().DenebForkVersion,
 					Epoch:           params.BeaconConfig().DenebForkEpoch,
 				}
-				signedExit := &ethpb.SignedVoluntaryExit{
-					Exit: &ethpb.VoluntaryExit{
+				signedExit := &silapb.SignedVoluntaryExit{
+					Exit: &silapb.VoluntaryExit{
 						Epoch:          params.BeaconConfig().CapellaForkEpoch,
 						ValidatorIndex: 0,
 					},
 				}
 				bs, keys := util.DeterministicGenesisState(t, 1)
-				bs, err := state_native.InitializeFromProtoUnsafeDeneb(&ethpb.BeaconStateDeneb{
+				bs, err := state_native.InitializeFromProtoUnsafeDeneb(&silapb.BeaconStateDeneb{
 					GenesisValidatorsRoot: bs.GenesisValidatorsRoot(),
 					Fork:                  fork,
 					Slot:                  denebSlot,
@@ -282,14 +282,14 @@ func TestVerifyExitAndSignature(t *testing.T) {
 		},
 		{
 			name: "EIP-7251 - pending balance to withdraw must be zero",
-			setup: func() (*ethpb.Validator, *ethpb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error) {
-				fork := &ethpb.Fork{
+			setup: func() (*silapb.Validator, *silapb.SignedVoluntaryExit, state.ReadOnlyBeaconState, error) {
+				fork := &silapb.Fork{
 					PreviousVersion: params.BeaconConfig().DenebForkVersion,
 					CurrentVersion:  params.BeaconConfig().ElectraForkVersion,
 					Epoch:           params.BeaconConfig().ElectraForkEpoch,
 				}
-				signedExit := &ethpb.SignedVoluntaryExit{
-					Exit: &ethpb.VoluntaryExit{
+				signedExit := &silapb.SignedVoluntaryExit{
+					Exit: &silapb.VoluntaryExit{
 						Epoch:          params.BeaconConfig().DenebForkEpoch + 1,
 						ValidatorIndex: 0,
 					},
@@ -297,7 +297,7 @@ func TestVerifyExitAndSignature(t *testing.T) {
 				electraSlot, err := slots.EpochStart(params.BeaconConfig().ElectraForkEpoch)
 				require.NoError(t, err)
 				bs, keys := util.DeterministicGenesisState(t, 1)
-				bs, err = state_native.InitializeFromProtoUnsafeElectra(&ethpb.BeaconStateElectra{
+				bs, err = state_native.InitializeFromProtoUnsafeElectra(&silapb.BeaconStateElectra{
 					GenesisValidatorsRoot: bs.GenesisValidatorsRoot(),
 					Fork:                  fork,
 					Slot:                  electraSlot,
@@ -317,7 +317,7 @@ func TestVerifyExitAndSignature(t *testing.T) {
 				signedExit.Signature = sig.Marshal()
 
 				// Give validator a pending balance to withdraw.
-				require.NoError(t, bs.AppendPendingPartialWithdrawal(&ethpb.PendingPartialWithdrawal{
+				require.NoError(t, bs.AppendPendingPartialWithdrawal(&silapb.PendingPartialWithdrawal{
 					Index:  0,
 					Amount: 500,
 				}))

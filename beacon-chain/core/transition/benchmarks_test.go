@@ -10,7 +10,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/benchmark"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"google.golang.org/protobuf/proto"
@@ -153,7 +153,7 @@ func BenchmarkUnmarshalState_FullState(b *testing.B) {
 		b.ResetTimer()
 		b.ReportAllocs()
 		for b.Loop() {
-			require.NoError(b, proto.Unmarshal(protoObject, &ethpb.BeaconState{}))
+			require.NoError(b, proto.Unmarshal(protoObject, &silapb.BeaconState{}))
 		}
 	})
 
@@ -161,7 +161,7 @@ func BenchmarkUnmarshalState_FullState(b *testing.B) {
 		b.ResetTimer()
 		b.ReportAllocs()
 		for b.Loop() {
-			sszState := &ethpb.BeaconState{}
+			sszState := &silapb.BeaconState{}
 			require.NoError(b, sszState.UnmarshalSSZ(sszObject))
 		}
 	})

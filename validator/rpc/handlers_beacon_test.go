@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	validatormock "github.com/sila-chain/Sila-Consensus-Core/v7/testing/validator-mock"
@@ -51,19 +51,19 @@ func TestGetBeaconStatus_OK(t *testing.T) {
 	nodeClient.EXPECT().SyncStatus(
 		gomock.Any(), // ctx
 		gomock.Any(),
-	).Return(&ethpb.SyncStatus{Syncing: true}, nil)
+	).Return(&silapb.SyncStatus{Syncing: true}, nil)
 	timeStamp := timestamppb.New(time.Unix(0, 0))
 	nodeClient.EXPECT().Genesis(
 		gomock.Any(), // ctx
 		gomock.Any(),
-	).Return(&ethpb.Genesis{
+	).Return(&silapb.Genesis{
 		GenesisTime:            timeStamp,
 		DepositContractAddress: []byte("hello"),
 	}, nil)
 	chainClient.EXPECT().ChainHead(
 		gomock.Any(), // ctx
 		gomock.Any(),
-	).Return(&ethpb.ChainHead{
+	).Return(&silapb.ChainHead{
 		HeadEpoch: 1,
 	}, nil)
 	srv := &Server{
@@ -108,8 +108,8 @@ func TestServer_GetValidators(t *testing.T) {
 	tests := []struct {
 		name        string
 		query       string
-		expectedReq *ethpb.ListValidatorsRequest
-		chainResp   *ethpb.Validators
+		expectedReq *silapb.ListValidatorsRequest
+		chainResp   *silapb.Validators
 		want        *ValidatorsResponse
 		wantCode    int
 		wantErr     string
@@ -118,25 +118,25 @@ func TestServer_GetValidators(t *testing.T) {
 			name:     "happypath on page_size, page_token, public_keys",
 			wantCode: http.StatusOK,
 			query:    "page_size=4&page_token=0&public_keys=0x855ae9c6184d6edd46351b375f16f541b2d33b0ed0da9be4571b13938588aee840ba606a946f0e8023ae3a4b2a43b4d4",
-			expectedReq: func() *ethpb.ListValidatorsRequest {
+			expectedReq: func() *silapb.ListValidatorsRequest {
 				b, err := hexutil.Decode("0x855ae9c6184d6edd46351b375f16f541b2d33b0ed0da9be4571b13938588aee840ba606a946f0e8023ae3a4b2a43b4d4")
 				require.NoError(t, err)
 				pubkeys := [][]byte{b}
-				return &ethpb.ListValidatorsRequest{
+				return &silapb.ListValidatorsRequest{
 					PublicKeys: pubkeys,
 					PageSize:   int32(4),
 					PageToken:  "0",
 				}
 			}(),
-			chainResp: func() *ethpb.Validators {
+			chainResp: func() *silapb.Validators {
 				b, err := hexutil.Decode("0x855ae9c6184d6edd46351b375f16f541b2d33b0ed0da9be4571b13938588aee840ba606a946f0e8023ae3a4b2a43b4d4")
 				require.NoError(t, err)
-				return &ethpb.Validators{
+				return &silapb.Validators{
 					Epoch: 0,
-					ValidatorList: []*ethpb.Validators_ValidatorContainer{
+					ValidatorList: []*silapb.Validators_ValidatorContainer{
 						{
 							Index: 0,
-							Validator: &ethpb.Validator{
+							Validator: &silapb.Validator{
 								PublicKey: b,
 							},
 						},
@@ -170,25 +170,25 @@ func TestServer_GetValidators(t *testing.T) {
 			name:     "extra public key that's empty still returns correct response",
 			wantCode: http.StatusOK,
 			query:    "page_size=4&page_token=0&public_keys=0x855ae9c6184d6edd46351b375f16f541b2d33b0ed0da9be4571b13938588aee840ba606a946f0e8023ae3a4b2a43b4d4&public_keys=",
-			expectedReq: func() *ethpb.ListValidatorsRequest {
+			expectedReq: func() *silapb.ListValidatorsRequest {
 				b, err := hexutil.Decode("0x855ae9c6184d6edd46351b375f16f541b2d33b0ed0da9be4571b13938588aee840ba606a946f0e8023ae3a4b2a43b4d4")
 				require.NoError(t, err)
 				pubkeys := [][]byte{b}
-				return &ethpb.ListValidatorsRequest{
+				return &silapb.ListValidatorsRequest{
 					PublicKeys: pubkeys,
 					PageSize:   int32(4),
 					PageToken:  "0",
 				}
 			}(),
-			chainResp: func() *ethpb.Validators {
+			chainResp: func() *silapb.Validators {
 				b, err := hexutil.Decode("0x855ae9c6184d6edd46351b375f16f541b2d33b0ed0da9be4571b13938588aee840ba606a946f0e8023ae3a4b2a43b4d4")
 				require.NoError(t, err)
-				return &ethpb.Validators{
+				return &silapb.Validators{
 					Epoch: 0,
-					ValidatorList: []*ethpb.Validators_ValidatorContainer{
+					ValidatorList: []*silapb.Validators_ValidatorContainer{
 						{
 							Index: 0,
-							Validator: &ethpb.Validator{
+							Validator: &silapb.Validator{
 								PublicKey: b,
 							},
 						},

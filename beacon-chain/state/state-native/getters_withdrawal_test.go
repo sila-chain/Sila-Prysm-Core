@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -17,21 +17,21 @@ import (
 
 func TestNextWithdrawalIndex(t *testing.T) {
 	t.Run("ok for deneb", func(t *testing.T) {
-		s, err := state_native.InitializeFromProtoDeneb(&ethpb.BeaconStateDeneb{NextWithdrawalIndex: 123})
+		s, err := state_native.InitializeFromProtoDeneb(&silapb.BeaconStateDeneb{NextWithdrawalIndex: 123})
 		require.NoError(t, err)
 		i, err := s.NextWithdrawalIndex()
 		require.NoError(t, err)
 		assert.Equal(t, uint64(123), i)
 	})
 	t.Run("ok", func(t *testing.T) {
-		s, err := state_native.InitializeFromProtoCapella(&ethpb.BeaconStateCapella{NextWithdrawalIndex: 123})
+		s, err := state_native.InitializeFromProtoCapella(&silapb.BeaconStateCapella{NextWithdrawalIndex: 123})
 		require.NoError(t, err)
 		i, err := s.NextWithdrawalIndex()
 		require.NoError(t, err)
 		assert.Equal(t, uint64(123), i)
 	})
 	t.Run("version before Capella not supported", func(t *testing.T) {
-		s, err := state_native.InitializeFromProtoBellatrix(&ethpb.BeaconStateBellatrix{})
+		s, err := state_native.InitializeFromProtoBellatrix(&silapb.BeaconStateBellatrix{})
 		require.NoError(t, err)
 		_, err = s.NextWithdrawalIndex()
 		assert.ErrorContains(t, "NextWithdrawalIndex is not supported", err)
@@ -40,7 +40,7 @@ func TestNextWithdrawalIndex(t *testing.T) {
 
 func TestNextWithdrawalValidatorIndex(t *testing.T) {
 	t.Run("ok for deneb", func(t *testing.T) {
-		pb := &ethpb.BeaconStateDeneb{NextWithdrawalValidatorIndex: 123}
+		pb := &silapb.BeaconStateDeneb{NextWithdrawalValidatorIndex: 123}
 		s, err := state_native.InitializeFromProtoDeneb(pb)
 		require.NoError(t, err)
 		i, err := s.NextWithdrawalValidatorIndex()
@@ -48,7 +48,7 @@ func TestNextWithdrawalValidatorIndex(t *testing.T) {
 		assert.Equal(t, primitives.ValidatorIndex(123), i)
 	})
 	t.Run("ok", func(t *testing.T) {
-		pb := &ethpb.BeaconStateCapella{NextWithdrawalValidatorIndex: 123}
+		pb := &silapb.BeaconStateCapella{NextWithdrawalValidatorIndex: 123}
 		s, err := state_native.InitializeFromProtoCapella(pb)
 		require.NoError(t, err)
 		i, err := s.NextWithdrawalValidatorIndex()
@@ -56,7 +56,7 @@ func TestNextWithdrawalValidatorIndex(t *testing.T) {
 		assert.Equal(t, primitives.ValidatorIndex(123), i)
 	})
 	t.Run("version before Capella not supported", func(t *testing.T) {
-		s, err := state_native.InitializeFromProtoBellatrix(&ethpb.BeaconStateBellatrix{})
+		s, err := state_native.InitializeFromProtoBellatrix(&silapb.BeaconStateBellatrix{})
 		require.NoError(t, err)
 		_, err = s.NextWithdrawalValidatorIndex()
 		assert.ErrorContains(t, "NextWithdrawalValidatorIndex is not supported", err)
@@ -68,11 +68,11 @@ func TestExpectedWithdrawals(t *testing.T) {
 		t.Run(version.String(stateVersion), func(t *testing.T) {
 			t.Run("no withdrawals", func(t *testing.T) {
 				s := state_native.EmptyStateFromVersion(t, stateVersion)
-				vals := make([]*ethpb.Validator, 100)
+				vals := make([]*silapb.Validator, 100)
 				balances := make([]uint64, 100)
 				for i := range vals {
 					balances[i] = params.BeaconConfig().MaxEffectiveBalance
-					val := &ethpb.Validator{
+					val := &silapb.Validator{
 						WithdrawalCredentials: make([]byte, 32),
 						EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 						WithdrawableEpoch:     primitives.Epoch(1),
@@ -90,11 +90,11 @@ func TestExpectedWithdrawals(t *testing.T) {
 				s := state_native.EmptyStateFromVersion(t, stateVersion)
 				require.NoError(t, s.SetNextWithdrawalValidatorIndex(20))
 
-				vals := make([]*ethpb.Validator, 100)
+				vals := make([]*silapb.Validator, 100)
 				balances := make([]uint64, 100)
 				for i := range 100 {
 					balances[i] = params.BeaconConfig().MaxEffectiveBalance
-					val := &ethpb.Validator{
+					val := &silapb.Validator{
 						WithdrawalCredentials: make([]byte, 32),
 						EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 						WithdrawableEpoch:     primitives.Epoch(1),
@@ -122,11 +122,11 @@ func TestExpectedWithdrawals(t *testing.T) {
 				s := state_native.EmptyStateFromVersion(t, stateVersion)
 				require.NoError(t, s.SetNextWithdrawalValidatorIndex(20))
 
-				vals := make([]*ethpb.Validator, 100)
+				vals := make([]*silapb.Validator, 100)
 				balances := make([]uint64, 100)
 				for i := range 100 {
 					balances[i] = params.BeaconConfig().MaxEffectiveBalance
-					val := &ethpb.Validator{
+					val := &silapb.Validator{
 						WithdrawalCredentials: make([]byte, 32),
 						EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 						WithdrawableEpoch:     primitives.Epoch(1),
@@ -151,11 +151,11 @@ func TestExpectedWithdrawals(t *testing.T) {
 			})
 			t.Run("one partially and one fully withdrawable", func(t *testing.T) {
 				s := state_native.EmptyStateFromVersion(t, stateVersion)
-				vals := make([]*ethpb.Validator, 100)
+				vals := make([]*silapb.Validator, 100)
 				balances := make([]uint64, 100)
 				for i := range vals {
 					balances[i] = params.BeaconConfig().MaxEffectiveBalance
-					val := &ethpb.Validator{
+					val := &silapb.Validator{
 						WithdrawalCredentials: make([]byte, 32),
 						EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 						WithdrawableEpoch:     primitives.Epoch(1),
@@ -189,11 +189,11 @@ func TestExpectedWithdrawals(t *testing.T) {
 			})
 			t.Run("all partially withdrawable", func(t *testing.T) {
 				s := state_native.EmptyStateFromVersion(t, stateVersion)
-				vals := make([]*ethpb.Validator, 100)
+				vals := make([]*silapb.Validator, 100)
 				balances := make([]uint64, 100)
 				for i := range vals {
 					balances[i] = params.BeaconConfig().MaxEffectiveBalance + 1
-					val := &ethpb.Validator{
+					val := &silapb.Validator{
 						WithdrawalCredentials: make([]byte, 32),
 						EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 						WithdrawableEpoch:     primitives.Epoch(1),
@@ -217,11 +217,11 @@ func TestExpectedWithdrawals(t *testing.T) {
 			})
 			t.Run("all fully withdrawable", func(t *testing.T) {
 				s := state_native.EmptyStateFromVersion(t, stateVersion)
-				vals := make([]*ethpb.Validator, 100)
+				vals := make([]*silapb.Validator, 100)
 				balances := make([]uint64, 100)
 				for i := range vals {
 					balances[i] = params.BeaconConfig().MaxEffectiveBalance
-					val := &ethpb.Validator{
+					val := &silapb.Validator{
 						WithdrawalCredentials: make([]byte, 32),
 						EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 						WithdrawableEpoch:     primitives.Epoch(0),
@@ -245,11 +245,11 @@ func TestExpectedWithdrawals(t *testing.T) {
 			})
 			t.Run("all fully and partially withdrawable", func(t *testing.T) {
 				s := state_native.EmptyStateFromVersion(t, stateVersion)
-				vals := make([]*ethpb.Validator, 100)
+				vals := make([]*silapb.Validator, 100)
 				balances := make([]uint64, 100)
 				for i := range vals {
 					balances[i] = params.BeaconConfig().MaxEffectiveBalance + 1
-					val := &ethpb.Validator{
+					val := &silapb.Validator{
 						WithdrawalCredentials: make([]byte, 32),
 						EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 						WithdrawableEpoch:     primitives.Epoch(0),
@@ -274,11 +274,11 @@ func TestExpectedWithdrawals(t *testing.T) {
 			t.Run("one fully withdrawable but zero balance", func(t *testing.T) {
 				s := state_native.EmptyStateFromVersion(t, stateVersion)
 				require.NoError(t, s.SetNextWithdrawalValidatorIndex(20))
-				vals := make([]*ethpb.Validator, 100)
+				vals := make([]*silapb.Validator, 100)
 				balances := make([]uint64, 100)
 				for i := range vals {
 					balances[i] = params.BeaconConfig().MaxEffectiveBalance
-					val := &ethpb.Validator{
+					val := &silapb.Validator{
 						WithdrawalCredentials: make([]byte, 32),
 						EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 						WithdrawableEpoch:     primitives.Epoch(1),
@@ -298,11 +298,11 @@ func TestExpectedWithdrawals(t *testing.T) {
 			})
 			t.Run("one partially withdrawable, one above sweep bound", func(t *testing.T) {
 				s := state_native.EmptyStateFromVersion(t, stateVersion)
-				vals := make([]*ethpb.Validator, 100)
+				vals := make([]*silapb.Validator, 100)
 				balances := make([]uint64, 100)
 				for i := range vals {
 					balances[i] = params.BeaconConfig().MaxEffectiveBalance
-					val := &ethpb.Validator{
+					val := &silapb.Validator{
 						WithdrawalCredentials: make([]byte, 32),
 						EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 						WithdrawableEpoch:     primitives.Epoch(1),
@@ -339,7 +339,7 @@ func TestExpectedWithdrawals(t *testing.T) {
 		require.NoError(t, err)
 		serializedSSZ, err := snappy.Decode(nil /* dst */, serializedBytes)
 		require.NoError(t, err)
-		pb := &ethpb.BeaconStateElectra{}
+		pb := &silapb.BeaconStateElectra{}
 		require.NoError(t, pb.UnmarshalSSZ(serializedSSZ))
 		s, err := state_native.InitializeFromProtoElectra(pb)
 		require.NoError(t, err)
@@ -356,7 +356,7 @@ func TestExpectedWithdrawals(t *testing.T) {
 		require.NoError(t, err)
 		serializedSSZ, err := snappy.Decode(nil /* dst */, serializedBytes)
 		require.NoError(t, err)
-		pb := &ethpb.BeaconStateElectra{}
+		pb := &silapb.BeaconStateElectra{}
 		require.NoError(t, pb.UnmarshalSSZ(serializedSSZ))
 		s, err := state_native.InitializeFromProtoElectra(pb)
 		require.NoError(t, err)
@@ -369,11 +369,11 @@ func TestExpectedWithdrawals(t *testing.T) {
 	})
 	t.Run("electra same validator has one partially and one fully withdrawable", func(t *testing.T) {
 		s, _ := util.DeterministicGenesisStateElectra(t, 1)
-		vals := make([]*ethpb.Validator, 100)
+		vals := make([]*silapb.Validator, 100)
 		balances := make([]uint64, 100)
 		for i := range vals {
 			balances[i] = params.BeaconConfig().MaxEffectiveBalance
-			val := &ethpb.Validator{
+			val := &silapb.Validator{
 				WithdrawalCredentials: make([]byte, 32),
 				EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 				WithdrawableEpoch:     primitives.Epoch(1),
@@ -388,7 +388,7 @@ func TestExpectedWithdrawals(t *testing.T) {
 		require.NoError(t, s.SetValidators(vals))
 		require.NoError(t, s.SetBalances(balances))
 		// Give validator a pending balance to withdraw.
-		require.NoError(t, s.AppendPendingPartialWithdrawal(&ethpb.PendingPartialWithdrawal{
+		require.NoError(t, s.AppendPendingPartialWithdrawal(&silapb.PendingPartialWithdrawal{
 			Index:             1,
 			Amount:            balances[1], // will only deduct excess even though balance is more that minimum activation
 			WithdrawableEpoch: primitives.Epoch(0),
@@ -418,12 +418,12 @@ func TestExpectedWithdrawals(t *testing.T) {
 }
 
 func TestExpectedWithdrawals_underflow_electra(t *testing.T) {
-	s, err := state_native.InitializeFromProtoUnsafeElectra(&ethpb.BeaconStateElectra{})
+	s, err := state_native.InitializeFromProtoUnsafeElectra(&silapb.BeaconStateElectra{})
 	require.NoError(t, err)
-	vals := make([]*ethpb.Validator, 1)
+	vals := make([]*silapb.Validator, 1)
 	balances := make([]uint64, 1)
 	balances[0] = 2015_000_000_000 //Validator A begins leaking ETH due to inactivity, and over time, its balance decreases to 2,015 ETH
-	val := &ethpb.Validator{
+	val := &silapb.Validator{
 		WithdrawalCredentials: make([]byte, 32),
 		EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalanceElectra,
 		WithdrawableEpoch:     primitives.Epoch(0),
@@ -435,11 +435,11 @@ func TestExpectedWithdrawals_underflow_electra(t *testing.T) {
 
 	require.NoError(t, s.SetValidators(vals))
 	require.NoError(t, s.SetBalances(balances))
-	require.NoError(t, s.AppendPendingPartialWithdrawal(&ethpb.PendingPartialWithdrawal{
+	require.NoError(t, s.AppendPendingPartialWithdrawal(&silapb.PendingPartialWithdrawal{
 		Amount:            1008_000_000_000,
 		WithdrawableEpoch: primitives.Epoch(0),
 	}))
-	require.NoError(t, s.AppendPendingPartialWithdrawal(&ethpb.PendingPartialWithdrawal{
+	require.NoError(t, s.AppendPendingPartialWithdrawal(&silapb.PendingPartialWithdrawal{
 		Amount:            1008_000_000_000,
 		WithdrawableEpoch: primitives.Epoch(0),
 	}))

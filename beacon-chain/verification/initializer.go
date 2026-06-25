@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	payloadattestation "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/payload-attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"golang.org/x/sync/singleflight"
 )
 
@@ -101,7 +101,7 @@ func (ini *Initializer) NewPayloadAttestationMsgVerifier(pa payloadattestation.R
 
 // NewSignedProposerPreferencesVerifier creates a SignedProposerPreferencesVerifier for a single signed proposer preferences
 // message, with the given set of requirements.
-func (ini *Initializer) NewSignedProposerPreferencesVerifier(p *ethpb.SignedProposerPreferences, reqs []Requirement) *ProposerPreferencesVerifier {
+func (ini *Initializer) NewSignedProposerPreferencesVerifier(p *silapb.SignedProposerPreferences, reqs []Requirement) *ProposerPreferencesVerifier {
 	return &ProposerPreferencesVerifier{
 		sharedResources: ini.shared,
 		results:         newResults(reqs...),
@@ -137,7 +137,7 @@ type InitializerWaiter struct {
 	getFork forkLookup
 }
 
-type forkLookup func(targetEpoch primitives.Epoch) (*ethpb.Fork, error)
+type forkLookup func(targetEpoch primitives.Epoch) (*silapb.Fork, error)
 
 type InitializerOption func(waiter *InitializerWaiter)
 

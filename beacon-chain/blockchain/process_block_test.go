@@ -40,7 +40,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -65,15 +65,15 @@ func Test_pruneAttsFromPool_Electra(t *testing.T) {
 	s := testServiceNoDB(t)
 	s.cfg.AttPool = kv.NewAttCaches()
 
-	data := &ethpb.AttestationData{
+	data := &silapb.AttestationData{
 		BeaconBlockRoot: make([]byte, 32),
-		Source:          &ethpb.Checkpoint{Root: make([]byte, 32)},
-		Target:          &ethpb.Checkpoint{Root: make([]byte, 32)},
+		Source:          &silapb.Checkpoint{Root: make([]byte, 32)},
+		Target:          &silapb.Checkpoint{Root: make([]byte, 32)},
 	}
 
 	cb := primitives.NewAttestationCommitteeBits()
 	cb.SetBitAt(0, true)
-	att1 := &ethpb.AttestationElectra{
+	att1 := &silapb.AttestationElectra{
 		AggregationBits: bitfield.Bitlist{0b10000000, 0b00000001},
 		Data:            data,
 		Signature:       make([]byte, 96),
@@ -82,7 +82,7 @@ func Test_pruneAttsFromPool_Electra(t *testing.T) {
 
 	cb = primitives.NewAttestationCommitteeBits()
 	cb.SetBitAt(1, true)
-	att2 := &ethpb.AttestationElectra{
+	att2 := &silapb.AttestationElectra{
 		AggregationBits: bitfield.Bitlist{0b11110111, 0b00000001},
 		Data:            data,
 		Signature:       make([]byte, 96),
@@ -91,7 +91,7 @@ func Test_pruneAttsFromPool_Electra(t *testing.T) {
 
 	cb = primitives.NewAttestationCommitteeBits()
 	cb.SetBitAt(3, true)
-	att3 := &ethpb.AttestationElectra{
+	att3 := &silapb.AttestationElectra{
 		AggregationBits: bitfield.Bitlist{0b11110111, 0b00000001},
 		Data:            data,
 		Signature:       make([]byte, 96),
@@ -105,16 +105,16 @@ func Test_pruneAttsFromPool_Electra(t *testing.T) {
 	cb = primitives.NewAttestationCommitteeBits()
 	cb.SetBitAt(0, true)
 	cb.SetBitAt(1, true)
-	onChainAtt := &ethpb.AttestationElectra{
+	onChainAtt := &silapb.AttestationElectra{
 		AggregationBits: bitfield.Bitlist{0b10000000, 0b11110111, 0b00000001},
 		Data:            data,
 		Signature:       make([]byte, 96),
 		CommitteeBits:   cb,
 	}
-	bl := &ethpb.SignedBeaconBlockElectra{
-		Block: &ethpb.BeaconBlockElectra{
-			Body: &ethpb.BeaconBlockBodyElectra{
-				Attestations: []*ethpb.AttestationElectra{onChainAtt},
+	bl := &silapb.SignedBeaconBlockElectra{
+		Block: &silapb.BeaconBlockElectra{
+			Body: &silapb.BeaconBlockBodyElectra{
+				Attestations: []*silapb.AttestationElectra{onChainAtt},
 			},
 		},
 		Signature: make([]byte, 96),
@@ -210,7 +210,7 @@ func TestCachedPreState_CanGetFromStateSummary(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, beaconDB.SaveBlock(ctx, wsb))
 
-	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Slot: 1, Root: root[:]}))
+	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Slot: 1, Root: root[:]}))
 	require.NoError(t, service.cfg.StateGen.SaveState(ctx, root, st))
 	require.NoError(t, service.verifyBlkPreState(ctx, wsb.Block().ParentRoot()))
 }
@@ -233,7 +233,7 @@ func TestFillForkChoiceMissingBlocks_CanSave(t *testing.T) {
 
 	// save invalid block at slot 0 because doubly linked tree enforces that
 	// the parent of the last block inserted is the tree node.
-	fcp := &ethpb.Checkpoint{Epoch: 0, Root: service.originBlockRoot[:]}
+	fcp := &silapb.Checkpoint{Epoch: 0, Root: service.originBlockRoot[:]}
 	r0 := bytesutil.ToBytes32(roots[0])
 	state, blkRoot, err := prepareForkchoiceState(ctx, 0, r0, service.originBlockRoot, [32]byte{}, fcp, fcp)
 	require.NoError(t, err)
@@ -275,7 +275,7 @@ func TestFillForkChoiceMissingBlocks_RootsMatch(t *testing.T) {
 
 	// save invalid block at slot 0 because doubly linked tree enforces that
 	// the parent of the last block inserted is the tree node.
-	fcp := &ethpb.Checkpoint{Epoch: 0, Root: service.originBlockRoot[:]}
+	fcp := &silapb.Checkpoint{Epoch: 0, Root: service.originBlockRoot[:]}
 	r0 := bytesutil.ToBytes32(roots[0])
 	state, blkRoot, err := prepareForkchoiceState(ctx, 0, r0, service.originBlockRoot, [32]byte{}, fcp, fcp)
 	require.NoError(t, err)
@@ -421,17 +421,17 @@ func TestFillForkChoiceMissingBlocks_ErrorCases(t *testing.T) {
 			util.SaveBlock(t, ctx, beaconDB, blk)
 
 			// Create checkpoints with test case epochs
-			finalizedCheckpoint := &ethpb.Checkpoint{
+			finalizedCheckpoint := &silapb.Checkpoint{
 				Epoch: tt.finalizedEpoch,
 				Root:  service.originBlockRoot[:],
 			}
-			justifiedCheckpoint := &ethpb.Checkpoint{
+			justifiedCheckpoint := &silapb.Checkpoint{
 				Epoch: tt.justifiedEpoch,
 				Root:  service.originBlockRoot[:],
 			}
 
 			// Set up forkchoice store to avoid other errors
-			fcp := &ethpb.Checkpoint{Epoch: 0, Root: service.originBlockRoot[:]}
+			fcp := &silapb.Checkpoint{Epoch: 0, Root: service.originBlockRoot[:]}
 			state, blkRoot, err := prepareForkchoiceState(ctx, 0, service.originBlockRoot, service.originBlockRoot, [32]byte{}, fcp, fcp)
 			require.NoError(t, err)
 			require.NoError(t, service.cfg.ForkChoiceStore.InsertNode(ctx, state, blkRoot))
@@ -520,7 +520,7 @@ func blockTree1(t *testing.T, beaconDB db.Database, genesisRoot []byte) ([][]byt
 	st, err := util.NewBeaconState()
 	require.NoError(t, err)
 
-	for _, b := range []*ethpb.SignedBeaconBlock{b0, b1, b3, b4, b5, b6, b7, b8} {
+	for _, b := range []*silapb.SignedBeaconBlock{b0, b1, b3, b4, b5, b6, b7, b8} {
 		beaconBlock := util.NewBeaconBlock()
 		beaconBlock.Block.Slot = b.Block.Slot
 		beaconBlock.Block.ParentRoot = bytesutil.PadTo(b.Block.ParentRoot, 32)
@@ -582,7 +582,7 @@ func TestAncestor_HandleSkipSlot(t *testing.T) {
 	b200.Block.ParentRoot = r100[:]
 	r200, err := b200.Block.HashTreeRoot()
 	require.NoError(t, err)
-	for _, b := range []*ethpb.SignedBeaconBlock{b1, b100, b200} {
+	for _, b := range []*silapb.SignedBeaconBlock{b1, b100, b200} {
 		beaconBlock := util.NewBeaconBlock()
 		beaconBlock.Block.Slot = b.Block.Slot
 		beaconBlock.Block.ParentRoot = bytesutil.PadTo(b.Block.ParentRoot, 32)
@@ -625,9 +625,9 @@ func TestAncestor_CanUseForkchoice(t *testing.T) {
 	b200.Block.ParentRoot = r100[:]
 	r200, err := b200.Block.HashTreeRoot()
 	require.NoError(t, err)
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	for _, b := range []*ethpb.SignedBeaconBlock{b1, b100, b200} {
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	for _, b := range []*silapb.SignedBeaconBlock{b1, b100, b200} {
 		beaconBlock := util.NewBeaconBlock()
 		beaconBlock.Block.Slot = b.Block.Slot
 		beaconBlock.Block.ParentRoot = bytesutil.PadTo(b.Block.ParentRoot, 32)
@@ -664,9 +664,9 @@ func TestAncestor_CanUseDB(t *testing.T) {
 	b200.Block.ParentRoot = r100[:]
 	r200, err := b200.Block.HashTreeRoot()
 	require.NoError(t, err)
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	for _, b := range []*ethpb.SignedBeaconBlock{b1, b100, b200} {
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	for _, b := range []*silapb.SignedBeaconBlock{b1, b100, b200} {
 		beaconBlock := util.NewBeaconBlock()
 		beaconBlock.Block.Slot = b.Block.Slot
 		beaconBlock.Block.ParentRoot = bytesutil.PadTo(b.Block.ParentRoot, 32)
@@ -869,13 +869,13 @@ func TestInsertFinalizedDeposits(t *testing.T) {
 	gs, _ := util.DeterministicGenesisState(t, 32)
 	require.NoError(t, service.saveGenesisData(ctx, gs))
 	gs = gs.Copy()
-	assert.NoError(t, gs.SetEth1Data(&ethpb.Eth1Data{DepositCount: 10, BlockHash: make([]byte, 32)}))
+	assert.NoError(t, gs.SetEth1Data(&silapb.Eth1Data{DepositCount: 10, BlockHash: make([]byte, 32)}))
 	assert.NoError(t, gs.SetEth1DepositIndex(8))
 	assert.NoError(t, service.cfg.StateGen.SaveState(ctx, [32]byte{'m', 'o', 'c', 'k'}, gs))
 	var zeroSig [96]byte
 	for i := uint64(0); i < uint64(4*params.BeaconConfig().SlotsPerEpoch); i++ {
 		root := []byte(strconv.Itoa(int(i)))
-		assert.NoError(t, depositCache.InsertDeposit(ctx, &ethpb.Deposit{Data: &ethpb.Deposit_Data{
+		assert.NoError(t, depositCache.InsertDeposit(ctx, &silapb.Deposit{Data: &silapb.Deposit_Data{
 			PublicKey:             bytesutil.FromBytes48([fieldparams.BLSPubkeyLength]byte{}),
 			WithdrawalCredentials: params.BeaconConfig().ZeroHash[:],
 			Amount:                0,
@@ -899,19 +899,19 @@ func TestInsertFinalizedDeposits_PrunePendingDeposits(t *testing.T) {
 	gs, _ := util.DeterministicGenesisState(t, 32)
 	require.NoError(t, service.saveGenesisData(ctx, gs))
 	gs = gs.Copy()
-	assert.NoError(t, gs.SetEth1Data(&ethpb.Eth1Data{DepositCount: 10, BlockHash: make([]byte, 32)}))
+	assert.NoError(t, gs.SetEth1Data(&silapb.Eth1Data{DepositCount: 10, BlockHash: make([]byte, 32)}))
 	assert.NoError(t, gs.SetEth1DepositIndex(8))
 	assert.NoError(t, service.cfg.StateGen.SaveState(ctx, [32]byte{'m', 'o', 'c', 'k'}, gs))
 	var zeroSig [96]byte
 	for i := uint64(0); i < uint64(4*params.BeaconConfig().SlotsPerEpoch); i++ {
 		root := []byte(strconv.Itoa(int(i)))
-		assert.NoError(t, depositCache.InsertDeposit(ctx, &ethpb.Deposit{Data: &ethpb.Deposit_Data{
+		assert.NoError(t, depositCache.InsertDeposit(ctx, &silapb.Deposit{Data: &silapb.Deposit_Data{
 			PublicKey:             bytesutil.FromBytes48([fieldparams.BLSPubkeyLength]byte{}),
 			WithdrawalCredentials: params.BeaconConfig().ZeroHash[:],
 			Amount:                0,
 			Signature:             zeroSig[:],
 		}, Proof: [][]byte{root}}, 100+i, int64(i), bytesutil.ToBytes32(root)))
-		depositCache.InsertPendingDeposit(ctx, &ethpb.Deposit{Data: &ethpb.Deposit_Data{
+		depositCache.InsertPendingDeposit(ctx, &silapb.Deposit{Data: &silapb.Deposit_Data{
 			PublicKey:             bytesutil.FromBytes48([fieldparams.BLSPubkeyLength]byte{}),
 			WithdrawalCredentials: params.BeaconConfig().ZeroHash[:],
 			Amount:                0,
@@ -939,17 +939,17 @@ func TestInsertFinalizedDeposits_MultipleFinalizedRoutines(t *testing.T) {
 	gs, _ := util.DeterministicGenesisState(t, 32)
 	require.NoError(t, service.saveGenesisData(ctx, gs))
 	gs = gs.Copy()
-	assert.NoError(t, gs.SetEth1Data(&ethpb.Eth1Data{DepositCount: 7, BlockHash: make([]byte, 32)}))
+	assert.NoError(t, gs.SetEth1Data(&silapb.Eth1Data{DepositCount: 7, BlockHash: make([]byte, 32)}))
 	assert.NoError(t, gs.SetEth1DepositIndex(6))
 	assert.NoError(t, service.cfg.StateGen.SaveState(ctx, [32]byte{'m', 'o', 'c', 'k'}, gs))
 	gs2 := gs.Copy()
-	assert.NoError(t, gs2.SetEth1Data(&ethpb.Eth1Data{DepositCount: 15, BlockHash: make([]byte, 32)}))
+	assert.NoError(t, gs2.SetEth1Data(&silapb.Eth1Data{DepositCount: 15, BlockHash: make([]byte, 32)}))
 	assert.NoError(t, gs2.SetEth1DepositIndex(13))
 	assert.NoError(t, service.cfg.StateGen.SaveState(ctx, [32]byte{'m', 'o', 'c', 'k', '2'}, gs2))
 	var zeroSig [96]byte
 	for i := uint64(0); i < uint64(4*params.BeaconConfig().SlotsPerEpoch); i++ {
 		root := []byte(strconv.Itoa(int(i)))
-		assert.NoError(t, depositCache.InsertDeposit(ctx, &ethpb.Deposit{Data: &ethpb.Deposit_Data{
+		assert.NoError(t, depositCache.InsertDeposit(ctx, &silapb.Deposit{Data: &silapb.Deposit_Data{
 			PublicKey:             bytesutil.FromBytes48([fieldparams.BLSPubkeyLength]byte{}),
 			WithdrawalCredentials: params.BeaconConfig().ZeroHash[:],
 			Amount:                0,
@@ -991,10 +991,10 @@ func TestRemoveBlockAttestationsInPool(t *testing.T) {
 	ctx := t.Context()
 	beaconDB := testDB.SetupDB(t)
 	service := setupBeaconChain(t, beaconDB)
-	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Root: r[:]}))
+	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Root: r[:]}))
 	require.NoError(t, service.cfg.BeaconDB.SaveGenesisBlockRoot(ctx, r))
 
-	atts := make([]ethpb.Att, len(b.Block.Body.Attestations))
+	atts := make([]silapb.Att, len(b.Block.Body.Attestations))
 	for i, a := range b.Block.Body.Attestations {
 		atts[i] = a
 	}
@@ -1182,7 +1182,7 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 				TotalDifficulty: "0x1",
 			}
 			service.cfg.ExecutionEngineCaller = e
-			b := util.HydrateSignedBeaconBlockBellatrix(&ethpb.SignedBeaconBlockBellatrix{})
+			b := util.HydrateSignedBeaconBlockBellatrix(&silapb.SignedBeaconBlockBellatrix{})
 			b.Block.Body.ExecutionPayload = tt.payload
 			blk, err := consensusblocks.NewSignedBeaconBlock(b)
 			require.NoError(t, err)
@@ -1201,9 +1201,9 @@ func TestService_insertSlashingsToForkChoiceStore(t *testing.T) {
 	ctx := tr.ctx
 
 	beaconState, privKeys := util.DeterministicGenesisState(t, 100)
-	att1 := util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: 1},
+	att1 := util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: 1},
 		},
 		AttestingIndices: []uint64{0, 1},
 	})
@@ -1216,7 +1216,7 @@ func TestService_insertSlashingsToForkChoiceStore(t *testing.T) {
 	aggregateSig := bls.AggregateSignatures([]bls.Signature{sig0, sig1})
 	att1.Signature = aggregateSig.Marshal()
 
-	att2 := util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+	att2 := util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 		AttestingIndices: []uint64{0, 1},
 	})
 	signingRoot, err = signing.ComputeSigningRoot(att2.Data, domain)
@@ -1225,7 +1225,7 @@ func TestService_insertSlashingsToForkChoiceStore(t *testing.T) {
 	sig1 = privKeys[1].Sign(signingRoot[:])
 	aggregateSig = bls.AggregateSignatures([]bls.Signature{sig0, sig1})
 	att2.Signature = aggregateSig.Marshal()
-	slashings := []*ethpb.AttesterSlashing{
+	slashings := []*silapb.AttesterSlashing{
 		{
 			Attestation_1: att1,
 			Attestation_2: att2,
@@ -1243,9 +1243,9 @@ func TestService_insertSlashingsToForkChoiceStoreElectra(t *testing.T) {
 	ctx := tr.ctx
 
 	beaconState, privKeys := util.DeterministicGenesisStateElectra(t, 100)
-	att1 := util.HydrateIndexedAttestationElectra(&ethpb.IndexedAttestationElectra{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: 1},
+	att1 := util.HydrateIndexedAttestationElectra(&silapb.IndexedAttestationElectra{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: 1},
 		},
 		AttestingIndices: []uint64{0, 1},
 	})
@@ -1258,7 +1258,7 @@ func TestService_insertSlashingsToForkChoiceStoreElectra(t *testing.T) {
 	aggregateSig := bls.AggregateSignatures([]bls.Signature{sig0, sig1})
 	att1.Signature = aggregateSig.Marshal()
 
-	att2 := util.HydrateIndexedAttestationElectra(&ethpb.IndexedAttestationElectra{
+	att2 := util.HydrateIndexedAttestationElectra(&silapb.IndexedAttestationElectra{
 		AttestingIndices: []uint64{0, 1},
 	})
 	signingRoot, err = signing.ComputeSigningRoot(att2.Data, domain)
@@ -1267,7 +1267,7 @@ func TestService_insertSlashingsToForkChoiceStoreElectra(t *testing.T) {
 	sig1 = privKeys[1].Sign(signingRoot[:])
 	aggregateSig = bls.AggregateSignatures([]bls.Signature{sig0, sig1})
 	att2.Signature = aggregateSig.Marshal()
-	slashings := []*ethpb.AttesterSlashingElectra{
+	slashings := []*silapb.AttesterSlashingElectra{
 		{
 			Attestation_1: att1,
 			Attestation_2: att2,
@@ -1314,7 +1314,7 @@ func TestOnBlock_ProcessBlocksParallel(t *testing.T) {
 
 	logHook := logTest.NewGlobal()
 	for range 10 {
-		fc := &ethpb.Checkpoint{}
+		fc := &silapb.Checkpoint{}
 		st, blkRoot, err := prepareForkchoiceState(ctx, 0, wsb1.Block().ParentRoot(), [32]byte{}, [32]byte{}, fc, fc)
 		require.NoError(t, err)
 		require.NoError(t, service.cfg.ForkChoiceStore.InsertNode(ctx, st, blkRoot))
@@ -1391,7 +1391,7 @@ func Test_verifyBlkFinalizedSlot_invalidBlock(t *testing.T) {
 	service, _ := minimalTestService(t)
 
 	require.NoError(t, service.cfg.ForkChoiceStore.UpdateFinalizedCheckpoint(&forkchoicetypes.Checkpoint{Epoch: 1}))
-	blk := util.HydrateBeaconBlock(&ethpb.BeaconBlock{Slot: 1})
+	blk := util.HydrateBeaconBlock(&silapb.BeaconBlock{Slot: 1})
 	wb, err := consensusblocks.NewBeaconBlock(blk)
 	require.NoError(t, err)
 	err = service.verifyBlkFinalizedSlot(wb)
@@ -2503,8 +2503,8 @@ func TestRollbackBlock_SavePostStateInfo_ContextDeadline(t *testing.T) {
 	require.NoError(t, err, "Could not get signing root")
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, st, parentRoot), "Could not save genesis state")
 	require.NoError(t, service.cfg.BeaconDB.SaveHeadBlockRoot(ctx, parentRoot), "Could not save genesis state")
-	require.NoError(t, service.cfg.BeaconDB.SaveJustifiedCheckpoint(ctx, &ethpb.Checkpoint{Root: parentRoot[:]}))
-	require.NoError(t, service.cfg.BeaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Root: parentRoot[:]}))
+	require.NoError(t, service.cfg.BeaconDB.SaveJustifiedCheckpoint(ctx, &silapb.Checkpoint{Root: parentRoot[:]}))
+	require.NoError(t, service.cfg.BeaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Root: parentRoot[:]}))
 
 	st, err = service.HeadState(ctx)
 	require.NoError(t, err)
@@ -2524,7 +2524,7 @@ func TestRollbackBlock_SavePostStateInfo_ContextDeadline(t *testing.T) {
 	// Save state summaries so that the cache is flushed and saved to disk
 	// later.
 	for i := 1; i <= 127; i++ {
-		require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{
+		require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &silapb.StateSummary{
 			Slot: primitives.Slot(i),
 			Root: bytesutil.Bytes32(uint64(i)),
 		}))
@@ -2561,8 +2561,8 @@ func TestRollbackBlock_ContextDeadline(t *testing.T) {
 	require.NoError(t, err, "Could not get signing root")
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, st, parentRoot), "Could not save genesis state")
 	require.NoError(t, service.cfg.BeaconDB.SaveHeadBlockRoot(ctx, parentRoot), "Could not save genesis state")
-	require.NoError(t, service.cfg.BeaconDB.SaveJustifiedCheckpoint(ctx, &ethpb.Checkpoint{Root: parentRoot[:]}))
-	require.NoError(t, service.cfg.BeaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Root: parentRoot[:]}))
+	require.NoError(t, service.cfg.BeaconDB.SaveJustifiedCheckpoint(ctx, &silapb.Checkpoint{Root: parentRoot[:]}))
+	require.NoError(t, service.cfg.BeaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Root: parentRoot[:]}))
 
 	st, err = service.HeadState(ctx)
 	require.NoError(t, err)
@@ -2608,7 +2608,7 @@ func TestRollbackBlock_ContextDeadline(t *testing.T) {
 
 	parentRoot = roblock.Block().ParentRoot()
 
-	cj := &ethpb.Checkpoint{}
+	cj := &silapb.Checkpoint{}
 	cj.Epoch = 1
 	cj.Root = parentRoot[:]
 	require.NoError(t, postState.SetCurrentJustifiedCheckpoint(cj))
@@ -2739,7 +2739,7 @@ func TestProcessLightClientUpdate(t *testing.T) {
 				for i := range 5 {
 					scb[i] = 0x01
 				}
-				oldUpdate.SetSyncAggregate(&ethpb.SyncAggregate{
+				oldUpdate.SetSyncAggregate(&silapb.SyncAggregate{
 					SyncCommitteeBits:      scb,
 					SyncCommitteeSignature: make([]byte, 96),
 				})
@@ -3517,14 +3517,14 @@ func TestHandleBlockPayloadAttestations(t *testing.T) {
 		unknownRoot := bytesutil.ToBytes32([]byte("unknown"))
 		bits := bitfield.NewBitvector512()
 		bits.SetBitAt(0, true)
-		blk := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-			Block: &ethpb.BeaconBlockGloas{
+		blk := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+			Block: &silapb.BeaconBlockGloas{
 				Slot: 2,
-				Body: &ethpb.BeaconBlockBodyGloas{
-					PayloadAttestations: []*ethpb.PayloadAttestation{
+				Body: &silapb.BeaconBlockBodyGloas{
+					PayloadAttestations: []*silapb.PayloadAttestation{
 						{
 							AggregationBits: bits,
-							Data: &ethpb.PayloadAttestationData{
+							Data: &silapb.PayloadAttestationData{
 								BeaconBlockRoot:   unknownRoot[:],
 								Slot:              1,
 								PayloadPresent:    true,
@@ -3562,14 +3562,14 @@ func TestHandleBlockPayloadAttestations(t *testing.T) {
 		bits := bitfield.NewBitvector512()
 		bits.SetBitAt(0, true)
 		bits.SetBitAt(2, true)
-		blk := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-			Block: &ethpb.BeaconBlockGloas{
+		blk := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+			Block: &silapb.BeaconBlockGloas{
 				Slot: 2,
-				Body: &ethpb.BeaconBlockBodyGloas{
-					PayloadAttestations: []*ethpb.PayloadAttestation{
+				Body: &silapb.BeaconBlockBodyGloas{
+					PayloadAttestations: []*silapb.PayloadAttestation{
 						{
 							AggregationBits: bits,
-							Data: &ethpb.PayloadAttestationData{
+							Data: &silapb.PayloadAttestationData{
 								BeaconBlockRoot:   blockRoot[:],
 								Slot:              1,
 								PayloadPresent:    true,
@@ -3604,14 +3604,14 @@ func TestHandleBlockPayloadAttestations(t *testing.T) {
 		bits1.SetBitAt(0, true)
 		bits2 := bitfield.NewBitvector512()
 		bits2.SetBitAt(1, true)
-		blk := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-			Block: &ethpb.BeaconBlockGloas{
+		blk := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+			Block: &silapb.BeaconBlockGloas{
 				Slot: 2,
-				Body: &ethpb.BeaconBlockBodyGloas{
-					PayloadAttestations: []*ethpb.PayloadAttestation{
+				Body: &silapb.BeaconBlockBodyGloas{
+					PayloadAttestations: []*silapb.PayloadAttestation{
 						{
 							AggregationBits: bits1,
-							Data: &ethpb.PayloadAttestationData{
+							Data: &silapb.PayloadAttestationData{
 								BeaconBlockRoot:   blockRoot[:],
 								Slot:              1,
 								PayloadPresent:    true,
@@ -3621,7 +3621,7 @@ func TestHandleBlockPayloadAttestations(t *testing.T) {
 						},
 						{
 							AggregationBits: bits2,
-							Data: &ethpb.PayloadAttestationData{
+							Data: &silapb.PayloadAttestationData{
 								BeaconBlockRoot:   blockRoot[:],
 								Slot:              1,
 								PayloadPresent:    false,
@@ -3668,20 +3668,20 @@ func TestHandleBlockAttestations_GloasSameSlotPayloadVote(t *testing.T) {
 		aggBits.SetBitAt(0, true)
 		cb := primitives.NewAttestationCommitteeBits()
 		cb.SetBitAt(0, true)
-		blk := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-			Block: &ethpb.BeaconBlockGloas{
+		blk := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+			Block: &silapb.BeaconBlockGloas{
 				Slot: 2,
-				Body: &ethpb.BeaconBlockBodyGloas{
-					Attestations: []*ethpb.AttestationElectra{
+				Body: &silapb.BeaconBlockBodyGloas{
+					Attestations: []*silapb.AttestationElectra{
 						{
 							AggregationBits: aggBits,
 							CommitteeBits:   cb,
-							Data: &ethpb.AttestationData{
+							Data: &silapb.AttestationData{
 								Slot:            attSlot,
 								CommitteeIndex:  1,
 								BeaconBlockRoot: blockRoot[:],
-								Source:          &ethpb.Checkpoint{Root: make([]byte, 32)},
-								Target:          &ethpb.Checkpoint{Root: make([]byte, 32)},
+								Source:          &silapb.Checkpoint{Root: make([]byte, 32)},
+								Target:          &silapb.Checkpoint{Root: make([]byte, 32)},
 							},
 							Signature: make([]byte, 96),
 						},

@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -30,11 +30,11 @@ func VerifyBeaconStateSlotDataRace(t *testing.T, factory getState) {
 	wg.Wait()
 }
 
-type getStateWithCurrentJustifiedCheckpoint func(*ethpb.Checkpoint) (state.BeaconState, error)
+type getStateWithCurrentJustifiedCheckpoint func(*silapb.Checkpoint) (state.BeaconState, error)
 
 func VerifyBeaconStateMatchCurrentJustifiedCheckptNative(t *testing.T, factory getStateWithCurrentJustifiedCheckpoint) {
-	c1 := &ethpb.Checkpoint{Epoch: 1}
-	c2 := &ethpb.Checkpoint{Epoch: 2}
+	c1 := &silapb.Checkpoint{Epoch: 1}
+	c2 := &silapb.Checkpoint{Epoch: 2}
 	beaconState, err := factory(c1)
 	require.NoError(t, err)
 	require.Equal(t, true, beaconState.MatchCurrentJustifiedCheckpoint(c1))
@@ -44,8 +44,8 @@ func VerifyBeaconStateMatchCurrentJustifiedCheckptNative(t *testing.T, factory g
 }
 
 func VerifyBeaconStateMatchPreviousJustifiedCheckptNative(t *testing.T, factory getStateWithCurrentJustifiedCheckpoint) {
-	c1 := &ethpb.Checkpoint{Epoch: 1}
-	c2 := &ethpb.Checkpoint{Epoch: 2}
+	c1 := &silapb.Checkpoint{Epoch: 1}
+	c2 := &silapb.Checkpoint{Epoch: 2}
 	beaconState, err := factory(c1)
 	require.NoError(t, err)
 	require.Equal(t, false, beaconState.MatchCurrentJustifiedCheckpoint(c1))
@@ -71,7 +71,7 @@ func VerifyBeaconStateValidatorByPubkey(t *testing.T, factory getState) {
 		{
 			name: "retrieve validator",
 			modifyFunc: func(b state.BeaconState, key [fieldparams.BLSPubkeyLength]byte) {
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key[:]}))
 			},
 			exists:      true,
 			expectedIdx: 0,
@@ -81,9 +81,9 @@ func VerifyBeaconStateValidatorByPubkey(t *testing.T, factory getState) {
 			modifyFunc: func(b state.BeaconState, key [fieldparams.BLSPubkeyLength]byte) {
 				key1 := keyCreator([]byte{'C'})
 				key2 := keyCreator([]byte{'D'})
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key[:]}))
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key1[:]}))
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key2[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key1[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key2[:]}))
 			},
 			exists:      true,
 			expectedIdx: 0,
@@ -93,9 +93,9 @@ func VerifyBeaconStateValidatorByPubkey(t *testing.T, factory getState) {
 			modifyFunc: func(b state.BeaconState, key [fieldparams.BLSPubkeyLength]byte) {
 				key1 := keyCreator([]byte{'C'})
 				key2 := keyCreator([]byte{'D'})
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key1[:]}))
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key2[:]}))
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key1[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key2[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key[:]}))
 			},
 			exists:      true,
 			expectedIdx: 2,
@@ -105,10 +105,10 @@ func VerifyBeaconStateValidatorByPubkey(t *testing.T, factory getState) {
 			modifyFunc: func(b state.BeaconState, key [fieldparams.BLSPubkeyLength]byte) {
 				key1 := keyCreator([]byte{'C'})
 				key2 := keyCreator([]byte{'D'})
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key[:]}))
 				_ = b.Copy()
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key1[:]}))
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key2[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key1[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key2[:]}))
 			},
 			exists:      true,
 			expectedIdx: 0,
@@ -118,11 +118,11 @@ func VerifyBeaconStateValidatorByPubkey(t *testing.T, factory getState) {
 			modifyFunc: func(b state.BeaconState, key [fieldparams.BLSPubkeyLength]byte) {
 				key1 := keyCreator([]byte{'C'})
 				key2 := keyCreator([]byte{'D'})
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key1[:]}))
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key2[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key1[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key2[:]}))
 				n := b.Copy()
 				// Append to another state
-				assert.NoError(t, n.AppendValidator(&ethpb.Validator{PublicKey: key[:]}))
+				assert.NoError(t, n.AppendValidator(&silapb.Validator{PublicKey: key[:]}))
 			},
 			exists:      false,
 			expectedIdx: 0,
@@ -131,10 +131,10 @@ func VerifyBeaconStateValidatorByPubkey(t *testing.T, factory getState) {
 			name: "retrieve validator with multiple validators with shared state at boundary",
 			modifyFunc: func(b state.BeaconState, key [fieldparams.BLSPubkeyLength]byte) {
 				key1 := keyCreator([]byte{'C'})
-				assert.NoError(t, b.AppendValidator(&ethpb.Validator{PublicKey: key1[:]}))
+				assert.NoError(t, b.AppendValidator(&silapb.Validator{PublicKey: key1[:]}))
 				n := b.Copy()
 				// Append to another state
-				assert.NoError(t, n.AppendValidator(&ethpb.Validator{PublicKey: key[:]}))
+				assert.NoError(t, n.AppendValidator(&silapb.Validator{PublicKey: key[:]}))
 			},
 			exists:      false,
 			expectedIdx: 0,

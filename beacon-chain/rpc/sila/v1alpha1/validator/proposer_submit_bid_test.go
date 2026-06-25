@@ -6,7 +6,7 @@ import (
 	p2pmock "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/testing"
 	mockSync "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync/initial-sync/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -24,8 +24,8 @@ func TestSubmitSignedExecutionPayloadBid_OK(t *testing.T) {
 		P2P:         p2p,
 	}
 
-	req := &ethpb.SignedExecutionPayloadBid{
-		Message: &ethpb.ExecutionPayloadBid{
+	req := &silapb.SignedExecutionPayloadBid{
+		Message: &silapb.ExecutionPayloadBid{
 			ParentBlockHash:       make([]byte, 32),
 			ParentBlockRoot:       make([]byte, 32),
 			BlockHash:             make([]byte, 32),
@@ -59,7 +59,7 @@ func TestSubmitSignedExecutionPayloadBid_NilMessage(t *testing.T) {
 	vs := &Server{
 		SyncChecker: &mockSync.Sync{IsSyncing: false},
 	}
-	_, err := vs.SubmitSignedExecutionPayloadBid(t.Context(), &ethpb.SignedExecutionPayloadBid{})
+	_, err := vs.SubmitSignedExecutionPayloadBid(t.Context(), &silapb.SignedExecutionPayloadBid{})
 	require.ErrorContains(t, "nil", err)
 }
 
@@ -67,8 +67,8 @@ func TestSubmitSignedExecutionPayloadBid_Syncing(t *testing.T) {
 	vs := &Server{
 		SyncChecker: &mockSync.Sync{IsSyncing: true},
 	}
-	req := &ethpb.SignedExecutionPayloadBid{
-		Message: &ethpb.ExecutionPayloadBid{Slot: 10},
+	req := &silapb.SignedExecutionPayloadBid{
+		Message: &silapb.ExecutionPayloadBid{Slot: 10},
 	}
 	_, err := vs.SubmitSignedExecutionPayloadBid(t.Context(), req)
 	require.ErrorContains(t, "Syncing", err)
@@ -83,8 +83,8 @@ func TestSubmitSignedExecutionPayloadBid_PreGloas(t *testing.T) {
 	vs := &Server{
 		SyncChecker: &mockSync.Sync{IsSyncing: false},
 	}
-	req := &ethpb.SignedExecutionPayloadBid{
-		Message: &ethpb.ExecutionPayloadBid{Slot: 10},
+	req := &silapb.SignedExecutionPayloadBid{
+		Message: &silapb.ExecutionPayloadBid{Slot: 10},
 	}
 	_, err := vs.SubmitSignedExecutionPayloadBid(t.Context(), req)
 	require.ErrorContains(t, "not supported before Gloas", err)

@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/logs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -99,7 +99,7 @@ func logStateTransitionData(b interfaces.ReadOnlyBeaconBlock) error {
 	return nil
 }
 
-func logBlockSyncStatus(block interfaces.ReadOnlyBeaconBlock, blockRoot [32]byte, justified, finalized *ethpb.Checkpoint, receivedTime time.Time, genesis time.Time, daWaitedTime time.Duration) error {
+func logBlockSyncStatus(block interfaces.ReadOnlyBeaconBlock, blockRoot [32]byte, justified, finalized *silapb.Checkpoint, receivedTime time.Time, genesis time.Time, daWaitedTime time.Duration) error {
 	startTime, err := slots.StartTime(genesis, block.Slot())
 	if err != nil {
 		return errors.Wrap(err, "failed to get slot start time")

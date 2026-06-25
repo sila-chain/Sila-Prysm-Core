@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
@@ -70,7 +70,7 @@ func ProcessBLSToExecutionChanges(
 //	    + b'\x00' * 11
 //	    + address_change.to_execution_address
 //	)
-func processBLSToExecutionChange(st state.BeaconState, signed *ethpb.SignedBLSToExecutionChange) (state.BeaconState, error) {
+func processBLSToExecutionChange(st state.BeaconState, signed *silapb.SignedBLSToExecutionChange) (state.BeaconState, error) {
 	// Checks that the message passes the validation conditions.
 	val, err := ValidateBLSToExecutionChange(st, signed)
 	if err != nil {
@@ -87,7 +87,7 @@ func processBLSToExecutionChange(st state.BeaconState, signed *ethpb.SignedBLSTo
 
 // ValidateBLSToExecutionChange validates the execution change message against the state and returns the
 // validator referenced by the message.
-func ValidateBLSToExecutionChange(st state.ReadOnlyBeaconState, signed *ethpb.SignedBLSToExecutionChange) (*ethpb.Validator, error) {
+func ValidateBLSToExecutionChange(st state.ReadOnlyBeaconState, signed *silapb.SignedBLSToExecutionChange) (*silapb.Validator, error) {
 	if signed == nil {
 		return nil, errNilSignedWithdrawalMessage
 	}
@@ -230,7 +230,7 @@ func ProcessWithdrawals(st state.BeaconState, executionData interfaces.Execution
 // messages and transforms them into a signature batch object.
 func BLSChangesSignatureBatch(
 	st state.ReadOnlyBeaconState,
-	changes []*ethpb.SignedBLSToExecutionChange,
+	changes []*silapb.SignedBLSToExecutionChange,
 ) (*bls.SignatureBatch, error) {
 	// Return early if no changes
 	if len(changes) == 0 {
@@ -269,7 +269,7 @@ func BLSChangesSignatureBatch(
 // is from a previous fork.
 func VerifyBLSChangeSignature(
 	st state.ReadOnlyBeaconState,
-	change *ethpb.SignedBLSToExecutionChange,
+	change *silapb.SignedBLSToExecutionChange,
 ) error {
 	c := params.BeaconConfig()
 	domain, err := signing.ComputeDomain(c.DomainBLSToExecutionChange, c.GenesisForkVersion, st.GenesisValidatorsRoot())

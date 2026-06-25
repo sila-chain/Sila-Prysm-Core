@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/backup"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -55,16 +55,16 @@ type ValidatorDB interface {
 	LowestSignedSourceEpoch(ctx context.Context, publicKey [fieldparams.BLSPubkeyLength]byte) (primitives.Epoch, bool, error)
 	AttestedPublicKeys(ctx context.Context) ([][fieldparams.BLSPubkeyLength]byte, error)
 	SlashableAttestationCheck(
-		ctx context.Context, indexedAtt ethpb.IndexedAtt, pubKey [fieldparams.BLSPubkeyLength]byte,
+		ctx context.Context, indexedAtt silapb.IndexedAtt, pubKey [fieldparams.BLSPubkeyLength]byte,
 		signingRoot32 [32]byte,
 		emitAccountMetrics bool,
 		validatorAttestFailVec *prometheus.CounterVec,
 	) error
 	SaveAttestationForPubKey(
-		ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoot [fieldparams.RootLength]byte, att ethpb.IndexedAtt,
+		ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoot [fieldparams.RootLength]byte, att silapb.IndexedAtt,
 	) error
 	SaveAttestationsForPubKey(
-		ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoots [][]byte, atts []*ethpb.IndexedAttestation,
+		ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoots [][]byte, atts []*silapb.IndexedAttestation,
 	) error
 	AttestationHistoryForPubKey(
 		ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte,

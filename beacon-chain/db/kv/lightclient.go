@@ -11,7 +11,7 @@ import (
 	light_client "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/golang/snappy"
 	"github.com/pkg/errors"
@@ -95,7 +95,7 @@ func (s *Store) LightClientBootstrap(ctx context.Context, blockRoot []byte) (int
 		if syncCommitteeBytes == nil {
 			return errors.New("sync committee not found")
 		}
-		syncCommittee := &ethpb.SyncCommittee{}
+		syncCommittee := &silapb.SyncCommittee{}
 		if err := syncCommittee.UnmarshalSSZ(syncCommitteeBytes); err != nil {
 			return errors.Wrap(err, "could not unmarshal sync committee")
 		}
@@ -108,13 +108,13 @@ func (s *Store) LightClientBootstrap(ctx context.Context, blockRoot []byte) (int
 	return bootstrap, err
 }
 
-func createEmptySyncCommittee() *ethpb.SyncCommittee {
+func createEmptySyncCommittee() *silapb.SyncCommittee {
 	syncCom := make([][]byte, params.BeaconConfig().SyncCommitteeSize)
 	for i := 0; uint64(i) < params.BeaconConfig().SyncCommitteeSize; i++ {
 		syncCom[i] = make([]byte, fieldparams.BLSPubkeyLength)
 	}
 
-	return &ethpb.SyncCommittee{
+	return &silapb.SyncCommittee{
 		Pubkeys:         syncCom,
 		AggregatePubkey: make([]byte, fieldparams.BLSPubkeyLength),
 	}
@@ -147,42 +147,42 @@ func decodeLightClientBootstrap(enc []byte) (interfaces.LightClientBootstrap, []
 	var syncCommitteeHash []byte
 	switch {
 	case hasAltairKey(enc):
-		bootstrap := &ethpb.LightClientBootstrapAltair{}
+		bootstrap := &silapb.LightClientBootstrapAltair{}
 		if err := bootstrap.UnmarshalSSZ(enc[len(altairKey)+32:]); err != nil {
 			return nil, nil, errors.Wrap(err, "could not unmarshal Altair light client bootstrap")
 		}
 		m = bootstrap
 		syncCommitteeHash = enc[len(altairKey) : len(altairKey)+32]
 	case hasBellatrixKey(enc):
-		bootstrap := &ethpb.LightClientBootstrapAltair{}
+		bootstrap := &silapb.LightClientBootstrapAltair{}
 		if err := bootstrap.UnmarshalSSZ(enc[len(bellatrixKey)+32:]); err != nil {
 			return nil, nil, errors.Wrap(err, "could not unmarshal Bellatrix light client bootstrap")
 		}
 		m = bootstrap
 		syncCommitteeHash = enc[len(bellatrixKey) : len(bellatrixKey)+32]
 	case hasCapellaKey(enc):
-		bootstrap := &ethpb.LightClientBootstrapCapella{}
+		bootstrap := &silapb.LightClientBootstrapCapella{}
 		if err := bootstrap.UnmarshalSSZ(enc[len(capellaKey)+32:]); err != nil {
 			return nil, nil, errors.Wrap(err, "could not unmarshal Capella light client bootstrap")
 		}
 		m = bootstrap
 		syncCommitteeHash = enc[len(capellaKey) : len(capellaKey)+32]
 	case hasDenebKey(enc):
-		bootstrap := &ethpb.LightClientBootstrapDeneb{}
+		bootstrap := &silapb.LightClientBootstrapDeneb{}
 		if err := bootstrap.UnmarshalSSZ(enc[len(denebKey)+32:]); err != nil {
 			return nil, nil, errors.Wrap(err, "could not unmarshal Deneb light client bootstrap")
 		}
 		m = bootstrap
 		syncCommitteeHash = enc[len(denebKey) : len(denebKey)+32]
 	case HasElectraKey(enc):
-		bootstrap := &ethpb.LightClientBootstrapElectra{}
+		bootstrap := &silapb.LightClientBootstrapElectra{}
 		if err := bootstrap.UnmarshalSSZ(enc[len(ElectraKey)+32:]); err != nil {
 			return nil, nil, errors.Wrap(err, "could not unmarshal Electra light client bootstrap")
 		}
 		m = bootstrap
 		syncCommitteeHash = enc[len(ElectraKey) : len(ElectraKey)+32]
 	case hasFuluKey(enc):
-		bootstrap := &ethpb.LightClientBootstrapElectra{}
+		bootstrap := &silapb.LightClientBootstrapElectra{}
 		if err := bootstrap.UnmarshalSSZ(enc[len(fuluKey)+32:]); err != nil {
 			return nil, nil, errors.Wrap(err, "could not unmarshal Electra light client bootstrap")
 		}
@@ -274,37 +274,37 @@ func decodeLightClientUpdate(enc []byte) (interfaces.LightClientUpdate, error) {
 	var m proto.Message
 	switch {
 	case hasAltairKey(enc):
-		update := &ethpb.LightClientUpdateAltair{}
+		update := &silapb.LightClientUpdateAltair{}
 		if err := update.UnmarshalSSZ(enc[len(altairKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Altair light client update")
 		}
 		m = update
 	case hasBellatrixKey(enc):
-		update := &ethpb.LightClientUpdateAltair{}
+		update := &silapb.LightClientUpdateAltair{}
 		if err := update.UnmarshalSSZ(enc[len(bellatrixKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Bellatrix light client update")
 		}
 		m = update
 	case hasCapellaKey(enc):
-		update := &ethpb.LightClientUpdateCapella{}
+		update := &silapb.LightClientUpdateCapella{}
 		if err := update.UnmarshalSSZ(enc[len(capellaKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Capella light client update")
 		}
 		m = update
 	case hasDenebKey(enc):
-		update := &ethpb.LightClientUpdateDeneb{}
+		update := &silapb.LightClientUpdateDeneb{}
 		if err := update.UnmarshalSSZ(enc[len(denebKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Deneb light client update")
 		}
 		m = update
 	case HasElectraKey(enc):
-		update := &ethpb.LightClientUpdateElectra{}
+		update := &silapb.LightClientUpdateElectra{}
 		if err := update.UnmarshalSSZ(enc[len(ElectraKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Electra light client update")
 		}
 		m = update
 	case hasFuluKey(enc):
-		update := &ethpb.LightClientUpdateElectra{}
+		update := &silapb.LightClientUpdateElectra{}
 		if err := update.UnmarshalSSZ(enc[len(fuluKey):]); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal Fulu light client update")
 		}

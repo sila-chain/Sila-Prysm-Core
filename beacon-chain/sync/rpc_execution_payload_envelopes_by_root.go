@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	libp2pcore "github.com/libp2p/go-libp2p/core"
 	"github.com/pkg/errors"
@@ -75,7 +75,7 @@ func (s *Service) executionPayloadEnvelopesByRootRPCHandler(ctx context.Context,
 
 	type requestedEnvelope struct {
 		root [32]byte
-		env  *ethpb.SignedBlindedExecutionPayloadEnvelope
+		env  *silapb.SignedBlindedExecutionPayloadEnvelope
 	}
 	if s.cfg.executionReconstructor == nil {
 		recordResult(executionPayloadEnvelopeRPCResultError)
@@ -151,8 +151,8 @@ func (s *Service) executionPayloadEnvelopesByRootRPCHandler(ctx context.Context,
 				log.WithField("root", fmt.Sprintf("%#x", req.root)).Debug("Missing reconstructed payload after successful batch call")
 				continue
 			}
-			envelope := &ethpb.SignedExecutionPayloadEnvelope{
-				Message: &ethpb.ExecutionPayloadEnvelope{
+			envelope := &silapb.SignedExecutionPayloadEnvelope{
+				Message: &silapb.ExecutionPayloadEnvelope{
 					Payload:               payload,
 					ExecutionRequests:     req.env.Message.ExecutionRequests,
 					BuilderIndex:          req.env.Message.BuilderIndex,

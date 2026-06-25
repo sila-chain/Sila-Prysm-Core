@@ -6,19 +6,19 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // signedExecutionPayloadBid wraps the protobuf signed execution payload bid
 // and implements the ROSignedExecutionPayloadBid interface.
 type signedExecutionPayloadBid struct {
-	bid *ethpb.SignedExecutionPayloadBid
+	bid *silapb.SignedExecutionPayloadBid
 }
 
 // executionPayloadBidGloas wraps the protobuf execution payload bid for Gloas fork
 // and implements the ROExecutionPayloadBidGloas interface.
 type executionPayloadBidGloas struct {
-	payload *ethpb.ExecutionPayloadBid
+	payload *silapb.ExecutionPayloadBid
 }
 
 // IsNil checks if the signed execution payload bid is nil or invalid.
@@ -59,7 +59,7 @@ func (h executionPayloadBidGloas) IsNil() bool {
 
 // WrappedROSignedExecutionPayloadBid creates a new read-only signed execution payload bid
 // wrapper from the given protobuf message.
-func WrappedROSignedExecutionPayloadBid(pb *ethpb.SignedExecutionPayloadBid) (interfaces.ROSignedExecutionPayloadBid, error) {
+func WrappedROSignedExecutionPayloadBid(pb *silapb.SignedExecutionPayloadBid) (interfaces.ROSignedExecutionPayloadBid, error) {
 	wrapper := signedExecutionPayloadBid{bid: pb}
 	if wrapper.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -69,7 +69,7 @@ func WrappedROSignedExecutionPayloadBid(pb *ethpb.SignedExecutionPayloadBid) (in
 
 // WrappedROExecutionPayloadBid creates a new read-only execution payload bid
 // wrapper for the Gloas fork from the given protobuf message.
-func WrappedROExecutionPayloadBid(pb *ethpb.ExecutionPayloadBid) (interfaces.ROExecutionPayloadBid, error) {
+func WrappedROExecutionPayloadBid(pb *silapb.ExecutionPayloadBid) (interfaces.ROExecutionPayloadBid, error) {
 	wrapper := executionPayloadBidGloas{payload: pb}
 	if wrapper.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped

@@ -7,7 +7,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -21,7 +21,7 @@ func buildStateWithBlockRoots(t *testing.T, stateSlot primitives.Slot, roots map
 		blockRoots[slot%cfg.SlotsPerHistoricalRoot] = root
 	}
 
-	stProto := &ethpb.BeaconStateGloas{
+	stProto := &silapb.BeaconStateGloas{
 		Slot:       stateSlot,
 		BlockRoots: blockRoots,
 	}
@@ -33,7 +33,7 @@ func buildStateWithBlockRoots(t *testing.T, stateSlot primitives.Slot, roots map
 
 func TestMatchingPayload(t *testing.T) {
 	t.Run("pre-gloas always true", func(t *testing.T) {
-		stIface, err := state_native.InitializeFromProtoElectra(&ethpb.BeaconStateElectra{})
+		stIface, err := state_native.InitializeFromProtoElectra(&silapb.BeaconStateElectra{})
 		require.NoError(t, err)
 
 		ok, err := MatchingPayload(stIface, [32]byte{}, 0, 123)
@@ -82,11 +82,11 @@ func TestMatchingPayload(t *testing.T) {
 		slotIndex := uint64(4)
 		availability[slotIndex/8] = byte(1 << (slotIndex % 8))
 
-		stIface, err := state_native.InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+		stIface, err := state_native.InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 			Slot:                         6,
 			BlockRoots:                   blockRoots,
 			ExecutionPayloadAvailability: availability,
-			Fork: &ethpb.Fork{
+			Fork: &silapb.Fork{
 				CurrentVersion:  bytes.Repeat([]byte{0x66}, 4),
 				PreviousVersion: bytes.Repeat([]byte{0x66}, 4),
 				Epoch:           0,

@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"google.golang.org/grpc/codes"
@@ -16,7 +16,7 @@ import (
 )
 
 // GetAttesterDuties returns attester duties for the requested validators at the given epoch.
-func (vs *Server) GetAttesterDuties(ctx context.Context, req *ethpb.AttesterDutiesRequest) (*ethpb.AttesterDutiesResponse, error) {
+func (vs *Server) GetAttesterDuties(ctx context.Context, req *silapb.AttesterDutiesRequest) (*silapb.AttesterDutiesResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.GetAttesterDuties")
 	defer span.End()
 
@@ -53,9 +53,9 @@ func (vs *Server) GetAttesterDuties(ctx context.Context, req *ethpb.AttesterDuti
 		return nil, status.Errorf(codes.Internal, "Could not determine optimistic status: %v", err)
 	}
 
-	dutiesResponses := make([]*ethpb.AttesterDuty, len(duties))
+	dutiesResponses := make([]*silapb.AttesterDuty, len(duties))
 	for i, d := range duties {
-		dutiesResponses[i] = &ethpb.AttesterDuty{
+		dutiesResponses[i] = &silapb.AttesterDuty{
 			Pubkey:                  d.Pubkey[:],
 			ValidatorIndex:          d.ValidatorIndex,
 			CommitteeIndex:          d.CommitteeIndex,
@@ -66,7 +66,7 @@ func (vs *Server) GetAttesterDuties(ctx context.Context, req *ethpb.AttesterDuti
 		}
 	}
 
-	return &ethpb.AttesterDutiesResponse{
+	return &silapb.AttesterDutiesResponse{
 		DependentRoot:       dependentRoot,
 		ExecutionOptimistic: optimistic,
 		Duties:              dutiesResponses,
@@ -74,7 +74,7 @@ func (vs *Server) GetAttesterDuties(ctx context.Context, req *ethpb.AttesterDuti
 }
 
 // GetProposerDutiesV2 returns proposer duties for the given epoch.
-func (vs *Server) GetProposerDutiesV2(ctx context.Context, req *ethpb.ProposerDutiesRequest) (*ethpb.ProposerDutiesResponse, error) {
+func (vs *Server) GetProposerDutiesV2(ctx context.Context, req *silapb.ProposerDutiesRequest) (*silapb.ProposerDutiesResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.GetProposerDutiesV2")
 	defer span.End()
 
@@ -111,16 +111,16 @@ func (vs *Server) GetProposerDutiesV2(ctx context.Context, req *ethpb.ProposerDu
 		return nil, status.Errorf(codes.Internal, "Could not determine optimistic status: %v", err)
 	}
 
-	dutiesResponses := make([]*ethpb.ProposerDutyV2, len(duties))
+	dutiesResponses := make([]*silapb.ProposerDutyV2, len(duties))
 	for i, d := range duties {
-		dutiesResponses[i] = &ethpb.ProposerDutyV2{
+		dutiesResponses[i] = &silapb.ProposerDutyV2{
 			Pubkey:         d.Pubkey[:],
 			ValidatorIndex: d.ValidatorIndex,
 			Slot:           d.Slot,
 		}
 	}
 
-	return &ethpb.ProposerDutiesResponse{
+	return &silapb.ProposerDutiesResponse{
 		DependentRoot:       dependentRoot,
 		ExecutionOptimistic: optimistic,
 		Duties:              dutiesResponses,
@@ -128,7 +128,7 @@ func (vs *Server) GetProposerDutiesV2(ctx context.Context, req *ethpb.ProposerDu
 }
 
 // GetSyncCommitteeDuties returns sync committee duties for the requested validators at the given epoch.
-func (vs *Server) GetSyncCommitteeDuties(ctx context.Context, req *ethpb.SyncCommitteeDutiesRequest) (*ethpb.SyncCommitteeDutiesResponse, error) {
+func (vs *Server) GetSyncCommitteeDuties(ctx context.Context, req *silapb.SyncCommitteeDutiesRequest) (*silapb.SyncCommitteeDutiesResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.GetSyncCommitteeDuties")
 	defer span.End()
 
@@ -161,23 +161,23 @@ func (vs *Server) GetSyncCommitteeDuties(ctx context.Context, req *ethpb.SyncCom
 		return nil, status.Errorf(codes.Internal, "Could not determine optimistic status: %v", err)
 	}
 
-	dutiesResponses := make([]*ethpb.SyncCommitteeDuty, len(duties))
+	dutiesResponses := make([]*silapb.SyncCommitteeDuty, len(duties))
 	for i, d := range duties {
-		dutiesResponses[i] = &ethpb.SyncCommitteeDuty{
+		dutiesResponses[i] = &silapb.SyncCommitteeDuty{
 			Pubkey:                        d.Pubkey[:],
 			ValidatorIndex:                d.ValidatorIndex,
 			ValidatorSyncCommitteeIndices: d.ValidatorSyncCommitteeIndices,
 		}
 	}
 
-	return &ethpb.SyncCommitteeDutiesResponse{
+	return &silapb.SyncCommitteeDutiesResponse{
 		ExecutionOptimistic: optimistic,
 		Duties:              dutiesResponses,
 	}, nil
 }
 
 // GetPTCDuties returns payload timeliness committee duties for the requested validators at the given epoch.
-func (vs *Server) GetPTCDuties(ctx context.Context, req *ethpb.PTCDutiesRequest) (*ethpb.PTCDutiesResponse, error) {
+func (vs *Server) GetPTCDuties(ctx context.Context, req *silapb.PTCDutiesRequest) (*silapb.PTCDutiesResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.GetPTCDuties")
 	defer span.End()
 
@@ -219,16 +219,16 @@ func (vs *Server) GetPTCDuties(ctx context.Context, req *ethpb.PTCDutiesRequest)
 		return nil, status.Errorf(codes.Internal, "Could not determine optimistic status: %v", err)
 	}
 
-	dutiesResponses := make([]*ethpb.PTCDuty, len(duties))
+	dutiesResponses := make([]*silapb.PTCDuty, len(duties))
 	for i, d := range duties {
-		dutiesResponses[i] = &ethpb.PTCDuty{
+		dutiesResponses[i] = &silapb.PTCDuty{
 			Pubkey:         d.Pubkey[:],
 			ValidatorIndex: d.ValidatorIndex,
 			Slot:           d.Slot,
 		}
 	}
 
-	return &ethpb.PTCDutiesResponse{
+	return &silapb.PTCDutiesResponse{
 		DependentRoot:       dependentRoot,
 		ExecutionOptimistic: optimistic,
 		Duties:              dutiesResponses,

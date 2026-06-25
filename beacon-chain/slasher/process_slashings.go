@@ -6,16 +6,16 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/blocks"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
 // Verifies attester slashings, logs them, and submits them to the slashing operations pool
 // in the beacon node if they pass validation.
 func (s *Service) processAttesterSlashings(
-	ctx context.Context, slashings map[[fieldparams.RootLength]byte]ethpb.AttSlashing,
-) (map[[fieldparams.RootLength]byte]ethpb.AttSlashing, error) {
-	processedSlashings := map[[fieldparams.RootLength]byte]ethpb.AttSlashing{}
+	ctx context.Context, slashings map[[fieldparams.RootLength]byte]silapb.AttSlashing,
+) (map[[fieldparams.RootLength]byte]silapb.AttSlashing, error) {
+	processedSlashings := map[[fieldparams.RootLength]byte]silapb.AttSlashing{}
 
 	// If no slashings, return early.
 	if len(slashings) == 0 {
@@ -61,7 +61,7 @@ func (s *Service) processAttesterSlashings(
 
 // Verifies proposer slashings, logs them, and submits them to the slashing operations pool
 // in the beacon node if they pass validation.
-func (s *Service) processProposerSlashings(ctx context.Context, slashings []*ethpb.ProposerSlashing) error {
+func (s *Service) processProposerSlashings(ctx context.Context, slashings []*silapb.ProposerSlashing) error {
 	// If no slashings, return early.
 	if len(slashings) == 0 {
 		return nil
@@ -102,7 +102,7 @@ func (s *Service) processProposerSlashings(ctx context.Context, slashings []*eth
 	return nil
 }
 
-func (s *Service) verifyBlockSignature(ctx context.Context, header *ethpb.SignedBeaconBlockHeader) error {
+func (s *Service) verifyBlockSignature(ctx context.Context, header *silapb.SignedBeaconBlockHeader) error {
 	parentState, err := s.serviceCfg.StateGen.StateByRoot(ctx, bytesutil.ToBytes32(header.Header.ParentRoot))
 	if err != nil {
 		return err
@@ -110,7 +110,7 @@ func (s *Service) verifyBlockSignature(ctx context.Context, header *ethpb.Signed
 	return blocks.VerifyBlockHeaderSignature(parentState, header)
 }
 
-func (s *Service) verifyAttSignature(ctx context.Context, att ethpb.IndexedAtt) error {
+func (s *Service) verifyAttSignature(ctx context.Context, att silapb.IndexedAtt) error {
 	preState, err := s.serviceCfg.AttestationStateFetcher.AttestationTargetState(ctx, att.GetData().Target)
 	if err != nil {
 		return err

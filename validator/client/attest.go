@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -92,15 +92,15 @@ func (v *validator) SubmitAttestation(ctx context.Context, slot primitives.Slot,
 		return
 	}
 
-	var indexedAtt ethpb.IndexedAtt
+	var indexedAtt silapb.IndexedAtt
 	if postElectra {
-		indexedAtt = &ethpb.IndexedAttestationElectra{
+		indexedAtt = &silapb.IndexedAttestationElectra{
 			AttestingIndices: []uint64{uint64(duty.ValidatorIndex)},
 			Data:             data,
 			Signature:        sig,
 		}
 	} else {
-		indexedAtt = &ethpb.IndexedAttestation{
+		indexedAtt = &silapb.IndexedAttestation{
 			AttestingIndices: []uint64{uint64(duty.ValidatorIndex)},
 			Data:             data,
 			Signature:        sig,
@@ -128,10 +128,10 @@ func (v *validator) SubmitAttestation(ctx context.Context, slot primitives.Slot,
 	}
 
 	var aggregationBitfield bitfield.Bitlist
-	var attestation ethpb.Att
-	var attResp *ethpb.AttestResponse
+	var attestation silapb.Att
+	var attResp *silapb.AttestResponse
 	if postElectra {
-		sa := &ethpb.SingleAttestation{
+		sa := &silapb.SingleAttestation{
 			Data:          data,
 			AttesterIndex: duty.ValidatorIndex,
 			CommitteeId:   duty.CommitteeIndex,
@@ -142,7 +142,7 @@ func (v *validator) SubmitAttestation(ctx context.Context, slot primitives.Slot,
 	} else {
 		aggregationBitfield = bitfield.NewBitlist(duty.CommitteeLength)
 		aggregationBitfield.SetBitAt(duty.ValidatorCommitteeIndex, true)
-		a := &ethpb.Attestation{
+		a := &silapb.Attestation{
 			Data:            data,
 			AggregationBits: aggregationBitfield,
 			Signature:       sig,
@@ -190,7 +190,7 @@ func (v *validator) SubmitAttestation(ctx context.Context, slot primitives.Slot,
 }
 
 // Given the validator public key, this gets the validator assignment.
-func (v *validator) duty(pubKey [fieldparams.BLSPubkeyLength]byte) (*ethpb.ValidatorDuty, error) {
+func (v *validator) duty(pubKey [fieldparams.BLSPubkeyLength]byte) (*silapb.ValidatorDuty, error) {
 	snap := v.duties.snapshot()
 	if !snap.isInitialized() {
 		return nil, errors.New("no duties for validators")
@@ -203,7 +203,7 @@ func (v *validator) duty(pubKey [fieldparams.BLSPubkeyLength]byte) (*ethpb.Valid
 }
 
 // Given validator's public key, this function returns the signature of an attestation data and its signing root.
-func (v *validator) signAtt(ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, data *ethpb.AttestationData, slot primitives.Slot) ([]byte, [32]byte, error) {
+func (v *validator) signAtt(ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, data *silapb.AttestationData, slot primitives.Slot) ([]byte, [32]byte, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.signAtt")
 	defer span.End()
 
@@ -225,7 +225,7 @@ func (v *validator) signAtt(ctx context.Context, pubKey [fieldparams.BLSPubkeyLe
 	return sig.Marshal(), root, nil
 }
 
-func (v *validator) domainAndSigningRoot(ctx context.Context, data *ethpb.AttestationData) (*ethpb.DomainResponse, [32]byte, error) {
+func (v *validator) domainAndSigningRoot(ctx context.Context, data *silapb.AttestationData) (*silapb.DomainResponse, [32]byte, error) {
 	domain, err := v.domainData(ctx, data.Target.Epoch, params.BeaconConfig().DomainBeaconAttester[:])
 	if err != nil {
 		return nil, [32]byte{}, err
@@ -308,7 +308,7 @@ func (v *validator) waitUntilAttestationDueOrValidBlock(ctx context.Context, slo
 	}
 }
 
-func attestationLogFields(pubKey [fieldparams.BLSPubkeyLength]byte, indexedAtt ethpb.IndexedAtt) logrus.Fields {
+func attestationLogFields(pubKey [fieldparams.BLSPubkeyLength]byte, indexedAtt silapb.IndexedAtt) logrus.Fields {
 	return logrus.Fields{
 		"pubkey":         fmt.Sprintf("%#x", pubKey),
 		"slot":           indexedAtt.GetData().Slot,

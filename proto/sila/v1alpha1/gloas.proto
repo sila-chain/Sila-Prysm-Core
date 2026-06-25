@@ -4,7 +4,7 @@ package ethereum.eth.v1alpha1;
 
 import "proto/engine/v1/execution_engine.proto";
 import "proto/engine/v1/electra.proto";
-import "proto/eth/ext/options.proto";
+import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1alpha1/attestation.proto";
 import "proto/sila/v1alpha1/withdrawals.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
@@ -422,7 +422,7 @@ message BeaconBlockContentsGloas {
 // SignedExecutionPayloadEnvelopeContents bundles a signed execution payload
 // envelope with the raw blobs and KZG proofs needed by a beacon node that has
 // not cached them locally. Used by the stateless publish path of
-// POST /eth/v1/beacon/execution_payload_envelopes.
+// POST /sila/v1/beacon/execution_payload_envelopes.
 message SignedExecutionPayloadEnvelopeContents {
   SignedExecutionPayloadEnvelope signed_execution_payload_envelope = 1;
   repeated bytes kzg_proofs = 2 [

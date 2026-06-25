@@ -6,13 +6,13 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
 // PendingAttRootWithHasher describes a method from which the hash tree root
 // of a pending attestation is returned.
-func PendingAttRootWithHasher(att *ethpb.PendingAttestation) ([32]byte, error) {
+func PendingAttRootWithHasher(att *silapb.PendingAttestation) ([32]byte, error) {
 	var fieldRoots [][32]byte
 
 	// Bitfield.
@@ -40,7 +40,7 @@ func PendingAttRootWithHasher(att *ethpb.PendingAttestation) ([32]byte, error) {
 	return ssz.BitwiseMerkleize(fieldRoots, uint64(len(fieldRoots)), uint64(len(fieldRoots)))
 }
 
-func attDataRootWithHasher(data *ethpb.AttestationData) ([32]byte, error) {
+func attDataRootWithHasher(data *silapb.AttestationData) ([32]byte, error) {
 	fieldRoots := make([][32]byte, 5)
 
 	if data != nil {

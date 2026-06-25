@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	validatormock "github.com/sila-chain/Sila-Consensus-Core/v7/testing/validator-mock"
@@ -285,8 +285,8 @@ func TestListAccounts_LocalKeymanager(t *testing.T) {
 	for i := range pubKeys {
 		pks = append(pks, pubKeys[i][:])
 	}
-	req := &ethpb.MultipleValidatorStatusRequest{PublicKeys: pks}
-	resp := &ethpb.MultipleValidatorStatusResponse{Indices: []types.ValidatorIndex{1, math.MaxUint64, 2}}
+	req := &silapb.MultipleValidatorStatusRequest{PublicKeys: pks}
+	resp := &silapb.MultipleValidatorStatusResponse{Indices: []types.ValidatorIndex{1, math.MaxUint64, 2}}
 
 	m.
 		EXPECT().

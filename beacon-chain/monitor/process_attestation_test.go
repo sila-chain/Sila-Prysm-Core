@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sirupsen/logrus"
@@ -17,8 +17,8 @@ import (
 func TestGetAttestingIndices(t *testing.T) {
 	ctx := t.Context()
 	beaconState, _ := util.DeterministicGenesisState(t, 256)
-	att := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
+	att := &silapb.Attestation{
+		Data: &silapb.AttestationData{
 			Slot:           1,
 			CommitteeIndex: 0,
 		},
@@ -37,16 +37,16 @@ func TestProcessIncludedAttestationTwoTracked(t *testing.T) {
 	require.NoError(t, state.SetSlot(2))
 	require.NoError(t, state.SetCurrentParticipationBits(bytes.Repeat([]byte{0xff}, 13)))
 
-	att := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
+	att := &silapb.Attestation{
+		Data: &silapb.AttestationData{
 			Slot:            1,
 			CommitteeIndex:  0,
 			BeaconBlockRoot: bytesutil.PadTo([]byte("hello-world"), 32),
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: 0,
 				Root:  bytesutil.PadTo([]byte("hello-world"), 32),
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 1,
 				Root:  bytesutil.PadTo([]byte("hello-world"), 32),
 			},
@@ -72,16 +72,16 @@ func TestProcessUnaggregatedAttestationStateNotCached(t *testing.T) {
 	participation := []byte{0xff, 0xff, 0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	require.NoError(t, state.SetCurrentParticipationBits(participation))
 
-	att := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
+	att := &silapb.Attestation{
+		Data: &silapb.AttestationData{
 			Slot:            1,
 			CommitteeIndex:  0,
 			BeaconBlockRoot: header.GetStateRoot(),
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: 0,
 				Root:  bytesutil.PadTo([]byte("hello-world"), 32),
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 1,
 				Root:  bytesutil.PadTo([]byte("hello-world"), 32),
 			},
@@ -105,16 +105,16 @@ func TestProcessUnaggregatedAttestationStateCached(t *testing.T) {
 	var root [32]byte
 	copy(root[:], "hello-world")
 
-	att := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
+	att := &silapb.Attestation{
+		Data: &silapb.AttestationData{
 			Slot:            1,
 			CommitteeIndex:  0,
 			BeaconBlockRoot: root[:],
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: 0,
 				Root:  root[:],
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 1,
 				Root:  root[:],
 			},
@@ -141,18 +141,18 @@ func TestProcessAggregatedAttestationStateNotCached(t *testing.T) {
 	participation := []byte{0xff, 0xff, 0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	require.NoError(t, state.SetCurrentParticipationBits(participation))
 
-	att := &ethpb.AggregateAttestationAndProof{
+	att := &silapb.AggregateAttestationAndProof{
 		AggregatorIndex: 2,
-		Aggregate: &ethpb.Attestation{
-			Data: &ethpb.AttestationData{
+		Aggregate: &silapb.Attestation{
+			Data: &silapb.AttestationData{
 				Slot:            1,
 				CommitteeIndex:  0,
 				BeaconBlockRoot: header.GetStateRoot(),
-				Source: &ethpb.Checkpoint{
+				Source: &silapb.Checkpoint{
 					Epoch: 0,
 					Root:  bytesutil.PadTo([]byte("hello-world"), 32),
 				},
-				Target: &ethpb.Checkpoint{
+				Target: &silapb.Checkpoint{
 					Epoch: 1,
 					Root:  bytesutil.PadTo([]byte("hello-world"), 32),
 				},
@@ -178,18 +178,18 @@ func TestProcessAggregatedAttestationStateCached(t *testing.T) {
 	var root [32]byte
 	copy(root[:], "hello-world")
 
-	att := &ethpb.AggregateAttestationAndProof{
+	att := &silapb.AggregateAttestationAndProof{
 		AggregatorIndex: 2,
-		Aggregate: &ethpb.Attestation{
-			Data: &ethpb.AttestationData{
+		Aggregate: &silapb.Attestation{
+			Data: &silapb.AttestationData{
 				Slot:            1,
 				CommitteeIndex:  0,
 				BeaconBlockRoot: root[:],
-				Source: &ethpb.Checkpoint{
+				Source: &silapb.Checkpoint{
 					Epoch: 0,
 					Root:  root[:],
 				},
-				Target: &ethpb.Checkpoint{
+				Target: &silapb.Checkpoint{
 					Epoch: 1,
 					Root:  root[:],
 				},
@@ -214,16 +214,16 @@ func TestProcessAttestations(t *testing.T) {
 	require.NoError(t, state.SetSlot(2))
 	require.NoError(t, state.SetCurrentParticipationBits(bytes.Repeat([]byte{0xff}, 13)))
 
-	att := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
+	att := &silapb.Attestation{
+		Data: &silapb.AttestationData{
 			Slot:            1,
 			CommitteeIndex:  0,
 			BeaconBlockRoot: bytesutil.PadTo([]byte("hello-world"), 32),
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: 0,
 				Root:  bytesutil.PadTo([]byte("hello-world"), 32),
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 1,
 				Root:  bytesutil.PadTo([]byte("hello-world"), 32),
 			},
@@ -231,10 +231,10 @@ func TestProcessAttestations(t *testing.T) {
 		AggregationBits: bitfield.Bitlist{0b11, 0b1},
 	}
 
-	block := &ethpb.BeaconBlockAltair{
+	block := &silapb.BeaconBlockAltair{
 		Slot: 2,
-		Body: &ethpb.BeaconBlockBodyAltair{
-			Attestations: []*ethpb.Attestation{att},
+		Body: &silapb.BeaconBlockBodyAltair{
+			Attestations: []*silapb.Attestation{att},
 		},
 	}
 

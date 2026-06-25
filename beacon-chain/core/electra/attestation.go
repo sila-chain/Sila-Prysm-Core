@@ -11,7 +11,7 @@ import (
 	customtypes "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native/custom-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 )
 
@@ -23,7 +23,7 @@ var (
 func GetProposerRewardNumerator(
 	ctx context.Context,
 	st state.ReadOnlyBeaconState,
-	att ethpb.Att,
+	att silapb.Att,
 	totalBalance uint64,
 ) (uint64, error) {
 	data := att.GetData()

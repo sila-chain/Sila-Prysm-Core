@@ -3,13 +3,13 @@ package synccommittee
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/queue"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
 // SaveSyncCommitteeMessage saves a sync committee message in to a priority queue.
 // The priority queue capped at syncCommitteeMaxQueueSize contributions.
-func (s *Store) SaveSyncCommitteeMessage(msg *ethpb.SyncCommitteeMessage) error {
+func (s *Store) SaveSyncCommitteeMessage(msg *silapb.SyncCommitteeMessage) error {
 	if msg == nil {
 		return errNilMessage
 	}
@@ -22,12 +22,12 @@ func (s *Store) SaveSyncCommitteeMessage(msg *ethpb.SyncCommitteeMessage) error 
 		return err
 	}
 
-	copied := ethpb.CopySyncCommitteeMessage(msg)
+	copied := silapb.CopySyncCommitteeMessage(msg)
 	// Messages exist in the queue. Append instead of insert new.
 	if item != nil {
-		messages, ok := item.Value.([]*ethpb.SyncCommitteeMessage)
+		messages, ok := item.Value.([]*silapb.SyncCommitteeMessage)
 		if !ok {
-			return errors.New("not typed []ethpb.SyncCommitteeMessage")
+			return errors.New("not typed []silapb.SyncCommitteeMessage")
 		}
 
 		idx := -1
@@ -56,7 +56,7 @@ func (s *Store) SaveSyncCommitteeMessage(msg *ethpb.SyncCommitteeMessage) error 
 	// Message does not exist. Insert new.
 	if err := s.messageCache.Push(&queue.Item{
 		Key:      syncCommitteeKey(msg.Slot),
-		Value:    []*ethpb.SyncCommitteeMessage{copied},
+		Value:    []*silapb.SyncCommitteeMessage{copied},
 		Priority: int64(msg.Slot),
 	}); err != nil {
 		return err
@@ -76,7 +76,7 @@ func (s *Store) SaveSyncCommitteeMessage(msg *ethpb.SyncCommitteeMessage) error 
 // SyncCommitteeMessages returns sync committee messages by slot from the priority queue.
 // When calling this method a copy is avoided as the caller is assumed to be only reading the
 // messages from the store rather than modifying it.
-func (s *Store) SyncCommitteeMessages(slot primitives.Slot) ([]*ethpb.SyncCommitteeMessage, error) {
+func (s *Store) SyncCommitteeMessages(slot primitives.Slot) ([]*silapb.SyncCommitteeMessage, error) {
 	s.messageLock.RLock()
 	defer s.messageLock.RUnlock()
 
@@ -85,9 +85,9 @@ func (s *Store) SyncCommitteeMessages(slot primitives.Slot) ([]*ethpb.SyncCommit
 		return nil, nil
 	}
 
-	messages, ok := item.Value.([]*ethpb.SyncCommitteeMessage)
+	messages, ok := item.Value.([]*silapb.SyncCommitteeMessage)
 	if !ok {
-		return nil, errors.New("not typed []ethpb.SyncCommitteeMessage")
+		return nil, errors.New("not typed []silapb.SyncCommitteeMessage")
 	}
 
 	return messages, nil

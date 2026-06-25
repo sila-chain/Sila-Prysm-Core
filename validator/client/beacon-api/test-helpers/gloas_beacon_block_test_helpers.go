@@ -3,28 +3,28 @@ package test_helpers
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 )
 
-func GenerateProtoGloasBeaconBlock() *ethpb.BeaconBlockGloas {
-	return &ethpb.BeaconBlockGloas{
+func GenerateProtoGloasBeaconBlock() *silapb.BeaconBlockGloas {
+	return &silapb.BeaconBlockGloas{
 		Slot:          1,
 		ProposerIndex: 2,
 		ParentRoot:    FillByteSlice(32, 3),
 		StateRoot:     FillByteSlice(32, 4),
-		Body: &ethpb.BeaconBlockBodyGloas{
+		Body: &silapb.BeaconBlockBodyGloas{
 			RandaoReveal: FillByteSlice(96, 5),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot:  FillByteSlice(32, 6),
 				DepositCount: 7,
 				BlockHash:    FillByteSlice(32, 8),
 			},
 			Graffiti: FillByteSlice(32, 9),
-			ProposerSlashings: []*ethpb.ProposerSlashing{
+			ProposerSlashings: []*silapb.ProposerSlashing{
 				{
-					Header_1: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+					Header_1: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							Slot:          10,
 							ProposerIndex: 11,
 							ParentRoot:    FillByteSlice(32, 12),
@@ -33,8 +33,8 @@ func GenerateProtoGloasBeaconBlock() *ethpb.BeaconBlockGloas {
 						},
 						Signature: FillByteSlice(96, 15),
 					},
-					Header_2: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+					Header_2: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							Slot:          16,
 							ProposerIndex: 17,
 							ParentRoot:    FillByteSlice(32, 18),
@@ -45,17 +45,17 @@ func GenerateProtoGloasBeaconBlock() *ethpb.BeaconBlockGloas {
 					},
 				},
 			},
-			AttesterSlashings: []*ethpb.AttesterSlashingElectra{},
-			Attestations:      []*ethpb.AttestationElectra{},
-			Deposits:          []*ethpb.Deposit{},
-			VoluntaryExits:    []*ethpb.SignedVoluntaryExit{},
-			SyncAggregate: &ethpb.SyncAggregate{
+			AttesterSlashings: []*silapb.AttesterSlashingElectra{},
+			Attestations:      []*silapb.AttestationElectra{},
+			Deposits:          []*silapb.Deposit{},
+			VoluntaryExits:    []*silapb.SignedVoluntaryExit{},
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      FillByteSlice(64, 100),
 				SyncCommitteeSignature: FillByteSlice(96, 101),
 			},
-			BlsToExecutionChanges: []*ethpb.SignedBLSToExecutionChange{},
-			SignedExecutionPayloadBid: &ethpb.SignedExecutionPayloadBid{
-				Message: &ethpb.ExecutionPayloadBid{
+			BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{},
+			SignedExecutionPayloadBid: &silapb.SignedExecutionPayloadBid{
+				Message: &silapb.ExecutionPayloadBid{
 					ParentBlockHash:       FillByteSlice(32, 110),
 					ParentBlockRoot:       FillByteSlice(32, 111),
 					BlockHash:             FillByteSlice(32, 112),
@@ -71,7 +71,7 @@ func GenerateProtoGloasBeaconBlock() *ethpb.BeaconBlockGloas {
 				},
 				Signature: FillByteSlice(96, 130),
 			},
-			PayloadAttestations: []*ethpb.PayloadAttestation{},
+			PayloadAttestations: []*silapb.PayloadAttestation{},
 		},
 	}
 }
@@ -145,8 +145,8 @@ func GenerateJsonGloasBeaconBlock() *structs.BeaconBlockGloas {
 	}
 }
 
-func GenerateProtoExecutionPayloadEnvelope() *ethpb.ExecutionPayloadEnvelope {
-	return &ethpb.ExecutionPayloadEnvelope{
+func GenerateProtoExecutionPayloadEnvelope() *silapb.ExecutionPayloadEnvelope {
+	return &silapb.ExecutionPayloadEnvelope{
 		Payload: &enginev1.ExecutionPayloadGloas{
 			ParentHash:    FillByteSlice(32, 200),
 			FeeRecipient:  FillByteSlice(20, 201),

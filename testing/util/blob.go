@@ -2,15 +2,15 @@ package util
 
 import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // HydrateBlobSidecar hydrates a blob sidecar with correct field length sizes
 // to comply with SSZ marshalling and unmarshalling rules.
-func HydrateBlobSidecar(b *ethpb.BlobSidecar) *ethpb.BlobSidecar {
+func HydrateBlobSidecar(b *silapb.BlobSidecar) *silapb.BlobSidecar {
 	if b.SignedBlockHeader == nil {
-		b.SignedBlockHeader = HydrateSignedBeaconHeader(&ethpb.SignedBeaconBlockHeader{
-			Header: &ethpb.BeaconBlockHeader{},
+		b.SignedBlockHeader = HydrateSignedBeaconHeader(&silapb.SignedBeaconBlockHeader{
+			Header: &silapb.BeaconBlockHeader{},
 		})
 	}
 	if b.Blob == nil {

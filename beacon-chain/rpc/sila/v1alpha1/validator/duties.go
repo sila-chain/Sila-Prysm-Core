@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -21,7 +21,7 @@ import (
 //
 // GetDuties returns the duties assigned to a list of validators specified
 // in the request object.
-func (vs *Server) GetDuties(ctx context.Context, req *ethpb.DutiesRequest) (*ethpb.DutiesResponse, error) {
+func (vs *Server) GetDuties(ctx context.Context, req *silapb.DutiesRequest) (*silapb.DutiesResponse, error) {
 	if vs.SyncChecker.Syncing() {
 		return nil, status.Error(codes.Unavailable, "Syncing to latest head, not ready to respond")
 	}
@@ -30,7 +30,7 @@ func (vs *Server) GetDuties(ctx context.Context, req *ethpb.DutiesRequest) (*eth
 
 // Compute the validator duties from the head state's corresponding epoch
 // for validators public key / indices requested.
-func (vs *Server) duties(ctx context.Context, req *ethpb.DutiesRequest) (*ethpb.DutiesResponse, error) {
+func (vs *Server) duties(ctx context.Context, req *silapb.DutiesRequest) (*silapb.DutiesResponse, error) {
 	currentEpoch := slots.ToEpoch(vs.TimeFetcher.CurrentSlot())
 	if req.Epoch > currentEpoch+1 {
 		return nil, status.Errorf(codes.Unavailable, "Request epoch %d can not be greater than next epoch %d", req.Epoch, currentEpoch+1)
@@ -84,16 +84,16 @@ func (vs *Server) duties(ctx context.Context, req *ethpb.DutiesRequest) (*ethpb.
 	ctx, span := trace.StartSpan(ctx, "getDuties.BuildResponse")
 	defer span.End()
 
-	validatorAssignments := make([]*ethpb.DutiesResponse_Duty, 0, len(req.PublicKeys))
-	nextValidatorAssignments := make([]*ethpb.DutiesResponse_Duty, 0, len(req.PublicKeys))
+	validatorAssignments := make([]*silapb.DutiesResponse_Duty, 0, len(req.PublicKeys))
+	nextValidatorAssignments := make([]*silapb.DutiesResponse_Duty, 0, len(req.PublicKeys))
 	for _, pubKey := range req.PublicKeys {
 		if ctx.Err() != nil {
 			return nil, status.Errorf(codes.Aborted, "Could not continue fetching assignments: %v", ctx.Err())
 		}
-		assignment := &ethpb.DutiesResponse_Duty{
+		assignment := &silapb.DutiesResponse_Duty{
 			PublicKey: pubKey,
 		}
-		nextAssignment := &ethpb.DutiesResponse_Duty{
+		nextAssignment := &silapb.DutiesResponse_Duty{
 			PublicKey: pubKey,
 		}
 		idx, ok := s.ValidatorIndexByPubkey(bytesutil.ToBytes48(pubKey))
@@ -173,7 +173,7 @@ func (vs *Server) duties(ctx context.Context, req *ethpb.DutiesRequest) (*ethpb.
 			return nil, status.Errorf(codes.Internal, "Could not get previous dependent root: %v", err)
 		}
 	}
-	return &ethpb.DutiesResponse{
+	return &silapb.DutiesResponse{
 		PreviousDutyDependentRoot: prevDependentRoot[:],
 		CurrentDutyDependentRoot:  currDependentRoot[:],
 		CurrentEpochDuties:        validatorAssignments,
@@ -185,6 +185,6 @@ func (vs *Server) duties(ctx context.Context, req *ethpb.DutiesRequest) (*ethpb.
 //
 // AssignValidatorToSubnet checks the status and pubkey of a particular validator
 // to discern whether persistent subnets need to be registered for them.
-func (vs *Server) AssignValidatorToSubnet(_ context.Context, req *ethpb.AssignValidatorToSubnetRequest) (*emptypb.Empty, error) {
+func (vs *Server) AssignValidatorToSubnet(_ context.Context, req *silapb.AssignValidatorToSubnetRequest) (*emptypb.Empty, error) {
 	return &emptypb.Empty{}, nil
 }

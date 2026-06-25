@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/math"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
@@ -277,7 +277,7 @@ func ProcessEth1DataReset(state state.BeaconState) (state.BeaconState, error) {
 
 	// Reset ETH1 data votes.
 	if nextEpoch%params.BeaconConfig().EpochsPerEth1VotingPeriod == 0 {
-		if err := state.SetEth1DataVotes([]*ethpb.Eth1Data{}); err != nil {
+		if err := state.SetEth1DataVotes([]*silapb.Eth1Data{}); err != nil {
 			return nil, err
 		}
 	}
@@ -311,7 +311,7 @@ func ProcessEffectiveBalanceUpdates(st state.BeaconState) (state.BeaconState, er
 	bals := st.Balances()
 
 	// Update effective balances with hysteresis.
-	validatorFunc := func(idx int, val state.ReadOnlyValidator) (newVal *ethpb.Validator, err error) {
+	validatorFunc := func(idx int, val state.ReadOnlyValidator) (newVal *silapb.Validator, err error) {
 		if val == nil {
 			return nil, fmt.Errorf("validator %d is nil in state", idx)
 		}
@@ -418,11 +418,11 @@ func ProcessHistoricalDataUpdate(state state.BeaconState) (state.BeaconState, er
 			if err != nil {
 				return nil, err
 			}
-			if err := state.AppendHistoricalSummaries(&ethpb.HistoricalSummary{BlockSummaryRoot: br[:], StateSummaryRoot: sr[:]}); err != nil {
+			if err := state.AppendHistoricalSummaries(&silapb.HistoricalSummary{BlockSummaryRoot: br[:], StateSummaryRoot: sr[:]}); err != nil {
 				return nil, err
 			}
 		} else {
-			historicalBatch := &ethpb.HistoricalBatch{
+			historicalBatch := &silapb.HistoricalBatch{
 				BlockRoots: state.BlockRoots(),
 				StateRoots: state.StateRoots(),
 			}

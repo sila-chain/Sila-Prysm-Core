@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,18 +23,18 @@ import (
 // all beacon committees for the current epoch. The results are paginated by default.
 func (bs *Server) ListBeaconCommittees(
 	ctx context.Context,
-	req *ethpb.ListCommitteesRequest,
-) (*ethpb.BeaconCommittees, error) {
+	req *silapb.ListCommitteesRequest,
+) (*silapb.BeaconCommittees, error) {
 	currentSlot := bs.GenesisTimeFetcher.CurrentSlot()
 	var requestedSlot primitives.Slot
 	switch q := req.QueryFilter.(type) {
-	case *ethpb.ListCommitteesRequest_Epoch:
+	case *silapb.ListCommitteesRequest_Epoch:
 		startSlot, err := slots.EpochStart(q.Epoch)
 		if err != nil {
 			return nil, err
 		}
 		requestedSlot = startSlot
-	case *ethpb.ListCommitteesRequest_Genesis:
+	case *silapb.ListCommitteesRequest_Genesis:
 		requestedSlot = 0
 	default:
 		requestedSlot = currentSlot
@@ -61,7 +61,7 @@ func (bs *Server) ListBeaconCommittees(
 		)
 	}
 
-	return &ethpb.BeaconCommittees{
+	return &silapb.BeaconCommittees{
 		Epoch:                requestedEpoch,
 		Committees:           committees.SlotToUint64(),
 		ActiveValidatorCount: uint64(len(activeIndices)),
@@ -155,7 +155,7 @@ func computeCommittees(
 		if countAtSlot == 0 {
 			countAtSlot = 1
 		}
-		committeeItems := make([]*ethpb.BeaconCommittees_CommitteeItem, countAtSlot)
+		committeeItems := make([]*silapb.BeaconCommittees_CommitteeItem, countAtSlot)
 		for committeeIndex := uint64(0); committeeIndex < countAtSlot; committeeIndex++ {
 			committee, err := helpers.BeaconCommittee(ctx, activeIndices, attesterSeed, slot, primitives.CommitteeIndex(committeeIndex))
 			if err != nil {
@@ -166,11 +166,11 @@ func computeCommittees(
 					err,
 				)
 			}
-			committeeItems[committeeIndex] = &ethpb.BeaconCommittees_CommitteeItem{
+			committeeItems[committeeIndex] = &silapb.BeaconCommittees_CommitteeItem{
 				ValidatorIndices: committee,
 			}
 		}
-		committeesListsBySlot[slot] = &ethpb.BeaconCommittees_CommitteesList{
+		committeesListsBySlot[slot] = &silapb.BeaconCommittees_CommitteesList{
 			Committees: committeeItems,
 		}
 	}
@@ -178,12 +178,12 @@ func computeCommittees(
 }
 
 // SlotToCommiteesMap represents <slot, CommitteeList> map.
-type SlotToCommiteesMap map[primitives.Slot]*ethpb.BeaconCommittees_CommitteesList
+type SlotToCommiteesMap map[primitives.Slot]*silapb.BeaconCommittees_CommitteesList
 
 // SlotToUint64 updates map keys to slots (workaround which will be unnecessary if we can cast
 // map<uint64, CommitteesList> correctly in beacon_chain.proto)
-func (m SlotToCommiteesMap) SlotToUint64() map[uint64]*ethpb.BeaconCommittees_CommitteesList {
-	updatedCommittees := make(map[uint64]*ethpb.BeaconCommittees_CommitteesList, len(m))
+func (m SlotToCommiteesMap) SlotToUint64() map[uint64]*silapb.BeaconCommittees_CommitteesList {
+	updatedCommittees := make(map[uint64]*silapb.BeaconCommittees_CommitteesList, len(m))
 	for k, v := range m {
 		updatedCommittees[uint64(k)] = v
 	}

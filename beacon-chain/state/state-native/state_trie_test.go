@@ -8,7 +8,7 @@ import (
 	statenative "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -23,7 +23,7 @@ func TestInitializeFromProto_Phase0(t *testing.T) {
 	require.NoError(t, err)
 	type test struct {
 		name  string
-		state *ethpb.BeaconState
+		state *silapb.BeaconState
 		error string
 	}
 	initTests := []test{
@@ -34,14 +34,14 @@ func TestInitializeFromProto_Phase0(t *testing.T) {
 		},
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconState{
+			state: &silapb.BeaconState{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconState{},
+			state: &silapb.BeaconState{},
 		},
 		{
 			name:  "full state",
@@ -63,7 +63,7 @@ func TestInitializeFromProto_Phase0(t *testing.T) {
 func TestInitializeFromProto_Altair(t *testing.T) {
 	type test struct {
 		name  string
-		state *ethpb.BeaconStateAltair
+		state *silapb.BeaconStateAltair
 		error string
 	}
 	initTests := []test{
@@ -74,14 +74,14 @@ func TestInitializeFromProto_Altair(t *testing.T) {
 		},
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconStateAltair{
+			state: &silapb.BeaconStateAltair{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconStateAltair{},
+			state: &silapb.BeaconStateAltair{},
 		},
 	}
 	for _, tt := range initTests {
@@ -99,7 +99,7 @@ func TestInitializeFromProto_Altair(t *testing.T) {
 func TestInitializeFromProto_Bellatrix(t *testing.T) {
 	type test struct {
 		name  string
-		state *ethpb.BeaconStateBellatrix
+		state *silapb.BeaconStateBellatrix
 		error string
 	}
 	initTests := []test{
@@ -110,14 +110,14 @@ func TestInitializeFromProto_Bellatrix(t *testing.T) {
 		},
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconStateBellatrix{
+			state: &silapb.BeaconStateBellatrix{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconStateBellatrix{},
+			state: &silapb.BeaconStateBellatrix{},
 		},
 	}
 	for _, tt := range initTests {
@@ -135,7 +135,7 @@ func TestInitializeFromProto_Bellatrix(t *testing.T) {
 func TestInitializeFromProto_Capella(t *testing.T) {
 	type test struct {
 		name  string
-		state *ethpb.BeaconStateCapella
+		state *silapb.BeaconStateCapella
 		error string
 	}
 	initTests := []test{
@@ -146,14 +146,14 @@ func TestInitializeFromProto_Capella(t *testing.T) {
 		},
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconStateCapella{
+			state: &silapb.BeaconStateCapella{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconStateCapella{},
+			state: &silapb.BeaconStateCapella{},
 		},
 	}
 	for _, tt := range initTests {
@@ -171,7 +171,7 @@ func TestInitializeFromProto_Capella(t *testing.T) {
 func TestInitializeFromProto_Deneb(t *testing.T) {
 	type test struct {
 		name  string
-		state *ethpb.BeaconStateDeneb
+		state *silapb.BeaconStateDeneb
 		error string
 	}
 	initTests := []test{
@@ -182,14 +182,14 @@ func TestInitializeFromProto_Deneb(t *testing.T) {
 		},
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconStateDeneb{
+			state: &silapb.BeaconStateDeneb{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconStateDeneb{},
+			state: &silapb.BeaconStateDeneb{},
 		},
 	}
 	for _, tt := range initTests {
@@ -207,7 +207,7 @@ func TestInitializeFromProto_Deneb(t *testing.T) {
 func TestInitializeFromProto_Electra(t *testing.T) {
 	type test struct {
 		name  string
-		state *ethpb.BeaconStateElectra
+		state *silapb.BeaconStateElectra
 		error string
 	}
 	initTests := []test{
@@ -218,14 +218,14 @@ func TestInitializeFromProto_Electra(t *testing.T) {
 		},
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconStateElectra{
+			state: &silapb.BeaconStateElectra{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconStateElectra{},
+			state: &silapb.BeaconStateElectra{},
 		},
 	}
 	for _, tt := range initTests {
@@ -246,20 +246,20 @@ func TestInitializeFromProtoUnsafe_Phase0(t *testing.T) {
 	require.NoError(t, err)
 	type test struct {
 		name  string
-		state *ethpb.BeaconState
+		state *silapb.BeaconState
 		error string
 	}
 	initTests := []test{
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconState{
+			state: &silapb.BeaconState{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconState{},
+			state: &silapb.BeaconState{},
 		},
 		{
 			name:  "full state",
@@ -281,20 +281,20 @@ func TestInitializeFromProtoUnsafe_Phase0(t *testing.T) {
 func TestInitializeFromProtoUnsafe_Altair(t *testing.T) {
 	type test struct {
 		name  string
-		state *ethpb.BeaconStateAltair
+		state *silapb.BeaconStateAltair
 		error string
 	}
 	initTests := []test{
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconStateAltair{
+			state: &silapb.BeaconStateAltair{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconStateAltair{},
+			state: &silapb.BeaconStateAltair{},
 		},
 	}
 	for _, tt := range initTests {
@@ -312,20 +312,20 @@ func TestInitializeFromProtoUnsafe_Altair(t *testing.T) {
 func TestInitializeFromProtoUnsafe_Bellatrix(t *testing.T) {
 	type test struct {
 		name  string
-		state *ethpb.BeaconStateBellatrix
+		state *silapb.BeaconStateBellatrix
 		error string
 	}
 	initTests := []test{
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconStateBellatrix{
+			state: &silapb.BeaconStateBellatrix{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconStateBellatrix{},
+			state: &silapb.BeaconStateBellatrix{},
 		},
 	}
 	for _, tt := range initTests {
@@ -343,20 +343,20 @@ func TestInitializeFromProtoUnsafe_Bellatrix(t *testing.T) {
 func TestInitializeFromProtoUnsafe_Capella(t *testing.T) {
 	type test struct {
 		name  string
-		state *ethpb.BeaconStateCapella
+		state *silapb.BeaconStateCapella
 		error string
 	}
 	initTests := []test{
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconStateCapella{
+			state: &silapb.BeaconStateCapella{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconStateCapella{},
+			state: &silapb.BeaconStateCapella{},
 		},
 	}
 	for _, tt := range initTests {
@@ -374,20 +374,20 @@ func TestInitializeFromProtoUnsafe_Capella(t *testing.T) {
 func TestInitializeFromProtoUnsafe_Deneb(t *testing.T) {
 	type test struct {
 		name  string
-		state *ethpb.BeaconStateDeneb
+		state *silapb.BeaconStateDeneb
 		error string
 	}
 	initTests := []test{
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconStateDeneb{
+			state: &silapb.BeaconStateDeneb{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconStateDeneb{},
+			state: &silapb.BeaconStateDeneb{},
 		},
 	}
 	for _, tt := range initTests {
@@ -405,20 +405,20 @@ func TestInitializeFromProtoUnsafe_Deneb(t *testing.T) {
 func TestInitializeFromProtoUnsafe_Electra(t *testing.T) {
 	type test struct {
 		name  string
-		state *ethpb.BeaconStateElectra
+		state *silapb.BeaconStateElectra
 		error string
 	}
 	initTests := []test{
 		{
 			name: "nil validators",
-			state: &ethpb.BeaconStateElectra{
+			state: &silapb.BeaconStateElectra{
 				Slot:       4,
 				Validators: nil,
 			},
 		},
 		{
 			name:  "empty state",
-			state: &ethpb.BeaconStateElectra{},
+			state: &silapb.BeaconStateElectra{},
 		},
 	}
 	for _, tt := range initTests {
@@ -595,7 +595,7 @@ func TestBeaconState_AppendValidator_DoesntMutateCopy(t *testing.T) {
 	st1 := st0.Copy()
 	originalCount := st1.NumValidators()
 
-	val := &ethpb.Validator{Slashed: true}
+	val := &silapb.Validator{Slashed: true}
 	assert.NoError(t, st0.AppendValidator(val))
 	assert.Equal(t, originalCount, st1.NumValidators(), "st1 NumValidators mutated")
 	_, ok := st1.ValidatorIndexByPubkey(bytesutil.ToBytes48(val.PublicKey))
@@ -613,14 +613,14 @@ func TestBeaconState_ValidatorMutation_Phase0(t *testing.T) {
 	require.NoError(t, err)
 
 	// Reset tries
-	require.NoError(t, testState.UpdateValidatorAtIndex(200, new(ethpb.Validator)))
+	require.NoError(t, testState.UpdateValidatorAtIndex(200, new(silapb.Validator)))
 	_, err = testState.HashTreeRoot(t.Context())
 	require.NoError(t, err)
 
 	newState1 := testState.Copy()
 	_ = testState.Copy()
 
-	require.NoError(t, testState.UpdateValidatorAtIndex(15, &ethpb.Validator{
+	require.NoError(t, testState.UpdateValidatorAtIndex(15, &silapb.Validator{
 		PublicKey:                  make([]byte, 48),
 		WithdrawalCredentials:      make([]byte, 32),
 		EffectiveBalance:           1111,
@@ -644,7 +644,7 @@ func TestBeaconState_ValidatorMutation_Phase0(t *testing.T) {
 
 	assert.Equal(t, rt, rt2)
 
-	require.NoError(t, newState1.UpdateValidatorAtIndex(150, &ethpb.Validator{
+	require.NoError(t, newState1.UpdateValidatorAtIndex(150, &silapb.Validator{
 		PublicKey:                  make([]byte, 48),
 		WithdrawalCredentials:      make([]byte, 32),
 		EffectiveBalance:           2111,
@@ -680,14 +680,14 @@ func TestBeaconState_ValidatorMutation_Altair(t *testing.T) {
 	require.NoError(t, err)
 
 	// Reset tries
-	require.NoError(t, testState.UpdateValidatorAtIndex(200, new(ethpb.Validator)))
+	require.NoError(t, testState.UpdateValidatorAtIndex(200, new(silapb.Validator)))
 	_, err = testState.HashTreeRoot(t.Context())
 	require.NoError(t, err)
 
 	newState1 := testState.Copy()
 	_ = testState.Copy()
 
-	require.NoError(t, testState.UpdateValidatorAtIndex(15, &ethpb.Validator{
+	require.NoError(t, testState.UpdateValidatorAtIndex(15, &silapb.Validator{
 		PublicKey:                  make([]byte, 48),
 		WithdrawalCredentials:      make([]byte, 32),
 		EffectiveBalance:           1111,
@@ -711,7 +711,7 @@ func TestBeaconState_ValidatorMutation_Altair(t *testing.T) {
 
 	assert.Equal(t, rt, rt2)
 
-	require.NoError(t, newState1.UpdateValidatorAtIndex(150, &ethpb.Validator{
+	require.NoError(t, newState1.UpdateValidatorAtIndex(150, &silapb.Validator{
 		PublicKey:                  make([]byte, 48),
 		WithdrawalCredentials:      make([]byte, 32),
 		EffectiveBalance:           2111,
@@ -747,14 +747,14 @@ func TestBeaconState_ValidatorMutation_Bellatrix(t *testing.T) {
 	require.NoError(t, err)
 
 	// Reset tries
-	require.NoError(t, testState.UpdateValidatorAtIndex(200, new(ethpb.Validator)))
+	require.NoError(t, testState.UpdateValidatorAtIndex(200, new(silapb.Validator)))
 	_, err = testState.HashTreeRoot(t.Context())
 	require.NoError(t, err)
 
 	newState1 := testState.Copy()
 	_ = testState.Copy()
 
-	require.NoError(t, testState.UpdateValidatorAtIndex(15, &ethpb.Validator{
+	require.NoError(t, testState.UpdateValidatorAtIndex(15, &silapb.Validator{
 		PublicKey:                  make([]byte, 48),
 		WithdrawalCredentials:      make([]byte, 32),
 		EffectiveBalance:           1111,
@@ -778,7 +778,7 @@ func TestBeaconState_ValidatorMutation_Bellatrix(t *testing.T) {
 
 	assert.Equal(t, rt, rt2)
 
-	require.NoError(t, newState1.UpdateValidatorAtIndex(150, &ethpb.Validator{
+	require.NoError(t, newState1.UpdateValidatorAtIndex(150, &silapb.Validator{
 		PublicKey:                  make([]byte, 48),
 		WithdrawalCredentials:      make([]byte, 32),
 		EffectiveBalance:           2111,
@@ -824,7 +824,7 @@ func TestBeaconState_InitializeInactivityScoresCorrectly_Deneb(t *testing.T) {
 	rt, err := st.HashTreeRoot(t.Context())
 	require.NoError(t, err)
 
-	copiedSt, ok := st.ToProtoUnsafe().(*ethpb.BeaconStateDeneb)
+	copiedSt, ok := st.ToProtoUnsafe().(*silapb.BeaconStateDeneb)
 	if !ok {
 		t.Error("not ok")
 	}
@@ -844,7 +844,7 @@ func TestBeaconChainCopy_Electra(t *testing.T) {
 	require.NoError(t, err)
 	serializedSSZ, err := snappy.Decode(nil /* dst */, serializedBytes)
 	require.NoError(t, err)
-	pb := &ethpb.BeaconStateElectra{}
+	pb := &silapb.BeaconStateElectra{}
 	require.NoError(t, pb.UnmarshalSSZ(serializedSSZ))
 	st, err := statenative.InitializeFromProtoElectra(pb)
 	require.NoError(t, err)

@@ -5,19 +5,19 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	common "github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/common/operations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
 
 func blockWithProposerSlashing(ssz []byte) (interfaces.SignedBeaconBlock, error) {
-	ps := &ethpb.ProposerSlashing{}
+	ps := &silapb.ProposerSlashing{}
 	if err := ps.UnmarshalSSZ(ssz); err != nil {
 		return nil, err
 	}
 	b := util.NewBeaconBlockCapella()
-	b.Block.Body = &ethpb.BeaconBlockBodyCapella{ProposerSlashings: []*ethpb.ProposerSlashing{ps}}
+	b.Block.Body = &silapb.BeaconBlockBodyCapella{ProposerSlashings: []*silapb.ProposerSlashing{ps}}
 	return blocks.NewSignedBeaconBlock(b)
 }
 

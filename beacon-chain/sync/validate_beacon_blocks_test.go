@@ -33,7 +33,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -58,7 +58,7 @@ func TestValidateBeaconBlockPubSub_InvalidSignature(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(ctx, copied)
@@ -73,7 +73,7 @@ func TestValidateBeaconBlockPubSub_InvalidSignature(t *testing.T) {
 
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	chainService := &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		},
@@ -102,7 +102,7 @@ func TestValidateBeaconBlockPubSub_InvalidSignature(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -135,7 +135,7 @@ func TestValidateBeaconBlockPubSub_InvalidSignature_MarksBlockAsBad(t *testing.T
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(ctx, copied)
@@ -150,7 +150,7 @@ func TestValidateBeaconBlockPubSub_InvalidSignature_MarksBlockAsBad(t *testing.T
 
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	chainService := &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		},
@@ -185,7 +185,7 @@ func TestValidateBeaconBlockPubSub_InvalidSignature_MarksBlockAsBad(t *testing.T
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -221,7 +221,7 @@ func TestValidateBeaconBlockPubSub_OutOfRangeProposerIndex(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 
 	msg := util.NewBeaconBlock()
 	msg.Block.ParentRoot = bRoot[:]
@@ -231,7 +231,7 @@ func TestValidateBeaconBlockPubSub_OutOfRangeProposerIndex(t *testing.T) {
 	require.NoError(t, err)
 
 	chainService := &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{Epoch: 0, Root: make([]byte, 32)},
+		FinalizedCheckPoint: &silapb.Checkpoint{Epoch: 0, Root: make([]byte, 32)},
 		DB:                  db,
 		State:               beaconState,
 		Root:                bRoot[:],
@@ -256,7 +256,7 @@ func TestValidateBeaconBlockPubSub_OutOfRangeProposerIndex(t *testing.T) {
 	require.NoError(t, err)
 	digest, err := r.currentForkDigest()
 	require.NoError(t, err)
-	topic := r.addDigestToTopic(p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()], digest)
+	topic := r.addDigestToTopic(p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()], digest)
 	m := &pubsub.Message{Message: &pubsubpb.Message{Data: buf.Bytes(), Topic: &topic}}
 
 	res, err := r.validateBeaconBlockPubSub(ctx, "", m)
@@ -298,7 +298,7 @@ func TestValidateBeaconBlockPubSub_BlockAlreadyPresentInDB(t *testing.T) {
 	_, err := p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
 
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -344,7 +344,7 @@ func TestValidateBeaconBlockPubSub_CanRecoverStateSummary(t *testing.T) {
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	chainService := &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
 		State: beaconState,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		},
@@ -373,7 +373,7 @@ func TestValidateBeaconBlockPubSub_CanRecoverStateSummary(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -410,7 +410,7 @@ func TestValidateBeaconBlockPubSub_IsInCache(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(t.Context(), copied)
@@ -425,7 +425,7 @@ func TestValidateBeaconBlockPubSub_IsInCache(t *testing.T) {
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	chainService := &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
 		State: beaconState,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		},
@@ -455,7 +455,7 @@ func TestValidateBeaconBlockPubSub_IsInCache(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -493,7 +493,7 @@ func TestValidateBeaconBlockPubSub_ValidProposerSignature(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(ctx, copied)
@@ -508,7 +508,7 @@ func TestValidateBeaconBlockPubSub_ValidProposerSignature(t *testing.T) {
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	chainService := &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
 		State: beaconState,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		},
@@ -537,7 +537,7 @@ func TestValidateBeaconBlockPubSub_ValidProposerSignature(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -575,7 +575,7 @@ func TestValidateBeaconBlockPubSub_WithLookahead(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	// The next block is only 1 epoch ahead so as to not induce a new seed.
 	blkSlot := params.BeaconConfig().SlotsPerEpoch.Mul(uint64(coreTime.NextEpoch(copied)))
@@ -595,7 +595,7 @@ func TestValidateBeaconBlockPubSub_WithLookahead(t *testing.T) {
 	chainService := &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-offset, 0),
 		DB:    db,
 		State: beaconState,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 		}}
 	r := &Service{
@@ -622,7 +622,7 @@ func TestValidateBeaconBlockPubSub_WithLookahead(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -660,7 +660,7 @@ func TestValidateBeaconBlockPubSub_AdvanceEpochsForState(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	// The next block is at least 2 epochs ahead to induce shuffling and a new seed.
 	blkSlot := params.BeaconConfig().SlotsPerEpoch * 2
@@ -680,7 +680,7 @@ func TestValidateBeaconBlockPubSub_AdvanceEpochsForState(t *testing.T) {
 	chainService := &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-offset, 0),
 		DB:    db,
 		State: beaconState,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 		}}
 	r := &Service{
@@ -706,7 +706,7 @@ func TestValidateBeaconBlockPubSub_AdvanceEpochsForState(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -747,7 +747,7 @@ func TestValidateBeaconBlockPubSub_Syncing(t *testing.T) {
 	msg.Signature = sk.Sign([]byte("data")).Marshal()
 	chainService := &mock.ChainService{
 		Genesis: time.Now(),
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 		}}
 	r := &Service{
@@ -767,7 +767,7 @@ func TestValidateBeaconBlockPubSub_Syncing(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	m := &pubsub.Message{
 		Message: &pubsubpb.Message{
 			Data:  buf.Bytes(),
@@ -797,7 +797,7 @@ func TestValidateBeaconBlockPubSub_IgnoreAndQueueBlocksFromNearFuture(t *testing
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(ctx, copied)
@@ -812,7 +812,7 @@ func TestValidateBeaconBlockPubSub_IgnoreAndQueueBlocksFromNearFuture(t *testing
 
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	chainService := &mock.ChainService{Genesis: time.Now(),
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		},
@@ -841,7 +841,7 @@ func TestValidateBeaconBlockPubSub_IgnoreAndQueueBlocksFromNearFuture(t *testing
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -903,7 +903,7 @@ func TestValidateBeaconBlockPubSub_RejectBlocksFromFuture(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -941,7 +941,7 @@ func TestValidateBeaconBlockPubSub_RejectBlocksFromThePast(t *testing.T) {
 	genesisTime := time.Now()
 	chainService := &mock.ChainService{
 		Genesis: time.Unix(genesisTime.Unix()-1000, 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 1,
 		},
 	}
@@ -965,7 +965,7 @@ func TestValidateBeaconBlockPubSub_RejectBlocksFromThePast(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -1022,7 +1022,7 @@ func TestValidateBeaconBlockPubSub_SeenProposerSlot(t *testing.T) {
 		Genesis: time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
 		State:   beaconState,
 		Block:   signedBlock, // Set the first block as the head block
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		},
@@ -1054,7 +1054,7 @@ func TestValidateBeaconBlockPubSub_SeenProposerSlot(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msgClone)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -1095,7 +1095,7 @@ func TestValidateBeaconBlockPubSub_FilterByFinalizedEpoch(t *testing.T) {
 	parentRoot, err := parent.Block.HashTreeRoot()
 	require.NoError(t, err)
 	chain := &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 1,
 		},
 		ValidatorsRoot: params.BeaconConfig().GenesisValidatorsRoot,
@@ -1127,7 +1127,7 @@ func TestValidateBeaconBlockPubSub_FilterByFinalizedEpoch(t *testing.T) {
 	require.NoError(t, err)
 	digest, err := signing.ComputeForkDigest(params.BeaconConfig().GenesisForkVersion, params.BeaconConfig().GenesisValidatorsRoot[:])
 	assert.NoError(t, err)
-	topic := fmt.Sprintf(p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()], digest)
+	topic := fmt.Sprintf(p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()], digest)
 	m := &pubsub.Message{
 		Message: &pubsubpb.Message{
 			Data:  buf.Bytes(),
@@ -1173,7 +1173,7 @@ func TestValidateBeaconBlockPubSub_ParentNotFinalizedDescendant(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(ctx, copied)
@@ -1190,7 +1190,7 @@ func TestValidateBeaconBlockPubSub_ParentNotFinalizedDescendant(t *testing.T) {
 		Genesis:      time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
 		NotFinalized: true,
 		State:        beaconState,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		},
@@ -1220,7 +1220,7 @@ func TestValidateBeaconBlockPubSub_ParentNotFinalizedDescendant(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -1252,7 +1252,7 @@ func TestValidateBeaconBlockPubSub_InvalidParentBlock(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(ctx, copied)
@@ -1272,7 +1272,7 @@ func TestValidateBeaconBlockPubSub_InvalidParentBlock(t *testing.T) {
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	chainService := &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
 		State: beaconState,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 		}}
 	r := &Service{
@@ -1298,7 +1298,7 @@ func TestValidateBeaconBlockPubSub_InvalidParentBlock(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -1334,7 +1334,7 @@ func TestValidateBeaconBlockPubSub_InvalidParentBlock(t *testing.T) {
 	}
 	chainService = &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-int64(2*params.BeaconConfig().SecondsPerSlot), 0),
 		State: beaconState,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 		}}
 	r.cfg.chain = chainService
@@ -1363,7 +1363,7 @@ func TestValidateBeaconBlockPubSub_InsertValidPendingBlock(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(ctx, copied)
@@ -1378,7 +1378,7 @@ func TestValidateBeaconBlockPubSub_InsertValidPendingBlock(t *testing.T) {
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	chainService := &mock.ChainService{Genesis: time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
 		State: beaconState,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 		}}
 	r := &Service{
@@ -1404,7 +1404,7 @@ func TestValidateBeaconBlockPubSub_InsertValidPendingBlock(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -1441,7 +1441,7 @@ func TestValidateBeaconBlockPubSub_RejectBlocksFromBadParent(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 
 	copied := beaconState.Copy()
 	// The next block is at least 2 epochs ahead to induce shuffling and a new seed.
@@ -1472,7 +1472,7 @@ func TestValidateBeaconBlockPubSub_RejectBlocksFromBadParent(t *testing.T) {
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	chainService := &mock.ChainService{
 		Genesis: time.Unix(genesisTime.Unix()-int64(slotsSinceGenesis.Mul(perSlot)), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 		},
 	}
@@ -1501,7 +1501,7 @@ func TestValidateBeaconBlockPubSub_RejectBlocksFromBadParent(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()]
 	digest, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, digest)
@@ -1566,7 +1566,7 @@ func TestValidateBeaconBlockPubSub_ValidExecutionPayload(t *testing.T) {
 	now := time.Now()
 	require.NoError(t, beaconState.SetGenesisTime(now))
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(ctx, copied)
@@ -1589,7 +1589,7 @@ func TestValidateBeaconBlockPubSub_ValidExecutionPayload(t *testing.T) {
 	chainService := &mock.ChainService{Genesis: now.Add(-1 * time.Duration(params.BeaconConfig().SecondsPerSlot) * time.Second),
 		ValidatorsRoot: params.BeaconConfig().GenesisValidatorsRoot,
 		DB:             db,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		},
@@ -1617,7 +1617,7 @@ func TestValidateBeaconBlockPubSub_ValidExecutionPayload(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlockBellatrix]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlockBellatrix]()]
 	genesisValidatorsRoot := r.cfg.clock.GenesisValidatorsRoot()
 	BellatrixDigest, err := signing.ComputeForkDigest(params.BeaconConfig().BellatrixForkVersion, genesisValidatorsRoot[:])
 	require.NoError(t, err)
@@ -1656,7 +1656,7 @@ func TestValidateBeaconBlockPubSub_InvalidPayloadTimestamp(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(ctx, copied)
@@ -1679,7 +1679,7 @@ func TestValidateBeaconBlockPubSub_InvalidPayloadTimestamp(t *testing.T) {
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	chainService := &mock.ChainService{Genesis: time.Unix(presentTime-int64(params.BeaconConfig().SecondsPerSlot), 0),
 		DB: db,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		}}
@@ -1704,7 +1704,7 @@ func TestValidateBeaconBlockPubSub_InvalidPayloadTimestamp(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlockBellatrix]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlockBellatrix]()]
 	genesisValidatorsRoot := r.cfg.clock.GenesisValidatorsRoot()
 	BellatrixDigest, err := signing.ComputeForkDigest(params.BeaconConfig().BellatrixForkVersion, genesisValidatorsRoot[:])
 	assert.NoError(t, err)
@@ -1735,7 +1735,7 @@ func Test_validateBellatrixBeaconBlock(t *testing.T) {
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	presentTime := time.Now().Unix()
 	chainService := &mock.ChainService{Genesis: time.Unix(presentTime-int64(params.BeaconConfig().SecondsPerSlot), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		}}
@@ -1771,7 +1771,7 @@ func Test_validateBellatrixBeaconBlockParentValidation(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(ctx, copied)
@@ -1795,7 +1795,7 @@ func Test_validateBellatrixBeaconBlockParentValidation(t *testing.T) {
 
 	chainService := &mock.ChainService{Genesis: beaconState.GenesisTime(),
 		OptimisticRoots: make(map[[32]byte]bool),
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		}}
@@ -1830,7 +1830,7 @@ func Test_validateBeaconBlockProcessingWhenParentIsOptimistic(t *testing.T) {
 	bRoot, err := parentBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 	require.NoError(t, db.SaveState(ctx, beaconState, bRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
 	copied := beaconState.Copy()
 	require.NoError(t, copied.SetSlot(1))
 	proposerIdx, err := helpers.BeaconProposerIndex(ctx, copied)
@@ -1853,7 +1853,7 @@ func Test_validateBeaconBlockProcessingWhenParentIsOptimistic(t *testing.T) {
 		ValidatorsRoot: params.BeaconConfig().GenesisValidatorsRoot,
 		DB:             db,
 		Optimistic:     true,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, 32),
 		},
@@ -1881,7 +1881,7 @@ func Test_validateBeaconBlockProcessingWhenParentIsOptimistic(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlockBellatrix]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlockBellatrix]()]
 	genesisValidatorsRoot := r.cfg.clock.GenesisValidatorsRoot()
 	BellatrixDigest, err := signing.ComputeForkDigest(params.BeaconConfig().BellatrixForkVersion, genesisValidatorsRoot[:])
 	require.NoError(t, err)
@@ -2276,7 +2276,7 @@ func TestBlockVerifyingState_SameEpochAsParent(t *testing.T) {
 	parentState := beaconState.Copy()
 	require.NoError(t, parentState.SetSlot(1))
 	require.NoError(t, db.SaveState(ctx, parentState, parentRoot))
-	require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: parentRoot[:]}))
+	require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: parentRoot[:]}))
 
 	// Create a different head block at a later epoch
 	headBlock := util.NewBeaconBlock()
@@ -2320,7 +2320,7 @@ func TestBlockVerifyingState_SameEpochAsParent(t *testing.T) {
 		Root:         headRoot[:],
 		MockHeadSlot: &headSlot,
 		State:        parentState, // GetBlockPreState returns this for the parent block
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  parentRoot[:],
 		},

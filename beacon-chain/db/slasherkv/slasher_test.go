@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	ssz "github.com/sila-chain/fastssz"
@@ -372,8 +372,8 @@ func Test_encodeDecodeProposalRecord(t *testing.T) {
 		{
 			name: "failing encode/decode",
 			blkHdr: &slashertypes.SignedBlockHeaderWrapper{
-				SignedBeaconBlockHeader: &ethpb.SignedBeaconBlockHeader{
-					Header: &ethpb.BeaconBlockHeader{},
+				SignedBeaconBlockHeader: &silapb.SignedBeaconBlockHeader{
+					Header: &silapb.BeaconBlockHeader{},
 				},
 			},
 			wantErr: true,
@@ -432,8 +432,8 @@ func Test_encodeDecodeAttestationRecord(t *testing.T) {
 		{
 			name: "failing encode/decode",
 			attWrapper: &slashertypes.IndexedAttestationWrapper{
-				IndexedAttestation: &ethpb.IndexedAttestation{
-					Data: &ethpb.AttestationData{},
+				IndexedAttestation: &silapb.IndexedAttestation{
+					Data: &silapb.AttestationData{},
 				},
 			},
 			wantErr: true,
@@ -472,7 +472,7 @@ func TestStore_HighestAttestations(t *testing.T) {
 	tests := []struct {
 		name             string
 		attestationsInDB []*slashertypes.IndexedAttestationWrapper
-		expected         []*ethpb.HighestAttestation
+		expected         []*silapb.HighestAttestation
 		indices          []primitives.ValidatorIndex
 		wantErr          bool
 	}{
@@ -482,7 +482,7 @@ func TestStore_HighestAttestations(t *testing.T) {
 				createAttestationWrapper(version.Phase0, 0, 3, []uint64{1}, []byte{1}),
 			},
 			indices: []primitives.ValidatorIndex{1},
-			expected: []*ethpb.HighestAttestation{
+			expected: []*silapb.HighestAttestation{
 				{
 					ValidatorIndex:     1,
 					HighestSourceEpoch: 0,
@@ -499,7 +499,7 @@ func TestStore_HighestAttestations(t *testing.T) {
 				createAttestationWrapper(version.Phase0, 5, 6, []uint64{5}, []byte{4}),
 			},
 			indices: []primitives.ValidatorIndex{2, 3, 4, 5},
-			expected: []*ethpb.HighestAttestation{
+			expected: []*silapb.HighestAttestation{
 				{
 					ValidatorIndex:     2,
 					HighestSourceEpoch: 0,
@@ -531,7 +531,7 @@ func TestStore_HighestAttestations(t *testing.T) {
 				createAttestationWrapper(version.Phase0, 6, 7, []uint64{5}, []byte{4}),
 			},
 			indices: []primitives.ValidatorIndex{2, 3, 4, 5},
-			expected: []*ethpb.HighestAttestation{
+			expected: []*silapb.HighestAttestation{
 				{
 					ValidatorIndex:     2,
 					HighestSourceEpoch: 4,
@@ -635,7 +635,7 @@ func BenchmarkStore_CheckDoubleBlockProposals(b *testing.B) {
 }
 
 func createProposalWrapper(t *testing.T, slot primitives.Slot, proposerIndex primitives.ValidatorIndex, signingRoot []byte) *slashertypes.SignedBlockHeaderWrapper {
-	header := &ethpb.BeaconBlockHeader{
+	header := &silapb.BeaconBlockHeader{
 		Slot:          slot,
 		ProposerIndex: proposerIndex,
 		ParentRoot:    params.BeaconConfig().ZeroHash[:],
@@ -647,7 +647,7 @@ func createProposalWrapper(t *testing.T, slot primitives.Slot, proposerIndex pri
 		t.Fatal(err)
 	}
 	return &slashertypes.SignedBlockHeaderWrapper{
-		SignedBeaconBlockHeader: &ethpb.SignedBeaconBlockHeader{
+		SignedBeaconBlockHeader: &silapb.SignedBeaconBlockHeader{
 			Header:    header,
 			Signature: params.BeaconConfig().EmptySignature[:],
 		},
@@ -661,13 +661,13 @@ func createAttestationWrapper(ver int, source, target primitives.Epoch, indices 
 		dataRoot = params.BeaconConfig().ZeroHash
 	}
 
-	data := &ethpb.AttestationData{
+	data := &silapb.AttestationData{
 		BeaconBlockRoot: params.BeaconConfig().ZeroHash[:],
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: source,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: target,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
@@ -675,7 +675,7 @@ func createAttestationWrapper(ver int, source, target primitives.Epoch, indices 
 
 	if ver >= version.Electra {
 		return &slashertypes.IndexedAttestationWrapper{
-			IndexedAttestation: &ethpb.IndexedAttestationElectra{
+			IndexedAttestation: &silapb.IndexedAttestationElectra{
 				AttestingIndices: indices,
 				Data:             data,
 				Signature:        params.BeaconConfig().EmptySignature[:],
@@ -684,7 +684,7 @@ func createAttestationWrapper(ver int, source, target primitives.Epoch, indices 
 		}
 	}
 	return &slashertypes.IndexedAttestationWrapper{
-		IndexedAttestation: &ethpb.IndexedAttestation{
+		IndexedAttestation: &silapb.IndexedAttestation{
 			AttestingIndices: indices,
 			Data:             data,
 			Signature:        params.BeaconConfig().EmptySignature[:],

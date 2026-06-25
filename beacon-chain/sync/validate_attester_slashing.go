@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/slice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -40,7 +40,7 @@ func (s *Service) validateAttesterSlashing(ctx context.Context, pid peer.ID, msg
 		tracing.AnnotateError(span, err)
 		return pubsub.ValidationReject, err
 	}
-	slashing, ok := m.(ethpb.AttSlashing)
+	slashing, ok := m.(silapb.AttSlashing)
 	if !ok {
 		return pubsub.ValidationReject, errWrongMessage
 	}

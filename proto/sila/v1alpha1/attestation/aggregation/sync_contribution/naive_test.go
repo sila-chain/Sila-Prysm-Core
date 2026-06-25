@@ -7,7 +7,7 @@ import (
 
 	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation"
 	aggtesting "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
@@ -16,19 +16,19 @@ import (
 
 func TestAggregateAttestations_aggregate(t *testing.T) {
 	tests := []struct {
-		a1   *ethpb.SyncCommitteeContribution
-		a2   *ethpb.SyncCommitteeContribution
-		want *ethpb.SyncCommitteeContribution
+		a1   *silapb.SyncCommitteeContribution
+		a2   *silapb.SyncCommitteeContribution
+		want *silapb.SyncCommitteeContribution
 	}{
 		{
-			a1:   &ethpb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x02}, Signature: bls.NewAggregateSignature().Marshal()},
-			a2:   &ethpb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x01}, Signature: bls.NewAggregateSignature().Marshal()},
-			want: &ethpb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x03}},
+			a1:   &silapb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x02}, Signature: bls.NewAggregateSignature().Marshal()},
+			a2:   &silapb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x01}, Signature: bls.NewAggregateSignature().Marshal()},
+			want: &silapb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x03}},
 		},
 		{
-			a1:   &ethpb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x01}, Signature: bls.NewAggregateSignature().Marshal()},
-			a2:   &ethpb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x02}, Signature: bls.NewAggregateSignature().Marshal()},
-			want: &ethpb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x03}},
+			a1:   &silapb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x01}, Signature: bls.NewAggregateSignature().Marshal()},
+			a2:   &silapb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x02}, Signature: bls.NewAggregateSignature().Marshal()},
+			want: &silapb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x03}},
 		},
 	}
 	for _, tt := range tests {
@@ -40,16 +40,16 @@ func TestAggregateAttestations_aggregate(t *testing.T) {
 
 func TestAggregateAttestations_aggregate_OverlapFails(t *testing.T) {
 	tests := []struct {
-		a1 *ethpb.SyncCommitteeContribution
-		a2 *ethpb.SyncCommitteeContribution
+		a1 *silapb.SyncCommitteeContribution
+		a2 *silapb.SyncCommitteeContribution
 	}{
 		{
-			a1: &ethpb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x1F}},
-			a2: &ethpb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x11}},
+			a1: &silapb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x1F}},
+			a2: &silapb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x11}},
 		},
 		{
-			a1: &ethpb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0xFF, 0x85}},
-			a2: &ethpb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x13, 0x8F}},
+			a1: &silapb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0xFF, 0x85}},
+			a2: &silapb.SyncCommitteeContribution{AggregationBits: bitfield.Bitvector128{0x13, 0x8F}},
 		},
 	}
 	for _, tt := range tests {

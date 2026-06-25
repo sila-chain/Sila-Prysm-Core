@@ -5,12 +5,12 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 )
 
 type mockChain struct {
-	currentFork     *ethpb.Fork
+	currentFork     *silapb.Fork
 	genesisValsRoot [32]byte
 	genesisTime     time.Time
 }
@@ -19,7 +19,7 @@ func (m *mockChain) ForkChoicer() forkchoice.ForkChoicer {
 	return nil
 }
 
-func (m *mockChain) CurrentFork() *ethpb.Fork {
+func (m *mockChain) CurrentFork() *silapb.Fork {
 	return m.currentFork
 }
 

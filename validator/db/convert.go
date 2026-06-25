@@ -7,7 +7,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/file"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/filesystem"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/iface"
@@ -186,12 +186,12 @@ func ConvertDatabase(ctx context.Context, sourceDataDir string, targetDataDir st
 		}
 
 		// Create the indexed attestation with the highest source and target epoch.
-		indexedAttestation := &ethpb.IndexedAttestation{
-			Data: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{
+		indexedAttestation := &silapb.IndexedAttestation{
+			Data: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{
 					Epoch: highestSource,
 				},
-				Target: &ethpb.Checkpoint{
+				Target: &silapb.Checkpoint{
 					Epoch: highestTarget,
 				},
 			},

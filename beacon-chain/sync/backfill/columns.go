@@ -14,7 +14,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pkg/errors"
 )
@@ -149,7 +149,7 @@ func (cs *columnSync) columnsNeeded() peerdas.ColumnIndices {
 	return cs.columnBatch.needed()
 }
 
-func (cs *columnSync) request(reqCols []uint64, limit int) (*ethpb.DataColumnSidecarsByRangeRequest, error) {
+func (cs *columnSync) request(reqCols []uint64, limit int) (*silapb.DataColumnSidecarsByRangeRequest, error) {
 	if len(reqCols) == 0 {
 		return nil, nil
 	}
@@ -175,7 +175,7 @@ func (cs *columnSync) request(reqCols []uint64, limit int) (*ethpb.DataColumnSid
 }
 
 type validatingColumnRequest struct {
-	req        *ethpb.DataColumnSidecarsByRangeRequest
+	req        *silapb.DataColumnSidecarsByRangeRequest
 	columnSync *columnSync
 	bisector   *columnBisector
 }

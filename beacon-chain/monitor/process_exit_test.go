@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
@@ -19,23 +19,23 @@ func TestProcessExitsFromBlockTrackedIndices(t *testing.T) {
 		},
 	}
 
-	exits := []*ethpb.SignedVoluntaryExit{
+	exits := []*silapb.SignedVoluntaryExit{
 		{
-			Exit: &ethpb.VoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: 3,
 				Epoch:          1,
 			},
 		},
 		{
-			Exit: &ethpb.VoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: 2,
 				Epoch:          0,
 			},
 		},
 	}
 
-	block := &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
+	block := &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
 			VoluntaryExits: exits,
 		},
 	}
@@ -55,23 +55,23 @@ func TestProcessExitsFromBlockUntrackedIndices(t *testing.T) {
 		},
 	}
 
-	exits := []*ethpb.SignedVoluntaryExit{
+	exits := []*silapb.SignedVoluntaryExit{
 		{
-			Exit: &ethpb.VoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: 3,
 				Epoch:          1,
 			},
 		},
 		{
-			Exit: &ethpb.VoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: 4,
 				Epoch:          0,
 			},
 		},
 	}
 
-	block := &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
+	block := &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
 			VoluntaryExits: exits,
 		},
 	}
@@ -91,8 +91,8 @@ func TestProcessExitP2PTrackedIndices(t *testing.T) {
 		},
 	}
 
-	exit := &ethpb.SignedVoluntaryExit{
-		Exit: &ethpb.VoluntaryExit{
+	exit := &silapb.SignedVoluntaryExit{
+		Exit: &silapb.VoluntaryExit{
 			ValidatorIndex: 1,
 			Epoch:          1,
 		},
@@ -111,8 +111,8 @@ func TestProcessExitP2PUntrackedIndices(t *testing.T) {
 		},
 	}
 
-	exit := &ethpb.SignedVoluntaryExit{
-		Exit: &ethpb.VoluntaryExit{
+	exit := &silapb.SignedVoluntaryExit{
+		Exit: &silapb.VoluntaryExit{
 			ValidatorIndex: 3,
 			Epoch:          1,
 		},

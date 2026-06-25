@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -72,7 +72,7 @@ func TestSubmitSyncMessage_OK(t *testing.T) {
 			},
 		},
 	}
-	msg := &ethpb.SyncCommitteeMessage{
+	msg := &silapb.SyncCommitteeMessage{
 		Slot:           1,
 		ValidatorIndex: 2,
 	}
@@ -80,7 +80,7 @@ func TestSubmitSyncMessage_OK(t *testing.T) {
 	require.NoError(t, err)
 	savedMsgs, err := server.CoreService.SyncCommitteePool.SyncCommitteeMessages(1)
 	require.NoError(t, err)
-	require.DeepEqual(t, []*ethpb.SyncCommitteeMessage{msg}, savedMsgs)
+	require.DeepEqual(t, []*silapb.SyncCommitteeMessage{msg}, savedMsgs)
 }
 
 func TestGetSyncSubcommitteeIndex_Ok(t *testing.T) {
@@ -94,7 +94,7 @@ func TestGetSyncSubcommitteeIndex_Ok(t *testing.T) {
 	}
 	var pubKey [fieldparams.BLSPubkeyLength]byte
 	// Request slot 0, should get the index 0 for validator 0.
-	res, err := server.GetSyncSubcommitteeIndex(t.Context(), &ethpb.SyncSubcommitteeIndexRequest{
+	res, err := server.GetSyncSubcommitteeIndex(t.Context(), &silapb.SyncSubcommitteeIndexRequest{
 		PublicKey: pubKey[:], Slot: primitives.Slot(0),
 	})
 	require.NoError(t, err)
@@ -122,7 +122,7 @@ func TestGetSyncCommitteeContribution_FiltersDuplicates(t *testing.T) {
 	secKey, err := bls.RandKey()
 	require.NoError(t, err)
 	sig := secKey.Sign([]byte{'A'}).Marshal()
-	msg := &ethpb.SyncCommitteeMessage{
+	msg := &silapb.SyncCommitteeMessage{
 		Slot:           1,
 		ValidatorIndex: 2,
 		BlockRoot:      make([]byte, 32),
@@ -136,7 +136,7 @@ func TestGetSyncCommitteeContribution_FiltersDuplicates(t *testing.T) {
 	require.NoError(t, err)
 
 	contr, err := server.GetSyncCommitteeContribution(t.Context(),
-		&ethpb.SyncCommitteeContributionRequest{
+		&silapb.SyncCommitteeContributionRequest{
 			Slot:      1,
 			PublicKey: val.PublicKey,
 			SubnetId:  1})
@@ -152,9 +152,9 @@ func TestSubmitSignedContributionAndProof_OK(t *testing.T) {
 			OperationNotifier: (&mock.ChainService{}).OperationNotifier(),
 		},
 	}
-	contribution := &ethpb.SignedContributionAndProof{
-		Message: &ethpb.ContributionAndProof{
-			Contribution: &ethpb.SyncCommitteeContribution{
+	contribution := &silapb.SignedContributionAndProof{
+		Message: &silapb.ContributionAndProof{
+			Contribution: &silapb.SyncCommitteeContribution{
 				Slot:              1,
 				SubcommitteeIndex: 2,
 			},
@@ -164,7 +164,7 @@ func TestSubmitSignedContributionAndProof_OK(t *testing.T) {
 	require.NoError(t, err)
 	savedMsgs, err := server.CoreService.SyncCommitteePool.SyncCommitteeContributions(1)
 	require.NoError(t, err)
-	require.DeepEqual(t, []*ethpb.SyncCommitteeContribution{contribution.Message.Contribution}, savedMsgs)
+	require.DeepEqual(t, []*silapb.SyncCommitteeContribution{contribution.Message.Contribution}, savedMsgs)
 }
 
 func TestSubmitSignedContributionAndProof_Notification(t *testing.T) {
@@ -181,9 +181,9 @@ func TestSubmitSignedContributionAndProof_Notification(t *testing.T) {
 	opSub := server.CoreService.OperationNotifier.OperationFeed().Subscribe(opChannel)
 	defer opSub.Unsubscribe()
 
-	contribution := &ethpb.SignedContributionAndProof{
-		Message: &ethpb.ContributionAndProof{
-			Contribution: &ethpb.SyncCommitteeContribution{
+	contribution := &silapb.SignedContributionAndProof{
+		Message: &silapb.ContributionAndProof{
+			Contribution: &silapb.SyncCommitteeContribution{
 				Slot:              1,
 				SubcommitteeIndex: 2,
 			},

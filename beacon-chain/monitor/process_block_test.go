@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	logTest "github.com/sirupsen/logrus/hooks/test"
@@ -18,23 +18,23 @@ import (
 func TestProcessSlashings(t *testing.T) {
 	tests := []struct {
 		name      string
-		block     *ethpb.BeaconBlock
+		block     *silapb.BeaconBlock
 		wantedErr string
 	}{
 		{
 			name: "Proposer slashing a tracked index",
-			block: &ethpb.BeaconBlock{
-				Body: &ethpb.BeaconBlockBody{
-					ProposerSlashings: []*ethpb.ProposerSlashing{
+			block: &silapb.BeaconBlock{
+				Body: &silapb.BeaconBlockBody{
+					ProposerSlashings: []*silapb.ProposerSlashing{
 						{
-							Header_1: &ethpb.SignedBeaconBlockHeader{
-								Header: &ethpb.BeaconBlockHeader{
+							Header_1: &silapb.SignedBeaconBlockHeader{
+								Header: &silapb.BeaconBlockHeader{
 									ProposerIndex: 2,
 									Slot:          params.BeaconConfig().SlotsPerEpoch + 1,
 								},
 							},
-							Header_2: &ethpb.SignedBeaconBlockHeader{
-								Header: &ethpb.BeaconBlockHeader{
+							Header_2: &silapb.SignedBeaconBlockHeader{
+								Header: &silapb.BeaconBlockHeader{
 									ProposerIndex: 2,
 									Slot:          0,
 								},
@@ -47,18 +47,18 @@ func TestProcessSlashings(t *testing.T) {
 		},
 		{
 			name: "Proposer slashing an untracked index",
-			block: &ethpb.BeaconBlock{
-				Body: &ethpb.BeaconBlockBody{
-					ProposerSlashings: []*ethpb.ProposerSlashing{
+			block: &silapb.BeaconBlock{
+				Body: &silapb.BeaconBlockBody{
+					ProposerSlashings: []*silapb.ProposerSlashing{
 						{
-							Header_1: &ethpb.SignedBeaconBlockHeader{
-								Header: &ethpb.BeaconBlockHeader{
+							Header_1: &silapb.SignedBeaconBlockHeader{
+								Header: &silapb.BeaconBlockHeader{
 									ProposerIndex: 3,
 									Slot:          params.BeaconConfig().SlotsPerEpoch + 4,
 								},
 							},
-							Header_2: &ethpb.SignedBeaconBlockHeader{
-								Header: &ethpb.BeaconBlockHeader{
+							Header_2: &silapb.SignedBeaconBlockHeader{
+								Header: &silapb.BeaconBlockHeader{
 									ProposerIndex: 3,
 									Slot:          0,
 								},
@@ -71,17 +71,17 @@ func TestProcessSlashings(t *testing.T) {
 		},
 		{
 			name: "Attester slashing a tracked index",
-			block: &ethpb.BeaconBlock{
-				Body: &ethpb.BeaconBlockBody{
-					AttesterSlashings: []*ethpb.AttesterSlashing{
+			block: &silapb.BeaconBlock{
+				Body: &silapb.BeaconBlockBody{
+					AttesterSlashings: []*silapb.AttesterSlashing{
 						{
-							Attestation_1: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
-								Data: &ethpb.AttestationData{
-									Source: &ethpb.Checkpoint{Epoch: 1},
+							Attestation_1: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
+								Data: &silapb.AttestationData{
+									Source: &silapb.Checkpoint{Epoch: 1},
 								},
 								AttestingIndices: []uint64{1, 3, 4},
 							}),
-							Attestation_2: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+							Attestation_2: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 								AttestingIndices: []uint64{1, 5, 6},
 							}),
 						},
@@ -93,17 +93,17 @@ func TestProcessSlashings(t *testing.T) {
 		},
 		{
 			name: "Attester slashing untracked index",
-			block: &ethpb.BeaconBlock{
-				Body: &ethpb.BeaconBlockBody{
-					AttesterSlashings: []*ethpb.AttesterSlashing{
+			block: &silapb.BeaconBlock{
+				Body: &silapb.BeaconBlockBody{
+					AttesterSlashings: []*silapb.AttesterSlashing{
 						{
-							Attestation_1: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
-								Data: &ethpb.AttestationData{
-									Source: &ethpb.Checkpoint{Epoch: 1},
+							Attestation_1: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
+								Data: &silapb.AttestationData{
+									Source: &silapb.Checkpoint{Epoch: 1},
 								},
 								AttestingIndices: []uint64{1, 3, 4},
 							}),
-							Attestation_2: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+							Attestation_2: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 								AttestingIndices: []uint64{3, 5, 6},
 							}),
 						},
@@ -137,28 +137,28 @@ func TestProcessSlashings(t *testing.T) {
 func TestProcessProposedBlock(t *testing.T) {
 	tests := []struct {
 		name      string
-		block     *ethpb.BeaconBlock
+		block     *silapb.BeaconBlock
 		wantedErr string
 	}{
 		{
 			name: "Block proposed by tracked validator",
-			block: &ethpb.BeaconBlock{
+			block: &silapb.BeaconBlock{
 				Slot:          6,
 				ProposerIndex: 12,
 				ParentRoot:    bytesutil.PadTo([]byte("hello-world"), 32),
 				StateRoot:     bytesutil.PadTo([]byte("state-world"), 32),
-				Body:          &ethpb.BeaconBlockBody{},
+				Body:          &silapb.BeaconBlockBody{},
 			},
 			wantedErr: "\"Proposed beacon block was included\" balanceChange=100000000 blockRoot=0x68656c6c6f2d newBalance=32000000000 package=beacon-chain/monitor parentRoot=0x68656c6c6f2d proposerIndex=12 slot=6 version=0",
 		},
 		{
 			name: "Block proposed by untracked validator",
-			block: &ethpb.BeaconBlock{
+			block: &silapb.BeaconBlock{
 				Slot:          6,
 				ProposerIndex: 13,
 				ParentRoot:    bytesutil.PadTo([]byte("hello-world"), 32),
 				StateRoot:     bytesutil.PadTo([]byte("state-world"), 32),
-				Body:          &ethpb.BeaconBlockBody{},
+				Body:          &silapb.BeaconBlockBody{},
 			},
 		},
 	}

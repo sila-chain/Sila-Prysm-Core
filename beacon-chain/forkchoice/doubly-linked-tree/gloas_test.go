@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -40,34 +40,34 @@ func prepareGloasForkchoiceState(
 	justifiedEpoch primitives.Epoch,
 	finalizedEpoch primitives.Epoch,
 ) (state.BeaconState, blocks.ROBlock, error) {
-	blockHeader := &ethpb.BeaconBlockHeader{
+	blockHeader := &silapb.BeaconBlockHeader{
 		ParentRoot: parentRoot[:],
 	}
 
-	justifiedCheckpoint := &ethpb.Checkpoint{
+	justifiedCheckpoint := &silapb.Checkpoint{
 		Epoch: justifiedEpoch,
 	}
 
-	finalizedCheckpoint := &ethpb.Checkpoint{
+	finalizedCheckpoint := &silapb.Checkpoint{
 		Epoch: finalizedEpoch,
 	}
 
-	builderPendingPayments := make([]*ethpb.BuilderPendingPayment, 64)
+	builderPendingPayments := make([]*silapb.BuilderPendingPayment, 64)
 	for i := range builderPendingPayments {
-		builderPendingPayments[i] = &ethpb.BuilderPendingPayment{
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+		builderPendingPayments[i] = &silapb.BuilderPendingPayment{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 			},
 		}
 	}
 
-	base := &ethpb.BeaconStateGloas{
+	base := &silapb.BeaconStateGloas{
 		Slot:                       slot,
 		RandaoMixes:                make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 		CurrentJustifiedCheckpoint: justifiedCheckpoint,
 		FinalizedCheckpoint:        finalizedCheckpoint,
 		LatestBlockHeader:          blockHeader,
-		LatestExecutionPayloadBid: &ethpb.ExecutionPayloadBid{
+		LatestExecutionPayloadBid: &silapb.ExecutionPayloadBid{
 			BlockHash:             blockHash[:],
 			ParentBlockHash:       parentBlockHash[:],
 			ParentBlockRoot:       make([]byte, 32),
@@ -76,7 +76,7 @@ func prepareGloasForkchoiceState(
 			BlobKzgCommitments:    [][]byte{make([]byte, 48)},
 			ExecutionRequestsRoot: make([]byte, 32),
 		},
-		Builders:                     make([]*ethpb.Builder, 0),
+		Builders:                     make([]*silapb.Builder, 0),
 		BuilderPendingPayments:       builderPendingPayments,
 		ExecutionPayloadAvailability: make([]byte, 1024),
 		LatestBlockHash:              make([]byte, 32),
@@ -89,18 +89,18 @@ func prepareGloasForkchoiceState(
 		return nil, blocks.ROBlock{}, err
 	}
 
-	bid := util.HydrateSignedExecutionPayloadBid(&ethpb.SignedExecutionPayloadBid{
-		Message: &ethpb.ExecutionPayloadBid{
+	bid := util.HydrateSignedExecutionPayloadBid(&silapb.SignedExecutionPayloadBid{
+		Message: &silapb.ExecutionPayloadBid{
 			BlockHash:       blockHash[:],
 			ParentBlockHash: parentBlockHash[:],
 		},
 	})
 
-	blk := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-		Block: &ethpb.BeaconBlockGloas{
+	blk := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+		Block: &silapb.BeaconBlockGloas{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body: &ethpb.BeaconBlockBodyGloas{
+			Body: &silapb.BeaconBlockBodyGloas{
 				SignedExecutionPayloadBid: bid,
 			},
 		},
@@ -117,7 +117,7 @@ func prepareGloasForkchoiceState(
 func prepareGloasForkchoicePayload(
 	blockRoot [32]byte,
 ) (interfaces.ROExecutionPayloadEnvelope, error) {
-	env := &ethpb.ExecutionPayloadEnvelope{
+	env := &silapb.ExecutionPayloadEnvelope{
 		BeaconBlockRoot:       blockRoot[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
 		Payload:               &enginev1.ExecutionPayloadGloas{},
@@ -1866,7 +1866,7 @@ func TestGasLimit_GloasEmptyNodeWalksToFullAncestor(t *testing.T) {
 	require.NoError(t, f.InsertNode(ctx, st, roblock))
 
 	const gl = uint64(42_000_000)
-	env := &ethpb.ExecutionPayloadEnvelope{
+	env := &silapb.ExecutionPayloadEnvelope{
 		BeaconBlockRoot:       rootA[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
 		Payload:               &enginev1.ExecutionPayloadGloas{GasLimit: gl},

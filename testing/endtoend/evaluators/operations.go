@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz/detect"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/helpers"
 	e2e "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/params"
@@ -199,13 +199,13 @@ func (m mismatch) String() string {
 func processesDepositsInBlocks(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	expected := ec.Balances(e2etypes.PostGenesisDepositBatch)
 	conn := conns[0]
-	client := ethpb.NewBeaconChainClient(conn)
+	client := silapb.NewBeaconChainClient(conn)
 	chainHead, err := client.GetChainHead(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		return errors.Wrap(err, "failed to get chain head")
 	}
 
-	req := &ethpb.ListBlocksRequest{QueryFilter: &ethpb.ListBlocksRequest_Epoch{Epoch: chainHead.HeadEpoch - 1}}
+	req := &silapb.ListBlocksRequest{QueryFilter: &silapb.ListBlocksRequest_Epoch{Epoch: chainHead.HeadEpoch - 1}}
 	blks, err := client.ListBeaconBlocks(context.Background(), req)
 	if err != nil {
 		return errors.Wrap(err, "failed to get blocks from beacon-chain")
@@ -239,7 +239,7 @@ func processesDepositsInBlocks(ec *e2etypes.EvaluationContext, conns ...*grpc.Cl
 
 func verifyGraffitiInBlocks(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconChainClient(conn)
+	client := silapb.NewBeaconChainClient(conn)
 	chainHead, err := client.GetChainHead(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		return errors.Wrap(err, "failed to get chain head")
@@ -249,7 +249,7 @@ func verifyGraffitiInBlocks(_ *e2etypes.EvaluationContext, conns ...*grpc.Client
 	if begin > 0 {
 		begin = begin.Sub(1)
 	}
-	req := &ethpb.ListBlocksRequest{QueryFilter: &ethpb.ListBlocksRequest_Epoch{Epoch: begin}}
+	req := &silapb.ListBlocksRequest{QueryFilter: &silapb.ListBlocksRequest_Epoch{Epoch: begin}}
 	blks, err := client.ListBeaconBlocks(context.Background(), req)
 	if err != nil {
 		return errors.Wrap(err, "failed to get blocks from beacon-chain")
@@ -282,7 +282,7 @@ func verifyGraffitiInBlocks(_ *e2etypes.EvaluationContext, conns ...*grpc.Client
 
 func activatesDepositedValidators(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconChainClient(conn)
+	client := silapb.NewBeaconChainClient(conn)
 
 	chainHead, err := client.GetChainHead(context.Background(), &emptypb.Empty{})
 	if err != nil {
@@ -347,11 +347,11 @@ func activatesDepositedValidators(ec *e2etypes.EvaluationContext, conns ...*grpc
 	return nil
 }
 
-func getAllValidators(c ethpb.BeaconChainClient) ([]*ethpb.Validator, error) {
-	vals := make([]*ethpb.Validator, 0)
+func getAllValidators(c silapb.BeaconChainClient) ([]*silapb.Validator, error) {
+	vals := make([]*silapb.Validator, 0)
 	pageToken := "0"
 	for pageToken != "" {
-		validatorRequest := &ethpb.ListValidatorsRequest{
+		validatorRequest := &silapb.ListValidatorsRequest{
 			PageSize:  100,
 			PageToken: pageToken,
 		}
@@ -369,7 +369,7 @@ func getAllValidators(c ethpb.BeaconChainClient) ([]*ethpb.Validator, error) {
 
 func depositedValidatorsAreActive(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconChainClient(conn)
+	client := silapb.NewBeaconChainClient(conn)
 
 	chainHead, err := client.GetChainHead(context.Background(), &emptypb.Empty{})
 	if err != nil {
@@ -429,16 +429,16 @@ func depositedValidatorsAreActive(ec *e2etypes.EvaluationContext, conns ...*grpc
 
 func proposeVoluntaryExit(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	valClient := ethpb.NewBeaconNodeValidatorClient(conn)
-	beaconClient := ethpb.NewBeaconChainClient(conn)
-	debugClient := ethpb.NewDebugClient(conn)
+	valClient := silapb.NewBeaconNodeValidatorClient(conn)
+	beaconClient := silapb.NewBeaconChainClient(conn)
+	debugClient := silapb.NewDebugClient(conn)
 
 	ctx := context.Background()
 	chainHead, err := beaconClient.GetChainHead(ctx, &emptypb.Empty{})
 	if err != nil {
 		return errors.Wrap(err, "could not get chain head")
 	}
-	stObj, err := debugClient.GetBeaconState(ctx, &ethpb.BeaconStateRequest{QueryFilter: &ethpb.BeaconStateRequest_Slot{Slot: chainHead.HeadSlot}})
+	stObj, err := debugClient.GetBeaconState(ctx, &silapb.BeaconStateRequest{QueryFilter: &silapb.BeaconStateRequest_Slot{Slot: chainHead.HeadSlot}})
 	if err != nil {
 		return errors.Wrap(err, "could not get state object")
 	}
@@ -466,11 +466,11 @@ func proposeVoluntaryExit(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientC
 	}
 
 	var sendExit = func(exitedIndex primitives.ValidatorIndex) error {
-		voluntaryExit := &ethpb.VoluntaryExit{
+		voluntaryExit := &silapb.VoluntaryExit{
 			Epoch:          chainHead.HeadEpoch,
 			ValidatorIndex: exitedIndex,
 		}
-		req := &ethpb.DomainRequest{
+		req := &silapb.DomainRequest{
 			Epoch:  chainHead.HeadEpoch,
 			Domain: params.BeaconConfig().DomainVoluntaryExit[:],
 		}
@@ -483,7 +483,7 @@ func proposeVoluntaryExit(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientC
 			return err
 		}
 		signature := privKeys[exitedIndex].Sign(signingData[:])
-		signedExit := &ethpb.SignedVoluntaryExit{
+		signedExit := &silapb.SignedVoluntaryExit{
 			Exit:      voluntaryExit,
 			Signature: signature.Marshal(),
 		}
@@ -520,10 +520,10 @@ func proposeVoluntaryExit(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientC
 
 func validatorsHaveExited(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconChainClient(conn)
+	client := silapb.NewBeaconChainClient(conn)
 	for k := range ec.ExitedVals {
-		validatorRequest := &ethpb.GetValidatorRequest{
-			QueryFilter: &ethpb.GetValidatorRequest_PublicKey{
+		validatorRequest := &silapb.GetValidatorRequest{
+			QueryFilter: &silapb.GetValidatorRequest_PublicKey{
 				PublicKey: k[:],
 			},
 		}
@@ -540,7 +540,7 @@ func validatorsHaveExited(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientC
 
 func validatorsVoteWithTheMajority(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconChainClient(conn)
+	client := silapb.NewBeaconChainClient(conn)
 	chainHead, err := client.GetChainHead(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		return errors.Wrap(err, "failed to get chain head")
@@ -551,7 +551,7 @@ func validatorsVoteWithTheMajority(ec *e2etypes.EvaluationContext, conns ...*grp
 	if begin > 0 {
 		begin = begin.Sub(1)
 	}
-	req := &ethpb.ListBlocksRequest{QueryFilter: &ethpb.ListBlocksRequest_Epoch{Epoch: begin}}
+	req := &silapb.ListBlocksRequest{QueryFilter: &silapb.ListBlocksRequest_Epoch{Epoch: begin}}
 	blks, err := client.ListBeaconBlocks(context.Background(), req)
 	if err != nil {
 		return errors.Wrap(err, "failed to get blocks from beacon-chain")
@@ -562,51 +562,51 @@ func validatorsVoteWithTheMajority(ec *e2etypes.EvaluationContext, conns ...*grp
 		var slot primitives.Slot
 		var vote []byte
 		switch blk.Block.(type) {
-		case *ethpb.BeaconBlockContainer_Phase0Block:
+		case *silapb.BeaconBlockContainer_Phase0Block:
 			b := blk.GetPhase0Block().Block
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
-		case *ethpb.BeaconBlockContainer_AltairBlock:
+		case *silapb.BeaconBlockContainer_AltairBlock:
 			b := blk.GetAltairBlock().Block
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
-		case *ethpb.BeaconBlockContainer_BellatrixBlock:
+		case *silapb.BeaconBlockContainer_BellatrixBlock:
 			b := blk.GetBellatrixBlock().Block
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
-		case *ethpb.BeaconBlockContainer_BlindedBellatrixBlock:
+		case *silapb.BeaconBlockContainer_BlindedBellatrixBlock:
 			b := blk.GetBlindedBellatrixBlock().Block
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
-		case *ethpb.BeaconBlockContainer_CapellaBlock:
+		case *silapb.BeaconBlockContainer_CapellaBlock:
 			b := blk.GetCapellaBlock().Block
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
-		case *ethpb.BeaconBlockContainer_BlindedCapellaBlock:
+		case *silapb.BeaconBlockContainer_BlindedCapellaBlock:
 			b := blk.GetBlindedCapellaBlock().Block
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
-		case *ethpb.BeaconBlockContainer_DenebBlock:
+		case *silapb.BeaconBlockContainer_DenebBlock:
 			b := blk.GetDenebBlock().Block
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
-		case *ethpb.BeaconBlockContainer_BlindedDenebBlock:
+		case *silapb.BeaconBlockContainer_BlindedDenebBlock:
 			b := blk.GetBlindedDenebBlock().Message
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
-		case *ethpb.BeaconBlockContainer_ElectraBlock:
+		case *silapb.BeaconBlockContainer_ElectraBlock:
 			b := blk.GetElectraBlock().Block
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
-		case *ethpb.BeaconBlockContainer_BlindedElectraBlock:
+		case *silapb.BeaconBlockContainer_BlindedElectraBlock:
 			b := blk.GetBlindedElectraBlock().Message
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
-		case *ethpb.BeaconBlockContainer_FuluBlock:
+		case *silapb.BeaconBlockContainer_FuluBlock:
 			b := blk.GetFuluBlock().Block
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
-		case *ethpb.BeaconBlockContainer_BlindedFuluBlock:
+		case *silapb.BeaconBlockContainer_BlindedFuluBlock:
 			b := blk.GetBlindedFuluBlock().Message
 			slot = b.Slot
 			vote = b.Body.Eth1Data.BlockHash
@@ -659,15 +659,15 @@ func validatorsVoteWithTheMajority(ec *e2etypes.EvaluationContext, conns ...*grp
 
 func submitWithdrawal(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	beaconClient := ethpb.NewBeaconChainClient(conn)
-	debugClient := ethpb.NewDebugClient(conn)
+	beaconClient := silapb.NewBeaconChainClient(conn)
+	debugClient := silapb.NewDebugClient(conn)
 
 	ctx := context.Background()
 	chainHead, err := beaconClient.GetChainHead(ctx, &emptypb.Empty{})
 	if err != nil {
 		return errors.Wrap(err, "could not get chain head")
 	}
-	stObj, err := debugClient.GetBeaconState(ctx, &ethpb.BeaconStateRequest{QueryFilter: &ethpb.BeaconStateRequest_Slot{Slot: chainHead.HeadSlot}})
+	stObj, err := debugClient.GetBeaconState(ctx, &silapb.BeaconStateRequest{QueryFilter: &silapb.BeaconStateRequest_Slot{Slot: chainHead.HeadSlot}})
 	if err != nil {
 		return errors.Wrap(err, "could not get state object")
 	}
@@ -716,7 +716,7 @@ func submitWithdrawal(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn)
 		if !bytes.Equal(val.PublicKey, privKeys[idx].PublicKey().Marshal()) {
 			return errors.Errorf("pubkey is not equal, wanted %#x but received %#x", val.PublicKey, privKeys[idx].PublicKey().Marshal())
 		}
-		message := &ethpb.BLSToExecutionChange{
+		message := &silapb.BLSToExecutionChange{
 			ValidatorIndex:     idx,
 			FromBlsPubkey:      privKeys[idx].PublicKey().Marshal(),
 			ToExecutionAddress: bytesutil.ToBytes(uint64(idx), 20),
@@ -747,15 +747,15 @@ func submitWithdrawal(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn)
 
 func validatorsAreWithdrawn(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	beaconClient := ethpb.NewBeaconChainClient(conn)
-	debugClient := ethpb.NewDebugClient(conn)
+	beaconClient := silapb.NewBeaconChainClient(conn)
+	debugClient := silapb.NewDebugClient(conn)
 
 	ctx := context.Background()
 	chainHead, err := beaconClient.GetChainHead(ctx, &emptypb.Empty{})
 	if err != nil {
 		return errors.Wrap(err, "could not get chain head")
 	}
-	stObj, err := debugClient.GetBeaconState(ctx, &ethpb.BeaconStateRequest{QueryFilter: &ethpb.BeaconStateRequest_Slot{Slot: chainHead.HeadSlot}})
+	stObj, err := debugClient.GetBeaconState(ctx, &silapb.BeaconStateRequest{QueryFilter: &silapb.BeaconStateRequest_Slot{Slot: chainHead.HeadSlot}})
 	if err != nil {
 		return errors.Wrap(err, "could not get state object")
 	}

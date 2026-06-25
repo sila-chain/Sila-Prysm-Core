@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -24,14 +24,14 @@ type payloadAttestationDataKey struct {
 // payload-attestation data.
 type PoolManager interface {
 	// PendingPayloadAttestations returns pending attestations for the requested slot.
-	PendingPayloadAttestations(slot primitives.Slot) []*ethpb.PayloadAttestation
+	PendingPayloadAttestations(slot primitives.Slot) []*silapb.PayloadAttestation
 	// InsertPayloadAttestation inserts or aggregates a payload attestation
 	// message into the pool. The idx parameter is the PTC committee index
 	// of the validator (position in the bitvector).
-	InsertPayloadAttestation(msg *ethpb.PayloadAttestationMessage, idx uint64) error
+	InsertPayloadAttestation(msg *silapb.PayloadAttestationMessage, idx uint64) error
 	// Seen returns true if the PTC committee index has already been seen
 	// for the given PayloadAttestationData.
-	Seen(data *ethpb.PayloadAttestationData, idx uint64) bool
+	Seen(data *silapb.PayloadAttestationData, idx uint64) bool
 }
 
 // Pool is an in-memory implementation of PoolManager.
@@ -39,24 +39,24 @@ type PoolManager interface {
 // PayloadAttestation value.
 type Pool struct {
 	lock    sync.RWMutex
-	pending map[payloadAttestationDataKey]*ethpb.PayloadAttestation
+	pending map[payloadAttestationDataKey]*silapb.PayloadAttestation
 }
 
 // NewPool returns an initialized pool.
 func NewPool() *Pool {
 	pool := &Pool{
-		pending: make(map[payloadAttestationDataKey]*ethpb.PayloadAttestation),
+		pending: make(map[payloadAttestationDataKey]*silapb.PayloadAttestation),
 	}
 	payloadAttestationPoolSize.Set(0)
 	return pool
 }
 
 // PendingPayloadAttestations returns payload attestations for the requested slot.
-func (p *Pool) PendingPayloadAttestations(slot primitives.Slot) []*ethpb.PayloadAttestation {
+func (p *Pool) PendingPayloadAttestations(slot primitives.Slot) []*silapb.PayloadAttestation {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
-	result := make([]*ethpb.PayloadAttestation, 0, len(p.pending))
+	result := make([]*silapb.PayloadAttestation, 0, len(p.pending))
 	for _, att := range p.pending {
 		if att.Data.Slot == slot {
 			result = append(result, att)
@@ -70,7 +70,7 @@ func (p *Pool) PendingPayloadAttestations(slot primitives.Slot) []*ethpb.Payload
 // signature and sets the aggregation bit for idx.
 // idx is the validator's position in the PTC committee bitfield. It also prunes
 // stale entries with slot lower than msg.Data.Slot.
-func (p *Pool) InsertPayloadAttestation(msg *ethpb.PayloadAttestationMessage, idx uint64) error {
+func (p *Pool) InsertPayloadAttestation(msg *silapb.PayloadAttestationMessage, idx uint64) error {
 	if msg == nil || msg.Data == nil {
 		return errNilPayloadAttestationMessage
 	}
@@ -120,7 +120,7 @@ func (p *Pool) pruneOlderSlotsLocked(slot primitives.Slot) {
 
 // Seen reports whether idx has already been observed for the given
 // PayloadAttestationData.
-func (p *Pool) Seen(data *ethpb.PayloadAttestationData, idx uint64) bool {
+func (p *Pool) Seen(data *silapb.PayloadAttestationData, idx uint64) bool {
 	if data == nil {
 		return false
 	}
@@ -142,16 +142,16 @@ func (p *Pool) Seen(data *ethpb.PayloadAttestationData, idx uint64) bool {
 
 // messageToPayloadAttestation creates an aggregated PayloadAttestation with a
 // single bit set at idx from msg.
-func messageToPayloadAttestation(msg *ethpb.PayloadAttestationMessage, idx uint64) *ethpb.PayloadAttestation {
-	bits := ethpb.NewPayloadAttestationAggregationBits()
+func messageToPayloadAttestation(msg *silapb.PayloadAttestationMessage, idx uint64) *silapb.PayloadAttestation {
+	bits := silapb.NewPayloadAttestationAggregationBits()
 	bits.SetBitAt(idx, true)
-	data := &ethpb.PayloadAttestationData{
+	data := &silapb.PayloadAttestationData{
 		BeaconBlockRoot:   bytesutil.SafeCopyBytes(msg.Data.BeaconBlockRoot),
 		Slot:              msg.Data.Slot,
 		PayloadPresent:    msg.Data.PayloadPresent,
 		BlobDataAvailable: msg.Data.BlobDataAvailable,
 	}
-	return &ethpb.PayloadAttestation{
+	return &silapb.PayloadAttestation{
 		AggregationBits: bits,
 		Data:            data,
 		Signature:       bytesutil.SafeCopyBytes(msg.Signature),
@@ -160,7 +160,7 @@ func messageToPayloadAttestation(msg *ethpb.PayloadAttestationMessage, idx uint6
 
 // aggregateSigFromMessage aggregates the existing signature with the new
 // message signature.
-func aggregateSigFromMessage(aggregated *ethpb.PayloadAttestation, message *ethpb.PayloadAttestationMessage) ([]byte, error) {
+func aggregateSigFromMessage(aggregated *silapb.PayloadAttestation, message *silapb.PayloadAttestationMessage) ([]byte, error) {
 	aggSig, err := bls.SignatureFromBytesNoValidation(aggregated.Signature)
 	if err != nil {
 		return nil, err
@@ -174,7 +174,7 @@ func aggregateSigFromMessage(aggregated *ethpb.PayloadAttestation, message *ethp
 
 // dataKey derives the map key directly from PayloadAttestationData fields.
 // BeaconBlockRoot must be 32 bytes.
-func dataKey(data *ethpb.PayloadAttestationData) (payloadAttestationDataKey, error) {
+func dataKey(data *silapb.PayloadAttestationData) (payloadAttestationDataKey, error) {
 	if data == nil {
 		return payloadAttestationDataKey{}, errNilPayloadAttestationMessage
 	}

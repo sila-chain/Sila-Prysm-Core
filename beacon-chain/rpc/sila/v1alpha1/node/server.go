@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/logs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/golang/protobuf/ptypes/timestamp"
@@ -53,7 +53,7 @@ type Server struct {
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // GetHealth checks the health of the node
-func (ns *Server) GetHealth(ctx context.Context, request *ethpb.HealthRequest) (*empty.Empty, error) {
+func (ns *Server) GetHealth(ctx context.Context, request *silapb.HealthRequest) (*empty.Empty, error) {
 	ctx, span := trace.StartSpan(ctx, "node.GetHealth")
 	defer span.End()
 
@@ -91,8 +91,8 @@ func (ns *Server) GetHealth(ctx context.Context, request *ethpb.HealthRequest) (
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // GetSyncStatus checks the current network sync status of the node.
-func (ns *Server) GetSyncStatus(_ context.Context, _ *empty.Empty) (*ethpb.SyncStatus, error) {
-	return &ethpb.SyncStatus{
+func (ns *Server) GetSyncStatus(_ context.Context, _ *empty.Empty) (*silapb.SyncStatus, error) {
+	return &silapb.SyncStatus{
 		Syncing: ns.SyncChecker.Syncing(),
 	}, nil
 }
@@ -101,7 +101,7 @@ func (ns *Server) GetSyncStatus(_ context.Context, _ *empty.Empty) (*ethpb.SyncS
 //
 // GetGenesis fetches genesis chain information of Sila. Returns unix timestamp 0
 // if a genesis time has yet to be determined.
-func (ns *Server) GetGenesis(ctx context.Context, _ *empty.Empty) (*ethpb.Genesis, error) {
+func (ns *Server) GetGenesis(ctx context.Context, _ *empty.Empty) (*silapb.Genesis, error) {
 	contractAddr, err := ns.BeaconDB.DepositContractAddress(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Could not retrieve contract address from db: %v", err)
@@ -116,7 +116,7 @@ func (ns *Server) GetGenesis(ctx context.Context, _ *empty.Empty) (*ethpb.Genesi
 	}
 
 	genValRoot := ns.GenesisFetcher.GenesisValidatorsRoot()
-	return &ethpb.Genesis{
+	return &silapb.Genesis{
 		GenesisTime:            gt,
 		DepositContractAddress: contractAddr,
 		GenesisValidatorsRoot:  genValRoot[:],
@@ -126,8 +126,8 @@ func (ns *Server) GetGenesis(ctx context.Context, _ *empty.Empty) (*ethpb.Genesi
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // GetVersion checks the version information of the beacon node.
-func (_ *Server) GetVersion(_ context.Context, _ *empty.Empty) (*ethpb.Version, error) {
-	return &ethpb.Version{
+func (_ *Server) GetVersion(_ context.Context, _ *empty.Empty) (*silapb.Version, error) {
+	return &silapb.Version{
 		Version: version.Version(),
 	}, nil
 }
@@ -139,14 +139,14 @@ func (_ *Server) GetVersion(_ context.Context, _ *empty.Empty) (*ethpb.Version, 
 // Any service not present in this list may return UNIMPLEMENTED or
 // PERMISSION_DENIED. The server may also support fetching services by grpc
 // reflection.
-func (ns *Server) ListImplementedServices(_ context.Context, _ *empty.Empty) (*ethpb.ImplementedServices, error) {
+func (ns *Server) ListImplementedServices(_ context.Context, _ *empty.Empty) (*silapb.ImplementedServices, error) {
 	serviceInfo := ns.Server.GetServiceInfo()
 	serviceNames := make([]string, 0, len(serviceInfo))
 	for svc := range serviceInfo {
 		serviceNames = append(serviceNames, svc)
 	}
 	sort.Strings(serviceNames)
-	return &ethpb.ImplementedServices{
+	return &silapb.ImplementedServices{
 		Services: serviceNames,
 	}, nil
 }
@@ -154,7 +154,7 @@ func (ns *Server) ListImplementedServices(_ context.Context, _ *empty.Empty) (*e
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // GetHost returns the p2p data on the current local and host peer.
-func (ns *Server) GetHost(_ context.Context, _ *empty.Empty) (*ethpb.HostData, error) {
+func (ns *Server) GetHost(_ context.Context, _ *empty.Empty) (*silapb.HostData, error) {
 	var stringAddr []string
 	for _, addr := range ns.PeerManager.Host().Addrs() {
 		stringAddr = append(stringAddr, addr.String())
@@ -169,7 +169,7 @@ func (ns *Server) GetHost(_ context.Context, _ *empty.Empty) (*ethpb.HostData, e
 		}
 	}
 
-	return &ethpb.HostData{
+	return &silapb.HostData{
 		Addresses: stringAddr,
 		PeerId:    ns.PeerManager.PeerID().String(),
 		Enr:       enr,
@@ -179,7 +179,7 @@ func (ns *Server) GetHost(_ context.Context, _ *empty.Empty) (*ethpb.HostData, e
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // GetPeer returns the data known about the peer defined by the provided peer id.
-func (ns *Server) GetPeer(_ context.Context, peerReq *ethpb.PeerRequest) (*ethpb.Peer, error) {
+func (ns *Server) GetPeer(_ context.Context, peerReq *silapb.PeerRequest) (*silapb.Peer, error) {
 	pid, err := peer.Decode(peerReq.PeerId)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Unable to parse provided peer id: %v", err)
@@ -192,12 +192,12 @@ func (ns *Server) GetPeer(_ context.Context, peerReq *ethpb.PeerRequest) (*ethpb
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "Requested peer does not exist: %v", err)
 	}
-	pbDirection := ethpb.PeerDirection_UNKNOWN
+	pbDirection := silapb.PeerDirection_UNKNOWN
 	switch dir {
 	case network.DirInbound:
-		pbDirection = ethpb.PeerDirection_INBOUND
+		pbDirection = silapb.PeerDirection_INBOUND
 	case network.DirOutbound:
-		pbDirection = ethpb.PeerDirection_OUTBOUND
+		pbDirection = silapb.PeerDirection_OUTBOUND
 	}
 	connState, err := ns.PeersFetcher.Peers().ConnectionState(pid)
 	if err != nil {
@@ -214,10 +214,10 @@ func (ns *Server) GetPeer(_ context.Context, peerReq *ethpb.PeerRequest) (*ethpb
 			return nil, status.Errorf(codes.Internal, "Unable to serialize enr: %v", err)
 		}
 	}
-	return &ethpb.Peer{
+	return &silapb.Peer{
 		Address:         addr.String(),
 		Direction:       pbDirection,
-		ConnectionState: ethpb.ConnectionState(connState),
+		ConnectionState: silapb.ConnectionState(connState),
 		PeerId:          peerReq.PeerId,
 		Enr:             enr,
 	}, nil
@@ -226,9 +226,9 @@ func (ns *Server) GetPeer(_ context.Context, peerReq *ethpb.PeerRequest) (*ethpb
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // ListPeers lists the peers connected to this node.
-func (ns *Server) ListPeers(ctx context.Context, _ *empty.Empty) (*ethpb.Peers, error) {
+func (ns *Server) ListPeers(ctx context.Context, _ *empty.Empty) (*silapb.Peers, error) {
 	peers := ns.PeersFetcher.Peers().Connected()
-	res := make([]*ethpb.Peer, 0, len(peers))
+	res := make([]*silapb.Peer, 0, len(peers))
 	for _, pid := range peers {
 		if ctx.Err() != nil {
 			return nil, ctx.Err()
@@ -257,23 +257,23 @@ func (ns *Server) ListPeers(ctx context.Context, _ *empty.Empty) (*ethpb.Peers, 
 			multiAddrStr = multiaddr.String()
 		}
 		address := fmt.Sprintf("%s/p2p/%s", multiAddrStr, pid.String())
-		pbDirection := ethpb.PeerDirection_UNKNOWN
+		pbDirection := silapb.PeerDirection_UNKNOWN
 		switch direction {
 		case network.DirInbound:
-			pbDirection = ethpb.PeerDirection_INBOUND
+			pbDirection = silapb.PeerDirection_INBOUND
 		case network.DirOutbound:
-			pbDirection = ethpb.PeerDirection_OUTBOUND
+			pbDirection = silapb.PeerDirection_OUTBOUND
 		}
-		res = append(res, &ethpb.Peer{
+		res = append(res, &silapb.Peer{
 			Address:         address,
 			Direction:       pbDirection,
-			ConnectionState: ethpb.ConnectionState_CONNECTED,
+			ConnectionState: silapb.ConnectionState_CONNECTED,
 			PeerId:          pid.String(),
 			Enr:             enr,
 		})
 	}
 
-	return &ethpb.Peers{
+	return &silapb.Peers{
 		Peers: res,
 	}, nil
 }
@@ -281,13 +281,13 @@ func (ns *Server) ListPeers(ctx context.Context, _ *empty.Empty) (*ethpb.Peers, 
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // GetETH1ConnectionStatus gets data about the ETH1 endpoints.
-func (ns *Server) GetETH1ConnectionStatus(_ context.Context, _ *empty.Empty) (*ethpb.ETH1ConnectionStatus, error) {
+func (ns *Server) GetETH1ConnectionStatus(_ context.Context, _ *empty.Empty) (*silapb.ETH1ConnectionStatus, error) {
 	var currErr string
 	err := ns.POWChainInfoFetcher.ExecutionClientConnectionErr()
 	if err != nil {
 		currErr = err.Error()
 	}
-	return &ethpb.ETH1ConnectionStatus{
+	return &silapb.ETH1ConnectionStatus{
 		CurrentAddress:         ns.POWChainInfoFetcher.ExecutionClientEndpoint(),
 		CurrentConnectionError: currErr,
 		Addresses:              []string{ns.POWChainInfoFetcher.ExecutionClientEndpoint()},
@@ -298,7 +298,7 @@ func (ns *Server) GetETH1ConnectionStatus(_ context.Context, _ *empty.Empty) (*e
 //
 // StreamBeaconLogs from the beacon node via a gRPC server-side stream.
 // DEPRECATED: This endpoint doesn't appear to be used and have been marked for deprecation.
-func (ns *Server) StreamBeaconLogs(_ *empty.Empty, stream ethpb.Health_StreamBeaconLogsServer) error {
+func (ns *Server) StreamBeaconLogs(_ *empty.Empty, stream silapb.Health_StreamBeaconLogsServer) error {
 	ch := make(chan []byte, ns.StreamLogsBufferSize)
 	sub := ns.LogsStreamer.LogsFeed().Subscribe(ch)
 	defer func() {
@@ -311,7 +311,7 @@ func (ns *Server) StreamBeaconLogs(_ *empty.Empty, stream ethpb.Health_StreamBea
 	for i, log := range recentLogs {
 		logStrings[i] = string(log)
 	}
-	if err := stream.Send(&ethpb.LogsResponse{
+	if err := stream.Send(&silapb.LogsResponse{
 		Logs: logStrings,
 	}); err != nil {
 		return status.Errorf(codes.Unavailable, "Could not send over stream: %v", err)
@@ -319,7 +319,7 @@ func (ns *Server) StreamBeaconLogs(_ *empty.Empty, stream ethpb.Health_StreamBea
 	for {
 		select {
 		case log := <-ch:
-			resp := &ethpb.LogsResponse{
+			resp := &silapb.LogsResponse{
 				Logs: []string{string(log)},
 			}
 			if err := stream.Send(resp); err != nil {

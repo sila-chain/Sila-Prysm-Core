@@ -4,7 +4,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/signing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -16,11 +16,11 @@ var (
 
 // ROMessage represents a read-only payload attestation message.
 type ROMessage struct {
-	m *ethpb.PayloadAttestationMessage
+	m *silapb.PayloadAttestationMessage
 }
 
 // validatePayloadAtt checks if the given payload attestation message is valid.
-func validatePayloadAtt(m *ethpb.PayloadAttestationMessage) error {
+func validatePayloadAtt(m *silapb.PayloadAttestationMessage) error {
 	if m == nil {
 		return errNilPayloadAttMessage
 	}
@@ -34,7 +34,7 @@ func validatePayloadAtt(m *ethpb.PayloadAttestationMessage) error {
 }
 
 // NewReadOnly creates a new ReadOnly instance after validating the message.
-func NewReadOnly(m *ethpb.PayloadAttestationMessage) (ROMessage, error) {
+func NewReadOnly(m *silapb.PayloadAttestationMessage) (ROMessage, error) {
 	if err := validatePayloadAtt(m); err != nil {
 		return ROMessage{}, err
 	}

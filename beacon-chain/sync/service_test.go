@@ -24,7 +24,7 @@ import (
 	leakybucket "github.com/sila-chain/Sila-Consensus-Core/v7/container/leaky-bucket"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -34,7 +34,7 @@ import (
 )
 
 func TestService_StatusZeroEpoch(t *testing.T) {
-	bState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: 0})
+	bState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: 0})
 	require.NoError(t, err)
 	chain := &mockChain.ChainService{
 		Genesis: time.Now(),

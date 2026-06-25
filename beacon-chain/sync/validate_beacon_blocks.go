@@ -22,7 +22,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -68,7 +68,7 @@ func (s *Service) validateBeaconBlockPubSub(ctx context.Context, pid peer.ID, ms
 
 	blk, ok := m.(interfaces.ReadOnlySignedBeaconBlock)
 	if !ok {
-		return pubsub.ValidationReject, errors.New("msg is not ethpb.ReadOnlySignedBeaconBlock")
+		return pubsub.ValidationReject, errors.New("msg is not silapb.ReadOnlySignedBeaconBlock")
 	}
 
 	if blk.IsNil() || blk.Block().IsNil() {
@@ -632,7 +632,7 @@ func (s *Service) detectAndBroadcastEquivocation(ctx context.Context, blk interf
 		return errors.Wrap(err, "could not get header from head block")
 	}
 
-	slashing := &ethpb.ProposerSlashing{
+	slashing := &silapb.ProposerSlashing{
 		Header_1: header1,
 		Header_2: header2,
 	}

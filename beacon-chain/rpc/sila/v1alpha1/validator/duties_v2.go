@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -22,7 +22,7 @@ import (
 // in the request object.
 //
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
-func (vs *Server) GetDutiesV2(ctx context.Context, req *ethpb.DutiesRequest) (*ethpb.DutiesV2Response, error) {
+func (vs *Server) GetDutiesV2(ctx context.Context, req *silapb.DutiesRequest) (*silapb.DutiesV2Response, error) {
 	if vs.SyncChecker.Syncing() {
 		return nil, status.Error(codes.Unavailable, "Syncing to latest head, not ready to respond")
 	}
@@ -31,7 +31,7 @@ func (vs *Server) GetDutiesV2(ctx context.Context, req *ethpb.DutiesRequest) (*e
 
 // Compute the validator duties from the head state's corresponding epoch
 // for validators public key / indices requested.
-func (vs *Server) dutiesv2(ctx context.Context, req *ethpb.DutiesRequest) (*ethpb.DutiesV2Response, error) {
+func (vs *Server) dutiesv2(ctx context.Context, req *silapb.DutiesRequest) (*silapb.DutiesV2Response, error) {
 	currentEpoch := slots.ToEpoch(vs.TimeFetcher.CurrentSlot())
 	if req.Epoch > currentEpoch+1 {
 		return nil, status.Errorf(codes.Unavailable, "Request epoch %d can not be greater than next epoch %d", req.Epoch, currentEpoch+1)
@@ -110,8 +110,8 @@ func (vs *Server) dutiesv2(ctx context.Context, req *ethpb.DutiesRequest) (*ethp
 	nextProposerMap := buildProposerMap(nextProposerDuties)
 	currentPTCAssignments := buildPTCMap(currentPTCDuties)
 	nextPTCAssignments := buildPTCMap(nextPTCDuties)
-	validatorAssignments := make([]*ethpb.DutiesV2Response_Duty, 0, len(req.PublicKeys))
-	nextValidatorAssignments := make([]*ethpb.DutiesV2Response_Duty, 0, len(req.PublicKeys))
+	validatorAssignments := make([]*silapb.DutiesV2Response_Duty, 0, len(req.PublicKeys))
+	nextValidatorAssignments := make([]*silapb.DutiesV2Response_Duty, 0, len(req.PublicKeys))
 
 	// Build duties using cached validator index lookups
 	for _, pubKey := range req.PublicKeys {
@@ -121,9 +121,9 @@ func (vs *Server) dutiesv2(ctx context.Context, req *ethpb.DutiesRequest) (*ethp
 
 		info := validatorLookup[string(pubKey)]
 		if !info.found {
-			unknownDuty := &ethpb.DutiesV2Response_Duty{
+			unknownDuty := &silapb.DutiesV2Response_Duty{
 				PublicKey: pubKey,
-				Status:    ethpb.ValidatorStatus_UNKNOWN_STATUS,
+				Status:    silapb.ValidatorStatus_UNKNOWN_STATUS,
 			}
 			validatorAssignments = append(validatorAssignments, unknownDuty)
 			nextValidatorAssignments = append(nextValidatorAssignments, unknownDuty)
@@ -133,7 +133,7 @@ func (vs *Server) dutiesv2(ctx context.Context, req *ethpb.DutiesRequest) (*ethp
 		statusEnum := assignmentStatus(s, info.index)
 
 		// Current epoch assignment
-		assignment := &ethpb.DutiesV2Response_Duty{
+		assignment := &silapb.DutiesV2Response_Duty{
 			PublicKey:      pubKey,
 			ValidatorIndex: info.index,
 			Status:         statusEnum,
@@ -151,7 +151,7 @@ func (vs *Server) dutiesv2(ctx context.Context, req *ethpb.DutiesRequest) (*ethp
 		}
 
 		// Next epoch assignment
-		nextDuty := &ethpb.DutiesV2Response_Duty{
+		nextDuty := &silapb.DutiesV2Response_Duty{
 			PublicKey:      pubKey,
 			ValidatorIndex: info.index,
 			Status:         statusEnum,
@@ -220,7 +220,7 @@ func (vs *Server) dutiesv2(ctx context.Context, req *ethpb.DutiesRequest) (*ethp
 		}
 	}
 
-	return &ethpb.DutiesV2Response{
+	return &silapb.DutiesV2Response{
 		PreviousDutyDependentRoot: prevDependentRoot[:],
 		CurrentDutyDependentRoot:  currDependentRoot[:],
 		CurrentEpochDuties:        validatorAssignments,

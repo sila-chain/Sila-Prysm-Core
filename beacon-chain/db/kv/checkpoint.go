@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 	bolt "go.etcd.io/bbolt"
 )
@@ -16,43 +16,43 @@ import (
 var errMissingStateForCheckpoint = errors.New("missing state summary for checkpoint root")
 
 // JustifiedCheckpoint returns the latest justified checkpoint in beacon chain.
-func (s *Store) JustifiedCheckpoint(ctx context.Context) (*ethpb.Checkpoint, error) {
+func (s *Store) JustifiedCheckpoint(ctx context.Context) (*silapb.Checkpoint, error) {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.JustifiedCheckpoint")
 	defer span.End()
-	var checkpoint *ethpb.Checkpoint
+	var checkpoint *silapb.Checkpoint
 	err := s.db.View(func(tx *bolt.Tx) error {
 		bkt := tx.Bucket(checkpointBucket)
 		enc := bkt.Get(justifiedCheckpointKey)
 		if enc == nil {
-			checkpoint = &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+			checkpoint = &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 			return nil
 		}
-		checkpoint = &ethpb.Checkpoint{}
+		checkpoint = &silapb.Checkpoint{}
 		return decode(ctx, enc, checkpoint)
 	})
 	return checkpoint, err
 }
 
 // FinalizedCheckpoint returns the latest finalized checkpoint in beacon chain.
-func (s *Store) FinalizedCheckpoint(ctx context.Context) (*ethpb.Checkpoint, error) {
+func (s *Store) FinalizedCheckpoint(ctx context.Context) (*silapb.Checkpoint, error) {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.FinalizedCheckpoint")
 	defer span.End()
-	var checkpoint *ethpb.Checkpoint
+	var checkpoint *silapb.Checkpoint
 	err := s.db.View(func(tx *bolt.Tx) error {
 		bkt := tx.Bucket(checkpointBucket)
 		enc := bkt.Get(finalizedCheckpointKey)
 		if enc == nil {
-			checkpoint = &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+			checkpoint = &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 			return nil
 		}
-		checkpoint = &ethpb.Checkpoint{}
+		checkpoint = &silapb.Checkpoint{}
 		return decode(ctx, enc, checkpoint)
 	})
 	return checkpoint, err
 }
 
 // SaveJustifiedCheckpoint saves justified checkpoint in beacon chain.
-func (s *Store) SaveJustifiedCheckpoint(ctx context.Context, checkpoint *ethpb.Checkpoint) error {
+func (s *Store) SaveJustifiedCheckpoint(ctx context.Context, checkpoint *silapb.Checkpoint) error {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.SaveJustifiedCheckpoint")
 	defer span.End()
 
@@ -60,7 +60,7 @@ func (s *Store) SaveJustifiedCheckpoint(ctx context.Context, checkpoint *ethpb.C
 }
 
 // SaveFinalizedCheckpoint saves finalized checkpoint in beacon chain.
-func (s *Store) SaveFinalizedCheckpoint(ctx context.Context, checkpoint *ethpb.Checkpoint) error {
+func (s *Store) SaveFinalizedCheckpoint(ctx context.Context, checkpoint *silapb.Checkpoint) error {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.SaveFinalizedCheckpoint")
 	defer span.End()
 
@@ -89,7 +89,7 @@ func (s *Store) SaveFinalizedCheckpoint(ctx context.Context, checkpoint *ethpb.C
 	return err
 }
 
-func (s *Store) saveCheckpoint(ctx context.Context, key []byte, checkpoint *ethpb.Checkpoint) error {
+func (s *Store) saveCheckpoint(ctx context.Context, key []byte, checkpoint *silapb.Checkpoint) error {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.saveCheckpoint")
 	defer span.End()
 
@@ -125,7 +125,7 @@ func recoverStateSummary(ctx context.Context, tx *bolt.Tx, root []byte) error {
 	if err != nil {
 		return errors.Wrapf(err, "Could not unmarshal block: %#x", bytesutil.Trunc(root))
 	}
-	summaryEnc, err := encode(ctx, &ethpb.StateSummary{
+	summaryEnc, err := encode(ctx, &silapb.StateSummary{
 		Slot: blk.Block().Slot(),
 		Root: root,
 	})

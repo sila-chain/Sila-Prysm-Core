@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	blocktest "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks/testing"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -60,13 +60,13 @@ func TestServer_ListBeaconCommittees_CurrentEpoch(t *testing.T) {
 	committees, err := computeCommittees(t.Context(), 0, activeIndices, attesterSeed)
 	require.NoError(t, err)
 
-	wanted := &ethpb.BeaconCommittees{
+	wanted := &silapb.BeaconCommittees{
 		Epoch:                0,
 		Committees:           committees.SlotToUint64(),
 		ActiveValidatorCount: uint64(numValidators),
 	}
-	res, err := bs.ListBeaconCommittees(t.Context(), &ethpb.ListCommitteesRequest{
-		QueryFilter: &ethpb.ListCommitteesRequest_Genesis{Genesis: true},
+	res, err := bs.ListBeaconCommittees(t.Context(), &silapb.ListCommitteesRequest{
+		QueryFilter: &silapb.ListCommitteesRequest_Genesis{Genesis: true},
 	})
 	require.NoError(t, err)
 	if !proto.Equal(res, wanted) {
@@ -132,14 +132,14 @@ func TestServer_ListBeaconCommittees_PreviousEpoch(t *testing.T) {
 	require.NoError(t, err)
 
 	tests := []struct {
-		req *ethpb.ListCommitteesRequest
-		res *ethpb.BeaconCommittees
+		req *silapb.ListCommitteesRequest
+		res *silapb.BeaconCommittees
 	}{
 		{
-			req: &ethpb.ListCommitteesRequest{
-				QueryFilter: &ethpb.ListCommitteesRequest_Epoch{Epoch: 1},
+			req: &silapb.ListCommitteesRequest{
+				QueryFilter: &silapb.ListCommitteesRequest_Epoch{Epoch: 1},
 			},
-			res: &ethpb.BeaconCommittees{
+			res: &silapb.BeaconCommittees{
 				Epoch:                1,
 				Committees:           wanted.SlotToUint64(),
 				ActiveValidatorCount: uint64(numValidators),
@@ -181,7 +181,7 @@ func TestRetrieveCommitteesForRoot(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, db.SaveGenesisBlockRoot(ctx, gRoot))
 	require.NoError(t, db.SaveState(ctx, headState, gRoot))
-	stateSummary := &ethpb.StateSummary{
+	stateSummary := &silapb.StateSummary{
 		Slot: 0,
 		Root: gRoot[:],
 	}
@@ -200,12 +200,12 @@ func TestRetrieveCommitteesForRoot(t *testing.T) {
 	committees, activeIndices, err := bs.retrieveCommitteesForRoot(t.Context(), gRoot[:])
 	require.NoError(t, err)
 
-	wantedRes := &ethpb.BeaconCommittees{
+	wantedRes := &silapb.BeaconCommittees{
 		Epoch:                0,
 		Committees:           wanted.SlotToUint64(),
 		ActiveValidatorCount: uint64(numValidators),
 	}
-	receivedRes := &ethpb.BeaconCommittees{
+	receivedRes := &silapb.BeaconCommittees{
 		Epoch:                0,
 		Committees:           committees.SlotToUint64(),
 		ActiveValidatorCount: uint64(len(activeIndices)),
@@ -215,12 +215,12 @@ func TestRetrieveCommitteesForRoot(t *testing.T) {
 
 func setupActiveValidators(t *testing.T, count int) state.BeaconState {
 	balances := make([]uint64, count)
-	validators := make([]*ethpb.Validator, 0, count)
+	validators := make([]*silapb.Validator, 0, count)
 	for i := range count {
 		pubKey := make([]byte, params.BeaconConfig().BLSPubkeyLength)
 		binary.LittleEndian.PutUint64(pubKey, uint64(i))
 		balances[i] = uint64(i)
-		validators = append(validators, &ethpb.Validator{
+		validators = append(validators, &silapb.Validator{
 			PublicKey:             pubKey,
 			ActivationEpoch:       0,
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,

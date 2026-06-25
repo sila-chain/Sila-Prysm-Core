@@ -9,7 +9,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	validatormock "github.com/sila-chain/Sila-Consensus-Core/v7/testing/validator-mock"
@@ -55,7 +55,7 @@ func TestLocalSelector_AttestationSelectionProof_Memoized(t *testing.T) {
 	m.validatorClient.EXPECT().DomainData(
 		gomock.Any(),
 		gomock.Any(),
-	).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
+	).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
 
 	slot := primitives.Slot(1)
 
@@ -86,7 +86,7 @@ func TestLocalSelector_AttestationSelectionProof_ConcurrentDedup(t *testing.T) {
 	m.validatorClient.EXPECT().DomainData(
 		gomock.Any(),
 		gomock.Any(),
-	).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil).Times(1)
+	).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil).Times(1)
 
 	slot := primitives.Slot(1)
 	const goroutines = 5
@@ -170,12 +170,12 @@ func TestDistributedSelector_EpochGuard(t *testing.T) {
 	slot := primitives.Slot(2) * params.BeaconConfig().SlotsPerEpoch
 	{
 		var data dutyStoreData
-		data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-			CurrentEpochDuties: []*ethpb.ValidatorDuty{{
+		data.setFromContainer(&silapb.ValidatorDutiesContainer{
+			CurrentEpochDuties: []*silapb.ValidatorDuty{{
 				AttesterSlot:   slot,
 				ValidatorIndex: 200,
 				PublicKey:      keys.pub[:],
-				Status:         ethpb.ValidatorStatus_ACTIVE,
+				Status:         silapb.ValidatorStatus_ACTIVE,
 			}},
 		})
 		ds.v.duties.write(data)
@@ -183,7 +183,7 @@ func TestDistributedSelector_EpochGuard(t *testing.T) {
 
 	sigDomain := make([]byte, 32)
 	client.EXPECT().DomainData(gomock.Any(), gomock.Any()).
-		Return(&ethpb.DomainResponse{SignatureDomain: sigDomain}, nil).Times(1)
+		Return(&silapb.DomainResponse{SignatureDomain: sigDomain}, nil).Times(1)
 	client.EXPECT().AggregatedSelections(gomock.Any(), gomock.Any()).
 		Return([]iface.BeaconCommitteeSelection{{
 			SelectionProof: make([]byte, 96),
@@ -203,12 +203,12 @@ func TestDistributedSelector_ReadyCh_BlocksUntilRefresh(t *testing.T) {
 	slot := primitives.Slot(3) * params.BeaconConfig().SlotsPerEpoch
 	{
 		var data dutyStoreData
-		data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-			CurrentEpochDuties: []*ethpb.ValidatorDuty{{
+		data.setFromContainer(&silapb.ValidatorDutiesContainer{
+			CurrentEpochDuties: []*silapb.ValidatorDuty{{
 				AttesterSlot:   slot,
 				ValidatorIndex: 200,
 				PublicKey:      keys.pub[:],
-				Status:         ethpb.ValidatorStatus_ACTIVE,
+				Status:         silapb.ValidatorStatus_ACTIVE,
 			}},
 		})
 		ds.v.duties.write(data)
@@ -222,10 +222,10 @@ func TestDistributedSelector_ReadyCh_BlocksUntilRefresh(t *testing.T) {
 	signingStarted := make(chan struct{})
 	rpcDone := make(chan struct{})
 	client.EXPECT().DomainData(gomock.Any(), gomock.Any()).
-		DoAndReturn(func(_ context.Context, _ *ethpb.DomainRequest) (*ethpb.DomainResponse, error) {
+		DoAndReturn(func(_ context.Context, _ *silapb.DomainRequest) (*silapb.DomainResponse, error) {
 			close(signingStarted) // Signal that refresh is in-flight.
 			<-rpcDone             // Block until test unblocks.
-			return &ethpb.DomainResponse{SignatureDomain: sigDomain}, nil
+			return &silapb.DomainResponse{SignatureDomain: sigDomain}, nil
 		})
 	client.EXPECT().AggregatedSelections(gomock.Any(), gomock.Any()).
 		Return([]iface.BeaconCommitteeSelection{{
@@ -264,12 +264,12 @@ func TestDistributedSelector_ErrorIsStickyWithinEpoch(t *testing.T) {
 	slot := primitives.Slot(4) * params.BeaconConfig().SlotsPerEpoch
 	{
 		var data dutyStoreData
-		data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-			CurrentEpochDuties: []*ethpb.ValidatorDuty{{
+		data.setFromContainer(&silapb.ValidatorDutiesContainer{
+			CurrentEpochDuties: []*silapb.ValidatorDuty{{
 				AttesterSlot:   slot,
 				ValidatorIndex: 200,
 				PublicKey:      keys.pub[:],
-				Status:         ethpb.ValidatorStatus_ACTIVE,
+				Status:         silapb.ValidatorStatus_ACTIVE,
 			}},
 		})
 		ds.v.duties.write(data)
@@ -277,7 +277,7 @@ func TestDistributedSelector_ErrorIsStickyWithinEpoch(t *testing.T) {
 
 	sigDomain := make([]byte, 32)
 	client.EXPECT().DomainData(gomock.Any(), gomock.Any()).
-		Return(&ethpb.DomainResponse{SignatureDomain: sigDomain}, nil).Times(1)
+		Return(&silapb.DomainResponse{SignatureDomain: sigDomain}, nil).Times(1)
 
 	refreshErr := errors.New("middleware down")
 	client.EXPECT().AggregatedSelections(gomock.Any(), gomock.Any()).
@@ -304,13 +304,13 @@ func TestDistributedSelector_SyncSubnetDedup(t *testing.T) {
 
 	// SyncCommitteeSize=512, SyncCommitteeSubnetCount=4 → 128 per subnet.
 	// Indices 0 and 127 both map to subnet 0, index 128 maps to subnet 1.
-	indexRes := &ethpb.SyncSubcommitteeIndexResponse{
+	indexRes := &silapb.SyncSubcommitteeIndexResponse{
 		Indices: []primitives.CommitteeIndex{0, 127, 128},
 	}
 
 	// DomainData called once per unique subnet (2 subnets).
 	client.EXPECT().DomainData(gomock.Any(), gomock.Any()).
-		Return(&ethpb.DomainResponse{SignatureDomain: sigDomain}, nil).Times(2)
+		Return(&silapb.DomainResponse{SignatureDomain: sigDomain}, nil).Times(2)
 
 	proofSubnet0 := []byte("aggregated-proof-subnet0")
 	proofSubnet1 := []byte("aggregated-proof-subnet1")

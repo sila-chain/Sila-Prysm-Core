@@ -7,7 +7,7 @@ import (
 
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	common "github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/common/ssz_static"
 	fssz "github.com/sila-chain/fastssz"
@@ -20,9 +20,9 @@ func RunSSZStaticTests(t *testing.T, config string) {
 
 func customHtr(t *testing.T, htrs []common.HTR, object any) []common.HTR {
 	switch object.(type) {
-	case *ethpb.BeaconStateCapella:
+	case *silapb.BeaconStateCapella:
 		htrs = append(htrs, func(s any) ([32]byte, error) {
-			beaconState, err := state_native.InitializeFromProtoUnsafeCapella(s.(*ethpb.BeaconStateCapella))
+			beaconState, err := state_native.InitializeFromProtoUnsafeCapella(s.(*silapb.BeaconStateCapella))
 			require.NoError(t, err)
 			return beaconState.HashTreeRoot(context.Background())
 		})
@@ -39,94 +39,94 @@ func unmarshalledSSZ(t *testing.T, serializedBytes []byte, folderName string) (a
 	case "ExecutionPayloadHeader":
 		obj = &enginev1.ExecutionPayloadHeaderCapella{}
 	case "Attestation":
-		obj = &ethpb.Attestation{}
+		obj = &silapb.Attestation{}
 	case "AttestationData":
-		obj = &ethpb.AttestationData{}
+		obj = &silapb.AttestationData{}
 	case "AttesterSlashing":
-		obj = &ethpb.AttesterSlashing{}
+		obj = &silapb.AttesterSlashing{}
 	case "AggregateAndProof":
-		obj = &ethpb.AggregateAttestationAndProof{}
+		obj = &silapb.AggregateAttestationAndProof{}
 	case "BeaconBlock":
-		obj = &ethpb.BeaconBlockCapella{}
+		obj = &silapb.BeaconBlockCapella{}
 	case "BeaconBlockBody":
-		obj = &ethpb.BeaconBlockBodyCapella{}
+		obj = &silapb.BeaconBlockBodyCapella{}
 	case "BeaconBlockHeader":
-		obj = &ethpb.BeaconBlockHeader{}
+		obj = &silapb.BeaconBlockHeader{}
 	case "BeaconState":
-		obj = &ethpb.BeaconStateCapella{}
+		obj = &silapb.BeaconStateCapella{}
 	case "Checkpoint":
-		obj = &ethpb.Checkpoint{}
+		obj = &silapb.Checkpoint{}
 	case "Deposit":
-		obj = &ethpb.Deposit{}
+		obj = &silapb.Deposit{}
 	case "DepositMessage":
-		obj = &ethpb.DepositMessage{}
+		obj = &silapb.DepositMessage{}
 	case "DepositData":
-		obj = &ethpb.Deposit_Data{}
+		obj = &silapb.Deposit_Data{}
 	case "Eth1Data":
-		obj = &ethpb.Eth1Data{}
+		obj = &silapb.Eth1Data{}
 	case "Eth1Block":
 		t.Skip("Unused type")
 		return nil, nil
 	case "Fork":
-		obj = &ethpb.Fork{}
+		obj = &silapb.Fork{}
 	case "ForkData":
-		obj = &ethpb.ForkData{}
+		obj = &silapb.ForkData{}
 	case "HistoricalBatch":
-		obj = &ethpb.HistoricalBatch{}
+		obj = &silapb.HistoricalBatch{}
 	case "IndexedAttestation":
-		obj = &ethpb.IndexedAttestation{}
+		obj = &silapb.IndexedAttestation{}
 	case "LightClientHeader":
-		obj = &ethpb.LightClientHeaderCapella{}
+		obj = &silapb.LightClientHeaderCapella{}
 	case "PendingAttestation":
-		obj = &ethpb.PendingAttestation{}
+		obj = &silapb.PendingAttestation{}
 	case "ProposerSlashing":
-		obj = &ethpb.ProposerSlashing{}
+		obj = &silapb.ProposerSlashing{}
 	case "SignedAggregateAndProof":
-		obj = &ethpb.SignedAggregateAttestationAndProof{}
+		obj = &silapb.SignedAggregateAttestationAndProof{}
 	case "SignedBeaconBlock":
-		obj = &ethpb.SignedBeaconBlockCapella{}
+		obj = &silapb.SignedBeaconBlockCapella{}
 	case "SignedBeaconBlockHeader":
-		obj = &ethpb.SignedBeaconBlockHeader{}
+		obj = &silapb.SignedBeaconBlockHeader{}
 	case "SignedVoluntaryExit":
-		obj = &ethpb.SignedVoluntaryExit{}
+		obj = &silapb.SignedVoluntaryExit{}
 	case "SigningData":
-		obj = &ethpb.SigningData{}
+		obj = &silapb.SigningData{}
 	case "Validator":
-		obj = &ethpb.Validator{}
+		obj = &silapb.Validator{}
 	case "VoluntaryExit":
-		obj = &ethpb.VoluntaryExit{}
+		obj = &silapb.VoluntaryExit{}
 	case "SyncCommitteeMessage":
-		obj = &ethpb.SyncCommitteeMessage{}
+		obj = &silapb.SyncCommitteeMessage{}
 	case "SyncCommitteeContribution":
-		obj = &ethpb.SyncCommitteeContribution{}
+		obj = &silapb.SyncCommitteeContribution{}
 	case "ContributionAndProof":
-		obj = &ethpb.ContributionAndProof{}
+		obj = &silapb.ContributionAndProof{}
 	case "SignedContributionAndProof":
-		obj = &ethpb.SignedContributionAndProof{}
+		obj = &silapb.SignedContributionAndProof{}
 	case "SyncAggregate":
-		obj = &ethpb.SyncAggregate{}
+		obj = &silapb.SyncAggregate{}
 	case "SyncAggregatorSelectionData":
-		obj = &ethpb.SyncAggregatorSelectionData{}
+		obj = &silapb.SyncAggregatorSelectionData{}
 	case "SyncCommittee":
-		obj = &ethpb.SyncCommittee{}
+		obj = &silapb.SyncCommittee{}
 	case "HistoricalSummary":
-		obj = &ethpb.HistoricalSummary{}
+		obj = &silapb.HistoricalSummary{}
 	case "LightClientOptimisticUpdate":
-		obj = &ethpb.LightClientOptimisticUpdateCapella{}
+		obj = &silapb.LightClientOptimisticUpdateCapella{}
 	case "LightClientFinalityUpdate":
-		obj = &ethpb.LightClientFinalityUpdateCapella{}
+		obj = &silapb.LightClientFinalityUpdateCapella{}
 	case "LightClientBootstrap":
-		obj = &ethpb.LightClientBootstrapCapella{}
+		obj = &silapb.LightClientBootstrapCapella{}
 	case "LightClientUpdate":
-		obj = &ethpb.LightClientUpdateCapella{}
+		obj = &silapb.LightClientUpdateCapella{}
 	case "PowBlock":
-		obj = &ethpb.PowBlock{}
+		obj = &silapb.PowBlock{}
 	case "Withdrawal":
 		obj = &enginev1.Withdrawal{}
 	case "BLSToExecutionChange":
-		obj = &ethpb.BLSToExecutionChange{}
+		obj = &silapb.BLSToExecutionChange{}
 	case "SignedBLSToExecutionChange":
-		obj = &ethpb.SignedBLSToExecutionChange{}
+		obj = &silapb.SignedBLSToExecutionChange{}
 	default:
 		return nil, errors.New("type not found")
 	}

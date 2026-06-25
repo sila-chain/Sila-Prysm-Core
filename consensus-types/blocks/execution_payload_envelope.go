@@ -9,20 +9,20 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"google.golang.org/protobuf/proto"
 )
 
 type signedExecutionPayloadEnvelope struct {
-	s *ethpb.SignedExecutionPayloadEnvelope
+	s *silapb.SignedExecutionPayloadEnvelope
 }
 
 type executionPayloadEnvelope struct {
-	p *ethpb.ExecutionPayloadEnvelope
+	p *silapb.ExecutionPayloadEnvelope
 }
 
 // WrappedROSignedExecutionPayloadEnvelope wraps a signed execution payload envelope proto in a read-only interface.
-func WrappedROSignedExecutionPayloadEnvelope(s *ethpb.SignedExecutionPayloadEnvelope) (interfaces.ROSignedExecutionPayloadEnvelope, error) {
+func WrappedROSignedExecutionPayloadEnvelope(s *silapb.SignedExecutionPayloadEnvelope) (interfaces.ROSignedExecutionPayloadEnvelope, error) {
 	w := signedExecutionPayloadEnvelope{s: s}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -31,7 +31,7 @@ func WrappedROSignedExecutionPayloadEnvelope(s *ethpb.SignedExecutionPayloadEnve
 }
 
 // WrappedROExecutionPayloadEnvelope wraps an execution payload envelope proto in a read-only interface.
-func WrappedROExecutionPayloadEnvelope(p *ethpb.ExecutionPayloadEnvelope) (interfaces.ROExecutionPayloadEnvelope, error) {
+func WrappedROExecutionPayloadEnvelope(p *silapb.ExecutionPayloadEnvelope) (interfaces.ROExecutionPayloadEnvelope, error) {
 	w := &executionPayloadEnvelope{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -115,7 +115,7 @@ func (p *executionPayloadEnvelope) Execution() (interfaces.ExecutionData, error)
 
 // ExecutionRequests returns the execution requests attached to the envelope.
 func (p *executionPayloadEnvelope) ExecutionRequests() *enginev1.ExecutionRequests {
-	return ethpb.CopyExecutionRequests(p.p.ExecutionRequests)
+	return silapb.CopyExecutionRequests(p.p.ExecutionRequests)
 }
 
 // BuilderIndex returns the proposer/builder index for the envelope.
@@ -144,11 +144,11 @@ func (p *executionPayloadEnvelope) BlockHash() [field_params.RootLength]byte {
 }
 
 type blindedExecutionPayloadEnvelope struct {
-	p *ethpb.BlindedExecutionPayloadEnvelope
+	p *silapb.BlindedExecutionPayloadEnvelope
 }
 
 // WrappedROBlindedExecutionPayloadEnvelope wraps a blinded execution payload envelope proto in a read-only interface.
-func WrappedROBlindedExecutionPayloadEnvelope(p *ethpb.BlindedExecutionPayloadEnvelope) (interfaces.ROBlindedExecutionPayloadEnvelope, error) {
+func WrappedROBlindedExecutionPayloadEnvelope(p *silapb.BlindedExecutionPayloadEnvelope) (interfaces.ROBlindedExecutionPayloadEnvelope, error) {
 	w := &blindedExecutionPayloadEnvelope{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -177,7 +177,7 @@ func (p *blindedExecutionPayloadEnvelope) IsBlinded() bool {
 }
 
 func (p *blindedExecutionPayloadEnvelope) ExecutionRequests() *enginev1.ExecutionRequests {
-	return ethpb.CopyExecutionRequests(p.p.ExecutionRequests)
+	return silapb.CopyExecutionRequests(p.p.ExecutionRequests)
 }
 
 func (p *blindedExecutionPayloadEnvelope) BuilderIndex() primitives.BuilderIndex {

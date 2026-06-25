@@ -9,17 +9,17 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // cloneValidatorDuty returns a deep copy: scalar fields are copied by value
 // and slice fields are independently allocated, so the returned duty shares
 // no memory with d.
-func cloneValidatorDuty(d *ethpb.ValidatorDuty) *ethpb.ValidatorDuty {
+func cloneValidatorDuty(d *silapb.ValidatorDuty) *silapb.ValidatorDuty {
 	if d == nil {
 		return nil
 	}
-	return &ethpb.ValidatorDuty{
+	return &silapb.ValidatorDuty{
 		CommitteeLength:         d.CommitteeLength,
 		CommitteeIndex:          d.CommitteeIndex,
 		CommitteesAtSlot:        d.CommitteesAtSlot,
@@ -47,8 +47,8 @@ type dutyStoreData struct {
 	syncCurrentMap    map[primitives.ValidatorIndex]bool
 	ptcSlots          map[primitives.ValidatorIndex][]primitives.Slot
 	proposerSlots     map[primitives.ValidatorIndex][]primitives.Slot
-	nextDuties        map[pubkey]*ethpb.ValidatorDuty
-	currentDuties     map[pubkey]*ethpb.ValidatorDuty
+	nextDuties        map[pubkey]*silapb.ValidatorDuty
+	currentDuties     map[pubkey]*silapb.ValidatorDuty
 	epoch             primitives.Epoch
 	currDependentRoot []byte
 	prevDependentRoot []byte
@@ -59,7 +59,7 @@ type dutyStoreData struct {
 
 func (d *dutyStoreData) isInitialized() bool { return d.initialized }
 
-func (d *dutyStoreData) currentDuty(pk pubkey) (*ethpb.ValidatorDuty, bool) {
+func (d *dutyStoreData) currentDuty(pk pubkey) (*silapb.ValidatorDuty, bool) {
 	if !d.initialized {
 		return nil, false
 	}
@@ -102,19 +102,19 @@ func (d *dutyStoreData) canPromote(nextEpoch primitives.Epoch, indices []primiti
 	return true
 }
 
-func (d *dutyStoreData) toContainer() *ethpb.ValidatorDutiesContainer {
+func (d *dutyStoreData) toContainer() *silapb.ValidatorDutiesContainer {
 	if !d.initialized {
-		return &ethpb.ValidatorDutiesContainer{}
+		return &silapb.ValidatorDutiesContainer{}
 	}
-	current := make([]*ethpb.ValidatorDuty, 0, len(d.currentDuties))
+	current := make([]*silapb.ValidatorDuty, 0, len(d.currentDuties))
 	for _, duty := range d.currentDuties {
 		current = append(current, duty)
 	}
-	next := make([]*ethpb.ValidatorDuty, 0, len(d.nextDuties))
+	next := make([]*silapb.ValidatorDuty, 0, len(d.nextDuties))
 	for _, duty := range d.nextDuties {
 		next = append(next, duty)
 	}
-	return &ethpb.ValidatorDutiesContainer{
+	return &silapb.ValidatorDutiesContainer{
 		PrevDependentRoot:  d.prevDependentRoot,
 		CurrDependentRoot:  d.currDependentRoot,
 		CurrentEpochDuties: current,
@@ -128,7 +128,7 @@ func (d *dutyStoreData) reset() {
 	*d = dutyStoreData{}
 }
 
-func (d *dutyStoreData) setFromContainer(container *ethpb.ValidatorDutiesContainer) {
+func (d *dutyStoreData) setFromContainer(container *silapb.ValidatorDutiesContainer) {
 	// Rebuild from scratch so no field can leak from a prior fetch, even if this
 	// is ever called on an already-populated struct.
 	d.reset()
@@ -141,7 +141,7 @@ func (d *dutyStoreData) setFromContainer(container *ethpb.ValidatorDutiesContain
 	d.syncCurrentMap = make(map[primitives.ValidatorIndex]bool)
 	d.syncNextMap = make(map[primitives.ValidatorIndex]bool)
 
-	d.currentDuties = make(map[pubkey]*ethpb.ValidatorDuty, len(container.CurrentEpochDuties))
+	d.currentDuties = make(map[pubkey]*silapb.ValidatorDuty, len(container.CurrentEpochDuties))
 	for _, duty := range container.CurrentEpochDuties {
 		if duty == nil {
 			continue
@@ -158,7 +158,7 @@ func (d *dutyStoreData) setFromContainer(container *ethpb.ValidatorDutiesContain
 		}
 	}
 
-	d.nextDuties = make(map[pubkey]*ethpb.ValidatorDuty, len(container.NextEpochDuties))
+	d.nextDuties = make(map[pubkey]*silapb.ValidatorDuty, len(container.NextEpochDuties))
 	for _, duty := range container.NextEpochDuties {
 		if duty == nil {
 			continue
@@ -204,7 +204,7 @@ func (s roDutySnapshot) currDependentRoot() []byte {
 	return bytes.Clone(s.d.currDependentRoot)
 }
 
-func (s roDutySnapshot) currentDuty(pk pubkey) (*ethpb.ValidatorDuty, bool) {
+func (s roDutySnapshot) currentDuty(pk pubkey) (*silapb.ValidatorDuty, bool) {
 	return s.d.currentDuty(pk)
 }
 
@@ -231,8 +231,8 @@ func (s roDutySnapshot) isNextSyncCommittee(idx primitives.ValidatorIndex) bool 
 }
 
 // currentDuties yields read-only current-epoch duty aliases. Re-rangeable.
-func (s roDutySnapshot) currentDuties() iter.Seq2[pubkey, *ethpb.ValidatorDuty] {
-	return func(yield func(pubkey, *ethpb.ValidatorDuty) bool) {
+func (s roDutySnapshot) currentDuties() iter.Seq2[pubkey, *silapb.ValidatorDuty] {
+	return func(yield func(pubkey, *silapb.ValidatorDuty) bool) {
 		if !s.d.initialized {
 			return
 		}
@@ -245,8 +245,8 @@ func (s roDutySnapshot) currentDuties() iter.Seq2[pubkey, *ethpb.ValidatorDuty] 
 }
 
 // nextDuties yields read-only next-epoch duty aliases. Re-rangeable.
-func (s roDutySnapshot) nextDuties() iter.Seq2[pubkey, *ethpb.ValidatorDuty] {
-	return func(yield func(pubkey, *ethpb.ValidatorDuty) bool) {
+func (s roDutySnapshot) nextDuties() iter.Seq2[pubkey, *silapb.ValidatorDuty] {
+	return func(yield func(pubkey, *silapb.ValidatorDuty) bool) {
 		if !s.d.initialized {
 			return
 		}
@@ -338,7 +338,7 @@ func (ds *dutyStore) dependentRoots() (prev, curr []byte) {
 	return bytes.Clone(ds.data.prevDependentRoot), bytes.Clone(ds.data.currDependentRoot)
 }
 
-func (ds *dutyStore) currentDuty(pk pubkey) (*ethpb.ValidatorDuty, bool) {
+func (ds *dutyStore) currentDuty(pk pubkey) (*silapb.ValidatorDuty, bool) {
 	ds.mu.RLock()
 	defer ds.mu.RUnlock()
 	return ds.data.currentDuty(pk)
@@ -374,7 +374,7 @@ func (ds *dutyStore) isNextSyncCommittee(idx primitives.ValidatorIndex) bool {
 	return ds.data.isNextSyncCommittee(idx)
 }
 
-func (ds *dutyStore) toContainer() *ethpb.ValidatorDutiesContainer {
+func (ds *dutyStore) toContainer() *silapb.ValidatorDutiesContainer {
 	ds.mu.RLock()
 	defer ds.mu.RUnlock()
 	return ds.data.toContainer()

@@ -7,7 +7,7 @@ import (
 
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/interop"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -15,7 +15,7 @@ import (
 
 func TestState_FieldCount(t *testing.T) {
 	count := params.BeaconConfig().BeaconStateFieldCount
-	typ := reflect.TypeFor[ethpb.BeaconState]()
+	typ := reflect.TypeFor[silapb.BeaconState]()
 	numFields := 0
 	for i := 0; i < typ.NumField(); i++ {
 		if typ.Field(i).Name == "state" ||
@@ -58,7 +58,7 @@ func BenchmarkHashTreeRoot_Generic_300000(b *testing.B) {
 	}
 }
 
-func setupGenesisState(t testing.TB, count uint64) *ethpb.BeaconState {
+func setupGenesisState(t testing.TB, count uint64) *silapb.BeaconState {
 	genesisState, _, err := interop.GenerateGenesisState(t.Context(), 0, 1)
 	require.NoError(t, err, "Could not generate genesis beacon state")
 	for i := uint64(1); i < count; i++ {
@@ -66,7 +66,7 @@ func setupGenesisState(t testing.TB, count uint64) *ethpb.BeaconState {
 		var someKey [fieldparams.BLSPubkeyLength]byte
 		copy(someRoot[:], strconv.Itoa(int(i)))
 		copy(someKey[:], strconv.Itoa(int(i)))
-		genesisState.Validators = append(genesisState.Validators, &ethpb.Validator{
+		genesisState.Validators = append(genesisState.Validators, &silapb.Validator{
 			PublicKey:                  someKey[:],
 			WithdrawalCredentials:      someRoot[:],
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,

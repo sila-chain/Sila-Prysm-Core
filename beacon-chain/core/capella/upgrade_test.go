@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -48,7 +48,7 @@ func TestUpgradeToCapella(t *testing.T) {
 	require.DeepSSZEqual(t, make([]uint64, numValidators), s)
 
 	f := mSt.Fork()
-	require.DeepSSZEqual(t, &ethpb.Fork{
+	require.DeepSSZEqual(t, &silapb.Fork{
 		PreviousVersion: st.Fork().CurrentVersion,
 		CurrentVersion:  params.BeaconConfig().CapellaForkVersion,
 		Epoch:           time.CurrentEpoch(st),

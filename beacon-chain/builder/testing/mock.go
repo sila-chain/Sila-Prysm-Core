@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -32,10 +32,10 @@ type MockBuilderService struct {
 	BlobBundleV2                  *v1.BlobsBundleV2
 	ErrSubmitBlindedBlock         error
 	ErrSubmitBlindedBlockPostFulu error
-	Bid                           *ethpb.SignedBuilderBid
-	BidCapella                    *ethpb.SignedBuilderBidCapella
-	BidDeneb                      *ethpb.SignedBuilderBidDeneb
-	BidElectra                    *ethpb.SignedBuilderBidElectra
+	Bid                           *silapb.SignedBuilderBid
+	BidCapella                    *silapb.SignedBuilderBidCapella
+	BidDeneb                      *silapb.SignedBuilderBidDeneb
+	BidElectra                    *silapb.SignedBuilderBidElectra
 	RegistrationCache             *cache.RegistrationCache
 	ErrGetHeader                  error
 	ErrRegisterValidator          error
@@ -102,7 +102,7 @@ func (s *MockBuilderService) GetHeader(_ context.Context, slot primitives.Slot, 
 }
 
 // RegistrationByValidatorID returns either the values from the cache or db.
-func (s *MockBuilderService) RegistrationByValidatorID(ctx context.Context, id primitives.ValidatorIndex) (*ethpb.ValidatorRegistrationV1, error) {
+func (s *MockBuilderService) RegistrationByValidatorID(ctx context.Context, id primitives.ValidatorIndex) (*silapb.ValidatorRegistrationV1, error) {
 	if s.RegistrationCache != nil {
 		return s.RegistrationCache.RegistrationByIndex(id)
 	}
@@ -113,7 +113,7 @@ func (s *MockBuilderService) RegistrationByValidatorID(ctx context.Context, id p
 }
 
 // RegisterValidator for mocking.
-func (s *MockBuilderService) RegisterValidator(context.Context, []*ethpb.SignedValidatorRegistrationV1) error {
+func (s *MockBuilderService) RegisterValidator(context.Context, []*silapb.SignedValidatorRegistrationV1) error {
 	return s.ErrRegisterValidator
 }
 

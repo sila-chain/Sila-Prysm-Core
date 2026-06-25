@@ -12,7 +12,7 @@ import (
 
 	github_com_sila_chain_go_bitfield "github.com/sila-chain/go-bitfield"
 	github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/ext"
+	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/ext"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/descriptorpb"
@@ -38,7 +38,7 @@ type BeaconBlock struct {
 
 func (x *BeaconBlock) Reset() {
 	*x = BeaconBlock{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[0]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -50,7 +50,7 @@ func (x *BeaconBlock) String() string {
 func (*BeaconBlock) ProtoMessage() {}
 
 func (x *BeaconBlock) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[0]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -63,7 +63,7 @@ func (x *BeaconBlock) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BeaconBlock.ProtoReflect.Descriptor instead.
 func (*BeaconBlock) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{0}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *BeaconBlock) GetSlot() github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives.Slot {
@@ -111,7 +111,7 @@ type SignedBeaconBlock struct {
 
 func (x *SignedBeaconBlock) Reset() {
 	*x = SignedBeaconBlock{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[1]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -123,7 +123,7 @@ func (x *SignedBeaconBlock) String() string {
 func (*SignedBeaconBlock) ProtoMessage() {}
 
 func (x *SignedBeaconBlock) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[1]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -136,7 +136,7 @@ func (x *SignedBeaconBlock) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignedBeaconBlock.ProtoReflect.Descriptor instead.
 func (*SignedBeaconBlock) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{1}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SignedBeaconBlock) GetBlock() *BeaconBlock {
@@ -169,7 +169,7 @@ type BeaconBlockBody struct {
 
 func (x *BeaconBlockBody) Reset() {
 	*x = BeaconBlockBody{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[2]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -181,7 +181,7 @@ func (x *BeaconBlockBody) String() string {
 func (*BeaconBlockBody) ProtoMessage() {}
 
 func (x *BeaconBlockBody) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[2]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -194,7 +194,7 @@ func (x *BeaconBlockBody) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BeaconBlockBody.ProtoReflect.Descriptor instead.
 func (*BeaconBlockBody) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{2}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *BeaconBlockBody) GetRandaoReveal() []byte {
@@ -263,7 +263,7 @@ type ProposerSlashing struct {
 
 func (x *ProposerSlashing) Reset() {
 	*x = ProposerSlashing{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[3]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -275,7 +275,7 @@ func (x *ProposerSlashing) String() string {
 func (*ProposerSlashing) ProtoMessage() {}
 
 func (x *ProposerSlashing) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[3]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -288,7 +288,7 @@ func (x *ProposerSlashing) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProposerSlashing.ProtoReflect.Descriptor instead.
 func (*ProposerSlashing) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{3}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ProposerSlashing) GetSignedHeader_1() *SignedBeaconBlockHeader {
@@ -315,7 +315,7 @@ type AttesterSlashing struct {
 
 func (x *AttesterSlashing) Reset() {
 	*x = AttesterSlashing{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[4]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -327,7 +327,7 @@ func (x *AttesterSlashing) String() string {
 func (*AttesterSlashing) ProtoMessage() {}
 
 func (x *AttesterSlashing) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[4]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -340,7 +340,7 @@ func (x *AttesterSlashing) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AttesterSlashing.ProtoReflect.Descriptor instead.
 func (*AttesterSlashing) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{4}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *AttesterSlashing) GetAttestation_1() *IndexedAttestation {
@@ -367,7 +367,7 @@ type Deposit struct {
 
 func (x *Deposit) Reset() {
 	*x = Deposit{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[5]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -379,7 +379,7 @@ func (x *Deposit) String() string {
 func (*Deposit) ProtoMessage() {}
 
 func (x *Deposit) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[5]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -392,7 +392,7 @@ func (x *Deposit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Deposit.ProtoReflect.Descriptor instead.
 func (*Deposit) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{5}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Deposit) GetProof() [][]byte {
@@ -419,7 +419,7 @@ type VoluntaryExit struct {
 
 func (x *VoluntaryExit) Reset() {
 	*x = VoluntaryExit{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[6]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -431,7 +431,7 @@ func (x *VoluntaryExit) String() string {
 func (*VoluntaryExit) ProtoMessage() {}
 
 func (x *VoluntaryExit) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[6]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -444,7 +444,7 @@ func (x *VoluntaryExit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VoluntaryExit.ProtoReflect.Descriptor instead.
 func (*VoluntaryExit) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{6}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *VoluntaryExit) GetEpoch() github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives.Epoch {
@@ -471,7 +471,7 @@ type SignedVoluntaryExit struct {
 
 func (x *SignedVoluntaryExit) Reset() {
 	*x = SignedVoluntaryExit{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[7]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -483,7 +483,7 @@ func (x *SignedVoluntaryExit) String() string {
 func (*SignedVoluntaryExit) ProtoMessage() {}
 
 func (x *SignedVoluntaryExit) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[7]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -496,7 +496,7 @@ func (x *SignedVoluntaryExit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignedVoluntaryExit.ProtoReflect.Descriptor instead.
 func (*SignedVoluntaryExit) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{7}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SignedVoluntaryExit) GetMessage() *VoluntaryExit {
@@ -524,7 +524,7 @@ type Eth1Data struct {
 
 func (x *Eth1Data) Reset() {
 	*x = Eth1Data{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[8]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -536,7 +536,7 @@ func (x *Eth1Data) String() string {
 func (*Eth1Data) ProtoMessage() {}
 
 func (x *Eth1Data) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[8]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -549,7 +549,7 @@ func (x *Eth1Data) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Eth1Data.ProtoReflect.Descriptor instead.
 func (*Eth1Data) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{8}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Eth1Data) GetDepositRoot() []byte {
@@ -586,7 +586,7 @@ type BeaconBlockHeader struct {
 
 func (x *BeaconBlockHeader) Reset() {
 	*x = BeaconBlockHeader{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[9]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -598,7 +598,7 @@ func (x *BeaconBlockHeader) String() string {
 func (*BeaconBlockHeader) ProtoMessage() {}
 
 func (x *BeaconBlockHeader) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[9]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -611,7 +611,7 @@ func (x *BeaconBlockHeader) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BeaconBlockHeader.ProtoReflect.Descriptor instead.
 func (*BeaconBlockHeader) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{9}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *BeaconBlockHeader) GetSlot() github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives.Slot {
@@ -659,7 +659,7 @@ type SignedBeaconBlockHeader struct {
 
 func (x *SignedBeaconBlockHeader) Reset() {
 	*x = SignedBeaconBlockHeader{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[10]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -671,7 +671,7 @@ func (x *SignedBeaconBlockHeader) String() string {
 func (*SignedBeaconBlockHeader) ProtoMessage() {}
 
 func (x *SignedBeaconBlockHeader) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[10]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -684,7 +684,7 @@ func (x *SignedBeaconBlockHeader) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignedBeaconBlockHeader.ProtoReflect.Descriptor instead.
 func (*SignedBeaconBlockHeader) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{10}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *SignedBeaconBlockHeader) GetMessage() *BeaconBlockHeader {
@@ -712,7 +712,7 @@ type IndexedAttestation struct {
 
 func (x *IndexedAttestation) Reset() {
 	*x = IndexedAttestation{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[11]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -724,7 +724,7 @@ func (x *IndexedAttestation) String() string {
 func (*IndexedAttestation) ProtoMessage() {}
 
 func (x *IndexedAttestation) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[11]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -737,7 +737,7 @@ func (x *IndexedAttestation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IndexedAttestation.ProtoReflect.Descriptor instead.
 func (*IndexedAttestation) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{11}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *IndexedAttestation) GetAttestingIndices() []uint64 {
@@ -771,7 +771,7 @@ type SyncAggregate struct {
 
 func (x *SyncAggregate) Reset() {
 	*x = SyncAggregate{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[12]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -783,7 +783,7 @@ func (x *SyncAggregate) String() string {
 func (*SyncAggregate) ProtoMessage() {}
 
 func (x *SyncAggregate) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[12]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -796,7 +796,7 @@ func (x *SyncAggregate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncAggregate.ProtoReflect.Descriptor instead.
 func (*SyncAggregate) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{12}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *SyncAggregate) GetSyncCommitteeBits() github_com_sila_chain_go_bitfield.Bitvector512 {
@@ -825,7 +825,7 @@ type Deposit_Data struct {
 
 func (x *Deposit_Data) Reset() {
 	*x = Deposit_Data{}
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[13]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -837,7 +837,7 @@ func (x *Deposit_Data) String() string {
 func (*Deposit_Data) ProtoMessage() {}
 
 func (x *Deposit_Data) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_beacon_block_proto_msgTypes[13]
+	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -850,7 +850,7 @@ func (x *Deposit_Data) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Deposit_Data.ProtoReflect.Descriptor instead.
 func (*Deposit_Data) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_beacon_block_proto_rawDescGZIP(), []int{5, 0}
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{5, 0}
 }
 
 func (x *Deposit_Data) GetPubkey() []byte {
@@ -881,9 +881,9 @@ func (x *Deposit_Data) GetSignature() []byte {
 	return nil
 }
 
-var File_proto_eth_v1_beacon_block_proto protoreflect.FileDescriptor
+var File_proto_silaapi_v1_beacon_block_proto protoreflect.FileDescriptor
 
-var file_proto_eth_v1_beacon_block_proto_rawDesc = []byte{
+var file_proto_silaapi_v1_beacon_block_proto_rawDesc = []byte{
 	0x0a, 0x1f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x65, 0x74, 0x68, 0x2f, 0x76, 0x31, 0x2f, 0x62,
 	0x65, 0x61, 0x63, 0x6f, 0x6e, 0x5f, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x2e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x12, 0x0f, 0x65, 0x74, 0x68, 0x65, 0x72, 0x65, 0x75, 0x6d, 0x2e, 0x65, 0x74, 0x68, 0x2e,
@@ -1091,19 +1091,19 @@ var file_proto_eth_v1_beacon_block_proto_rawDesc = []byte{
 }
 
 var (
-	file_proto_eth_v1_beacon_block_proto_rawDescOnce sync.Once
-	file_proto_eth_v1_beacon_block_proto_rawDescData = file_proto_eth_v1_beacon_block_proto_rawDesc
+	file_proto_silaapi_v1_beacon_block_proto_rawDescOnce sync.Once
+	file_proto_silaapi_v1_beacon_block_proto_rawDescData = file_proto_silaapi_v1_beacon_block_proto_rawDesc
 )
 
-func file_proto_eth_v1_beacon_block_proto_rawDescGZIP() []byte {
-	file_proto_eth_v1_beacon_block_proto_rawDescOnce.Do(func() {
-		file_proto_eth_v1_beacon_block_proto_rawDescData = protoimpl.X.CompressGZIP(file_proto_eth_v1_beacon_block_proto_rawDescData)
+func file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP() []byte {
+	file_proto_silaapi_v1_beacon_block_proto_rawDescOnce.Do(func() {
+		file_proto_silaapi_v1_beacon_block_proto_rawDescData = protoimpl.X.CompressGZIP(file_proto_silaapi_v1_beacon_block_proto_rawDescData)
 	})
-	return file_proto_eth_v1_beacon_block_proto_rawDescData
+	return file_proto_silaapi_v1_beacon_block_proto_rawDescData
 }
 
-var file_proto_eth_v1_beacon_block_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
-var file_proto_eth_v1_beacon_block_proto_goTypes = []any{
+var file_proto_silaapi_v1_beacon_block_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_proto_silaapi_v1_beacon_block_proto_goTypes = []any{
 	(*BeaconBlock)(nil),             // 0: Sila.Eth.v1.BeaconBlock
 	(*SignedBeaconBlock)(nil),       // 1: Sila.Eth.v1.SignedBeaconBlock
 	(*BeaconBlockBody)(nil),         // 2: Sila.Eth.v1.BeaconBlockBody
@@ -1121,7 +1121,7 @@ var file_proto_eth_v1_beacon_block_proto_goTypes = []any{
 	(*Attestation)(nil),             // 14: Sila.Eth.v1.Attestation
 	(*AttestationData)(nil),         // 15: Sila.Eth.v1.AttestationData
 }
-var file_proto_eth_v1_beacon_block_proto_depIdxs = []int32{
+var file_proto_silaapi_v1_beacon_block_proto_depIdxs = []int32{
 	2,  // 0: Sila.Eth.v1.BeaconBlock.body:type_name -> Sila.Eth.v1.BeaconBlockBody
 	0,  // 1: Sila.Eth.v1.SignedBeaconBlock.block:type_name -> Sila.Eth.v1.BeaconBlock
 	8,  // 2: Sila.Eth.v1.BeaconBlockBody.eth1_data:type_name -> Sila.Eth.v1.Eth1Data
@@ -1145,28 +1145,28 @@ var file_proto_eth_v1_beacon_block_proto_depIdxs = []int32{
 	0,  // [0:16] is the sub-list for field type_name
 }
 
-func init() { file_proto_eth_v1_beacon_block_proto_init() }
-func file_proto_eth_v1_beacon_block_proto_init() {
-	if File_proto_eth_v1_beacon_block_proto != nil {
+func init() { file_proto_silaapi_v1_beacon_block_proto_init() }
+func file_proto_silaapi_v1_beacon_block_proto_init() {
+	if File_proto_silaapi_v1_beacon_block_proto != nil {
 		return
 	}
-	file_proto_eth_v1_attestation_proto_init()
+	file_proto_silaapi_v1_attestation_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_proto_eth_v1_beacon_block_proto_rawDesc,
+			RawDescriptor: file_proto_silaapi_v1_beacon_block_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_proto_eth_v1_beacon_block_proto_goTypes,
-		DependencyIndexes: file_proto_eth_v1_beacon_block_proto_depIdxs,
-		MessageInfos:      file_proto_eth_v1_beacon_block_proto_msgTypes,
+		GoTypes:           file_proto_silaapi_v1_beacon_block_proto_goTypes,
+		DependencyIndexes: file_proto_silaapi_v1_beacon_block_proto_depIdxs,
+		MessageInfos:      file_proto_silaapi_v1_beacon_block_proto_msgTypes,
 	}.Build()
-	File_proto_eth_v1_beacon_block_proto = out.File
-	file_proto_eth_v1_beacon_block_proto_rawDesc = nil
-	file_proto_eth_v1_beacon_block_proto_goTypes = nil
-	file_proto_eth_v1_beacon_block_proto_depIdxs = nil
+	File_proto_silaapi_v1_beacon_block_proto = out.File
+	file_proto_silaapi_v1_beacon_block_proto_rawDesc = nil
+	file_proto_silaapi_v1_beacon_block_proto_goTypes = nil
+	file_proto_silaapi_v1_beacon_block_proto_depIdxs = nil
 }

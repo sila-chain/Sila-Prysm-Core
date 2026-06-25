@@ -5,21 +5,21 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 type writeOnlyGloasFields interface {
 	// Bids.
 	SetExecutionPayloadBid(h interfaces.ROExecutionPayloadBid) error
-	SetPTCWindow([]*ethpb.PTCs) error
-	RotatePTCWindow([]*ethpb.PTCs) error
+	SetPTCWindow([]*silapb.PTCs) error
+	RotatePTCWindow([]*silapb.PTCs) error
 
 	// Builder pending payments / withdrawals.
-	SetBuilderPendingPayment(index primitives.Slot, payment *ethpb.BuilderPendingPayment) error
+	SetBuilderPendingPayment(index primitives.Slot, payment *silapb.BuilderPendingPayment) error
 	ClearBuilderPendingPayment(index primitives.Slot) error
 	QueueBuilderPaymentForSlot(parentSlot primitives.Slot) error
 	RotateBuilderPendingPayments() error
-	AppendBuilderPendingWithdrawals([]*ethpb.BuilderPendingWithdrawal) error
+	AppendBuilderPendingWithdrawals([]*silapb.BuilderPendingWithdrawal) error
 
 	// Execution payload availability.
 	UpdateExecutionPayloadAvailabilityAtIndex(idx uint64, val byte) error
@@ -31,13 +31,13 @@ type writeOnlyGloasFields interface {
 	// Builders.
 	IncreaseBuilderBalance(index primitives.BuilderIndex, amount uint64) error
 	AddBuilderFromDeposit(pubkey [fieldparams.BLSPubkeyLength]byte, withdrawalCredentials [fieldparams.RootLength]byte, amount uint64) error
-	UpdatePendingPaymentWeight(att ethpb.Att, indices []uint64, participatedFlags map[uint8]bool) error
-	UpdateBuilderAtIndex(index primitives.BuilderIndex, builder *ethpb.Builder) error
+	UpdatePendingPaymentWeight(att silapb.Att, indices []uint64, participatedFlags map[uint8]bool) error
+	UpdateBuilderAtIndex(index primitives.BuilderIndex, builder *silapb.Builder) error
 
 	// Bulk setters (used by hdiff).
-	SetBuilders([]*ethpb.Builder) error
-	SetBuilderPendingPayments([]*ethpb.BuilderPendingPayment) error
-	SetBuilderPendingWithdrawals([]*ethpb.BuilderPendingWithdrawal) error
+	SetBuilders([]*silapb.Builder) error
+	SetBuilderPendingPayments([]*silapb.BuilderPendingPayment) error
+	SetBuilderPendingWithdrawals([]*silapb.BuilderPendingWithdrawal) error
 	SetExecutionPayloadAvailabilityVector([]byte) error
 
 	// Withdrawals.
@@ -51,27 +51,27 @@ type writeOnlyGloasFields interface {
 type readOnlyGloasFields interface {
 	// Bids.
 	LatestExecutionPayloadBid() (interfaces.ROExecutionPayloadBid, error)
-	PTCWindow() ([]*ethpb.PTCs, error)
+	PTCWindow() ([]*silapb.PTCs, error)
 	PayloadCommitteeReadOnly(slot primitives.Slot) ([]primitives.ValidatorIndex, error)
 
 	// Builder pending payments / withdrawals.
-	BuilderPendingPayments() ([]*ethpb.BuilderPendingPayment, error)
+	BuilderPendingPayments() ([]*silapb.BuilderPendingPayment, error)
 	WithdrawalsMatchPayloadExpected(withdrawals []*enginev1.Withdrawal) (bool, error)
-	BuilderPendingWithdrawals() ([]*ethpb.BuilderPendingWithdrawal, error)
+	BuilderPendingWithdrawals() ([]*silapb.BuilderPendingWithdrawal, error)
 
 	// Misc.
 	LatestBlockHash() ([32]byte, error)
 
 	// Builders.
-	Builder(index primitives.BuilderIndex) (*ethpb.Builder, error)
-	Builders() ([]*ethpb.Builder, error)
+	Builder(index primitives.BuilderIndex) (*silapb.Builder, error)
+	Builders() ([]*silapb.Builder, error)
 	BuilderPubkey(primitives.BuilderIndex) ([48]byte, error)
 	BuilderIndexByPubkey(pubkey [fieldparams.BLSPubkeyLength]byte) (primitives.BuilderIndex, bool)
 	IsActiveBuilder(primitives.BuilderIndex) (bool, error)
 	CanBuilderCoverBid(primitives.BuilderIndex, primitives.Gwei) (bool, error)
 	BuilderPendingBalanceToWithdraw(primitives.BuilderIndex) (uint64, error)
 	IsAttestationSameSlot(blockRoot [32]byte, slot primitives.Slot) (bool, error)
-	BuilderPendingPayment(index uint64) (*ethpb.BuilderPendingPayment, error)
+	BuilderPendingPayment(index uint64) (*silapb.BuilderPendingPayment, error)
 	ExecutionPayloadAvailability(slot primitives.Slot) (uint64, error)
 	ExecutionPayloadAvailabilityVector() ([]byte, error)
 	NextWithdrawalBuilderIndex() (primitives.BuilderIndex, error)

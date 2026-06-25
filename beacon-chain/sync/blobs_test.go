@@ -25,7 +25,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -58,7 +58,7 @@ type requestFromSidecars func([]blocks.ROBlob) any
 type oldestSlotCallback func(t *testing.T) types.Slot
 type expectedRequirer func(*testing.T, *Service, []*expectedBlobChunk) func(network.Stream)
 
-func generateTestBlockWithSidecars(t *testing.T, parent [32]byte, slot types.Slot, nblobs int) (*ethpb.SignedBeaconBlockDeneb, []blocks.ROBlob) {
+func generateTestBlockWithSidecars(t *testing.T, parent [32]byte, slot types.Slot, nblobs int) (*silapb.SignedBeaconBlockDeneb, []blocks.ROBlob) {
 	// Start service with 160 as allowed blocks capacity (and almost zero capacity recovery).
 	stateRoot := bytesutil.PadTo([]byte("stateRoot"), fieldparams.RootLength)
 	receiptsRoot := bytesutil.PadTo([]byte("receiptsRoot"), fieldparams.RootLength)
@@ -122,7 +122,7 @@ func generateTestSidecar(t *testing.T, root [32]byte, block interfaces.ReadOnlyS
 	require.NoError(t, err)
 	blob := make([]byte, fieldparams.BlobSize)
 	binary.LittleEndian.PutUint64(blob, uint64(index))
-	pb := &ethpb.BlobSidecar{
+	pb := &silapb.BlobSidecar{
 		Index:             uint64(index),
 		Blob:              blob,
 		KzgCommitment:     commitment,
@@ -136,7 +136,7 @@ func generateTestSidecar(t *testing.T, root [32]byte, block interfaces.ReadOnlyS
 	return sc
 }
 
-func fakeEmptyProof(_ *testing.T, _ interfaces.ReadOnlySignedBeaconBlock, _ *ethpb.BlobSidecar) [][]byte {
+func fakeEmptyProof(_ *testing.T, _ interfaces.ReadOnlySignedBeaconBlock, _ *silapb.BlobSidecar) [][]byte {
 	return util.HydrateCommitmentInclusionProofs()
 }
 
@@ -160,7 +160,7 @@ func (r *expectedBlobChunk) requireExpected(t *testing.T, s *Service, stream net
 	require.NoError(t, err)
 	require.Equal(t, params.ForkDigest(slots.ToEpoch(r.sidecar.Slot())), bytesutil.ToBytes4(c))
 
-	sc := &ethpb.BlobSidecar{}
+	sc := &silapb.BlobSidecar{}
 	require.NoError(t, encoding.DecodeWithMaxLength(stream, sc))
 	rob, err := blocks.NewROBlob(sc)
 	require.NoError(t, err)
@@ -271,7 +271,7 @@ func defaultMockChain(t *testing.T, current primitives.Epoch) *mock.ChainService
 	df, err := params.Fork(current)
 	require.NoError(t, err)
 	chain := &mock.ChainService{
-		FinalizedCheckPoint: &ethpb.Checkpoint{Epoch: fe},
+		FinalizedCheckPoint: &silapb.Checkpoint{Epoch: fe},
 		Fork:                df,
 	}
 

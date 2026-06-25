@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -61,14 +61,14 @@ func (v *validator) SubmitAggregateAndProof(ctx context.Context, slot primitives
 
 	postElectra := slots.ToEpoch(slot) >= params.BeaconConfig().ElectraForkEpoch
 
-	aggSelectionRequest := &ethpb.AggregateSelectionRequest{
+	aggSelectionRequest := &silapb.AggregateSelectionRequest{
 		Slot:           slot,
 		CommitteeIndex: duty.CommitteeIndex,
 		PublicKey:      pubKey[:],
 		SlotSignature:  slotSig,
 	}
 	// TODO: look at renaming SubmitAggregateSelectionProof functions as they are GET beacon API
-	var agg ethpb.AggregateAttAndProof
+	var agg silapb.AggregateAttAndProof
 	if postElectra {
 		res, err := v.validatorClient.SubmitAggregateSelectionProofElectra(ctx, aggSelectionRequest, duty.ValidatorIndex, duty.CommitteeLength)
 		if err != nil {
@@ -92,16 +92,16 @@ func (v *validator) SubmitAggregateAndProof(ctx context.Context, slot primitives
 	}
 
 	if postElectra {
-		msg, ok := agg.(*ethpb.AggregateAttestationAndProofElectra)
+		msg, ok := agg.(*silapb.AggregateAttestationAndProofElectra)
 		if !ok {
-			log.Errorf("Message is not %T", &ethpb.AggregateAttestationAndProofElectra{})
+			log.Errorf("Message is not %T", &silapb.AggregateAttestationAndProofElectra{})
 			if v.emitAccountMetrics {
 				ValidatorAggFailVec.WithLabelValues(fmtKey).Inc()
 			}
 			return
 		}
-		_, err = v.validatorClient.SubmitSignedAggregateSelectionProofElectra(ctx, &ethpb.SignedAggregateSubmitElectraRequest{
-			SignedAggregateAndProof: &ethpb.SignedAggregateAttestationAndProofElectra{
+		_, err = v.validatorClient.SubmitSignedAggregateSelectionProofElectra(ctx, &silapb.SignedAggregateSubmitElectraRequest{
+			SignedAggregateAndProof: &silapb.SignedAggregateAttestationAndProofElectra{
 				Message:   msg,
 				Signature: sig,
 			},
@@ -114,16 +114,16 @@ func (v *validator) SubmitAggregateAndProof(ctx context.Context, slot primitives
 			return
 		}
 	} else {
-		msg, ok := agg.(*ethpb.AggregateAttestationAndProof)
+		msg, ok := agg.(*silapb.AggregateAttestationAndProof)
 		if !ok {
-			log.Errorf("Message is not %T", &ethpb.AggregateAttestationAndProof{})
+			log.Errorf("Message is not %T", &silapb.AggregateAttestationAndProof{})
 			if v.emitAccountMetrics {
 				ValidatorAggFailVec.WithLabelValues(fmtKey).Inc()
 			}
 			return
 		}
-		_, err = v.validatorClient.SubmitSignedAggregateSelectionProof(ctx, &ethpb.SignedAggregateSubmitRequest{
-			SignedAggregateAndProof: &ethpb.SignedAggregateAttestationAndProof{
+		_, err = v.validatorClient.SubmitSignedAggregateSelectionProof(ctx, &silapb.SignedAggregateSubmitRequest{
+			SignedAggregateAndProof: &silapb.SignedAggregateAttestationAndProof{
 				Message:   msg,
 				Signature: sig,
 			},
@@ -195,7 +195,7 @@ func (v *validator) waitUntilAggregateDue(ctx context.Context, slot primitives.S
 
 // This returns the signature of validator signing over aggregate and
 // proof object.
-func (v *validator) aggregateAndProofSig(ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, agg ethpb.AggregateAttAndProof, slot primitives.Slot) ([]byte, error) {
+func (v *validator) aggregateAndProofSig(ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, agg silapb.AggregateAttAndProof, slot primitives.Slot) ([]byte, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.aggregateAndProofSig")
 	defer span.End()
 
@@ -215,15 +215,15 @@ func (v *validator) aggregateAndProofSig(ctx context.Context, pubKey [fieldparam
 		SigningSlot:     slot,
 	}
 	if agg.Version() >= version.Electra {
-		aggregate, ok := agg.(*ethpb.AggregateAttestationAndProofElectra)
+		aggregate, ok := agg.(*silapb.AggregateAttestationAndProofElectra)
 		if !ok {
-			return nil, fmt.Errorf("wrong aggregate type (expected %T, got %T)", &ethpb.AggregateAttestationAndProofElectra{}, agg)
+			return nil, fmt.Errorf("wrong aggregate type (expected %T, got %T)", &silapb.AggregateAttestationAndProofElectra{}, agg)
 		}
 		signRequest.Object = &validatorpb.SignRequest_AggregateAttestationAndProofElectra{AggregateAttestationAndProofElectra: aggregate}
 	} else {
-		aggregate, ok := agg.(*ethpb.AggregateAttestationAndProof)
+		aggregate, ok := agg.(*silapb.AggregateAttestationAndProof)
 		if !ok {
-			return nil, fmt.Errorf("wrong aggregate type (expected %T, got %T)", &ethpb.AggregateAttestationAndProof{}, agg)
+			return nil, fmt.Errorf("wrong aggregate type (expected %T, got %T)", &silapb.AggregateAttestationAndProof{}, agg)
 		}
 		signRequest.Object = &validatorpb.SignRequest_AggregateAttestationAndProof{AggregateAttestationAndProof: aggregate}
 	}

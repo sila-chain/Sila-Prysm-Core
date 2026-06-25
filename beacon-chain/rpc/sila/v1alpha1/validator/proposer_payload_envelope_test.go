@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/pkg/errors"
@@ -104,7 +104,7 @@ func TestGetExecutionPayloadEnvelopeRPC_PreFork(t *testing.T) {
 	params.OverrideBeaconConfig(cfg)
 
 	vs := &Server{}
-	_, err := vs.GetExecutionPayloadEnvelope(t.Context(), &ethpb.ExecutionPayloadEnvelopeRequest{
+	_, err := vs.GetExecutionPayloadEnvelope(t.Context(), &silapb.ExecutionPayloadEnvelopeRequest{
 		Slot: 0, // epoch 0, before GloasForkEpoch 10
 	})
 	require.ErrorContains(t, "not supported before Gloas fork", err)
@@ -115,7 +115,7 @@ func TestPublishExecutionPayloadEnvelope_NilRequest(t *testing.T) {
 	_, err := vs.PublishExecutionPayloadEnvelope(t.Context(), nil)
 	require.ErrorContains(t, "signed envelope or payload cannot be nil", err)
 
-	_, err = vs.PublishExecutionPayloadEnvelope(t.Context(), &ethpb.SignedExecutionPayloadEnvelope{})
+	_, err = vs.PublishExecutionPayloadEnvelope(t.Context(), &silapb.SignedExecutionPayloadEnvelope{})
 	require.ErrorContains(t, "signed envelope or payload cannot be nil", err)
 }
 
@@ -126,8 +126,8 @@ func TestPublishExecutionPayloadEnvelope_PreFork(t *testing.T) {
 	params.OverrideBeaconConfig(cfg)
 
 	vs := &Server{}
-	_, err := vs.PublishExecutionPayloadEnvelope(t.Context(), &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+	_, err := vs.PublishExecutionPayloadEnvelope(t.Context(), &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload: &enginev1.ExecutionPayloadGloas{SlotNumber: 0}, // epoch 0, before GloasForkEpoch 10
 		},
 	})
@@ -140,7 +140,7 @@ func TestGetExecutionPayloadEnvelopeRPC_Success(t *testing.T) {
 	cfg.GloasForkEpoch = 0
 	params.OverrideBeaconConfig(cfg)
 
-	envelope := &ethpb.ExecutionPayloadEnvelope{
+	envelope := &silapb.ExecutionPayloadEnvelope{
 		Payload: &enginev1.ExecutionPayloadGloas{
 			ParentHash:    make([]byte, 32),
 			FeeRecipient:  make([]byte, 20),
@@ -159,7 +159,7 @@ func TestGetExecutionPayloadEnvelopeRPC_Success(t *testing.T) {
 	vs := &Server{ExecutionPayloadEnvelopeCache: cache.NewExecutionPayloadEnvelopeCache()}
 	vs.ExecutionPayloadEnvelopeCache.Set(&cache.ExecutionPayloadContents{Envelope: envelope})
 
-	resp, err := vs.GetExecutionPayloadEnvelope(t.Context(), &ethpb.ExecutionPayloadEnvelopeRequest{
+	resp, err := vs.GetExecutionPayloadEnvelope(t.Context(), &silapb.ExecutionPayloadEnvelopeRequest{
 		Slot: 1,
 	})
 	require.NoError(t, err)
@@ -180,8 +180,8 @@ func TestPublishExecutionPayloadEnvelope_Success(t *testing.T) {
 		ExecutionPayloadEnvelopeReceiver: receiver,
 	}
 
-	req := &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+	req := &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload: &enginev1.ExecutionPayloadGloas{
 				ParentHash:    make([]byte, 32),
 				FeeRecipient:  make([]byte, 20),
@@ -223,8 +223,8 @@ func TestPublishExecutionPayloadEnvelope_ImportFailureIsAborted(t *testing.T) {
 		ExecutionPayloadEnvelopeReceiver: receiver,
 	}
 
-	req := &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+	req := &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload: &enginev1.ExecutionPayloadGloas{
 				ParentHash:    make([]byte, 32),
 				FeeRecipient:  make([]byte, 20),

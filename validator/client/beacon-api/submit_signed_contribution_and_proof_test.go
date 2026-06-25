@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -54,10 +54,10 @@ func TestSubmitSignedContributionAndProof_Valid(t *testing.T) {
 		nil,
 	).Times(1)
 
-	contributionAndProof := &ethpb.SignedContributionAndProof{
-		Message: &ethpb.ContributionAndProof{
+	contributionAndProof := &silapb.SignedContributionAndProof{
+		Message: &silapb.ContributionAndProof{
 			AggregatorIndex: 1,
-			Contribution: &ethpb.SyncCommitteeContribution{
+			Contribution: &silapb.SyncCommitteeContribution{
 				Slot:              2,
 				BlockRoot:         []byte{3},
 				SubcommitteeIndex: 4,
@@ -77,7 +77,7 @@ func TestSubmitSignedContributionAndProof_Valid(t *testing.T) {
 func TestSubmitSignedContributionAndProof_Error(t *testing.T) {
 	testCases := []struct {
 		name                 string
-		data                 *ethpb.SignedContributionAndProof
+		data                 *silapb.SignedContributionAndProof
 		expectedErrorMessage string
 		httpRequestExpected  bool
 	}{
@@ -88,21 +88,21 @@ func TestSubmitSignedContributionAndProof_Error(t *testing.T) {
 		},
 		{
 			name:                 "nil message",
-			data:                 &ethpb.SignedContributionAndProof{},
+			data:                 &silapb.SignedContributionAndProof{},
 			expectedErrorMessage: "signed contribution and proof message is nil",
 		},
 		{
 			name: "nil contribution",
-			data: &ethpb.SignedContributionAndProof{
-				Message: &ethpb.ContributionAndProof{},
+			data: &silapb.SignedContributionAndProof{
+				Message: &silapb.ContributionAndProof{},
 			},
 			expectedErrorMessage: "signed contribution and proof contribution is nil",
 		},
 		{
 			name: "bad request",
-			data: &ethpb.SignedContributionAndProof{
-				Message: &ethpb.ContributionAndProof{
-					Contribution: &ethpb.SyncCommitteeContribution{},
+			data: &silapb.SignedContributionAndProof{
+				Message: &silapb.ContributionAndProof{
+					Contribution: &silapb.SyncCommitteeContribution{},
 				},
 			},
 			httpRequestExpected:  true,

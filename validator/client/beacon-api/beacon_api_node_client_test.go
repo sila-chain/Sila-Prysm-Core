@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -23,7 +23,7 @@ func TestGetGenesis(t *testing.T) {
 		depositContractResponse structs.GetDepositContractResponse
 		depositContractError    error
 		queriesDepositContract  bool
-		expectedResponse        *ethpb.Genesis
+		expectedResponse        *silapb.Genesis
 		expectedError           string
 	}{
 		{
@@ -95,7 +95,7 @@ func TestGetGenesis(t *testing.T) {
 					Address: hexutil.Encode([]byte{3}),
 				},
 			},
-			expectedResponse: &ethpb.Genesis{
+			expectedResponse: &silapb.Genesis{
 				GenesisTime: &timestamppb.Timestamp{
 					Seconds: 654812,
 				},
@@ -157,7 +157,7 @@ func TestGetSyncStatus(t *testing.T) {
 		name                 string
 		restEndpointResponse structs.SyncStatusResponse
 		restEndpointError    error
-		expectedResponse     *ethpb.SyncStatus
+		expectedResponse     *silapb.SyncStatus
 		expectedError        string
 	}{
 		{
@@ -177,7 +177,7 @@ func TestGetSyncStatus(t *testing.T) {
 					IsSyncing: false,
 				},
 			},
-			expectedResponse: &ethpb.SyncStatus{
+			expectedResponse: &silapb.SyncStatus{
 				Syncing: false,
 			},
 		},
@@ -188,7 +188,7 @@ func TestGetSyncStatus(t *testing.T) {
 					IsSyncing: true,
 				},
 			},
-			expectedResponse: &ethpb.SyncStatus{
+			expectedResponse: &silapb.SyncStatus{
 				Syncing: true,
 			},
 		},
@@ -232,7 +232,7 @@ func TestGetVersion(t *testing.T) {
 		name                 string
 		restEndpointResponse structs.GetVersionResponse
 		restEndpointError    error
-		expectedResponse     *ethpb.Version
+		expectedResponse     *silapb.Version
 		expectedError        string
 	}{
 		{
@@ -252,7 +252,7 @@ func TestGetVersion(t *testing.T) {
 					Version: "sila/local",
 				},
 			},
-			expectedResponse: &ethpb.Version{
+			expectedResponse: &silapb.Version{
 				Version: "sila/local",
 			},
 		},

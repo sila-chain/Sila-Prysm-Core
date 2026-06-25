@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -140,7 +140,7 @@ func TestProcessDeposit_InvalidPublicKey(t *testing.T) {
 	root, err := generatedTrie.HashTreeRoot()
 	require.NoError(t, err)
 
-	eth1Data := &ethpb.Eth1Data{
+	eth1Data := &silapb.Eth1Data{
 		DepositCount: 1,
 		DepositRoot:  root[:],
 	}
@@ -181,7 +181,7 @@ func TestProcessDeposit_InvalidSignature(t *testing.T) {
 	root, err := generatedTrie.HashTreeRoot()
 	require.NoError(t, err)
 
-	eth1Data := &ethpb.Eth1Data{
+	eth1Data := &silapb.Eth1Data{
 		DepositCount: 1,
 		DepositRoot:  root[:],
 	}
@@ -217,7 +217,7 @@ func TestProcessDeposit_UnableToVerify(t *testing.T) {
 	require.NoError(t, err)
 	root, err := generatedTrie.HashTreeRoot()
 	require.NoError(t, err)
-	eth1Data := &ethpb.Eth1Data{
+	eth1Data := &silapb.Eth1Data{
 		DepositCount: 1,
 		DepositRoot:  root[:],
 	}
@@ -245,10 +245,10 @@ func TestProcessDeposit_IncompleteDeposit(t *testing.T) {
 	)
 	require.NoError(t, err, "unable to setup web3 ETH1.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	require.NoError(t, web3Service.preGenesisState.SetValidators([]*ethpb.Validator{}))
+	require.NoError(t, web3Service.preGenesisState.SetValidators([]*silapb.Validator{}))
 
-	deposit := &ethpb.Deposit{
-		Data: &ethpb.Deposit_Data{
+	deposit := &silapb.Deposit{
+		Data: &silapb.Deposit_Data{
 			Amount:                params.BeaconConfig().EffectiveBalanceIncrement, // incomplete deposit
 			WithdrawalCredentials: bytesutil.PadTo([]byte("testing"), 32),
 			Signature:             bytesutil.PadTo([]byte("test"), fieldparams.BLSSignatureLength),
@@ -270,7 +270,7 @@ func TestProcessDeposit_IncompleteDeposit(t *testing.T) {
 	require.NoError(t, err)
 	root, err := generatedTrie.HashTreeRoot()
 	require.NoError(t, err)
-	eth1Data := &ethpb.Eth1Data{
+	eth1Data := &silapb.Eth1Data{
 		DepositCount: 1,
 		DepositRoot:  root[:],
 	}

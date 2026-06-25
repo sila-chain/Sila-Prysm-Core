@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -13,9 +13,9 @@ import (
 // contribution pool for processing.
 // skipcq: SCC-U1000
 func (s *Service) syncContributionAndProofSubscriber(_ context.Context, msg proto.Message) error {
-	sContr, ok := msg.(*ethpb.SignedContributionAndProof)
+	sContr, ok := msg.(*silapb.SignedContributionAndProof)
 	if !ok {
-		return fmt.Errorf("message was not type *ethpb.SignedContributionAndProof, type=%T", msg)
+		return fmt.Errorf("message was not type *silapb.SignedContributionAndProof, type=%T", msg)
 	}
 
 	if sContr.Message == nil || sContr.Message.Contribution == nil {

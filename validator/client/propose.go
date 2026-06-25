@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/rand"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -78,7 +78,7 @@ func (v *validator) ProposeBlock(ctx context.Context, slot primitives.Slot, pubK
 	}
 
 	// Request block from beacon node
-	b, err := v.validatorClient.BeaconBlock(ctx, &ethpb.BlockRequest{
+	b, err := v.validatorClient.BeaconBlock(ctx, &silapb.BlockRequest{
 		Slot:         slot,
 		RandaoReveal: randaoReveal,
 		Graffiti:     g,
@@ -126,7 +126,7 @@ func (v *validator) ProposeBlock(ctx context.Context, slot primitives.Slot, pubK
 		return
 	}
 
-	var genericSignedBlock *ethpb.GenericSignedBeaconBlock
+	var genericSignedBlock *silapb.GenericSignedBeaconBlock
 	// Special handling for Deneb blocks and later version because of blob side cars.
 	// Gloas blocks are handled differently - no blobs in block, execution payload is separate.
 	if blk.Version() >= version.Deneb && blk.Version() < version.Gloas && !blk.IsBlinded() {
@@ -273,14 +273,14 @@ func logProposedBlock(log *logrus.Entry, blk interfaces.SignedBeaconBlock, blkRo
 	return nil
 }
 
-func buildGenericSignedBlockDenebWithBlobs(pb proto.Message, b *ethpb.GenericBeaconBlock) (*ethpb.GenericSignedBeaconBlock, error) {
-	denebBlock, ok := pb.(*ethpb.SignedBeaconBlockDeneb)
+func buildGenericSignedBlockDenebWithBlobs(pb proto.Message, b *silapb.GenericBeaconBlock) (*silapb.GenericSignedBeaconBlock, error) {
+	denebBlock, ok := pb.(*silapb.SignedBeaconBlockDeneb)
 	if !ok {
 		return nil, errors.New("could cast to deneb block")
 	}
-	return &ethpb.GenericSignedBeaconBlock{
-		Block: &ethpb.GenericSignedBeaconBlock_Deneb{
-			Deneb: &ethpb.SignedBeaconBlockContentsDeneb{
+	return &silapb.GenericSignedBeaconBlock{
+		Block: &silapb.GenericSignedBeaconBlock_Deneb{
+			Deneb: &silapb.SignedBeaconBlockContentsDeneb{
 				Block:     denebBlock,
 				KzgProofs: b.GetDeneb().KzgProofs,
 				Blobs:     b.GetDeneb().Blobs,
@@ -289,14 +289,14 @@ func buildGenericSignedBlockDenebWithBlobs(pb proto.Message, b *ethpb.GenericBea
 	}, nil
 }
 
-func buildGenericSignedBlockElectraWithBlobs(pb proto.Message, b *ethpb.GenericBeaconBlock) (*ethpb.GenericSignedBeaconBlock, error) {
-	electraBlock, ok := pb.(*ethpb.SignedBeaconBlockElectra)
+func buildGenericSignedBlockElectraWithBlobs(pb proto.Message, b *silapb.GenericBeaconBlock) (*silapb.GenericSignedBeaconBlock, error) {
+	electraBlock, ok := pb.(*silapb.SignedBeaconBlockElectra)
 	if !ok {
 		return nil, errors.New("could cast to electra block")
 	}
-	return &ethpb.GenericSignedBeaconBlock{
-		Block: &ethpb.GenericSignedBeaconBlock_Electra{
-			Electra: &ethpb.SignedBeaconBlockContentsElectra{
+	return &silapb.GenericSignedBeaconBlock{
+		Block: &silapb.GenericSignedBeaconBlock_Electra{
+			Electra: &silapb.SignedBeaconBlockContentsElectra{
 				Block:     electraBlock,
 				KzgProofs: b.GetElectra().KzgProofs,
 				Blobs:     b.GetElectra().Blobs,
@@ -305,14 +305,14 @@ func buildGenericSignedBlockElectraWithBlobs(pb proto.Message, b *ethpb.GenericB
 	}, nil
 }
 
-func buildGenericSignedBlockFuluWithBlobs(pb proto.Message, b *ethpb.GenericBeaconBlock) (*ethpb.GenericSignedBeaconBlock, error) {
-	fuluBlock, ok := pb.(*ethpb.SignedBeaconBlockFulu)
+func buildGenericSignedBlockFuluWithBlobs(pb proto.Message, b *silapb.GenericBeaconBlock) (*silapb.GenericSignedBeaconBlock, error) {
+	fuluBlock, ok := pb.(*silapb.SignedBeaconBlockFulu)
 	if !ok {
 		return nil, errors.New("could cast to fulu block")
 	}
-	return &ethpb.GenericSignedBeaconBlock{
-		Block: &ethpb.GenericSignedBeaconBlock_Fulu{
-			Fulu: &ethpb.SignedBeaconBlockContentsFulu{
+	return &silapb.GenericSignedBeaconBlock{
+		Block: &silapb.GenericSignedBeaconBlock_Fulu{
+			Fulu: &silapb.SignedBeaconBlockContentsFulu{
 				Block:     fuluBlock,
 				KzgProofs: b.GetFulu().KzgProofs,
 				Blobs:     b.GetFulu().Blobs,
@@ -360,15 +360,15 @@ func CreateSignedVoluntaryExit(
 	signer iface.SigningFunc,
 	pubKey []byte,
 	epoch primitives.Epoch,
-) (*ethpb.SignedVoluntaryExit, error) {
+) (*silapb.SignedVoluntaryExit, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.CreateSignedVoluntaryExit")
 	defer span.End()
 
-	indexResponse, err := validatorClient.ValidatorIndex(ctx, &ethpb.ValidatorIndexRequest{PublicKey: pubKey})
+	indexResponse, err := validatorClient.ValidatorIndex(ctx, &silapb.ValidatorIndexRequest{PublicKey: pubKey})
 	if err != nil {
 		return nil, errors.Wrap(err, "gRPC call to get validator index failed")
 	}
-	exit := &ethpb.VoluntaryExit{Epoch: epoch, ValidatorIndex: indexResponse.Index}
+	exit := &silapb.VoluntaryExit{Epoch: epoch, ValidatorIndex: indexResponse.Index}
 	slot, err := slots.EpochStart(epoch)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to retrieve slot")
@@ -378,7 +378,7 @@ func CreateSignedVoluntaryExit(
 		return nil, errors.Wrap(err, "failed to sign voluntary exit")
 	}
 
-	return &ethpb.SignedVoluntaryExit{Exit: exit, Signature: sig}, nil
+	return &silapb.SignedVoluntaryExit{Exit: exit, Signature: sig}, nil
 }
 
 // Sign randao reveal with randao domain and private key.
@@ -454,13 +454,13 @@ func signVoluntaryExit(
 	validatorClient iface.ValidatorClient,
 	signer iface.SigningFunc,
 	pubKey []byte,
-	exit *ethpb.VoluntaryExit,
+	exit *silapb.VoluntaryExit,
 	slot primitives.Slot,
 ) ([]byte, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.signVoluntaryExit")
 	defer span.End()
 
-	req := &ethpb.DomainRequest{
+	req := &silapb.DomainRequest{
 		Epoch:  exit.Epoch,
 		Domain: params.BeaconConfig().DomainVoluntaryExit[:],
 	}
@@ -522,7 +522,7 @@ func (v *validator) Graffiti(ctx context.Context, pubKey [fieldparams.BLSPubkeyL
 	}
 
 	// When specified, individual validator specified graffiti takes the third priority.
-	idx, err := v.validatorClient.ValidatorIndex(ctx, &ethpb.ValidatorIndexRequest{PublicKey: pubKey[:]})
+	idx, err := v.validatorClient.ValidatorIndex(ctx, &silapb.ValidatorIndexRequest{PublicKey: pubKey[:]})
 	if err != nil {
 		return nil, err
 	}

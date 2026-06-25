@@ -10,7 +10,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -28,19 +28,19 @@ func TestPruneExpired_Ticker(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	ad1 := util.HydrateAttestationData(&ethpb.AttestationData{})
+	ad1 := util.HydrateAttestationData(&silapb.AttestationData{})
 
-	ad2 := util.HydrateAttestationData(&ethpb.AttestationData{Slot: 1})
+	ad2 := util.HydrateAttestationData(&silapb.AttestationData{Slot: 1})
 
-	atts := []ethpb.Att{
-		&ethpb.Attestation{Data: ad1, AggregationBits: bitfield.Bitlist{0b1000, 0b1}, Signature: make([]byte, fieldparams.BLSSignatureLength)},
-		&ethpb.Attestation{Data: ad2, AggregationBits: bitfield.Bitlist{0b1000, 0b1}, Signature: make([]byte, fieldparams.BLSSignatureLength)},
+	atts := []silapb.Att{
+		&silapb.Attestation{Data: ad1, AggregationBits: bitfield.Bitlist{0b1000, 0b1}, Signature: make([]byte, fieldparams.BLSSignatureLength)},
+		&silapb.Attestation{Data: ad2, AggregationBits: bitfield.Bitlist{0b1000, 0b1}, Signature: make([]byte, fieldparams.BLSSignatureLength)},
 	}
 	require.NoError(t, s.cfg.Pool.SaveUnaggregatedAttestations(atts))
 	require.Equal(t, 2, s.cfg.Pool.UnaggregatedAttestationCount(), "Unexpected number of attestations")
-	atts = []ethpb.Att{
-		&ethpb.Attestation{Data: ad1, AggregationBits: bitfield.Bitlist{0b1101, 0b1}, Signature: make([]byte, fieldparams.BLSSignatureLength)},
-		&ethpb.Attestation{Data: ad2, AggregationBits: bitfield.Bitlist{0b1101, 0b1}, Signature: make([]byte, fieldparams.BLSSignatureLength)},
+	atts = []silapb.Att{
+		&silapb.Attestation{Data: ad1, AggregationBits: bitfield.Bitlist{0b1101, 0b1}, Signature: make([]byte, fieldparams.BLSSignatureLength)},
+		&silapb.Attestation{Data: ad2, AggregationBits: bitfield.Bitlist{0b1101, 0b1}, Signature: make([]byte, fieldparams.BLSSignatureLength)},
 	}
 	require.NoError(t, s.cfg.Pool.SaveAggregatedAttestations(atts))
 	assert.Equal(t, 2, s.cfg.Pool.AggregatedAttestationCount())
@@ -87,15 +87,15 @@ func TestPruneExpired_PruneExpiredAtts(t *testing.T) {
 	s, err := NewService(t.Context(), &Config{Pool: NewPool()})
 	require.NoError(t, err)
 
-	ad1 := util.HydrateAttestationData(&ethpb.AttestationData{})
+	ad1 := util.HydrateAttestationData(&silapb.AttestationData{})
 
-	ad2 := util.HydrateAttestationData(&ethpb.AttestationData{})
+	ad2 := util.HydrateAttestationData(&silapb.AttestationData{})
 
-	att1 := &ethpb.Attestation{Data: ad1, AggregationBits: bitfield.Bitlist{0b1101}}
-	att2 := &ethpb.Attestation{Data: ad1, AggregationBits: bitfield.Bitlist{0b1111}}
-	att3 := &ethpb.Attestation{Data: ad2, AggregationBits: bitfield.Bitlist{0b1101}}
-	att4 := &ethpb.Attestation{Data: ad2, AggregationBits: bitfield.Bitlist{0b1110}}
-	atts := []ethpb.Att{att1, att2, att3, att4}
+	att1 := &silapb.Attestation{Data: ad1, AggregationBits: bitfield.Bitlist{0b1101}}
+	att2 := &silapb.Attestation{Data: ad1, AggregationBits: bitfield.Bitlist{0b1111}}
+	att3 := &silapb.Attestation{Data: ad2, AggregationBits: bitfield.Bitlist{0b1101}}
+	att4 := &silapb.Attestation{Data: ad2, AggregationBits: bitfield.Bitlist{0b1110}}
+	atts := []silapb.Att{att1, att2, att3, att4}
 	require.NoError(t, s.cfg.Pool.SaveAggregatedAttestations(atts))
 	for _, att := range atts {
 		require.NoError(t, s.cfg.Pool.SaveBlockAttestation(att))

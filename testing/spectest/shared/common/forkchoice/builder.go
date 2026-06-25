@@ -21,7 +21,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common"
 )
@@ -36,7 +36,7 @@ type Builder struct {
 
 func NewBuilder(t testing.TB, initialState state.BeaconState, initialBlock interfaces.ReadOnlySignedBeaconBlock) *Builder {
 	execMock := &engineMock{
-		powBlocks: make(map[[32]byte]*ethpb.PowBlock),
+		powBlocks: make(map[[32]byte]*silapb.PowBlock),
 	}
 	cw := startup.NewClockSynchronizer()
 	service, sg, fc := startChainService(t, initialState, initialBlock, execMock, cw)
@@ -44,7 +44,7 @@ func NewBuilder(t testing.TB, initialState state.BeaconState, initialBlock inter
 	// This trips up the lite fork lookup code in the blob verifier that figures out the fork
 	// based on the slot of the block. So just for spectests we override that behavior and get the fork from the state
 	// which matches the behavior of block verification.
-	getFork := func(targetEpoch primitives.Epoch) (*ethpb.Fork, error) {
+	getFork := func(targetEpoch primitives.Epoch) (*silapb.Fork, error) {
 		return initialState.Fork(), nil
 	}
 	bvw := verification.NewInitializerWaiter(cw, fc, sg, service, verification.WithForkLookup(getFork))
@@ -123,7 +123,7 @@ func (bb *Builder) ValidBlock(t testing.TB, b interfaces.ReadOnlySignedBeaconBlo
 
 // ExecutionPayloadEnvelope receives an envelope and notifies the chain service.
 // If expectValid is false the receive call must error; otherwise it must succeed.
-func (bb *Builder) ExecutionPayloadEnvelope(t testing.TB, signed *ethpb.SignedExecutionPayloadEnvelope, expectValid bool) {
+func (bb *Builder) ExecutionPayloadEnvelope(t testing.TB, signed *silapb.SignedExecutionPayloadEnvelope, expectValid bool) {
 	ro, err := blocks.WrappedROSignedExecutionPayloadEnvelope(signed)
 	require.NoError(t, err)
 	ctx, cancel := context.WithTimeout(t.Context(), 3*time.Second)
@@ -138,7 +138,7 @@ func (bb *Builder) ExecutionPayloadEnvelope(t testing.TB, signed *ethpb.SignedEx
 
 // PayloadAttestationMessage feeds the message to the chain service.
 // If expectValid is false the receive call must error; otherwise it must succeed.
-func (bb *Builder) PayloadAttestationMessage(t testing.TB, m *ethpb.PayloadAttestationMessage, expectValid bool) {
+func (bb *Builder) PayloadAttestationMessage(t testing.TB, m *silapb.PayloadAttestationMessage, expectValid bool) {
 	ctx, cancel := context.WithTimeout(t.Context(), 3*time.Second)
 	defer cancel()
 	err := bb.service.ReceivePayloadAttestationMessage(ctx, m)
@@ -150,18 +150,18 @@ func (bb *Builder) PayloadAttestationMessage(t testing.TB, m *ethpb.PayloadAttes
 }
 
 // PoWBlock receives the block and notifies a mocked execution engine.
-func (bb *Builder) PoWBlock(pb *ethpb.PowBlock) {
+func (bb *Builder) PoWBlock(pb *silapb.PowBlock) {
 	bb.execMock.powBlocks[bytesutil.ToBytes32(pb.BlockHash)] = pb
 }
 
 // Attestation receives the attestation and updates forkchoice.
-func (bb *Builder) Attestation(t testing.TB, a ethpb.Att) {
+func (bb *Builder) Attestation(t testing.TB, a silapb.Att) {
 	require.NoError(t, bb.service.OnAttestation(context.TODO(), a, params.BeaconConfig().MaximumGossipClockDisparityDuration()))
 }
 
 // AttesterSlashing receives an attester slashing and feeds it to forkchoice.
-func (bb *Builder) AttesterSlashing(s *ethpb.AttesterSlashing) {
-	slashings := []ethpb.AttSlashing{s}
+func (bb *Builder) AttesterSlashing(s *silapb.AttesterSlashing) {
+	slashings := []silapb.AttSlashing{s}
 	bb.service.InsertSlashingsToForkChoiceStore(context.TODO(), slashings)
 }
 
@@ -180,7 +180,7 @@ func (bb *Builder) Check(t testing.TB, c *Check) {
 		require.Equal(t, primitives.Slot(c.Head.Slot), bb.service.HeadSlot())
 	}
 	if c.JustifiedCheckPoint != nil {
-		cp := &ethpb.Checkpoint{
+		cp := &silapb.Checkpoint{
 			Epoch: primitives.Epoch(c.JustifiedCheckPoint.Epoch),
 			Root:  common.FromHex(c.JustifiedCheckPoint.Root),
 		}
@@ -188,7 +188,7 @@ func (bb *Builder) Check(t testing.TB, c *Check) {
 		require.DeepEqual(t, cp, got)
 	}
 	if c.FinalizedCheckPoint != nil {
-		cp := &ethpb.Checkpoint{
+		cp := &silapb.Checkpoint{
 			Epoch: primitives.Epoch(c.FinalizedCheckPoint.Epoch),
 			Root:  common.FromHex(c.FinalizedCheckPoint.Root),
 		}

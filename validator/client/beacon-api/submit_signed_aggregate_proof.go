@@ -6,13 +6,13 @@ import (
 	"encoding/json"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
 
-func (c *beaconApiValidatorClient) submitSignedAggregateSelectionProof(ctx context.Context, in *ethpb.SignedAggregateSubmitRequest) (*ethpb.SignedAggregateSubmitResponse, error) {
+func (c *beaconApiValidatorClient) submitSignedAggregateSelectionProof(ctx context.Context, in *silapb.SignedAggregateSubmitRequest) (*silapb.SignedAggregateSubmitResponse, error) {
 	body, err := json.Marshal([]*structs.SignedAggregateAttestationAndProof{jsonifySignedAggregateAndProof(in.SignedAggregateAndProof)})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal SignedAggregateAttestationAndProof")
@@ -28,10 +28,10 @@ func (c *beaconApiValidatorClient) submitSignedAggregateSelectionProof(ctx conte
 		return nil, errors.Wrap(err, "failed to compute attestation data root")
 	}
 
-	return &ethpb.SignedAggregateSubmitResponse{AttestationDataRoot: attestationDataRoot[:]}, nil
+	return &silapb.SignedAggregateSubmitResponse{AttestationDataRoot: attestationDataRoot[:]}, nil
 }
 
-func (c *beaconApiValidatorClient) submitSignedAggregateSelectionProofElectra(ctx context.Context, in *ethpb.SignedAggregateSubmitElectraRequest) (*ethpb.SignedAggregateSubmitResponse, error) {
+func (c *beaconApiValidatorClient) submitSignedAggregateSelectionProofElectra(ctx context.Context, in *silapb.SignedAggregateSubmitElectraRequest) (*silapb.SignedAggregateSubmitResponse, error) {
 	body, err := json.Marshal([]*structs.SignedAggregateAttestationAndProofElectra{jsonifySignedAggregateAndProofElectra(in.SignedAggregateAndProof)})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal SignedAggregateAttestationAndProofElectra")
@@ -48,5 +48,5 @@ func (c *beaconApiValidatorClient) submitSignedAggregateSelectionProofElectra(ct
 		return nil, errors.Wrap(err, "failed to compute attestation data root")
 	}
 
-	return &ethpb.SignedAggregateSubmitResponse{AttestationDataRoot: attestationDataRoot[:]}, nil
+	return &silapb.SignedAggregateSubmitResponse{AttestationDataRoot: attestationDataRoot[:]}, nil
 }

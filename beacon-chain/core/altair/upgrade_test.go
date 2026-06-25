@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -32,14 +32,14 @@ func TestTranslateParticipation(t *testing.T) {
 	aggBits.SetBitAt(1, true)
 	r, err := helpers.BlockRootAtSlot(s, 0)
 	require.NoError(t, err)
-	var pendingAtts []*ethpb.PendingAttestation
+	var pendingAtts []*silapb.PendingAttestation
 	for i := range 3 {
-		pendingAtts = append(pendingAtts, &ethpb.PendingAttestation{
-			Data: &ethpb.AttestationData{
+		pendingAtts = append(pendingAtts, &silapb.PendingAttestation{
+			Data: &silapb.AttestationData{
 				CommitteeIndex:  primitives.CommitteeIndex(i),
 				BeaconBlockRoot: r,
-				Source:          &ethpb.Checkpoint{Epoch: 0, Root: make([]byte, 32)},
-				Target:          &ethpb.Checkpoint{Epoch: 0, Root: make([]byte, 32)},
+				Source:          &silapb.Checkpoint{Epoch: 0, Root: make([]byte, 32)},
+				Target:          &silapb.Checkpoint{Epoch: 0, Root: make([]byte, 32)},
 			},
 			AggregationBits: aggBits,
 			InclusionDelay:  1,
@@ -107,7 +107,7 @@ func TestUpgradeToAltair(t *testing.T) {
 	require.DeepSSZEqual(t, make([]uint64, numValidators), s)
 
 	f := aState.Fork()
-	require.DeepSSZEqual(t, &ethpb.Fork{
+	require.DeepSSZEqual(t, &silapb.Fork{
 		PreviousVersion: st.Fork().CurrentVersion,
 		CurrentVersion:  params.BeaconConfig().AltairForkVersion,
 		Epoch:           time.CurrentEpoch(st),

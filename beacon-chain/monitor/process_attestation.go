@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -33,7 +33,7 @@ func (s *Service) canUpdateAttestedValidator(idx primitives.ValidatorIndex, slot
 }
 
 // attestingIndices returns the indices of validators that participated in the given aggregated attestation.
-func attestingIndices(ctx context.Context, state state.ReadOnlyBeaconState, att ethpb.Att) ([]uint64, error) {
+func attestingIndices(ctx context.Context, state state.ReadOnlyBeaconState, att silapb.Att) ([]uint64, error) {
 	committeeBits := att.CommitteeBitsVal().BitIndices()
 	committees := make([][]primitives.ValidatorIndex, len(committeeBits))
 	var err error
@@ -48,7 +48,7 @@ func attestingIndices(ctx context.Context, state state.ReadOnlyBeaconState, att 
 }
 
 // logMessageTimelyFlagsForIndex returns the log message with performance info for the attestation (head, source, target)
-func logMessageTimelyFlagsForIndex(idx primitives.ValidatorIndex, data *ethpb.AttestationData) logrus.Fields {
+func logMessageTimelyFlagsForIndex(idx primitives.ValidatorIndex, data *silapb.AttestationData) logrus.Fields {
 	return logrus.Fields{
 		"validatorIndex": idx,
 		"slot":           data.Slot,
@@ -69,7 +69,7 @@ func (s *Service) processAttestations(ctx context.Context, state state.ReadOnlyB
 }
 
 // processIncludedAttestation logs in the event for the tracked validators' and their latest attestation gets processed.
-func (s *Service) processIncludedAttestation(ctx context.Context, state state.ReadOnlyBeaconState, att ethpb.Att) {
+func (s *Service) processIncludedAttestation(ctx context.Context, state state.ReadOnlyBeaconState, att silapb.Att) {
 	attestingIndices, err := attestingIndices(ctx, state, att)
 	if err != nil {
 		log.WithError(err).Error("Could not get attesting indices")
@@ -167,13 +167,13 @@ func (s *Service) processIncludedAttestation(ctx context.Context, state state.Re
 }
 
 // processSingleAttestation logs when the beacon node observes a single attestation from tracked validator.
-func (s *Service) processSingleAttestation(att ethpb.Att) {
+func (s *Service) processSingleAttestation(att silapb.Att) {
 	s.RLock()
 	defer s.RUnlock()
 
-	single, ok := att.(*ethpb.SingleAttestation)
+	single, ok := att.(*silapb.SingleAttestation)
 	if !ok {
-		log.Errorf("Wrong attestation type (expected %T, got %T)", &ethpb.SingleAttestation{}, att)
+		log.Errorf("Wrong attestation type (expected %T, got %T)", &silapb.SingleAttestation{}, att)
 		return
 	}
 
@@ -184,7 +184,7 @@ func (s *Service) processSingleAttestation(att ethpb.Att) {
 }
 
 // processUnaggregatedAttestation logs when the beacon node observes an unaggregated attestation from tracked validator.
-func (s *Service) processUnaggregatedAttestation(ctx context.Context, att ethpb.Att) {
+func (s *Service) processUnaggregatedAttestation(ctx context.Context, att silapb.Att) {
 	s.RLock()
 	defer s.RUnlock()
 	root := bytesutil.ToBytes32(att.GetData().BeaconBlockRoot)
@@ -208,7 +208,7 @@ func (s *Service) processUnaggregatedAttestation(ctx context.Context, att ethpb.
 }
 
 // processUnaggregatedAttestation logs when the beacon node observes an aggregated attestation from tracked validator.
-func (s *Service) processAggregatedAttestation(ctx context.Context, att ethpb.AggregateAttAndProof) {
+func (s *Service) processAggregatedAttestation(ctx context.Context, att silapb.AggregateAttAndProof) {
 	s.Lock()
 	defer s.Unlock()
 	if s.trackedIndex(att.GetAggregatorIndex()) {

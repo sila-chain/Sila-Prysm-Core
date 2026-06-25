@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 )
 
@@ -17,11 +17,11 @@ func ConvertToAltair(state state.BeaconState) (state.BeaconState, error) {
 	epoch := time.CurrentEpoch(state)
 
 	numValidators := state.NumValidators()
-	s := &ethpb.BeaconStateAltair{
+	s := &silapb.BeaconStateAltair{
 		GenesisTime:           uint64(state.GenesisTime().Unix()),
 		GenesisValidatorsRoot: state.GenesisValidatorsRoot(),
 		Slot:                  state.Slot(),
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: state.Fork().CurrentVersion,
 			CurrentVersion:  params.BeaconConfig().AltairForkVersion,
 			Epoch:           epoch,
@@ -147,7 +147,7 @@ func UpgradeToAltair(ctx context.Context, state state.BeaconState) (state.Beacon
 //	    for index in get_attesting_indices(state, data, attestation.aggregation_bits):
 //	        for flag_index in participation_flag_indices:
 //	            epoch_participation[index] = add_flag(epoch_participation[index], flag_index)
-func TranslateParticipation(ctx context.Context, state state.BeaconState, atts []*ethpb.PendingAttestation) (state.BeaconState, error) {
+func TranslateParticipation(ctx context.Context, state state.BeaconState, atts []*silapb.PendingAttestation) (state.BeaconState, error) {
 	epochParticipation, err := state.PreviousEpochParticipation()
 	if err != nil {
 		return nil, err

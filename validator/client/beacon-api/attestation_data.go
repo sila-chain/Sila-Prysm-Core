@@ -10,7 +10,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -18,7 +18,7 @@ func (c *beaconApiValidatorClient) attestationData(
 	ctx context.Context,
 	reqSlot primitives.Slot,
 	reqCommitteeIndex primitives.CommitteeIndex,
-) (*ethpb.AttestationData, error) {
+) (*silapb.AttestationData, error) {
 	params := url.Values{}
 	params.Add("slot", strconv.FormatUint(uint64(reqSlot), 10))
 	params.Add("committee_index", strconv.FormatUint(uint64(reqCommitteeIndex), 10))
@@ -78,15 +78,15 @@ func (c *beaconApiValidatorClient) attestationData(
 		return nil, errors.Wrapf(err, "failed to decode attestation target root: %s", attestationData.Target.Root)
 	}
 
-	response := &ethpb.AttestationData{
+	response := &silapb.AttestationData{
 		BeaconBlockRoot: beaconBlockRoot,
 		CommitteeIndex:  primitives.CommitteeIndex(committeeIndex),
 		Slot:            primitives.Slot(slot),
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: primitives.Epoch(sourceEpoch),
 			Root:  sourceRoot,
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: primitives.Epoch(targetEpoch),
 			Root:  targetRoot,
 		},

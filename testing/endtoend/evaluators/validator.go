@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	e2eparams "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/policies"
@@ -61,10 +61,10 @@ var ValidatorSyncParticipation = types.Evaluator{
 
 func validatorsAreActive(ec *types.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconChainClient(conn)
+	client := silapb.NewBeaconChainClient(conn)
 
 	// Balances actually fluctuate but we just want to check initial balance.
-	validatorRequest := &ethpb.ListValidatorsRequest{
+	validatorRequest := &silapb.ListValidatorsRequest{
 		PageSize: int32(params.BeaconConfig().MinGenesisActiveValidatorCount),
 		Active:   true,
 	}
@@ -124,8 +124,8 @@ func validatorsAreActive(ec *types.EvaluationContext, conns ...*grpc.ClientConn)
 // validatorsParticipating ensures the validators have an acceptable participation rate.
 func validatorsParticipating(_ *types.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconChainClient(conn)
-	validatorRequest := &ethpb.GetValidatorParticipationRequest{}
+	client := silapb.NewBeaconChainClient(conn)
+	validatorRequest := &silapb.GetValidatorParticipationRequest{}
 	participation, err := client.GetValidatorParticipation(context.Background(), validatorRequest)
 	if err != nil {
 		return errors.Wrap(err, "failed to get validator participation")
@@ -236,8 +236,8 @@ func validatorsParticipating(_ *types.EvaluationContext, conns ...*grpc.ClientCo
 // sync committee assignments.
 func validatorsSyncParticipation(_ *types.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewNodeClient(conn)
-	altairClient := ethpb.NewBeaconChainClient(conn)
+	client := silapb.NewNodeClient(conn)
+	altairClient := silapb.NewBeaconChainClient(conn)
 	genesis, err := client.GetGenesis(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		return errors.Wrap(err, "failed to get genesis data")
@@ -252,7 +252,7 @@ func validatorsSyncParticipation(_ *types.EvaluationContext, conns ...*grpc.Clie
 	if lowestBound < params.BeaconConfig().AltairForkEpoch {
 		lowestBound = params.BeaconConfig().AltairForkEpoch
 	}
-	blockCtrs, err := altairClient.ListBeaconBlocks(context.Background(), &ethpb.ListBlocksRequest{QueryFilter: &ethpb.ListBlocksRequest_Epoch{Epoch: lowestBound}})
+	blockCtrs, err := altairClient.ListBeaconBlocks(context.Background(), &silapb.ListBlocksRequest{QueryFilter: &silapb.ListBlocksRequest_Epoch{Epoch: lowestBound}})
 	if err != nil {
 		return errors.Wrap(err, "failed to get validator participation")
 	}
@@ -298,7 +298,7 @@ func validatorsSyncParticipation(_ *types.EvaluationContext, conns ...*grpc.Clie
 	if lowestBound == currEpoch {
 		return nil
 	}
-	blockCtrs, err = altairClient.ListBeaconBlocks(context.Background(), &ethpb.ListBlocksRequest{QueryFilter: &ethpb.ListBlocksRequest_Epoch{Epoch: currEpoch}})
+	blockCtrs, err = altairClient.ListBeaconBlocks(context.Background(), &silapb.ListBlocksRequest{QueryFilter: &silapb.ListBlocksRequest_Epoch{Epoch: currEpoch}})
 	if err != nil {
 		return errors.Wrap(err, "failed to get validator participation")
 	}
@@ -352,7 +352,7 @@ func validatorsSyncParticipation(_ *types.EvaluationContext, conns ...*grpc.Clie
 	return nil
 }
 
-func syncCompatibleBlockFromCtr(container *ethpb.BeaconBlockContainer) (interfaces.ReadOnlySignedBeaconBlock, error) {
+func syncCompatibleBlockFromCtr(container *silapb.BeaconBlockContainer) (interfaces.ReadOnlySignedBeaconBlock, error) {
 	if container.GetPhase0Block() != nil {
 		return nil, errors.New("block doesn't support sync committees")
 	}

@@ -7,12 +7,12 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
 
-func (c *beaconApiValidatorClient) submitSignedProposerPreferences(ctx context.Context, prefs []*ethpb.SignedProposerPreferences) error {
+func (c *beaconApiValidatorClient) submitSignedProposerPreferences(ctx context.Context, prefs []*silapb.SignedProposerPreferences) error {
 	jsonPrefs := make([]*structs.SignedProposerPreferences, len(prefs))
 	for i, p := range prefs {
 		if p == nil || p.Message == nil {

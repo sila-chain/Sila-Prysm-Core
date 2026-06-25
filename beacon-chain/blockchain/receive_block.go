@@ -23,8 +23,8 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpbv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapbv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -64,7 +64,7 @@ type DataColumnReceiver interface {
 
 // SlashingReceiver interface defines the methods of chain service for receiving validated slashing over the wire.
 type SlashingReceiver interface {
-	ReceiveAttesterSlashing(ctx context.Context, slashing ethpb.AttSlashing)
+	ReceiveAttesterSlashing(ctx context.Context, slashing silapb.AttSlashing)
 }
 
 // ReceiveBlock is a function that defines the operations (minus pubsub)
@@ -298,12 +298,12 @@ func (s *Service) reportPostBlockProcessing(
 
 	// Reports on block and fork choice metrics.
 	cp := s.cfg.ForkChoiceStore.FinalizedCheckpoint()
-	finalized := &ethpb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
+	finalized := &silapb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
 	reportSlotMetrics(block.Slot(), s.HeadSlot(), s.CurrentSlot(), finalized)
 
 	// Log block sync status.
 	cp = s.cfg.ForkChoiceStore.JustifiedCheckpoint()
-	justified := &ethpb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
+	justified := &silapb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
 	if err := logBlockSyncStatus(block, blockRoot, justified, finalized, receivedTime, s.genesisTime, daWaitedTime); err != nil {
 		log.WithError(err).Error("Unable to log block sync status")
 	}
@@ -425,7 +425,7 @@ func (s *Service) ReceiveBlockBatch(ctx context.Context, blocks []blocks.ROBlock
 
 		// Reports on blockCopy and fork choice metrics.
 		cp := s.cfg.ForkChoiceStore.FinalizedCheckpoint()
-		finalized := &ethpb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
+		finalized := &silapb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
 		reportSlotMetrics(blockCopy.Block().Slot(), s.HeadSlot(), s.CurrentSlot(), finalized)
 	}
 
@@ -433,7 +433,7 @@ func (s *Service) ReceiveBlockBatch(ctx context.Context, blocks []blocks.ROBlock
 		return err
 	}
 	for _, e := range envelopes {
-		protoEnv, ok := e.Proto().(*ethpb.SignedExecutionPayloadEnvelope)
+		protoEnv, ok := e.Proto().(*silapb.SignedExecutionPayloadEnvelope)
 		if !ok {
 			return errors.New("could not type assert signed envelope to proto")
 		}
@@ -464,10 +464,10 @@ func (s *Service) HasBlock(ctx context.Context, root [32]byte) bool {
 }
 
 // ReceiveAttesterSlashing receives an attester slashing and inserts it to forkchoice
-func (s *Service) ReceiveAttesterSlashing(ctx context.Context, slashing ethpb.AttSlashing) {
+func (s *Service) ReceiveAttesterSlashing(ctx context.Context, slashing silapb.AttSlashing) {
 	s.cfg.ForkChoiceStore.Lock()
 	defer s.cfg.ForkChoiceStore.Unlock()
-	s.InsertSlashingsToForkChoiceStore(ctx, []ethpb.AttSlashing{slashing})
+	s.InsertSlashingsToForkChoiceStore(ctx, []silapb.AttSlashing{slashing})
 }
 
 // prunePostBlockOperationPools only runs on new head otherwise should return a nil.
@@ -595,7 +595,7 @@ func (s *Service) updateJustificationOnBlock(ctx context.Context, preState, post
 	preStateJustifiedEpoch := preState.CurrentJustifiedCheckpoint().Epoch
 	postStateJustifiedEpoch := postState.CurrentJustifiedCheckpoint().Epoch
 	if justified.Epoch > preJustifiedEpoch || (justified.Epoch == postStateJustifiedEpoch && justified.Epoch > preStateJustifiedEpoch) {
-		if err := s.cfg.BeaconDB.SaveJustifiedCheckpoint(ctx, &ethpb.Checkpoint{
+		if err := s.cfg.BeaconDB.SaveJustifiedCheckpoint(ctx, &silapb.Checkpoint{
 			Epoch: justified.Epoch, Root: justified.Root[:],
 		}); err != nil {
 			return err
@@ -611,7 +611,7 @@ func (s *Service) updateFinalizationOnBlock(ctx context.Context, preState, postS
 	postStateFinalizedEpoch := postState.FinalizedCheckpoint().Epoch
 	finalized := s.cfg.ForkChoiceStore.FinalizedCheckpoint()
 	if finalized.Epoch > preFinalizedEpoch || (finalized.Epoch == postStateFinalizedEpoch && finalized.Epoch > preStateFinalizedEpoch) {
-		if err := s.updateFinalized(ctx, &ethpb.Checkpoint{Epoch: finalized.Epoch, Root: finalized.Root[:]}); err != nil {
+		if err := s.updateFinalized(ctx, &silapb.Checkpoint{Epoch: finalized.Epoch, Root: finalized.Root[:]}); err != nil {
 			return true, err
 		}
 		return true, nil
@@ -642,7 +642,7 @@ func (s *Service) sendNewFinalizedEvent(ctx context.Context, postState state.Bea
 	// Send an event regarding the new finalized checkpoint over a common event feed.
 	s.cfg.StateNotifier.StateFeed().Send(&feed.Event{
 		Type: statefeed.FinalizedCheckpoint,
-		Data: &ethpbv1.EventFinalizedCheckpoint{
+		Data: &silapbv1.EventFinalizedCheckpoint{
 			Epoch:               postState.FinalizedCheckpoint().Epoch,
 			Block:               postState.FinalizedCheckpoint().Root,
 			State:               stateRoot[:],

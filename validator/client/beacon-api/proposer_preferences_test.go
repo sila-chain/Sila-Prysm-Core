@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -48,8 +48,8 @@ func TestSubmitSignedProposerPreferences_Valid(t *testing.T) {
 	).Return(nil).Times(1)
 
 	client := &beaconApiValidatorClient{handler: handler}
-	err = client.submitSignedProposerPreferences(t.Context(), []*ethpb.SignedProposerPreferences{{
-		Message: &ethpb.ProposerPreferences{
+	err = client.submitSignedProposerPreferences(t.Context(), []*silapb.SignedProposerPreferences{{
+		Message: &silapb.ProposerPreferences{
 			DependentRoot:  dependentRoot,
 			ProposalSlot:   32,
 			ValidatorIndex: 2,
@@ -75,8 +75,8 @@ func TestSubmitSignedProposerPreferences_HandlerError(t *testing.T) {
 	).Return(errors.New("foo error")).Times(1)
 
 	client := &beaconApiValidatorClient{handler: handler}
-	err := client.submitSignedProposerPreferences(t.Context(), []*ethpb.SignedProposerPreferences{{
-		Message:   &ethpb.ProposerPreferences{DependentRoot: bytes.Repeat([]byte{0xcc}, 32), FeeRecipient: bytes.Repeat([]byte{0xab}, 20)},
+	err := client.submitSignedProposerPreferences(t.Context(), []*silapb.SignedProposerPreferences{{
+		Message:   &silapb.ProposerPreferences{DependentRoot: bytes.Repeat([]byte{0xcc}, 32), FeeRecipient: bytes.Repeat([]byte{0xab}, 20)},
 		Signature: bytes.Repeat([]byte{0x01}, 96),
 	}})
 	assert.ErrorContains(t, "foo error", err)
@@ -84,6 +84,6 @@ func TestSubmitSignedProposerPreferences_HandlerError(t *testing.T) {
 
 func TestSubmitSignedProposerPreferences_NilEntry(t *testing.T) {
 	client := &beaconApiValidatorClient{}
-	err := client.submitSignedProposerPreferences(t.Context(), []*ethpb.SignedProposerPreferences{nil})
+	err := client.submitSignedProposerPreferences(t.Context(), []*silapb.SignedProposerPreferences{nil})
 	assert.ErrorContains(t, "is nil", err)
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -37,7 +37,7 @@ func DeterministicGenesisStateBellatrix(t testing.TB, numValidators uint64) (sta
 }
 
 // genesisBeaconStateBellatrix returns the genesis beacon state.
-func genesisBeaconStateBellatrix(ctx context.Context, deposits []*ethpb.Deposit, genesisTime time.Time, eth1Data *ethpb.Eth1Data) (state.BeaconState, error) {
+func genesisBeaconStateBellatrix(ctx context.Context, deposits []*silapb.Deposit, genesisTime time.Time, eth1Data *silapb.Eth1Data) (state.BeaconState, error) {
 	st, err := emptyGenesisStateBellatrix()
 	if err != nil {
 		return nil, err
@@ -59,16 +59,16 @@ func genesisBeaconStateBellatrix(ctx context.Context, deposits []*ethpb.Deposit,
 
 // emptyGenesisStateBellatrix returns an empty genesis state in Bellatrix format.
 func emptyGenesisStateBellatrix() (state.BeaconState, error) {
-	st := &ethpb.BeaconStateBellatrix{
+	st := &silapb.BeaconStateBellatrix{
 		// Misc fields.
 		Slot: 0,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().AltairForkVersion,
 			CurrentVersion:  params.BeaconConfig().BellatrixForkVersion,
 			Epoch:           0,
 		},
 		// Validator registry fields.
-		Validators:       []*ethpb.Validator{},
+		Validators:       []*silapb.Validator{},
 		Balances:         []uint64{},
 		InactivityScores: []uint64{},
 
@@ -78,8 +78,8 @@ func emptyGenesisStateBellatrix() (state.BeaconState, error) {
 		PreviousEpochParticipation: []byte{},
 
 		// Eth1 data.
-		Eth1Data:         &ethpb.Eth1Data{},
-		Eth1DataVotes:    []*ethpb.Eth1Data{},
+		Eth1Data:         &silapb.Eth1Data{},
+		Eth1DataVotes:    []*silapb.Eth1Data{},
 		Eth1DepositIndex: 0,
 
 		LatestExecutionPayloadHeader: &enginev1.ExecutionPayloadHeader{},
@@ -87,7 +87,7 @@ func emptyGenesisStateBellatrix() (state.BeaconState, error) {
 	return state_native.InitializeFromProtoUnsafeBellatrix(st)
 }
 
-func buildGenesisBeaconStateBellatrix(genesisTime time.Time, preState state.BeaconState, eth1Data *ethpb.Eth1Data) (state.BeaconState, error) {
+func buildGenesisBeaconStateBellatrix(genesisTime time.Time, preState state.BeaconState, eth1Data *silapb.Eth1Data) (state.BeaconState, error) {
 	if eth1Data == nil {
 		return nil, errors.New("no eth1data provided for genesis state")
 	}
@@ -142,13 +142,13 @@ func buildGenesisBeaconStateBellatrix(genesisTime time.Time, preState state.Beac
 			scores = append(scores, 0)
 		}
 	}
-	st := &ethpb.BeaconStateBellatrix{
+	st := &silapb.BeaconStateBellatrix{
 		// Misc fields.
 		Slot:                  0,
 		GenesisTime:           uint64(genesisTime.Unix()),
 		GenesisValidatorsRoot: genesisValidatorsRoot[:],
 
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			Epoch:           0,
@@ -165,16 +165,16 @@ func buildGenesisBeaconStateBellatrix(genesisTime time.Time, preState state.Beac
 		RandaoMixes: randaoMixes,
 
 		// Finality.
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
 		JustificationBits: []byte{0},
-		FinalizedCheckpoint: &ethpb.Checkpoint{
+		FinalizedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
@@ -186,19 +186,19 @@ func buildGenesisBeaconStateBellatrix(genesisTime time.Time, preState state.Beac
 
 		// Eth1 data.
 		Eth1Data:         eth1Data,
-		Eth1DataVotes:    []*ethpb.Eth1Data{},
+		Eth1DataVotes:    []*silapb.Eth1Data{},
 		Eth1DepositIndex: preState.Eth1DepositIndex(),
 	}
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
-	bodyRoot, err := (&ethpb.BeaconBlockBodyBellatrix{
+	bodyRoot, err := (&silapb.BeaconBlockBodyBellatrix{
 		RandaoReveal: make([]byte, 96),
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},
 		Graffiti: make([]byte, 32),
-		SyncAggregate: &ethpb.SyncAggregate{
+		SyncAggregate: &silapb.SyncAggregate{
 			SyncCommitteeBits:      scBits[:],
 			SyncCommitteeSignature: make([]byte, 96),
 		},
@@ -219,7 +219,7 @@ func buildGenesisBeaconStateBellatrix(genesisTime time.Time, preState state.Beac
 		return nil, errors.Wrap(err, "could not hash tree root empty block body")
 	}
 
-	st.LatestBlockHeader = &ethpb.BeaconBlockHeader{
+	st.LatestBlockHeader = &silapb.BeaconBlockHeader{
 		ParentRoot: zeroHash,
 		StateRoot:  zeroHash,
 		BodyRoot:   bodyRoot[:],
@@ -229,11 +229,11 @@ func buildGenesisBeaconStateBellatrix(genesisTime time.Time, preState state.Beac
 	for i := uint64(0); i < params.BeaconConfig().SyncCommitteeSize; i++ {
 		pubKeys = append(pubKeys, bytesutil.PadTo([]byte{}, params.BeaconConfig().BLSPubkeyLength))
 	}
-	st.CurrentSyncCommittee = &ethpb.SyncCommittee{
+	st.CurrentSyncCommittee = &silapb.SyncCommittee{
 		Pubkeys:         pubKeys,
 		AggregatePubkey: bytesutil.PadTo([]byte{}, params.BeaconConfig().BLSPubkeyLength),
 	}
-	st.NextSyncCommittee = &ethpb.SyncCommittee{
+	st.NextSyncCommittee = &silapb.SyncCommittee{
 		Pubkeys:         bytesutil.SafeCopy2dBytes(pubKeys),
 		AggregatePubkey: bytesutil.PadTo([]byte{}, params.BeaconConfig().BLSPubkeyLength),
 	}

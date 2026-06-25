@@ -6,7 +6,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/blocks"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -18,7 +18,7 @@ import (
 func TestVerifyProposerSlashing_BeaconFuzzIssue91(t *testing.T) {
 	file, err := os.ReadFile("testdata/beaconfuzz_91_beacon.ssz")
 	require.NoError(t, err)
-	rawState := &ethpb.BeaconState{}
+	rawState := &silapb.BeaconState{}
 	err = rawState.UnmarshalSSZ(file)
 	require.NoError(t, err)
 
@@ -27,7 +27,7 @@ func TestVerifyProposerSlashing_BeaconFuzzIssue91(t *testing.T) {
 
 	file, err = os.ReadFile("testdata/beaconfuzz_91_proposer_slashing.ssz")
 	require.NoError(t, err)
-	slashing := &ethpb.ProposerSlashing{}
+	slashing := &silapb.ProposerSlashing{}
 	err = slashing.UnmarshalSSZ(file)
 	require.NoError(t, err)
 

@@ -22,7 +22,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -31,7 +31,7 @@ import (
 	ssz "github.com/sila-chain/fastssz"
 )
 
-func gloasFixture(t *testing.T) (*ethpb.DataColumnSidecarGloas, interfaces.ReadOnlySignedBeaconBlock) {
+func gloasFixture(t *testing.T) (*silapb.DataColumnSidecarGloas, interfaces.ReadOnlySignedBeaconBlock) {
 	t.Helper()
 
 	roBlock, roSidecars, _ := util.GenerateTestFuluBlockWithSidecars(t, 1, util.WithSlot(1))
@@ -58,7 +58,7 @@ func gloasFixture(t *testing.T) (*ethpb.DataColumnSidecarGloas, interfaces.ReadO
 	blockRoot, err := signedBlock.Block().HashTreeRoot()
 	require.NoError(t, err)
 
-	sidecar := &ethpb.DataColumnSidecarGloas{
+	sidecar := &silapb.DataColumnSidecarGloas{
 		Index:           base.Index(),
 		Column:          bytesutil.SafeCopy2dBytes(base.Column()),
 		KzgProofs:       bytesutil.SafeCopy2dBytes(base.KzgProofs()),
@@ -158,7 +158,7 @@ func TestValidateDataColumnGloas(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, pubsub.ValidationAccept, result)
 
-		validated, ok := message.ValidatorData.(*ethpb.DataColumnSidecarGloas)
+		validated, ok := message.ValidatorData.(*silapb.DataColumnSidecarGloas)
 		require.Equal(t, true, ok)
 		require.Equal(t, true, bytes.Equal(validated.KzgProofs[0], sidecar.KzgProofs[0]))
 
@@ -197,7 +197,7 @@ func TestValidateDataColumnGloas(t *testing.T) {
 
 		digest, err := service.currentForkDigest()
 		require.NoError(t, err)
-		topic := service.addDigestAndIndexToTopic(p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.DataColumnSidecarGloas]()], digest, peerdas.ComputeSubnetForDataColumnSidecar(sidecar.Index))
+		topic := service.addDigestAndIndexToTopic(p2p.GossipTypeMapping[reflect.TypeFor[*silapb.DataColumnSidecarGloas]()], digest, peerdas.ComputeSubnetForDataColumnSidecar(sidecar.Index))
 		msg := &pubsub.Message{Message: &pb.Message{Topic: &topic}}
 
 		_, err = service.validateDataColumnGloas(ctx, "aDummyPID", msg, roDataColumn, "/data_column_sidecar_%d/")
@@ -249,7 +249,7 @@ func TestPendingGloasColumns(t *testing.T) {
 			pendingGloasColumns: make(map[[32]byte]*pendingGloasEntry),
 		}
 		root := [32]byte{0xaa}
-		dc := &ethpb.DataColumnSidecarGloas{
+		dc := &silapb.DataColumnSidecarGloas{
 			Index:           5,
 			Slot:            clock.CurrentSlot(),
 			BeaconBlockRoot: root[:],
@@ -274,7 +274,7 @@ func TestPendingGloasColumns(t *testing.T) {
 			pendingGloasColumns: make(map[[32]byte]*pendingGloasEntry),
 		}
 		root := [32]byte{0xbb}
-		dc := &ethpb.DataColumnSidecarGloas{
+		dc := &silapb.DataColumnSidecarGloas{
 			Index:           10,
 			Slot:            clock.CurrentSlot(),
 			BeaconBlockRoot: root[:],
@@ -308,7 +308,7 @@ func TestPendingGloasColumns(t *testing.T) {
 			pendingGloasColumns: make(map[[32]byte]*pendingGloasEntry),
 		}
 		root := [32]byte{0xee}
-		dc := &ethpb.DataColumnSidecarGloas{
+		dc := &silapb.DataColumnSidecarGloas{
 			Index:           fieldparams.NumberOfColumns + 1,
 			Slot:            clock.CurrentSlot(),
 			BeaconBlockRoot: root[:],
@@ -337,7 +337,7 @@ func TestPendingGloasColumns(t *testing.T) {
 			proofs[i] = make([]byte, 48)
 		}
 		root := [32]byte{0x77}
-		dc := &ethpb.DataColumnSidecarGloas{
+		dc := &silapb.DataColumnSidecarGloas{
 			Index:           0,
 			Slot:            clock.CurrentSlot(),
 			BeaconBlockRoot: root[:],
@@ -357,7 +357,7 @@ func TestPendingGloasColumns(t *testing.T) {
 			pendingGloasColumns: make(map[[32]byte]*pendingGloasEntry),
 		}
 		root := [32]byte{0x78}
-		dc := &ethpb.DataColumnSidecarGloas{
+		dc := &silapb.DataColumnSidecarGloas{
 			Index:           0,
 			Slot:            clock.CurrentSlot(),
 			BeaconBlockRoot: root[:],
@@ -377,7 +377,7 @@ func TestPendingGloasColumns(t *testing.T) {
 			pendingGloasColumns: make(map[[32]byte]*pendingGloasEntry),
 		}
 		root := [32]byte{0x79}
-		dc := &ethpb.DataColumnSidecarGloas{
+		dc := &silapb.DataColumnSidecarGloas{
 			Index:           0,
 			Slot:            clock.CurrentSlot(),
 			BeaconBlockRoot: root[:],
@@ -399,7 +399,7 @@ func TestPendingGloasColumns(t *testing.T) {
 		// Fill up to the cap.
 		for i := range maxPendingGloasRoots {
 			root := [32]byte{byte(i)}
-			dc := &ethpb.DataColumnSidecarGloas{
+			dc := &silapb.DataColumnSidecarGloas{
 				Index:           0,
 				Slot:            clock.CurrentSlot(),
 				BeaconBlockRoot: root[:],
@@ -414,7 +414,7 @@ func TestPendingGloasColumns(t *testing.T) {
 
 		// One more should be dropped.
 		overflowRoot := [32]byte{0xff}
-		dc := &ethpb.DataColumnSidecarGloas{
+		dc := &silapb.DataColumnSidecarGloas{
 			Index:           0,
 			Slot:            clock.CurrentSlot(),
 			BeaconBlockRoot: overflowRoot[:],
@@ -428,7 +428,7 @@ func TestPendingGloasColumns(t *testing.T) {
 
 		// Adding to an existing root should still work.
 		existingRoot := [32]byte{0x00}
-		dc2 := &ethpb.DataColumnSidecarGloas{
+		dc2 := &silapb.DataColumnSidecarGloas{
 			Index:           1,
 			Slot:            clock.CurrentSlot(),
 			BeaconBlockRoot: existingRoot[:],

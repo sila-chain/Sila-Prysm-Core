@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila/common"
@@ -34,9 +34,9 @@ func TestVerifyOperationLengths_Electra(t *testing.T) {
 		s, _ := util.DeterministicGenesisStateElectra(t, 1)
 		sb, err := consensusblocks.NewSignedBeaconBlock(util.NewBeaconBlockElectra())
 		require.NoError(t, err)
-		sb.SetDeposits([]*ethpb.Deposit{
+		sb.SetDeposits([]*silapb.Deposit{
 			{
-				Data: &ethpb.Deposit_Data{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             []byte{1, 2, 3},
 					Amount:                1000,
 					WithdrawalCredentials: make([]byte, common.AddressLength),
@@ -57,9 +57,9 @@ func TestProcessEpoch_CanProcessElectra(t *testing.T) {
 	require.NoError(t, st.SetDepositBalanceToConsume(100))
 	amountAvailForProcessing := helpers.ActivationExitChurnLimit(1_000 * 1e9)
 	validators := st.Validators()
-	deps := make([]*ethpb.PendingDeposit, 20)
+	deps := make([]*silapb.PendingDeposit, 20)
 	for i := 0; i < len(deps); i += 1 {
-		deps[i] = &ethpb.PendingDeposit{
+		deps[i] = &silapb.PendingDeposit{
 			PublicKey:             validators[i].PublicKey,
 			WithdrawalCredentials: validators[i].WithdrawalCredentials,
 			Amount:                uint64(amountAvailForProcessing) / 10,
@@ -67,7 +67,7 @@ func TestProcessEpoch_CanProcessElectra(t *testing.T) {
 		}
 	}
 	require.NoError(t, st.SetPendingDeposits(deps))
-	require.NoError(t, st.SetPendingConsolidations([]*ethpb.PendingConsolidation{
+	require.NoError(t, st.SetPendingConsolidations([]*silapb.PendingConsolidation{
 		{
 			SourceIndex: 2,
 			TargetIndex: 3,

@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -17,7 +17,7 @@ type MockBroadcaster struct {
 	BroadcastCalled       atomic.Bool
 	BroadcastMessages     []proto.Message
 	BroadcastEpochs       []primitives.Epoch
-	BroadcastAttestations []ethpb.Att
+	BroadcastAttestations []silapb.Att
 	msgLock               sync.Mutex
 	attLock               sync.Mutex
 }
@@ -40,7 +40,7 @@ func (m *MockBroadcaster) BroadcastForEpoch(ctx context.Context, msg proto.Messa
 }
 
 // BroadcastAttestation records a broadcast occurred.
-func (m *MockBroadcaster) BroadcastAttestation(_ context.Context, _ uint64, a ethpb.Att) error {
+func (m *MockBroadcaster) BroadcastAttestation(_ context.Context, _ uint64, a silapb.Att) error {
 	m.BroadcastCalled.Store(true)
 	m.attLock.Lock()
 	defer m.attLock.Unlock()
@@ -49,13 +49,13 @@ func (m *MockBroadcaster) BroadcastAttestation(_ context.Context, _ uint64, a et
 }
 
 // BroadcastSyncCommitteeMessage records a broadcast occurred.
-func (m *MockBroadcaster) BroadcastSyncCommitteeMessage(_ context.Context, _ uint64, _ *ethpb.SyncCommitteeMessage) error {
+func (m *MockBroadcaster) BroadcastSyncCommitteeMessage(_ context.Context, _ uint64, _ *silapb.SyncCommitteeMessage) error {
 	m.BroadcastCalled.Store(true)
 	return nil
 }
 
 // BroadcastBlob broadcasts a blob for mock.
-func (m *MockBroadcaster) BroadcastBlob(context.Context, uint64, *ethpb.BlobSidecar) error {
+func (m *MockBroadcaster) BroadcastBlob(context.Context, uint64, *silapb.BlobSidecar) error {
 	m.BroadcastCalled.Store(true)
 	return nil
 }

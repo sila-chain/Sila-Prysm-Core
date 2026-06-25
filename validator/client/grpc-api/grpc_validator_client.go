@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
 	validatorHelpers "github.com/sila-chain/Sila-Consensus-Core/v7/validator/helpers"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -25,12 +25,12 @@ import (
 )
 
 type grpcValidatorClient struct {
-	*grpcClientManager[ethpb.BeaconNodeValidatorClient]
+	*grpcClientManager[silapb.BeaconNodeValidatorClient]
 	nodeClient           *grpcNodeClient
 	isEventStreamRunning bool
 }
 
-func (c *grpcValidatorClient) Duties(ctx context.Context, in *ethpb.DutiesRequest) (*ethpb.ValidatorDutiesContainer, error) {
+func (c *grpcValidatorClient) Duties(ctx context.Context, in *silapb.DutiesRequest) (*silapb.ValidatorDutiesContainer, error) {
 	if features.Get().DisableDutiesV2 {
 		return c.getDuties(ctx, in)
 	}
@@ -49,7 +49,7 @@ func (c *grpcValidatorClient) Duties(ctx context.Context, in *ethpb.DutiesReques
 }
 
 // getDuties is calling the v1 of get duties
-func (c *grpcValidatorClient) getDuties(ctx context.Context, in *ethpb.DutiesRequest) (*ethpb.ValidatorDutiesContainer, error) {
+func (c *grpcValidatorClient) getDuties(ctx context.Context, in *silapb.DutiesRequest) (*silapb.ValidatorDutiesContainer, error) {
 	dutiesResponse, err := c.getClient().GetDuties(ctx, in)
 	if err != nil {
 		return nil, errors.Wrap(
@@ -60,8 +60,8 @@ func (c *grpcValidatorClient) getDuties(ctx context.Context, in *ethpb.DutiesReq
 	return toValidatorDutiesContainer(dutiesResponse)
 }
 
-func toValidatorDutiesContainer(dutiesResponse *ethpb.DutiesResponse) (*ethpb.ValidatorDutiesContainer, error) {
-	currentDuties := make([]*ethpb.ValidatorDuty, len(dutiesResponse.CurrentEpochDuties))
+func toValidatorDutiesContainer(dutiesResponse *silapb.DutiesResponse) (*silapb.ValidatorDutiesContainer, error) {
+	currentDuties := make([]*silapb.ValidatorDuty, len(dutiesResponse.CurrentEpochDuties))
 	for i, cd := range dutiesResponse.CurrentEpochDuties {
 		duty, err := toValidatorDuty(cd)
 		if err != nil {
@@ -69,7 +69,7 @@ func toValidatorDutiesContainer(dutiesResponse *ethpb.DutiesResponse) (*ethpb.Va
 		}
 		currentDuties[i] = duty
 	}
-	nextDuties := make([]*ethpb.ValidatorDuty, len(dutiesResponse.NextEpochDuties))
+	nextDuties := make([]*silapb.ValidatorDuty, len(dutiesResponse.NextEpochDuties))
 	for i, nd := range dutiesResponse.NextEpochDuties {
 		duty, err := toValidatorDuty(nd)
 		if err != nil {
@@ -77,7 +77,7 @@ func toValidatorDutiesContainer(dutiesResponse *ethpb.DutiesResponse) (*ethpb.Va
 		}
 		nextDuties[i] = duty
 	}
-	return &ethpb.ValidatorDutiesContainer{
+	return &silapb.ValidatorDutiesContainer{
 		PrevDependentRoot:  dutiesResponse.PreviousDutyDependentRoot,
 		CurrDependentRoot:  dutiesResponse.CurrentDutyDependentRoot,
 		CurrentEpochDuties: currentDuties,
@@ -85,7 +85,7 @@ func toValidatorDutiesContainer(dutiesResponse *ethpb.DutiesResponse) (*ethpb.Va
 	}, nil
 }
 
-func toValidatorDuty(duty *ethpb.DutiesResponse_Duty) (*ethpb.ValidatorDuty, error) {
+func toValidatorDuty(duty *silapb.DutiesResponse_Duty) (*silapb.ValidatorDuty, error) {
 	var valIndexInCommittee uint64
 	// valIndexInCommittee will be 0 in case we don't get a match. This is a potential false positive,
 	// however it's an impossible condition because every validator must be assigned to a committee.
@@ -95,7 +95,7 @@ func toValidatorDuty(duty *ethpb.DutiesResponse_Duty) (*ethpb.ValidatorDuty, err
 			break
 		}
 	}
-	return &ethpb.ValidatorDuty{
+	return &silapb.ValidatorDuty{
 		CommitteeLength:         uint64(len(duty.Committee)),
 		CommitteeIndex:          duty.CommitteeIndex,
 		CommitteesAtSlot:        duty.CommitteesAtSlot, // GRPC doesn't use this value though
@@ -109,8 +109,8 @@ func toValidatorDuty(duty *ethpb.DutiesResponse_Duty) (*ethpb.ValidatorDuty, err
 	}, nil
 }
 
-func toValidatorDutiesContainerV2(dutiesResponse *ethpb.DutiesV2Response) (*ethpb.ValidatorDutiesContainer, error) {
-	currentDuties := make([]*ethpb.ValidatorDuty, len(dutiesResponse.CurrentEpochDuties))
+func toValidatorDutiesContainerV2(dutiesResponse *silapb.DutiesV2Response) (*silapb.ValidatorDutiesContainer, error) {
+	currentDuties := make([]*silapb.ValidatorDuty, len(dutiesResponse.CurrentEpochDuties))
 	for i, cd := range dutiesResponse.CurrentEpochDuties {
 		duty, err := toValidatorDutyV2(cd)
 		if err != nil {
@@ -118,7 +118,7 @@ func toValidatorDutiesContainerV2(dutiesResponse *ethpb.DutiesV2Response) (*ethp
 		}
 		currentDuties[i] = duty
 	}
-	nextDuties := make([]*ethpb.ValidatorDuty, len(dutiesResponse.NextEpochDuties))
+	nextDuties := make([]*silapb.ValidatorDuty, len(dutiesResponse.NextEpochDuties))
 	for i, nd := range dutiesResponse.NextEpochDuties {
 		duty, err := toValidatorDutyV2(nd)
 		if err != nil {
@@ -126,7 +126,7 @@ func toValidatorDutiesContainerV2(dutiesResponse *ethpb.DutiesV2Response) (*ethp
 		}
 		nextDuties[i] = duty
 	}
-	return &ethpb.ValidatorDutiesContainer{
+	return &silapb.ValidatorDutiesContainer{
 		PrevDependentRoot:  dutiesResponse.PreviousDutyDependentRoot,
 		CurrDependentRoot:  dutiesResponse.CurrentDutyDependentRoot,
 		CurrentEpochDuties: currentDuties,
@@ -134,8 +134,8 @@ func toValidatorDutiesContainerV2(dutiesResponse *ethpb.DutiesV2Response) (*ethp
 	}, nil
 }
 
-func toValidatorDutyV2(duty *ethpb.DutiesV2Response_Duty) (*ethpb.ValidatorDuty, error) {
-	return &ethpb.ValidatorDuty{
+func toValidatorDutyV2(duty *silapb.DutiesV2Response_Duty) (*silapb.ValidatorDuty, error) {
+	return &silapb.ValidatorDuty{
 		CommitteeLength:         duty.CommitteeLength,
 		CommitteeIndex:          duty.CommitteeIndex,
 		CommitteesAtSlot:        duty.CommitteesAtSlot, // GRPC doesn't use this value though
@@ -150,8 +150,8 @@ func toValidatorDutyV2(duty *ethpb.DutiesV2Response_Duty) (*ethpb.ValidatorDuty,
 	}, nil
 }
 
-func (c *grpcValidatorClient) AttesterDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*ethpb.AttesterDutiesResponse, error) {
-	resp, err := c.getClient().GetAttesterDuties(ctx, &ethpb.AttesterDutiesRequest{
+func (c *grpcValidatorClient) AttesterDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*silapb.AttesterDutiesResponse, error) {
+	resp, err := c.getClient().GetAttesterDuties(ctx, &silapb.AttesterDutiesRequest{
 		Epoch:            epoch,
 		ValidatorIndices: validatorIndices,
 	})
@@ -161,8 +161,8 @@ func (c *grpcValidatorClient) AttesterDuties(ctx context.Context, epoch primitiv
 	return resp, nil
 }
 
-func (c *grpcValidatorClient) ProposerDuties(ctx context.Context, epoch primitives.Epoch) (*ethpb.ProposerDutiesResponse, error) {
-	resp, err := c.getClient().GetProposerDutiesV2(ctx, &ethpb.ProposerDutiesRequest{
+func (c *grpcValidatorClient) ProposerDuties(ctx context.Context, epoch primitives.Epoch) (*silapb.ProposerDutiesResponse, error) {
+	resp, err := c.getClient().GetProposerDutiesV2(ctx, &silapb.ProposerDutiesRequest{
 		Epoch: epoch,
 	})
 	if err != nil {
@@ -171,8 +171,8 @@ func (c *grpcValidatorClient) ProposerDuties(ctx context.Context, epoch primitiv
 	return resp, nil
 }
 
-func (c *grpcValidatorClient) SyncCommitteeDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*ethpb.SyncCommitteeDutiesResponse, error) {
-	resp, err := c.getClient().GetSyncCommitteeDuties(ctx, &ethpb.SyncCommitteeDutiesRequest{
+func (c *grpcValidatorClient) SyncCommitteeDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*silapb.SyncCommitteeDutiesResponse, error) {
+	resp, err := c.getClient().GetSyncCommitteeDuties(ctx, &silapb.SyncCommitteeDutiesRequest{
 		Epoch:            epoch,
 		ValidatorIndices: validatorIndices,
 	})
@@ -182,8 +182,8 @@ func (c *grpcValidatorClient) SyncCommitteeDuties(ctx context.Context, epoch pri
 	return resp, nil
 }
 
-func (c *grpcValidatorClient) PTCDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*ethpb.PTCDutiesResponse, error) {
-	resp, err := c.getClient().GetPTCDuties(ctx, &ethpb.PTCDutiesRequest{
+func (c *grpcValidatorClient) PTCDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*silapb.PTCDutiesResponse, error) {
+	resp, err := c.getClient().GetPTCDuties(ctx, &silapb.PTCDutiesRequest{
 		Epoch:            epoch,
 		ValidatorIndices: validatorIndices,
 	})
@@ -193,116 +193,116 @@ func (c *grpcValidatorClient) PTCDuties(ctx context.Context, epoch primitives.Ep
 	return resp, nil
 }
 
-func (c *grpcValidatorClient) CheckDoppelGanger(ctx context.Context, in *ethpb.DoppelGangerRequest) (*ethpb.DoppelGangerResponse, error) {
+func (c *grpcValidatorClient) CheckDoppelGanger(ctx context.Context, in *silapb.DoppelGangerRequest) (*silapb.DoppelGangerResponse, error) {
 	return c.getClient().CheckDoppelGanger(ctx, in)
 }
 
-func (c *grpcValidatorClient) DomainData(ctx context.Context, in *ethpb.DomainRequest) (*ethpb.DomainResponse, error) {
+func (c *grpcValidatorClient) DomainData(ctx context.Context, in *silapb.DomainRequest) (*silapb.DomainResponse, error) {
 	return c.getClient().DomainData(ctx, in)
 }
 
-func (c *grpcValidatorClient) AttestationData(ctx context.Context, in *ethpb.AttestationDataRequest) (*ethpb.AttestationData, error) {
+func (c *grpcValidatorClient) AttestationData(ctx context.Context, in *silapb.AttestationDataRequest) (*silapb.AttestationData, error) {
 	return c.getClient().GetAttestationData(ctx, in)
 }
 
-func (c *grpcValidatorClient) BeaconBlock(ctx context.Context, in *ethpb.BlockRequest) (*ethpb.GenericBeaconBlock, error) {
+func (c *grpcValidatorClient) BeaconBlock(ctx context.Context, in *silapb.BlockRequest) (*silapb.GenericBeaconBlock, error) {
 	return c.getClient().GetBeaconBlock(ctx, in)
 }
 
-func (c *grpcValidatorClient) FeeRecipientByPubKey(ctx context.Context, in *ethpb.FeeRecipientByPubKeyRequest) (*ethpb.FeeRecipientByPubKeyResponse, error) {
+func (c *grpcValidatorClient) FeeRecipientByPubKey(ctx context.Context, in *silapb.FeeRecipientByPubKeyRequest) (*silapb.FeeRecipientByPubKeyResponse, error) {
 	return c.getClient().GetFeeRecipientByPubKey(ctx, in)
 }
 
-func (c *grpcValidatorClient) SyncCommitteeContribution(ctx context.Context, in *ethpb.SyncCommitteeContributionRequest) (*ethpb.SyncCommitteeContribution, error) {
+func (c *grpcValidatorClient) SyncCommitteeContribution(ctx context.Context, in *silapb.SyncCommitteeContributionRequest) (*silapb.SyncCommitteeContribution, error) {
 	return c.getClient().GetSyncCommitteeContribution(ctx, in)
 }
 
-func (c *grpcValidatorClient) SyncMessageBlockRoot(ctx context.Context, in *empty.Empty) (*ethpb.SyncMessageBlockRootResponse, error) {
+func (c *grpcValidatorClient) SyncMessageBlockRoot(ctx context.Context, in *empty.Empty) (*silapb.SyncMessageBlockRootResponse, error) {
 	return c.getClient().GetSyncMessageBlockRoot(ctx, in)
 }
 
-func (c *grpcValidatorClient) SyncSubcommitteeIndex(ctx context.Context, in *ethpb.SyncSubcommitteeIndexRequest) (*ethpb.SyncSubcommitteeIndexResponse, error) {
+func (c *grpcValidatorClient) SyncSubcommitteeIndex(ctx context.Context, in *silapb.SyncSubcommitteeIndexRequest) (*silapb.SyncSubcommitteeIndexResponse, error) {
 	return c.getClient().GetSyncSubcommitteeIndex(ctx, in)
 }
 
-func (c *grpcValidatorClient) MultipleValidatorStatus(ctx context.Context, in *ethpb.MultipleValidatorStatusRequest) (*ethpb.MultipleValidatorStatusResponse, error) {
+func (c *grpcValidatorClient) MultipleValidatorStatus(ctx context.Context, in *silapb.MultipleValidatorStatusRequest) (*silapb.MultipleValidatorStatusResponse, error) {
 	return c.getClient().MultipleValidatorStatus(ctx, in)
 }
 
-func (c *grpcValidatorClient) PrepareBeaconProposer(ctx context.Context, in *ethpb.PrepareBeaconProposerRequest) (*empty.Empty, error) {
+func (c *grpcValidatorClient) PrepareBeaconProposer(ctx context.Context, in *silapb.PrepareBeaconProposerRequest) (*empty.Empty, error) {
 	return c.getClient().PrepareBeaconProposer(ctx, in)
 }
 
-func (c *grpcValidatorClient) ProposeAttestation(ctx context.Context, in *ethpb.Attestation) (*ethpb.AttestResponse, error) {
+func (c *grpcValidatorClient) ProposeAttestation(ctx context.Context, in *silapb.Attestation) (*silapb.AttestResponse, error) {
 	return c.getClient().ProposeAttestation(ctx, in)
 }
 
-func (c *grpcValidatorClient) ProposeAttestationElectra(ctx context.Context, in *ethpb.SingleAttestation) (*ethpb.AttestResponse, error) {
+func (c *grpcValidatorClient) ProposeAttestationElectra(ctx context.Context, in *silapb.SingleAttestation) (*silapb.AttestResponse, error) {
 	return c.getClient().ProposeAttestationElectra(ctx, in)
 }
 
-func (c *grpcValidatorClient) ProposeBeaconBlock(ctx context.Context, in *ethpb.GenericSignedBeaconBlock) (*ethpb.ProposeResponse, error) {
+func (c *grpcValidatorClient) ProposeBeaconBlock(ctx context.Context, in *silapb.GenericSignedBeaconBlock) (*silapb.ProposeResponse, error) {
 	return c.getClient().ProposeBeaconBlock(ctx, in)
 }
 
-func (c *grpcValidatorClient) ProposeExit(ctx context.Context, in *ethpb.SignedVoluntaryExit) (*ethpb.ProposeExitResponse, error) {
+func (c *grpcValidatorClient) ProposeExit(ctx context.Context, in *silapb.SignedVoluntaryExit) (*silapb.ProposeExitResponse, error) {
 	return c.getClient().ProposeExit(ctx, in)
 }
 
-func (c *grpcValidatorClient) StreamBlocksAltair(ctx context.Context, in *ethpb.StreamBlocksRequest) (ethpb.BeaconNodeValidator_StreamBlocksAltairClient, error) {
+func (c *grpcValidatorClient) StreamBlocksAltair(ctx context.Context, in *silapb.StreamBlocksRequest) (silapb.BeaconNodeValidator_StreamBlocksAltairClient, error) {
 	return c.getClient().StreamBlocksAltair(ctx, in)
 }
 
-func (c *grpcValidatorClient) SubmitAggregateSelectionProof(ctx context.Context, in *ethpb.AggregateSelectionRequest, _ primitives.ValidatorIndex, _ uint64) (*ethpb.AggregateSelectionResponse, error) {
+func (c *grpcValidatorClient) SubmitAggregateSelectionProof(ctx context.Context, in *silapb.AggregateSelectionRequest, _ primitives.ValidatorIndex, _ uint64) (*silapb.AggregateSelectionResponse, error) {
 	return c.getClient().SubmitAggregateSelectionProof(ctx, in)
 }
 
-func (c *grpcValidatorClient) SubmitAggregateSelectionProofElectra(ctx context.Context, in *ethpb.AggregateSelectionRequest, _ primitives.ValidatorIndex, _ uint64) (*ethpb.AggregateSelectionElectraResponse, error) {
+func (c *grpcValidatorClient) SubmitAggregateSelectionProofElectra(ctx context.Context, in *silapb.AggregateSelectionRequest, _ primitives.ValidatorIndex, _ uint64) (*silapb.AggregateSelectionElectraResponse, error) {
 	return c.getClient().SubmitAggregateSelectionProofElectra(ctx, in)
 }
 
-func (c *grpcValidatorClient) SubmitSignedAggregateSelectionProof(ctx context.Context, in *ethpb.SignedAggregateSubmitRequest) (*ethpb.SignedAggregateSubmitResponse, error) {
+func (c *grpcValidatorClient) SubmitSignedAggregateSelectionProof(ctx context.Context, in *silapb.SignedAggregateSubmitRequest) (*silapb.SignedAggregateSubmitResponse, error) {
 	return c.getClient().SubmitSignedAggregateSelectionProof(ctx, in)
 }
 
-func (c *grpcValidatorClient) SubmitSignedAggregateSelectionProofElectra(ctx context.Context, in *ethpb.SignedAggregateSubmitElectraRequest) (*ethpb.SignedAggregateSubmitResponse, error) {
+func (c *grpcValidatorClient) SubmitSignedAggregateSelectionProofElectra(ctx context.Context, in *silapb.SignedAggregateSubmitElectraRequest) (*silapb.SignedAggregateSubmitResponse, error) {
 	return c.getClient().SubmitSignedAggregateSelectionProofElectra(ctx, in)
 }
 
-func (c *grpcValidatorClient) SubmitSignedContributionAndProof(ctx context.Context, in *ethpb.SignedContributionAndProof) (*empty.Empty, error) {
+func (c *grpcValidatorClient) SubmitSignedContributionAndProof(ctx context.Context, in *silapb.SignedContributionAndProof) (*empty.Empty, error) {
 	return c.getClient().SubmitSignedContributionAndProof(ctx, in)
 }
 
-func (c *grpcValidatorClient) SubmitSyncMessage(ctx context.Context, in *ethpb.SyncCommitteeMessage) (*empty.Empty, error) {
+func (c *grpcValidatorClient) SubmitSyncMessage(ctx context.Context, in *silapb.SyncCommitteeMessage) (*empty.Empty, error) {
 	return c.getClient().SubmitSyncMessage(ctx, in)
 }
 
-func (c *grpcValidatorClient) SubmitValidatorRegistrations(ctx context.Context, in *ethpb.SignedValidatorRegistrationsV1) (*empty.Empty, error) {
+func (c *grpcValidatorClient) SubmitValidatorRegistrations(ctx context.Context, in *silapb.SignedValidatorRegistrationsV1) (*empty.Empty, error) {
 	return c.getClient().SubmitValidatorRegistrations(ctx, in)
 }
 
-func (c *grpcValidatorClient) SubmitSignedProposerPreferences(ctx context.Context, in *ethpb.SubmitSignedProposerPreferencesRequest) (*empty.Empty, error) {
+func (c *grpcValidatorClient) SubmitSignedProposerPreferences(ctx context.Context, in *silapb.SubmitSignedProposerPreferencesRequest) (*empty.Empty, error) {
 	return c.getClient().SubmitSignedProposerPreferences(ctx, in)
 }
 
-func (c *grpcValidatorClient) SubmitSignedExecutionPayloadBid(ctx context.Context, in *ethpb.SignedExecutionPayloadBid) (*empty.Empty, error) {
+func (c *grpcValidatorClient) SubmitSignedExecutionPayloadBid(ctx context.Context, in *silapb.SignedExecutionPayloadBid) (*empty.Empty, error) {
 	return c.getClient().SubmitSignedExecutionPayloadBid(ctx, in)
 }
 
-func (c *grpcValidatorClient) SubscribeCommitteeSubnets(ctx context.Context, in *ethpb.CommitteeSubnetsSubscribeRequest, _ []*ethpb.ValidatorDuty) (*empty.Empty, error) {
+func (c *grpcValidatorClient) SubscribeCommitteeSubnets(ctx context.Context, in *silapb.CommitteeSubnetsSubscribeRequest, _ []*silapb.ValidatorDuty) (*empty.Empty, error) {
 	return c.getClient().SubscribeCommitteeSubnets(ctx, in)
 }
 
-func (c *grpcValidatorClient) ValidatorIndex(ctx context.Context, in *ethpb.ValidatorIndexRequest) (*ethpb.ValidatorIndexResponse, error) {
+func (c *grpcValidatorClient) ValidatorIndex(ctx context.Context, in *silapb.ValidatorIndexRequest) (*silapb.ValidatorIndexResponse, error) {
 	return c.getClient().ValidatorIndex(ctx, in)
 }
 
-func (c *grpcValidatorClient) ValidatorStatus(ctx context.Context, in *ethpb.ValidatorStatusRequest) (*ethpb.ValidatorStatusResponse, error) {
+func (c *grpcValidatorClient) ValidatorStatus(ctx context.Context, in *silapb.ValidatorStatusRequest) (*silapb.ValidatorStatusResponse, error) {
 	return c.getClient().ValidatorStatus(ctx, in)
 }
 
 // Deprecated: Do not use.
-func (c *grpcValidatorClient) WaitForChainStart(ctx context.Context, in *empty.Empty) (*ethpb.ChainStartResponse, error) {
+func (c *grpcValidatorClient) WaitForChainStart(ctx context.Context, in *empty.Empty) (*silapb.ChainStartResponse, error) {
 	stream, err := c.getClient().WaitForChainStart(ctx, in)
 	if err != nil {
 		return nil, errors.Wrap(
@@ -314,13 +314,13 @@ func (c *grpcValidatorClient) WaitForChainStart(ctx context.Context, in *empty.E
 	return stream.Recv()
 }
 
-func (c *grpcValidatorClient) AssignValidatorToSubnet(ctx context.Context, in *ethpb.AssignValidatorToSubnetRequest) (*empty.Empty, error) {
+func (c *grpcValidatorClient) AssignValidatorToSubnet(ctx context.Context, in *silapb.AssignValidatorToSubnetRequest) (*empty.Empty, error) {
 	return c.getClient().AssignValidatorToSubnet(ctx, in)
 }
 func (c *grpcValidatorClient) AggregatedSigAndAggregationBits(
 	ctx context.Context,
-	in *ethpb.AggregatedSigAndAggregationBitsRequest,
-) (*ethpb.AggregatedSigAndAggregationBitsResponse, error) {
+	in *silapb.AggregatedSigAndAggregationBitsRequest,
+) (*silapb.AggregatedSigAndAggregationBitsResponse, error) {
 	return c.getClient().AggregatedSigAndAggregationBits(ctx, in)
 }
 
@@ -336,9 +336,9 @@ func (*grpcValidatorClient) AggregatedSyncSelections(context.Context, []iface.Sy
 // dynamic connection switching via the NodeConnection's GrpcConnectionProvider.
 func NewGrpcValidatorClient(conn validatorHelpers.NodeConnection) iface.ValidatorClient {
 	return &grpcValidatorClient{
-		grpcClientManager: newGrpcClientManager(conn, ethpb.NewBeaconNodeValidatorClient),
+		grpcClientManager: newGrpcClientManager(conn, silapb.NewBeaconNodeValidatorClient),
 		nodeClient: &grpcNodeClient{
-			grpcClientManager: newGrpcClientManager(conn, ethpb.NewNodeClient),
+			grpcClientManager: newGrpcClientManager(conn, silapb.NewNodeClient),
 		},
 	}
 }
@@ -370,7 +370,7 @@ func (c *grpcValidatorClient) StartEventStream(ctx context.Context, topics []str
 		log.Warn("gRPC only supports the head topic, other topics will be ignored")
 	}
 
-	stream, err := c.getClient().StreamSlots(ctx, &ethpb.StreamSlotsRequest{VerifiedOnly: true})
+	stream, err := c.getClient().StreamSlots(ctx, &silapb.StreamSlotsRequest{VerifiedOnly: true})
 	if err != nil {
 		eventsChannel <- &eventClient.Event{
 			EventType: eventClient.EventConnectionError,
@@ -451,8 +451,8 @@ func (c *grpcValidatorClient) EnsureReady(ctx context.Context) bool {
 // The beacon-APIs blinded flow (GET BlindedExecutionPayloadEnvelope / POST
 // SignedBlindedExecutionPayloadEnvelope) is implemented only over REST. A blinded gRPC variant would
 // need a v1alpha1 service change plus web3signer blinded signing; deferred as gRPC is BN-internal.
-func (c *grpcValidatorClient) GetExecutionPayloadEnvelope(ctx context.Context, slot primitives.Slot, _ [32]byte) (*ethpb.ExecutionPayloadEnvelope, *ethpb.WireBlindedExecutionPayloadEnvelope, error) {
-	req := &ethpb.ExecutionPayloadEnvelopeRequest{
+func (c *grpcValidatorClient) GetExecutionPayloadEnvelope(ctx context.Context, slot primitives.Slot, _ [32]byte) (*silapb.ExecutionPayloadEnvelope, *silapb.WireBlindedExecutionPayloadEnvelope, error) {
+	req := &silapb.ExecutionPayloadEnvelopeRequest{
 		Slot: slot,
 	}
 	resp, err := c.getClient().GetExecutionPayloadEnvelope(ctx, req)
@@ -467,16 +467,16 @@ func (c *grpcValidatorClient) GetExecutionPayloadEnvelope(ctx context.Context, s
 	return resp.Envelope, nil, nil
 }
 
-func (c *grpcValidatorClient) PublishExecutionPayloadEnvelope(ctx context.Context, in *ethpb.SignedExecutionPayloadEnvelope) (*empty.Empty, error) {
+func (c *grpcValidatorClient) PublishExecutionPayloadEnvelope(ctx context.Context, in *silapb.SignedExecutionPayloadEnvelope) (*empty.Empty, error) {
 	return c.getClient().PublishExecutionPayloadEnvelope(ctx, in)
 }
 
-func (c *grpcValidatorClient) PublishBlindedExecutionPayloadEnvelope(_ context.Context, _ *ethpb.SignedWireBlindedExecutionPayloadEnvelope) (*empty.Empty, error) {
+func (c *grpcValidatorClient) PublishBlindedExecutionPayloadEnvelope(_ context.Context, _ *silapb.SignedWireBlindedExecutionPayloadEnvelope) (*empty.Empty, error) {
 	return nil, errors.New("blinded execution payload envelope publishing is not supported over gRPC; use the REST API")
 }
 
-func (c *grpcValidatorClient) PayloadAttestationData(ctx context.Context, slot primitives.Slot) (*ethpb.PayloadAttestationData, error) {
-	req := &ethpb.PayloadAttestationDataRequest{
+func (c *grpcValidatorClient) PayloadAttestationData(ctx context.Context, slot primitives.Slot) (*silapb.PayloadAttestationData, error) {
+	req := &silapb.PayloadAttestationDataRequest{
 		Slot: slot,
 	}
 	resp, err := c.getClient().PayloadAttestationData(ctx, req, grpcretry.WithMax(0))
@@ -486,6 +486,6 @@ func (c *grpcValidatorClient) PayloadAttestationData(ctx context.Context, slot p
 	return resp, nil
 }
 
-func (c *grpcValidatorClient) SubmitPayloadAttestation(ctx context.Context, in *ethpb.PayloadAttestationMessage) (*empty.Empty, error) {
+func (c *grpcValidatorClient) SubmitPayloadAttestation(ctx context.Context, in *silapb.PayloadAttestationMessage) (*empty.Empty, error) {
 	return c.getClient().SubmitPayloadAttestation(ctx, in)
 }

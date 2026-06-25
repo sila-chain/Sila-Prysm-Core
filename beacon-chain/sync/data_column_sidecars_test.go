@@ -22,7 +22,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/wrapper"
 	leakybucket "github.com/sila-chain/Sila-Consensus-Core/v7/container/leaky-bucket"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -140,11 +140,11 @@ func TestFetchDataColumnSidecars(t *testing.T) {
 	p2p.Peers().SetConnectionState(other.PeerID(), peers.Connected)
 	p2p.Connect(other)
 
-	p2p.Peers().SetChainState(other.PeerID(), &ethpb.StatusV2{
+	p2p.Peers().SetChainState(other.PeerID(), &silapb.StatusV2{
 		HeadSlot: 8,
 	})
 
-	p2p.Peers().SetMetadata(other.PeerID(), wrapper.WrappedMetadataV2(&ethpb.MetaDataV2{
+	p2p.Peers().SetMetadata(other.PeerID(), wrapper.WrappedMetadataV2(&silapb.MetaDataV2{
 		CustodyGroupCount: 128,
 	}))
 
@@ -161,13 +161,13 @@ func TestFetchDataColumnSidecars(t *testing.T) {
 	newDataColumnsVerifier := newDataColumnsVerifierFromInitializer(initializer)
 
 	other.SetStreamHandler(byRangeProtocol, func(stream network.Stream) {
-		expectedRequest := &ethpb.DataColumnSidecarsByRangeRequest{
+		expectedRequest := &silapb.DataColumnSidecarsByRangeRequest{
 			StartSlot: 3,
 			Count:     5,
 			Columns:   []uint64{31, 81},
 		}
 
-		actualRequest := new(ethpb.DataColumnSidecarsByRangeRequest)
+		actualRequest := new(silapb.DataColumnSidecarsByRangeRequest)
 		err := other.Encoding().DecodeWithMaxLength(stream, actualRequest)
 		assert.NoError(t, err)
 		assert.DeepEqual(t, expectedRequest, actualRequest)
@@ -389,10 +389,10 @@ func TestFetchDataColumnSidecarsFromPeers(t *testing.T) {
 		kzgCommitmentsInclusionProof = append(kzgCommitmentsInclusionProof, make([]byte, 32))
 	}
 
-	expectedResponseSidecarPb := &ethpb.DataColumnSidecar{
+	expectedResponseSidecarPb := &silapb.DataColumnSidecar{
 		Index: 2,
-		SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-			Header: &ethpb.BeaconBlockHeader{
+		SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+			Header: &silapb.BeaconBlockHeader{
 				Slot:       1,
 				ParentRoot: make([]byte, fieldparams.RootLength),
 				StateRoot:  make([]byte, fieldparams.RootLength),
@@ -420,7 +420,7 @@ func TestFetchDataColumnSidecarsFromPeers(t *testing.T) {
 		7: true,
 	}
 
-	expectedRequest := &ethpb.DataColumnSidecarsByRangeRequest{
+	expectedRequest := &silapb.DataColumnSidecarsByRangeRequest{
 		StartSlot: 1,
 		Count:     7,
 		Columns:   []uint64{1, 2},
@@ -431,7 +431,7 @@ func TestFetchDataColumnSidecarsFromPeers(t *testing.T) {
 	p2p.Connect(other)
 
 	other.SetStreamHandler(protocol, func(stream network.Stream) {
-		receivedRequest := new(ethpb.DataColumnSidecarsByRangeRequest)
+		receivedRequest := new(silapb.DataColumnSidecarsByRangeRequest)
 		err := other.Encoding().DecodeWithMaxLength(stream, receivedRequest)
 		assert.NoError(t, err)
 		assert.DeepEqual(t, expectedRequest, receivedRequest)
@@ -488,10 +488,10 @@ func TestSendDataColumnSidecarsRequest(t *testing.T) {
 		kzgCommitmentsInclusionProof = append(kzgCommitmentsInclusionProof, make([]byte, 32))
 	}
 
-	expectedResponsePb := &ethpb.DataColumnSidecar{
+	expectedResponsePb := &silapb.DataColumnSidecar{
 		Index: 2,
-		SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-			Header: &ethpb.BeaconBlockHeader{
+		SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+			Header: &silapb.BeaconBlockHeader{
 				Slot:       1,
 				ParentRoot: make([]byte, fieldparams.RootLength),
 				StateRoot:  make([]byte, fieldparams.RootLength),
@@ -531,7 +531,7 @@ func TestSendDataColumnSidecarsRequest(t *testing.T) {
 			7: true,
 		}
 
-		expectedRequest := &ethpb.DataColumnSidecarsByRangeRequest{
+		expectedRequest := &silapb.DataColumnSidecarsByRangeRequest{
 			StartSlot: 1,
 			Count:     7,
 			Columns:   []uint64{1, 2},
@@ -542,7 +542,7 @@ func TestSendDataColumnSidecarsRequest(t *testing.T) {
 		p2p.Connect(other)
 
 		other.SetStreamHandler(protocol, func(stream network.Stream) {
-			receivedRequest := new(ethpb.DataColumnSidecarsByRangeRequest)
+			receivedRequest := new(silapb.DataColumnSidecarsByRangeRequest)
 			err := other.Encoding().DecodeWithMaxLength(stream, receivedRequest)
 			assert.NoError(t, err)
 			assert.DeepEqual(t, expectedRequest, receivedRequest)
@@ -718,7 +718,7 @@ func TestBuildByRangeRequests(t *testing.T) {
 			7: true,
 		}
 
-		expected := []*ethpb.DataColumnSidecarsByRangeRequest{
+		expected := []*silapb.DataColumnSidecarsByRangeRequest{
 			{
 				StartSlot: 1,
 				Count:     3,
@@ -881,7 +881,7 @@ func TestVerifyDataColumnSidecarsByPeer(t *testing.T) {
 		require.NoError(t, headerErr)
 		junkSig := make([]byte, fieldparams.BLSSignatureLength)
 		junkSig[0] = 0xff
-		roDataColumnSidecars[middle].DataColumnSidecar().SignedBlockHeader = &ethpb.SignedBeaconBlockHeader{
+		roDataColumnSidecars[middle].DataColumnSidecar().SignedBlockHeader = &silapb.SignedBeaconBlockHeader{
 			Header:    origHeader.Header,
 			Signature: junkSig,
 		}
@@ -969,7 +969,7 @@ func TestComputeIndicesByRootByPeer(t *testing.T) {
 		peerID, err := peer.Decode(peerIdStr)
 		require.NoError(t, err)
 
-		peers.SetChainState(peerID, &ethpb.StatusV2{
+		peers.SetChainState(peerID, &silapb.StatusV2{
 			HeadSlot: headSlotByPeer[peerIdStr],
 		})
 
@@ -1124,9 +1124,9 @@ func TestSetBidCommitments(t *testing.T) {
 	comms := [][]byte{{0xaa}, {0xbb}}
 
 	// Fulu column should be untouched.
-	fuluDC := &ethpb.DataColumnSidecar{
-		SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-			Header: &ethpb.BeaconBlockHeader{
+	fuluDC := &silapb.DataColumnSidecar{
+		SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+			Header: &silapb.BeaconBlockHeader{
 				ParentRoot: make([]byte, 32),
 				StateRoot:  make([]byte, 32),
 				BodyRoot:   make([]byte, 32),
@@ -1137,7 +1137,7 @@ func TestSetBidCommitments(t *testing.T) {
 	fuluCol := blocks.NewRODataColumnNoVerify(fuluDC)
 
 	// Gloas column should get commitments set.
-	gloasDC := &ethpb.DataColumnSidecarGloas{
+	gloasDC := &silapb.DataColumnSidecarGloas{
 		Index:           5,
 		BeaconBlockRoot: root[:],
 		Column:          [][]byte{make([]byte, 2048)},

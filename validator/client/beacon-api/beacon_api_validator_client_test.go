@@ -8,12 +8,12 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	rpctesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/shared/testing"
+	rpctesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/shared/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -49,7 +49,7 @@ func TestBeaconApiValidatorClient_GetAttestationDataValid(t *testing.T) {
 
 	resp, err := validatorClient.AttestationData(
 		t.Context(),
-		&ethpb.AttestationDataRequest{Slot: slot, CommitteeIndex: committeeIndex},
+		&silapb.AttestationDataRequest{Slot: slot, CommitteeIndex: committeeIndex},
 	)
 
 	assert.DeepEqual(t, expectedErr, err)
@@ -83,7 +83,7 @@ func TestBeaconApiValidatorClient_GetAttestationDataError(t *testing.T) {
 
 	resp, err := validatorClient.AttestationData(
 		t.Context(),
-		&ethpb.AttestationDataRequest{Slot: slot, CommitteeIndex: committeeIndex},
+		&silapb.AttestationDataRequest{Slot: slot, CommitteeIndex: committeeIndex},
 	)
 
 	assert.ErrorContains(t, expectedErr.Error(), err)
@@ -93,7 +93,7 @@ func TestBeaconApiValidatorClient_GetAttestationDataError(t *testing.T) {
 func TestBeaconApiValidatorClient_GetFeeRecipientByPubKey(t *testing.T) {
 	ctx := t.Context()
 	validatorClient := beaconApiValidatorClient{}
-	var expected *ethpb.FeeRecipientByPubKeyResponse = nil
+	var expected *silapb.FeeRecipientByPubKeyResponse = nil
 
 	resp, err := validatorClient.FeeRecipientByPubKey(ctx, nil)
 	require.NoError(t, err)
@@ -117,7 +117,7 @@ func TestBeaconApiValidatorClient_DomainDataValid(t *testing.T) {
 	).Times(2)
 
 	validatorClient := beaconApiValidatorClient{genesisProvider: genesisProvider}
-	resp, err := validatorClient.DomainData(t.Context(), &ethpb.DomainRequest{Epoch: epoch, Domain: domainType})
+	resp, err := validatorClient.DomainData(t.Context(), &silapb.DomainRequest{Epoch: epoch, Domain: domainType})
 
 	domainTypeArray := bytesutil.ToBytes4(domainType)
 	expectedResp, expectedErr := validatorClient.domainData(ctx, epoch, domainTypeArray)
@@ -129,7 +129,7 @@ func TestBeaconApiValidatorClient_DomainDataError(t *testing.T) {
 	epoch := params.BeaconConfig().AltairForkEpoch
 	domainType := make([]byte, 3)
 	validatorClient := beaconApiValidatorClient{}
-	_, err := validatorClient.DomainData(t.Context(), &ethpb.DomainRequest{Epoch: epoch, Domain: domainType})
+	_, err := validatorClient.DomainData(t.Context(), &silapb.DomainRequest{Epoch: epoch, Domain: domainType})
 	assert.ErrorContains(t, fmt.Sprintf("invalid domain type: %s", hexutil.Encode(domainType)), err)
 }
 
@@ -152,7 +152,7 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockValid(t *testing.T) {
 	validatorClient := beaconApiValidatorClient{handler: handler}
 	expectedResp, expectedErr := validatorClient.proposeBeaconBlock(
 		ctx,
-		&ethpb.GenericSignedBeaconBlock{
+		&silapb.GenericSignedBeaconBlock{
 			Block: generateSignedPhase0Block(),
 		},
 	)
@@ -192,7 +192,7 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockError_ThenPass(t *testing.T)
 	validatorClient := beaconApiValidatorClient{handler: handler}
 	expectedResp, expectedErr := validatorClient.proposeBeaconBlock(
 		ctx,
-		&ethpb.GenericSignedBeaconBlock{
+		&silapb.GenericSignedBeaconBlock{
 			Block: generateSignedPhase0Block(),
 		},
 	)
@@ -203,98 +203,98 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockError_ThenPass(t *testing.T)
 func TestBeaconApiValidatorClient_ProposeBeaconBlockAllTypes(t *testing.T) {
 	tests := []struct {
 		name         string
-		block        *ethpb.GenericSignedBeaconBlock
+		block        *silapb.GenericSignedBeaconBlock
 		expectedPath string
 		wantErr      bool
 		errorMessage string
 	}{
 		{
 			name: "Phase0 block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Altair block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedAltairBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Bellatrix block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBellatrixBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Capella block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedCapellaBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Bellatrix block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedBellatrixBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Blinded Capella block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedCapellaBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Deneb block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedDenebBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Deneb block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedDenebBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Electra block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedElectraBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Electra block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedElectraBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Fulu block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedFuluBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Fulu block",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedFuluBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Unsupported block type",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: nil,
 			},
 			wantErr:      true,
@@ -324,7 +324,7 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockAllTypes(t *testing.T) {
 
 			if tt.wantErr {
 				require.ErrorContains(t, tt.errorMessage, err)
-				assert.Equal(t, (*ethpb.ProposeResponse)(nil), resp)
+				assert.Equal(t, (*silapb.ProposeResponse)(nil), resp)
 			} else {
 				require.NoError(t, err)
 				require.NotNil(t, resp)
@@ -389,7 +389,7 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockHTTPErrors(t *testing.T) {
 			validatorClient := beaconApiValidatorClient{handler: handler}
 			_, err := validatorClient.proposeBeaconBlock(
 				ctx,
-				&ethpb.GenericSignedBeaconBlock{
+				&silapb.GenericSignedBeaconBlock{
 					Block: generateSignedPhase0Block(),
 				},
 			)
@@ -401,98 +401,98 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockHTTPErrors(t *testing.T) {
 func TestBeaconApiValidatorClient_ProposeBeaconBlockJSONFallback(t *testing.T) {
 	tests := []struct {
 		name         string
-		block        *ethpb.GenericSignedBeaconBlock
+		block        *silapb.GenericSignedBeaconBlock
 		expectedPath string
 		jsonError    error
 		wantErr      bool
 	}{
 		{
 			name: "Phase0 block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Altair block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedAltairBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Bellatrix block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBellatrixBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Capella block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedCapellaBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Bellatrix block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedBellatrixBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Blinded Capella block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedCapellaBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Deneb block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedDenebBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Deneb block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedDenebBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Electra block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedElectraBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Electra block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedElectraBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "Fulu block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedFuluBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
 		},
 		{
 			name: "Blinded Fulu block JSON fallback success",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedFuluBlock(),
 			},
 			expectedPath: "/sila/v2/beacon/blinded_blocks",
 		},
 		{
 			name: "JSON fallback fails",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
 			expectedPath: "/sila/v2/beacon/blocks",
@@ -534,7 +534,7 @@ func TestBeaconApiValidatorClient_ProposeBeaconBlockJSONFallback(t *testing.T) {
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
-				assert.Equal(t, (*ethpb.ProposeResponse)(nil), resp)
+				assert.Equal(t, (*silapb.ProposeResponse)(nil), resp)
 			} else {
 				require.NoError(t, err)
 				require.NotNil(t, resp)
@@ -556,7 +556,7 @@ func TestBeaconApiValidatorClient_Host(t *testing.T) {
 }
 
 // Helper functions for generating test blocks for newer consensus versions
-func generateSignedDenebBlock() *ethpb.GenericSignedBeaconBlock_Deneb {
+func generateSignedDenebBlock() *silapb.GenericSignedBeaconBlock_Deneb {
 	var blockContents structs.SignedBeaconBlockContentsDeneb
 	if err := json.Unmarshal([]byte(rpctesting.DenebBlockContents), &blockContents); err != nil {
 		panic(err)
@@ -565,12 +565,12 @@ func generateSignedDenebBlock() *ethpb.GenericSignedBeaconBlock_Deneb {
 	if err != nil {
 		panic(err)
 	}
-	return &ethpb.GenericSignedBeaconBlock_Deneb{
+	return &silapb.GenericSignedBeaconBlock_Deneb{
 		Deneb: genericBlock.GetDeneb(),
 	}
 }
 
-func generateSignedBlindedDenebBlock() *ethpb.GenericSignedBeaconBlock_BlindedDeneb {
+func generateSignedBlindedDenebBlock() *silapb.GenericSignedBeaconBlock_BlindedDeneb {
 	var blindedBlock structs.SignedBlindedBeaconBlockDeneb
 	if err := json.Unmarshal([]byte(rpctesting.BlindedDenebBlock), &blindedBlock); err != nil {
 		panic(err)
@@ -579,12 +579,12 @@ func generateSignedBlindedDenebBlock() *ethpb.GenericSignedBeaconBlock_BlindedDe
 	if err != nil {
 		panic(err)
 	}
-	return &ethpb.GenericSignedBeaconBlock_BlindedDeneb{
+	return &silapb.GenericSignedBeaconBlock_BlindedDeneb{
 		BlindedDeneb: genericBlock.GetBlindedDeneb(),
 	}
 }
 
-func generateSignedElectraBlock() *ethpb.GenericSignedBeaconBlock_Electra {
+func generateSignedElectraBlock() *silapb.GenericSignedBeaconBlock_Electra {
 	var blockContents structs.SignedBeaconBlockContentsElectra
 	if err := json.Unmarshal([]byte(rpctesting.ElectraBlockContents), &blockContents); err != nil {
 		panic(err)
@@ -593,12 +593,12 @@ func generateSignedElectraBlock() *ethpb.GenericSignedBeaconBlock_Electra {
 	if err != nil {
 		panic(err)
 	}
-	return &ethpb.GenericSignedBeaconBlock_Electra{
+	return &silapb.GenericSignedBeaconBlock_Electra{
 		Electra: genericBlock.GetElectra(),
 	}
 }
 
-func generateSignedBlindedElectraBlock() *ethpb.GenericSignedBeaconBlock_BlindedElectra {
+func generateSignedBlindedElectraBlock() *silapb.GenericSignedBeaconBlock_BlindedElectra {
 	var blindedBlock structs.SignedBlindedBeaconBlockElectra
 	if err := json.Unmarshal([]byte(rpctesting.BlindedElectraBlock), &blindedBlock); err != nil {
 		panic(err)
@@ -607,12 +607,12 @@ func generateSignedBlindedElectraBlock() *ethpb.GenericSignedBeaconBlock_Blinded
 	if err != nil {
 		panic(err)
 	}
-	return &ethpb.GenericSignedBeaconBlock_BlindedElectra{
+	return &silapb.GenericSignedBeaconBlock_BlindedElectra{
 		BlindedElectra: genericBlock.GetBlindedElectra(),
 	}
 }
 
-func generateSignedFuluBlock() *ethpb.GenericSignedBeaconBlock_Fulu {
+func generateSignedFuluBlock() *silapb.GenericSignedBeaconBlock_Fulu {
 	var blockContents structs.SignedBeaconBlockContentsFulu
 	if err := json.Unmarshal([]byte(rpctesting.FuluBlockContents), &blockContents); err != nil {
 		panic(err)
@@ -621,12 +621,12 @@ func generateSignedFuluBlock() *ethpb.GenericSignedBeaconBlock_Fulu {
 	if err != nil {
 		panic(err)
 	}
-	return &ethpb.GenericSignedBeaconBlock_Fulu{
+	return &silapb.GenericSignedBeaconBlock_Fulu{
 		Fulu: genericBlock.GetFulu(),
 	}
 }
 
-func generateSignedBlindedFuluBlock() *ethpb.GenericSignedBeaconBlock_BlindedFulu {
+func generateSignedBlindedFuluBlock() *silapb.GenericSignedBeaconBlock_BlindedFulu {
 	var blindedBlock structs.SignedBlindedBeaconBlockFulu
 	if err := json.Unmarshal([]byte(rpctesting.BlindedFuluBlock), &blindedBlock); err != nil {
 		panic(err)
@@ -635,7 +635,7 @@ func generateSignedBlindedFuluBlock() *ethpb.GenericSignedBeaconBlock_BlindedFul
 	if err != nil {
 		panic(err)
 	}
-	return &ethpb.GenericSignedBeaconBlock_BlindedFulu{
+	return &silapb.GenericSignedBeaconBlock_BlindedFulu{
 		BlindedFulu: genericBlock.GetBlindedFulu(),
 	}
 }

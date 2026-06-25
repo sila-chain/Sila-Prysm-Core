@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 type Option func(s *Service) error
@@ -41,7 +41,7 @@ func WithLCStore() Option {
 }
 
 // WithWeakSubjectivityCheckpoint for checkpoint sync.
-func WithWeakSubjectivityCheckpoint(c *ethpb.Checkpoint) Option {
+func WithWeakSubjectivityCheckpoint(c *silapb.Checkpoint) Option {
 	return func(s *Service) error {
 		s.cfg.WeakSubjectivityCheckpt = c
 		return nil

@@ -6,11 +6,11 @@ import (
 	"encoding/json"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
-func (c *beaconApiValidatorClient) submitValidatorRegistrations(ctx context.Context, registrations []*ethpb.SignedValidatorRegistrationV1) error {
+func (c *beaconApiValidatorClient) submitValidatorRegistrations(ctx context.Context, registrations []*silapb.SignedValidatorRegistrationV1) error {
 	const endpoint = "/sila/v1/validator/register_validator"
 
 	jsonRegistration := make([]*structs.SignedValidatorRegistration, len(registrations))

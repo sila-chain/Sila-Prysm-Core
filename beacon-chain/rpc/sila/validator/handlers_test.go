@@ -31,7 +31,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -83,10 +83,10 @@ func TestServer_GetValidatorParticipation_CurrentAndPrevEpoch(t *testing.T) {
 	ctx := t.Context()
 	validatorCount := uint64(32)
 
-	validators := make([]*ethpb.Validator, validatorCount)
+	validators := make([]*silapb.Validator, validatorCount)
 	balances := make([]uint64, validatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             bytesutil.ToBytes(uint64(i), 48),
 			WithdrawalCredentials: make([]byte, 32),
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
@@ -95,8 +95,8 @@ func TestServer_GetValidatorParticipation_CurrentAndPrevEpoch(t *testing.T) {
 		balances[i] = params.BeaconConfig().MaxEffectiveBalance
 	}
 
-	atts := []*ethpb.PendingAttestation{{
-		Data:            util.HydrateAttestationData(&ethpb.AttestationData{}),
+	atts := []*silapb.PendingAttestation{{
+		Data:            util.HydrateAttestationData(&silapb.AttestationData{}),
 		InclusionDelay:  1,
 		AggregationBits: bitfield.NewBitlist(validatorCount / uint64(params.BeaconConfig().SlotsPerEpoch)),
 	}}
@@ -112,8 +112,8 @@ func TestServer_GetValidatorParticipation_CurrentAndPrevEpoch(t *testing.T) {
 	b.Block.Slot = 8
 	util.SaveBlock(t, ctx, beaconDB, b)
 	bRoot, err := b.Block.HashTreeRoot()
-	require.NoError(t, beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bRoot[:]}))
-	require.NoError(t, beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Root: params.BeaconConfig().ZeroHash[:]}))
+	require.NoError(t, beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Root: bRoot[:]}))
+	require.NoError(t, beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Root: params.BeaconConfig().ZeroHash[:]}))
 	require.NoError(t, beaconDB.SaveGenesisBlockRoot(ctx, bRoot))
 	require.NoError(t, err)
 	require.NoError(t, beaconDB.SaveState(ctx, headState, bRoot))
@@ -136,7 +136,7 @@ func TestServer_GetValidatorParticipation_CurrentAndPrevEpoch(t *testing.T) {
 			GenesisTimeFetcher: &mock.ChainService{
 				Genesis: silaTime.Now().Add(time.Duration(-1*offset) * time.Second),
 			},
-			FinalizedFetcher: &mock.ChainService{FinalizedCheckPoint: &ethpb.Checkpoint{Epoch: 100}},
+			FinalizedFetcher: &mock.ChainService{FinalizedCheckPoint: &silapb.Checkpoint{Epoch: 100}},
 		},
 		CanonicalFetcher: &mock.ChainService{
 			CanonicalRoots: map[[32]byte]bool{
@@ -187,10 +187,10 @@ func TestServer_GetValidatorParticipation_OrphanedUntilGenesis(t *testing.T) {
 	ctx := t.Context()
 	validatorCount := uint64(100)
 
-	validators := make([]*ethpb.Validator, validatorCount)
+	validators := make([]*silapb.Validator, validatorCount)
 	balances := make([]uint64, validatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             bytesutil.ToBytes(uint64(i), 48),
 			WithdrawalCredentials: make([]byte, 32),
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
@@ -199,8 +199,8 @@ func TestServer_GetValidatorParticipation_OrphanedUntilGenesis(t *testing.T) {
 		balances[i] = params.BeaconConfig().MaxEffectiveBalance
 	}
 
-	atts := []*ethpb.PendingAttestation{{
-		Data:            util.HydrateAttestationData(&ethpb.AttestationData{}),
+	atts := []*silapb.PendingAttestation{{
+		Data:            util.HydrateAttestationData(&silapb.AttestationData{}),
 		InclusionDelay:  1,
 		AggregationBits: bitfield.NewBitlist(validatorCount / uint64(params.BeaconConfig().SlotsPerEpoch)),
 	}}
@@ -236,7 +236,7 @@ func TestServer_GetValidatorParticipation_OrphanedUntilGenesis(t *testing.T) {
 			GenesisTimeFetcher: &mock.ChainService{
 				Genesis: silaTime.Now().Add(time.Duration(-1*offset) * time.Second),
 			},
-			FinalizedFetcher: &mock.ChainService{FinalizedCheckPoint: &ethpb.Checkpoint{Epoch: 100}},
+			FinalizedFetcher: &mock.ChainService{FinalizedCheckPoint: &silapb.Checkpoint{Epoch: 100}},
 		},
 		CanonicalFetcher: &mock.ChainService{
 			CanonicalRoots: map[[32]byte]bool{
@@ -371,7 +371,7 @@ func runGetValidatorParticipationCurrentEpoch(t *testing.T, genState state.Beaco
 			GenesisTimeFetcher: &mock.ChainService{
 				Genesis: silaTime.Now().Add(time.Duration(-1*offset) * time.Second),
 			},
-			FinalizedFetcher: &mock.ChainService{FinalizedCheckPoint: &ethpb.Checkpoint{Epoch: 100}},
+			FinalizedFetcher: &mock.ChainService{FinalizedCheckPoint: &silapb.Checkpoint{Epoch: 100}},
 		},
 	}
 	addDefaultReplayerBuilder(s, beaconDB)
@@ -441,7 +441,7 @@ func TestServer_GetValidatorActiveSetChanges(t *testing.T) {
 	beaconDB := dbTest.SetupDB(t)
 
 	ctx := t.Context()
-	validators := make([]*ethpb.Validator, 8)
+	validators := make([]*silapb.Validator, 8)
 	headState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, headState.SetSlot(0))
@@ -469,7 +469,7 @@ func TestServer_GetValidatorActiveSetChanges(t *testing.T) {
 			withdrawableEpoch = params.BeaconConfig().MinValidatorWithdrawabilityDelay
 			balance = params.BeaconConfig().EjectionBalance
 		}
-		err := headState.UpdateValidatorAtIndex(primitives.ValidatorIndex(i), &ethpb.Validator{
+		err := headState.UpdateValidatorAtIndex(primitives.ValidatorIndex(i), &silapb.Validator{
 			ActivationEpoch:       activationEpoch,
 			PublicKey:             pubKey(uint64(i)),
 			EffectiveBalance:      balance,
@@ -496,7 +496,7 @@ func TestServer_GetValidatorActiveSetChanges(t *testing.T) {
 		},
 		CoreService: &core.Service{
 			FinalizedFetcher: &mock.ChainService{
-				FinalizedCheckPoint: &ethpb.Checkpoint{Epoch: 0, Root: make([]byte, fieldparams.RootLength)},
+				FinalizedCheckPoint: &silapb.Checkpoint{Epoch: 0, Root: make([]byte, fieldparams.RootLength)},
 			},
 			GenesisTimeFetcher: &mock.ChainService{},
 		},

@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -118,7 +118,7 @@ func TestEnvelopeVerifier_VerifySignature_Builder(t *testing.T) {
 	require.NoError(t, err)
 	builderPubkey := sk.PublicKey().Marshal()
 
-	st := newGloasState(t, slot, nil, nil, []*ethpb.Builder{{Pubkey: builderPubkey}})
+	st := newGloasState(t, slot, nil, nil, []*silapb.Builder{{Pubkey: builderPubkey}})
 
 	sig := signEnvelope(t, sk, env.Message, st.Fork(), st.GenesisValidatorsRoot(), slot)
 	env.Signature = sig[:]
@@ -154,7 +154,7 @@ func TestEnvelopeVerifier_VerifySignature_SelfBuild(t *testing.T) {
 	require.NoError(t, err)
 	validatorPubkey := sk.PublicKey().Marshal()
 
-	validators := []*ethpb.Validator{{PublicKey: validatorPubkey}}
+	validators := []*silapb.Validator{{PublicKey: validatorPubkey}}
 	balances := []uint64{0}
 	st := newGloasState(t, slot, validators, balances, nil)
 
@@ -167,7 +167,7 @@ func TestEnvelopeVerifier_VerifySignature_SelfBuild(t *testing.T) {
 	require.NoError(t, verifier.VerifySignature(t.Context(), st))
 }
 
-func testSignedExecutionPayloadEnvelope(t *testing.T, slot primitives.Slot, builderIdx primitives.BuilderIndex, root, blockHash [32]byte) *ethpb.SignedExecutionPayloadEnvelope {
+func testSignedExecutionPayloadEnvelope(t *testing.T, slot primitives.Slot, builderIdx primitives.BuilderIndex, root, blockHash [32]byte) *silapb.SignedExecutionPayloadEnvelope {
 	t.Helper()
 
 	payload := &enginev1.ExecutionPayloadGloas{
@@ -190,8 +190,8 @@ func testSignedExecutionPayloadEnvelope(t *testing.T, slot primitives.Slot, buil
 		SlotNumber:    slot,
 	}
 
-	return &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+	return &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload: payload,
 			ExecutionRequests: &enginev1.ExecutionRequests{
 				Deposits: []*enginev1.DepositRequest{},
@@ -221,14 +221,14 @@ func testExecutionPayloadBid(t *testing.T, slot primitives.Slot, builderIdx prim
 func newGloasState(
 	t *testing.T,
 	slot primitives.Slot,
-	validators []*ethpb.Validator,
+	validators []*silapb.Validator,
 	balances []uint64,
-	builders []*ethpb.Builder,
+	builders []*silapb.Builder,
 ) state.BeaconState {
 	t.Helper()
 
 	genesisRoot := bytes.Repeat([]byte{0x11}, 32)
-	st, err := util.NewBeaconStateGloas(func(s *ethpb.BeaconStateGloas) error {
+	st, err := util.NewBeaconStateGloas(func(s *silapb.BeaconStateGloas) error {
 		s.Slot = slot
 		s.GenesisValidatorsRoot = genesisRoot
 		if validators != nil {
@@ -249,7 +249,7 @@ func newGloasState(
 	return st
 }
 
-func signEnvelope(t *testing.T, sk bls.SecretKey, env *ethpb.ExecutionPayloadEnvelope, fork *ethpb.Fork, genesisRoot []byte, slot primitives.Slot) [96]byte {
+func signEnvelope(t *testing.T, sk bls.SecretKey, env *silapb.ExecutionPayloadEnvelope, fork *silapb.Fork, genesisRoot []byte, slot primitives.Slot) [96]byte {
 	t.Helper()
 
 	epoch := slots.ToEpoch(slot)

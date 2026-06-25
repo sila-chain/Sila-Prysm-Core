@@ -9,7 +9,7 @@ import (
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -21,8 +21,8 @@ func TestVerifyBlockHeaderSignature(t *testing.T) {
 
 	privKey, err := bls.RandKey()
 	require.NoError(t, err)
-	validators := make([]*ethpb.Validator, 1)
-	validators[0] = &ethpb.Validator{
+	validators := make([]*silapb.Validator, 1)
+	validators[0] = &silapb.Validator{
 		PublicKey:             privKey.PublicKey().Marshal(),
 		WithdrawalCredentials: make([]byte, 32),
 		EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
@@ -31,8 +31,8 @@ func TestVerifyBlockHeaderSignature(t *testing.T) {
 	require.NoError(t, err)
 
 	// Sign the block header.
-	blockHeader := util.HydrateSignedBeaconHeader(&ethpb.SignedBeaconBlockHeader{
-		Header: &ethpb.BeaconBlockHeader{
+	blockHeader := util.HydrateSignedBeaconHeader(&silapb.SignedBeaconBlockHeader{
+		Header: &silapb.BeaconBlockHeader{
 			Slot:          0,
 			ProposerIndex: 0,
 		},
@@ -46,7 +46,7 @@ func TestVerifyBlockHeaderSignature(t *testing.T) {
 	require.NoError(t, err)
 	htr, err := blockHeader.Header.HashTreeRoot()
 	require.NoError(t, err)
-	container := &ethpb.SigningData{
+	container := &silapb.SigningData{
 		ObjectRoot: htr[:],
 		Domain:     domain,
 	}
@@ -72,7 +72,7 @@ func TestVerifyBlockSignatureUsingCurrentFork(t *testing.T) {
 	altairBlk := util.NewBeaconBlockAltair()
 	altairBlk.Block.ProposerIndex = 0
 	altairBlk.Block.Slot = params.BeaconConfig().SlotsPerEpoch * 100
-	fData := &ethpb.Fork{
+	fData := &silapb.Fork{
 		Epoch:           100,
 		CurrentVersion:  params.BeaconConfig().AltairForkVersion,
 		PreviousVersion: params.BeaconConfig().GenesisForkVersion,
@@ -104,7 +104,7 @@ func TestVerifyBlockSignatureUsingCurrentFork_InvalidSignature(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Sign with wrong key (proposer index 0, but using key 1)
-	fData := &ethpb.Fork{
+	fData := &silapb.Fork{
 		Epoch:           100,
 		CurrentVersion:  params.BeaconConfig().AltairForkVersion,
 		PreviousVersion: params.BeaconConfig().GenesisForkVersion,

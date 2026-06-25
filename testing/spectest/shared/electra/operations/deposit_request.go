@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	common "github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/common/operations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -21,7 +21,7 @@ func blockWithDepositRequest(ssz []byte) (interfaces.SignedBeaconBlock, error) {
 		Deposits: []*enginev1.DepositRequest{dr},
 	}
 	b := util.NewBeaconBlockElectra()
-	b.Block.Body = &ethpb.BeaconBlockBodyElectra{ExecutionRequests: er}
+	b.Block.Body = &silapb.BeaconBlockBodyElectra{ExecutionRequests: er}
 	return blocks.NewSignedBeaconBlock(b)
 }
 

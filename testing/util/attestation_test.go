@@ -5,20 +5,20 @@ import (
 
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func TestHydrateAttestation(t *testing.T) {
-	a := HydrateAttestation(&ethpb.Attestation{})
+	a := HydrateAttestation(&silapb.Attestation{})
 	_, err := a.HashTreeRoot()
 	require.NoError(t, err)
 	require.DeepEqual(t, a.Signature, make([]byte, fieldparams.BLSSignatureLength))
 }
 
 func TestHydrateAttestationData(t *testing.T) {
-	d := HydrateAttestationData(&ethpb.AttestationData{})
+	d := HydrateAttestationData(&silapb.AttestationData{})
 	_, err := d.HashTreeRoot()
 	require.NoError(t, err)
 	require.DeepEqual(t, d.BeaconBlockRoot, make([]byte, fieldparams.RootLength))
@@ -43,7 +43,7 @@ func TestHydrateV1AttestationData(t *testing.T) {
 }
 
 func TestHydrateIndexedAttestation(t *testing.T) {
-	a := &ethpb.IndexedAttestation{}
+	a := &silapb.IndexedAttestation{}
 	a = HydrateIndexedAttestation(a)
 	_, err := a.HashTreeRoot()
 	require.NoError(t, err)

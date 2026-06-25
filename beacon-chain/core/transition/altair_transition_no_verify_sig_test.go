@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -30,7 +30,7 @@ func TestExecuteAltairStateTransitionNoVerify_FullProcess(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetCurrentSyncCommittee(syncCommittee))
 
-	eth1Data := &ethpb.Eth1Data{
+	eth1Data := &silapb.Eth1Data{
 		DepositCount: 100,
 		DepositRoot:  bytesutil.PadTo([]byte{2}, 32),
 		BlockHash:    make([]byte, 32),
@@ -42,7 +42,7 @@ func TestExecuteAltairStateTransitionNoVerify_FullProcess(t *testing.T) {
 	bh := beaconState.LatestBlockHeader()
 	bh.Slot = beaconState.Slot()
 	require.NoError(t, beaconState.SetLatestBlockHeader(bh))
-	require.NoError(t, beaconState.SetEth1DataVotes([]*ethpb.Eth1Data{eth1Data}))
+	require.NoError(t, beaconState.SetEth1DataVotes([]*silapb.Eth1Data{eth1Data}))
 
 	require.NoError(t, beaconState.SetSlot(beaconState.Slot()+1))
 	epoch := time.CurrentEpoch(beaconState)
@@ -85,7 +85,7 @@ func TestExecuteAltairStateTransitionNoVerify_FullProcess(t *testing.T) {
 		syncSigs[i] = sig
 	}
 	aggregatedSig := bls.AggregateSignatures(syncSigs).Marshal()
-	syncAggregate := &ethpb.SyncAggregate{
+	syncAggregate := &silapb.SyncAggregate{
 		SyncCommitteeBits:      syncBits,
 		SyncCommitteeSignature: aggregatedSig,
 	}
@@ -117,7 +117,7 @@ func TestExecuteAltairStateTransitionNoVerifySignature_CouldNotVerifyStateRoot(t
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetCurrentSyncCommittee(syncCommittee))
 
-	eth1Data := &ethpb.Eth1Data{
+	eth1Data := &silapb.Eth1Data{
 		DepositCount: 100,
 		DepositRoot:  bytesutil.PadTo([]byte{2}, 32),
 		BlockHash:    make([]byte, 32),
@@ -129,7 +129,7 @@ func TestExecuteAltairStateTransitionNoVerifySignature_CouldNotVerifyStateRoot(t
 	bh := beaconState.LatestBlockHeader()
 	bh.Slot = beaconState.Slot()
 	require.NoError(t, beaconState.SetLatestBlockHeader(bh))
-	require.NoError(t, beaconState.SetEth1DataVotes([]*ethpb.Eth1Data{eth1Data}))
+	require.NoError(t, beaconState.SetEth1DataVotes([]*silapb.Eth1Data{eth1Data}))
 
 	require.NoError(t, beaconState.SetSlot(beaconState.Slot()+1))
 	epoch := time.CurrentEpoch(beaconState)
@@ -172,7 +172,7 @@ func TestExecuteAltairStateTransitionNoVerifySignature_CouldNotVerifyStateRoot(t
 		syncSigs[i] = sig
 	}
 	aggregatedSig := bls.AggregateSignatures(syncSigs).Marshal()
-	syncAggregate := &ethpb.SyncAggregate{
+	syncAggregate := &silapb.SyncAggregate{
 		SyncCommitteeBits:      syncBits,
 		SyncCommitteeSignature: aggregatedSig,
 	}
@@ -230,7 +230,7 @@ func TestProcessEpoch_BadBalanceAltair(t *testing.T) {
 }
 
 func createFullAltairBlockWithOperations(t *testing.T) (state.BeaconState,
-	*ethpb.SignedBeaconBlockAltair) {
+	*silapb.SignedBeaconBlockAltair) {
 	beaconState, privKeys := util.DeterministicGenesisStateAltair(t, 32)
 	sCom, err := altair.NextSyncCommittee(t.Context(), beaconState)
 	assert.NoError(t, err)

@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/blocks"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -24,7 +24,7 @@ func TestProcessAttestationNoVerifySignature_BeaconFuzzIssue78(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	att := &ethpb.Attestation{}
+	att := &silapb.Attestation{}
 	if err := att.UnmarshalSSZ(attData); err != nil {
 		t.Fatal(err)
 	}
@@ -32,7 +32,7 @@ func TestProcessAttestationNoVerifySignature_BeaconFuzzIssue78(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	spb := &ethpb.BeaconState{}
+	spb := &silapb.BeaconState{}
 	if err := spb.UnmarshalSSZ(stateData); err != nil {
 		t.Fatal(err)
 	}
@@ -56,10 +56,10 @@ func TestVerifyAttestationNoVerifySignature_IncorrectSourceEpoch(t *testing.T) {
 	aggBits.SetBitAt(1, true)
 	var mockRoot [32]byte
 	copy(mockRoot[:], "hello-world")
-	att := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: 99, Root: mockRoot[:]},
-			Target: &ethpb.Checkpoint{Epoch: 0, Root: make([]byte, 32)},
+	att := &silapb.Attestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: 99, Root: mockRoot[:]},
+			Target: &silapb.Checkpoint{Epoch: 0, Root: make([]byte, 32)},
 		},
 		AggregationBits: aggBits,
 	}
@@ -72,7 +72,7 @@ func TestVerifyAttestationNoVerifySignature_IncorrectSourceEpoch(t *testing.T) {
 	ckp := beaconState.CurrentJustifiedCheckpoint()
 	copy(ckp.Root, "hello-world")
 	require.NoError(t, beaconState.SetCurrentJustifiedCheckpoint(ckp))
-	require.NoError(t, beaconState.AppendCurrentEpochAttestations(&ethpb.PendingAttestation{}))
+	require.NoError(t, beaconState.AppendCurrentEpochAttestations(&silapb.PendingAttestation{}))
 
 	err = blocks.VerifyAttestationNoVerifySignature(context.TODO(), beaconState, att)
 	assert.NotEqual(t, nil, err)

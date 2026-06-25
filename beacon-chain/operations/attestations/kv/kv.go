@@ -9,7 +9,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations/attmap"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/patrickmn/go-cache"
 )
@@ -19,15 +19,15 @@ import (
 // such are unaggregated, aggregated or attestations within a block.
 type AttCaches struct {
 	aggregatedAttLock     sync.RWMutex
-	aggregatedAtt         map[attestation.Id][]ethpb.Att
+	aggregatedAtt         map[attestation.Id][]silapb.Att
 	unAggregateAttLock    sync.RWMutex
-	unAggregatedAtt       map[attestation.Id]ethpb.Att
+	unAggregatedAtt       map[attestation.Id]silapb.Att
 	forkchoiceAtt         *attmap.Attestations
 	blockAttLock          sync.RWMutex
-	blockAtt              map[attestation.Id][]ethpb.Att
+	blockAtt              map[attestation.Id][]silapb.Att
 	seenAtt               *cache.Cache
 	seenAggregatedAttLock sync.RWMutex
-	seenAggregatedAtt     map[attestation.Id][]ethpb.Att
+	seenAggregatedAtt     map[attestation.Id][]silapb.Att
 }
 
 // NewAttCaches initializes a new attestation pool consists of multiple KV store in cache for
@@ -36,34 +36,34 @@ func NewAttCaches() *AttCaches {
 	secsInEpoch := time.Duration(params.BeaconConfig().SlotsPerEpoch.Mul(params.BeaconConfig().SecondsPerSlot))
 	c := cache.New(2*secsInEpoch*time.Second, 2*secsInEpoch*time.Second)
 	pool := &AttCaches{
-		unAggregatedAtt:   make(map[attestation.Id]ethpb.Att),
-		aggregatedAtt:     make(map[attestation.Id][]ethpb.Att),
+		unAggregatedAtt:   make(map[attestation.Id]silapb.Att),
+		aggregatedAtt:     make(map[attestation.Id][]silapb.Att),
 		forkchoiceAtt:     attmap.New(),
-		blockAtt:          make(map[attestation.Id][]ethpb.Att),
+		blockAtt:          make(map[attestation.Id][]silapb.Att),
 		seenAtt:           c,
-		seenAggregatedAtt: make(map[attestation.Id][]ethpb.Att),
+		seenAggregatedAtt: make(map[attestation.Id][]silapb.Att),
 	}
 
 	return pool
 }
 
 // saveForkchoiceAttestation saves a forkchoice attestation.
-func (c *AttCaches) saveForkchoiceAttestation(att ethpb.Att) error {
+func (c *AttCaches) saveForkchoiceAttestation(att silapb.Att) error {
 	return c.forkchoiceAtt.Save(att)
 }
 
 // SaveForkchoiceAttestations saves forkchoice attestations.
-func (c *AttCaches) SaveForkchoiceAttestations(att []ethpb.Att) error {
+func (c *AttCaches) SaveForkchoiceAttestations(att []silapb.Att) error {
 	return c.forkchoiceAtt.SaveMany(att)
 }
 
 // ForkchoiceAttestations returns all forkchoice attestations.
-func (c *AttCaches) ForkchoiceAttestations() []ethpb.Att {
+func (c *AttCaches) ForkchoiceAttestations() []silapb.Att {
 	return c.forkchoiceAtt.GetAll()
 }
 
 // DeleteForkchoiceAttestation deletes a forkchoice attestation.
-func (c *AttCaches) DeleteForkchoiceAttestation(att ethpb.Att) error {
+func (c *AttCaches) DeleteForkchoiceAttestation(att silapb.Att) error {
 	return c.forkchoiceAtt.Delete(att)
 }
 

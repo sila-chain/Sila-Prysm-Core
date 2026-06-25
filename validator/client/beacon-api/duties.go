@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
@@ -42,10 +42,10 @@ type attesterDuty struct {
 type validatorForDuty struct {
 	pubkey []byte
 	index  primitives.ValidatorIndex
-	status ethpb.ValidatorStatus
+	status silapb.ValidatorStatus
 }
 
-func (c *beaconApiValidatorClient) duties(ctx context.Context, in *ethpb.DutiesRequest) (*ethpb.ValidatorDutiesContainer, error) {
+func (c *beaconApiValidatorClient) duties(ctx context.Context, in *silapb.DutiesRequest) (*silapb.ValidatorDutiesContainer, error) {
 	vals, err := c.validatorsForDuties(ctx, in.PublicKeys)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get validators for duties")
@@ -56,7 +56,7 @@ func (c *beaconApiValidatorClient) duties(ctx context.Context, in *ethpb.DutiesR
 
 	errCh := make(chan error, 1)
 
-	currentEpochDuties := &ethpb.ValidatorDutiesContainer{}
+	currentEpochDuties := &silapb.ValidatorDutiesContainer{}
 	go func() {
 		if err := c.dutiesForEpoch(ctx, currentEpochDuties, in.Epoch, vals, fetchSyncDuties); err != nil {
 			errCh <- errors.Wrapf(err, "failed to get duties for current epoch `%d`", in.Epoch)
@@ -65,7 +65,7 @@ func (c *beaconApiValidatorClient) duties(ctx context.Context, in *ethpb.DutiesR
 		errCh <- nil
 	}()
 
-	nextEpochDuties := &ethpb.ValidatorDutiesContainer{}
+	nextEpochDuties := &silapb.ValidatorDutiesContainer{}
 	nextEpochErr := c.dutiesForEpoch(ctx, nextEpochDuties, in.Epoch+1, vals, fetchSyncDuties)
 
 	if currEpochErr := <-errCh; currEpochErr != nil {
@@ -75,7 +75,7 @@ func (c *beaconApiValidatorClient) duties(ctx context.Context, in *ethpb.DutiesR
 		return nil, errors.Wrapf(nextEpochErr, "failed to get duties for next epoch `%d`", in.Epoch+1)
 	}
 
-	return &ethpb.ValidatorDutiesContainer{
+	return &silapb.ValidatorDutiesContainer{
 		PrevDependentRoot:  currentEpochDuties.PrevDependentRoot,
 		CurrDependentRoot:  currentEpochDuties.CurrDependentRoot,
 		CurrentEpochDuties: currentEpochDuties.CurrentEpochDuties,
@@ -85,7 +85,7 @@ func (c *beaconApiValidatorClient) duties(ctx context.Context, in *ethpb.DutiesR
 
 func (c *beaconApiValidatorClient) dutiesForEpoch(
 	ctx context.Context,
-	dutiesContainer *ethpb.ValidatorDutiesContainer,
+	dutiesContainer *silapb.ValidatorDutiesContainer,
 	epoch primitives.Epoch,
 	vals []validatorForDuty,
 	fetchSyncDuties bool,
@@ -195,14 +195,14 @@ func (c *beaconApiValidatorClient) dutiesForEpoch(
 		return err
 	}
 
-	duties := make([]*ethpb.ValidatorDuty, len(vals))
+	duties := make([]*silapb.ValidatorDuty, len(vals))
 	for i, v := range vals {
 		att, ok := attesterDutiesMapping[v.index]
 		if !ok {
 			log.Debugf("failed to find attester duty for validator `%d`", v.index)
 		}
 
-		duties[i] = &ethpb.ValidatorDuty{
+		duties[i] = &silapb.ValidatorDuty{
 			ValidatorCommitteeIndex: att.validatorCommitteeIndex,
 			CommitteeLength:         att.committeeLength,
 			CommitteeIndex:          att.committeeIndex,
@@ -228,7 +228,7 @@ func (c *beaconApiValidatorClient) dutiesForEpoch(
 	return nil
 }
 
-func (c *beaconApiValidatorClient) attesterDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*ethpb.AttesterDutiesResponse, error) {
+func (c *beaconApiValidatorClient) attesterDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*silapb.AttesterDutiesResponse, error) {
 	resp, err := c.dutiesProvider.AttesterDuties(ctx, epoch, validatorIndices)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get attester duties")
@@ -237,7 +237,7 @@ func (c *beaconApiValidatorClient) attesterDuties(ctx context.Context, epoch pri
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decode dependent root")
 	}
-	duties := make([]*ethpb.AttesterDuty, len(resp.Data))
+	duties := make([]*silapb.AttesterDuty, len(resp.Data))
 	for i, d := range resp.Data {
 		pubkey, err := hexutil.Decode(d.Pubkey)
 		if err != nil {
@@ -267,7 +267,7 @@ func (c *beaconApiValidatorClient) attesterDuties(ctx context.Context, epoch pri
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to parse slot %s", d.Slot)
 		}
-		duties[i] = &ethpb.AttesterDuty{
+		duties[i] = &silapb.AttesterDuty{
 			Pubkey:                  pubkey,
 			ValidatorIndex:          primitives.ValidatorIndex(valIdx),
 			CommitteeIndex:          primitives.CommitteeIndex(commIdx),
@@ -277,14 +277,14 @@ func (c *beaconApiValidatorClient) attesterDuties(ctx context.Context, epoch pri
 			Slot:                    primitives.Slot(slot),
 		}
 	}
-	return &ethpb.AttesterDutiesResponse{
+	return &silapb.AttesterDutiesResponse{
 		DependentRoot:       dependentRoot,
 		ExecutionOptimistic: resp.ExecutionOptimistic,
 		Duties:              duties,
 	}, nil
 }
 
-func (c *beaconApiValidatorClient) proposerDuties(ctx context.Context, epoch primitives.Epoch) (*ethpb.ProposerDutiesResponse, error) {
+func (c *beaconApiValidatorClient) proposerDuties(ctx context.Context, epoch primitives.Epoch) (*silapb.ProposerDutiesResponse, error) {
 	resp, err := c.dutiesProvider.ProposerDuties(ctx, epoch)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get proposer duties")
@@ -293,7 +293,7 @@ func (c *beaconApiValidatorClient) proposerDuties(ctx context.Context, epoch pri
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decode dependent root")
 	}
-	duties := make([]*ethpb.ProposerDutyV2, len(resp.Data))
+	duties := make([]*silapb.ProposerDutyV2, len(resp.Data))
 	for i, d := range resp.Data {
 		pubkey, err := hexutil.Decode(d.Pubkey)
 		if err != nil {
@@ -307,25 +307,25 @@ func (c *beaconApiValidatorClient) proposerDuties(ctx context.Context, epoch pri
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to parse slot %s", d.Slot)
 		}
-		duties[i] = &ethpb.ProposerDutyV2{
+		duties[i] = &silapb.ProposerDutyV2{
 			Pubkey:         pubkey,
 			ValidatorIndex: primitives.ValidatorIndex(valIdx),
 			Slot:           primitives.Slot(slot),
 		}
 	}
-	return &ethpb.ProposerDutiesResponse{
+	return &silapb.ProposerDutiesResponse{
 		DependentRoot:       dependentRoot,
 		ExecutionOptimistic: resp.ExecutionOptimistic,
 		Duties:              duties,
 	}, nil
 }
 
-func (c *beaconApiValidatorClient) syncCommitteeDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*ethpb.SyncCommitteeDutiesResponse, error) {
+func (c *beaconApiValidatorClient) syncCommitteeDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*silapb.SyncCommitteeDutiesResponse, error) {
 	syncDuties, err := c.dutiesProvider.SyncDuties(ctx, epoch, validatorIndices)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get sync committee duties")
 	}
-	duties := make([]*ethpb.SyncCommitteeDuty, len(syncDuties))
+	duties := make([]*silapb.SyncCommitteeDuty, len(syncDuties))
 	for i, d := range syncDuties {
 		pubkey, err := hexutil.Decode(d.Pubkey)
 		if err != nil {
@@ -343,13 +343,13 @@ func (c *beaconApiValidatorClient) syncCommitteeDuties(ctx context.Context, epoc
 			}
 			indices[j] = parsed
 		}
-		duties[i] = &ethpb.SyncCommitteeDuty{
+		duties[i] = &silapb.SyncCommitteeDuty{
 			Pubkey:                        pubkey,
 			ValidatorIndex:                primitives.ValidatorIndex(valIdx),
 			ValidatorSyncCommitteeIndices: indices,
 		}
 	}
-	return &ethpb.SyncCommitteeDutiesResponse{
+	return &silapb.SyncCommitteeDutiesResponse{
 		Duties: duties,
 	}, nil
 }
@@ -535,7 +535,7 @@ func (c beaconApiDutiesProvider) PTCDuties(ctx context.Context, epoch primitives
 	return &ptcDuties, nil
 }
 
-func (c *beaconApiValidatorClient) ptcDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*ethpb.PTCDutiesResponse, error) {
+func (c *beaconApiValidatorClient) ptcDuties(ctx context.Context, epoch primitives.Epoch, validatorIndices []primitives.ValidatorIndex) (*silapb.PTCDutiesResponse, error) {
 	resp, err := c.dutiesProvider.PTCDuties(ctx, epoch, validatorIndices)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get PTC duties")
@@ -544,7 +544,7 @@ func (c *beaconApiValidatorClient) ptcDuties(ctx context.Context, epoch primitiv
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to decode dependent root %s", resp.DependentRoot)
 	}
-	duties := make([]*ethpb.PTCDuty, len(resp.Data))
+	duties := make([]*silapb.PTCDuty, len(resp.Data))
 	for i, d := range resp.Data {
 		pubkey, err := hexutil.Decode(d.Pubkey)
 		if err != nil {
@@ -558,13 +558,13 @@ func (c *beaconApiValidatorClient) ptcDuties(ctx context.Context, epoch primitiv
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to parse slot %s", d.Slot)
 		}
-		duties[i] = &ethpb.PTCDuty{
+		duties[i] = &silapb.PTCDuty{
 			Pubkey:         pubkey,
 			ValidatorIndex: primitives.ValidatorIndex(valIdx),
 			Slot:           primitives.Slot(slot),
 		}
 	}
-	return &ethpb.PTCDutiesResponse{
+	return &silapb.PTCDutiesResponse{
 		DependentRoot:       dependentRoot,
 		ExecutionOptimistic: resp.ExecutionOptimistic,
 		Duties:              duties,

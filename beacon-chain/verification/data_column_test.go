@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -288,7 +288,7 @@ func TestValidProposerSignature(t *testing.T) {
 	)
 
 	parentRoot := [fieldparams.RootLength]byte{}
-	validator := &ethpb.Validator{}
+	validator := &silapb.Validator{}
 
 	columns := GenerateTestDataColumns(t, parentRoot, columnSlot, blobCount)
 	firstColumn := columns[0]

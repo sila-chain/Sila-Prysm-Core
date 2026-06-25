@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
@@ -51,9 +51,9 @@ func TestStore_CheckSlashableAttestation_DoubleVote(t *testing.T) {
 	validatorDB := setupDB(t, pubKeys)
 	tests := []struct {
 		name                string
-		existingAttestation *ethpb.IndexedAttestation
+		existingAttestation *silapb.IndexedAttestation
 		existingSigningRoot [32]byte
-		incomingAttestation *ethpb.IndexedAttestation
+		incomingAttestation *silapb.IndexedAttestation
 		incomingSigningRoot [32]byte
 		want                bool
 	}{
@@ -174,7 +174,7 @@ func TestStore_CheckSlashableAttestation_SurroundVote_54kEpochs(t *testing.T) {
 	tests := []struct {
 		name        string
 		signingRoot []byte
-		attestation *ethpb.IndexedAttestation
+		attestation *silapb.IndexedAttestation
 		want        SlashingKind
 	}{
 		{
@@ -336,7 +336,7 @@ func TestStore_SaveAttestationsForPubKey(t *testing.T) {
 	numValidators := 1
 	pubKeys := make([][fieldparams.BLSPubkeyLength]byte, numValidators)
 	validatorDB := setupDB(t, pubKeys)
-	atts := make([]*ethpb.IndexedAttestation, 0)
+	atts := make([]*silapb.IndexedAttestation, 0)
 	signingRoots := make([][]byte, 0)
 	for i := primitives.Epoch(1); i < 10; i++ {
 		atts = append(atts, createAttestation(i-1, i))
@@ -535,7 +535,7 @@ func benchCheckSurroundVote(
 	require.NoError(b, err)
 
 	// Will surround many attestations.
-	var surroundingVote *ethpb.IndexedAttestation
+	var surroundingVote *silapb.IndexedAttestation
 	if shouldSurround {
 		surroundingVote = createAttestation(numEpochs/2, numEpochs)
 	} else {
@@ -578,12 +578,12 @@ func BenchmarkStore_SaveAttestationForPubKey(b *testing.B) {
 	}
 
 	signingRoot := [32]byte{1}
-	attestation := &ethpb.IndexedAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{
+	attestation := &silapb.IndexedAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{
 				Epoch: 42,
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 43,
 			},
 		},

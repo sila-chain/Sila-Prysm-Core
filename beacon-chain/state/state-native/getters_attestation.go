@@ -1,12 +1,12 @@
 package state_native
 
 import (
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
 
 // PreviousEpochAttestations corresponding to blocks on the beacon chain.
-func (b *BeaconState) PreviousEpochAttestations() ([]*ethpb.PendingAttestation, error) {
+func (b *BeaconState) PreviousEpochAttestations() ([]*silapb.PendingAttestation, error) {
 	if b.version != version.Phase0 {
 		return nil, errNotSupported("PreviousEpochAttestations", b.version)
 	}
@@ -23,12 +23,12 @@ func (b *BeaconState) PreviousEpochAttestations() ([]*ethpb.PendingAttestation, 
 
 // previousEpochAttestationsVal corresponding to blocks on the beacon chain.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) previousEpochAttestationsVal() []*ethpb.PendingAttestation {
+func (b *BeaconState) previousEpochAttestationsVal() []*silapb.PendingAttestation {
 	if b.previousEpochAttestations == nil {
 		return nil
 	}
 
-	res := make([]*ethpb.PendingAttestation, len(b.previousEpochAttestations))
+	res := make([]*silapb.PendingAttestation, len(b.previousEpochAttestations))
 	for i := range res {
 		res[i] = b.previousEpochAttestations[i].Copy()
 	}
@@ -36,7 +36,7 @@ func (b *BeaconState) previousEpochAttestationsVal() []*ethpb.PendingAttestation
 }
 
 // CurrentEpochAttestations corresponding to blocks on the beacon chain.
-func (b *BeaconState) CurrentEpochAttestations() ([]*ethpb.PendingAttestation, error) {
+func (b *BeaconState) CurrentEpochAttestations() ([]*silapb.PendingAttestation, error) {
 	if b.version != version.Phase0 {
 		return nil, errNotSupported("CurrentEpochAttestations", b.version)
 	}
@@ -53,12 +53,12 @@ func (b *BeaconState) CurrentEpochAttestations() ([]*ethpb.PendingAttestation, e
 
 // currentEpochAttestations corresponding to blocks on the beacon chain.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) currentEpochAttestationsVal() []*ethpb.PendingAttestation {
+func (b *BeaconState) currentEpochAttestationsVal() []*silapb.PendingAttestation {
 	if b.currentEpochAttestations == nil {
 		return nil
 	}
 
-	res := make([]*ethpb.PendingAttestation, len(b.currentEpochAttestations))
+	res := make([]*silapb.PendingAttestation, len(b.currentEpochAttestations))
 	for i := range res {
 		res[i] = b.currentEpochAttestations[i].Copy()
 	}

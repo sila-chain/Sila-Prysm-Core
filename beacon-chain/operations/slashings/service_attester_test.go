@@ -7,15 +7,15 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
 
-func validAttesterSlashingForValIdx(t *testing.T, beaconState state.BeaconState, privs []bls.SecretKey, valIdx ...uint64) ethpb.AttSlashing {
-	var slashings []ethpb.AttSlashing
+func validAttesterSlashingForValIdx(t *testing.T, beaconState state.BeaconState, privs []bls.SecretKey, valIdx ...uint64) silapb.AttSlashing {
+	var slashings []silapb.AttSlashing
 	for _, idx := range valIdx {
 		generatedSlashing, err := util.GenerateAttesterSlashingForValidator(beaconState, privs[idx], primitives.ValidatorIndex(idx))
 		require.NoError(t, err)
@@ -37,13 +37,13 @@ func validAttesterSlashingForValIdx(t *testing.T, beaconState state.BeaconState,
 	aggSig2 := bls.AggregateSignatures(allSig2)
 
 	if beaconState.Version() >= version.Electra {
-		return &ethpb.AttesterSlashingElectra{
-			Attestation_1: &ethpb.IndexedAttestationElectra{
+		return &silapb.AttesterSlashingElectra{
+			Attestation_1: &silapb.IndexedAttestationElectra{
 				AttestingIndices: valIdx,
 				Data:             slashings[0].FirstAttestation().GetData(),
 				Signature:        aggSig1.Marshal(),
 			},
-			Attestation_2: &ethpb.IndexedAttestationElectra{
+			Attestation_2: &silapb.IndexedAttestationElectra{
 				AttestingIndices: valIdx,
 				Data:             slashings[0].SecondAttestation().GetData(),
 				Signature:        aggSig2.Marshal(),
@@ -51,13 +51,13 @@ func validAttesterSlashingForValIdx(t *testing.T, beaconState state.BeaconState,
 		}
 	}
 
-	return &ethpb.AttesterSlashing{
-		Attestation_1: &ethpb.IndexedAttestation{
+	return &silapb.AttesterSlashing{
+		Attestation_1: &silapb.IndexedAttestation{
 			AttestingIndices: valIdx,
 			Data:             slashings[0].FirstAttestation().GetData(),
 			Signature:        aggSig1.Marshal(),
 		},
-		Attestation_2: &ethpb.IndexedAttestation{
+		Attestation_2: &silapb.IndexedAttestation{
 			AttestingIndices: valIdx,
 			Data:             slashings[0].SecondAttestation().GetData(),
 			Signature:        aggSig2.Marshal(),
@@ -65,16 +65,16 @@ func validAttesterSlashingForValIdx(t *testing.T, beaconState state.BeaconState,
 	}
 }
 
-func attesterSlashingForValIdx(ver int, valIdx ...uint64) ethpb.AttSlashing {
+func attesterSlashingForValIdx(ver int, valIdx ...uint64) silapb.AttSlashing {
 	if ver >= version.Electra {
-		return &ethpb.AttesterSlashingElectra{
-			Attestation_1: &ethpb.IndexedAttestationElectra{AttestingIndices: valIdx},
-			Attestation_2: &ethpb.IndexedAttestationElectra{AttestingIndices: valIdx},
+		return &silapb.AttesterSlashingElectra{
+			Attestation_1: &silapb.IndexedAttestationElectra{AttestingIndices: valIdx},
+			Attestation_2: &silapb.IndexedAttestationElectra{AttestingIndices: valIdx},
 		}
 	}
-	return &ethpb.AttesterSlashing{
-		Attestation_1: &ethpb.IndexedAttestation{AttestingIndices: valIdx},
-		Attestation_2: &ethpb.IndexedAttestation{AttestingIndices: valIdx},
+	return &silapb.AttesterSlashing{
+		Attestation_1: &silapb.IndexedAttestation{AttestingIndices: valIdx},
+		Attestation_2: &silapb.IndexedAttestation{AttestingIndices: valIdx},
 	}
 }
 
@@ -92,7 +92,7 @@ func TestPool_InsertAttesterSlashing(t *testing.T) {
 		wantErr  []bool
 	}
 	type args struct {
-		slashings []ethpb.AttSlashing
+		slashings []silapb.AttSlashing
 	}
 	type testCase struct {
 		name   string
@@ -104,7 +104,7 @@ func TestPool_InsertAttesterSlashing(t *testing.T) {
 
 	setupFunc := func(beaconState state.BeaconState, privKeys []bls.SecretKey) []testCase {
 		pendingSlashings := make([]*PendingAttesterSlashing, 20)
-		slashings := make([]ethpb.AttSlashing, 20)
+		slashings := make([]silapb.AttSlashing, 20)
 		for i := range pendingSlashings {
 			generatedSl, err := util.GenerateAttesterSlashingForValidator(beaconState, privKeys[i], primitives.ValidatorIndex(i))
 			require.NoError(t, err)
@@ -256,7 +256,7 @@ func TestPool_InsertAttesterSlashing(t *testing.T) {
 					wantErr:  []bool{false, false, false, true},
 				},
 				args: args{
-					slashings: []ethpb.AttSlashing{
+					slashings: []silapb.AttSlashing{
 						aggSlashing1,
 						aggSlashing2,
 						aggSlashing3,
@@ -340,7 +340,7 @@ func TestPool_InsertAttesterSlashing_SigFailsVerify_ClearPool(t *testing.T) {
 	params.OverrideBeaconConfig(conf)
 	beaconState, privKeys := util.DeterministicGenesisState(t, 64)
 	pendingSlashings := make([]*PendingAttesterSlashing, 2)
-	slashings := make([]*ethpb.AttesterSlashing, 2)
+	slashings := make([]*silapb.AttesterSlashing, 2)
 	for i := range 2 {
 		generatedSl, err := util.GenerateAttesterSlashingForValidator(beaconState, privKeys[i], primitives.ValidatorIndex(i))
 		require.NoError(t, err)
@@ -348,16 +348,16 @@ func TestPool_InsertAttesterSlashing_SigFailsVerify_ClearPool(t *testing.T) {
 			attesterSlashing: generatedSl,
 			validatorToSlash: primitives.ValidatorIndex(i),
 		}
-		sl, ok := generatedSl.(*ethpb.AttesterSlashing)
+		sl, ok := generatedSl.(*silapb.AttesterSlashing)
 		if !ok {
-			require.Equal(t, true, ok, "Attester slashing has the wrong type (expected %T, got %T)", &ethpb.AttesterSlashing{}, generatedSl)
+			require.Equal(t, true, ok, "Attester slashing has the wrong type (expected %T, got %T)", &silapb.AttesterSlashing{}, generatedSl)
 		}
 		slashings[i] = sl
 	}
 	// We mess up the signature of the second slashing.
 	badSig := make([]byte, 96)
 	copy(badSig, "muahaha")
-	pendingSlashings[1].attesterSlashing.(*ethpb.AttesterSlashing).Attestation_1.Signature = badSig
+	pendingSlashings[1].attesterSlashing.(*silapb.AttesterSlashing).Attestation_1.Signature = badSig
 	slashings[1].Attestation_1.Signature = badSig
 	p := &Pool{
 		pendingAttesterSlashing: make([]*PendingAttesterSlashing, 0),
@@ -374,7 +374,7 @@ func TestPool_MarkIncludedAttesterSlashing(t *testing.T) {
 		included map[primitives.ValidatorIndex]bool
 	}
 	type args struct {
-		slashing ethpb.AttSlashing
+		slashing silapb.AttSlashing
 	}
 	tests := []struct {
 		name   string
@@ -521,7 +521,7 @@ func TestPool_PendingAttesterSlashings(t *testing.T) {
 	params.SetupTestConfigCleanup(t)
 	beaconState, privKeys := util.DeterministicGenesisState(t, 64)
 	pendingSlashings := make([]*PendingAttesterSlashing, 20)
-	slashings := make([]ethpb.AttSlashing, 20)
+	slashings := make([]silapb.AttSlashing, 20)
 	for i := range pendingSlashings {
 		sl, err := util.GenerateAttesterSlashingForValidator(beaconState, privKeys[i], primitives.ValidatorIndex(i))
 		require.NoError(t, err)
@@ -534,14 +534,14 @@ func TestPool_PendingAttesterSlashings(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   []ethpb.AttSlashing
+		want   []silapb.AttSlashing
 	}{
 		{
 			name: "Empty list",
 			fields: fields{
 				pending: []*PendingAttesterSlashing{},
 			},
-			want: []ethpb.AttSlashing{},
+			want: []silapb.AttSlashing{},
 		},
 		{
 			name: "All pending",
@@ -585,7 +585,7 @@ func TestPool_PendingAttesterSlashings_AfterElectra(t *testing.T) {
 	beaconState, privKeys := util.DeterministicGenesisStateElectra(t, 64)
 
 	pendingSlashings := make([]*PendingAttesterSlashing, 20)
-	slashings := make([]ethpb.AttSlashing, 20)
+	slashings := make([]silapb.AttSlashing, 20)
 	for i := range pendingSlashings {
 		sl, err := util.GenerateAttesterSlashingForValidator(beaconState, privKeys[i], primitives.ValidatorIndex(i))
 		require.NoError(t, err)
@@ -598,14 +598,14 @@ func TestPool_PendingAttesterSlashings_AfterElectra(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   []ethpb.AttSlashing
+		want   []silapb.AttSlashing
 	}{
 		{
 			name: "Empty list",
 			fields: fields{
 				pending: []*PendingAttesterSlashing{},
 			},
-			want: []ethpb.AttSlashing{},
+			want: []silapb.AttSlashing{},
 		},
 		{
 			name: "All pending",
@@ -660,7 +660,7 @@ func TestPool_PendingAttesterSlashings_Slashed(t *testing.T) {
 	require.NoError(t, beaconState.UpdateValidatorAtIndex(5, val))
 	pendingSlashings := make([]*PendingAttesterSlashing, 20)
 	pendingSlashings2 := make([]*PendingAttesterSlashing, 20)
-	slashings := make([]ethpb.AttSlashing, 20)
+	slashings := make([]silapb.AttSlashing, 20)
 	for i := range pendingSlashings {
 		sl, err := util.GenerateAttesterSlashingForValidator(beaconState, privKeys[i], primitives.ValidatorIndex(i))
 		require.NoError(t, err)
@@ -678,7 +678,7 @@ func TestPool_PendingAttesterSlashings_Slashed(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   []ethpb.AttSlashing
+		want   []silapb.AttSlashing
 	}{
 		{
 			name: "One item",
@@ -718,7 +718,7 @@ func TestPool_PendingAttesterSlashings_NoDuplicates(t *testing.T) {
 	params.OverrideBeaconConfig(conf)
 	beaconState, privKeys := util.DeterministicGenesisState(t, 64)
 	pendingSlashings := make([]*PendingAttesterSlashing, 3)
-	slashings := make([]ethpb.AttSlashing, 3)
+	slashings := make([]silapb.AttSlashing, 3)
 	for i := range 2 {
 		sl, err := util.GenerateAttesterSlashingForValidator(beaconState, privKeys[i], primitives.ValidatorIndex(i))
 		require.NoError(t, err)

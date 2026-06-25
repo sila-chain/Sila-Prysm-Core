@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -12,7 +12,7 @@ import (
 func TestPrunePendingDeposits_ZeroMerkleIndex(t *testing.T) {
 	dc := Cache{}
 
-	dc.pendingDeposits = []*ethpb.DepositContainer{
+	dc.pendingDeposits = []*silapb.DepositContainer{
 		{Eth1BlockHeight: 2, Index: 2},
 		{Eth1BlockHeight: 4, Index: 4},
 		{Eth1BlockHeight: 6, Index: 6},
@@ -22,7 +22,7 @@ func TestPrunePendingDeposits_ZeroMerkleIndex(t *testing.T) {
 	}
 
 	dc.PrunePendingDeposits(t.Context(), 0)
-	expected := []*ethpb.DepositContainer{
+	expected := []*silapb.DepositContainer{
 		{Eth1BlockHeight: 2, Index: 2},
 		{Eth1BlockHeight: 4, Index: 4},
 		{Eth1BlockHeight: 6, Index: 6},
@@ -36,7 +36,7 @@ func TestPrunePendingDeposits_ZeroMerkleIndex(t *testing.T) {
 func TestPrunePendingDeposits_OK(t *testing.T) {
 	dc := Cache{}
 
-	dc.pendingDeposits = []*ethpb.DepositContainer{
+	dc.pendingDeposits = []*silapb.DepositContainer{
 		{Eth1BlockHeight: 2, Index: 2},
 		{Eth1BlockHeight: 4, Index: 4},
 		{Eth1BlockHeight: 6, Index: 6},
@@ -46,7 +46,7 @@ func TestPrunePendingDeposits_OK(t *testing.T) {
 	}
 
 	dc.PrunePendingDeposits(t.Context(), 6)
-	expected := []*ethpb.DepositContainer{
+	expected := []*silapb.DepositContainer{
 		{Eth1BlockHeight: 6, Index: 6},
 		{Eth1BlockHeight: 8, Index: 8},
 		{Eth1BlockHeight: 10, Index: 10},
@@ -55,7 +55,7 @@ func TestPrunePendingDeposits_OK(t *testing.T) {
 
 	assert.DeepEqual(t, expected, dc.pendingDeposits)
 
-	dc.pendingDeposits = []*ethpb.DepositContainer{
+	dc.pendingDeposits = []*silapb.DepositContainer{
 		{Eth1BlockHeight: 2, Index: 2},
 		{Eth1BlockHeight: 4, Index: 4},
 		{Eth1BlockHeight: 6, Index: 6},
@@ -65,7 +65,7 @@ func TestPrunePendingDeposits_OK(t *testing.T) {
 	}
 
 	dc.PrunePendingDeposits(t.Context(), 10)
-	expected = []*ethpb.DepositContainer{
+	expected = []*silapb.DepositContainer{
 		{Eth1BlockHeight: 10, Index: 10},
 		{Eth1BlockHeight: 12, Index: 12},
 	}
@@ -76,7 +76,7 @@ func TestPrunePendingDeposits_OK(t *testing.T) {
 func TestPruneAllPendingDeposits(t *testing.T) {
 	dc := Cache{}
 
-	dc.pendingDeposits = []*ethpb.DepositContainer{
+	dc.pendingDeposits = []*silapb.DepositContainer{
 		{Eth1BlockHeight: 2, Index: 2},
 		{Eth1BlockHeight: 4, Index: 4},
 		{Eth1BlockHeight: 6, Index: 6},
@@ -86,7 +86,7 @@ func TestPruneAllPendingDeposits(t *testing.T) {
 	}
 
 	dc.PruneAllPendingDeposits(t.Context())
-	expected := []*ethpb.DepositContainer{}
+	expected := []*silapb.DepositContainer{}
 
 	assert.DeepEqual(t, expected, dc.pendingDeposits)
 }
@@ -97,31 +97,31 @@ func TestPruneProofs_Ok(t *testing.T) {
 
 	deposits := []struct {
 		blkNum  uint64
-		deposit *ethpb.Deposit
+		deposit *silapb.Deposit
 		index   int64
 	}{
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk0"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk0"), 48)}},
 			index: 0,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk1"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk1"), 48)}},
 			index: 1,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk2"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk2"), 48)}},
 			index: 2,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk3"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk3"), 48)}},
 			index: 3,
 		},
 	}
@@ -144,29 +144,29 @@ func TestPruneProofs_SomeAlreadyPruned(t *testing.T) {
 
 	deposits := []struct {
 		blkNum  uint64
-		deposit *ethpb.Deposit
+		deposit *silapb.Deposit
 		index   int64
 	}{
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: nil, Data: &ethpb.Deposit_Data{
+			deposit: &silapb.Deposit{Proof: nil, Data: &silapb.Deposit_Data{
 				PublicKey: bytesutil.PadTo([]byte("pk0"), 48)}},
 			index: 0,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: nil, Data: &ethpb.Deposit_Data{
+			deposit: &silapb.Deposit{Proof: nil, Data: &silapb.Deposit_Data{
 				PublicKey: bytesutil.PadTo([]byte("pk1"), 48)}}, index: 1,
 		},
 		{
 			blkNum:  0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(), Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk2"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(), Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk2"), 48)}},
 			index:   2,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk3"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk3"), 48)}},
 			index: 3,
 		},
 	}
@@ -186,31 +186,31 @@ func TestPruneProofs_PruneAllWhenDepositIndexTooBig(t *testing.T) {
 
 	deposits := []struct {
 		blkNum  uint64
-		deposit *ethpb.Deposit
+		deposit *silapb.Deposit
 		index   int64
 	}{
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk0"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk0"), 48)}},
 			index: 0,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk1"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk1"), 48)}},
 			index: 1,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk2"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk2"), 48)}},
 			index: 2,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk3"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk3"), 48)}},
 			index: 3,
 		},
 	}
@@ -233,31 +233,31 @@ func TestPruneProofs_CorrectlyHandleLastIndex(t *testing.T) {
 
 	deposits := []struct {
 		blkNum  uint64
-		deposit *ethpb.Deposit
+		deposit *silapb.Deposit
 		index   int64
 	}{
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk0"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk0"), 48)}},
 			index: 0,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk1"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk1"), 48)}},
 			index: 1,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk2"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk2"), 48)}},
 			index: 2,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk3"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk3"), 48)}},
 			index: 3,
 		},
 	}
@@ -280,31 +280,31 @@ func TestPruneAllProofs(t *testing.T) {
 
 	deposits := []struct {
 		blkNum  uint64
-		deposit *ethpb.Deposit
+		deposit *silapb.Deposit
 		index   int64
 	}{
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk0"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk0"), 48)}},
 			index: 0,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk1"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk1"), 48)}},
 			index: 1,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk2"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk2"), 48)}},
 			index: 2,
 		},
 		{
 			blkNum: 0,
-			deposit: &ethpb.Deposit{Proof: makeDepositProof(),
-				Data: &ethpb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk3"), 48)}},
+			deposit: &silapb.Deposit{Proof: makeDepositProof(),
+				Data: &silapb.Deposit_Data{PublicKey: bytesutil.PadTo([]byte("pk3"), 48)}},
 			index: 3,
 		},
 	}

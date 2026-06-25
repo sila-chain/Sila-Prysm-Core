@@ -4,7 +4,7 @@ import (
 	"context"
 	"math/big"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common"
 )
 
@@ -17,20 +17,20 @@ type DepositCache interface {
 
 // DepositFetcher defines a struct which can retrieve deposit information from a store.
 type DepositFetcher interface {
-	AllDeposits(ctx context.Context, untilBlk *big.Int) []*ethpb.Deposit
-	AllDepositContainers(ctx context.Context) []*ethpb.DepositContainer
-	DepositByPubkey(ctx context.Context, pubKey []byte) (*ethpb.Deposit, *big.Int)
+	AllDeposits(ctx context.Context, untilBlk *big.Int) []*silapb.Deposit
+	AllDepositContainers(ctx context.Context) []*silapb.DepositContainer
+	DepositByPubkey(ctx context.Context, pubKey []byte) (*silapb.Deposit, *big.Int)
 	DepositsNumberAndRootAtHeight(ctx context.Context, blockHeight *big.Int) (uint64, [32]byte)
-	InsertPendingDeposit(ctx context.Context, d *ethpb.Deposit, blockNum uint64, index int64, depositRoot [32]byte)
-	PendingDeposits(ctx context.Context, untilBlk *big.Int) []*ethpb.Deposit
-	PendingContainers(ctx context.Context, untilBlk *big.Int) []*ethpb.DepositContainer
+	InsertPendingDeposit(ctx context.Context, d *silapb.Deposit, blockNum uint64, index int64, depositRoot [32]byte)
+	PendingDeposits(ctx context.Context, untilBlk *big.Int) []*silapb.Deposit
+	PendingContainers(ctx context.Context, untilBlk *big.Int) []*silapb.DepositContainer
 	FinalizedFetcher
 }
 
 // DepositInserter defines a struct which can insert deposit information from a store.
 type DepositInserter interface {
-	InsertDeposit(ctx context.Context, d *ethpb.Deposit, blockNum uint64, index int64, depositRoot [32]byte) error
-	InsertDepositContainers(ctx context.Context, ctrs []*ethpb.DepositContainer)
+	InsertDeposit(ctx context.Context, d *silapb.Deposit, blockNum uint64, index int64, depositRoot [32]byte) error
+	InsertDepositContainers(ctx context.Context, ctrs []*silapb.DepositContainer)
 	InsertFinalizedDeposits(ctx context.Context, eth1DepositIndex int64, executionHash common.Hash, executionNumber uint64) error
 }
 
@@ -38,7 +38,7 @@ type DepositInserter interface {
 // It extends the "DepositFetcher" interface with additional methods for fetching finalized deposits.
 type FinalizedFetcher interface {
 	FinalizedDeposits(ctx context.Context) (FinalizedDeposits, error)
-	NonFinalizedDeposits(ctx context.Context, lastFinalizedIndex int64, untilBlk *big.Int) []*ethpb.Deposit
+	NonFinalizedDeposits(ctx context.Context, lastFinalizedIndex int64, untilBlk *big.Int) []*silapb.Deposit
 }
 
 // DepositPruner is an interface for pruning deposits and proofs.

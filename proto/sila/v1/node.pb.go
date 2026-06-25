@@ -52,11 +52,11 @@ func (x PeerDirection) String() string {
 }
 
 func (PeerDirection) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_eth_v1_node_proto_enumTypes[0].Descriptor()
+	return file_proto_silaapi_v1_node_proto_enumTypes[0].Descriptor()
 }
 
 func (PeerDirection) Type() protoreflect.EnumType {
-	return &file_proto_eth_v1_node_proto_enumTypes[0]
+	return &file_proto_silaapi_v1_node_proto_enumTypes[0]
 }
 
 func (x PeerDirection) Number() protoreflect.EnumNumber {
@@ -65,7 +65,7 @@ func (x PeerDirection) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PeerDirection.Descriptor instead.
 func (PeerDirection) EnumDescriptor() ([]byte, []int) {
-	return file_proto_eth_v1_node_proto_rawDescGZIP(), []int{0}
+	return file_proto_silaapi_v1_node_proto_rawDescGZIP(), []int{0}
 }
 
 type ConnectionState int32
@@ -104,11 +104,11 @@ func (x ConnectionState) String() string {
 }
 
 func (ConnectionState) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_eth_v1_node_proto_enumTypes[1].Descriptor()
+	return file_proto_silaapi_v1_node_proto_enumTypes[1].Descriptor()
 }
 
 func (ConnectionState) Type() protoreflect.EnumType {
-	return &file_proto_eth_v1_node_proto_enumTypes[1]
+	return &file_proto_silaapi_v1_node_proto_enumTypes[1]
 }
 
 func (x ConnectionState) Number() protoreflect.EnumNumber {
@@ -117,7 +117,7 @@ func (x ConnectionState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ConnectionState.Descriptor instead.
 func (ConnectionState) EnumDescriptor() ([]byte, []int) {
-	return file_proto_eth_v1_node_proto_rawDescGZIP(), []int{1}
+	return file_proto_silaapi_v1_node_proto_rawDescGZIP(), []int{1}
 }
 
 type Peer struct {
@@ -133,7 +133,7 @@ type Peer struct {
 
 func (x *Peer) Reset() {
 	*x = Peer{}
-	mi := &file_proto_eth_v1_node_proto_msgTypes[0]
+	mi := &file_proto_silaapi_v1_node_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -145,7 +145,7 @@ func (x *Peer) String() string {
 func (*Peer) ProtoMessage() {}
 
 func (x *Peer) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_node_proto_msgTypes[0]
+	mi := &file_proto_silaapi_v1_node_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -158,7 +158,7 @@ func (x *Peer) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Peer.ProtoReflect.Descriptor instead.
 func (*Peer) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_node_proto_rawDescGZIP(), []int{0}
+	return file_proto_silaapi_v1_node_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Peer) GetPeerId() string {
@@ -196,9 +196,9 @@ func (x *Peer) GetDirection() PeerDirection {
 	return PeerDirection_INBOUND
 }
 
-var File_proto_eth_v1_node_proto protoreflect.FileDescriptor
+var File_proto_silaapi_v1_node_proto protoreflect.FileDescriptor
 
-var file_proto_eth_v1_node_proto_rawDesc = []byte{
+var file_proto_silaapi_v1_node_proto_rawDesc = []byte{
 	0x0a, 0x17, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x65, 0x74, 0x68, 0x2f, 0x76, 0x31, 0x2f, 0x6e,
 	0x6f, 0x64, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0f, 0x65, 0x74, 0x68, 0x65, 0x72,
 	0x65, 0x75, 0x6d, 0x2e, 0x65, 0x74, 0x68, 0x2e, 0x76, 0x31, 0x1a, 0x20, 0x67, 0x6f, 0x6f, 0x67,
@@ -238,25 +238,25 @@ var file_proto_eth_v1_node_proto_rawDesc = []byte{
 }
 
 var (
-	file_proto_eth_v1_node_proto_rawDescOnce sync.Once
-	file_proto_eth_v1_node_proto_rawDescData = file_proto_eth_v1_node_proto_rawDesc
+	file_proto_silaapi_v1_node_proto_rawDescOnce sync.Once
+	file_proto_silaapi_v1_node_proto_rawDescData = file_proto_silaapi_v1_node_proto_rawDesc
 )
 
-func file_proto_eth_v1_node_proto_rawDescGZIP() []byte {
-	file_proto_eth_v1_node_proto_rawDescOnce.Do(func() {
-		file_proto_eth_v1_node_proto_rawDescData = protoimpl.X.CompressGZIP(file_proto_eth_v1_node_proto_rawDescData)
+func file_proto_silaapi_v1_node_proto_rawDescGZIP() []byte {
+	file_proto_silaapi_v1_node_proto_rawDescOnce.Do(func() {
+		file_proto_silaapi_v1_node_proto_rawDescData = protoimpl.X.CompressGZIP(file_proto_silaapi_v1_node_proto_rawDescData)
 	})
-	return file_proto_eth_v1_node_proto_rawDescData
+	return file_proto_silaapi_v1_node_proto_rawDescData
 }
 
-var file_proto_eth_v1_node_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_proto_eth_v1_node_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
-var file_proto_eth_v1_node_proto_goTypes = []any{
+var file_proto_silaapi_v1_node_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_proto_silaapi_v1_node_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_proto_silaapi_v1_node_proto_goTypes = []any{
 	(PeerDirection)(0),   // 0: Sila.Eth.v1.PeerDirection
 	(ConnectionState)(0), // 1: Sila.Eth.v1.ConnectionState
 	(*Peer)(nil),         // 2: Sila.Eth.v1.Peer
 }
-var file_proto_eth_v1_node_proto_depIdxs = []int32{
+var file_proto_silaapi_v1_node_proto_depIdxs = []int32{
 	1, // 0: Sila.Eth.v1.Peer.state:type_name -> Sila.Eth.v1.ConnectionState
 	0, // 1: Sila.Eth.v1.Peer.direction:type_name -> Sila.Eth.v1.PeerDirection
 	2, // [2:2] is the sub-list for method output_type
@@ -266,28 +266,28 @@ var file_proto_eth_v1_node_proto_depIdxs = []int32{
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_proto_eth_v1_node_proto_init() }
-func file_proto_eth_v1_node_proto_init() {
-	if File_proto_eth_v1_node_proto != nil {
+func init() { file_proto_silaapi_v1_node_proto_init() }
+func file_proto_silaapi_v1_node_proto_init() {
+	if File_proto_silaapi_v1_node_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_proto_eth_v1_node_proto_rawDesc,
+			RawDescriptor: file_proto_silaapi_v1_node_proto_rawDesc,
 			NumEnums:      2,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_proto_eth_v1_node_proto_goTypes,
-		DependencyIndexes: file_proto_eth_v1_node_proto_depIdxs,
-		EnumInfos:         file_proto_eth_v1_node_proto_enumTypes,
-		MessageInfos:      file_proto_eth_v1_node_proto_msgTypes,
+		GoTypes:           file_proto_silaapi_v1_node_proto_goTypes,
+		DependencyIndexes: file_proto_silaapi_v1_node_proto_depIdxs,
+		EnumInfos:         file_proto_silaapi_v1_node_proto_enumTypes,
+		MessageInfos:      file_proto_silaapi_v1_node_proto_msgTypes,
 	}.Build()
-	File_proto_eth_v1_node_proto = out.File
-	file_proto_eth_v1_node_proto_rawDesc = nil
-	file_proto_eth_v1_node_proto_goTypes = nil
-	file_proto_eth_v1_node_proto_depIdxs = nil
+	File_proto_silaapi_v1_node_proto = out.File
+	file_proto_silaapi_v1_node_proto_rawDesc = nil
+	file_proto_silaapi_v1_node_proto_goTypes = nil
+	file_proto_silaapi_v1_node_proto_depIdxs = nil
 }

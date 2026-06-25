@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -25,7 +25,7 @@ import (
 
 // sortableAttestations implements the Sort interface to sort attestations
 // by slot as the canonical sorting attribute.
-type sortableAttestations []ethpb.Att
+type sortableAttestations []silapb.Att
 
 // Len is the number of elements in the collection.
 func (s sortableAttestations) Len() int { return len(s) }
@@ -38,8 +38,8 @@ func (s sortableAttestations) Less(i, j int) bool {
 	return s[i].GetData().Slot < s[j].GetData().Slot
 }
 
-func mapAttestationsByTargetRoot(atts []ethpb.Att) map[[32]byte][]ethpb.Att {
-	attsMap := make(map[[32]byte][]ethpb.Att, len(atts))
+func mapAttestationsByTargetRoot(atts []silapb.Att) map[[32]byte][]silapb.Att {
+	attsMap := make(map[[32]byte][]silapb.Att, len(atts))
 	if len(atts) == 0 {
 		return attsMap
 	}
@@ -58,8 +58,8 @@ func mapAttestationsByTargetRoot(atts []ethpb.Att) map[[32]byte][]ethpb.Att {
 // filter criteria. This RPC should not return NOT_FOUND. Only one filter
 // criteria should be used.
 func (bs *Server) ListAttestations(
-	ctx context.Context, req *ethpb.ListAttestationsRequest,
-) (*ethpb.ListAttestationsResponse, error) {
+	ctx context.Context, req *silapb.ListAttestationsRequest,
+) (*silapb.ListAttestationsResponse, error) {
 	if int(req.PageSize) > cmd.Get().MaxRPCPageSize {
 		return nil, status.Errorf(codes.InvalidArgument, "Requested page size %d can not be greater than max size %d",
 			req.PageSize, cmd.Get().MaxRPCPageSize)
@@ -67,15 +67,15 @@ func (bs *Server) ListAttestations(
 	var blocks []interfaces.ReadOnlySignedBeaconBlock
 	var err error
 	switch q := req.QueryFilter.(type) {
-	case *ethpb.ListAttestationsRequest_GenesisEpoch:
+	case *silapb.ListAttestationsRequest_GenesisEpoch:
 		blocks, _, err = bs.BeaconDB.Blocks(ctx, filters.NewFilter().SetStartEpoch(0).SetEndEpoch(0))
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Could not fetch attestations: %v", err)
 		}
-	case *ethpb.ListAttestationsRequest_Epoch:
+	case *silapb.ListAttestationsRequest_Epoch:
 		if q.Epoch >= params.BeaconConfig().ElectraForkEpoch {
-			return &ethpb.ListAttestationsResponse{
-				Attestations:  make([]*ethpb.Attestation, 0),
+			return &silapb.ListAttestationsResponse{
+				Attestations:  make([]*silapb.Attestation, 0),
 				TotalSize:     int32(0),
 				NextPageToken: strconv.Itoa(0),
 			}, nil
@@ -88,7 +88,7 @@ func (bs *Server) ListAttestations(
 		return nil, status.Error(codes.InvalidArgument, "Must specify a filter criteria for fetching attestations")
 	}
 
-	atts, err := blockAttestations[*ethpb.Attestation](blocks)
+	atts, err := blockAttestations[*silapb.Attestation](blocks)
 	if err != nil {
 		return nil, err
 	}
@@ -96,8 +96,8 @@ func (bs *Server) ListAttestations(
 	// If there are no attestations, we simply return a response specifying this.
 	// Otherwise, attempting to paginate 0 attestations below would result in an error.
 	if len(atts) == 0 {
-		return &ethpb.ListAttestationsResponse{
-			Attestations:  make([]*ethpb.Attestation, 0),
+		return &silapb.ListAttestationsResponse{
+			Attestations:  make([]*silapb.Attestation, 0),
 			TotalSize:     int32(0),
 			NextPageToken: strconv.Itoa(0),
 		}, nil
@@ -108,7 +108,7 @@ func (bs *Server) ListAttestations(
 		return nil, status.Errorf(codes.Internal, "Could not paginate attestations: %v", err)
 	}
 
-	return &ethpb.ListAttestationsResponse{
+	return &silapb.ListAttestationsResponse{
 		Attestations:  atts[start:end],
 		TotalSize:     int32(len(atts)),
 		NextPageToken: nextPageToken,
@@ -123,7 +123,7 @@ func (bs *Server) ListAttestations(
 // The server may return an empty list when no attestations match the given
 // filter criteria. This RPC should not return NOT_FOUND. Only one filter
 // criteria should be used.
-func (bs *Server) ListAttestationsElectra(ctx context.Context, req *ethpb.ListAttestationsRequest) (*ethpb.ListAttestationsElectraResponse, error) {
+func (bs *Server) ListAttestationsElectra(ctx context.Context, req *silapb.ListAttestationsRequest) (*silapb.ListAttestationsElectraResponse, error) {
 	if int(req.PageSize) > cmd.Get().MaxRPCPageSize {
 		return nil, status.Errorf(codes.InvalidArgument, "Requested page size %d can not be greater than max size %d",
 			req.PageSize, cmd.Get().MaxRPCPageSize)
@@ -131,16 +131,16 @@ func (bs *Server) ListAttestationsElectra(ctx context.Context, req *ethpb.ListAt
 	var blocks []interfaces.ReadOnlySignedBeaconBlock
 	var err error
 	switch q := req.QueryFilter.(type) {
-	case *ethpb.ListAttestationsRequest_GenesisEpoch:
-		return &ethpb.ListAttestationsElectraResponse{
-			Attestations:  make([]*ethpb.AttestationElectra, 0),
+	case *silapb.ListAttestationsRequest_GenesisEpoch:
+		return &silapb.ListAttestationsElectraResponse{
+			Attestations:  make([]*silapb.AttestationElectra, 0),
 			TotalSize:     int32(0),
 			NextPageToken: strconv.Itoa(0),
 		}, nil
-	case *ethpb.ListAttestationsRequest_Epoch:
+	case *silapb.ListAttestationsRequest_Epoch:
 		if q.Epoch < params.BeaconConfig().ElectraForkEpoch {
-			return &ethpb.ListAttestationsElectraResponse{
-				Attestations:  make([]*ethpb.AttestationElectra, 0),
+			return &silapb.ListAttestationsElectraResponse{
+				Attestations:  make([]*silapb.AttestationElectra, 0),
 				TotalSize:     int32(0),
 				NextPageToken: strconv.Itoa(0),
 			}, nil
@@ -153,7 +153,7 @@ func (bs *Server) ListAttestationsElectra(ctx context.Context, req *ethpb.ListAt
 		return nil, status.Error(codes.InvalidArgument, "Must specify a filter criteria for fetching attestations")
 	}
 
-	atts, err := blockAttestations[*ethpb.AttestationElectra](blocks)
+	atts, err := blockAttestations[*silapb.AttestationElectra](blocks)
 	if err != nil {
 		return nil, err
 	}
@@ -161,8 +161,8 @@ func (bs *Server) ListAttestationsElectra(ctx context.Context, req *ethpb.ListAt
 	// If there are no attestations, we simply return a response specifying this.
 	// Otherwise, attempting to paginate 0 attestations below would result in an error.
 	if len(atts) == 0 {
-		return &ethpb.ListAttestationsElectraResponse{
-			Attestations:  make([]*ethpb.AttestationElectra, 0),
+		return &silapb.ListAttestationsElectraResponse{
+			Attestations:  make([]*silapb.AttestationElectra, 0),
 			TotalSize:     int32(0),
 			NextPageToken: strconv.Itoa(0),
 		}, nil
@@ -173,7 +173,7 @@ func (bs *Server) ListAttestationsElectra(ctx context.Context, req *ethpb.ListAt
 		return nil, status.Errorf(codes.Internal, "Could not paginate attestations: %v", err)
 	}
 
-	return &ethpb.ListAttestationsElectraResponse{
+	return &silapb.ListAttestationsElectraResponse{
 		Attestations:  atts[start:end],
 		TotalSize:     int32(len(atts)),
 		NextPageToken: nextPageToken,
@@ -189,20 +189,20 @@ func (bs *Server) ListAttestationsElectra(ctx context.Context, req *ethpb.ListAt
 // The server may return an empty list when no attestations match the given
 // filter criteria. This RPC should not return NOT_FOUND.
 func (bs *Server) ListIndexedAttestations(
-	ctx context.Context, req *ethpb.ListIndexedAttestationsRequest,
-) (*ethpb.ListIndexedAttestationsResponse, error) {
+	ctx context.Context, req *silapb.ListIndexedAttestationsRequest,
+) (*silapb.ListIndexedAttestationsResponse, error) {
 	var blocks []interfaces.ReadOnlySignedBeaconBlock
 	var err error
 	switch q := req.QueryFilter.(type) {
-	case *ethpb.ListIndexedAttestationsRequest_GenesisEpoch:
+	case *silapb.ListIndexedAttestationsRequest_GenesisEpoch:
 		blocks, _, err = bs.BeaconDB.Blocks(ctx, filters.NewFilter().SetStartEpoch(0).SetEndEpoch(0))
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Could not fetch attestations: %v", err)
 		}
-	case *ethpb.ListIndexedAttestationsRequest_Epoch:
+	case *silapb.ListIndexedAttestationsRequest_Epoch:
 		if q.Epoch >= params.BeaconConfig().ElectraForkEpoch {
-			return &ethpb.ListIndexedAttestationsResponse{
-				IndexedAttestations: make([]*ethpb.IndexedAttestation, 0),
+			return &silapb.ListIndexedAttestationsResponse{
+				IndexedAttestations: make([]*silapb.IndexedAttestation, 0),
 				TotalSize:           int32(0),
 				NextPageToken:       strconv.Itoa(0),
 			}, nil
@@ -215,7 +215,7 @@ func (bs *Server) ListIndexedAttestations(
 		return nil, status.Error(codes.InvalidArgument, "Must specify a filter criteria for fetching attestations")
 	}
 
-	indexedAtts, err := blockIndexedAttestations[*ethpb.IndexedAttestation](ctx, blocks, bs.StateGen)
+	indexedAtts, err := blockIndexedAttestations[*silapb.IndexedAttestation](ctx, blocks, bs.StateGen)
 	if err != nil {
 		return nil, err
 	}
@@ -223,8 +223,8 @@ func (bs *Server) ListIndexedAttestations(
 	// If there are no attestations, we simply return a response specifying this.
 	// Otherwise, attempting to paginate 0 attestations below would result in an error.
 	if len(indexedAtts) == 0 {
-		return &ethpb.ListIndexedAttestationsResponse{
-			IndexedAttestations: make([]*ethpb.IndexedAttestation, 0),
+		return &silapb.ListIndexedAttestationsResponse{
+			IndexedAttestations: make([]*silapb.IndexedAttestation, 0),
 			TotalSize:           int32(0),
 			NextPageToken:       strconv.Itoa(0),
 		}, nil
@@ -235,7 +235,7 @@ func (bs *Server) ListIndexedAttestations(
 		return nil, status.Errorf(codes.Internal, "Could not paginate attestations: %v", err)
 	}
 
-	return &ethpb.ListIndexedAttestationsResponse{
+	return &silapb.ListIndexedAttestationsResponse{
 		IndexedAttestations: indexedAtts[start:end],
 		TotalSize:           int32(len(indexedAtts)),
 		NextPageToken:       nextPageToken,
@@ -252,21 +252,21 @@ func (bs *Server) ListIndexedAttestations(
 // filter criteria. This RPC should not return NOT_FOUND.
 func (bs *Server) ListIndexedAttestationsElectra(
 	ctx context.Context,
-	req *ethpb.ListIndexedAttestationsRequest,
-) (*ethpb.ListIndexedAttestationsElectraResponse, error) {
+	req *silapb.ListIndexedAttestationsRequest,
+) (*silapb.ListIndexedAttestationsElectraResponse, error) {
 	var blocks []interfaces.ReadOnlySignedBeaconBlock
 	var err error
 	switch q := req.QueryFilter.(type) {
-	case *ethpb.ListIndexedAttestationsRequest_GenesisEpoch:
-		return &ethpb.ListIndexedAttestationsElectraResponse{
-			IndexedAttestations: make([]*ethpb.IndexedAttestationElectra, 0),
+	case *silapb.ListIndexedAttestationsRequest_GenesisEpoch:
+		return &silapb.ListIndexedAttestationsElectraResponse{
+			IndexedAttestations: make([]*silapb.IndexedAttestationElectra, 0),
 			TotalSize:           int32(0),
 			NextPageToken:       strconv.Itoa(0),
 		}, nil
-	case *ethpb.ListIndexedAttestationsRequest_Epoch:
+	case *silapb.ListIndexedAttestationsRequest_Epoch:
 		if q.Epoch < params.BeaconConfig().ElectraForkEpoch {
-			return &ethpb.ListIndexedAttestationsElectraResponse{
-				IndexedAttestations: make([]*ethpb.IndexedAttestationElectra, 0),
+			return &silapb.ListIndexedAttestationsElectraResponse{
+				IndexedAttestations: make([]*silapb.IndexedAttestationElectra, 0),
 				TotalSize:           int32(0),
 				NextPageToken:       strconv.Itoa(0),
 			}, nil
@@ -279,15 +279,15 @@ func (bs *Server) ListIndexedAttestationsElectra(
 		return nil, status.Error(codes.InvalidArgument, "Must specify a filter criteria for fetching attestations")
 	}
 
-	indexedAtts, err := blockIndexedAttestations[*ethpb.IndexedAttestationElectra](ctx, blocks, bs.StateGen)
+	indexedAtts, err := blockIndexedAttestations[*silapb.IndexedAttestationElectra](ctx, blocks, bs.StateGen)
 	if err != nil {
 		return nil, err
 	}
 	// If there are no attestations, we simply return a response specifying this.
 	// Otherwise, attempting to paginate 0 attestations below would result in an error.
 	if len(indexedAtts) == 0 {
-		return &ethpb.ListIndexedAttestationsElectraResponse{
-			IndexedAttestations: make([]*ethpb.IndexedAttestationElectra, 0),
+		return &silapb.ListIndexedAttestationsElectraResponse{
+			IndexedAttestations: make([]*silapb.IndexedAttestationElectra, 0),
 			TotalSize:           int32(0),
 			NextPageToken:       strconv.Itoa(0),
 		}, nil
@@ -298,7 +298,7 @@ func (bs *Server) ListIndexedAttestationsElectra(
 		return nil, status.Errorf(codes.Internal, "Could not paginate attestations: %v", err)
 	}
 
-	return &ethpb.ListIndexedAttestationsElectraResponse{
+	return &silapb.ListIndexedAttestationsElectraResponse{
 		IndexedAttestations: indexedAtts[start:end],
 		TotalSize:           int32(len(indexedAtts)),
 		NextPageToken:       nextPageToken,
@@ -316,14 +316,14 @@ func (bs *Server) ListIndexedAttestationsElectra(
 // Refer to the Sila consensus specification for more details on how
 // attestations are processed and when they are no longer valid.
 // https://github.com/sila-chain/Sila-Consensus-Specs/blob/master/specs/phase0/beacon-chain.md#attestations
-func (bs *Server) AttestationPool(_ context.Context, req *ethpb.AttestationPoolRequest) (*ethpb.AttestationPoolResponse, error) {
-	var atts []*ethpb.Attestation
+func (bs *Server) AttestationPool(_ context.Context, req *silapb.AttestationPoolRequest) (*silapb.AttestationPoolResponse, error) {
+	var atts []*silapb.Attestation
 	var err error
 
 	if features.Get().EnableExperimentalAttestationPool {
-		atts, err = attestationsFromCache[*ethpb.Attestation](req.PageSize, bs.AttestationCache)
+		atts, err = attestationsFromCache[*silapb.Attestation](req.PageSize, bs.AttestationCache)
 	} else {
-		atts, err = attestationsFromPool[*ethpb.Attestation](req.PageSize, bs.AttestationsPool)
+		atts, err = attestationsFromPool[*silapb.Attestation](req.PageSize, bs.AttestationsPool)
 	}
 	if err != nil {
 		return nil, err
@@ -331,8 +331,8 @@ func (bs *Server) AttestationPool(_ context.Context, req *ethpb.AttestationPoolR
 	// If there are no attestations, we simply return a response specifying this.
 	// Otherwise, attempting to paginate 0 attestations below would result in an error.
 	if len(atts) == 0 {
-		return &ethpb.AttestationPoolResponse{
-			Attestations:  make([]*ethpb.Attestation, 0),
+		return &silapb.AttestationPoolResponse{
+			Attestations:  make([]*silapb.Attestation, 0),
 			TotalSize:     int32(0),
 			NextPageToken: strconv.Itoa(0),
 		}, nil
@@ -343,7 +343,7 @@ func (bs *Server) AttestationPool(_ context.Context, req *ethpb.AttestationPoolR
 		return nil, status.Errorf(codes.Internal, "Could not paginate attestations: %v", err)
 	}
 
-	return &ethpb.AttestationPoolResponse{
+	return &silapb.AttestationPoolResponse{
 		Attestations:  atts[start:end],
 		TotalSize:     int32(len(atts)),
 		NextPageToken: nextPageToken,
@@ -351,14 +351,14 @@ func (bs *Server) AttestationPool(_ context.Context, req *ethpb.AttestationPoolR
 }
 
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
-func (bs *Server) AttestationPoolElectra(_ context.Context, req *ethpb.AttestationPoolRequest) (*ethpb.AttestationPoolElectraResponse, error) {
-	var atts []*ethpb.AttestationElectra
+func (bs *Server) AttestationPoolElectra(_ context.Context, req *silapb.AttestationPoolRequest) (*silapb.AttestationPoolElectraResponse, error) {
+	var atts []*silapb.AttestationElectra
 	var err error
 
 	if features.Get().EnableExperimentalAttestationPool {
-		atts, err = attestationsFromCache[*ethpb.AttestationElectra](req.PageSize, bs.AttestationCache)
+		atts, err = attestationsFromCache[*silapb.AttestationElectra](req.PageSize, bs.AttestationCache)
 	} else {
-		atts, err = attestationsFromPool[*ethpb.AttestationElectra](req.PageSize, bs.AttestationsPool)
+		atts, err = attestationsFromPool[*silapb.AttestationElectra](req.PageSize, bs.AttestationsPool)
 	}
 	if err != nil {
 		return nil, err
@@ -367,8 +367,8 @@ func (bs *Server) AttestationPoolElectra(_ context.Context, req *ethpb.Attestati
 	// If there are no attestations, we simply return a response specifying this.
 	// Otherwise, attempting to paginate 0 attestations below would result in an error.
 	if len(atts) == 0 {
-		return &ethpb.AttestationPoolElectraResponse{
-			Attestations:  make([]*ethpb.AttestationElectra, 0),
+		return &silapb.AttestationPoolElectraResponse{
+			Attestations:  make([]*silapb.AttestationElectra, 0),
 			TotalSize:     int32(0),
 			NextPageToken: strconv.Itoa(0),
 		}, nil
@@ -379,15 +379,15 @@ func (bs *Server) AttestationPoolElectra(_ context.Context, req *ethpb.Attestati
 		return nil, status.Errorf(codes.Internal, "Could not paginate attestations: %v", err)
 	}
 
-	return &ethpb.AttestationPoolElectraResponse{
+	return &silapb.AttestationPoolElectraResponse{
 		Attestations:  atts[start:end],
 		TotalSize:     int32(len(atts)),
 		NextPageToken: nextPageToken,
 	}, nil
 }
 
-func blockAttestations[T ethpb.Att](blocks []interfaces.ReadOnlySignedBeaconBlock) ([]T, error) {
-	blockAtts := make([]ethpb.Att, 0, params.BeaconConfig().MaxAttestations*uint64(len(blocks)))
+func blockAttestations[T silapb.Att](blocks []interfaces.ReadOnlySignedBeaconBlock) ([]T, error) {
+	blockAtts := make([]silapb.Att, 0, params.BeaconConfig().MaxAttestations*uint64(len(blocks)))
 	for _, blk := range blocks {
 		blockAtts = append(blockAtts, blk.Block().Body().Attestations()...)
 	}
@@ -411,12 +411,12 @@ func blockAttestations[T ethpb.Att](blocks []interfaces.ReadOnlySignedBeaconBloc
 	return atts, nil
 }
 
-func blockIndexedAttestations[T ethpb.IndexedAtt](
+func blockIndexedAttestations[T silapb.IndexedAtt](
 	ctx context.Context,
 	blocks []interfaces.ReadOnlySignedBeaconBlock,
 	stateGen stategen.StateManager,
 ) ([]T, error) {
-	attsArray := make([]ethpb.Att, 0, params.BeaconConfig().MaxAttestations*uint64(len(blocks)))
+	attsArray := make([]silapb.Att, 0, params.BeaconConfig().MaxAttestations*uint64(len(blocks)))
 	for _, b := range blocks {
 		attsArray = append(attsArray, b.Block().Body().Attestations()...)
 	}
@@ -472,7 +472,7 @@ func blockIndexedAttestations[T ethpb.IndexedAtt](
 	return indexed, nil
 }
 
-func attestationsFromPool[T ethpb.Att](pageSize int32, pool attestations.Pool) ([]T, error) {
+func attestationsFromPool[T silapb.Att](pageSize int32, pool attestations.Pool) ([]T, error) {
 	if int(pageSize) > cmd.Get().MaxRPCPageSize {
 		return nil, status.Errorf(
 			codes.InvalidArgument,
@@ -494,7 +494,7 @@ func attestationsFromPool[T ethpb.Att](pageSize int32, pool attestations.Pool) (
 	return atts, nil
 }
 
-func attestationsFromCache[T ethpb.Att](pageSize int32, c *cache.AttestationCache) ([]T, error) {
+func attestationsFromCache[T silapb.Att](pageSize int32, c *cache.AttestationCache) ([]T, error) {
 	if int(pageSize) > cmd.Get().MaxRPCPageSize {
 		return nil, status.Errorf(
 			codes.InvalidArgument,

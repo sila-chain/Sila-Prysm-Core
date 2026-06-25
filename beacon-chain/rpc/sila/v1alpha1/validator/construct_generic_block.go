@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/proto"
@@ -17,7 +17,7 @@ func (vs *Server) constructGenericBeaconBlock(
 	sBlk interfaces.SignedBeaconBlock,
 	blobsBundler enginev1.BlobsBundler,
 	winningBid primitives.Wei,
-) (*ethpb.GenericBeaconBlock, error) {
+) (*silapb.GenericBeaconBlock, error) {
 	if sBlk == nil || sBlk.Block() == nil {
 		return nil, errors.New("block cannot be nil")
 	}
@@ -59,8 +59,8 @@ func (vs *Server) constructGenericBeaconBlock(
 		return vs.constructFuluBlock(blockProto, isBlinded, bidStr, bundle), nil
 	case version.Gloas:
 		// Gloas blocks do not carry a separate payload value — the bid is part of the block body.
-		return &ethpb.GenericBeaconBlock{
-			Block: &ethpb.GenericBeaconBlock_Gloas{Gloas: blockProto.(*ethpb.BeaconBlockGloas)},
+		return &silapb.GenericBeaconBlock{
+			Block: &silapb.GenericBeaconBlock_Gloas{Gloas: blockProto.(*silapb.BeaconBlockGloas)},
 		}, nil
 	default:
 		return nil, fmt.Errorf("unknown block version: %d", sBlk.Version())
@@ -68,60 +68,60 @@ func (vs *Server) constructGenericBeaconBlock(
 }
 
 // Helper functions for constructing blocks for each version
-func (vs *Server) constructPhase0Block(pb proto.Message) *ethpb.GenericBeaconBlock {
-	return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_Phase0{Phase0: pb.(*ethpb.BeaconBlock)}}
+func (vs *Server) constructPhase0Block(pb proto.Message) *silapb.GenericBeaconBlock {
+	return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_Phase0{Phase0: pb.(*silapb.BeaconBlock)}}
 }
 
-func (vs *Server) constructAltairBlock(pb proto.Message) *ethpb.GenericBeaconBlock {
-	return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_Altair{Altair: pb.(*ethpb.BeaconBlockAltair)}}
+func (vs *Server) constructAltairBlock(pb proto.Message) *silapb.GenericBeaconBlock {
+	return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_Altair{Altair: pb.(*silapb.BeaconBlockAltair)}}
 }
 
-func (vs *Server) constructBellatrixBlock(pb proto.Message, isBlinded bool, payloadValue string) *ethpb.GenericBeaconBlock {
+func (vs *Server) constructBellatrixBlock(pb proto.Message, isBlinded bool, payloadValue string) *silapb.GenericBeaconBlock {
 	if isBlinded {
-		return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_BlindedBellatrix{BlindedBellatrix: pb.(*ethpb.BlindedBeaconBlockBellatrix)}, IsBlinded: true, PayloadValue: payloadValue}
+		return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_BlindedBellatrix{BlindedBellatrix: pb.(*silapb.BlindedBeaconBlockBellatrix)}, IsBlinded: true, PayloadValue: payloadValue}
 	}
-	return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_Bellatrix{Bellatrix: pb.(*ethpb.BeaconBlockBellatrix)}, IsBlinded: false, PayloadValue: payloadValue}
+	return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_Bellatrix{Bellatrix: pb.(*silapb.BeaconBlockBellatrix)}, IsBlinded: false, PayloadValue: payloadValue}
 }
 
-func (vs *Server) constructCapellaBlock(pb proto.Message, isBlinded bool, payloadValue string) *ethpb.GenericBeaconBlock {
+func (vs *Server) constructCapellaBlock(pb proto.Message, isBlinded bool, payloadValue string) *silapb.GenericBeaconBlock {
 	if isBlinded {
-		return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_BlindedCapella{BlindedCapella: pb.(*ethpb.BlindedBeaconBlockCapella)}, IsBlinded: true, PayloadValue: payloadValue}
+		return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_BlindedCapella{BlindedCapella: pb.(*silapb.BlindedBeaconBlockCapella)}, IsBlinded: true, PayloadValue: payloadValue}
 	}
-	return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_Capella{Capella: pb.(*ethpb.BeaconBlockCapella)}, IsBlinded: false, PayloadValue: payloadValue}
+	return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_Capella{Capella: pb.(*silapb.BeaconBlockCapella)}, IsBlinded: false, PayloadValue: payloadValue}
 }
 
-func (vs *Server) constructDenebBlock(blockProto proto.Message, isBlinded bool, payloadValue string, bundle *enginev1.BlobsBundle) *ethpb.GenericBeaconBlock {
+func (vs *Server) constructDenebBlock(blockProto proto.Message, isBlinded bool, payloadValue string, bundle *enginev1.BlobsBundle) *silapb.GenericBeaconBlock {
 	if isBlinded {
-		return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_BlindedDeneb{BlindedDeneb: blockProto.(*ethpb.BlindedBeaconBlockDeneb)}, IsBlinded: true, PayloadValue: payloadValue}
+		return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_BlindedDeneb{BlindedDeneb: blockProto.(*silapb.BlindedBeaconBlockDeneb)}, IsBlinded: true, PayloadValue: payloadValue}
 	}
-	denebContents := &ethpb.BeaconBlockContentsDeneb{Block: blockProto.(*ethpb.BeaconBlockDeneb)}
+	denebContents := &silapb.BeaconBlockContentsDeneb{Block: blockProto.(*silapb.BeaconBlockDeneb)}
 	if bundle != nil {
 		denebContents.KzgProofs = bundle.Proofs
 		denebContents.Blobs = bundle.Blobs
 	}
-	return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_Deneb{Deneb: denebContents}, IsBlinded: false, PayloadValue: payloadValue}
+	return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_Deneb{Deneb: denebContents}, IsBlinded: false, PayloadValue: payloadValue}
 }
 
-func (vs *Server) constructElectraBlock(blockProto proto.Message, isBlinded bool, payloadValue string, bundle *enginev1.BlobsBundle) *ethpb.GenericBeaconBlock {
+func (vs *Server) constructElectraBlock(blockProto proto.Message, isBlinded bool, payloadValue string, bundle *enginev1.BlobsBundle) *silapb.GenericBeaconBlock {
 	if isBlinded {
-		return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_BlindedElectra{BlindedElectra: blockProto.(*ethpb.BlindedBeaconBlockElectra)}, IsBlinded: true, PayloadValue: payloadValue}
+		return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_BlindedElectra{BlindedElectra: blockProto.(*silapb.BlindedBeaconBlockElectra)}, IsBlinded: true, PayloadValue: payloadValue}
 	}
-	electraContents := &ethpb.BeaconBlockContentsElectra{Block: blockProto.(*ethpb.BeaconBlockElectra)}
+	electraContents := &silapb.BeaconBlockContentsElectra{Block: blockProto.(*silapb.BeaconBlockElectra)}
 	if bundle != nil {
 		electraContents.KzgProofs = bundle.Proofs
 		electraContents.Blobs = bundle.Blobs
 	}
-	return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_Electra{Electra: electraContents}, IsBlinded: false, PayloadValue: payloadValue}
+	return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_Electra{Electra: electraContents}, IsBlinded: false, PayloadValue: payloadValue}
 }
 
-func (vs *Server) constructFuluBlock(blockProto proto.Message, isBlinded bool, payloadValue string, bundle *enginev1.BlobsBundleV2) *ethpb.GenericBeaconBlock {
+func (vs *Server) constructFuluBlock(blockProto proto.Message, isBlinded bool, payloadValue string, bundle *enginev1.BlobsBundleV2) *silapb.GenericBeaconBlock {
 	if isBlinded {
-		return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_BlindedFulu{BlindedFulu: blockProto.(*ethpb.BlindedBeaconBlockFulu)}, IsBlinded: true, PayloadValue: payloadValue}
+		return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_BlindedFulu{BlindedFulu: blockProto.(*silapb.BlindedBeaconBlockFulu)}, IsBlinded: true, PayloadValue: payloadValue}
 	}
-	fuluContents := &ethpb.BeaconBlockContentsFulu{Block: blockProto.(*ethpb.BeaconBlockElectra)}
+	fuluContents := &silapb.BeaconBlockContentsFulu{Block: blockProto.(*silapb.BeaconBlockElectra)}
 	if bundle != nil {
 		fuluContents.KzgProofs = bundle.Proofs
 		fuluContents.Blobs = bundle.Blobs
 	}
-	return &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_Fulu{Fulu: fuluContents}, IsBlinded: false, PayloadValue: payloadValue}
+	return &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_Fulu{Fulu: fuluContents}, IsBlinded: false, PayloadValue: payloadValue}
 }

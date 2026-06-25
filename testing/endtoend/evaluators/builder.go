@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/policies"
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
@@ -33,8 +33,8 @@ const maxNonBuilderBlocks = 2
 
 func builderActive(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewNodeClient(conn)
-	beaconClient := ethpb.NewBeaconChainClient(conn)
+	client := silapb.NewNodeClient(conn)
+	beaconClient := silapb.NewBeaconChainClient(conn)
 	genesis, err := client.GetGenesis(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		return errors.Wrap(err, "failed to get genesis data")
@@ -57,7 +57,7 @@ func builderActive(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) err
 	nonBuilderBlocks := 0
 	builderBlocks := 0
 
-	blockCtrs, err := beaconClient.ListBeaconBlocks(context.Background(), &ethpb.ListBlocksRequest{QueryFilter: &ethpb.ListBlocksRequest_Epoch{Epoch: lowestBound}})
+	blockCtrs, err := beaconClient.ListBeaconBlocks(context.Background(), &silapb.ListBlocksRequest{QueryFilter: &silapb.ListBlocksRequest_Epoch{Epoch: lowestBound}})
 	if err != nil {
 		return errors.Wrap(err, "failed to get beacon blocks")
 	}
@@ -106,7 +106,7 @@ func builderActive(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) err
 		}
 		return nil
 	}
-	blockCtrs, err = beaconClient.ListBeaconBlocks(context.Background(), &ethpb.ListBlocksRequest{QueryFilter: &ethpb.ListBlocksRequest_Epoch{Epoch: currEpoch}})
+	blockCtrs, err = beaconClient.ListBeaconBlocks(context.Background(), &silapb.ListBlocksRequest{QueryFilter: &silapb.ListBlocksRequest_Epoch{Epoch: currEpoch}})
 	if err != nil {
 		return errors.Wrap(err, "failed to get validator participation")
 	}

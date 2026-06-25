@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -29,7 +29,7 @@ const (
 // builderDiff represents a change to a single builder in the registry.
 type builderDiff struct {
 	index   uint32
-	builder *ethpb.Builder
+	builder *silapb.Builder
 }
 
 // diffGloasFields populates the Gloas-specific fields of the stateDiff.
@@ -48,7 +48,7 @@ func diffGloasFields(diff *stateDiff, source, target state.ReadOnlyBeaconState) 
 	prevRandao := bid.PrevRandao()
 	feeRecipient := bid.FeeRecipient()
 	executionRequestsRoot := bid.ExecutionRequestsRoot()
-	diff.latestExecutionPayloadBid = &ethpb.ExecutionPayloadBid{
+	diff.latestExecutionPayloadBid = &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       parentBlockHash[:],
 		ParentBlockRoot:       parentBlockRoot[:],
 		BlockHash:             blockHash[:],
@@ -118,7 +118,7 @@ func diffBuilders(diff *stateDiff, source, target state.ReadOnlyBeaconState) err
 	if err != nil {
 		return errors.Wrap(err, "failed to get target builders")
 	}
-	var sBuilders []*ethpb.Builder
+	var sBuilders []*silapb.Builder
 	if source.Version() >= version.Gloas {
 		sBuilders, err = source.Builders()
 		if err != nil {
@@ -148,7 +148,7 @@ func diffBuilderPendingWithdrawals(diff *stateDiff, source, target state.ReadOnl
 	}
 	tlen := len(tBpw)
 	tBpw = append(tBpw, nil)
-	var sBpw []*ethpb.BuilderPendingWithdrawal
+	var sBpw []*silapb.BuilderPendingWithdrawal
 	if source.Version() >= version.Gloas {
 		sBpw, err = source.BuilderPendingWithdrawals()
 		if err != nil {
@@ -158,9 +158,9 @@ func diffBuilderPendingWithdrawals(diff *stateDiff, source, target state.ReadOnl
 	tBpw = append(tBpw, sBpw...)
 	index := kmpIndex(len(sBpw), tBpw, helpers.BuilderPendingWithdrawalsEqual)
 	diff.builderPendingWithdrawalsIndex = uint64(index)
-	diff.builderPendingWithdrawalsDiff = make([]*ethpb.BuilderPendingWithdrawal, tlen+index-len(sBpw))
+	diff.builderPendingWithdrawalsDiff = make([]*silapb.BuilderPendingWithdrawal, tlen+index-len(sBpw))
 	for i, d := range tBpw[len(sBpw)-index : tlen] {
-		diff.builderPendingWithdrawalsDiff[i] = &ethpb.BuilderPendingWithdrawal{
+		diff.builderPendingWithdrawalsDiff[i] = &silapb.BuilderPendingWithdrawal{
 			FeeRecipient: d.FeeRecipient,
 			Amount:       d.Amount,
 			BuilderIndex: d.BuilderIndex,
@@ -261,7 +261,7 @@ func (ret *stateDiff) readGloasFields(data *[]byte) error {
 	if len(*data) < bidLength {
 		return errors.Wrap(errDataSmall, "latestExecutionPayloadBid data")
 	}
-	ret.latestExecutionPayloadBid = &ethpb.ExecutionPayloadBid{}
+	ret.latestExecutionPayloadBid = &silapb.ExecutionPayloadBid{}
 	if err := ret.latestExecutionPayloadBid.UnmarshalSSZ((*data)[:bidLength]); err != nil {
 		return errors.Wrap(err, "failed to unmarshal latestExecutionPayloadBid")
 	}
@@ -284,7 +284,7 @@ func (ret *stateDiff) readGloasFields(data *[]byte) error {
 	for i := range builderDiffsCount {
 		ret.builderDiffs[i].index = binary.LittleEndian.Uint32((*data)[:4])
 		*data = (*data)[4:]
-		ret.builderDiffs[i].builder = &ethpb.Builder{}
+		ret.builderDiffs[i].builder = &silapb.Builder{}
 		if err := ret.builderDiffs[i].builder.UnmarshalSSZ((*data)[:builderLength]); err != nil {
 			return errors.Wrap(err, "failed to unmarshal builder diff")
 		}
@@ -310,9 +310,9 @@ func (ret *stateDiff) readGloasFields(data *[]byte) error {
 	if len(*data) < builderPendingPaymentsTotalLength {
 		return errors.Wrap(errDataSmall, "builderPendingPayments")
 	}
-	ret.builderPendingPayments = make([]*ethpb.BuilderPendingPayment, builderPendingPaymentsCount)
+	ret.builderPendingPayments = make([]*silapb.BuilderPendingPayment, builderPendingPaymentsCount)
 	for i := range builderPendingPaymentsCount {
-		ret.builderPendingPayments[i] = &ethpb.BuilderPendingPayment{}
+		ret.builderPendingPayments[i] = &silapb.BuilderPendingPayment{}
 		if err := ret.builderPendingPayments[i].UnmarshalSSZ((*data)[:builderPendingPaymentLength]); err != nil {
 			return errors.Wrap(err, "failed to unmarshal builder pending payment")
 		}
@@ -332,9 +332,9 @@ func (ret *stateDiff) readGloasFields(data *[]byte) error {
 	if len(*data) < bpwCount*builderPendingWithdrawalLength {
 		return errors.Wrap(errDataSmall, "builderPendingWithdrawals data")
 	}
-	ret.builderPendingWithdrawalsDiff = make([]*ethpb.BuilderPendingWithdrawal, bpwCount)
+	ret.builderPendingWithdrawalsDiff = make([]*silapb.BuilderPendingWithdrawal, bpwCount)
 	for i := range bpwCount {
-		ret.builderPendingWithdrawalsDiff[i] = &ethpb.BuilderPendingWithdrawal{}
+		ret.builderPendingWithdrawalsDiff[i] = &silapb.BuilderPendingWithdrawal{}
 		if err := ret.builderPendingWithdrawalsDiff[i].UnmarshalSSZ((*data)[:builderPendingWithdrawalLength]); err != nil {
 			return errors.Wrap(err, "failed to unmarshal builder pending withdrawal")
 		}
@@ -378,9 +378,9 @@ func (ret *stateDiff) readGloasFields(data *[]byte) error {
 		return errors.Wrap(errDataSmall, "ptcWindow: negative count")
 	}
 	*data = (*data)[8:]
-	ret.ptcWindow = make([]*ethpb.PTCs, ptcCount)
+	ret.ptcWindow = make([]*silapb.PTCs, ptcCount)
 	for i := range ptcCount {
-		ret.ptcWindow[i] = &ethpb.PTCs{}
+		ret.ptcWindow[i] = &silapb.PTCs{}
 		ptcSize := ret.ptcWindow[i].SizeSSZ()
 		if len(*data) < ptcSize {
 			return errors.Wrap(errDataSmall, "ptcWindow data")
@@ -468,7 +468,7 @@ func applyBuilderPendingWithdrawalsDiff(source state.BeaconState, diff *stateDif
 	}
 	sBpw = sBpw[int(diff.builderPendingWithdrawalsIndex):]
 	for _, d := range diff.builderPendingWithdrawalsDiff {
-		sBpw = append(sBpw, &ethpb.BuilderPendingWithdrawal{
+		sBpw = append(sBpw, &silapb.BuilderPendingWithdrawal{
 			FeeRecipient: d.FeeRecipient,
 			Amount:       d.Amount,
 			BuilderIndex: d.BuilderIndex,

@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // SwitchToCompoundingValidator
@@ -69,7 +69,7 @@ func QueueExcessActiveBalance(s state.BeaconState, idx primitives.ValidatorIndex
 			return err
 		}
 		pk := val.PublicKey()
-		return s.AppendPendingDeposit(&ethpb.PendingDeposit{
+		return s.AppendPendingDeposit(&silapb.PendingDeposit{
 			PublicKey:             pk[:],
 			WithdrawalCredentials: val.GetWithdrawalCredentials(),
 			Amount:                excessBalance,
@@ -122,7 +122,7 @@ func QueueEntireBalanceAndResetValidator(s state.BeaconState, idx primitives.Val
 		return err
 	}
 
-	return s.AppendPendingDeposit(&ethpb.PendingDeposit{
+	return s.AppendPendingDeposit(&silapb.PendingDeposit{
 		PublicKey:             v.PublicKey,
 		WithdrawalCredentials: v.WithdrawalCredentials,
 		Amount:                bal,

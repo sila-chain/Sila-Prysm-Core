@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	common "github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/common/operations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -18,7 +18,7 @@ func blockWithWithdrawals(ssz []byte) (interfaces.SignedBeaconBlock, error) {
 		return nil, err
 	}
 	b := util.NewBeaconBlockCapella()
-	b.Block.Body = &ethpb.BeaconBlockBodyCapella{ExecutionPayload: e}
+	b.Block.Body = &silapb.BeaconBlockBodyCapella{ExecutionPayload: e}
 	return blocks.NewSignedBeaconBlock(b)
 }
 

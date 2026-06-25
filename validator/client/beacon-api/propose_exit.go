@@ -7,12 +7,12 @@ import (
 	"strconv"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 )
 
-func (c *beaconApiValidatorClient) proposeExit(ctx context.Context, signedVoluntaryExit *ethpb.SignedVoluntaryExit) (*ethpb.ProposeExitResponse, error) {
+func (c *beaconApiValidatorClient) proposeExit(ctx context.Context, signedVoluntaryExit *silapb.SignedVoluntaryExit) (*silapb.ProposeExitResponse, error) {
 	if signedVoluntaryExit == nil {
 		return nil, errors.New("signed voluntary exit is nil")
 	}
@@ -49,7 +49,7 @@ func (c *beaconApiValidatorClient) proposeExit(ctx context.Context, signedVolunt
 		return nil, errors.Wrap(err, "failed to compute exit root")
 	}
 
-	return &ethpb.ProposeExitResponse{
+	return &silapb.ProposeExitResponse{
 		ExitRoot: exitRoot[:],
 	}, nil
 }

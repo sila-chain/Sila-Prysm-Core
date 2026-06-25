@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
@@ -17,19 +17,19 @@ type envelopeCountingHistory struct {
 	envelopeCalls int
 }
 
-func (h *envelopeCountingHistory) ExecutionPayloadEnvelope(_ context.Context, _ [32]byte) (*ethpb.SignedBlindedExecutionPayloadEnvelope, error) {
+func (h *envelopeCountingHistory) ExecutionPayloadEnvelope(_ context.Context, _ [32]byte) (*silapb.SignedBlindedExecutionPayloadEnvelope, error) {
 	h.envelopeCalls++
 	return nil, nil
 }
 
-func headerFromBlock(b interfaces.ReadOnlySignedBeaconBlock) (*ethpb.BeaconBlockHeader, error) {
+func headerFromBlock(b interfaces.ReadOnlySignedBeaconBlock) (*silapb.BeaconBlockHeader, error) {
 	bodyRoot, err := b.Block().Body().HashTreeRoot()
 	if err != nil {
 		return nil, err
 	}
 	stateRoot := b.Block().StateRoot()
 	parentRoot := b.Block().ParentRoot()
-	return &ethpb.BeaconBlockHeader{
+	return &silapb.BeaconBlockHeader{
 		Slot:          b.Block().Slot(),
 		StateRoot:     stateRoot[:],
 		ProposerIndex: b.Block().ProposerIndex(),

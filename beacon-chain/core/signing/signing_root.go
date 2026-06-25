@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 	fssz "github.com/sila-chain/fastssz"
 )
@@ -61,11 +61,11 @@ func ComputeDomainAndSign(st state.ReadOnlyBeaconState, epoch primitives.Epoch, 
 
 // ComputeDomainAndSignWithoutState offers the same functionality as ComputeDomainAndSign without the need to provide a BeaconState.
 // This is particularly helpful for signing values in tests.
-func ComputeDomainAndSignWithoutState(fork *ethpb.Fork, epoch primitives.Epoch, domain [4]byte, vr []byte, obj fssz.HashRoot, key bls.SecretKey) ([]byte, error) {
+func ComputeDomainAndSignWithoutState(fork *silapb.Fork, epoch primitives.Epoch, domain [4]byte, vr []byte, obj fssz.HashRoot, key bls.SecretKey) ([]byte, error) {
 	// EIP-7044: Beginning in Deneb, fix the fork version to Capella for signed exits.
 	// This allows for signed validator exits to be valid forever.
 	if domain == params.BeaconConfig().DomainVoluntaryExit && epoch >= params.BeaconConfig().DenebForkEpoch {
-		fork = &ethpb.Fork{
+		fork = &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().CapellaForkVersion,
 			CurrentVersion:  params.BeaconConfig().CapellaForkVersion,
 			Epoch:           params.BeaconConfig().CapellaForkEpoch,
@@ -111,7 +111,7 @@ func Data(rootFunc func() ([32]byte, error), domain []byte) ([32]byte, error) {
 // ComputeSigningRootForRoot works the same as ComputeSigningRoot,
 // except that gets the root from an argument instead of a callback.
 func ComputeSigningRootForRoot(root [32]byte, domain []byte) ([32]byte, error) {
-	container := &ethpb.SigningData{
+	container := &silapb.SigningData{
 		ObjectRoot: root[:],
 		Domain:     domain,
 	}
@@ -152,7 +152,7 @@ func VerifySigningRoot(obj fssz.HashRoot, pub, signature, domain []byte) error {
 }
 
 // VerifyBlockHeaderSigningRoot verifies the signing root of a block header given its public key, signature and domain.
-func VerifyBlockHeaderSigningRoot(blkHdr *ethpb.BeaconBlockHeader, pub, signature, domain []byte) error {
+func VerifyBlockHeaderSigningRoot(blkHdr *silapb.BeaconBlockHeader, pub, signature, domain []byte) error {
 	publicKey, err := bls.PublicKeyFromBytes(pub)
 	if err != nil {
 		return errors.Wrap(err, "could not convert bytes to public key")
@@ -274,7 +274,7 @@ func computeForkDataRoot(version, root []byte) ([32]byte, error) {
 		return val, nil
 	}
 	digestMapLock.RUnlock()
-	r, err := (&ethpb.ForkData{
+	r, err := (&silapb.ForkData{
 		CurrentVersion:        version,
 		GenesisValidatorsRoot: root,
 	}).HashTreeRoot()

@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -34,7 +34,7 @@ func TestStore_OnAttestation_ErrorConditions(t *testing.T) {
 	blkWithoutState.Block.Slot = 0
 	util.SaveBlock(t, ctx, beaconDB, blkWithoutState)
 
-	cp := &ethpb.Checkpoint{}
+	cp := &silapb.Checkpoint{}
 	st, roblock, err := prepareForkchoiceState(ctx, 0, [32]byte{}, [32]byte{}, params.BeaconConfig().ZeroHash, cp, cp)
 	require.NoError(t, err)
 	require.NoError(t, service.cfg.ForkChoiceStore.InsertNode(ctx, st, roblock))
@@ -43,7 +43,7 @@ func TestStore_OnAttestation_ErrorConditions(t *testing.T) {
 	blkWithStateBadAtt.Block.Slot = 1
 	r, err := blkWithStateBadAtt.Block.HashTreeRoot()
 	require.NoError(t, err)
-	cp = &ethpb.Checkpoint{Root: r[:]}
+	cp = &silapb.Checkpoint{Root: r[:]}
 	st, roblock, err = prepareForkchoiceState(ctx, blkWithStateBadAtt.Block.Slot, r, [32]byte{}, params.BeaconConfig().ZeroHash, cp, cp)
 	require.NoError(t, err)
 	require.NoError(t, service.cfg.ForkChoiceStore.InsertNode(ctx, st, roblock))
@@ -64,7 +64,7 @@ func TestStore_OnAttestation_ErrorConditions(t *testing.T) {
 	require.NoError(t, err)
 	s, err = util.NewBeaconState()
 	require.NoError(t, err)
-	err = s.SetFork(&ethpb.Fork{
+	err = s.SetFork(&silapb.Fork{
 		Epoch:           0,
 		CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 		PreviousVersion: params.BeaconConfig().GenesisForkVersion,
@@ -78,17 +78,17 @@ func TestStore_OnAttestation_ErrorConditions(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		a         ethpb.Att
+		a         silapb.Att
 		wantedErr string
 	}{
 		{
 			name:      "attestation's data slot not aligned with target vote",
-			a:         util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: params.BeaconConfig().SlotsPerEpoch, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}}}),
+			a:         util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: params.BeaconConfig().SlotsPerEpoch, Target: &silapb.Checkpoint{Root: make([]byte, 32)}}}),
 			wantedErr: "slot 32 does not match target epoch 0",
 		},
 		{
 			name: "process attestation doesn't match current epoch",
-			a: util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 100 * params.BeaconConfig().SlotsPerEpoch, Target: &ethpb.Checkpoint{Epoch: 100,
+			a: util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 100 * params.BeaconConfig().SlotsPerEpoch, Target: &silapb.Checkpoint{Epoch: 100,
 				Root: BlkWithStateBadAttRoot[:]}}}),
 			wantedErr: "target epoch 100 does not match current epoch",
 		},
@@ -99,16 +99,16 @@ func TestStore_OnAttestation_ErrorConditions(t *testing.T) {
 		},
 		{
 			name:      "process nil field (a.Data) in attestation",
-			a:         &ethpb.Attestation{},
+			a:         &silapb.Attestation{},
 			wantedErr: "attestation is nil",
 		},
 		{
 			name: "process nil field (a.Target) in attestation",
-			a: &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
+			a: &silapb.Attestation{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: make([]byte, fieldparams.RootLength),
 					Target:          nil,
-					Source:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 				AggregationBits: make([]byte, 1),
 				Signature:       make([]byte, 96),
@@ -140,8 +140,8 @@ func TestStore_OnAttestation_Ok_DoublyLinkedTree(t *testing.T) {
 		copied, err = transition.ProcessSlots(ctx, copied, 1)
 		require.NoError(t, err)
 		require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, copied, tRoot))
-		ojc := &ethpb.Checkpoint{Epoch: 0, Root: tRoot[:]}
-		ofc := &ethpb.Checkpoint{Epoch: 0, Root: tRoot[:]}
+		ojc := &silapb.Checkpoint{Epoch: 0, Root: tRoot[:]}
+		ofc := &silapb.Checkpoint{Epoch: 0, Root: tRoot[:]}
 		state, roblock, err := prepareForkchoiceState(ctx, 0, tRoot, tRoot, params.BeaconConfig().ZeroHash, ojc, ofc)
 		require.NoError(t, err)
 		require.NoError(t, service.cfg.ForkChoiceStore.InsertNode(ctx, state, roblock))
@@ -178,7 +178,7 @@ func TestOnAttestation_GloasSameSlotPayloadVote(t *testing.T) {
 
 	// payloadVote builds a committee-index-1 (payload-present) attestation for the
 	// genesis block (slot 0), dated attSlot.
-	payloadVote := func(attSlot primitives.Slot) ethpb.Att {
+	payloadVote := func(attSlot primitives.Slot) silapb.Att {
 		committee, err := helpers.BeaconCommitteeFromState(ctx, genesisState, attSlot, 0)
 		require.NoError(t, err)
 		require.NotEqual(t, 0, len(committee))
@@ -186,15 +186,15 @@ func TestOnAttestation_GloasSameSlotPayloadVote(t *testing.T) {
 		aggBits.SetBitAt(0, true)
 		cb := primitives.NewAttestationCommitteeBits()
 		cb.SetBitAt(0, true)
-		return &ethpb.AttestationElectra{
+		return &silapb.AttestationElectra{
 			AggregationBits: aggBits,
 			CommitteeBits:   cb,
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				Slot:            attSlot,
 				CommitteeIndex:  1,
 				BeaconBlockRoot: genesisRoot[:],
-				Source:          &ethpb.Checkpoint{Epoch: 0, Root: genesisRoot[:]},
-				Target:          &ethpb.Checkpoint{Epoch: 0, Root: genesisRoot[:]},
+				Source:          &silapb.Checkpoint{Epoch: 0, Root: genesisRoot[:]},
+				Target:          &silapb.Checkpoint{Epoch: 0, Root: genesisRoot[:]},
 			},
 			Signature: make([]byte, 96),
 		}
@@ -220,7 +220,7 @@ func TestService_GetRecentPreState(t *testing.T) {
 	s, err := util.NewBeaconState()
 	require.NoError(t, err)
 	ckRoot := bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)
-	cp0 := &ethpb.Checkpoint{Epoch: 0, Root: ckRoot}
+	cp0 := &silapb.Checkpoint{Epoch: 0, Root: ckRoot}
 	err = s.SetFinalizedCheckpoint(cp0)
 	require.NoError(t, err)
 
@@ -233,13 +233,13 @@ func TestService_GetRecentPreState(t *testing.T) {
 		block: blk,
 		slot:  31,
 	}
-	require.NotNil(t, service.getRecentPreState(ctx, &ethpb.Checkpoint{Epoch: 1, Root: ckRoot}))
+	require.NotNil(t, service.getRecentPreState(ctx, &silapb.Checkpoint{Epoch: 1, Root: ckRoot}))
 }
 
 func TestService_GetRecentPreState_Epoch_0(t *testing.T) {
 	service, _ := minimalTestService(t)
 	ctx := t.Context()
-	require.IsNil(t, service.getRecentPreState(ctx, &ethpb.Checkpoint{}))
+	require.IsNil(t, service.getRecentPreState(ctx, &silapb.Checkpoint{}))
 }
 
 func TestService_GetRecentPreState_Old_Checkpoint(t *testing.T) {
@@ -248,7 +248,7 @@ func TestService_GetRecentPreState_Old_Checkpoint(t *testing.T) {
 	s, err := util.NewBeaconState()
 	require.NoError(t, err)
 	ckRoot := bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)
-	cp0 := &ethpb.Checkpoint{Epoch: 0, Root: ckRoot}
+	cp0 := &silapb.Checkpoint{Epoch: 0, Root: ckRoot}
 	err = s.SetFinalizedCheckpoint(cp0)
 	require.NoError(t, err)
 
@@ -261,7 +261,7 @@ func TestService_GetRecentPreState_Old_Checkpoint(t *testing.T) {
 		block: blk,
 		slot:  33,
 	}
-	require.IsNil(t, service.getRecentPreState(ctx, &ethpb.Checkpoint{}))
+	require.IsNil(t, service.getRecentPreState(ctx, &silapb.Checkpoint{}))
 }
 
 func TestService_GetRecentPreState_Same_DependentRoots(t *testing.T) {
@@ -270,7 +270,7 @@ func TestService_GetRecentPreState_Same_DependentRoots(t *testing.T) {
 	s, err := util.NewBeaconState()
 	require.NoError(t, err)
 	ckRoot := bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)
-	cp0 := &ethpb.Checkpoint{Epoch: 0, Root: ckRoot}
+	cp0 := &silapb.Checkpoint{Epoch: 0, Root: ckRoot}
 
 	// Create a fork 31 <-- 32 <--- 64
 	//                 \---------33
@@ -296,7 +296,7 @@ func TestService_GetRecentPreState_Same_DependentRoots(t *testing.T) {
 		slot:  64,
 		state: s,
 	}
-	require.NotNil(t, service.getRecentPreState(ctx, &ethpb.Checkpoint{Epoch: 2, Root: cpRoot[:]}))
+	require.NotNil(t, service.getRecentPreState(ctx, &silapb.Checkpoint{Epoch: 2, Root: cpRoot[:]}))
 }
 
 func TestService_GetRecentPreState_Different_DependentRoots(t *testing.T) {
@@ -305,7 +305,7 @@ func TestService_GetRecentPreState_Different_DependentRoots(t *testing.T) {
 	s, err := util.NewBeaconState()
 	require.NoError(t, err)
 	ckRoot := bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)
-	cp0 := &ethpb.Checkpoint{Epoch: 0, Root: ckRoot}
+	cp0 := &silapb.Checkpoint{Epoch: 0, Root: ckRoot}
 
 	// Create a fork 30 <-- 31 <-- 32 <--- 64
 	//                 \---------33
@@ -334,7 +334,7 @@ func TestService_GetRecentPreState_Different_DependentRoots(t *testing.T) {
 		state: s,
 		slot:  64,
 	}
-	require.IsNil(t, service.getRecentPreState(ctx, &ethpb.Checkpoint{Epoch: 2, Root: cpRoot[:]}))
+	require.IsNil(t, service.getRecentPreState(ctx, &silapb.Checkpoint{Epoch: 2, Root: cpRoot[:]}))
 }
 
 func TestService_GetRecentPreState_Different(t *testing.T) {
@@ -343,7 +343,7 @@ func TestService_GetRecentPreState_Different(t *testing.T) {
 	s, err := util.NewBeaconState()
 	require.NoError(t, err)
 	ckRoot := bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)
-	cp0 := &ethpb.Checkpoint{Epoch: 0, Root: ckRoot}
+	cp0 := &silapb.Checkpoint{Epoch: 0, Root: ckRoot}
 	err = s.SetFinalizedCheckpoint(cp0)
 	require.NoError(t, err)
 
@@ -356,7 +356,7 @@ func TestService_GetRecentPreState_Different(t *testing.T) {
 		block: blk,
 		slot:  33,
 	}
-	require.IsNil(t, service.getRecentPreState(ctx, &ethpb.Checkpoint{}))
+	require.IsNil(t, service.getRecentPreState(ctx, &silapb.Checkpoint{}))
 }
 
 func TestService_GetAttPreState_Concurrency(t *testing.T) {
@@ -366,19 +366,19 @@ func TestService_GetAttPreState_Concurrency(t *testing.T) {
 	s, err := util.NewBeaconState()
 	require.NoError(t, err)
 	ckRoot := bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)
-	err = s.SetFinalizedCheckpoint(&ethpb.Checkpoint{Root: ckRoot})
+	err = s.SetFinalizedCheckpoint(&silapb.Checkpoint{Root: ckRoot})
 	require.NoError(t, err)
-	val := &ethpb.Validator{PublicKey: bytesutil.PadTo([]byte("foo"), 48), WithdrawalCredentials: bytesutil.PadTo([]byte("bar"), fieldparams.RootLength)}
-	err = s.SetValidators([]*ethpb.Validator{val})
+	val := &silapb.Validator{PublicKey: bytesutil.PadTo([]byte("foo"), 48), WithdrawalCredentials: bytesutil.PadTo([]byte("bar"), fieldparams.RootLength)}
+	err = s.SetValidators([]*silapb.Validator{val})
 	require.NoError(t, err)
 	err = s.SetBalances([]uint64{0})
 	require.NoError(t, err)
 	r := [32]byte{'g'}
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, s, r))
 
-	cp1 := &ethpb.Checkpoint{Epoch: 1, Root: ckRoot}
+	cp1 := &silapb.Checkpoint{Epoch: 1, Root: ckRoot}
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, s, bytesutil.ToBytes32([]byte{'A'})))
-	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Root: ckRoot}))
+	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Root: ckRoot}))
 
 	st, root, err := prepareForkchoiceState(ctx, 100, [32]byte(cp1.Root), [32]byte{}, [32]byte{'R'}, cp1, cp1)
 	require.NoError(t, err)
@@ -389,7 +389,7 @@ func TestService_GetAttPreState_Concurrency(t *testing.T) {
 
 	for range 1000 {
 		wg.Go(func() {
-			cp1 := &ethpb.Checkpoint{Epoch: 1, Root: ckRoot}
+			cp1 := &silapb.Checkpoint{Epoch: 1, Root: ckRoot}
 			_, err := service.getAttPreState(ctx, cp1)
 			if err != nil {
 				errChan <- err
@@ -418,22 +418,22 @@ func TestStore_SaveCheckpointState(t *testing.T) {
 
 	s, err := util.NewBeaconState()
 	require.NoError(t, err)
-	err = s.SetFinalizedCheckpoint(&ethpb.Checkpoint{Root: bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)})
+	err = s.SetFinalizedCheckpoint(&silapb.Checkpoint{Root: bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)})
 	require.NoError(t, err)
-	val := &ethpb.Validator{
+	val := &silapb.Validator{
 		PublicKey:             bytesutil.PadTo([]byte("foo"), 48),
 		WithdrawalCredentials: bytesutil.PadTo([]byte("bar"), fieldparams.RootLength),
 	}
-	err = s.SetValidators([]*ethpb.Validator{val})
+	err = s.SetValidators([]*silapb.Validator{val})
 	require.NoError(t, err)
 	err = s.SetBalances([]uint64{0})
 	require.NoError(t, err)
 	r := [32]byte{'g'}
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, s, r))
 
-	cp1 := &ethpb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)}
+	cp1 := &silapb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)}
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, s, bytesutil.ToBytes32([]byte{'A'})))
-	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)}))
+	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Root: bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)}))
 
 	st, root, err := prepareForkchoiceState(ctx, 1, [32]byte(cp1.Root), [32]byte{}, [32]byte{'R'}, cp1, cp1)
 	require.NoError(t, err)
@@ -442,9 +442,9 @@ func TestStore_SaveCheckpointState(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, 1*params.BeaconConfig().SlotsPerEpoch, s1.Slot(), "Unexpected state slot")
 
-	cp2 := &ethpb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte{'B'}, fieldparams.RootLength)}
+	cp2 := &silapb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte{'B'}, fieldparams.RootLength)}
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, s, bytesutil.ToBytes32([]byte{'B'})))
-	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bytesutil.PadTo([]byte{'B'}, fieldparams.RootLength)}))
+	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Root: bytesutil.PadTo([]byte{'B'}, fieldparams.RootLength)}))
 
 	_, err = service.getAttPreState(ctx, cp2)
 	require.ErrorContains(t, "epoch 2 root 0x4200000000000000000000000000000000000000000000000000000000000000: not a checkpoint in forkchoice", err)
@@ -471,9 +471,9 @@ func TestStore_SaveCheckpointState(t *testing.T) {
 	assert.Equal(t, 2*params.BeaconConfig().SlotsPerEpoch, s2.Slot(), "Unexpected state slot")
 
 	require.NoError(t, s.SetSlot(params.BeaconConfig().SlotsPerEpoch+1))
-	cp3 := &ethpb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'C'}, fieldparams.RootLength)}
+	cp3 := &silapb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'C'}, fieldparams.RootLength)}
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, s, bytesutil.ToBytes32([]byte{'C'})))
-	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Root: bytesutil.PadTo([]byte{'C'}, fieldparams.RootLength)}))
+	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Root: bytesutil.PadTo([]byte{'C'}, fieldparams.RootLength)}))
 	st, root, err = prepareForkchoiceState(ctx, 31, [32]byte(cp3.Root), [32]byte(cp2.Root), [32]byte{'P'}, cp2, cp2)
 	require.NoError(t, err)
 	require.NoError(t, service.cfg.ForkChoiceStore.InsertNode(ctx, st, root))
@@ -492,7 +492,7 @@ func TestStore_UpdateCheckpointState(t *testing.T) {
 	blk := util.NewBeaconBlock()
 	r1, err := blk.Block.HashTreeRoot()
 	require.NoError(t, err)
-	checkpoint := &ethpb.Checkpoint{Epoch: epoch, Root: r1[:]}
+	checkpoint := &silapb.Checkpoint{Epoch: epoch, Root: r1[:]}
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, baseState, bytesutil.ToBytes32(checkpoint.Root)))
 	st, roblock, err := prepareForkchoiceState(ctx, blk.Block.Slot, r1, [32]byte{}, params.BeaconConfig().ZeroHash, checkpoint, checkpoint)
 	require.NoError(t, err)
@@ -510,7 +510,7 @@ func TestStore_UpdateCheckpointState(t *testing.T) {
 	blk.Block.Slot = 64
 	r2, err := blk.Block.HashTreeRoot()
 	require.NoError(t, err)
-	newCheckpoint := &ethpb.Checkpoint{Epoch: epoch, Root: r2[:]}
+	newCheckpoint := &silapb.Checkpoint{Epoch: epoch, Root: r2[:]}
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, baseState, bytesutil.ToBytes32(newCheckpoint.Root)))
 	st, roblock, err = prepareForkchoiceState(ctx, blk.Block.Slot, r2, r1, params.BeaconConfig().ZeroHash, newCheckpoint, newCheckpoint)
 	require.NoError(t, err)
@@ -532,21 +532,21 @@ func TestAttEpoch_MatchPrevEpoch(t *testing.T) {
 	ctx := t.Context()
 
 	nowTime := time.Unix(int64(params.BeaconConfig().SlotsPerEpoch)*int64(params.BeaconConfig().SecondsPerSlot), 0)
-	require.NoError(t, verifyAttTargetEpoch(ctx, time.Unix(0, 0), nowTime, &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)}))
+	require.NoError(t, verifyAttTargetEpoch(ctx, time.Unix(0, 0), nowTime, &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)}))
 }
 
 func TestAttEpoch_MatchCurrentEpoch(t *testing.T) {
 	ctx := t.Context()
 
 	nowTime := time.Unix(int64(params.BeaconConfig().SlotsPerEpoch)*int64(params.BeaconConfig().SecondsPerSlot), 0)
-	require.NoError(t, verifyAttTargetEpoch(ctx, time.Unix(0, 0), nowTime, &ethpb.Checkpoint{Epoch: 1}))
+	require.NoError(t, verifyAttTargetEpoch(ctx, time.Unix(0, 0), nowTime, &silapb.Checkpoint{Epoch: 1}))
 }
 
 func TestAttEpoch_NotMatch(t *testing.T) {
 	ctx := t.Context()
 
 	nowTime := time.Unix(2*int64(params.BeaconConfig().SlotsPerEpoch)*int64(params.BeaconConfig().SecondsPerSlot), 0)
-	err := verifyAttTargetEpoch(ctx, time.Unix(0, 0), nowTime, &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)})
+	err := verifyAttTargetEpoch(ctx, time.Unix(0, 0), nowTime, &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)})
 	assert.ErrorContains(t, "target epoch 0 does not match current epoch 2 or prev epoch 1", err)
 }
 
@@ -556,7 +556,7 @@ func TestVerifyBeaconBlock_NoBlock(t *testing.T) {
 	service, err := NewService(ctx, opts...)
 	require.NoError(t, err)
 
-	d := util.HydrateAttestationData(&ethpb.AttestationData{})
+	d := util.HydrateAttestationData(&silapb.AttestationData{})
 	require.Equal(t, errBlockNotFoundInCacheOrDB, service.verifyBeaconBlock(ctx, d))
 }
 
@@ -572,7 +572,7 @@ func TestVerifyBeaconBlock_futureBlock(t *testing.T) {
 	util.SaveBlock(t, ctx, service.cfg.BeaconDB, b)
 	r, err := b.Block.HashTreeRoot()
 	require.NoError(t, err)
-	d := &ethpb.AttestationData{Slot: 1, BeaconBlockRoot: r[:]}
+	d := &silapb.AttestationData{Slot: 1, BeaconBlockRoot: r[:]}
 
 	assert.ErrorContains(t, "could not process attestation for future block", service.verifyBeaconBlock(ctx, d))
 }
@@ -589,7 +589,7 @@ func TestVerifyBeaconBlock_OK(t *testing.T) {
 	util.SaveBlock(t, ctx, service.cfg.BeaconDB, b)
 	r, err := b.Block.HashTreeRoot()
 	require.NoError(t, err)
-	d := &ethpb.AttestationData{Slot: 2, BeaconBlockRoot: r[:]}
+	d := &silapb.AttestationData{Slot: 2, BeaconBlockRoot: r[:]}
 
 	assert.NoError(t, service.verifyBeaconBlock(ctx, d), "Did not receive the wanted error")
 }
@@ -603,7 +603,7 @@ func TestGetAttPreState_HeadState(t *testing.T) {
 	blk := util.NewBeaconBlock()
 	r1, err := blk.Block.HashTreeRoot()
 	require.NoError(t, err)
-	checkpoint := &ethpb.Checkpoint{Epoch: epoch, Root: r1[:]}
+	checkpoint := &silapb.Checkpoint{Epoch: epoch, Root: r1[:]}
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, baseState, bytesutil.ToBytes32(checkpoint.Root)))
 	require.NoError(t, transition.UpdateNextSlotCache(ctx, checkpoint.Root, baseState))
 	_, err = service.getAttPreState(ctx, checkpoint)

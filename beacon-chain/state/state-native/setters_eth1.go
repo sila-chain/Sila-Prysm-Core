@@ -3,11 +3,11 @@ package state_native
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native/types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stateutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // SetEth1Data for the beacon state.
-func (b *BeaconState) SetEth1Data(val *ethpb.Eth1Data) error {
+func (b *BeaconState) SetEth1Data(val *silapb.Eth1Data) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
@@ -18,7 +18,7 @@ func (b *BeaconState) SetEth1Data(val *ethpb.Eth1Data) error {
 
 // SetEth1DataVotes for the beacon state. Updates the entire
 // list to a new value by overwriting the previous one.
-func (b *BeaconState) SetEth1DataVotes(val []*ethpb.Eth1Data) error {
+func (b *BeaconState) SetEth1DataVotes(val []*silapb.Eth1Data) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
@@ -43,14 +43,14 @@ func (b *BeaconState) SetEth1DepositIndex(val uint64) error {
 
 // AppendEth1DataVotes for the beacon state. Appends the new value
 // to the end of list.
-func (b *BeaconState) AppendEth1DataVotes(val *ethpb.Eth1Data) error {
+func (b *BeaconState) AppendEth1DataVotes(val *silapb.Eth1Data) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
 	votes := b.eth1DataVotes
 	if b.sharedFieldReferences[types.Eth1DataVotes].Refs() > 1 {
 		// Copy elements in underlying array by reference.
-		votes = make([]*ethpb.Eth1Data, 0, len(b.eth1DataVotes)+1)
+		votes = make([]*silapb.Eth1Data, 0, len(b.eth1DataVotes)+1)
 		votes = append(votes, b.eth1DataVotes...)
 		b.sharedFieldReferences[types.Eth1DataVotes].MinusRef()
 		b.sharedFieldReferences[types.Eth1DataVotes] = stateutil.NewRef(1)

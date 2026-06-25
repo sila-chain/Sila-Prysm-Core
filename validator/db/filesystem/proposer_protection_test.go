@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
@@ -203,11 +203,11 @@ func Test_slashableProposalCheck_PreventsLowerThanMinProposal(t *testing.T) {
 
 	// We expect the same block with a slot lower than the lowest
 	// signed slot to fail validation.
-	blk := &ethpb.SignedBeaconBlock{
-		Block: &ethpb.BeaconBlock{
+	blk := &silapb.SignedBeaconBlock{
+		Block: &silapb.BeaconBlock{
 			Slot:          lowestSignedSlot - 1,
 			ProposerIndex: 0,
-			Body:          &ethpb.BeaconBlockBody{},
+			Body:          &silapb.BeaconBlockBody{},
 		},
 		Signature: params.BeaconConfig().EmptySignature[:],
 	}
@@ -218,11 +218,11 @@ func Test_slashableProposalCheck_PreventsLowerThanMinProposal(t *testing.T) {
 
 	// We expect the same block with a slot equal to the lowest
 	// signed slot to pass validation if signing roots are equal.
-	blk = &ethpb.SignedBeaconBlock{
-		Block: &ethpb.BeaconBlock{
+	blk = &silapb.SignedBeaconBlock{
+		Block: &silapb.BeaconBlock{
 			Slot:          lowestSignedSlot,
 			ProposerIndex: 0,
-			Body:          &ethpb.BeaconBlockBody{},
+			Body:          &silapb.BeaconBlockBody{},
 		},
 		Signature: params.BeaconConfig().EmptySignature[:],
 	}
@@ -240,11 +240,11 @@ func Test_slashableProposalCheck_PreventsLowerThanMinProposal(t *testing.T) {
 
 	// We expect the same block with a slot > than the lowest
 	// signed slot to pass validation.
-	blk = &ethpb.SignedBeaconBlock{
-		Block: &ethpb.BeaconBlock{
+	blk = &silapb.SignedBeaconBlock{
+		Block: &silapb.BeaconBlock{
 			Slot:          lowestSignedSlot + 1,
 			ProposerIndex: 0,
-			Body:          &ethpb.BeaconBlockBody{},
+			Body:          &silapb.BeaconBlockBody{},
 		},
 		Signature: params.BeaconConfig().EmptySignature[:],
 	}
@@ -269,11 +269,11 @@ func Test_slashableProposalCheck(t *testing.T) {
 	s, err := NewStore(databasePath, &Config{PubKeys: pubkeys})
 	require.NoError(t, err, "NewStore should not return an error")
 
-	blk := util.HydrateSignedBeaconBlock(&ethpb.SignedBeaconBlock{
-		Block: &ethpb.BeaconBlock{
+	blk := util.HydrateSignedBeaconBlock(&silapb.SignedBeaconBlock{
+		Block: &silapb.BeaconBlock{
 			Slot:          10,
 			ProposerIndex: 0,
-			Body:          &ethpb.BeaconBlockBody{},
+			Body:          &silapb.BeaconBlockBody{},
 		},
 		Signature: params.BeaconConfig().EmptySignature[:],
 	})

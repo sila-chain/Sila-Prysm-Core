@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
 )
@@ -46,7 +46,7 @@ func ROExecutionPayloadBidFromConsensus(b interfaces.ROExecutionPayloadBid) *Exe
 	}
 }
 
-func BuildersFromConsensus(builders []*ethpb.Builder) []*Builder {
+func BuildersFromConsensus(builders []*silapb.Builder) []*Builder {
 	newBuilders := make([]*Builder, len(builders))
 	for i, b := range builders {
 		newBuilders[i] = BuilderFromConsensus(b)
@@ -54,7 +54,7 @@ func BuildersFromConsensus(builders []*ethpb.Builder) []*Builder {
 	return newBuilders
 }
 
-func BuilderFromConsensus(b *ethpb.Builder) *Builder {
+func BuilderFromConsensus(b *silapb.Builder) *Builder {
 	return &Builder{
 		Pubkey:            hexutil.Encode(b.Pubkey),
 		Version:           hexutil.Encode(b.Version),
@@ -65,7 +65,7 @@ func BuilderFromConsensus(b *ethpb.Builder) *Builder {
 	}
 }
 
-func BuilderPendingPaymentsFromConsensus(payments []*ethpb.BuilderPendingPayment) []*BuilderPendingPayment {
+func BuilderPendingPaymentsFromConsensus(payments []*silapb.BuilderPendingPayment) []*BuilderPendingPayment {
 	newPayments := make([]*BuilderPendingPayment, len(payments))
 	for i, p := range payments {
 		newPayments[i] = BuilderPendingPaymentFromConsensus(p)
@@ -73,14 +73,14 @@ func BuilderPendingPaymentsFromConsensus(payments []*ethpb.BuilderPendingPayment
 	return newPayments
 }
 
-func BuilderPendingPaymentFromConsensus(p *ethpb.BuilderPendingPayment) *BuilderPendingPayment {
+func BuilderPendingPaymentFromConsensus(p *silapb.BuilderPendingPayment) *BuilderPendingPayment {
 	return &BuilderPendingPayment{
 		Weight:     fmt.Sprintf("%d", p.Weight),
 		Withdrawal: BuilderPendingWithdrawalFromConsensus(p.Withdrawal),
 	}
 }
 
-func BuilderPendingWithdrawalsFromConsensus(withdrawals []*ethpb.BuilderPendingWithdrawal) []*BuilderPendingWithdrawal {
+func BuilderPendingWithdrawalsFromConsensus(withdrawals []*silapb.BuilderPendingWithdrawal) []*BuilderPendingWithdrawal {
 	newWithdrawals := make([]*BuilderPendingWithdrawal, len(withdrawals))
 	for i, w := range withdrawals {
 		newWithdrawals[i] = BuilderPendingWithdrawalFromConsensus(w)
@@ -88,7 +88,7 @@ func BuilderPendingWithdrawalsFromConsensus(withdrawals []*ethpb.BuilderPendingW
 	return newWithdrawals
 }
 
-func BuilderPendingWithdrawalFromConsensus(w *ethpb.BuilderPendingWithdrawal) *BuilderPendingWithdrawal {
+func BuilderPendingWithdrawalFromConsensus(w *silapb.BuilderPendingWithdrawal) *BuilderPendingWithdrawal {
 	return &BuilderPendingWithdrawal{
 		FeeRecipient: hexutil.Encode(w.FeeRecipient),
 		Amount:       fmt.Sprintf("%d", w.Amount),
@@ -96,7 +96,7 @@ func BuilderPendingWithdrawalFromConsensus(w *ethpb.BuilderPendingWithdrawal) *B
 	}
 }
 
-func PTCWindowFromConsensus(window []*ethpb.PTCs) []*PTCs {
+func PTCWindowFromConsensus(window []*silapb.PTCs) []*PTCs {
 	out := make([]*PTCs, len(window))
 	for i, slot := range window {
 		out[i] = PTCsFromConsensus(slot)
@@ -104,7 +104,7 @@ func PTCWindowFromConsensus(window []*ethpb.PTCs) []*PTCs {
 	return out
 }
 
-func PTCsFromConsensus(p *ethpb.PTCs) *PTCs {
+func PTCsFromConsensus(p *silapb.PTCs) *PTCs {
 	if p == nil {
 		return &PTCs{}
 	}
@@ -115,7 +115,7 @@ func PTCsFromConsensus(p *ethpb.PTCs) *PTCs {
 	return &PTCs{ValidatorIndices: indices}
 }
 
-func (s *SignedProposerPreferences) ToConsensus() (*ethpb.SignedProposerPreferences, error) {
+func (s *SignedProposerPreferences) ToConsensus() (*silapb.SignedProposerPreferences, error) {
 	if s == nil {
 		return nil, server.NewDecodeError(errNilValue, "SignedProposerPreferences")
 	}
@@ -130,13 +130,13 @@ func (s *SignedProposerPreferences) ToConsensus() (*ethpb.SignedProposerPreferen
 	if err != nil {
 		return nil, server.NewDecodeError(err, "Signature")
 	}
-	return &ethpb.SignedProposerPreferences{
+	return &silapb.SignedProposerPreferences{
 		Message:   msg,
 		Signature: sig,
 	}, nil
 }
 
-func SignedProposerPreferencesFromConsensus(s *ethpb.SignedProposerPreferences) *SignedProposerPreferences {
+func SignedProposerPreferencesFromConsensus(s *silapb.SignedProposerPreferences) *SignedProposerPreferences {
 	if s == nil {
 		return nil
 	}
@@ -146,7 +146,7 @@ func SignedProposerPreferencesFromConsensus(s *ethpb.SignedProposerPreferences) 
 	}
 }
 
-func ProposerPreferencesFromConsensus(p *ethpb.ProposerPreferences) *ProposerPreferences {
+func ProposerPreferencesFromConsensus(p *silapb.ProposerPreferences) *ProposerPreferences {
 	if p == nil {
 		return nil
 	}
@@ -159,7 +159,7 @@ func ProposerPreferencesFromConsensus(p *ethpb.ProposerPreferences) *ProposerPre
 	}
 }
 
-func (p *ProposerPreferences) ToConsensus() (*ethpb.ProposerPreferences, error) {
+func (p *ProposerPreferences) ToConsensus() (*silapb.ProposerPreferences, error) {
 	dependentRoot, err := bytesutil.DecodeHexWithLength(p.DependentRoot, fieldparams.RootLength)
 	if err != nil {
 		return nil, server.NewDecodeError(err, "DependentRoot")
@@ -180,7 +180,7 @@ func (p *ProposerPreferences) ToConsensus() (*ethpb.ProposerPreferences, error) 
 	if err != nil {
 		return nil, server.NewDecodeError(err, "TargetGasLimit")
 	}
-	return &ethpb.ProposerPreferences{
+	return &silapb.ProposerPreferences{
 		DependentRoot:  dependentRoot,
 		ProposalSlot:   primitives.Slot(slot),
 		ValidatorIndex: primitives.ValidatorIndex(valIdx),

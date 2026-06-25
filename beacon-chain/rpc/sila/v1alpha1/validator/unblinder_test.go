@@ -5,15 +5,15 @@ import (
 
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func TestUnblinder_UnblindBlobSidecars_InvalidBundle(t *testing.T) {
-	wBlock, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockDeneb{
-		Block: &ethpb.BeaconBlockDeneb{
-			Body: &ethpb.BeaconBlockBodyDeneb{},
+	wBlock, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockDeneb{
+		Block: &silapb.BeaconBlockDeneb{
+			Body: &silapb.BeaconBlockBodyDeneb{},
 		},
 		Signature: nil,
 	})
@@ -21,9 +21,9 @@ func TestUnblinder_UnblindBlobSidecars_InvalidBundle(t *testing.T) {
 	_, err = unblindBlobsSidecars(wBlock, nil)
 	assert.NoError(t, err)
 
-	wBlock, err = consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockDeneb{
-		Block: &ethpb.BeaconBlockDeneb{
-			Body: &ethpb.BeaconBlockBodyDeneb{
+	wBlock, err = consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockDeneb{
+		Block: &silapb.BeaconBlockDeneb{
+			Body: &silapb.BeaconBlockBodyDeneb{
 				BlobKzgCommitments: [][]byte{[]byte("a"), []byte("b")},
 			},
 		},
@@ -40,9 +40,9 @@ func TestUnblindBlobsSidecars_WithBlobsBundler(t *testing.T) {
 
 	t.Run("Interface compatibility with BlobsBundle", func(t *testing.T) {
 		// Create a simple pre-Deneb block that will return nil (no processing needed)
-		wBlock, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockCapella{
-			Block: &ethpb.BeaconBlockCapella{
-				Body: &ethpb.BeaconBlockBodyCapella{},
+		wBlock, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockCapella{
+			Block: &silapb.BeaconBlockCapella{
+				Body: &silapb.BeaconBlockBodyCapella{},
 			},
 			Signature: nil,
 		})
@@ -63,9 +63,9 @@ func TestUnblindBlobsSidecars_WithBlobsBundler(t *testing.T) {
 
 	t.Run("Interface compatibility with BlobsBundleV2", func(t *testing.T) {
 		// Create a simple pre-Deneb block that will return nil (no processing needed)
-		wBlock, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockCapella{
-			Block: &ethpb.BeaconBlockCapella{
-				Body: &ethpb.BeaconBlockBodyCapella{},
+		wBlock, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockCapella{
+			Block: &silapb.BeaconBlockCapella{
+				Body: &silapb.BeaconBlockBodyCapella{},
 			},
 			Signature: nil,
 		})
@@ -89,9 +89,9 @@ func TestUnblindBlobsSidecars_WithBlobsBundler(t *testing.T) {
 		// We test this by verifying the code compiles with both types
 
 		// Create a simple pre-Deneb block for the interface test
-		wBlock, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockCapella{
-			Block: &ethpb.BeaconBlockCapella{
-				Body: &ethpb.BeaconBlockBodyCapella{},
+		wBlock, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockCapella{
+			Block: &silapb.BeaconBlockCapella{
+				Body: &silapb.BeaconBlockBodyCapella{},
 			},
 			Signature: nil,
 		})
@@ -122,9 +122,9 @@ func TestUnblindBlobsSidecars_WithBlobsBundler(t *testing.T) {
 
 func TestUnblindBlobsSidecars_PreDenebBlock(t *testing.T) {
 	// Test with pre-Deneb block (should return nil sidecars)
-	wBlock, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockCapella{
-		Block: &ethpb.BeaconBlockCapella{
-			Body: &ethpb.BeaconBlockBodyCapella{},
+	wBlock, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockCapella{
+		Block: &silapb.BeaconBlockCapella{
+			Body: &silapb.BeaconBlockBodyCapella{},
 		},
 		Signature: nil,
 	})

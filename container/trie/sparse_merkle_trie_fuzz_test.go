@@ -6,15 +6,15 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/golang/protobuf/proto"
 )
 
 func FuzzSparseMerkleTrie_HashTreeRoot(f *testing.F) {
 	h := hash.Hash([]byte("hi"))
-	pb := &ethpb.SparseMerkleTrie{
-		Layers: []*ethpb.TrieLayer{
+	pb := &silapb.SparseMerkleTrie{
+		Layers: []*silapb.TrieLayer{
 			{
 				Layer: [][]byte{h[:]},
 			},
@@ -32,7 +32,7 @@ func FuzzSparseMerkleTrie_HashTreeRoot(f *testing.F) {
 	f.Add(b)
 
 	f.Fuzz(func(t *testing.T, b []byte) {
-		pb := &ethpb.SparseMerkleTrie{}
+		pb := &silapb.SparseMerkleTrie{}
 		if err := proto.Unmarshal(b, pb); err != nil {
 			return
 		}
@@ -48,8 +48,8 @@ func FuzzSparseMerkleTrie_HashTreeRoot(f *testing.F) {
 
 func FuzzSparseMerkleTrie_MerkleProof(f *testing.F) {
 	h := hash.Hash([]byte("hi"))
-	pb := &ethpb.SparseMerkleTrie{
-		Layers: []*ethpb.TrieLayer{
+	pb := &silapb.SparseMerkleTrie{
+		Layers: []*silapb.TrieLayer{
 			{
 				Layer: [][]byte{h[:]},
 			},
@@ -67,7 +67,7 @@ func FuzzSparseMerkleTrie_MerkleProof(f *testing.F) {
 	f.Add(b, 0)
 
 	f.Fuzz(func(t *testing.T, b []byte, i int) {
-		pb := &ethpb.SparseMerkleTrie{}
+		pb := &silapb.SparseMerkleTrie{}
 		if err := proto.Unmarshal(b, pb); err != nil {
 			return
 		}
@@ -83,8 +83,8 @@ func FuzzSparseMerkleTrie_MerkleProof(f *testing.F) {
 
 func FuzzSparseMerkleTrie_Insert(f *testing.F) {
 	h := hash.Hash([]byte("hi"))
-	pb := &ethpb.SparseMerkleTrie{
-		Layers: []*ethpb.TrieLayer{
+	pb := &silapb.SparseMerkleTrie{
+		Layers: []*silapb.TrieLayer{
 			{
 				Layer: [][]byte{h[:]},
 			},
@@ -102,7 +102,7 @@ func FuzzSparseMerkleTrie_Insert(f *testing.F) {
 	f.Add(b, []byte{}, 0)
 
 	f.Fuzz(func(t *testing.T, b, item []byte, i int) {
-		pb := &ethpb.SparseMerkleTrie{}
+		pb := &silapb.SparseMerkleTrie{}
 		if err := proto.Unmarshal(b, pb); err != nil {
 			return
 		}

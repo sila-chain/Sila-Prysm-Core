@@ -12,7 +12,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // BeaconState defines a struct containing utilities for the Sila Beacon Chain state, defining
@@ -27,29 +27,29 @@ type BeaconState struct {
 	genesisTime                         uint64
 	genesisValidatorsRoot               [32]byte
 	slot                                primitives.Slot
-	fork                                *ethpb.Fork
-	latestBlockHeader                   *ethpb.BeaconBlockHeader
+	fork                                *silapb.Fork
+	latestBlockHeader                   *silapb.BeaconBlockHeader
 	blockRootsMultiValue                *MultiValueBlockRoots
 	stateRootsMultiValue                *MultiValueStateRoots
 	historicalRoots                     customtypes.HistoricalRoots
-	eth1Data                            *ethpb.Eth1Data
-	eth1DataVotes                       []*ethpb.Eth1Data
+	eth1Data                            *silapb.Eth1Data
+	eth1DataVotes                       []*silapb.Eth1Data
 	eth1DepositIndex                    uint64
 	validatorsMultiValue                *MultiValueValidators
 	balancesMultiValue                  *MultiValueBalances
 	randaoMixesMultiValue               *MultiValueRandaoMixes
 	slashings                           []uint64
-	previousEpochAttestations           []*ethpb.PendingAttestation
-	currentEpochAttestations            []*ethpb.PendingAttestation
+	previousEpochAttestations           []*silapb.PendingAttestation
+	currentEpochAttestations            []*silapb.PendingAttestation
 	previousEpochParticipation          []byte
 	currentEpochParticipation           []byte
 	justificationBits                   bitfield.Bitvector4
-	previousJustifiedCheckpoint         *ethpb.Checkpoint
-	currentJustifiedCheckpoint          *ethpb.Checkpoint
-	finalizedCheckpoint                 *ethpb.Checkpoint
+	previousJustifiedCheckpoint         *silapb.Checkpoint
+	currentJustifiedCheckpoint          *silapb.Checkpoint
+	finalizedCheckpoint                 *silapb.Checkpoint
 	inactivityScoresMultiValue          *MultiValueInactivityScores
-	currentSyncCommittee                *ethpb.SyncCommittee
-	nextSyncCommittee                   *ethpb.SyncCommittee
+	currentSyncCommittee                *silapb.SyncCommittee
+	nextSyncCommittee                   *silapb.SyncCommittee
 	latestExecutionPayloadHeader        *enginev1.ExecutionPayloadHeader
 	latestExecutionPayloadHeaderCapella *enginev1.ExecutionPayloadHeaderCapella
 	latestExecutionPayloadHeaderDeneb   *enginev1.ExecutionPayloadHeaderDeneb
@@ -57,7 +57,7 @@ type BeaconState struct {
 	// Capella fields
 	nextWithdrawalIndex          uint64
 	nextWithdrawalValidatorIndex primitives.ValidatorIndex
-	historicalSummaries          []*ethpb.HistoricalSummary
+	historicalSummaries          []*silapb.HistoricalSummary
 
 	// Electra fields
 	depositRequestsStartIndex     uint64
@@ -66,22 +66,22 @@ type BeaconState struct {
 	earliestExitEpoch             primitives.Epoch
 	consolidationBalanceToConsume primitives.Gwei
 	earliestConsolidationEpoch    primitives.Epoch
-	pendingDeposits               []*ethpb.PendingDeposit           // pending_deposits: List[PendingDeposit, PENDING_DEPOSITS_LIMIT]
-	pendingPartialWithdrawals     []*ethpb.PendingPartialWithdrawal // pending_partial_withdrawals: List[PartialWithdrawal, PENDING_PARTIAL_WITHDRAWALS_LIMIT]
-	pendingConsolidations         []*ethpb.PendingConsolidation     // pending_consolidations: List[PendingConsolidation, PENDING_CONSOLIDATIONS_LIMIT]
+	pendingDeposits               []*silapb.PendingDeposit           // pending_deposits: List[PendingDeposit, PENDING_DEPOSITS_LIMIT]
+	pendingPartialWithdrawals     []*silapb.PendingPartialWithdrawal // pending_partial_withdrawals: List[PartialWithdrawal, PENDING_PARTIAL_WITHDRAWALS_LIMIT]
+	pendingConsolidations         []*silapb.PendingConsolidation     // pending_consolidations: List[PendingConsolidation, PENDING_CONSOLIDATIONS_LIMIT]
 	proposerLookahead             []primitives.ValidatorIndex       // proposer_look_ahead: List[uint64, (MIN_LOOKAHEAD + 1)*SLOTS_PER_EPOCH]
 
 	// Gloas fields
-	latestExecutionPayloadBid    *ethpb.ExecutionPayloadBid
-	builders                     []*ethpb.Builder
+	latestExecutionPayloadBid    *silapb.ExecutionPayloadBid
+	builders                     []*silapb.Builder
 	builderIdxMap                map[[fieldparams.BLSPubkeyLength]byte]primitives.BuilderIndex
 	nextWithdrawalBuilderIndex   primitives.BuilderIndex
 	executionPayloadAvailability []byte
-	builderPendingPayments       []*ethpb.BuilderPendingPayment
-	builderPendingWithdrawals    []*ethpb.BuilderPendingWithdrawal
+	builderPendingPayments       []*silapb.BuilderPendingPayment
+	builderPendingWithdrawals    []*silapb.BuilderPendingWithdrawal
 	latestBlockHash              []byte
 	payloadExpectedWithdrawals   []*enginev1.Withdrawal
-	ptcWindow                    []*ethpb.PTCs
+	ptcWindow                    []*silapb.PTCs
 
 	id                    uint64
 	lock                  sync.RWMutex
@@ -99,54 +99,54 @@ type beaconStateMarshalable struct {
 	GenesisTime                         uint64                                  `json:"genesis_time" yaml:"genesis_time"`
 	GenesisValidatorsRoot               [32]byte                                `json:"genesis_validators_root" yaml:"genesis_validators_root"`
 	Slot                                primitives.Slot                         `json:"slot" yaml:"slot"`
-	Fork                                *ethpb.Fork                             `json:"fork" yaml:"fork"`
-	LatestBlockHeader                   *ethpb.BeaconBlockHeader                `json:"latest_block_header" yaml:"latest_block_header"`
+	Fork                                *silapb.Fork                             `json:"fork" yaml:"fork"`
+	LatestBlockHeader                   *silapb.BeaconBlockHeader                `json:"latest_block_header" yaml:"latest_block_header"`
 	BlockRoots                          customtypes.BlockRoots                  `json:"block_roots" yaml:"block_roots"`
 	StateRoots                          customtypes.StateRoots                  `json:"state_roots" yaml:"state_roots"`
 	HistoricalRoots                     customtypes.HistoricalRoots             `json:"historical_roots" yaml:"historical_roots"`
-	Eth1Data                            *ethpb.Eth1Data                         `json:"eth_1_data" yaml:"eth_1_data"`
-	Eth1DataVotes                       []*ethpb.Eth1Data                       `json:"eth_1_data_votes" yaml:"eth_1_data_votes"`
+	Eth1Data                            *silapb.Eth1Data                         `json:"eth_1_data" yaml:"eth_1_data"`
+	Eth1DataVotes                       []*silapb.Eth1Data                       `json:"eth_1_data_votes" yaml:"eth_1_data_votes"`
 	Eth1DepositIndex                    uint64                                  `json:"eth_1_deposit_index" yaml:"eth_1_deposit_index"`
-	Validators                          []*ethpb.Validator                      `json:"validators" yaml:"validators"`
+	Validators                          []*silapb.Validator                      `json:"validators" yaml:"validators"`
 	Balances                            []uint64                                `json:"balances" yaml:"balances"`
 	RandaoMixes                         customtypes.RandaoMixes                 `json:"randao_mixes" yaml:"randao_mixes"`
 	Slashings                           []uint64                                `json:"slashings" yaml:"slashings"`
-	PreviousEpochAttestations           []*ethpb.PendingAttestation             `json:"previous_epoch_attestations" yaml:"previous_epoch_attestations"`
-	CurrentEpochAttestations            []*ethpb.PendingAttestation             `json:"current_epoch_attestations" yaml:"current_epoch_attestations"`
+	PreviousEpochAttestations           []*silapb.PendingAttestation             `json:"previous_epoch_attestations" yaml:"previous_epoch_attestations"`
+	CurrentEpochAttestations            []*silapb.PendingAttestation             `json:"current_epoch_attestations" yaml:"current_epoch_attestations"`
 	PreviousEpochParticipation          []byte                                  `json:"previous_epoch_participation" yaml:"previous_epoch_participation"`
 	CurrentEpochParticipation           []byte                                  `json:"current_epoch_participation" yaml:"current_epoch_participation"`
 	JustificationBits                   bitfield.Bitvector4                     `json:"justification_bits" yaml:"justification_bits"`
-	PreviousJustifiedCheckpoint         *ethpb.Checkpoint                       `json:"previous_justified_checkpoint" yaml:"previous_justified_checkpoint"`
-	CurrentJustifiedCheckpoint          *ethpb.Checkpoint                       `json:"current_justified_checkpoint" yaml:"current_justified_checkpoint"`
-	FinalizedCheckpoint                 *ethpb.Checkpoint                       `json:"finalized_checkpoint" yaml:"finalized_checkpoint"`
+	PreviousJustifiedCheckpoint         *silapb.Checkpoint                       `json:"previous_justified_checkpoint" yaml:"previous_justified_checkpoint"`
+	CurrentJustifiedCheckpoint          *silapb.Checkpoint                       `json:"current_justified_checkpoint" yaml:"current_justified_checkpoint"`
+	FinalizedCheckpoint                 *silapb.Checkpoint                       `json:"finalized_checkpoint" yaml:"finalized_checkpoint"`
 	InactivityScores                    []uint64                                `json:"inactivity_scores" yaml:"inactivity_scores"`
-	CurrentSyncCommittee                *ethpb.SyncCommittee                    `json:"current_sync_committee" yaml:"current_sync_committee"`
-	NextSyncCommittee                   *ethpb.SyncCommittee                    `json:"next_sync_committee" yaml:"next_sync_committee"`
+	CurrentSyncCommittee                *silapb.SyncCommittee                    `json:"current_sync_committee" yaml:"current_sync_committee"`
+	NextSyncCommittee                   *silapb.SyncCommittee                    `json:"next_sync_committee" yaml:"next_sync_committee"`
 	LatestExecutionPayloadHeader        *enginev1.ExecutionPayloadHeader        `json:"latest_execution_payload_header" yaml:"latest_execution_payload_header"`
 	LatestExecutionPayloadHeaderCapella *enginev1.ExecutionPayloadHeaderCapella `json:"latest_execution_payload_header_capella" yaml:"latest_execution_payload_header_capella"`
 	LatestExecutionPayloadHeaderDeneb   *enginev1.ExecutionPayloadHeaderDeneb   `json:"latest_execution_payload_header_deneb" yaml:"latest_execution_payload_header_deneb"`
 	NextWithdrawalIndex                 uint64                                  `json:"next_withdrawal_index" yaml:"next_withdrawal_index"`
 	NextWithdrawalValidatorIndex        primitives.ValidatorIndex               `json:"next_withdrawal_validator_index" yaml:"next_withdrawal_validator_index"`
-	HistoricalSummaries                 []*ethpb.HistoricalSummary              `json:"historical_summaries" yaml:"historical_summaries"`
+	HistoricalSummaries                 []*silapb.HistoricalSummary              `json:"historical_summaries" yaml:"historical_summaries"`
 	DepositRequestsStartIndex           uint64                                  `json:"deposit_requests_start_index" yaml:"deposit_requests_start_index"`
 	DepositBalanceToConsume             primitives.Gwei                         `json:"deposit_balance_to_consume" yaml:"deposit_balance_to_consume"`
 	ExitBalanceToConsume                primitives.Gwei                         `json:"exit_balance_to_consume" yaml:"exit_balance_to_consume"`
 	EarliestExitEpoch                   primitives.Epoch                        `json:"earliest_exit_epoch" yaml:"earliest_exit_epoch"`
 	ConsolidationBalanceToConsume       primitives.Gwei                         `json:"consolidation_balance_to_consume" yaml:"consolidation_balance_to_consume"`
 	EarliestConsolidationEpoch          primitives.Epoch                        `json:"earliest_consolidation_epoch" yaml:"earliest_consolidation_epoch"`
-	PendingDeposits                     []*ethpb.PendingDeposit                 `json:"pending_deposits" yaml:"pending_deposits"`
-	PendingPartialWithdrawals           []*ethpb.PendingPartialWithdrawal       `json:"pending_partial_withdrawals" yaml:"pending_partial_withdrawals"`
-	PendingConsolidations               []*ethpb.PendingConsolidation           `json:"pending_consolidations" yaml:"pending_consolidations"`
+	PendingDeposits                     []*silapb.PendingDeposit                 `json:"pending_deposits" yaml:"pending_deposits"`
+	PendingPartialWithdrawals           []*silapb.PendingPartialWithdrawal       `json:"pending_partial_withdrawals" yaml:"pending_partial_withdrawals"`
+	PendingConsolidations               []*silapb.PendingConsolidation           `json:"pending_consolidations" yaml:"pending_consolidations"`
 	ProposerLookahead                   []primitives.ValidatorIndex             `json:"proposer_look_ahead" yaml:"proposer_look_ahead"`
-	LatestExecutionPayloadBid           *ethpb.ExecutionPayloadBid              `json:"latest_execution_payload_bid" yaml:"latest_execution_payload_bid"`
-	Builders                            []*ethpb.Builder                        `json:"builders" yaml:"builders"`
+	LatestExecutionPayloadBid           *silapb.ExecutionPayloadBid              `json:"latest_execution_payload_bid" yaml:"latest_execution_payload_bid"`
+	Builders                            []*silapb.Builder                        `json:"builders" yaml:"builders"`
 	NextWithdrawalBuilderIndex          primitives.BuilderIndex                 `json:"next_withdrawal_builder_index" yaml:"next_withdrawal_builder_index"`
 	ExecutionPayloadAvailability        []byte                                  `json:"execution_payload_availability" yaml:"execution_payload_availability"`
-	BuilderPendingPayments              []*ethpb.BuilderPendingPayment          `json:"builder_pending_payments" yaml:"builder_pending_payments"`
-	BuilderPendingWithdrawals           []*ethpb.BuilderPendingWithdrawal       `json:"builder_pending_withdrawals" yaml:"builder_pending_withdrawals"`
+	BuilderPendingPayments              []*silapb.BuilderPendingPayment          `json:"builder_pending_payments" yaml:"builder_pending_payments"`
+	BuilderPendingWithdrawals           []*silapb.BuilderPendingWithdrawal       `json:"builder_pending_withdrawals" yaml:"builder_pending_withdrawals"`
 	LatestBlockHash                     []byte                                  `json:"latest_block_hash" yaml:"latest_block_hash"`
 	PayloadExpectedWithdrawals          []*enginev1.Withdrawal                  `json:"payload_expected_withdrawals" yaml:"payload_expected_withdrawals"`
-	PtcWindow                           []*ethpb.PTCs                           `json:"ptc_window" yaml:"ptc_window"`
+	PtcWindow                           []*silapb.PTCs                           `json:"ptc_window" yaml:"ptc_window"`
 }
 
 func (b *BeaconState) MarshalJSON() ([]byte, error) {

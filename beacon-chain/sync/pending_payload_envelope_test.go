@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -27,7 +27,7 @@ import (
 
 func TestProcessPendingPayloadEnvelope_NoPendingEnvelope(t *testing.T) {
 	s := &Service{
-		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 		seenPayloadEnvelopeCache: lruwrpr.New(10),
 		badBlockCache:            lruwrpr.New(10),
 		cfg:                      &config{chain: &mock.ChainService{}},
@@ -41,11 +41,11 @@ func TestProcessPendingPayloadEnvelope_AlreadySeen(t *testing.T) {
 	db := dbtest.SetupDB(t)
 	chainService := &mock.ChainService{
 		Genesis:             time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{},
+		FinalizedCheckPoint: &silapb.Checkpoint{},
 		DB:                  db,
 	}
 	s := &Service{
-		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 		seenPayloadEnvelopeCache: lruwrpr.New(10),
 		badBlockCache:            lruwrpr.New(10),
 		cfg:                      &config{chain: chainService, beaconDB: db},
@@ -63,7 +63,7 @@ func TestProcessPendingPayloadEnvelope_AlreadySeen(t *testing.T) {
 	builderIdx := primitives.BuilderIndex(bid.Message.BuilderIndex)
 	blockHash := bytesutil.ToBytes32(bid.Message.BlockHash)
 	env := testSignedExecutionPayloadEnvelope(t, 1, builderIdx, root, blockHash)
-	s.pendingPayloadEnvelopes[root] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{uint64(builderIdx): env}
+	s.pendingPayloadEnvelopes[root] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{uint64(builderIdx): env}
 
 	s.setSeenPayloadEnvelope(root, builderIdx)
 	s.processPendingPayloadEnvelope(ctx, root)
@@ -75,13 +75,13 @@ func TestProcessPendingPayloadEnvelope_HappyPath(t *testing.T) {
 	db := dbtest.SetupDB(t)
 	chainService := &mock.ChainService{
 		Genesis:             time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{},
+		FinalizedCheckPoint: &silapb.Checkpoint{},
 		DB:                  db,
 	}
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	broadcaster := p2ptesting.NewTestP2P(t)
 	s := &Service{
-		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 		seenPayloadEnvelopeCache: lruwrpr.New(10),
 		badBlockCache:            lruwrpr.New(10),
 		cfg: &config{
@@ -110,7 +110,7 @@ func TestProcessPendingPayloadEnvelope_HappyPath(t *testing.T) {
 	builderIdx := primitives.BuilderIndex(bid.Message.BuilderIndex)
 	blockHash := bytesutil.ToBytes32(bid.Message.BlockHash)
 	env := testSignedExecutionPayloadEnvelope(t, 1, builderIdx, root, blockHash)
-	s.pendingPayloadEnvelopes[root] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{uint64(builderIdx): env}
+	s.pendingPayloadEnvelopes[root] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{uint64(builderIdx): env}
 
 	require.Equal(t, false, s.hasSeenPayloadEnvelope(root, builderIdx))
 	s.processPendingPayloadEnvelope(ctx, root)
@@ -124,14 +124,14 @@ func TestProcessPendingPayloadEnvelope_DoesNotBroadcastOnReceiveError(t *testing
 	db := dbtest.SetupDB(t)
 	chainService := &mock.ChainService{
 		Genesis:                   time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
-		FinalizedCheckPoint:       &ethpb.Checkpoint{},
+		FinalizedCheckPoint:       &silapb.Checkpoint{},
 		DB:                        db,
 		ReceivePayloadEnvelopeErr: errors.New("receive failed"),
 	}
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	broadcaster := p2ptesting.NewTestP2P(t)
 	s := &Service{
-		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 		seenPayloadEnvelopeCache: lruwrpr.New(10),
 		badBlockCache:            lruwrpr.New(10),
 		cfg: &config{
@@ -155,7 +155,7 @@ func TestProcessPendingPayloadEnvelope_DoesNotBroadcastOnReceiveError(t *testing
 	builderIdx := primitives.BuilderIndex(bid.Message.BuilderIndex)
 	blockHash := bytesutil.ToBytes32(bid.Message.BlockHash)
 	env := testSignedExecutionPayloadEnvelope(t, 1, builderIdx, root, blockHash)
-	s.pendingPayloadEnvelopes[root] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{uint64(builderIdx): env}
+	s.pendingPayloadEnvelopes[root] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{uint64(builderIdx): env}
 
 	s.processPendingPayloadEnvelope(ctx, root)
 	require.Equal(t, false, broadcaster.BroadcastCalled.Load())
@@ -166,12 +166,12 @@ func TestProcessPendingPayloadEnvelopes_Sweep(t *testing.T) {
 	db := dbtest.SetupDB(t)
 	chainService := &mock.ChainService{
 		Genesis:             time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{},
+		FinalizedCheckPoint: &silapb.Checkpoint{},
 		DB:                  db,
 	}
 	stateGen := stategen.New(db, doublylinkedtree.New())
 	s := &Service{
-		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 		seenPayloadEnvelopeCache: lruwrpr.New(10),
 		badBlockCache:            lruwrpr.New(10),
 		cfg: &config{
@@ -200,7 +200,7 @@ func TestProcessPendingPayloadEnvelopes_Sweep(t *testing.T) {
 	builderIdx := primitives.BuilderIndex(bid.Message.BuilderIndex)
 	blockHash := bytesutil.ToBytes32(bid.Message.BlockHash)
 	env := testSignedExecutionPayloadEnvelope(t, 1, builderIdx, root, blockHash)
-	s.pendingPayloadEnvelopes[root] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{uint64(builderIdx): env}
+	s.pendingPayloadEnvelopes[root] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{uint64(builderIdx): env}
 	s.newExecutionPayloadEnvelopeVerifier = testNewExecutionPayloadEnvelopeVerifier(mockExecutionPayloadEnvelopeVerifier{})
 
 	require.Equal(t, false, s.hasSeenPayloadEnvelope(root, builderIdx))
@@ -215,12 +215,12 @@ func TestProcessPendingPayloadEnvelopes_SkipsUnknownRoot(t *testing.T) {
 	db := dbtest.SetupDB(t)
 	chainService := &mock.ChainService{
 		Genesis:             time.Unix(time.Now().Unix()-int64(params.BeaconConfig().SecondsPerSlot), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{},
+		FinalizedCheckPoint: &silapb.Checkpoint{},
 		DB:                  db,
 		NotFinalized:        true, // InForkchoice returns false
 	}
 	s := &Service{
-		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 		seenPayloadEnvelopeCache: lruwrpr.New(10),
 		badBlockCache:            lruwrpr.New(10),
 		cfg:                      &config{chain: chainService, beaconDB: db},
@@ -229,7 +229,7 @@ func TestProcessPendingPayloadEnvelopes_SkipsUnknownRoot(t *testing.T) {
 	root := [32]byte{0x01}
 	blockHash := [32]byte{0x02}
 	env := testSignedExecutionPayloadEnvelope(t, 1, 1, root, blockHash)
-	s.pendingPayloadEnvelopes[root] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{1: env}
+	s.pendingPayloadEnvelopes[root] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{1: env}
 
 	s.processPendingPayloadEnvelopes(ctx)
 	require.Equal(t, 1, len(s.pendingPayloadEnvelopes))
@@ -239,17 +239,17 @@ func TestPrunePendingPayloadEnvelopes(t *testing.T) {
 	finalizedEpoch := primitives.Epoch(3)
 	slotsPerEpoch := params.BeaconConfig().SlotsPerEpoch
 	s := &Service{
-		pendingPayloadEnvelopes: make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+		pendingPayloadEnvelopes: make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 		cfg: &config{
 			chain: &mock.ChainService{
-				FinalizedCheckPoint: &ethpb.Checkpoint{Epoch: finalizedEpoch},
+				FinalizedCheckPoint: &silapb.Checkpoint{Epoch: finalizedEpoch},
 			},
 		},
 	}
 
 	oldRoot := [32]byte{0x01}
-	oldEnv := &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+	oldEnv := &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload:         &enginev1.ExecutionPayloadGloas{SlotNumber: primitives.Slot(finalizedEpoch-1) * slotsPerEpoch},
 			BeaconBlockRoot: oldRoot[:],
 		},
@@ -257,8 +257,8 @@ func TestPrunePendingPayloadEnvelopes(t *testing.T) {
 	}
 
 	atFinalizedRoot := [32]byte{0x03}
-	atFinalizedEnv := &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+	atFinalizedEnv := &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload:         &enginev1.ExecutionPayloadGloas{SlotNumber: primitives.Slot(finalizedEpoch) * slotsPerEpoch},
 			BeaconBlockRoot: atFinalizedRoot[:],
 		},
@@ -266,17 +266,17 @@ func TestPrunePendingPayloadEnvelopes(t *testing.T) {
 	}
 
 	freshRoot := [32]byte{0x02}
-	freshEnv := &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+	freshEnv := &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload:         &enginev1.ExecutionPayloadGloas{SlotNumber: primitives.Slot(finalizedEpoch+1) * slotsPerEpoch},
 			BeaconBlockRoot: freshRoot[:],
 		},
 		Signature: bytes.Repeat([]byte{0xBB}, 96),
 	}
 
-	s.pendingPayloadEnvelopes[oldRoot] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{1: oldEnv}
-	s.pendingPayloadEnvelopes[atFinalizedRoot] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{1: atFinalizedEnv}
-	s.pendingPayloadEnvelopes[freshRoot] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{1: freshEnv}
+	s.pendingPayloadEnvelopes[oldRoot] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{1: oldEnv}
+	s.pendingPayloadEnvelopes[atFinalizedRoot] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{1: atFinalizedEnv}
+	s.pendingPayloadEnvelopes[freshRoot] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{1: freshEnv}
 	require.Equal(t, 3, len(s.pendingPayloadEnvelopes))
 
 	s.prunePendingPayloadEnvelopes()
@@ -301,7 +301,7 @@ func TestQueuePendingPayloadEnvelope_SelfBuildIgnoredOutsideLookahead(t *testing
 	db := dbtest.SetupDB(t)
 	chainService := &mock.ChainService{
 		Genesis:             time.Unix(time.Now().Unix()-int64(uint64(envelopeSlot)*cfg.SecondsPerSlot), 0),
-		FinalizedCheckPoint: &ethpb.Checkpoint{},
+		FinalizedCheckPoint: &silapb.Checkpoint{},
 		DB:                  db,
 	}
 	st, err := util.NewBeaconStateFulu()
@@ -310,7 +310,7 @@ func TestQueuePendingPayloadEnvelope_SelfBuildIgnoredOutsideLookahead(t *testing
 
 	s := &Service{
 		seenPayloadEnvelopeCache: lruwrpr.New(10),
-		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 		cfg: &config{
 			chain: chainService,
 			clock: startup.NewClock(chainService.Genesis, chainService.ValidatorsRoot),
@@ -405,7 +405,7 @@ func TestQueuePendingPayloadEnvelope_DoesNotOverwrite(t *testing.T) {
 
 	blockHash := [32]byte{0x02}
 	first := testSignedExecutionPayloadEnvelope(t, 1, 1, root, blockHash)
-	s.pendingPayloadEnvelopes[root] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{1: first}
+	s.pendingPayloadEnvelopes[root] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{1: first}
 
 	second := testSignedExecutionPayloadEnvelope(t, 1, 1, root, blockHash)
 	e, err := blocks.WrappedROSignedExecutionPayloadEnvelope(second)
@@ -425,7 +425,7 @@ func TestQueuePendingPayloadEnvelope_PrunesMalformedExistingEnvelope(t *testing.
 	ctx := context.Background()
 	s, _, _, root := setupExecutionPayloadEnvelopeService(t, 1, 1)
 
-	s.pendingPayloadEnvelopes[root] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{
+	s.pendingPayloadEnvelopes[root] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{
 		1: {Signature: bytes.Repeat([]byte{0xAA}, 96)},
 	}
 
@@ -451,10 +451,10 @@ func TestQueuePendingPayloadEnvelope_RootCountBound(t *testing.T) {
 	// Fill up to maxPendingPayloadRoots with non-self-build envelopes.
 	for i := range maxPendingPayloadRoots {
 		root := [32]byte{byte(i + 1)}
-		env := &ethpb.SignedExecutionPayloadEnvelope{
-			Message: &ethpb.ExecutionPayloadEnvelope{Payload: &enginev1.ExecutionPayloadGloas{SlotNumber: 1}, BeaconBlockRoot: root[:]},
+		env := &silapb.SignedExecutionPayloadEnvelope{
+			Message: &silapb.ExecutionPayloadEnvelope{Payload: &enginev1.ExecutionPayloadGloas{SlotNumber: 1}, BeaconBlockRoot: root[:]},
 		}
-		s.pendingPayloadEnvelopes[root] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{uint64(i): env}
+		s.pendingPayloadEnvelopes[root] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{uint64(i): env}
 	}
 	require.Equal(t, maxPendingPayloadRoots, len(s.pendingPayloadEnvelopes))
 
@@ -482,10 +482,10 @@ func TestQueuePendingPayloadEnvelope_SelfBuildBypassesRootBound(t *testing.T) {
 	// Fill to the root limit.
 	for i := range maxPendingPayloadRoots {
 		root := [32]byte{byte(i + 1)}
-		env := &ethpb.SignedExecutionPayloadEnvelope{
-			Message: &ethpb.ExecutionPayloadEnvelope{Payload: &enginev1.ExecutionPayloadGloas{SlotNumber: 1}, BeaconBlockRoot: root[:]},
+		env := &silapb.SignedExecutionPayloadEnvelope{
+			Message: &silapb.ExecutionPayloadEnvelope{Payload: &enginev1.ExecutionPayloadGloas{SlotNumber: 1}, BeaconBlockRoot: root[:]},
 		}
-		s.pendingPayloadEnvelopes[root] = map[uint64]*ethpb.SignedExecutionPayloadEnvelope{uint64(i): env}
+		s.pendingPayloadEnvelopes[root] = map[uint64]*silapb.SignedExecutionPayloadEnvelope{uint64(i): env}
 	}
 
 	// Self-build for a new root should still be accepted.

@@ -9,18 +9,18 @@ import (
 	"strings"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/helpers"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/shared"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/helpers"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/shared"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/validator"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 )
 
-// GetValidatorCount is a HTTP handler that serves the GET /eth/v1/beacon/states/{state_id}/validator_count endpoint.
+// GetValidatorCount is a HTTP handler that serves the GET /sila/v1/beacon/states/{state_id}/validator_count endpoint.
 // It returns the total validator count according to the given statuses provided as a query parameter.
 //
 // The state ID is expected to be a valid Beacon Chain state identifier.
@@ -30,7 +30,7 @@ import (
 //
 // Example usage:
 //
-//	GET /eth/v1/beacon/states/12345/validator_count?status=active&status=pending
+//	GET /sila/v1/beacon/states/12345/validator_count?status=active&status=pending
 //
 // The above request will return a JSON response like:
 //
@@ -80,7 +80,7 @@ func (s *Server) GetValidatorCount(w http.ResponseWriter, r *http.Request) {
 
 	var statusVals []validator.Status
 	for _, status := range r.URL.Query()["status"] {
-		statusVal, ok := ethpb.ValidatorStatus_value[strings.ToUpper(status)]
+		statusVal, ok := silapb.ValidatorStatus_value[strings.ToUpper(status)]
 		if !ok {
 			errJson := &httputil.DefaultJsonError{
 				Message: fmt.Sprintf("invalid status query parameter: %v", status),
@@ -95,7 +95,7 @@ func (s *Server) GetValidatorCount(w http.ResponseWriter, r *http.Request) {
 
 	// If no status was provided then consider all the statuses to return validator count for each status.
 	if len(statusVals) == 0 {
-		for _, val := range ethpb.ValidatorStatus_value {
+		for _, val := range silapb.ValidatorStatus_value {
 			statusVals = append(statusVals, validator.Status(val))
 		}
 	}

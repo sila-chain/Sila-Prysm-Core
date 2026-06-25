@@ -17,7 +17,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -88,7 +88,7 @@ func TestValidateDataColumn(t *testing.T) {
 		digest, err := service.currentForkDigest()
 		require.NoError(t, err)
 
-		if dc, ok := msg.(*ethpb.DataColumnSidecar); ok {
+		if dc, ok := msg.(*silapb.DataColumnSidecar); ok {
 			subnet := peerdas.ComputeSubnetForDataColumnSidecar(dc.Index)
 			topic = service.addDigestAndIndexToTopic(topic, digest, subnet)
 		} else {
@@ -110,9 +110,9 @@ func TestValidateDataColumn(t *testing.T) {
 
 	genericError := errors.New("generic error")
 
-	dataColumnSidecarMsg := &ethpb.DataColumnSidecar{
-		SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-			Header: &ethpb.BeaconBlockHeader{
+	dataColumnSidecarMsg := &silapb.DataColumnSidecar{
+		SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+			Header: &silapb.BeaconBlockHeader{
 				ParentRoot: make([]byte, fieldparams.RootLength),
 				StateRoot:  make([]byte, fieldparams.RootLength),
 				BodyRoot:   make([]byte, fieldparams.RootLength),

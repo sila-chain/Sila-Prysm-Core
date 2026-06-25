@@ -2,21 +2,21 @@ package test_helpers
 
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
-func GenerateProtoFuluBeaconBlockContents() *ethpb.BeaconBlockContentsFulu {
+func GenerateProtoFuluBeaconBlockContents() *silapb.BeaconBlockContentsFulu {
 	electra := GenerateProtoElectraBeaconBlockContents()
-	return &ethpb.BeaconBlockContentsFulu{
+	return &silapb.BeaconBlockContentsFulu{
 		Block:     electra.Block,
 		KzgProofs: electra.KzgProofs,
 		Blobs:     electra.Blobs,
 	}
 }
 
-func GenerateProtoBlindedFuluBeaconBlock() *ethpb.BlindedBeaconBlockFulu {
+func GenerateProtoBlindedFuluBeaconBlock() *silapb.BlindedBeaconBlockFulu {
 	electra := GenerateProtoBlindedElectraBeaconBlock()
-	return &ethpb.BlindedBeaconBlockFulu{
+	return &silapb.BlindedBeaconBlockFulu{
 		Slot:          electra.Slot,
 		ProposerIndex: electra.ProposerIndex,
 		ParentRoot:    electra.ParentRoot,

@@ -5,7 +5,7 @@ import (
 
 	slashertypes "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/slasher/types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -13,13 +13,13 @@ import (
 func (s *Service) detectProposerSlashings(
 	ctx context.Context,
 	incomingProposals []*slashertypes.SignedBlockHeaderWrapper,
-) ([]*ethpb.ProposerSlashing, error) {
+) ([]*silapb.ProposerSlashing, error) {
 	ctx, span := trace.StartSpan(ctx, "slasher.detectProposerSlashings")
 	defer span.End()
 
 	// internalSlashings will contain any slashable double proposals in the input list
 	// of proposals with respect to each other.
-	internalSlashings := []*ethpb.ProposerSlashing{}
+	internalSlashings := []*silapb.ProposerSlashing{}
 
 	existingProposals := make(map[string]*slashertypes.SignedBlockHeaderWrapper)
 
@@ -40,7 +40,7 @@ func (s *Service) detectProposerSlashings(
 		if isDoubleProposal(incomingProposal.HeaderRoot, existingProposal.HeaderRoot) {
 			doubleProposalsTotal.Inc()
 
-			slashing := &ethpb.ProposerSlashing{
+			slashing := &silapb.ProposerSlashing{
 				Header_1: existingProposal.SignedBeaconBlockHeader,
 				Header_2: incomingProposal.SignedBeaconBlockHeader,
 			}

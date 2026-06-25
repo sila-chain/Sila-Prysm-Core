@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -50,7 +50,7 @@ var ValidatorCannotExitYetMsg = "validator has not been active long enough to ex
 func ProcessVoluntaryExits(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	exits []*ethpb.SignedVoluntaryExit,
+	exits []*silapb.SignedVoluntaryExit,
 	exitInfo *v.ExitInfo,
 ) (state.BeaconState, error) {
 	ctx, span := trace.StartSpan(ctx, "blocks.ProcessVoluntaryExits")
@@ -120,7 +120,7 @@ func ProcessVoluntaryExits(
 func VerifyExitAndSignature(
 	validator state.ReadOnlyValidator,
 	st state.ReadOnlyBeaconState,
-	signed *ethpb.SignedVoluntaryExit,
+	signed *silapb.SignedVoluntaryExit,
 ) error {
 	if signed == nil || signed.Exit == nil {
 		return errors.New("nil exit")
@@ -137,7 +137,7 @@ func VerifyExitAndSignature(
 	// EIP-7044: Beginning in Deneb, fix the fork version to Capella.
 	// This allows for signed validator exits to be valid forever.
 	if st.Version() >= version.Deneb {
-		fork = &ethpb.Fork{
+		fork = &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().CapellaForkVersion,
 			CurrentVersion:  params.BeaconConfig().CapellaForkVersion,
 			Epoch:           params.BeaconConfig().CapellaForkEpoch,
@@ -182,7 +182,7 @@ func VerifyExitAndSignature(
 //	 assert bls.Verify(validator.pubkey, signing_root, signed_voluntary_exit.signature)
 //	 # Initiate exit
 //	 initiate_validator_exit(state, voluntary_exit.validator_index)
-func verifyExitConditions(st state.ReadOnlyBeaconState, validator state.ReadOnlyValidator, exit *ethpb.VoluntaryExit) error {
+func verifyExitConditions(st state.ReadOnlyBeaconState, validator state.ReadOnlyValidator, exit *silapb.VoluntaryExit) error {
 	currentEpoch := slots.ToEpoch(st.Slot())
 	// Verify the validator is active.
 	if !helpers.IsActiveValidatorUsingTrie(validator, currentEpoch) {
@@ -223,7 +223,7 @@ func verifyExitConditions(st state.ReadOnlyBeaconState, validator state.ReadOnly
 
 // verifyBuilderExitAndSignature validates a builder voluntary exit.
 // [New in Gloas:EIP7732]
-func verifyBuilderExitAndSignature(st state.ReadOnlyBeaconState, signed *ethpb.SignedVoluntaryExit) error {
+func verifyBuilderExitAndSignature(st state.ReadOnlyBeaconState, signed *silapb.SignedVoluntaryExit) error {
 	if signed == nil || signed.Exit == nil {
 		return errors.New("nil exit")
 	}
@@ -259,7 +259,7 @@ func verifyBuilderExitAndSignature(st state.ReadOnlyBeaconState, signed *ethpb.S
 	if err != nil {
 		return errors.Wrap(err, "could not get builder pubkey")
 	}
-	fork := &ethpb.Fork{
+	fork := &silapb.Fork{
 		PreviousVersion: params.BeaconConfig().CapellaForkVersion,
 		CurrentVersion:  params.BeaconConfig().CapellaForkVersion,
 		Epoch:           params.BeaconConfig().CapellaForkEpoch,

@@ -22,7 +22,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	leakybucket "github.com/sila-chain/Sila-Consensus-Core/v7/container/leaky-bucket"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/rand"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	goPeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -879,7 +879,7 @@ func buildByRangeRequests(
 	slotsWithCommitments map[primitives.Slot]bool,
 	indicesByRoot map[[fieldparams.RootLength]byte]map[uint64]bool,
 	batchSize uint64,
-) ([]*ethpb.DataColumnSidecarsByRangeRequest, error) {
+) ([]*silapb.DataColumnSidecarsByRangeRequest, error) {
 	if len(indicesByRoot) == 0 {
 		return nil, nil
 	}
@@ -922,10 +922,10 @@ func buildByRangeRequests(
 	startSlot, endSlot := slots[0], slots[len(slots)-1]
 	totalCount := uint64(endSlot - startSlot + 1)
 
-	requests := make([]*ethpb.DataColumnSidecarsByRangeRequest, 0, totalCount/batchSize)
+	requests := make([]*silapb.DataColumnSidecarsByRangeRequest, 0, totalCount/batchSize)
 	for start := startSlot; start <= endSlot; start += primitives.Slot(batchSize) {
 		end := min(start+primitives.Slot(batchSize)-1, endSlot)
-		request := &ethpb.DataColumnSidecarsByRangeRequest{
+		request := &silapb.DataColumnSidecarsByRangeRequest{
 			StartSlot: start,
 			Count:     uint64(end - start + 1),
 			Columns:   columns,
@@ -941,7 +941,7 @@ func buildByRangeRequests(
 func buildByRootRequest(indicesByRoot map[[fieldparams.RootLength]byte]map[uint64]bool) p2ptypes.DataColumnsByRootIdentifiers {
 	identifiers := make(p2ptypes.DataColumnsByRootIdentifiers, 0, len(indicesByRoot))
 	for root, indices := range indicesByRoot {
-		identifier := &ethpb.DataColumnsByRootIdentifier{
+		identifier := &silapb.DataColumnsByRootIdentifier{
 			BlockRoot: root[:],
 			Columns:   helpers.SortedSliceFromMap(indices),
 		}
@@ -949,7 +949,7 @@ func buildByRootRequest(indicesByRoot map[[fieldparams.RootLength]byte]map[uint6
 	}
 
 	// Sort identifiers to have a deterministic output.
-	slices.SortFunc(identifiers, func(left, right *ethpb.DataColumnsByRootIdentifier) int {
+	slices.SortFunc(identifiers, func(left, right *silapb.DataColumnsByRootIdentifier) int {
 		if cmp := bytes.Compare(left.BlockRoot, right.BlockRoot); cmp != 0 {
 			return cmp
 		}

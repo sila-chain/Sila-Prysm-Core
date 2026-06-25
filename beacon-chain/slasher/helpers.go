@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/slice"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sirupsen/logrus"
 )
@@ -96,7 +96,7 @@ func (s *Service) filterAttestations(
 // source and target epochs, and that the source epoch of the attestation must
 // be less than the target epoch, which is a precondition for performing slashing
 // detection (except for the genesis epoch).
-func validateAttestationIntegrity(att ethpb.IndexedAtt) bool {
+func validateAttestationIntegrity(att silapb.IndexedAtt) bool {
 	// If an attestation is malformed, we drop it.
 	if att == nil || att.IsNil() || att.GetData().Source == nil || att.GetData().Target == nil {
 		return false
@@ -116,7 +116,7 @@ func validateAttestationIntegrity(att ethpb.IndexedAtt) bool {
 }
 
 // Validates the signed beacon block header integrity, ensuring we have no nil values.
-func validateBlockHeaderIntegrity(header *ethpb.SignedBeaconBlockHeader) bool {
+func validateBlockHeaderIntegrity(header *silapb.SignedBeaconBlockHeader) bool {
 	// If a signed block header is malformed, we drop it.
 	if header == nil ||
 		header.Header == nil ||
@@ -127,7 +127,7 @@ func validateBlockHeaderIntegrity(header *ethpb.SignedBeaconBlockHeader) bool {
 	return true
 }
 
-func logAttesterSlashing(slashing ethpb.AttSlashing) {
+func logAttesterSlashing(slashing silapb.AttSlashing) {
 	indices := slice.IntersectionUint64(slashing.FirstAttestation().GetAttestingIndices(), slashing.SecondAttestation().GetAttestingIndices())
 	log.WithFields(logrus.Fields{
 		"validatorIndex":  indices,
@@ -138,7 +138,7 @@ func logAttesterSlashing(slashing ethpb.AttSlashing) {
 	}).Info("Attester slashing detected")
 }
 
-func logProposerSlashing(slashing *ethpb.ProposerSlashing) {
+func logProposerSlashing(slashing *silapb.ProposerSlashing) {
 	log.WithFields(logrus.Fields{
 		"validatorIndex": slashing.Header_1.Header.ProposerIndex,
 		"slot":           slashing.Header_1.Header.Slot,
@@ -258,14 +258,14 @@ func unifyAttWrapperVersion(w1 *slashertypes.IndexedAttestationWrapper, w2 *slas
 		return
 	}
 	if w1.IndexedAttestation.Version() != version.Electra {
-		w1.IndexedAttestation = &ethpb.IndexedAttestationElectra{
+		w1.IndexedAttestation = &silapb.IndexedAttestationElectra{
 			AttestingIndices: w1.IndexedAttestation.GetAttestingIndices(),
 			Data:             w1.IndexedAttestation.GetData(),
 			Signature:        w1.IndexedAttestation.GetSignature(),
 		}
 		return
 	}
-	w2.IndexedAttestation = &ethpb.IndexedAttestationElectra{
+	w2.IndexedAttestation = &silapb.IndexedAttestationElectra{
 		AttestingIndices: w2.IndexedAttestation.GetAttestingIndices(),
 		Data:             w2.IndexedAttestation.GetData(),
 		Signature:        w2.IndexedAttestation.GetSignature(),

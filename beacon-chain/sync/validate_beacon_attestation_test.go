@@ -21,7 +21,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -72,7 +72,7 @@ func TestService_validateCommitteeIndexBeaconAttestation(t *testing.T) {
 
 	validBlockRoot, err := blk.Block.HashTreeRoot()
 	require.NoError(t, err)
-	chain.FinalizedCheckPoint = &ethpb.Checkpoint{
+	chain.FinalizedCheckPoint = &silapb.Checkpoint{
 		Root:  validBlockRoot[:],
 		Epoch: 0,
 	}
@@ -85,24 +85,24 @@ func TestService_validateCommitteeIndexBeaconAttestation(t *testing.T) {
 
 	tests := []struct {
 		name                      string
-		msg                       ethpb.Att
+		msg                       silapb.Att
 		topic                     string
 		validAttestationSignature bool
 		want                      bool
 	}{
 		{
 			name: "valid attestation signature",
-			msg: &ethpb.Attestation{
+			msg: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b101},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: validBlockRoot[:],
 					CommitteeIndex:  0,
 					Slot:            1,
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 0,
 						Root:  validBlockRoot[:],
 					},
-					Source: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 			},
 			topic:                     fmt.Sprintf("/sila/%x/beacon_attestation_1", digest) + p.Encoding().ProtocolSuffix(),
@@ -111,17 +111,17 @@ func TestService_validateCommitteeIndexBeaconAttestation(t *testing.T) {
 		},
 		{
 			name: "valid attestation signature with nil topic",
-			msg: &ethpb.Attestation{
+			msg: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b101},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: validBlockRoot[:],
 					CommitteeIndex:  0,
 					Slot:            1,
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 0,
 						Root:  validBlockRoot[:],
 					},
-					Source: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 			},
 			topic:                     "",
@@ -130,17 +130,17 @@ func TestService_validateCommitteeIndexBeaconAttestation(t *testing.T) {
 		},
 		{
 			name: "bad target epoch",
-			msg: &ethpb.Attestation{
+			msg: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b101},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: validBlockRoot[:],
 					CommitteeIndex:  0,
 					Slot:            1,
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 10,
 						Root:  validBlockRoot[:],
 					},
-					Source: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 			},
 			topic:                     fmt.Sprintf("/sila/%x/beacon_attestation_1", digest) + p.Encoding().ProtocolSuffix(),
@@ -149,14 +149,14 @@ func TestService_validateCommitteeIndexBeaconAttestation(t *testing.T) {
 		},
 		{
 			name: "already seen",
-			msg: &ethpb.Attestation{
+			msg: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b101},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: validBlockRoot[:],
 					CommitteeIndex:  0,
 					Slot:            1,
-					Target:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-					Source:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Target:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 			},
 			topic:                     fmt.Sprintf("/sila/%x/beacon_attestation_1", digest) + p.Encoding().ProtocolSuffix(),
@@ -165,14 +165,14 @@ func TestService_validateCommitteeIndexBeaconAttestation(t *testing.T) {
 		},
 		{
 			name: "invalid beacon block",
-			msg: &ethpb.Attestation{
+			msg: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b101},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: invalidRoot[:],
 					CommitteeIndex:  0,
 					Slot:            1,
-					Target:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-					Source:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Target:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 			},
 			topic:                     fmt.Sprintf("/sila/%x/beacon_attestation_1", digest) + p.Encoding().ProtocolSuffix(),
@@ -181,14 +181,14 @@ func TestService_validateCommitteeIndexBeaconAttestation(t *testing.T) {
 		},
 		{
 			name: "committee index exceeds committee length",
-			msg: &ethpb.Attestation{
+			msg: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b101},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: validBlockRoot[:],
 					CommitteeIndex:  4,
 					Slot:            1,
-					Target:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-					Source:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Target:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 			},
 			topic:                     fmt.Sprintf("/sila/%x/beacon_attestation_2", digest) + p.Encoding().ProtocolSuffix(),
@@ -197,14 +197,14 @@ func TestService_validateCommitteeIndexBeaconAttestation(t *testing.T) {
 		},
 		{
 			name: "wrong committee index",
-			msg: &ethpb.Attestation{
+			msg: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b101},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: validBlockRoot[:],
 					CommitteeIndex:  2,
 					Slot:            1,
-					Target:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-					Source:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Target:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 			},
 			topic:                     fmt.Sprintf("/sila/%x/beacon_attestation_2", digest) + p.Encoding().ProtocolSuffix(),
@@ -213,14 +213,14 @@ func TestService_validateCommitteeIndexBeaconAttestation(t *testing.T) {
 		},
 		{
 			name: "already aggregated",
-			msg: &ethpb.Attestation{
+			msg: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b1011},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: validBlockRoot[:],
 					CommitteeIndex:  1,
 					Slot:            1,
-					Target:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-					Source:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Target:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 			},
 			topic:                     fmt.Sprintf("/sila/%x/beacon_attestation_1", digest) + p.Encoding().ProtocolSuffix(),
@@ -229,14 +229,14 @@ func TestService_validateCommitteeIndexBeaconAttestation(t *testing.T) {
 		},
 		{
 			name: "missing block",
-			msg: &ethpb.Attestation{
+			msg: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b101},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: bytesutil.PadTo([]byte("missing"), fieldparams.RootLength),
 					CommitteeIndex:  1,
 					Slot:            1,
-					Target:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-					Source:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Target:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 			},
 			topic:                     fmt.Sprintf("/sila/%x/beacon_attestation_1", digest) + p.Encoding().ProtocolSuffix(),
@@ -245,14 +245,14 @@ func TestService_validateCommitteeIndexBeaconAttestation(t *testing.T) {
 		},
 		{
 			name: "invalid attestation",
-			msg: &ethpb.Attestation{
+			msg: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0b101},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: validBlockRoot[:],
 					CommitteeIndex:  1,
 					Slot:            1,
-					Target:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-					Source:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Target:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 			},
 			topic:                     fmt.Sprintf("/sila/%x/beacon_attestation_1", digest) + p.Encoding().ProtocolSuffix(),
@@ -353,7 +353,7 @@ func TestService_validateCommitteeIndexBeaconAttestationElectra(t *testing.T) {
 
 	validBlockRoot, err := blk.Block.HashTreeRoot()
 	require.NoError(t, err)
-	chain.FinalizedCheckPoint = &ethpb.Checkpoint{
+	chain.FinalizedCheckPoint = &silapb.Checkpoint{
 		Root:  validBlockRoot[:],
 		Epoch: 0,
 	}
@@ -368,21 +368,21 @@ func TestService_validateCommitteeIndexBeaconAttestationElectra(t *testing.T) {
 
 	tests := []struct {
 		name string
-		msg  ethpb.Att
+		msg  silapb.Att
 		want bool
 	}{
 		{
 			name: "valid",
-			msg: &ethpb.SingleAttestation{
-				Data: &ethpb.AttestationData{
+			msg: &silapb.SingleAttestation{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: validBlockRoot[:],
 					CommitteeIndex:  0,
 					Slot:            s.cfg.clock.CurrentSlot(),
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: s.cfg.clock.CurrentEpoch(),
 						Root:  validBlockRoot[:],
 					},
-					Source: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 				AttesterIndex: committee[0],
 			},
@@ -390,16 +390,16 @@ func TestService_validateCommitteeIndexBeaconAttestationElectra(t *testing.T) {
 		},
 		{
 			name: "non-zero committee index in att data",
-			msg: &ethpb.SingleAttestation{
-				Data: &ethpb.AttestationData{
+			msg: &silapb.SingleAttestation{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: validBlockRoot[:],
 					CommitteeIndex:  1,
 					Slot:            s.cfg.clock.CurrentSlot(),
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: s.cfg.clock.CurrentEpoch(),
 						Root:  validBlockRoot[:],
 					},
-					Source: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 				AttesterIndex: committee[0],
 			},
@@ -407,16 +407,16 @@ func TestService_validateCommitteeIndexBeaconAttestationElectra(t *testing.T) {
 		},
 		{
 			name: "attesting index not in committee",
-			msg: &ethpb.SingleAttestation{
-				Data: &ethpb.AttestationData{
+			msg: &silapb.SingleAttestation{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: validBlockRoot[:],
 					CommitteeIndex:  1,
 					Slot:            s.cfg.clock.CurrentSlot(),
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: s.cfg.clock.CurrentEpoch(),
 						Root:  validBlockRoot[:],
 					},
-					Source: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				},
 				AttesterIndex: 999999,
 			},
@@ -464,7 +464,7 @@ func TestService_setSeenUnaggregatedAtt(t *testing.T) {
 	s := NewService(t.Context(), WithP2P(p2ptest.NewTestP2P(t)))
 
 	// Helper function to generate key and handle errors in tests
-	generateKey := func(t *testing.T, att ethpb.Att) string {
+	generateKey := func(t *testing.T, att silapb.Att) string {
 		key, err := generateUnaggregatedAttCacheKey(att)
 		require.NoError(t, err)
 		return key
@@ -473,36 +473,36 @@ func TestService_setSeenUnaggregatedAtt(t *testing.T) {
 	t.Run("phase0", func(t *testing.T) {
 		s.initCaches()
 
-		s0c0a0 := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 0, CommitteeIndex: 0},
+		s0c0a0 := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 0, CommitteeIndex: 0},
 			AggregationBits: bitfield.Bitlist{0b1001},
 		}
-		s0c0a1 := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 0, CommitteeIndex: 0},
+		s0c0a1 := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 0, CommitteeIndex: 0},
 			AggregationBits: bitfield.Bitlist{0b1010},
 		}
-		s0c0a2 := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 0, CommitteeIndex: 0},
+		s0c0a2 := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 0, CommitteeIndex: 0},
 			AggregationBits: bitfield.Bitlist{0b1100},
 		}
-		s0c1a0 := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 0, CommitteeIndex: 1},
+		s0c1a0 := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 0, CommitteeIndex: 1},
 			AggregationBits: bitfield.Bitlist{0b1001},
 		}
-		s0c2a0 := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 0, CommitteeIndex: 2},
+		s0c2a0 := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 0, CommitteeIndex: 2},
 			AggregationBits: bitfield.Bitlist{0b1001},
 		}
-		s1c0a0 := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 1, CommitteeIndex: 0},
+		s1c0a0 := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 1, CommitteeIndex: 0},
 			AggregationBits: bitfield.Bitlist{0b1001},
 		}
-		s2c0a0 := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 2, CommitteeIndex: 0},
+		s2c0a0 := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 2, CommitteeIndex: 0},
 			AggregationBits: bitfield.Bitlist{0b1001},
 		}
-		s3c0a0 := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 3, CommitteeIndex: 0},
+		s3c0a0 := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 3, CommitteeIndex: 0},
 			AggregationBits: bitfield.Bitlist{0b1001},
 		}
 
@@ -547,12 +547,12 @@ func TestService_setSeenUnaggregatedAtt(t *testing.T) {
 			assert.Equal(t, true, first)
 		})
 		t.Run("0 bits set is considered not seen", func(t *testing.T) {
-			a := &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b1000}}
+			a := &silapb.Attestation{AggregationBits: bitfield.Bitlist{0b1000}}
 			_, err := generateUnaggregatedAttCacheKey(a)
 			require.Equal(t, err != nil, true, "Should error because no bits set is invalid")
 		})
 		t.Run("multiple bits set is considered not seen", func(t *testing.T) {
-			a := &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b1111}}
+			a := &silapb.Attestation{AggregationBits: bitfield.Bitlist{0b1111}}
 			_, err := generateUnaggregatedAttCacheKey(a)
 			require.Equal(t, err != nil, true, "Should error because no bits set is invalid")
 		})
@@ -560,43 +560,43 @@ func TestService_setSeenUnaggregatedAtt(t *testing.T) {
 	t.Run("electra", func(t *testing.T) {
 		s.initCaches()
 
-		s0c0a0 := &ethpb.SingleAttestation{
-			Data:          &ethpb.AttestationData{Slot: 0},
+		s0c0a0 := &silapb.SingleAttestation{
+			Data:          &silapb.AttestationData{Slot: 0},
 			CommitteeId:   0,
 			AttesterIndex: 0,
 		}
-		s0c0a1 := &ethpb.SingleAttestation{
-			Data:          &ethpb.AttestationData{Slot: 0},
+		s0c0a1 := &silapb.SingleAttestation{
+			Data:          &silapb.AttestationData{Slot: 0},
 			CommitteeId:   0,
 			AttesterIndex: 1,
 		}
-		s0c0a2 := &ethpb.SingleAttestation{
-			Data:          &ethpb.AttestationData{Slot: 0},
+		s0c0a2 := &silapb.SingleAttestation{
+			Data:          &silapb.AttestationData{Slot: 0},
 			CommitteeId:   0,
 			AttesterIndex: 2,
 		}
-		s0c1a0 := &ethpb.SingleAttestation{
-			Data:          &ethpb.AttestationData{Slot: 0},
+		s0c1a0 := &silapb.SingleAttestation{
+			Data:          &silapb.AttestationData{Slot: 0},
 			CommitteeId:   1,
 			AttesterIndex: 0,
 		}
-		s0c2a0 := &ethpb.SingleAttestation{
-			Data:          &ethpb.AttestationData{Slot: 0},
+		s0c2a0 := &silapb.SingleAttestation{
+			Data:          &silapb.AttestationData{Slot: 0},
 			CommitteeId:   2,
 			AttesterIndex: 0,
 		}
-		s1c0a0 := &ethpb.SingleAttestation{
-			Data:          &ethpb.AttestationData{Slot: 1},
+		s1c0a0 := &silapb.SingleAttestation{
+			Data:          &silapb.AttestationData{Slot: 1},
 			CommitteeId:   0,
 			AttesterIndex: 0,
 		}
-		s2c0a0 := &ethpb.SingleAttestation{
-			Data:          &ethpb.AttestationData{Slot: 2},
+		s2c0a0 := &silapb.SingleAttestation{
+			Data:          &silapb.AttestationData{Slot: 2},
 			CommitteeId:   0,
 			AttesterIndex: 0,
 		}
-		s3c0a0 := &ethpb.SingleAttestation{
-			Data:          &ethpb.AttestationData{Slot: 2},
+		s3c0a0 := &silapb.SingleAttestation{
+			Data:          &silapb.AttestationData{Slot: 2},
 			CommitteeId:   0,
 			AttesterIndex: 0,
 		}
@@ -642,7 +642,7 @@ func TestService_setSeenUnaggregatedAtt(t *testing.T) {
 			assert.Equal(t, true, first)
 		})
 		t.Run("single attestation is considered not seen", func(t *testing.T) {
-			a := &ethpb.AttestationElectra{}
+			a := &silapb.AttestationElectra{}
 			_, err := generateUnaggregatedAttCacheKey(a)
 			require.Equal(t, err != nil, true, "Should error because no bits set is invalid")
 		})
@@ -660,8 +660,8 @@ func Test_validateCommitteeIndexAndCount_Boundary(t *testing.T) {
 	s := &Service{}
 
 	// Build a minimal Phase0 attestation (unaggregated path).
-	att := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
+	att := &silapb.Attestation{
+		Data: &silapb.AttestationData{
 			Slot:           1,
 			CommitteeIndex: 0,
 		},
@@ -758,7 +758,7 @@ func Test_validateGloasCommitteeIndex(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mc := &mockChain.ChainService{
 				BlockSlot:           tt.blockSlot,
-				FinalizedCheckPoint: &ethpb.Checkpoint{Root: make([]byte, 32)},
+				FinalizedCheckPoint: &silapb.Checkpoint{Root: make([]byte, 32)},
 			}
 			if tt.hasFullNode {
 				mc.ForkchoiceRoots = map[[32]byte]bool{blockRoot32: true}
@@ -774,7 +774,7 @@ func Test_validateGloasCommitteeIndex(t *testing.T) {
 				s.badPayloadCache.Add(string(blockRoot32[:]), true)
 			}
 
-			data := &ethpb.AttestationData{
+			data := &silapb.AttestationData{
 				Slot:            tt.attestationSlot,
 				CommitteeIndex:  tt.committeeIndex,
 				BeaconBlockRoot: blockRoot,
@@ -800,13 +800,13 @@ func TestService_validateUnaggregatedAttTopic_SubnetMatch(t *testing.T) {
 	st, _ := util.DeterministicGenesisState(t, 64)
 	require.NoError(t, st.SetSlot(1))
 
-	att := &ethpb.Attestation{
+	att := &silapb.Attestation{
 		AggregationBits: bitfield.Bitlist{0b101},
-		Data: &ethpb.AttestationData{
+		Data: &silapb.AttestationData{
 			Slot:           1,
 			CommitteeIndex: 0,
-			Target:         &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-			Source:         &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+			Target:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+			Source:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 		},
 	}
 

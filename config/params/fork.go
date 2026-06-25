@@ -3,7 +3,7 @@ package params
 import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
@@ -20,7 +20,7 @@ func ForkDigest(epoch primitives.Epoch) [4]byte {
 }
 
 func computeForkDataRoot(version [fieldparams.VersionLength]byte, root [32]byte) ([32]byte, error) {
-	r, err := (&ethpb.ForkData{
+	r, err := (&silapb.ForkData{
 		CurrentVersion:        version[:],
 		GenesisValidatorsRoot: root[:],
 	}).HashTreeRoot()
@@ -31,18 +31,18 @@ func computeForkDataRoot(version [fieldparams.VersionLength]byte, root [32]byte)
 }
 
 // Fork returns the fork version for the given epoch.
-func Fork(epoch primitives.Epoch) (*ethpb.Fork, error) {
+func Fork(epoch primitives.Epoch) (*silapb.Fork, error) {
 	cfg := BeaconConfig()
 	return ForkFromConfig(cfg, epoch), nil
 }
 
-func ForkFromConfig(cfg *BeaconChainConfig, epoch primitives.Epoch) *ethpb.Fork {
+func ForkFromConfig(cfg *BeaconChainConfig, epoch primitives.Epoch) *silapb.Fork {
 	current := cfg.networkSchedule.forEpoch(epoch)
 	previous := current
 	if current.Epoch > 0 {
 		previous = cfg.networkSchedule.forEpoch(current.Epoch - 1)
 	}
-	return &ethpb.Fork{
+	return &silapb.Fork{
 		PreviousVersion: previous.ForkVersion[:],
 		CurrentVersion:  current.ForkVersion[:],
 		Epoch:           current.Epoch,

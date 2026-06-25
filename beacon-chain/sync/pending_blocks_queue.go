@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz/equality"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	silaTrace "github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/libp2p/go-libp2p/core"
 	"github.com/pkg/errors"
@@ -516,7 +516,7 @@ func (s *Service) fetchAndQueuePayloadEnvelopesForRoots(
 	}
 }
 
-func (s *Service) queuePendingPayloadEnvelopeFromRootRequest(signedEnvelope *ethpb.SignedExecutionPayloadEnvelope) {
+func (s *Service) queuePendingPayloadEnvelopeFromRootRequest(signedEnvelope *silapb.SignedExecutionPayloadEnvelope) {
 	if signedEnvelope == nil || signedEnvelope.Message == nil {
 		return
 	}
@@ -529,7 +529,7 @@ func (s *Service) queuePendingPayloadEnvelopeFromRootRequest(signedEnvelope *eth
 
 	inner, ok := s.pendingPayloadEnvelopes[root]
 	if !ok {
-		inner = make(map[uint64]*ethpb.SignedExecutionPayloadEnvelope)
+		inner = make(map[uint64]*silapb.SignedExecutionPayloadEnvelope)
 		s.pendingPayloadEnvelopes[root] = inner
 	}
 	inner[builderIdx] = signedEnvelope

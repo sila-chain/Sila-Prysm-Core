@@ -8,14 +8,14 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func TestValidatorIndexMap_OK(t *testing.T) {
-	base := &ethpb.BeaconState{
-		Validators: []*ethpb.Validator{
+	base := &silapb.BeaconState{
+		Validators: []*silapb.Validator{
 			{
 				PublicKey: []byte("zero"),
 			},

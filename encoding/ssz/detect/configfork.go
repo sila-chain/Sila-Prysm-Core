@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -105,7 +105,7 @@ func (cf *VersionedUnmarshaler) UnmarshalBeaconState(marshaled []byte) (s state.
 	forkName := version.String(cf.Fork)
 	switch fork := cf.Fork; fork {
 	case version.Phase0:
-		st := &ethpb.BeaconState{}
+		st := &silapb.BeaconState{}
 		err = st.UnmarshalSSZ(marshaled)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to unmarshal state, detected fork=%s", forkName)
@@ -115,7 +115,7 @@ func (cf *VersionedUnmarshaler) UnmarshalBeaconState(marshaled []byte) (s state.
 			return nil, errors.Wrapf(err, "failed to init state trie from state, detected fork=%s", forkName)
 		}
 	case version.Altair:
-		st := &ethpb.BeaconStateAltair{}
+		st := &silapb.BeaconStateAltair{}
 		err = st.UnmarshalSSZ(marshaled)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to unmarshal state, detected fork=%s", forkName)
@@ -125,7 +125,7 @@ func (cf *VersionedUnmarshaler) UnmarshalBeaconState(marshaled []byte) (s state.
 			return nil, errors.Wrapf(err, "failed to init state trie from state, detected fork=%s", forkName)
 		}
 	case version.Bellatrix:
-		st := &ethpb.BeaconStateBellatrix{}
+		st := &silapb.BeaconStateBellatrix{}
 		err = st.UnmarshalSSZ(marshaled)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to unmarshal state, detected fork=%s", forkName)
@@ -135,7 +135,7 @@ func (cf *VersionedUnmarshaler) UnmarshalBeaconState(marshaled []byte) (s state.
 			return nil, errors.Wrapf(err, "failed to init state trie from state, detected fork=%s", forkName)
 		}
 	case version.Capella:
-		st := &ethpb.BeaconStateCapella{}
+		st := &silapb.BeaconStateCapella{}
 		err = st.UnmarshalSSZ(marshaled)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to unmarshal state, detected fork=%s", forkName)
@@ -145,7 +145,7 @@ func (cf *VersionedUnmarshaler) UnmarshalBeaconState(marshaled []byte) (s state.
 			return nil, errors.Wrapf(err, "failed to init state trie from state, detected fork=%s", forkName)
 		}
 	case version.Deneb:
-		st := &ethpb.BeaconStateDeneb{}
+		st := &silapb.BeaconStateDeneb{}
 		err = st.UnmarshalSSZ(marshaled)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to unmarshal state, detected fork=%s", forkName)
@@ -155,7 +155,7 @@ func (cf *VersionedUnmarshaler) UnmarshalBeaconState(marshaled []byte) (s state.
 			return nil, errors.Wrapf(err, "failed to init state trie from state, detected fork=%s", forkName)
 		}
 	case version.Electra:
-		st := &ethpb.BeaconStateElectra{}
+		st := &silapb.BeaconStateElectra{}
 		err = st.UnmarshalSSZ(marshaled)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to unmarshal state, detected fork=%s", forkName)
@@ -165,7 +165,7 @@ func (cf *VersionedUnmarshaler) UnmarshalBeaconState(marshaled []byte) (s state.
 			return nil, errors.Wrapf(err, "failed to init state trie from state, detected fork=%s", forkName)
 		}
 	case version.Fulu:
-		st := &ethpb.BeaconStateFulu{}
+		st := &silapb.BeaconStateFulu{}
 		err = st.UnmarshalSSZ(marshaled)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to unmarshal state, detected fork=%s", forkName)
@@ -175,7 +175,7 @@ func (cf *VersionedUnmarshaler) UnmarshalBeaconState(marshaled []byte) (s state.
 			return nil, errors.Wrapf(err, "failed to init state trie from state, detected fork=%s", forkName)
 		}
 	case version.Gloas:
-		st := &ethpb.BeaconStateGloas{}
+		st := &silapb.BeaconStateGloas{}
 
 		err = st.UnmarshalSSZ(marshaled)
 		if err != nil {
@@ -225,21 +225,21 @@ func (cf *VersionedUnmarshaler) UnmarshalBeaconBlock(marshaled []byte) (interfac
 	var blk ssz.Unmarshaler
 	switch cf.Fork {
 	case version.Phase0:
-		blk = &ethpb.SignedBeaconBlock{}
+		blk = &silapb.SignedBeaconBlock{}
 	case version.Altair:
-		blk = &ethpb.SignedBeaconBlockAltair{}
+		blk = &silapb.SignedBeaconBlockAltair{}
 	case version.Bellatrix:
-		blk = &ethpb.SignedBeaconBlockBellatrix{}
+		blk = &silapb.SignedBeaconBlockBellatrix{}
 	case version.Capella:
-		blk = &ethpb.SignedBeaconBlockCapella{}
+		blk = &silapb.SignedBeaconBlockCapella{}
 	case version.Deneb:
-		blk = &ethpb.SignedBeaconBlockDeneb{}
+		blk = &silapb.SignedBeaconBlockDeneb{}
 	case version.Electra:
-		blk = &ethpb.SignedBeaconBlockElectra{}
+		blk = &silapb.SignedBeaconBlockElectra{}
 	case version.Fulu:
-		blk = &ethpb.SignedBeaconBlockFulu{}
+		blk = &silapb.SignedBeaconBlockFulu{}
 	case version.Gloas:
-		blk = &ethpb.SignedBeaconBlockGloas{}
+		blk = &silapb.SignedBeaconBlockGloas{}
 	default:
 		forkName := version.String(cf.Fork)
 		return nil, fmt.Errorf("unable to initialize ReadOnlyBeaconBlock for fork version=%s at slot=%d", forkName, slot)
@@ -266,21 +266,21 @@ func (cf *VersionedUnmarshaler) UnmarshalBlindedBeaconBlock(marshaled []byte) (i
 	var blk ssz.Unmarshaler
 	switch cf.Fork {
 	case version.Phase0:
-		blk = &ethpb.SignedBeaconBlock{}
+		blk = &silapb.SignedBeaconBlock{}
 	case version.Altair:
-		blk = &ethpb.SignedBeaconBlockAltair{}
+		blk = &silapb.SignedBeaconBlockAltair{}
 	case version.Bellatrix:
-		blk = &ethpb.SignedBlindedBeaconBlockBellatrix{}
+		blk = &silapb.SignedBlindedBeaconBlockBellatrix{}
 	case version.Capella:
-		blk = &ethpb.SignedBlindedBeaconBlockCapella{}
+		blk = &silapb.SignedBlindedBeaconBlockCapella{}
 	case version.Deneb:
-		blk = &ethpb.SignedBlindedBeaconBlockDeneb{}
+		blk = &silapb.SignedBlindedBeaconBlockDeneb{}
 	case version.Electra:
-		blk = &ethpb.SignedBlindedBeaconBlockElectra{}
+		blk = &silapb.SignedBlindedBeaconBlockElectra{}
 	case version.Fulu:
-		blk = &ethpb.SignedBlindedBeaconBlockFulu{}
+		blk = &silapb.SignedBlindedBeaconBlockFulu{}
 	case version.Gloas:
-		blk = &ethpb.SignedBeaconBlockGloas{}
+		blk = &silapb.SignedBeaconBlockGloas{}
 	default:
 		forkName := version.String(cf.Fork)
 		return nil, fmt.Errorf("unable to initialize ReadOnlyBeaconBlock for fork version=%s at slot=%d", forkName, slot)

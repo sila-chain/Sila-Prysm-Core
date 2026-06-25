@@ -7,14 +7,14 @@ import (
 	"github.com/sila-chain/go-bitfield"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/keymanager/remote-web3signer/types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/keymanager/remote-web3signer/types/mock"
 )
 
 func TestMapAggregateAndProof(t *testing.T) {
 	type args struct {
-		from *ethpb.AggregateAttestationAndProof
+		from *silapb.AggregateAttestationAndProof
 	}
 	tests := []struct {
 		name    string
@@ -25,16 +25,16 @@ func TestMapAggregateAndProof(t *testing.T) {
 		{
 			name: "HappyPathTest",
 			args: args{
-				from: &ethpb.AggregateAttestationAndProof{
+				from: &silapb.AggregateAttestationAndProof{
 					AggregatorIndex: 0,
-					Aggregate: &ethpb.Attestation{
+					Aggregate: &silapb.Attestation{
 						AggregationBits: bitfield.Bitlist{0b1101},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Root: make([]byte, fieldparams.RootLength),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Root: make([]byte, fieldparams.RootLength),
 							},
 						},
@@ -67,7 +67,7 @@ func TestMapAggregateAndProof(t *testing.T) {
 
 func TestMapAggregateAndProofElectra(t *testing.T) {
 	type args struct {
-		from *ethpb.AggregateAttestationAndProofElectra
+		from *silapb.AggregateAttestationAndProofElectra
 	}
 	tests := []struct {
 		name    string
@@ -78,16 +78,16 @@ func TestMapAggregateAndProofElectra(t *testing.T) {
 		{
 			name: "HappyPathTest",
 			args: args{
-				from: &ethpb.AggregateAttestationAndProofElectra{
+				from: &silapb.AggregateAttestationAndProofElectra{
 					AggregatorIndex: 0,
-					Aggregate: &ethpb.AttestationElectra{
+					Aggregate: &silapb.AttestationElectra{
 						AggregationBits: bitfield.Bitlist{0b1101},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Root: make([]byte, fieldparams.RootLength),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Root: make([]byte, fieldparams.RootLength),
 							},
 						},
@@ -125,7 +125,7 @@ func TestMapAggregateAndProofElectra(t *testing.T) {
 
 func TestMapAttestation(t *testing.T) {
 	type args struct {
-		attestation *ethpb.Attestation
+		attestation *silapb.Attestation
 	}
 	tests := []struct {
 		name    string
@@ -136,14 +136,14 @@ func TestMapAttestation(t *testing.T) {
 		{
 			name: "HappyPathTest",
 			args: args{
-				attestation: &ethpb.Attestation{
+				attestation: &silapb.Attestation{
 					AggregationBits: bitfield.Bitlist{0b1101},
-					Data: &ethpb.AttestationData{
+					Data: &silapb.AttestationData{
 						BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-						Source: &ethpb.Checkpoint{
+						Source: &silapb.Checkpoint{
 							Root: make([]byte, fieldparams.RootLength),
 						},
-						Target: &ethpb.Checkpoint{
+						Target: &silapb.Checkpoint{
 							Root: make([]byte, fieldparams.RootLength),
 						},
 					},
@@ -170,7 +170,7 @@ func TestMapAttestation(t *testing.T) {
 
 func TestMapAttestationElectra(t *testing.T) {
 	type args struct {
-		attestation *ethpb.AttestationElectra
+		attestation *silapb.AttestationElectra
 	}
 	tests := []struct {
 		name    string
@@ -181,14 +181,14 @@ func TestMapAttestationElectra(t *testing.T) {
 		{
 			name: "HappyPathTest",
 			args: args{
-				attestation: &ethpb.AttestationElectra{
+				attestation: &silapb.AttestationElectra{
 					AggregationBits: bitfield.Bitlist{0b1101},
-					Data: &ethpb.AttestationData{
+					Data: &silapb.AttestationData{
 						BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-						Source: &ethpb.Checkpoint{
+						Source: &silapb.Checkpoint{
 							Root: make([]byte, fieldparams.RootLength),
 						},
-						Target: &ethpb.Checkpoint{
+						Target: &silapb.Checkpoint{
 							Root: make([]byte, fieldparams.RootLength),
 						},
 					},
@@ -220,7 +220,7 @@ func TestMapAttestationElectra(t *testing.T) {
 
 func TestMapAttestationData(t *testing.T) {
 	type args struct {
-		data *ethpb.AttestationData
+		data *silapb.AttestationData
 	}
 	tests := []struct {
 		name    string
@@ -231,12 +231,12 @@ func TestMapAttestationData(t *testing.T) {
 		{
 			name: "HappyPathTest",
 			args: args{
-				data: &ethpb.AttestationData{
+				data: &silapb.AttestationData{
 					BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-					Source: &ethpb.Checkpoint{
+					Source: &silapb.Checkpoint{
 						Root: make([]byte, fieldparams.RootLength),
 					},
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Root: make([]byte, fieldparams.RootLength),
 					},
 				},
@@ -261,7 +261,7 @@ func TestMapAttestationData(t *testing.T) {
 
 func TestMapAttesterSlashing(t *testing.T) {
 	type args struct {
-		slashing *ethpb.AttesterSlashing
+		slashing *silapb.AttesterSlashing
 	}
 	tests := []struct {
 		name    string
@@ -272,28 +272,28 @@ func TestMapAttesterSlashing(t *testing.T) {
 		{
 			name: "HappyPathTest",
 			args: args{
-				slashing: &ethpb.AttesterSlashing{
-					Attestation_1: &ethpb.IndexedAttestation{
+				slashing: &silapb.AttesterSlashing{
+					Attestation_1: &silapb.IndexedAttestation{
 						AttestingIndices: []uint64{0, 1, 2},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Root: make([]byte, fieldparams.RootLength),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Root: make([]byte, fieldparams.RootLength),
 							},
 						},
 						Signature: make([]byte, fieldparams.BLSSignatureLength),
 					},
-					Attestation_2: &ethpb.IndexedAttestation{
+					Attestation_2: &silapb.IndexedAttestation{
 						AttestingIndices: []uint64{0, 1, 2},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Root: make([]byte, fieldparams.RootLength),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Root: make([]byte, fieldparams.RootLength),
 							},
 						},
@@ -324,7 +324,7 @@ func TestMapAttesterSlashing(t *testing.T) {
 
 func TestMapBeaconBlockAltair(t *testing.T) {
 	type args struct {
-		block *ethpb.BeaconBlockAltair
+		block *silapb.BeaconBlockAltair
 	}
 	tests := []struct {
 		name    string
@@ -335,23 +335,23 @@ func TestMapBeaconBlockAltair(t *testing.T) {
 		{
 			name: "Happy Path Test",
 			args: args{
-				block: &ethpb.BeaconBlockAltair{
+				block: &silapb.BeaconBlockAltair{
 					Slot:          0,
 					ProposerIndex: 0,
 					ParentRoot:    make([]byte, fieldparams.RootLength),
 					StateRoot:     make([]byte, fieldparams.RootLength),
-					Body: &ethpb.BeaconBlockBodyAltair{
+					Body: &silapb.BeaconBlockBodyAltair{
 						RandaoReveal: make([]byte, 32),
-						Eth1Data: &ethpb.Eth1Data{
+						Eth1Data: &silapb.Eth1Data{
 							DepositRoot:  make([]byte, fieldparams.RootLength),
 							DepositCount: 0,
 							BlockHash:    make([]byte, 32),
 						},
 						Graffiti: make([]byte, 32),
-						ProposerSlashings: []*ethpb.ProposerSlashing{
+						ProposerSlashings: []*silapb.ProposerSlashing{
 							{
-								Header_1: &ethpb.SignedBeaconBlockHeader{
-									Header: &ethpb.BeaconBlockHeader{
+								Header_1: &silapb.SignedBeaconBlockHeader{
+									Header: &silapb.BeaconBlockHeader{
 										Slot:          0,
 										ProposerIndex: 0,
 										ParentRoot:    make([]byte, fieldparams.RootLength),
@@ -360,8 +360,8 @@ func TestMapBeaconBlockAltair(t *testing.T) {
 									},
 									Signature: make([]byte, fieldparams.BLSSignatureLength),
 								},
-								Header_2: &ethpb.SignedBeaconBlockHeader{
-									Header: &ethpb.BeaconBlockHeader{
+								Header_2: &silapb.SignedBeaconBlockHeader{
+									Header: &silapb.BeaconBlockHeader{
 										Slot:          0,
 										ProposerIndex: 0,
 										ParentRoot:    make([]byte, fieldparams.RootLength),
@@ -372,29 +372,29 @@ func TestMapBeaconBlockAltair(t *testing.T) {
 								},
 							},
 						},
-						AttesterSlashings: []*ethpb.AttesterSlashing{
+						AttesterSlashings: []*silapb.AttesterSlashing{
 							{
-								Attestation_1: &ethpb.IndexedAttestation{
+								Attestation_1: &silapb.IndexedAttestation{
 									AttestingIndices: []uint64{0, 1, 2},
-									Data: &ethpb.AttestationData{
+									Data: &silapb.AttestationData{
 										BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-										Source: &ethpb.Checkpoint{
+										Source: &silapb.Checkpoint{
 											Root: make([]byte, fieldparams.RootLength),
 										},
-										Target: &ethpb.Checkpoint{
+										Target: &silapb.Checkpoint{
 											Root: make([]byte, fieldparams.RootLength),
 										},
 									},
 									Signature: make([]byte, fieldparams.BLSSignatureLength),
 								},
-								Attestation_2: &ethpb.IndexedAttestation{
+								Attestation_2: &silapb.IndexedAttestation{
 									AttestingIndices: []uint64{0, 1, 2},
-									Data: &ethpb.AttestationData{
+									Data: &silapb.AttestationData{
 										BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-										Source: &ethpb.Checkpoint{
+										Source: &silapb.Checkpoint{
 											Root: make([]byte, fieldparams.RootLength),
 										},
-										Target: &ethpb.Checkpoint{
+										Target: &silapb.Checkpoint{
 											Root: make([]byte, fieldparams.RootLength),
 										},
 									},
@@ -402,25 +402,25 @@ func TestMapBeaconBlockAltair(t *testing.T) {
 								},
 							},
 						},
-						Attestations: []*ethpb.Attestation{
+						Attestations: []*silapb.Attestation{
 							{
 								AggregationBits: bitfield.Bitlist{0b1101},
-								Data: &ethpb.AttestationData{
+								Data: &silapb.AttestationData{
 									BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-									Source: &ethpb.Checkpoint{
+									Source: &silapb.Checkpoint{
 										Root: make([]byte, fieldparams.RootLength),
 									},
-									Target: &ethpb.Checkpoint{
+									Target: &silapb.Checkpoint{
 										Root: make([]byte, fieldparams.RootLength),
 									},
 								},
 								Signature: make([]byte, 96),
 							},
 						},
-						Deposits: []*ethpb.Deposit{
+						Deposits: []*silapb.Deposit{
 							{
 								Proof: [][]byte{[]byte("A")},
-								Data: &ethpb.Deposit_Data{
+								Data: &silapb.Deposit_Data{
 									PublicKey:             make([]byte, fieldparams.BLSPubkeyLength),
 									WithdrawalCredentials: make([]byte, 32),
 									Amount:                0,
@@ -428,16 +428,16 @@ func TestMapBeaconBlockAltair(t *testing.T) {
 								},
 							},
 						},
-						VoluntaryExits: []*ethpb.SignedVoluntaryExit{
+						VoluntaryExits: []*silapb.SignedVoluntaryExit{
 							{
-								Exit: &ethpb.VoluntaryExit{
+								Exit: &silapb.VoluntaryExit{
 									Epoch:          0,
 									ValidatorIndex: 0,
 								},
 								Signature: make([]byte, fieldparams.BLSSignatureLength),
 							},
 						},
-						SyncAggregate: &ethpb.SyncAggregate{
+						SyncAggregate: &silapb.SyncAggregate{
 							SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 							SyncCommitteeBits:      mock.SyncComitteeBits(),
 						},
@@ -464,7 +464,7 @@ func TestMapBeaconBlockAltair(t *testing.T) {
 
 func TestMapBeaconBlockBody(t *testing.T) {
 	type args struct {
-		body *ethpb.BeaconBlockBody
+		body *silapb.BeaconBlockBody
 	}
 	tests := []struct {
 		name    string
@@ -475,18 +475,18 @@ func TestMapBeaconBlockBody(t *testing.T) {
 		{
 			name: "Happy Path Test",
 			args: args{
-				body: &ethpb.BeaconBlockBody{
+				body: &silapb.BeaconBlockBody{
 					RandaoReveal: make([]byte, 32),
-					Eth1Data: &ethpb.Eth1Data{
+					Eth1Data: &silapb.Eth1Data{
 						DepositRoot:  make([]byte, fieldparams.RootLength),
 						DepositCount: 0,
 						BlockHash:    make([]byte, 32),
 					},
 					Graffiti: make([]byte, 32),
-					ProposerSlashings: []*ethpb.ProposerSlashing{
+					ProposerSlashings: []*silapb.ProposerSlashing{
 						{
-							Header_1: &ethpb.SignedBeaconBlockHeader{
-								Header: &ethpb.BeaconBlockHeader{
+							Header_1: &silapb.SignedBeaconBlockHeader{
+								Header: &silapb.BeaconBlockHeader{
 									Slot:          0,
 									ProposerIndex: 0,
 									ParentRoot:    make([]byte, fieldparams.RootLength),
@@ -495,8 +495,8 @@ func TestMapBeaconBlockBody(t *testing.T) {
 								},
 								Signature: make([]byte, fieldparams.BLSSignatureLength),
 							},
-							Header_2: &ethpb.SignedBeaconBlockHeader{
-								Header: &ethpb.BeaconBlockHeader{
+							Header_2: &silapb.SignedBeaconBlockHeader{
+								Header: &silapb.BeaconBlockHeader{
 									Slot:          0,
 									ProposerIndex: 0,
 									ParentRoot:    make([]byte, fieldparams.RootLength),
@@ -507,29 +507,29 @@ func TestMapBeaconBlockBody(t *testing.T) {
 							},
 						},
 					},
-					AttesterSlashings: []*ethpb.AttesterSlashing{
+					AttesterSlashings: []*silapb.AttesterSlashing{
 						{
-							Attestation_1: &ethpb.IndexedAttestation{
+							Attestation_1: &silapb.IndexedAttestation{
 								AttestingIndices: []uint64{0, 1, 2},
-								Data: &ethpb.AttestationData{
+								Data: &silapb.AttestationData{
 									BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-									Source: &ethpb.Checkpoint{
+									Source: &silapb.Checkpoint{
 										Root: make([]byte, fieldparams.RootLength),
 									},
-									Target: &ethpb.Checkpoint{
+									Target: &silapb.Checkpoint{
 										Root: make([]byte, fieldparams.RootLength),
 									},
 								},
 								Signature: make([]byte, fieldparams.BLSSignatureLength),
 							},
-							Attestation_2: &ethpb.IndexedAttestation{
+							Attestation_2: &silapb.IndexedAttestation{
 								AttestingIndices: []uint64{0, 1, 2},
-								Data: &ethpb.AttestationData{
+								Data: &silapb.AttestationData{
 									BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-									Source: &ethpb.Checkpoint{
+									Source: &silapb.Checkpoint{
 										Root: make([]byte, fieldparams.RootLength),
 									},
-									Target: &ethpb.Checkpoint{
+									Target: &silapb.Checkpoint{
 										Root: make([]byte, fieldparams.RootLength),
 									},
 								},
@@ -537,25 +537,25 @@ func TestMapBeaconBlockBody(t *testing.T) {
 							},
 						},
 					},
-					Attestations: []*ethpb.Attestation{
+					Attestations: []*silapb.Attestation{
 						{
 							AggregationBits: bitfield.Bitlist{0b1101},
-							Data: &ethpb.AttestationData{
+							Data: &silapb.AttestationData{
 								BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-								Source: &ethpb.Checkpoint{
+								Source: &silapb.Checkpoint{
 									Root: make([]byte, fieldparams.RootLength),
 								},
-								Target: &ethpb.Checkpoint{
+								Target: &silapb.Checkpoint{
 									Root: make([]byte, fieldparams.RootLength),
 								},
 							},
 							Signature: make([]byte, 96),
 						},
 					},
-					Deposits: []*ethpb.Deposit{
+					Deposits: []*silapb.Deposit{
 						{
 							Proof: [][]byte{[]byte("A")},
-							Data: &ethpb.Deposit_Data{
+							Data: &silapb.Deposit_Data{
 								PublicKey:             make([]byte, fieldparams.BLSPubkeyLength),
 								WithdrawalCredentials: make([]byte, 32),
 								Amount:                0,
@@ -563,9 +563,9 @@ func TestMapBeaconBlockBody(t *testing.T) {
 							},
 						},
 					},
-					VoluntaryExits: []*ethpb.SignedVoluntaryExit{
+					VoluntaryExits: []*silapb.SignedVoluntaryExit{
 						{
-							Exit: &ethpb.VoluntaryExit{
+							Exit: &silapb.VoluntaryExit{
 								Epoch:          0,
 								ValidatorIndex: 0,
 							},
@@ -594,7 +594,7 @@ func TestMapBeaconBlockBody(t *testing.T) {
 
 func TestMapContributionAndProof(t *testing.T) {
 	type args struct {
-		contribution *ethpb.ContributionAndProof
+		contribution *silapb.ContributionAndProof
 	}
 	tests := []struct {
 		name    string
@@ -605,9 +605,9 @@ func TestMapContributionAndProof(t *testing.T) {
 		{
 			name: "Happy Path Test",
 			args: args{
-				contribution: &ethpb.ContributionAndProof{
+				contribution: &silapb.ContributionAndProof{
 					AggregatorIndex: 0,
-					Contribution: &ethpb.SyncCommitteeContribution{
+					Contribution: &silapb.SyncCommitteeContribution{
 						Slot:              0,
 						BlockRoot:         make([]byte, fieldparams.RootLength),
 						SubcommitteeIndex: 0,
@@ -672,7 +672,7 @@ func TestMapForkInfo(t *testing.T) {
 
 func TestMapSyncAggregatorSelectionData(t *testing.T) {
 	type args struct {
-		data *ethpb.SyncAggregatorSelectionData
+		data *silapb.SyncAggregatorSelectionData
 	}
 	tests := []struct {
 		name    string
@@ -683,7 +683,7 @@ func TestMapSyncAggregatorSelectionData(t *testing.T) {
 		{
 			name: "Happy Path Test",
 			args: args{
-				data: &ethpb.SyncAggregatorSelectionData{
+				data: &silapb.SyncAggregatorSelectionData{
 					Slot:              0,
 					SubcommitteeIndex: 0,
 				},

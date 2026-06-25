@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -38,8 +38,8 @@ func TestProcessAttesterSlashings_RegressionSlashableIndices(t *testing.T) {
 	expectedSlashedVal := 2800
 
 	root1 := [32]byte{'d', 'o', 'u', 'b', 'l', 'e', '1'}
-	att1 := &ethpb.IndexedAttestation{
-		Data:             util.HydrateAttestationData(&ethpb.AttestationData{Target: &ethpb.Checkpoint{Epoch: 0, Root: root1[:]}}),
+	att1 := &silapb.IndexedAttestation{
+		Data:             util.HydrateAttestationData(&silapb.AttestationData{Target: &silapb.Checkpoint{Epoch: 0, Root: root1[:]}}),
 		AttestingIndices: setA,
 		Signature:        make([]byte, 96),
 	}
@@ -56,9 +56,9 @@ func TestProcessAttesterSlashings_RegressionSlashableIndices(t *testing.T) {
 	att1.Signature = aggregateSig.Marshal()
 
 	root2 := [32]byte{'d', 'o', 'u', 'b', 'l', 'e', '2'}
-	att2 := &ethpb.IndexedAttestation{
-		Data: util.HydrateAttestationData(&ethpb.AttestationData{
-			Target: &ethpb.Checkpoint{Root: root2[:]},
+	att2 := &silapb.IndexedAttestation{
+		Data: util.HydrateAttestationData(&silapb.AttestationData{
+			Target: &silapb.Checkpoint{Root: root2[:]},
 		}),
 		AttestingIndices: setB,
 		Signature:        make([]byte, 96),
@@ -73,7 +73,7 @@ func TestProcessAttesterSlashings_RegressionSlashableIndices(t *testing.T) {
 	aggregateSig = bls.AggregateSignatures(aggSigs)
 	att2.Signature = aggregateSig.Marshal()
 
-	slashings := []*ethpb.AttesterSlashing{
+	slashings := []*silapb.AttesterSlashing{
 		{
 			Attestation_1: att1,
 			Attestation_2: att2,
@@ -84,13 +84,13 @@ func TestProcessAttesterSlashings_RegressionSlashableIndices(t *testing.T) {
 	require.NoError(t, beaconState.SetSlot(currentSlot))
 
 	b := util.NewBeaconBlock()
-	b.Block = &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
+	b.Block = &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
 			AttesterSlashings: slashings,
 		},
 	}
 
-	ss := make([]ethpb.AttSlashing, len(b.Block.Body.AttesterSlashings))
+	ss := make([]silapb.AttSlashing, len(b.Block.Body.AttesterSlashings))
 	for i, s := range b.Block.Body.AttesterSlashings {
 		ss[i] = s
 	}

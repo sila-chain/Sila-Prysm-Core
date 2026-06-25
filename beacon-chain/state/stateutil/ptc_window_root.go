@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // PTCWindowRoot computes the merkle root of the cached PTC window.
-func PTCWindowRoot(ptcs []*ethpb.PTCs) ([32]byte, error) {
+func PTCWindowRoot(ptcs []*silapb.PTCs) ([32]byte, error) {
 	roots := make([][32]byte, len(ptcs))
 
 	for i, ptc := range ptcs {

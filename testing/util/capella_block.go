@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -29,7 +29,7 @@ func GenerateFullBlockCapella(
 	privs []bls.SecretKey,
 	conf *BlockGenConfig,
 	slot primitives.Slot,
-) (*ethpb.SignedBeaconBlockCapella, error) {
+) (*silapb.SignedBeaconBlockCapella, error) {
 	ctx := context.Background()
 	currentSlot := bState.Slot()
 	if currentSlot > slot {
@@ -42,7 +42,7 @@ func GenerateFullBlockCapella(
 	}
 
 	var err error
-	var pSlashings []*ethpb.ProposerSlashing
+	var pSlashings []*silapb.ProposerSlashing
 	numToGen := conf.NumProposerSlashings
 	if numToGen > 0 {
 		pSlashings, err = generateProposerSlashings(bState, privs, numToGen)
@@ -52,41 +52,41 @@ func GenerateFullBlockCapella(
 	}
 
 	numToGen = conf.NumAttesterSlashings
-	var aSlashings []*ethpb.AttesterSlashing
+	var aSlashings []*silapb.AttesterSlashing
 	if numToGen > 0 {
 		generated, err := generateAttesterSlashings(bState, privs, numToGen)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed generating %d attester slashings:", numToGen)
 		}
-		aSlashings = make([]*ethpb.AttesterSlashing, len(generated))
+		aSlashings = make([]*silapb.AttesterSlashing, len(generated))
 		var ok bool
 		for i, s := range generated {
-			aSlashings[i], ok = s.(*ethpb.AttesterSlashing)
+			aSlashings[i], ok = s.(*silapb.AttesterSlashing)
 			if !ok {
-				return nil, fmt.Errorf("attester slashing has the wrong type (expected %T, got %T)", &ethpb.AttesterSlashing{}, s)
+				return nil, fmt.Errorf("attester slashing has the wrong type (expected %T, got %T)", &silapb.AttesterSlashing{}, s)
 			}
 		}
 	}
 
 	numToGen = conf.NumAttestations
-	var atts []*ethpb.Attestation
+	var atts []*silapb.Attestation
 	if numToGen > 0 {
 		generatedAtts, err := GenerateAttestations(bState, privs, numToGen, slot, false)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed generating %d attestations:", numToGen)
 		}
-		atts = make([]*ethpb.Attestation, len(generatedAtts))
+		atts = make([]*silapb.Attestation, len(generatedAtts))
 		var ok bool
 		for i, a := range generatedAtts {
-			atts[i], ok = a.(*ethpb.Attestation)
+			atts[i], ok = a.(*silapb.Attestation)
 			if !ok {
-				return nil, fmt.Errorf("attestation has the wrong type (expected %T, got %T)", &ethpb.Attestation{}, a)
+				return nil, fmt.Errorf("attestation has the wrong type (expected %T, got %T)", &silapb.Attestation{}, a)
 			}
 		}
 	}
 
 	numToGen = conf.NumDeposits
-	var newDeposits []*ethpb.Deposit
+	var newDeposits []*silapb.Deposit
 	eth1Data := bState.Eth1Data()
 	if numToGen > 0 {
 		newDeposits, eth1Data, err = generateDepositsAndEth1Data(bState, numToGen)
@@ -96,7 +96,7 @@ func GenerateFullBlockCapella(
 	}
 
 	numToGen = conf.NumVoluntaryExits
-	var exits []*ethpb.SignedVoluntaryExit
+	var exits []*silapb.SignedVoluntaryExit
 	if numToGen > 0 {
 		exits, err = generateVoluntaryExits(bState, privs, numToGen)
 		if err != nil {
@@ -148,7 +148,7 @@ func GenerateFullBlockCapella(
 		Withdrawals:   newWithdrawals,
 	}
 	var syncCommitteeBits []byte
-	currSize := new(ethpb.SyncAggregate).SyncCommitteeBits.Len()
+	currSize := new(silapb.SyncAggregate).SyncCommitteeBits.Len()
 	switch currSize {
 	case 512:
 		syncCommitteeBits = bitfield.NewBitvector512()
@@ -157,7 +157,7 @@ func GenerateFullBlockCapella(
 	default:
 		return nil, errors.New("invalid bit vector size")
 	}
-	newSyncAggregate := &ethpb.SyncAggregate{
+	newSyncAggregate := &silapb.SyncAggregate{
 		SyncCommitteeBits:      syncCommitteeBits,
 		SyncCommitteeSignature: append([]byte{0xC0}, make([]byte, 95)...),
 	}
@@ -187,7 +187,7 @@ func GenerateFullBlockCapella(
 		return nil, errors.Wrap(err, "could not compute beacon proposer index")
 	}
 
-	changes := make([]*ethpb.SignedBLSToExecutionChange, conf.NumBLSChanges)
+	changes := make([]*silapb.SignedBLSToExecutionChange, conf.NumBLSChanges)
 	for i := uint64(0); i < conf.NumBLSChanges; i++ {
 		changes[i], err = GenerateBLSToExecutionChange(bState, privs[i+1], primitives.ValidatorIndex(i))
 		if err != nil {
@@ -195,11 +195,11 @@ func GenerateFullBlockCapella(
 		}
 	}
 
-	block := &ethpb.BeaconBlockCapella{
+	block := &silapb.BeaconBlockCapella{
 		Slot:          slot,
 		ParentRoot:    parentRoot[:],
 		ProposerIndex: idx,
-		Body: &ethpb.BeaconBlockBodyCapella{
+		Body: &silapb.BeaconBlockBodyCapella{
 			Eth1Data:              eth1Data,
 			RandaoReveal:          reveal,
 			ProposerSlashings:     pSlashings,
@@ -220,14 +220,14 @@ func GenerateFullBlockCapella(
 		return nil, errors.Wrap(err, "could not compute block signature")
 	}
 
-	return &ethpb.SignedBeaconBlockCapella{Block: block, Signature: signature.Marshal()}, nil
+	return &silapb.SignedBeaconBlockCapella{Block: block, Signature: signature.Marshal()}, nil
 }
 
 // GenerateBLSToExecutionChange generates a valid bls to exec change for validator `val` and its private key `priv` with the given beacon state `st`.
-func GenerateBLSToExecutionChange(st state.BeaconState, priv bls.SecretKey, val primitives.ValidatorIndex) (*ethpb.SignedBLSToExecutionChange, error) {
+func GenerateBLSToExecutionChange(st state.BeaconState, priv bls.SecretKey, val primitives.ValidatorIndex) (*silapb.SignedBLSToExecutionChange, error) {
 	cred := indexToHash(uint64(val))
 	pubkey := priv.PublicKey().Marshal()
-	message := &ethpb.BLSToExecutionChange{
+	message := &silapb.BLSToExecutionChange{
 		ToExecutionAddress: cred[12:],
 		ValidatorIndex:     val,
 		FromBlsPubkey:      pubkey,
@@ -242,7 +242,7 @@ func GenerateBLSToExecutionChange(st state.BeaconState, priv bls.SecretKey, val 
 		return nil, err
 	}
 	signature := priv.Sign(sr[:]).Marshal()
-	return &ethpb.SignedBLSToExecutionChange{
+	return &silapb.SignedBLSToExecutionChange{
 		Message:   message,
 		Signature: signature,
 	}, nil

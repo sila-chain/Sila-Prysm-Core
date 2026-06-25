@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -31,7 +31,7 @@ func prepareForkchoiceState(
 	justifiedEpoch primitives.Epoch,
 	finalizedEpoch primitives.Epoch,
 ) (state.BeaconState, blocks.ROBlock, error) {
-	blockHeader := &ethpb.BeaconBlockHeader{
+	blockHeader := &silapb.BeaconBlockHeader{
 		ParentRoot: parentRoot[:],
 	}
 
@@ -39,15 +39,15 @@ func prepareForkchoiceState(
 		BlockHash: payloadHash[:],
 	}
 
-	justifiedCheckpoint := &ethpb.Checkpoint{
+	justifiedCheckpoint := &silapb.Checkpoint{
 		Epoch: justifiedEpoch,
 	}
 
-	finalizedCheckpoint := &ethpb.Checkpoint{
+	finalizedCheckpoint := &silapb.Checkpoint{
 		Epoch: finalizedEpoch,
 	}
 
-	base := &ethpb.BeaconStateBellatrix{
+	base := &silapb.BeaconStateBellatrix{
 		Slot:                         slot,
 		RandaoMixes:                  make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 		CurrentJustifiedCheckpoint:   justifiedCheckpoint,
@@ -60,11 +60,11 @@ func prepareForkchoiceState(
 	if err != nil {
 		return nil, blocks.ROBlock{}, err
 	}
-	blk := &ethpb.SignedBeaconBlockBellatrix{
-		Block: &ethpb.BeaconBlockBellatrix{
+	blk := &silapb.SignedBeaconBlockBellatrix{
+		Block: &silapb.BeaconBlockBellatrix{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body: &ethpb.BeaconBlockBodyBellatrix{
+			Body: &silapb.BeaconBlockBodyBellatrix{
 				ExecutionPayload: &enginev1.ExecutionPayload{
 					BlockHash: payloadHash[:],
 				},
@@ -651,8 +651,8 @@ func TestStore_InsertChain(t *testing.T) {
 	require.NoError(t, err)
 	blks = append(blks, &forkchoicetypes.BlockAndCheckpoints{
 		Block:               roblock,
-		JustifiedCheckpoint: &ethpb.Checkpoint{Epoch: 1, Root: params.BeaconConfig().ZeroHash[:]},
-		FinalizedCheckpoint: &ethpb.Checkpoint{Epoch: 1, Root: params.BeaconConfig().ZeroHash[:]},
+		JustifiedCheckpoint: &silapb.Checkpoint{Epoch: 1, Root: params.BeaconConfig().ZeroHash[:]},
+		FinalizedCheckpoint: &silapb.Checkpoint{Epoch: 1, Root: params.BeaconConfig().ZeroHash[:]},
 	})
 	for i := uint64(2); i < 11; i++ {
 		blk := util.NewBeaconBlock()
@@ -667,8 +667,8 @@ func TestStore_InsertChain(t *testing.T) {
 		require.NoError(t, err)
 		blks = append(blks, &forkchoicetypes.BlockAndCheckpoints{
 			Block:               roblock,
-			JustifiedCheckpoint: &ethpb.Checkpoint{Epoch: 1, Root: params.BeaconConfig().ZeroHash[:]},
-			FinalizedCheckpoint: &ethpb.Checkpoint{Epoch: 1, Root: params.BeaconConfig().ZeroHash[:]},
+			JustifiedCheckpoint: &silapb.Checkpoint{Epoch: 1, Root: params.BeaconConfig().ZeroHash[:]},
+			FinalizedCheckpoint: &silapb.Checkpoint{Epoch: 1, Root: params.BeaconConfig().ZeroHash[:]},
 		})
 	}
 	// InsertChain now expects blocks in increasing slot order
@@ -758,8 +758,8 @@ func TestForkChoice_UpdateCheckpoints(t *testing.T) {
 			fcs.store.justifiedCheckpoint = tt.justified
 			fcs.store.finalizedCheckpoint = tt.finalized
 
-			jc := &ethpb.Checkpoint{Epoch: tt.newJustified.Epoch, Root: tt.newJustified.Root[:]}
-			fc := &ethpb.Checkpoint{Epoch: tt.newFinalized.Epoch, Root: tt.newFinalized.Root[:]}
+			jc := &silapb.Checkpoint{Epoch: tt.newJustified.Epoch, Root: tt.newJustified.Root[:]}
+			fc := &silapb.Checkpoint{Epoch: tt.newFinalized.Epoch, Root: tt.newFinalized.Root[:]}
 			err = fcs.updateCheckpoints(ctx, jc, fc)
 			if len(tt.wantedErr) > 0 {
 				require.ErrorContains(t, tt.wantedErr, err)
@@ -1000,13 +1000,13 @@ func prepareBellatrixForkchoiceStateWithGasLimit(
 	payloadHash [32]byte,
 	gasLimit uint64,
 ) (state.BeaconState, blocks.ROBlock, error) {
-	blockHeader := &ethpb.BeaconBlockHeader{ParentRoot: parentRoot[:]}
+	blockHeader := &silapb.BeaconBlockHeader{ParentRoot: parentRoot[:]}
 	executionHeader := &enginev1.ExecutionPayloadHeader{BlockHash: payloadHash[:], GasLimit: gasLimit}
-	base := &ethpb.BeaconStateBellatrix{
+	base := &silapb.BeaconStateBellatrix{
 		Slot:                         slot,
 		RandaoMixes:                  make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
-		CurrentJustifiedCheckpoint:   &ethpb.Checkpoint{},
-		FinalizedCheckpoint:          &ethpb.Checkpoint{},
+		CurrentJustifiedCheckpoint:   &silapb.Checkpoint{},
+		FinalizedCheckpoint:          &silapb.Checkpoint{},
 		LatestExecutionPayloadHeader: executionHeader,
 		LatestBlockHeader:            blockHeader,
 	}
@@ -1014,11 +1014,11 @@ func prepareBellatrixForkchoiceStateWithGasLimit(
 	if err != nil {
 		return nil, blocks.ROBlock{}, err
 	}
-	blk := &ethpb.SignedBeaconBlockBellatrix{
-		Block: &ethpb.BeaconBlockBellatrix{
+	blk := &silapb.SignedBeaconBlockBellatrix{
+		Block: &silapb.BeaconBlockBellatrix{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body: &ethpb.BeaconBlockBodyBellatrix{
+			Body: &silapb.BeaconBlockBodyBellatrix{
 				ExecutionPayload: &enginev1.ExecutionPayload{BlockHash: payloadHash[:], GasLimit: gasLimit},
 			},
 		},

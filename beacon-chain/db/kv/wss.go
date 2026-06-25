@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz/detect"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/dbval"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -81,7 +81,7 @@ func (s *Store) SaveOrigin(ctx context.Context, serState, serBlock []byte) error
 		}
 	}
 
-	if err = s.SaveStateSummary(ctx, &ethpb.StateSummary{
+	if err = s.SaveStateSummary(ctx, &silapb.StateSummary{
 		Slot: state.Slot(),
 		Root: blockRoot[:],
 	}); err != nil {
@@ -106,7 +106,7 @@ func (s *Store) SaveOrigin(ctx context.Context, serState, serBlock []byte) error
 		return err
 	}
 
-	chkpt := &ethpb.Checkpoint{
+	chkpt := &silapb.Checkpoint{
 		Epoch: primitives.Epoch(slotEpoch),
 		Root:  blockRoot[:],
 	}

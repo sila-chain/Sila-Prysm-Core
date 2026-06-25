@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	doublylinkedlist "github.com/sila-chain/Sila-Consensus-Core/v7/container/doubly-linked-list"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sirupsen/logrus"
@@ -30,41 +30,41 @@ var (
 // PoolManager maintains pending and seen BLS-to-execution-change objects.
 // This pool is used by proposers to insert BLS-to-execution-change objects into new blocks.
 type PoolManager interface {
-	PendingBLSToExecChanges() ([]*ethpb.SignedBLSToExecutionChange, error)
-	BLSToExecChangesForInclusion(beaconState state.ReadOnlyBeaconState) ([]*ethpb.SignedBLSToExecutionChange, error)
-	InsertBLSToExecChange(change *ethpb.SignedBLSToExecutionChange)
-	MarkIncluded(change *ethpb.SignedBLSToExecutionChange)
+	PendingBLSToExecChanges() ([]*silapb.SignedBLSToExecutionChange, error)
+	BLSToExecChangesForInclusion(beaconState state.ReadOnlyBeaconState) ([]*silapb.SignedBLSToExecutionChange, error)
+	InsertBLSToExecChange(change *silapb.SignedBLSToExecutionChange)
+	MarkIncluded(change *silapb.SignedBLSToExecutionChange)
 	ValidatorExists(idx primitives.ValidatorIndex) bool
 }
 
 // Pool is a concrete implementation of PoolManager.
 type Pool struct {
 	lock    sync.RWMutex
-	pending doublylinkedlist.List[*ethpb.SignedBLSToExecutionChange]
-	m       map[primitives.ValidatorIndex]*doublylinkedlist.Node[*ethpb.SignedBLSToExecutionChange]
+	pending doublylinkedlist.List[*silapb.SignedBLSToExecutionChange]
+	m       map[primitives.ValidatorIndex]*doublylinkedlist.Node[*silapb.SignedBLSToExecutionChange]
 }
 
 // NewPool returns an initialized pool.
 func NewPool() *Pool {
 	return &Pool{
-		pending: doublylinkedlist.List[*ethpb.SignedBLSToExecutionChange]{},
-		m:       make(map[primitives.ValidatorIndex]*doublylinkedlist.Node[*ethpb.SignedBLSToExecutionChange]),
+		pending: doublylinkedlist.List[*silapb.SignedBLSToExecutionChange]{},
+		m:       make(map[primitives.ValidatorIndex]*doublylinkedlist.Node[*silapb.SignedBLSToExecutionChange]),
 	}
 }
 
 // Copies the internal map and returns a new one.
 func (p *Pool) cycleMap() {
-	newMap := make(map[primitives.ValidatorIndex]*doublylinkedlist.Node[*ethpb.SignedBLSToExecutionChange])
+	newMap := make(map[primitives.ValidatorIndex]*doublylinkedlist.Node[*silapb.SignedBLSToExecutionChange])
 	maps.Copy(newMap, p.m)
 	p.m = newMap
 }
 
 // PendingBLSToExecChanges returns all objects from the pool.
-func (p *Pool) PendingBLSToExecChanges() ([]*ethpb.SignedBLSToExecutionChange, error) {
+func (p *Pool) PendingBLSToExecChanges() ([]*silapb.SignedBLSToExecutionChange, error) {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
 
-	result := make([]*ethpb.SignedBLSToExecutionChange, p.pending.Len())
+	result := make([]*silapb.SignedBLSToExecutionChange, p.pending.Len())
 	node := p.pending.First()
 	var err error
 	for i := 0; node != nil; i++ {
@@ -82,11 +82,11 @@ func (p *Pool) PendingBLSToExecChanges() ([]*ethpb.SignedBLSToExecutionChange, e
 
 // BLSToExecChangesForInclusion returns objects that are ready for inclusion.
 // This method will not return more than the block enforced MaxBlsToExecutionChanges.
-func (p *Pool) BLSToExecChangesForInclusion(st state.ReadOnlyBeaconState) ([]*ethpb.SignedBLSToExecutionChange, error) {
+func (p *Pool) BLSToExecChangesForInclusion(st state.ReadOnlyBeaconState) ([]*silapb.SignedBLSToExecutionChange, error) {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
 	length := int(min(float64(params.BeaconConfig().MaxBlsToExecutionChanges), float64(p.pending.Len())))
-	result := make([]*ethpb.SignedBLSToExecutionChange, 0, length)
+	result := make([]*silapb.SignedBLSToExecutionChange, 0, length)
 	node := p.pending.Last()
 	for node != nil && len(result) < length {
 		change, err := node.Value()
@@ -112,7 +112,7 @@ func (p *Pool) BLSToExecChangesForInclusion(st state.ReadOnlyBeaconState) ([]*et
 }
 
 // InsertBLSToExecChange inserts an object into the pool.
-func (p *Pool) InsertBLSToExecChange(change *ethpb.SignedBLSToExecutionChange) {
+func (p *Pool) InsertBLSToExecChange(change *silapb.SignedBLSToExecutionChange) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
@@ -129,7 +129,7 @@ func (p *Pool) InsertBLSToExecChange(change *ethpb.SignedBLSToExecutionChange) {
 
 // MarkIncluded is used when an object has been included in a beacon block. Every block seen by this
 // node should call this method to include the object. This will remove the object from the pool.
-func (p *Pool) MarkIncluded(change *ethpb.SignedBLSToExecutionChange) {
+func (p *Pool) MarkIncluded(change *silapb.SignedBLSToExecutionChange) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 

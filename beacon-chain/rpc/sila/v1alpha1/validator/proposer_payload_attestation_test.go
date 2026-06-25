@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -62,9 +62,9 @@ func TestGetPayloadAttestations_FromPoolFiltersByParentAndPreviousSlot(t *testin
 	pool := payloadattestation.NewPool()
 	insert := func(slot primitives.Slot, root []byte, payloadPresent bool, idx uint64) {
 		t.Helper()
-		msg := &ethpb.PayloadAttestationMessage{
+		msg := &silapb.PayloadAttestationMessage{
 			ValidatorIndex: 0,
-			Data: &ethpb.PayloadAttestationData{
+			Data: &silapb.PayloadAttestationData{
 				BeaconBlockRoot:   root,
 				Slot:              slot,
 				PayloadPresent:    payloadPresent,

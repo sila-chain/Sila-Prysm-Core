@@ -8,10 +8,10 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	rpctesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/shared/testing"
+	rpctesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/shared/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
 	engine "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -44,13 +44,13 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 		name             string
 		consensusVersion string
 		endpoint         string
-		block            *ethpb.GenericSignedBeaconBlock
+		block            *silapb.GenericSignedBeaconBlock
 	}{
 		{
 			name:             "phase0",
 			consensusVersion: "phase0",
 			endpoint:         "/sila/v2/beacon/blocks",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
 		},
@@ -58,7 +58,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 			name:             "altair",
 			consensusVersion: "altair",
 			endpoint:         "/sila/v2/beacon/blocks",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedAltairBlock(),
 			},
 		},
@@ -66,7 +66,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 			name:             "bellatrix",
 			consensusVersion: "bellatrix",
 			endpoint:         "/sila/v2/beacon/blocks",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBellatrixBlock(),
 			},
 		},
@@ -74,7 +74,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 			name:             "blinded bellatrix",
 			consensusVersion: "bellatrix",
 			endpoint:         "/sila/v2/beacon/blinded_blocks",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedBellatrixBlock(),
 			},
 		},
@@ -82,7 +82,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 			name:             "capella",
 			consensusVersion: "capella",
 			endpoint:         "/sila/v2/beacon/blocks",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedCapellaBlock(),
 			},
 		},
@@ -90,7 +90,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 			name:             "blinded capella",
 			consensusVersion: "capella",
 			endpoint:         "/sila/v2/beacon/blinded_blocks",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedBlindedCapellaBlock(),
 			},
 		},
@@ -130,7 +130,7 @@ func TestProposeBeaconBlock_SSZ_Error(t *testing.T) {
 
 func TestProposeBeaconBlock_UnsupportedBlockType(t *testing.T) {
 	validatorClient := &beaconApiValidatorClient{}
-	_, err := validatorClient.proposeBeaconBlock(t.Context(), &ethpb.GenericSignedBeaconBlock{})
+	_, err := validatorClient.proposeBeaconBlock(t.Context(), &silapb.GenericSignedBeaconBlock{})
 	assert.ErrorContains(t, "unsupported block type", err)
 }
 
@@ -139,13 +139,13 @@ func TestProposeBeaconBlock_SSZSuccess_NoFallback(t *testing.T) {
 		name             string
 		consensusVersion string
 		endpoint         string
-		block            *ethpb.GenericSignedBeaconBlock
+		block            *silapb.GenericSignedBeaconBlock
 	}{
 		{
 			name:             "phase0",
 			consensusVersion: "phase0",
 			endpoint:         "/sila/v2/beacon/blocks",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
 		},
@@ -153,7 +153,7 @@ func TestProposeBeaconBlock_SSZSuccess_NoFallback(t *testing.T) {
 			name:             "altair",
 			consensusVersion: "altair",
 			endpoint:         "/sila/v2/beacon/blocks",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedAltairBlock(),
 			},
 		},
@@ -385,53 +385,53 @@ func TestProposeBeaconBlock_NewerTypes_SSZMarshal(t *testing.T) {
 }
 
 // Generator functions for test blocks
-func generateSignedPhase0Block() *ethpb.GenericSignedBeaconBlock_Phase0 {
-	return &ethpb.GenericSignedBeaconBlock_Phase0{
-		Phase0: &ethpb.SignedBeaconBlock{
+func generateSignedPhase0Block() *silapb.GenericSignedBeaconBlock_Phase0 {
+	return &silapb.GenericSignedBeaconBlock_Phase0{
+		Phase0: &silapb.SignedBeaconBlock{
 			Block:     testhelpers.GenerateProtoPhase0BeaconBlock(),
 			Signature: testhelpers.FillByteSlice(96, 110),
 		},
 	}
 }
 
-func generateSignedAltairBlock() *ethpb.GenericSignedBeaconBlock_Altair {
-	return &ethpb.GenericSignedBeaconBlock_Altair{
-		Altair: &ethpb.SignedBeaconBlockAltair{
+func generateSignedAltairBlock() *silapb.GenericSignedBeaconBlock_Altair {
+	return &silapb.GenericSignedBeaconBlock_Altair{
+		Altair: &silapb.SignedBeaconBlockAltair{
 			Block:     testhelpers.GenerateProtoAltairBeaconBlock(),
 			Signature: testhelpers.FillByteSlice(96, 112),
 		},
 	}
 }
 
-func generateSignedBellatrixBlock() *ethpb.GenericSignedBeaconBlock_Bellatrix {
-	return &ethpb.GenericSignedBeaconBlock_Bellatrix{
-		Bellatrix: &ethpb.SignedBeaconBlockBellatrix{
+func generateSignedBellatrixBlock() *silapb.GenericSignedBeaconBlock_Bellatrix {
+	return &silapb.GenericSignedBeaconBlock_Bellatrix{
+		Bellatrix: &silapb.SignedBeaconBlockBellatrix{
 			Block:     testhelpers.GenerateProtoBellatrixBeaconBlock(),
 			Signature: testhelpers.FillByteSlice(96, 127),
 		},
 	}
 }
 
-func generateSignedBlindedBellatrixBlock() *ethpb.GenericSignedBeaconBlock_BlindedBellatrix {
-	return &ethpb.GenericSignedBeaconBlock_BlindedBellatrix{
-		BlindedBellatrix: &ethpb.SignedBlindedBeaconBlockBellatrix{
-			Block: &ethpb.BlindedBeaconBlockBellatrix{
+func generateSignedBlindedBellatrixBlock() *silapb.GenericSignedBeaconBlock_BlindedBellatrix {
+	return &silapb.GenericSignedBeaconBlock_BlindedBellatrix{
+		BlindedBellatrix: &silapb.SignedBlindedBeaconBlockBellatrix{
+			Block: &silapb.BlindedBeaconBlockBellatrix{
 				Slot:          1,
 				ProposerIndex: 2,
 				ParentRoot:    testhelpers.FillByteSlice(32, 3),
 				StateRoot:     testhelpers.FillByteSlice(32, 4),
-				Body: &ethpb.BlindedBeaconBlockBodyBellatrix{
+				Body: &silapb.BlindedBeaconBlockBodyBellatrix{
 					RandaoReveal: testhelpers.FillByteSlice(96, 5),
-					Eth1Data: &ethpb.Eth1Data{
+					Eth1Data: &silapb.Eth1Data{
 						DepositRoot:  testhelpers.FillByteSlice(32, 6),
 						DepositCount: 7,
 						BlockHash:    testhelpers.FillByteSlice(32, 8),
 					},
 					Graffiti: testhelpers.FillByteSlice(32, 9),
-					ProposerSlashings: []*ethpb.ProposerSlashing{
+					ProposerSlashings: []*silapb.ProposerSlashing{
 						{
-							Header_1: &ethpb.SignedBeaconBlockHeader{
-								Header: &ethpb.BeaconBlockHeader{
+							Header_1: &silapb.SignedBeaconBlockHeader{
+								Header: &silapb.BeaconBlockHeader{
 									Slot:          10,
 									ProposerIndex: 11,
 									ParentRoot:    testhelpers.FillByteSlice(32, 12),
@@ -440,8 +440,8 @@ func generateSignedBlindedBellatrixBlock() *ethpb.GenericSignedBeaconBlock_Blind
 								},
 								Signature: testhelpers.FillByteSlice(96, 15),
 							},
-							Header_2: &ethpb.SignedBeaconBlockHeader{
-								Header: &ethpb.BeaconBlockHeader{
+							Header_2: &silapb.SignedBeaconBlockHeader{
+								Header: &silapb.BeaconBlockHeader{
 									Slot:          16,
 									ProposerIndex: 17,
 									ParentRoot:    testhelpers.FillByteSlice(32, 18),
@@ -452,11 +452,11 @@ func generateSignedBlindedBellatrixBlock() *ethpb.GenericSignedBeaconBlock_Blind
 							},
 						},
 					},
-					AttesterSlashings: []*ethpb.AttesterSlashing{},
-					Attestations:      []*ethpb.Attestation{},
-					Deposits:          []*ethpb.Deposit{},
-					VoluntaryExits:    []*ethpb.SignedVoluntaryExit{},
-					SyncAggregate: &ethpb.SyncAggregate{
+					AttesterSlashings: []*silapb.AttesterSlashing{},
+					Attestations:      []*silapb.Attestation{},
+					Deposits:          []*silapb.Deposit{},
+					VoluntaryExits:    []*silapb.SignedVoluntaryExit{},
+					SyncAggregate: &silapb.SyncAggregate{
 						SyncCommitteeBits:      testhelpers.FillByteSlice(64, 100),
 						SyncCommitteeSignature: testhelpers.FillByteSlice(96, 101),
 					},
@@ -483,35 +483,35 @@ func generateSignedBlindedBellatrixBlock() *ethpb.GenericSignedBeaconBlock_Blind
 	}
 }
 
-func generateSignedCapellaBlock() *ethpb.GenericSignedBeaconBlock_Capella {
-	return &ethpb.GenericSignedBeaconBlock_Capella{
-		Capella: &ethpb.SignedBeaconBlockCapella{
+func generateSignedCapellaBlock() *silapb.GenericSignedBeaconBlock_Capella {
+	return &silapb.GenericSignedBeaconBlock_Capella{
+		Capella: &silapb.SignedBeaconBlockCapella{
 			Block:     testhelpers.GenerateProtoCapellaBeaconBlock(),
 			Signature: testhelpers.FillByteSlice(96, 127),
 		},
 	}
 }
 
-func generateSignedBlindedCapellaBlock() *ethpb.GenericSignedBeaconBlock_BlindedCapella {
-	return &ethpb.GenericSignedBeaconBlock_BlindedCapella{
-		BlindedCapella: &ethpb.SignedBlindedBeaconBlockCapella{
-			Block: &ethpb.BlindedBeaconBlockCapella{
+func generateSignedBlindedCapellaBlock() *silapb.GenericSignedBeaconBlock_BlindedCapella {
+	return &silapb.GenericSignedBeaconBlock_BlindedCapella{
+		BlindedCapella: &silapb.SignedBlindedBeaconBlockCapella{
+			Block: &silapb.BlindedBeaconBlockCapella{
 				Slot:          1,
 				ProposerIndex: 2,
 				ParentRoot:    testhelpers.FillByteSlice(32, 3),
 				StateRoot:     testhelpers.FillByteSlice(32, 4),
-				Body: &ethpb.BlindedBeaconBlockBodyCapella{
+				Body: &silapb.BlindedBeaconBlockBodyCapella{
 					RandaoReveal: testhelpers.FillByteSlice(96, 5),
-					Eth1Data: &ethpb.Eth1Data{
+					Eth1Data: &silapb.Eth1Data{
 						DepositRoot:  testhelpers.FillByteSlice(32, 6),
 						DepositCount: 7,
 						BlockHash:    testhelpers.FillByteSlice(32, 8),
 					},
 					Graffiti: testhelpers.FillByteSlice(32, 9),
-					ProposerSlashings: []*ethpb.ProposerSlashing{
+					ProposerSlashings: []*silapb.ProposerSlashing{
 						{
-							Header_1: &ethpb.SignedBeaconBlockHeader{
-								Header: &ethpb.BeaconBlockHeader{
+							Header_1: &silapb.SignedBeaconBlockHeader{
+								Header: &silapb.BeaconBlockHeader{
 									Slot:          10,
 									ProposerIndex: 11,
 									ParentRoot:    testhelpers.FillByteSlice(32, 12),
@@ -520,8 +520,8 @@ func generateSignedBlindedCapellaBlock() *ethpb.GenericSignedBeaconBlock_Blinded
 								},
 								Signature: testhelpers.FillByteSlice(96, 15),
 							},
-							Header_2: &ethpb.SignedBeaconBlockHeader{
-								Header: &ethpb.BeaconBlockHeader{
+							Header_2: &silapb.SignedBeaconBlockHeader{
+								Header: &silapb.BeaconBlockHeader{
 									Slot:          16,
 									ProposerIndex: 17,
 									ParentRoot:    testhelpers.FillByteSlice(32, 18),
@@ -532,11 +532,11 @@ func generateSignedBlindedCapellaBlock() *ethpb.GenericSignedBeaconBlock_Blinded
 							},
 						},
 					},
-					AttesterSlashings: []*ethpb.AttesterSlashing{},
-					Attestations:      []*ethpb.Attestation{},
-					Deposits:          []*ethpb.Deposit{},
-					VoluntaryExits:    []*ethpb.SignedVoluntaryExit{},
-					SyncAggregate: &ethpb.SyncAggregate{
+					AttesterSlashings: []*silapb.AttesterSlashing{},
+					Attestations:      []*silapb.Attestation{},
+					Deposits:          []*silapb.Deposit{},
+					VoluntaryExits:    []*silapb.SignedVoluntaryExit{},
+					SyncAggregate: &silapb.SyncAggregate{
 						SyncCommitteeBits:      testhelpers.FillByteSlice(64, 37),
 						SyncCommitteeSignature: testhelpers.FillByteSlice(96, 38),
 					},
@@ -557,7 +557,7 @@ func generateSignedBlindedCapellaBlock() *ethpb.GenericSignedBeaconBlock_Blinded
 						TransactionsRoot: testhelpers.FillByteSlice(32, 52),
 						WithdrawalsRoot:  testhelpers.FillByteSlice(32, 53),
 					},
-					BlsToExecutionChanges: []*ethpb.SignedBLSToExecutionChange{},
+					BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{},
 				},
 			},
 			Signature: testhelpers.FillByteSlice(96, 54),
@@ -570,13 +570,13 @@ func TestProposeBeaconBlock_SSZFails_406_FallbackToJSON(t *testing.T) {
 		name             string
 		consensusVersion string
 		endpoint         string
-		block            *ethpb.GenericSignedBeaconBlock
+		block            *silapb.GenericSignedBeaconBlock
 	}{
 		{
 			name:             "phase0",
 			consensusVersion: "phase0",
 			endpoint:         "/sila/v2/beacon/blocks",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
 		},
@@ -650,7 +650,7 @@ func TestProposeBeaconBlock_SSZFails_406_JSONFallbackFails(t *testing.T) {
 	).Times(1)
 
 	validatorClient := &beaconApiValidatorClient{handler: handler}
-	_, err := validatorClient.proposeBeaconBlock(ctx, &ethpb.GenericSignedBeaconBlock{
+	_, err := validatorClient.proposeBeaconBlock(ctx, &silapb.GenericSignedBeaconBlock{
 		Block: generateSignedPhase0Block(),
 	})
 	assert.ErrorContains(t, "failed to submit block via JSON fallback", err)
@@ -661,13 +661,13 @@ func TestProposeBeaconBlock_SSZFails_Non406_NoFallback(t *testing.T) {
 		name             string
 		consensusVersion string
 		endpoint         string
-		block            *ethpb.GenericSignedBeaconBlock
+		block            *silapb.GenericSignedBeaconBlock
 	}{
 		{
 			name:             "phase0",
 			consensusVersion: "phase0",
 			endpoint:         "/sila/v2/beacon/blocks",
-			block: &ethpb.GenericSignedBeaconBlock{
+			block: &silapb.GenericSignedBeaconBlock{
 				Block: generateSignedPhase0Block(),
 			},
 		},

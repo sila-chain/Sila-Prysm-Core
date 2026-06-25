@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -24,24 +24,24 @@ func TestProcessDeposits_SameValidatorMultipleDepositsSameBlock(t *testing.T) {
 	require.NoError(t, err)
 	eth1Data, err := util.DeterministicEth1Data(len(dep))
 	require.NoError(t, err)
-	registry := []*ethpb.Validator{
+	registry := []*silapb.Validator{
 		{
 			PublicKey:             []byte{1},
 			WithdrawalCredentials: []byte{1, 2, 3},
 		},
 	}
 	balances := []uint64{0}
-	beaconState, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+	beaconState, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 		Validators: registry,
 		Balances:   balances,
 		Eth1Data:   eth1Data,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 		},
 	})
 	require.NoError(t, err)
-	newState, err := altair.ProcessDeposits(t.Context(), beaconState, []*ethpb.Deposit{dep[0], dep[1], dep[2]})
+	newState, err := altair.ProcessDeposits(t.Context(), beaconState, []*silapb.Deposit{dep[0], dep[1], dep[2]})
 	require.NoError(t, err, "Expected block deposits to process correctly")
 	require.Equal(t, 2, len(newState.Validators()), "Incorrect validator count")
 }
@@ -52,24 +52,24 @@ func TestProcessDeposits_AddsNewValidatorDeposit(t *testing.T) {
 	eth1Data, err := util.DeterministicEth1Data(len(dep))
 	require.NoError(t, err)
 
-	registry := []*ethpb.Validator{
+	registry := []*silapb.Validator{
 		{
 			PublicKey:             []byte{1},
 			WithdrawalCredentials: []byte{1, 2, 3},
 		},
 	}
 	balances := []uint64{0}
-	beaconState, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+	beaconState, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 		Validators: registry,
 		Balances:   balances,
 		Eth1Data:   eth1Data,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 		},
 	})
 	require.NoError(t, err)
-	newState, err := altair.ProcessDeposits(t.Context(), beaconState, []*ethpb.Deposit{dep[0]})
+	newState, err := altair.ProcessDeposits(t.Context(), beaconState, []*silapb.Deposit{dep[0]})
 	require.NoError(t, err, "Expected block deposits to process correctly")
 	if newState.Balances()[1] != dep[0].Data.Amount {
 		t.Errorf(
@@ -83,8 +83,8 @@ func TestProcessDeposits_AddsNewValidatorDeposit(t *testing.T) {
 func TestProcessDeposits_RepeatedDeposit_IncreasesValidatorBalance(t *testing.T) {
 	sk, err := bls.RandKey()
 	require.NoError(t, err)
-	deposit := &ethpb.Deposit{
-		Data: &ethpb.Deposit_Data{
+	deposit := &silapb.Deposit{
+		Data: &silapb.Deposit_Data{
 			PublicKey:             sk.PublicKey().Marshal(),
 			Amount:                1000,
 			WithdrawalCredentials: make([]byte, 32),
@@ -105,7 +105,7 @@ func TestProcessDeposits_RepeatedDeposit_IncreasesValidatorBalance(t *testing.T)
 	require.NoError(t, err, "Could not generate proof")
 
 	deposit.Proof = proof
-	registry := []*ethpb.Validator{
+	registry := []*silapb.Validator{
 		{
 			PublicKey: []byte{1, 2, 3},
 		},
@@ -117,16 +117,16 @@ func TestProcessDeposits_RepeatedDeposit_IncreasesValidatorBalance(t *testing.T)
 	balances := []uint64{0, 50}
 	root, err := depositTrie.HashTreeRoot()
 	require.NoError(t, err)
-	beaconState, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+	beaconState, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 		Validators: registry,
 		Balances:   balances,
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: root[:],
 			BlockHash:   root[:],
 		},
 	})
 	require.NoError(t, err)
-	newState, err := altair.ProcessDeposits(t.Context(), beaconState, []*ethpb.Deposit{deposit})
+	newState, err := altair.ProcessDeposits(t.Context(), beaconState, []*silapb.Deposit{deposit})
 	require.NoError(t, err, "Process deposit failed")
 	require.Equal(t, uint64(1000+50), newState.Balances()[1], "Expected balance at index 1 to be 1050")
 }
@@ -138,18 +138,18 @@ func TestProcessDeposit_AddsNewValidatorDeposit(t *testing.T) {
 	eth1Data, err := util.DeterministicEth1Data(len(dep))
 	require.NoError(t, err)
 
-	registry := []*ethpb.Validator{
+	registry := []*silapb.Validator{
 		{
 			PublicKey:             []byte{1},
 			WithdrawalCredentials: []byte{1, 2, 3},
 		},
 	}
 	balances := []uint64{0}
-	beaconState, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+	beaconState, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 		Validators: registry,
 		Balances:   balances,
 		Eth1Data:   eth1Data,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 		},
@@ -177,22 +177,22 @@ func TestProcessDeposit_SkipsInvalidDeposit(t *testing.T) {
 	require.NoError(t, err)
 	root, err := dt.HashTreeRoot()
 	require.NoError(t, err)
-	eth1Data := &ethpb.Eth1Data{
+	eth1Data := &silapb.Eth1Data{
 		DepositRoot:  root[:],
 		DepositCount: 1,
 	}
-	registry := []*ethpb.Validator{
+	registry := []*silapb.Validator{
 		{
 			PublicKey:             []byte{1},
 			WithdrawalCredentials: []byte{1, 2, 3},
 		},
 	}
 	balances := []uint64{0}
-	beaconState, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+	beaconState, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 		Validators: registry,
 		Balances:   balances,
 		Eth1Data:   eth1Data,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 		},
@@ -234,22 +234,22 @@ func TestPreGenesisDeposits_SkipInvalidDeposit(t *testing.T) {
 	root, err := dt.HashTreeRoot()
 	require.NoError(t, err)
 
-	eth1Data := &ethpb.Eth1Data{
+	eth1Data := &silapb.Eth1Data{
 		DepositRoot:  root[:],
 		DepositCount: 1,
 	}
-	registry := []*ethpb.Validator{
+	registry := []*silapb.Validator{
 		{
 			PublicKey:             []byte{1},
 			WithdrawalCredentials: []byte{1, 2, 3},
 		},
 	}
 	balances := []uint64{0}
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators: registry,
 		Balances:   balances,
 		Eth1Data:   eth1Data,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 		},
@@ -288,8 +288,8 @@ func TestPreGenesisDeposits_SkipInvalidDeposit(t *testing.T) {
 func TestProcessDeposit_RepeatedDeposit_IncreasesValidatorBalance(t *testing.T) {
 	sk, err := bls.RandKey()
 	require.NoError(t, err)
-	deposit := &ethpb.Deposit{
-		Data: &ethpb.Deposit_Data{
+	deposit := &silapb.Deposit{
+		Data: &silapb.Deposit_Data{
 			PublicKey:             sk.PublicKey().Marshal(),
 			Amount:                1000,
 			WithdrawalCredentials: make([]byte, 32),
@@ -310,7 +310,7 @@ func TestProcessDeposit_RepeatedDeposit_IncreasesValidatorBalance(t *testing.T) 
 	require.NoError(t, err, "Could not generate proof")
 
 	deposit.Proof = proof
-	registry := []*ethpb.Validator{
+	registry := []*silapb.Validator{
 		{
 			PublicKey: []byte{1, 2, 3},
 		},
@@ -323,10 +323,10 @@ func TestProcessDeposit_RepeatedDeposit_IncreasesValidatorBalance(t *testing.T) 
 	root, err := depositTrie.HashTreeRoot()
 	require.NoError(t, err)
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators: registry,
 		Balances:   balances,
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: root[:],
 			BlockHash:   root[:],
 		},
@@ -338,8 +338,8 @@ func TestProcessDeposit_RepeatedDeposit_IncreasesValidatorBalance(t *testing.T) 
 }
 
 func TestProcessDeposits_MerkleBranchFailsVerification(t *testing.T) {
-	deposit := &ethpb.Deposit{
-		Data: &ethpb.Deposit_Data{
+	deposit := &silapb.Deposit{
+		Data: &silapb.Deposit_Data{
 			PublicKey:             bytesutil.PadTo([]byte{1, 2, 3}, fieldparams.BLSPubkeyLength),
 			WithdrawalCredentials: make([]byte, 32),
 			Signature:             make([]byte, fieldparams.BLSSignatureLength),
@@ -356,13 +356,13 @@ func TestProcessDeposits_MerkleBranchFailsVerification(t *testing.T) {
 
 	deposit.Proof = proof
 	b := util.NewBeaconBlock()
-	b.Block = &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
-			Deposits: []*ethpb.Deposit{deposit},
+	b.Block = &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
+			Deposits: []*silapb.Deposit{deposit},
 		},
 	}
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-		Eth1Data: &ethpb.Eth1Data{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: []byte{0},
 			BlockHash:   []byte{1},
 		},

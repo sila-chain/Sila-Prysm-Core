@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -17,26 +17,26 @@ import (
 func TestProcessOperationsWithNilRequests(t *testing.T) {
 	tests := []struct {
 		name      string
-		modifyBlk func(blockElectra *ethpb.SignedBeaconBlockElectra)
+		modifyBlk func(blockElectra *silapb.SignedBeaconBlockElectra)
 		errMsg    string
 	}{
 		{
 			name: "Nil deposit request",
-			modifyBlk: func(blk *ethpb.SignedBeaconBlockElectra) {
+			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
 				blk.Block.Body.ExecutionRequests.Deposits = []*enginev1.DepositRequest{nil}
 			},
 			errMsg: "nil deposit request",
 		},
 		{
 			name: "Nil withdrawal request",
-			modifyBlk: func(blk *ethpb.SignedBeaconBlockElectra) {
+			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
 				blk.Block.Body.ExecutionRequests.Withdrawals = []*enginev1.WithdrawalRequest{nil}
 			},
 			errMsg: "nil withdrawal request",
 		},
 		{
 			name: "Nil consolidation request",
-			modifyBlk: func(blk *ethpb.SignedBeaconBlockElectra) {
+			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
 				blk.Block.Body.ExecutionRequests.Consolidations = []*enginev1.ConsolidationRequest{nil}
 			},
 			errMsg: "nil consolidation request",
@@ -65,17 +65,17 @@ func TestProcessOperationsWithNilRequests(t *testing.T) {
 func TestElectraOperations_ProcessingErrors(t *testing.T) {
 	tests := []struct {
 		name      string
-		modifyBlk func(blk *ethpb.SignedBeaconBlockElectra)
+		modifyBlk func(blk *silapb.SignedBeaconBlockElectra)
 		errCheck  func(t *testing.T, err error)
 	}{
 		{
 			name: "ErrProcessProposerSlashingsFailed",
-			modifyBlk: func(blk *ethpb.SignedBeaconBlockElectra) {
+			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
 				// Create invalid proposer slashing with out-of-bounds proposer index
-				blk.Block.Body.ProposerSlashings = []*ethpb.ProposerSlashing{
+				blk.Block.Body.ProposerSlashings = []*silapb.ProposerSlashing{
 					{
-						Header_1: &ethpb.SignedBeaconBlockHeader{
-							Header: &ethpb.BeaconBlockHeader{
+						Header_1: &silapb.SignedBeaconBlockHeader{
+							Header: &silapb.BeaconBlockHeader{
 								Slot:          1,
 								ProposerIndex: 999999, // Invalid index (out of bounds)
 								ParentRoot:    make([]byte, 32),
@@ -84,8 +84,8 @@ func TestElectraOperations_ProcessingErrors(t *testing.T) {
 							},
 							Signature: make([]byte, 96),
 						},
-						Header_2: &ethpb.SignedBeaconBlockHeader{
-							Header: &ethpb.BeaconBlockHeader{
+						Header_2: &silapb.SignedBeaconBlockHeader{
+							Header: &silapb.BeaconBlockHeader{
 								Slot:          1,
 								ProposerIndex: 999999,
 								ParentRoot:    make([]byte, 32),
@@ -104,20 +104,20 @@ func TestElectraOperations_ProcessingErrors(t *testing.T) {
 		},
 		{
 			name: "ErrProcessAttestationsFailed",
-			modifyBlk: func(blk *ethpb.SignedBeaconBlockElectra) {
+			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
 				// Create attestation with invalid committee index
-				blk.Block.Body.Attestations = []*ethpb.AttestationElectra{
+				blk.Block.Body.Attestations = []*silapb.AttestationElectra{
 					{
 						AggregationBits: []byte{0b00000001},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							Slot:            1,
 							CommitteeIndex:  999999, // Invalid committee index
 							BeaconBlockRoot: make([]byte, 32),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Epoch: 0,
 								Root:  make([]byte, 32),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Epoch: 0,
 								Root:  make([]byte, 32),
 							},
@@ -134,12 +134,12 @@ func TestElectraOperations_ProcessingErrors(t *testing.T) {
 		},
 		{
 			name: "ErrProcessDepositsFailed",
-			modifyBlk: func(blk *ethpb.SignedBeaconBlockElectra) {
+			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
 				// Create deposit with invalid proof length
-				blk.Block.Body.Deposits = []*ethpb.Deposit{
+				blk.Block.Body.Deposits = []*silapb.Deposit{
 					{
 						Proof: [][]byte{}, // Invalid: empty proof
-						Data: &ethpb.Deposit_Data{
+						Data: &silapb.Deposit_Data{
 							PublicKey:             make([]byte, 48),
 							WithdrawalCredentials: make([]byte, 32),
 							Amount:                32000000000, // 32 ETH in Gwei
@@ -155,11 +155,11 @@ func TestElectraOperations_ProcessingErrors(t *testing.T) {
 		},
 		{
 			name: "ErrProcessVoluntaryExitsFailed",
-			modifyBlk: func(blk *ethpb.SignedBeaconBlockElectra) {
+			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
 				// Create voluntary exit with invalid validator index
-				blk.Block.Body.VoluntaryExits = []*ethpb.SignedVoluntaryExit{
+				blk.Block.Body.VoluntaryExits = []*silapb.SignedVoluntaryExit{
 					{
-						Exit: &ethpb.VoluntaryExit{
+						Exit: &silapb.VoluntaryExit{
 							Epoch:          0,
 							ValidatorIndex: 999999, // Invalid index (out of bounds)
 						},
@@ -174,11 +174,11 @@ func TestElectraOperations_ProcessingErrors(t *testing.T) {
 		},
 		{
 			name: "ErrProcessBLSChangesFailed",
-			modifyBlk: func(blk *ethpb.SignedBeaconBlockElectra) {
+			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
 				// Create BLS to execution change with invalid validator index
-				blk.Block.Body.BlsToExecutionChanges = []*ethpb.SignedBLSToExecutionChange{
+				blk.Block.Body.BlsToExecutionChanges = []*silapb.SignedBLSToExecutionChange{
 					{
-						Message: &ethpb.BLSToExecutionChange{
+						Message: &silapb.BLSToExecutionChange{
 							ValidatorIndex:     999999, // Invalid index (out of bounds)
 							FromBlsPubkey:      make([]byte, 48),
 							ToExecutionAddress: make([]byte, 20),

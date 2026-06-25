@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
@@ -31,7 +31,7 @@ func TestAttestationCheckPtState_FarFutureSlot(t *testing.T) {
 	service.genesisTime = time.Now()
 
 	e := primitives.Epoch(slots.MaxSlotBuffer/uint64(params.BeaconConfig().SlotsPerEpoch) + 1)
-	_, err := service.AttestationTargetState(t.Context(), &ethpb.Checkpoint{Epoch: e})
+	_, err := service.AttestationTargetState(t.Context(), &silapb.Checkpoint{Epoch: e})
 	require.ErrorContains(t, "exceeds max allowed value relative to the local clock", err)
 }
 
@@ -40,7 +40,7 @@ func TestVerifyLMDFFGConsistent(t *testing.T) {
 	ctx := tr.ctx
 
 	f := service.cfg.ForkChoiceStore
-	fc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	fc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	state, r32, err := prepareForkchoiceState(ctx, 32, [32]byte{'a'}, params.BeaconConfig().ZeroHash, params.BeaconConfig().ZeroHash, fc, fc)
 	require.NoError(t, err)
 	require.NoError(t, f.InsertNode(ctx, state, r32))
@@ -79,12 +79,12 @@ func TestProcessAttestations_Ok(t *testing.T) {
 	copied, err = transition.ProcessSlots(ctx, copied, 1)
 	require.NoError(t, err)
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, copied, tRoot))
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	state, blkRoot, err := prepareForkchoiceState(ctx, 0, tRoot, tRoot, params.BeaconConfig().ZeroHash, ojc, ofc)
 	require.NoError(t, err)
 	require.NoError(t, service.cfg.ForkChoiceStore.InsertNode(ctx, state, blkRoot))
-	attsToSave := make([]ethpb.Att, len(atts))
+	attsToSave := make([]silapb.Att, len(atts))
 	copy(attsToSave, atts)
 	require.NoError(t, service.cfg.AttPool.SaveForkchoiceAttestations(attsToSave))
 	service.processAttestations(ctx, 0)
@@ -99,7 +99,7 @@ func TestService_ProcessAttestationsAndUpdateHead(t *testing.T) {
 	service.genesisTime = silaTime.Now().Add(-2 * time.Duration(params.BeaconConfig().SecondsPerSlot) * time.Second)
 	genesisState, pks := util.DeterministicGenesisState(t, 64)
 	require.NoError(t, service.saveGenesisData(ctx, genesisState))
-	ojc := &ethpb.Checkpoint{Epoch: 0, Root: service.originBlockRoot[:]}
+	ojc := &silapb.Checkpoint{Epoch: 0, Root: service.originBlockRoot[:]}
 	require.NoError(t, fcs.UpdateJustifiedCheckpoint(ctx, &forkchoicetypes.Checkpoint{Epoch: 0, Root: service.originBlockRoot}))
 	copied := genesisState.Copy()
 	// Generate a new block for attesters to attest
@@ -128,7 +128,7 @@ func TestService_ProcessAttestationsAndUpdateHead(t *testing.T) {
 	// Generate attestations for this block in Slot 1
 	atts, err := util.GenerateAttestations(copied, pks, 1, 1, false)
 	require.NoError(t, err)
-	attsToSave := make([]ethpb.Att, len(atts))
+	attsToSave := make([]silapb.Att, len(atts))
 	copy(attsToSave, atts)
 	require.NoError(t, service.cfg.AttPool.SaveForkchoiceAttestations(attsToSave))
 	// Verify the target is in forkchoice
@@ -187,7 +187,7 @@ func TestService_UpdateHead_NoAtts(t *testing.T) {
 	require.Equal(t, tRoot, service.head.root)
 
 	// Insert a new block to forkchoice
-	ojc := &ethpb.Checkpoint{Epoch: 0, Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Epoch: 0, Root: params.BeaconConfig().ZeroHash[:]}
 	b, err := util.GenerateFullBlock(genesisState, pks, util.DefaultBlockGenConfig(), 2)
 	require.NoError(t, err)
 	b.Block.ParentRoot = service.originBlockRoot[:]

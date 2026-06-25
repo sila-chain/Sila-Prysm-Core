@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -46,9 +46,9 @@ func TestProposeAttestation(t *testing.T) {
 	root, err := head.Block.HashTreeRoot()
 	require.NoError(t, err)
 
-	validators := make([]*ethpb.Validator, 64)
+	validators := make([]*silapb.Validator, 64)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             make([]byte, 48),
 			WithdrawalCredentials: make([]byte, 32),
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
@@ -66,12 +66,12 @@ func TestProposeAttestation(t *testing.T) {
 		require.NoError(t, state.SetSlot(params.BeaconConfig().SlotsPerEpoch+1))
 		require.NoError(t, state.SetValidators(validators))
 
-		req := &ethpb.Attestation{
+		req := &silapb.Attestation{
 			Signature: sig.Marshal(),
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				BeaconBlockRoot: root[:],
-				Source:          &ethpb.Checkpoint{Root: make([]byte, 32)},
-				Target:          &ethpb.Checkpoint{Root: make([]byte, 32)},
+				Source:          &silapb.Checkpoint{Root: make([]byte, 32)},
+				Target:          &silapb.Checkpoint{Root: make([]byte, 32)},
 			},
 		}
 		_, err = attesterServer.ProposeAttestation(t.Context(), req)
@@ -88,12 +88,12 @@ func TestProposeAttestation(t *testing.T) {
 		require.NoError(t, state.SetSlot(params.BeaconConfig().SlotsPerEpoch+1))
 		require.NoError(t, state.SetValidators(validators))
 
-		req := &ethpb.Attestation{
+		req := &silapb.Attestation{
 			Signature: sig.Marshal(),
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				BeaconBlockRoot: root[:],
-				Source:          &ethpb.Checkpoint{Root: make([]byte, 32)},
-				Target:          &ethpb.Checkpoint{Root: make([]byte, 32)},
+				Source:          &silapb.Checkpoint{Root: make([]byte, 32)},
+				Target:          &silapb.Checkpoint{Root: make([]byte, 32)},
 			},
 		}
 		_, err = attesterServer.ProposeAttestation(t.Context(), req)
@@ -111,24 +111,24 @@ func TestProposeAttestation(t *testing.T) {
 		require.NoError(t, state.SetValidators(validators))
 		chainService.State = state
 
-		req := &ethpb.SingleAttestation{
+		req := &silapb.SingleAttestation{
 			Signature: sig.Marshal(),
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				BeaconBlockRoot: root[:],
-				Source:          &ethpb.Checkpoint{Root: make([]byte, 32)},
-				Target:          &ethpb.Checkpoint{Root: make([]byte, 32)},
+				Source:          &silapb.Checkpoint{Root: make([]byte, 32)},
+				Target:          &silapb.Checkpoint{Root: make([]byte, 32)},
 			},
 		}
 		_, err = attesterServer.ProposeAttestationElectra(t.Context(), req)
 		assert.NoError(t, err)
 	})
 	t.Run("Electra att too early", func(t *testing.T) {
-		req := &ethpb.SingleAttestation{
+		req := &silapb.SingleAttestation{
 			Signature: sig.Marshal(),
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				BeaconBlockRoot: root[:],
-				Source:          &ethpb.Checkpoint{Root: make([]byte, 32)},
-				Target:          &ethpb.Checkpoint{Root: make([]byte, 32)},
+				Source:          &silapb.Checkpoint{Root: make([]byte, 32)},
+				Target:          &silapb.Checkpoint{Root: make([]byte, 32)},
 			},
 		}
 		_, err = attesterServer.ProposeAttestationElectra(t.Context(), req)
@@ -141,14 +141,14 @@ func TestProposeAttestation(t *testing.T) {
 		config.GloasForkEpoch = 0
 		params.OverrideBeaconConfig(config)
 
-		req := &ethpb.SingleAttestation{
+		req := &silapb.SingleAttestation{
 			Signature: sig.Marshal(),
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				Slot:            params.BeaconConfig().SlotsPerEpoch + 1,
 				CommitteeIndex:  2,
 				BeaconBlockRoot: root[:],
-				Source:          &ethpb.Checkpoint{Root: make([]byte, 32)},
-				Target:          &ethpb.Checkpoint{Root: make([]byte, 32)},
+				Source:          &silapb.Checkpoint{Root: make([]byte, 32)},
+				Target:          &silapb.Checkpoint{Root: make([]byte, 32)},
 			},
 		}
 		_, err = attesterServer.ProposeAttestationElectra(t.Context(), req)
@@ -172,14 +172,14 @@ func TestProposeAttestation(t *testing.T) {
 			SyncChecker:             &mockSync.Sync{IsSyncing: false},
 			ForkchoiceFetcher:       &mock.ChainService{BlockSlot: attSlot},
 		}
-		req := &ethpb.SingleAttestation{
+		req := &silapb.SingleAttestation{
 			Signature: sig.Marshal(),
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				Slot:            attSlot,
 				CommitteeIndex:  1,
 				BeaconBlockRoot: root[:],
-				Source:          &ethpb.Checkpoint{Root: make([]byte, 32)},
-				Target:          &ethpb.Checkpoint{Root: make([]byte, 32)},
+				Source:          &silapb.Checkpoint{Root: make([]byte, 32)},
+				Target:          &silapb.Checkpoint{Root: make([]byte, 32)},
 			},
 		}
 		_, err = server.ProposeAttestationElectra(t.Context(), req)
@@ -208,14 +208,14 @@ func TestProposeAttestation(t *testing.T) {
 			SyncChecker:             &mockSync.Sync{IsSyncing: false},
 			ForkchoiceFetcher:       cs,
 		}
-		req := &ethpb.SingleAttestation{
+		req := &silapb.SingleAttestation{
 			Signature: sig.Marshal(),
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				Slot:            attSlot,
 				CommitteeIndex:  1,
 				BeaconBlockRoot: root[:],
-				Source:          &ethpb.Checkpoint{Root: make([]byte, 32)},
-				Target:          &ethpb.Checkpoint{Root: make([]byte, 32)},
+				Source:          &silapb.Checkpoint{Root: make([]byte, 32)},
+				Target:          &silapb.Checkpoint{Root: make([]byte, 32)},
 			},
 		}
 		_, err = server.ProposeAttestationElectra(t.Context(), req)
@@ -232,7 +232,7 @@ func TestProposeAttestation_IncorrectSignature(t *testing.T) {
 		SyncChecker:       &mockSync.Sync{IsSyncing: false},
 	}
 
-	req := util.HydrateAttestation(&ethpb.Attestation{})
+	req := util.HydrateAttestation(&silapb.Attestation{})
 	wanted := "Incorrect attestation signature"
 	_, err := attesterServer.ProposeAttestation(t.Context(), req)
 	assert.ErrorContains(t, wanted, err)
@@ -243,7 +243,7 @@ func TestProposeAttestation_Syncing(t *testing.T) {
 		SyncChecker: &mockSync.Sync{IsSyncing: true},
 	}
 
-	req := util.HydrateAttestation(&ethpb.Attestation{})
+	req := util.HydrateAttestation(&silapb.Attestation{})
 	_, err := attesterServer.ProposeAttestation(t.Context(), req)
 	assert.ErrorContains(t, "Syncing to latest head", err)
 	s, ok := status.FromError(err)
@@ -256,10 +256,10 @@ func TestProposeAttestationElectra_Syncing(t *testing.T) {
 		SyncChecker: &mockSync.Sync{IsSyncing: true},
 	}
 
-	req := &ethpb.SingleAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Root: make([]byte, 32)},
-			Target: &ethpb.Checkpoint{Root: make([]byte, 32)},
+	req := &silapb.SingleAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Root: make([]byte, 32)},
+			Target: &silapb.Checkpoint{Root: make([]byte, 32)},
 		},
 	}
 	_, err := attesterServer.ProposeAttestationElectra(t.Context(), req)
@@ -287,7 +287,7 @@ func TestGetAttestationData_OK(t *testing.T) {
 	beaconState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetSlot(slot))
-	justifiedCheckpoint := &ethpb.Checkpoint{
+	justifiedCheckpoint := &silapb.Checkpoint{
 		Epoch: 2,
 		Root:  justifiedRoot[:],
 	}
@@ -308,21 +308,21 @@ func TestGetAttestationData_OK(t *testing.T) {
 		},
 	}
 
-	req := &ethpb.AttestationDataRequest{
+	req := &silapb.AttestationDataRequest{
 		CommitteeIndex: 0,
 		Slot:           3*params.BeaconConfig().SlotsPerEpoch + 1,
 	}
 	res, err := attesterServer.GetAttestationData(t.Context(), req)
 	require.NoError(t, err, "Could not get attestation info at slot")
 
-	expectedInfo := &ethpb.AttestationData{
+	expectedInfo := &silapb.AttestationData{
 		Slot:            3*params.BeaconConfig().SlotsPerEpoch + 1,
 		BeaconBlockRoot: blockRoot[:],
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: 2,
 			Root:  justifiedRoot[:],
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: 3,
 			Root:  targetRoot[:],
 		},
@@ -348,7 +348,7 @@ func BenchmarkGetAttestationDataConcurrent(b *testing.B) {
 	justifiedRoot, err := justifiedBlock.Block.HashTreeRoot()
 	require.NoError(b, err, "Could not get signing root for justified block")
 	slot := 3*params.BeaconConfig().SlotsPerEpoch + 1
-	justifiedCheckpoint := &ethpb.Checkpoint{
+	justifiedCheckpoint := &silapb.Checkpoint{
 		Epoch: 2,
 		Root:  justifiedRoot[:],
 	}
@@ -368,7 +368,7 @@ func BenchmarkGetAttestationDataConcurrent(b *testing.B) {
 		},
 	}
 
-	req := &ethpb.AttestationDataRequest{
+	req := &silapb.AttestationDataRequest{
 		CommitteeIndex: 0,
 		Slot:           3*params.BeaconConfig().SlotsPerEpoch + 1,
 	}
@@ -392,7 +392,7 @@ func TestGetAttestationData_SyncNotReady(t *testing.T) {
 	as := Server{
 		SyncChecker: &mockSync.Sync{IsSyncing: true},
 	}
-	_, err := as.GetAttestationData(t.Context(), &ethpb.AttestationDataRequest{})
+	_, err := as.GetAttestationData(t.Context(), &silapb.AttestationDataRequest{})
 	assert.ErrorContains(t, "Syncing to latest head", err)
 }
 
@@ -413,7 +413,7 @@ func TestGetAttestationData_Optimistic(t *testing.T) {
 			OptimisticModeFetcher: &mock.ChainService{Optimistic: true},
 		},
 	}
-	_, err := as.GetAttestationData(t.Context(), &ethpb.AttestationDataRequest{})
+	_, err := as.GetAttestationData(t.Context(), &silapb.AttestationDataRequest{})
 	s, ok := status.FromError(err)
 	require.Equal(t, true, ok)
 	require.DeepEqual(t, codes.Unavailable, s.Code())
@@ -429,11 +429,11 @@ func TestGetAttestationData_Optimistic(t *testing.T) {
 			AttestationCache:      cache.NewAttestationDataCache(),
 			GenesisTimeFetcher:    &mock.ChainService{Genesis: time.Now()},
 			HeadFetcher:           &mock.ChainService{Optimistic: false, State: beaconState},
-			FinalizedFetcher:      &mock.ChainService{CurrentJustifiedCheckPoint: &ethpb.Checkpoint{}},
+			FinalizedFetcher:      &mock.ChainService{CurrentJustifiedCheckPoint: &silapb.Checkpoint{}},
 			OptimisticModeFetcher: &mock.ChainService{Optimistic: false},
 		},
 	}
-	_, err = as.GetAttestationData(t.Context(), &ethpb.AttestationDataRequest{})
+	_, err = as.GetAttestationData(t.Context(), &silapb.AttestationDataRequest{})
 	require.NoError(t, err)
 }
 
@@ -452,7 +452,7 @@ func TestServer_GetAttestationData_InvalidRequestSlot(t *testing.T) {
 		},
 	}
 
-	req := &ethpb.AttestationDataRequest{
+	req := &silapb.AttestationDataRequest{
 		Slot: 1000000000000,
 	}
 	_, err := attesterServer.GetAttestationData(ctx, req)
@@ -479,7 +479,7 @@ func TestServer_GetAttestationData_RequestSlotIsDifferentThanCurrentSlot(t *test
 	util.SaveBlock(t, ctx, db, block2)
 	justifiedRoot, err := justifiedBlock.Block.HashTreeRoot()
 	require.NoError(t, err, "Could not get signing root for justified block")
-	justifiedCheckpoint := &ethpb.Checkpoint{
+	justifiedCheckpoint := &silapb.Checkpoint{
 		Epoch: 2,
 		Root:  justifiedRoot[:],
 	}
@@ -498,7 +498,7 @@ func TestServer_GetAttestationData_RequestSlotIsDifferentThanCurrentSlot(t *test
 	}
 	util.SaveBlock(t, ctx, db, block)
 
-	req := &ethpb.AttestationDataRequest{
+	req := &silapb.AttestationDataRequest{
 		CommitteeIndex: 0,
 		Slot:           slot - 1,
 	}
@@ -524,7 +524,7 @@ func TestGetAttestationData_SucceedsInFirstEpoch(t *testing.T) {
 	beaconState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetSlot(slot))
-	justifiedCheckpoint := &ethpb.Checkpoint{
+	justifiedCheckpoint := &silapb.Checkpoint{
 		Epoch: 0,
 		Root:  justifiedRoot[:],
 	}
@@ -546,21 +546,21 @@ func TestGetAttestationData_SucceedsInFirstEpoch(t *testing.T) {
 		},
 	}
 
-	req := &ethpb.AttestationDataRequest{
+	req := &silapb.AttestationDataRequest{
 		CommitteeIndex: 0,
 		Slot:           5,
 	}
 	res, err := attesterServer.GetAttestationData(t.Context(), req)
 	require.NoError(t, err, "Could not get attestation info at slot")
 
-	expectedInfo := &ethpb.AttestationData{
+	expectedInfo := &silapb.AttestationData{
 		Slot:            slot,
 		BeaconBlockRoot: blockRoot[:],
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  justifiedRoot[:],
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  targetRoot[:],
 		},
@@ -594,7 +594,7 @@ func TestGetAttestationData_CommitteeIndexIsZeroPostElectra(t *testing.T) {
 	beaconState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetSlot(slot))
-	justifiedCheckpoint := &ethpb.Checkpoint{
+	justifiedCheckpoint := &silapb.Checkpoint{
 		Epoch: 2,
 		Root:  justifiedRoot[:],
 	}
@@ -615,22 +615,22 @@ func TestGetAttestationData_CommitteeIndexIsZeroPostElectra(t *testing.T) {
 		},
 	}
 
-	req := &ethpb.AttestationDataRequest{
+	req := &silapb.AttestationDataRequest{
 		CommitteeIndex: 123, // set non-zero committee index
 		Slot:           3*params.BeaconConfig().SlotsPerEpoch + 1,
 	}
 	res, err := attesterServer.GetAttestationData(t.Context(), req)
 	require.NoError(t, err)
 
-	expected := &ethpb.AttestationData{
+	expected := &silapb.AttestationData{
 		Slot:            3*params.BeaconConfig().SlotsPerEpoch + 1,
 		CommitteeIndex:  0,
 		BeaconBlockRoot: blockRoot[:],
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: 2,
 			Root:  justifiedRoot[:],
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: 3,
 			Root:  targetRoot[:],
 		},
@@ -663,7 +663,7 @@ func TestGetAttestationData_CommitteeIndexGloas(t *testing.T) {
 	beaconState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetSlot(slot))
-	justifiedCheckpoint := &ethpb.Checkpoint{
+	justifiedCheckpoint := &silapb.Checkpoint{
 		Epoch: 2,
 		Root:  justifiedRoot[:],
 	}
@@ -695,7 +695,7 @@ func TestGetAttestationData_CommitteeIndexGloas(t *testing.T) {
 				OptimisticModeFetcher: &mock.ChainService{Optimistic: false},
 			},
 		}
-		res, err := attesterServer.GetAttestationData(t.Context(), &ethpb.AttestationDataRequest{
+		res, err := attesterServer.GetAttestationData(t.Context(), &silapb.AttestationDataRequest{
 			CommitteeIndex: 123,
 			Slot:           slot,
 		})
@@ -727,7 +727,7 @@ func TestGetAttestationData_CommitteeIndexGloas(t *testing.T) {
 				OptimisticModeFetcher: &mock.ChainService{Optimistic: false},
 			},
 		}
-		res, err := attesterServer.GetAttestationData(t.Context(), &ethpb.AttestationDataRequest{
+		res, err := attesterServer.GetAttestationData(t.Context(), &silapb.AttestationDataRequest{
 			CommitteeIndex: 123,
 			Slot:           slot,
 		})
@@ -744,7 +744,7 @@ func TestServer_SubscribeCommitteeSubnets_NoSlots(t *testing.T) {
 		OperationNotifier: (&mock.ChainService{}).OperationNotifier(),
 	}
 
-	_, err := attesterServer.SubscribeCommitteeSubnets(t.Context(), &ethpb.CommitteeSubnetsSubscribeRequest{
+	_, err := attesterServer.SubscribeCommitteeSubnets(t.Context(), &silapb.CommitteeSubnetsSubscribeRequest{
 		Slots:        nil,
 		CommitteeIds: nil,
 		IsAggregator: nil,
@@ -777,7 +777,7 @@ func TestServer_SubscribeCommitteeSubnets_DifferentLengthSlots(t *testing.T) {
 
 	ss = append(ss, 321)
 
-	_, err := attesterServer.SubscribeCommitteeSubnets(t.Context(), &ethpb.CommitteeSubnetsSubscribeRequest{
+	_, err := attesterServer.SubscribeCommitteeSubnets(t.Context(), &silapb.CommitteeSubnetsSubscribeRequest{
 		Slots:        ss,
 		CommitteeIds: comIdxs,
 		IsAggregator: isAggregator,
@@ -790,9 +790,9 @@ func TestServer_SubscribeCommitteeSubnets_MultipleSlots(t *testing.T) {
 	s := rand.NewSource(10)
 	randGen := rand.New(s)
 
-	validators := make([]*ethpb.Validator, 64)
+	validators := make([]*silapb.Validator, 64)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 			EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance,
 		}
@@ -820,7 +820,7 @@ func TestServer_SubscribeCommitteeSubnets_MultipleSlots(t *testing.T) {
 		isAggregator = append(isAggregator, boolVal)
 	}
 
-	_, err = attesterServer.SubscribeCommitteeSubnets(t.Context(), &ethpb.CommitteeSubnetsSubscribeRequest{
+	_, err = attesterServer.SubscribeCommitteeSubnets(t.Context(), &silapb.CommitteeSubnetsSubscribeRequest{
 		Slots:        ss,
 		CommitteeIds: comIdxs,
 		IsAggregator: isAggregator,

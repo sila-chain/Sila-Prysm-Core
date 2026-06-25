@@ -17,16 +17,16 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/libp2p/go-libp2p/core/network"
 )
 
-func makeSignedEnvelope(root [32]byte, slot primitives.Slot) *ethpb.SignedExecutionPayloadEnvelope {
-	return &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+func makeSignedEnvelope(root [32]byte, slot primitives.Slot) *silapb.SignedExecutionPayloadEnvelope {
+	return &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload: &enginev1.ExecutionPayloadGloas{
 				ParentHash:    make([]byte, fieldparams.RootLength),
 				FeeRecipient:  make([]byte, 20),
@@ -57,7 +57,7 @@ func newEnvelopeFetchService(t *testing.T, p1 p2p.P2P) *Service {
 			chain:    chain,
 			clock:    startup.NewClock(chain.Genesis, chain.ValidatorsRoot),
 		},
-		pendingPayloadEnvelopes: make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+		pendingPayloadEnvelopes: make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 	}
 	ctxMap, err := ContextByteVersionsForValRoot(chain.ValidatorsRoot)
 	require.NoError(t, err)

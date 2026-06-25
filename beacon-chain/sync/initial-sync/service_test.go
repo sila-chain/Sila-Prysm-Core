@@ -28,7 +28,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -251,7 +251,7 @@ func TestService_Start_DoesNotMarkSyncedWhenStillBehindInSameEpoch(t *testing.T)
 	initialSyncComplete := make(chan struct{})
 	mc := &mock.ChainService{
 		State: st,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 		},
 		Genesis:        genesisTime,
@@ -836,7 +836,7 @@ func TestFetchOriginColumns(t *testing.T) {
 		p2p.Peers().SetConnectionState(other.PeerID(), peers.Connected)
 		p2p.Connect(other)
 
-		p2p.Peers().SetChainState(other.PeerID(), &ethpb.StatusV2{
+		p2p.Peers().SetChainState(other.PeerID(), &silapb.StatusV2{
 			HeadSlot: 5,
 		})
 
@@ -850,7 +850,7 @@ func TestFetchOriginColumns(t *testing.T) {
 			}
 		}
 
-		expectedRequests := []*ethpb.DataColumnSidecarsByRangeRequest{
+		expectedRequests := []*silapb.DataColumnSidecarsByRangeRequest{
 			{
 				StartSlot: 0,
 				Count:     1,
@@ -906,7 +906,7 @@ func TestFetchOriginColumns(t *testing.T) {
 		// Do not respond any sidecar on the first attempt, and respond everything requested on the second one.
 		attempt := 0
 		other.SetStreamHandler(protocol, func(stream network.Stream) {
-			actualRequest := new(ethpb.DataColumnSidecarsByRangeRequest)
+			actualRequest := new(silapb.DataColumnSidecarsByRangeRequest)
 			err := other.Encoding().DecodeWithMaxLength(stream, actualRequest)
 			assert.NoError(t, err)
 			assert.DeepEqual(t, expectedRequests[attempt], actualRequest)

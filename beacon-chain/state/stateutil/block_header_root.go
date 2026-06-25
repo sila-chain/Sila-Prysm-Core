@@ -5,13 +5,13 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // BlockHeaderRoot computes the HashTreeRoot Merkleization of
 // a BeaconBlockHeader struct according to the Sila
 // Simple Serialize specification.
-func BlockHeaderRoot(header *ethpb.BeaconBlockHeader) ([32]byte, error) {
+func BlockHeaderRoot(header *silapb.BeaconBlockHeader) ([32]byte, error) {
 	fieldRoots := make([][32]byte, 5)
 	if header != nil {
 		headerSlotBuf := make([]byte, 8)

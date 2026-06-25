@@ -5,11 +5,11 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 func sszToState(b []byte) (state.BeaconState, error) {
-	base := &ethpb.BeaconState{}
+	base := &silapb.BeaconState{}
 	if err := base.UnmarshalSSZ(b); err != nil {
 		return nil, err
 	}
@@ -17,9 +17,9 @@ func sszToState(b []byte) (state.BeaconState, error) {
 }
 
 func sszToBlock(b []byte) (interfaces.SignedBeaconBlock, error) {
-	base := &ethpb.BeaconBlock{}
+	base := &silapb.BeaconBlock{}
 	if err := base.UnmarshalSSZ(b); err != nil {
 		return nil, err
 	}
-	return blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlock{Block: base})
+	return blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlock{Block: base})
 }

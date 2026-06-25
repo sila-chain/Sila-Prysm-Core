@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // PruneProofs removes proofs from all deposits whose index is equal or less than untilDepositIndex.
@@ -61,7 +61,7 @@ func (c *Cache) PrunePendingDeposits(ctx context.Context, merkleTreeIndex int64)
 	c.depositsLock.Lock()
 	defer c.depositsLock.Unlock()
 
-	cleanDeposits := make([]*ethpb.DepositContainer, 0, len(c.pendingDeposits))
+	cleanDeposits := make([]*silapb.DepositContainer, 0, len(c.pendingDeposits))
 	for _, dp := range c.pendingDeposits {
 		if dp.Index >= merkleTreeIndex {
 			cleanDeposits = append(cleanDeposits, dp)
@@ -83,6 +83,6 @@ func (c *Cache) PruneAllPendingDeposits(ctx context.Context) {
 	c.depositsLock.Lock()
 	defer c.depositsLock.Unlock()
 
-	c.pendingDeposits = make([]*ethpb.DepositContainer, 0)
+	c.pendingDeposits = make([]*silapb.DepositContainer, 0)
 	pendingDepositsCount.Set(float64(0))
 }

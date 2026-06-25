@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash/htr"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -25,7 +25,7 @@ func Test_MerkleProofKZGCommitment_Altair(t *testing.T) {
 	kzgs[2] = make([]byte, 48)
 	_, err = rand.Read(kzgs[2])
 	require.NoError(t, err)
-	pbBody := &ethpb.BeaconBlockBodyAltair{}
+	pbBody := &silapb.BeaconBlockBodyAltair{}
 
 	body, err := NewBeaconBlockBody(pbBody)
 	require.NoError(t, err)
@@ -44,8 +44,8 @@ func buildTestKzgsAndBody(t *testing.T) ([][]byte, interfaces.ReadOnlyBeaconBloc
 	kzgs[2] = make([]byte, 48)
 	_, err = rand.Read(kzgs[2])
 	require.NoError(t, err)
-	pbBody := &ethpb.BeaconBlockBodyDeneb{
-		SyncAggregate: &ethpb.SyncAggregate{
+	pbBody := &silapb.BeaconBlockBodyDeneb{
+		SyncAggregate: &silapb.SyncAggregate{
 			SyncCommitteeBits:      make([]byte, fieldparams.SyncAggregateSyncCommitteeBytesLength),
 			SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 		},
@@ -61,7 +61,7 @@ func buildTestKzgsAndBody(t *testing.T) ([][]byte, interfaces.ReadOnlyBeaconBloc
 			Transactions:  make([][]byte, 0),
 			ExtraData:     make([]byte, 0),
 		},
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
@@ -114,7 +114,7 @@ func Test_MerkleProofKZGCommitment(t *testing.T) {
 
 func TestMerkleProofKZGCommitments(t *testing.T) {
 	t.Run("invalid version", func(t *testing.T) {
-		pbBody := &ethpb.BeaconBlockBodyAltair{}
+		pbBody := &silapb.BeaconBlockBodyAltair{}
 
 		body, err := NewBeaconBlockBody(pbBody)
 		require.NoError(t, err)
@@ -203,8 +203,8 @@ func Benchmark_MerkleProofKZGCommitment(b *testing.B) {
 	kzgs[2] = make([]byte, 48)
 	_, err = rand.Read(kzgs[2])
 	require.NoError(b, err)
-	pbBody := &ethpb.BeaconBlockBodyDeneb{
-		SyncAggregate: &ethpb.SyncAggregate{
+	pbBody := &silapb.BeaconBlockBodyDeneb{
+		SyncAggregate: &silapb.SyncAggregate{
 			SyncCommitteeBits:      make([]byte, fieldparams.SyncAggregateSyncCommitteeBytesLength),
 			SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 		},
@@ -220,7 +220,7 @@ func Benchmark_MerkleProofKZGCommitment(b *testing.B) {
 			Transactions:  make([][]byte, 0),
 			ExtraData:     make([]byte, 0),
 		},
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
@@ -248,8 +248,8 @@ func Test_VerifyKZGInclusionProof(t *testing.T) {
 	kzgs[2] = make([]byte, 48)
 	_, err = rand.Read(kzgs[2])
 	require.NoError(t, err)
-	pbBody := &ethpb.BeaconBlockBodyDeneb{
-		SyncAggregate: &ethpb.SyncAggregate{
+	pbBody := &silapb.BeaconBlockBodyDeneb{
+		SyncAggregate: &silapb.SyncAggregate{
 			SyncCommitteeBits:      make([]byte, fieldparams.SyncAggregateSyncCommitteeBytesLength),
 			SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 		},
@@ -265,7 +265,7 @@ func Test_VerifyKZGInclusionProof(t *testing.T) {
 			Transactions:  make([][]byte, 0),
 			ExtraData:     make([]byte, 0),
 		},
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
@@ -280,16 +280,16 @@ func Test_VerifyKZGInclusionProof(t *testing.T) {
 	proof, err := MerkleProofKZGCommitment(body, index)
 	require.NoError(t, err)
 
-	header := &ethpb.BeaconBlockHeader{
+	header := &silapb.BeaconBlockHeader{
 		BodyRoot:   root[:],
 		ParentRoot: make([]byte, 32),
 		StateRoot:  make([]byte, 32),
 	}
-	signedHeader := &ethpb.SignedBeaconBlockHeader{
+	signedHeader := &silapb.SignedBeaconBlockHeader{
 		Header:    header,
 		Signature: make([]byte, fieldparams.BLSSignatureLength),
 	}
-	sidecar := &ethpb.BlobSidecar{
+	sidecar := &silapb.BlobSidecar{
 		Index:                    uint64(index),
 		KzgCommitment:            kzgs[index],
 		CommitmentInclusionProof: proof,

@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -19,12 +19,12 @@ func TestSetSelfBuildExecutionPayloadBid(t *testing.T) {
 	slot := primitives.Slot(100)
 	proposerIndex := primitives.ValidatorIndex(42)
 
-	sBlk, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockGloas{
-		Block: &ethpb.BeaconBlockGloas{
+	sBlk, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockGloas{
+		Block: &silapb.BeaconBlockGloas{
 			Slot:          slot,
 			ProposerIndex: proposerIndex,
 			ParentRoot:    parentRoot[:],
-			Body:          &ethpb.BeaconBlockBodyGloas{},
+			Body:          &silapb.BeaconBlockBodyGloas{},
 		},
 	})
 	require.NoError(t, err)
@@ -81,11 +81,11 @@ func TestSetSelfBuildExecutionPayloadBid_BlobCommitments(t *testing.T) {
 	parentRoot := [32]byte{1, 2, 3}
 	slot := primitives.Slot(100)
 
-	sBlk, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockGloas{
-		Block: &ethpb.BeaconBlockGloas{
+	sBlk, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockGloas{
+		Block: &silapb.BeaconBlockGloas{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body:       &ethpb.BeaconBlockBodyGloas{},
+			Body:       &silapb.BeaconBlockBodyGloas{},
 		},
 	})
 	require.NoError(t, err)
@@ -136,11 +136,11 @@ func TestSetSelfBuildExecutionPayloadBid_BlobCommitments(t *testing.T) {
 }
 
 func TestSetSelfBuildExecutionPayloadBid_NilPayload(t *testing.T) {
-	sBlk, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockGloas{
-		Block: &ethpb.BeaconBlockGloas{
+	sBlk, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockGloas{
+		Block: &silapb.BeaconBlockGloas{
 			Slot:       1,
 			ParentRoot: make([]byte, 32),
-			Body:       &ethpb.BeaconBlockBodyGloas{},
+			Body:       &silapb.BeaconBlockBodyGloas{},
 		},
 	})
 	require.NoError(t, err)
@@ -159,11 +159,11 @@ func TestSetExecutionPayloadBid_PrefersP2PBid(t *testing.T) {
 	parentRoot := [32]byte{1, 2, 3}
 	slot := primitives.Slot(100)
 
-	sBlk, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockGloas{
-		Block: &ethpb.BeaconBlockGloas{
+	sBlk, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockGloas{
+		Block: &silapb.BeaconBlockGloas{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body:       &ethpb.BeaconBlockBodyGloas{},
+			Body:       &silapb.BeaconBlockBodyGloas{},
 		},
 	})
 	require.NoError(t, err)
@@ -190,8 +190,8 @@ func TestSetExecutionPayloadBid_PrefersP2PBid(t *testing.T) {
 	}
 
 	// Populate the highest bid cache with a P2P bid.
-	p2pBid := &ethpb.SignedExecutionPayloadBid{
-		Message: &ethpb.ExecutionPayloadBid{
+	p2pBid := &silapb.SignedExecutionPayloadBid{
+		Message: &silapb.ExecutionPayloadBid{
 			Slot:                  slot,
 			ParentBlockHash:       parentHash[:],
 			ParentBlockRoot:       parentRoot[:],
@@ -232,11 +232,11 @@ func TestSetExecutionPayloadBid_PrefersLocalWhenHigherValue(t *testing.T) {
 	parentRoot := [32]byte{1, 2, 3}
 	slot := primitives.Slot(100)
 
-	sBlk, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockGloas{
-		Block: &ethpb.BeaconBlockGloas{
+	sBlk, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockGloas{
+		Block: &silapb.BeaconBlockGloas{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body:       &ethpb.BeaconBlockBodyGloas{},
+			Body:       &silapb.BeaconBlockBodyGloas{},
 		},
 	})
 	require.NoError(t, err)
@@ -264,8 +264,8 @@ func TestSetExecutionPayloadBid_PrefersLocalWhenHigherValue(t *testing.T) {
 	}
 
 	// P2P bid is only 1000 Gwei — local should win.
-	p2pBid := &ethpb.SignedExecutionPayloadBid{
-		Message: &ethpb.ExecutionPayloadBid{
+	p2pBid := &silapb.SignedExecutionPayloadBid{
+		Message: &silapb.ExecutionPayloadBid{
 			Slot:                  slot,
 			ParentBlockHash:       parentHash[:],
 			ParentBlockRoot:       parentRoot[:],
@@ -306,11 +306,11 @@ func TestSetExecutionPayloadBid_SelfBuildOnlyIgnoresCache(t *testing.T) {
 	parentRoot := [32]byte{1, 2, 3}
 	slot := primitives.Slot(100)
 
-	sBlk, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockGloas{
-		Block: &ethpb.BeaconBlockGloas{
+	sBlk, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockGloas{
+		Block: &silapb.BeaconBlockGloas{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body:       &ethpb.BeaconBlockBodyGloas{},
+			Body:       &silapb.BeaconBlockBodyGloas{},
 		},
 	})
 	require.NoError(t, err)
@@ -337,8 +337,8 @@ func TestSetExecutionPayloadBid_SelfBuildOnlyIgnoresCache(t *testing.T) {
 	}
 
 	// P2P bid has higher value, but selfBuildOnly=true should force self-build.
-	p2pBid := &ethpb.SignedExecutionPayloadBid{
-		Message: &ethpb.ExecutionPayloadBid{
+	p2pBid := &silapb.SignedExecutionPayloadBid{
+		Message: &silapb.ExecutionPayloadBid{
 			Slot:                  slot,
 			ParentBlockHash:       parentHash[:],
 			ParentBlockRoot:       parentRoot[:],
@@ -378,11 +378,11 @@ func TestSetExecutionPayloadBid_FallsBackToSelfBuildWhenNoCachedBid(t *testing.T
 	parentRoot := [32]byte{1, 2, 3}
 	slot := primitives.Slot(100)
 
-	sBlk, err := consensusblocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockGloas{
-		Block: &ethpb.BeaconBlockGloas{
+	sBlk, err := consensusblocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockGloas{
+		Block: &silapb.BeaconBlockGloas{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body:       &ethpb.BeaconBlockBodyGloas{},
+			Body:       &silapb.BeaconBlockBodyGloas{},
 		},
 	})
 	require.NoError(t, err)

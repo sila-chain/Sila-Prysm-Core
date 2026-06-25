@@ -11,14 +11,14 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/core"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/shared"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/shared"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
@@ -119,7 +119,7 @@ func (s *Server) GetIndividualVotes(w http.ResponseWriter, r *http.Request) {
 	}
 	votes, rpcError := s.CoreService.IndividualVotes(
 		ctx,
-		&ethpb.IndividualVotesRequest{
+		&silapb.IndividualVotesRequest{
 			Epoch:      primitives.Epoch(epoch),
 			PublicKeys: publicKeyBytes,
 			Indices:    indices,

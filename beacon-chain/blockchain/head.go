@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpbv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
+	silapbv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -133,7 +133,7 @@ func (s *Service) saveHead(ctx context.Context, newHeadRoot [32]byte, headBlock 
 
 		s.cfg.StateNotifier.StateFeed().Send(&feed.Event{
 			Type: statefeed.Reorg,
-			Data: &ethpbv1.EventChainReorg{
+			Data: &silapbv1.EventChainReorg{
 				Slot:                newHeadSlot,
 				Depth:               max(uint64(headSlot-forkSlot), uint64(newHeadSlot-forkSlot)),
 				OldHeadBlock:        oldHeadRoot[:],
@@ -364,7 +364,7 @@ func (s *Service) notifyNewHeadEvent(
 
 	s.cfg.StateNotifier.StateFeed().Send(&feed.Event{
 		Type: statefeed.NewHead,
-		Data: &ethpbv1.EventHead{
+		Data: &silapbv1.EventHead{
 			Slot:                      newHeadSlot,
 			Block:                     newHeadRoot,
 			State:                     newHeadStateRoot,

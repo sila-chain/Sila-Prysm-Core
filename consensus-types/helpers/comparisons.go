@@ -3,10 +3,10 @@ package helpers
 import (
 	"bytes"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
-func ForksEqual(s, t *ethpb.Fork) bool {
+func ForksEqual(s, t *silapb.Fork) bool {
 	if s == nil && t == nil {
 		return true
 	}
@@ -22,7 +22,7 @@ func ForksEqual(s, t *ethpb.Fork) bool {
 	return bytes.Equal(s.CurrentVersion, t.CurrentVersion)
 }
 
-func BlockHeadersEqual(s, t *ethpb.BeaconBlockHeader) bool {
+func BlockHeadersEqual(s, t *silapb.BeaconBlockHeader) bool {
 	if s == nil && t == nil {
 		return true
 	}
@@ -44,7 +44,7 @@ func BlockHeadersEqual(s, t *ethpb.BeaconBlockHeader) bool {
 	return bytes.Equal(s.BodyRoot, t.BodyRoot)
 }
 
-func Eth1DataEqual(s, t *ethpb.Eth1Data) bool {
+func Eth1DataEqual(s, t *silapb.Eth1Data) bool {
 	if s == nil && t == nil {
 		return true
 	}
@@ -60,7 +60,7 @@ func Eth1DataEqual(s, t *ethpb.Eth1Data) bool {
 	return bytes.Equal(s.BlockHash, t.BlockHash)
 }
 
-func PendingDepositsEqual(s, t *ethpb.PendingDeposit) bool {
+func PendingDepositsEqual(s, t *silapb.PendingDeposit) bool {
 	if s == nil && t == nil {
 		return true
 	}
@@ -82,7 +82,7 @@ func PendingDepositsEqual(s, t *ethpb.PendingDeposit) bool {
 	return s.Slot == t.Slot
 }
 
-func PendingPartialWithdrawalsEqual(s, t *ethpb.PendingPartialWithdrawal) bool {
+func PendingPartialWithdrawalsEqual(s, t *silapb.PendingPartialWithdrawal) bool {
 	if s == nil && t == nil {
 		return true
 	}
@@ -98,7 +98,7 @@ func PendingPartialWithdrawalsEqual(s, t *ethpb.PendingPartialWithdrawal) bool {
 	return s.WithdrawableEpoch == t.WithdrawableEpoch
 }
 
-func PendingConsolidationsEqual(s, t *ethpb.PendingConsolidation) bool {
+func PendingConsolidationsEqual(s, t *silapb.PendingConsolidation) bool {
 	if s == nil && t == nil {
 		return true
 	}
@@ -108,7 +108,7 @@ func PendingConsolidationsEqual(s, t *ethpb.PendingConsolidation) bool {
 	return s.SourceIndex == t.SourceIndex && s.TargetIndex == t.TargetIndex
 }
 
-func BuilderPendingWithdrawalsEqual(s, t *ethpb.BuilderPendingWithdrawal) bool {
+func BuilderPendingWithdrawalsEqual(s, t *silapb.BuilderPendingWithdrawal) bool {
 	if s == nil && t == nil {
 		return true
 	}

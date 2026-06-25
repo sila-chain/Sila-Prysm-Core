@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -85,7 +85,7 @@ func TestProposerPreferencesVerifier_VerifySignature_ForkBoundary(t *testing.T) 
 	st, keys := util.DeterministicGenesisStateFulu(t, 64)
 	// State is at epoch 0 (pre-gloas), but proposal is for epoch 1 (gloas).
 	require.NoError(t, st.SetSlot(params.BeaconConfig().SlotsPerEpoch-1))
-	require.NoError(t, st.SetFork(&ethpb.Fork{
+	require.NoError(t, st.SetFork(&silapb.Fork{
 		PreviousVersion: cfg.FuluForkVersion,
 		CurrentVersion:  cfg.FuluForkVersion,
 		Epoch:           0,
@@ -97,8 +97,8 @@ func TestProposerPreferencesVerifier_VerifySignature_ForkBoundary(t *testing.T) 
 	lookahead[index] = validatorIndex
 	require.NoError(t, st.SetProposerLookahead(lookahead))
 
-	signed := &ethpb.SignedProposerPreferences{
-		Message: &ethpb.ProposerPreferences{
+	signed := &silapb.SignedProposerPreferences{
+		Message: &silapb.ProposerPreferences{
 			DependentRoot:  bytes.Repeat([]byte{0x02}, 32),
 			ProposalSlot:   proposalSlot,
 			ValidatorIndex: validatorIndex,
@@ -113,7 +113,7 @@ func TestProposerPreferencesVerifier_VerifySignature_ForkBoundary(t *testing.T) 
 	require.NoError(t, verifier.VerifySignature(st))
 }
 
-func newSignedProposerPreferencesState(t *testing.T, currentSlot, proposalSlot primitives.Slot, validatorIndex primitives.ValidatorIndex) (state.BeaconState, []bls.SecretKey, *ethpb.SignedProposerPreferences) {
+func newSignedProposerPreferencesState(t *testing.T, currentSlot, proposalSlot primitives.Slot, validatorIndex primitives.ValidatorIndex) (state.BeaconState, []bls.SecretKey, *silapb.SignedProposerPreferences) {
 	t.Helper()
 
 	params.SetupTestConfigCleanup(t)
@@ -123,7 +123,7 @@ func newSignedProposerPreferencesState(t *testing.T, currentSlot, proposalSlot p
 
 	st, keys := util.DeterministicGenesisStateFulu(t, 64)
 	require.NoError(t, st.SetSlot(currentSlot))
-	require.NoError(t, st.SetFork(&ethpb.Fork{
+	require.NoError(t, st.SetFork(&silapb.Fork{
 		PreviousVersion: cfg.FuluForkVersion,
 		CurrentVersion:  cfg.GloasForkVersion,
 		Epoch:           0,
@@ -137,8 +137,8 @@ func newSignedProposerPreferencesState(t *testing.T, currentSlot, proposalSlot p
 	lookahead[index] = validatorIndex
 	require.NoError(t, st.SetProposerLookahead(lookahead))
 
-	signed := &ethpb.SignedProposerPreferences{
-		Message: &ethpb.ProposerPreferences{
+	signed := &silapb.SignedProposerPreferences{
+		Message: &silapb.ProposerPreferences{
 			DependentRoot:  bytes.Repeat([]byte{0x02}, 32),
 			ProposalSlot:   proposalSlot,
 			ValidatorIndex: validatorIndex,
@@ -152,7 +152,7 @@ func newSignedProposerPreferencesState(t *testing.T, currentSlot, proposalSlot p
 
 // signProposerPreferencesWithConfigFork signs preferences using the config-based fork
 // for the target epoch, matching the DomainData RPC behavior used by the validator client.
-func signProposerPreferencesWithConfigFork(t *testing.T, sk bls.SecretKey, preferences *ethpb.ProposerPreferences, st state.ReadOnlyBeaconState) []byte {
+func signProposerPreferencesWithConfigFork(t *testing.T, sk bls.SecretKey, preferences *silapb.ProposerPreferences, st state.ReadOnlyBeaconState) []byte {
 	t.Helper()
 
 	epoch := slots.ToEpoch(preferences.ProposalSlot)

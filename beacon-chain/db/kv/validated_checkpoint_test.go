@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -16,7 +16,7 @@ func TestStore_LastValidatedCheckpoint_CanSaveRetrieve(t *testing.T) {
 	db := setupDB(t)
 	ctx := t.Context()
 	root := bytesutil.ToBytes32([]byte{'A'})
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: 10,
 		Root:  root[:],
 	}
@@ -34,10 +34,10 @@ func TestStore_LastValidatedCheckpoint_CanSaveRetrieve(t *testing.T) {
 func TestStore_LastValidatedCheckpoint_Recover(t *testing.T) {
 	db := setupDB(t)
 	ctx := t.Context()
-	blk := util.HydrateSignedBeaconBlock(&ethpb.SignedBeaconBlock{})
+	blk := util.HydrateSignedBeaconBlock(&silapb.SignedBeaconBlock{})
 	r, err := blk.Block.HashTreeRoot()
 	require.NoError(t, err)
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: 2,
 		Root:  r[:],
 	}
@@ -54,7 +54,7 @@ func BenchmarkStore_SaveLastValidatedCheckpoint(b *testing.B) {
 	db := setupDB(b)
 	ctx := b.Context()
 	root := bytesutil.ToBytes32([]byte{'A'})
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: 10,
 		Root:  root[:],
 	}
@@ -83,7 +83,7 @@ func TestStore_LastValidatedCheckpoint_DefaultIsFinalized(t *testing.T) {
 	root, err := blk.Block.HashTreeRoot()
 	require.NoError(t, err)
 
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: 5,
 		Root:  root[:],
 	}

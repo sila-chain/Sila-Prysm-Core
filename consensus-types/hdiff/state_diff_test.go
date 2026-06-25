@@ -15,7 +15,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -102,7 +102,7 @@ func TestApplyDiff(t *testing.T) {
 	for i := range blockHash {
 		blockHash[i] = byte(i + 100)
 	}
-	require.NoError(t, target.SetEth1Data(&ethpb.Eth1Data{
+	require.NoError(t, target.SetEth1Data(&silapb.Eth1Data{
 		DepositRoot:  depositRoot,
 		DepositCount: 99999,
 		BlockHash:    blockHash,
@@ -124,7 +124,7 @@ func getMainnetStates() (state.BeaconState, state.BeaconState, error) {
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to read target file")
 	}
-	sourceProto := &ethpb.BeaconStateDeneb{}
+	sourceProto := &silapb.BeaconStateDeneb{}
 	if err := sourceProto.UnmarshalSSZ(sourceBytes); err != nil {
 		return nil, nil, errors.Wrap(err, "failed to unmarshal source proto")
 	}
@@ -132,7 +132,7 @@ func getMainnetStates() (state.BeaconState, state.BeaconState, error) {
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to initialize source state")
 	}
-	targetProto := &ethpb.BeaconStateElectra{}
+	targetProto := &silapb.BeaconStateElectra{}
 	if err := targetProto.UnmarshalSSZ(targetBytes); err != nil {
 		return nil, nil, errors.Wrap(err, "failed to unmarshal target proto")
 	}
@@ -288,7 +288,7 @@ func Test_validatorsEqual(t *testing.T) {
 	// Create two different states to test validator comparison
 	target := source.Copy()
 	targetVals := target.Validators()
-	modifiedVal := &ethpb.Validator{
+	modifiedVal := &silapb.Validator{
 		PublicKey:                  targetVals[0].PublicKey,
 		WithdrawalCredentials:      targetVals[0].WithdrawalCredentials,
 		EffectiveBalance:           targetVals[0].EffectiveBalance,
@@ -373,7 +373,7 @@ func Test_diffToVals(t *testing.T) {
 
 	t.Run("validator slashed", func(t *testing.T) {
 		vals := target.Validators()
-		modifiedVal := &ethpb.Validator{
+		modifiedVal := &silapb.Validator{
 			PublicKey:                  vals[0].PublicKey,
 			WithdrawalCredentials:      vals[0].WithdrawalCredentials,
 			EffectiveBalance:           vals[0].EffectiveBalance,
@@ -396,7 +396,7 @@ func Test_diffToVals(t *testing.T) {
 
 	t.Run("validator effective balance changed", func(t *testing.T) {
 		vals := target.Validators()
-		modifiedVal := &ethpb.Validator{
+		modifiedVal := &silapb.Validator{
 			PublicKey:                  vals[1].PublicKey,
 			WithdrawalCredentials:      vals[1].WithdrawalCredentials,
 			EffectiveBalance:           vals[1].EffectiveBalance,
@@ -431,7 +431,7 @@ func Test_newValidatorDiffs(t *testing.T) {
 
 	// Modify a validator to create diffs
 	vals := target.Validators()
-	modifiedVal := &ethpb.Validator{
+	modifiedVal := &silapb.Validator{
 		PublicKey:                  vals[0].PublicKey,
 		WithdrawalCredentials:      vals[0].WithdrawalCredentials,
 		EffectiveBalance:           vals[0].EffectiveBalance,
@@ -474,7 +474,7 @@ func Test_applyValidatorDiff(t *testing.T) {
 
 	// Modify validators in target
 	vals := target.Validators()
-	modifiedVal := &ethpb.Validator{
+	modifiedVal := &silapb.Validator{
 		PublicKey:                  vals[0].PublicKey,
 		WithdrawalCredentials:      vals[0].WithdrawalCredentials,
 		EffectiveBalance:           vals[0].EffectiveBalance,
@@ -520,7 +520,7 @@ func TestApplyDiff_WithSignificantValidatorGrowth(t *testing.T) {
 
 	vals := target.Validators()
 	for i := range vals {
-		vals[i] = &ethpb.Validator{
+		vals[i] = &silapb.Validator{
 			PublicKey:                  vals[i].PublicKey,
 			WithdrawalCredentials:      vals[i].WithdrawalCredentials,
 			EffectiveBalance:           vals[i].EffectiveBalance + 1000,
@@ -536,7 +536,7 @@ func TestApplyDiff_WithSignificantValidatorGrowth(t *testing.T) {
 		binary.LittleEndian.PutUint64(pubkey, 1000+i)
 		wc := make([]byte, 32)
 		binary.LittleEndian.PutUint64(wc, 2000+i)
-		vals = append(vals, &ethpb.Validator{
+		vals = append(vals, &silapb.Validator{
 			PublicKey:                  pubkey,
 			WithdrawalCredentials:      wc,
 			EffectiveBalance:           32000000000,
@@ -840,20 +840,20 @@ func Test_shouldAppendEth1DataVotes(t *testing.T) {
 	// Test empty votes
 	root1 := make([]byte, 32)
 	root1[0] = 0x01
-	require.Equal(t, true, shouldAppendEth1DataVotes([]*ethpb.Eth1Data{}, []*ethpb.Eth1Data{{BlockHash: root1}}))
+	require.Equal(t, true, shouldAppendEth1DataVotes([]*silapb.Eth1Data{}, []*silapb.Eth1Data{{BlockHash: root1}}))
 
 	// Test appending to existing votes
 	root2 := make([]byte, 32)
 	root2[0] = 0x02
-	sourceVotes := []*ethpb.Eth1Data{{BlockHash: root1}}
-	targetVotes := []*ethpb.Eth1Data{{BlockHash: root1}, {BlockHash: root2}}
+	sourceVotes := []*silapb.Eth1Data{{BlockHash: root1}}
+	targetVotes := []*silapb.Eth1Data{{BlockHash: root1}, {BlockHash: root2}}
 	require.Equal(t, true, shouldAppendEth1DataVotes(sourceVotes, targetVotes))
 
 	// Test complete replacement
 	root3 := make([]byte, 32)
 	root3[0] = 0x03
-	sourceVotes = []*ethpb.Eth1Data{{BlockHash: root1}, {BlockHash: root2}}
-	targetVotes = []*ethpb.Eth1Data{{BlockHash: root3}}
+	sourceVotes = []*silapb.Eth1Data{{BlockHash: root1}, {BlockHash: root2}}
+	targetVotes = []*silapb.Eth1Data{{BlockHash: root3}}
 	require.Equal(t, false, shouldAppendEth1DataVotes(sourceVotes, targetVotes))
 }
 

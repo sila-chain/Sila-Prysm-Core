@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	logTest "github.com/sirupsen/logrus/hooks/test"
@@ -68,8 +68,8 @@ func Test_setupForkchoiceTree_Finalized(t *testing.T) {
 	require.NoError(t, err, "Could not get signing root")
 	require.NoError(t, service.cfg.BeaconDB.SaveState(ctx, st, parentRoot), "Could not save genesis state")
 	require.NoError(t, service.cfg.BeaconDB.SaveHeadBlockRoot(ctx, parentRoot), "Could not save genesis state")
-	require.NoError(t, service.cfg.BeaconDB.SaveJustifiedCheckpoint(ctx, &ethpb.Checkpoint{Root: parentRoot[:]}))
-	require.NoError(t, service.cfg.BeaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Root: parentRoot[:]}))
+	require.NoError(t, service.cfg.BeaconDB.SaveJustifiedCheckpoint(ctx, &silapb.Checkpoint{Root: parentRoot[:]}))
+	require.NoError(t, service.cfg.BeaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Root: parentRoot[:]}))
 	require.NoError(t, service.setupForkchoiceTree(st))
 	require.Equal(t, 1, service.cfg.ForkChoiceStore.NodeCount())
 }

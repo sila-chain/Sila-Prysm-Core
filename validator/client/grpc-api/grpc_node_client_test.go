@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/mock"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -57,11 +57,11 @@ func TestGrpcNodeClient_IsReady(t *testing.T) {
 
 			// Create client with injected mock
 			client := &grpcNodeClient{
-				grpcClientManager: &grpcClientManager[ethpb.NodeClient]{
+				grpcClientManager: &grpcClientManager[silapb.NodeClient]{
 					conn:            conn,
 					client:          mockNodeClient,
 					lastConnCounter: 0,
-					newClient:       func(grpc.ClientConnInterface) ethpb.NodeClient { return mockNodeClient },
+					newClient:       func(grpc.ClientConnInterface) silapb.NodeClient { return mockNodeClient },
 				},
 			}
 

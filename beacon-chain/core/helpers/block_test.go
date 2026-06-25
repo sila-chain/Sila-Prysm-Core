@@ -9,7 +9,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -20,7 +20,7 @@ func TestBlockRootAtSlot_CorrectBlockRoot(t *testing.T) {
 	for i := uint64(0); i < uint64(params.BeaconConfig().SlotsPerHistoricalRoot); i++ {
 		blockRoots = append(blockRoots, []byte{byte(i)})
 	}
-	s := &ethpb.BeaconState{
+	s := &silapb.BeaconState{
 		BlockRoots: blockRoots,
 	}
 
@@ -79,7 +79,7 @@ func TestBlockRootAtSlot_OutOfBounds(t *testing.T) {
 	for i := uint64(0); i < uint64(params.BeaconConfig().SlotsPerHistoricalRoot); i++ {
 		blockRoots = append(blockRoots, []byte{byte(i)})
 	}
-	state := &ethpb.BeaconState{
+	state := &silapb.BeaconState{
 		BlockRoots: blockRoots,
 	}
 

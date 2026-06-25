@@ -21,7 +21,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -202,7 +202,7 @@ func TestValidateExecutionPayloadBidGossip_LowerBidIgnoredStillMarksBuilderSeen(
 	s, msg, signedBid := setupExecutionPayloadBidService(t)
 	s.newExecutionPayloadBidVerifier = testNewExecutionPayloadBidVerifier(mockExecutionPayloadBidVerifier{})
 
-	higherBid := proto.Clone(signedBid).(*ethpb.SignedExecutionPayloadBid)
+	higherBid := proto.Clone(signedBid).(*silapb.SignedExecutionPayloadBid)
 	higherBid.Message.Value = signedBid.Message.Value + 1
 	s.setHighestExecutionPayloadBid(higherBid)
 
@@ -229,7 +229,7 @@ func TestValidateExecutionPayloadBidGossip_HigherBidAccepted(t *testing.T) {
 	require.NoError(t, err)
 	bid, err := wrapped.Bid()
 	require.NoError(t, err)
-	lowerBid := proto.Clone(signedBid).(*ethpb.SignedExecutionPayloadBid)
+	lowerBid := proto.Clone(signedBid).(*silapb.SignedExecutionPayloadBid)
 	lowerBid.Message.Value = bid.Value() - 1
 	s.setHighestExecutionPayloadBid(lowerBid)
 
@@ -249,7 +249,7 @@ func TestValidateExecutionPayloadBidGossip_HappyPath(t *testing.T) {
 
 	builderKey := executionPayloadBidBuilderKey(signedBid.Message.Slot, signedBid.Message.BuilderIndex)
 	require.Equal(t, true, s.hasSeenExecutionPayloadBidBuilder(builderKey))
-	got, ok := msg.ValidatorData.(*ethpb.SignedExecutionPayloadBid)
+	got, ok := msg.ValidatorData.(*silapb.SignedExecutionPayloadBid)
 	require.Equal(t, true, ok)
 	require.DeepEqual(t, signedBid, got)
 }
@@ -282,7 +282,7 @@ func TestValidateExecutionPayloadBidGossip_GasLimitIncompatible(t *testing.T) {
 
 func TestExecutionPayloadBidSubscriber_WrongMessage(t *testing.T) {
 	s := &Service{}
-	err := s.executionPayloadBidSubscriber(context.Background(), &ethpb.BeaconBlock{})
+	err := s.executionPayloadBidSubscriber(context.Background(), &silapb.BeaconBlock{})
 	require.ErrorIs(t, errWrongMessage, err)
 }
 
@@ -303,7 +303,7 @@ func TestExecutionPayloadBidSubscriber_NilMessage(t *testing.T) {
 	s := &Service{
 		highestExecutionPayloadBidCache: cache.NewHighestExecutionPayloadBidCache(),
 	}
-	err := s.executionPayloadBidSubscriber(context.Background(), &ethpb.SignedExecutionPayloadBid{})
+	err := s.executionPayloadBidSubscriber(context.Background(), &silapb.SignedExecutionPayloadBid{})
 	require.ErrorIs(t, errNilMessage, err)
 }
 
@@ -371,7 +371,7 @@ func testNewExecutionPayloadBidVerifier(m mockExecutionPayloadBidVerifier) verif
 	}
 }
 
-func setupExecutionPayloadBidService(t *testing.T) (*Service, *pubsub.Message, *ethpb.SignedExecutionPayloadBid) {
+func setupExecutionPayloadBidService(t *testing.T) (*Service, *pubsub.Message, *silapb.SignedExecutionPayloadBid) {
 	t.Helper()
 
 	params.SetupTestConfigCleanup(t)
@@ -433,14 +433,14 @@ func setupExecutionPayloadBidService(t *testing.T) (*Service, *pubsub.Message, *
 	return s, msg, signedBid
 }
 
-func executionPayloadBidToPubsub(t *testing.T, s *Service, p p2p.P2P, bid *ethpb.SignedExecutionPayloadBid) *pubsub.Message {
+func executionPayloadBidToPubsub(t *testing.T, s *Service, p p2p.P2P, bid *silapb.SignedExecutionPayloadBid) *pubsub.Message {
 	t.Helper()
 
 	buf := new(bytes.Buffer)
 	_, err := p.Encoding().EncodeGossip(buf, bid)
 	require.NoError(t, err)
 
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedExecutionPayloadBid]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedExecutionPayloadBid]()]
 	digest, err := s.currentForkDigest()
 	require.NoError(t, err)
 	topic = s.addDigestToTopic(topic, digest)
@@ -453,7 +453,7 @@ func executionPayloadBidToPubsub(t *testing.T, s *Service, p p2p.P2P, bid *ethpb
 	}
 }
 
-func mustBid(t *testing.T, signedBid *ethpb.SignedExecutionPayloadBid) interfaces.ROExecutionPayloadBid {
+func mustBid(t *testing.T, signedBid *silapb.SignedExecutionPayloadBid) interfaces.ROExecutionPayloadBid {
 	t.Helper()
 
 	wrapped, err := blocks.WrappedROSignedExecutionPayloadBid(signedBid)

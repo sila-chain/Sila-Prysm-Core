@@ -7,7 +7,7 @@ import (
 	grpcutil "github.com/sila-chain/Sila-Consensus-Core/v7/api/grpc"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/validator/flags"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/accounts"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/accounts/wallet"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client"
@@ -52,7 +52,7 @@ func Exit(c *cli.Context, r io.Reader) error {
 		if err != nil {
 			return errors.Wrapf(err, "could not dial endpoint %s", beaconRPCProvider)
 		}
-		nodeClient := ethpb.NewNodeClient(conn)
+		nodeClient := silapb.NewNodeClient(conn)
 		resp, err := nodeClient.GetGenesis(c.Context, &empty.Empty{})
 		if err != nil {
 			return errors.Wrapf(err, "failed to get genesis info")

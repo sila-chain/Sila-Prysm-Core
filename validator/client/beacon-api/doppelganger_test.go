@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -43,8 +43,8 @@ func TestCheckDoppelGanger_Nominal(t *testing.T) {
 
 	testCases := []struct {
 		name                        string
-		doppelGangerInput           *ethpb.DoppelGangerRequest
-		doppelGangerExpectedOutput  *ethpb.DoppelGangerResponse
+		doppelGangerInput           *silapb.DoppelGangerRequest
+		doppelGangerExpectedOutput  *silapb.DoppelGangerResponse
 		getSyncingOutput            *structs.SyncStatusResponse
 		getForkOutput               *structs.GetStateForkResponse
 		getHeadersOutput            *structs.GetBlockHeadersResponse
@@ -61,32 +61,32 @@ func TestCheckDoppelGanger_Nominal(t *testing.T) {
 		{
 			name:              "nil input",
 			doppelGangerInput: nil,
-			doppelGangerExpectedOutput: &ethpb.DoppelGangerResponse{
-				Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{},
+			doppelGangerExpectedOutput: &silapb.DoppelGangerResponse{
+				Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{},
 			},
 		},
 		{
 			name: "nil validator requests",
-			doppelGangerInput: &ethpb.DoppelGangerRequest{
+			doppelGangerInput: &silapb.DoppelGangerRequest{
 				ValidatorRequests: nil,
 			},
-			doppelGangerExpectedOutput: &ethpb.DoppelGangerResponse{
-				Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{},
+			doppelGangerExpectedOutput: &silapb.DoppelGangerResponse{
+				Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{},
 			},
 		},
 		{
 			name: "empty validator requests",
-			doppelGangerInput: &ethpb.DoppelGangerRequest{
-				ValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{},
+			doppelGangerInput: &silapb.DoppelGangerRequest{
+				ValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{},
 			},
-			doppelGangerExpectedOutput: &ethpb.DoppelGangerResponse{
-				Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{},
+			doppelGangerExpectedOutput: &silapb.DoppelGangerResponse{
+				Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{},
 			},
 		},
 		{
 			name: "phase0",
-			doppelGangerInput: &ethpb.DoppelGangerRequest{
-				ValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{
+			doppelGangerInput: &silapb.DoppelGangerRequest{
+				ValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{
 					{PublicKey: pubKey1},
 					{PublicKey: pubKey2},
 					{PublicKey: pubKey3},
@@ -95,8 +95,8 @@ func TestCheckDoppelGanger_Nominal(t *testing.T) {
 					{PublicKey: pubKey6},
 				},
 			},
-			doppelGangerExpectedOutput: &ethpb.DoppelGangerResponse{
-				Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{
+			doppelGangerExpectedOutput: &silapb.DoppelGangerResponse{
+				Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{
 					{PublicKey: pubKey1, DuplicateExists: false},
 					{PublicKey: pubKey2, DuplicateExists: false},
 					{PublicKey: pubKey3, DuplicateExists: false},
@@ -120,8 +120,8 @@ func TestCheckDoppelGanger_Nominal(t *testing.T) {
 		},
 		{
 			name: "all validators are recent",
-			doppelGangerInput: &ethpb.DoppelGangerRequest{
-				ValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{
+			doppelGangerInput: &silapb.DoppelGangerRequest{
+				ValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{
 					{PublicKey: pubKey1, Epoch: 2},
 					{PublicKey: pubKey2, Epoch: 2},
 					{PublicKey: pubKey3, Epoch: 2},
@@ -130,8 +130,8 @@ func TestCheckDoppelGanger_Nominal(t *testing.T) {
 					{PublicKey: pubKey6, Epoch: 2},
 				},
 			},
-			doppelGangerExpectedOutput: &ethpb.DoppelGangerResponse{
-				Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{
+			doppelGangerExpectedOutput: &silapb.DoppelGangerResponse{
+				Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{
 					{PublicKey: pubKey1, DuplicateExists: false},
 					{PublicKey: pubKey2, DuplicateExists: false},
 					{PublicKey: pubKey3, DuplicateExists: false},
@@ -166,8 +166,8 @@ func TestCheckDoppelGanger_Nominal(t *testing.T) {
 		},
 		{
 			name: "some validators are recent, some not, some duplicates",
-			doppelGangerInput: &ethpb.DoppelGangerRequest{
-				ValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{
+			doppelGangerInput: &silapb.DoppelGangerRequest{
+				ValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{
 					{PublicKey: pubKey1, Epoch: 99}, // recent
 					{PublicKey: pubKey2, Epoch: 80}, // not recent - duplicate on previous epoch
 					{PublicKey: pubKey3, Epoch: 80}, // not recent - duplicate on current epoch
@@ -176,8 +176,8 @@ func TestCheckDoppelGanger_Nominal(t *testing.T) {
 					{PublicKey: pubKey6, Epoch: 80}, // not recent - not duplicate
 				},
 			},
-			doppelGangerExpectedOutput: &ethpb.DoppelGangerResponse{
-				Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{
+			doppelGangerExpectedOutput: &silapb.DoppelGangerResponse{
+				Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{
 					{PublicKey: pubKey1, DuplicateExists: false}, // recent
 					{PublicKey: pubKey2, DuplicateExists: true},  // not recent - duplicate on previous epoch
 					{PublicKey: pubKey3, DuplicateExists: true},  // not recent - duplicate on current epoch
@@ -392,7 +392,7 @@ func TestCheckDoppelGanger_Errors(t *testing.T) {
 	pubKey, err := hexutil.Decode(stringPubKey)
 	require.NoError(t, err)
 
-	standardInputValidatorRequests := []*ethpb.DoppelGangerRequest_ValidatorRequest{
+	standardInputValidatorRequests := []*silapb.DoppelGangerRequest_ValidatorRequest{
 		{
 			PublicKey: pubKey,
 			Epoch:     1,
@@ -444,7 +444,7 @@ func TestCheckDoppelGanger_Errors(t *testing.T) {
 	testCases := []struct {
 		name                        string
 		expectedErrorMessage        string
-		inputValidatorRequests      []*ethpb.DoppelGangerRequest_ValidatorRequest
+		inputValidatorRequests      []*silapb.DoppelGangerRequest_ValidatorRequest
 		getSyncingOutput            *structs.SyncStatusResponse
 		getSyncingError             error
 		getForkOutput               *structs.GetStateForkResponse
@@ -466,7 +466,7 @@ func TestCheckDoppelGanger_Errors(t *testing.T) {
 		{
 			name:                   "nil validatorRequest",
 			expectedErrorMessage:   "validator request is nil",
-			inputValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{nil},
+			inputValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{nil},
 		},
 		{
 			name:                   "isSyncing on error",
@@ -812,7 +812,7 @@ func TestCheckDoppelGanger_Errors(t *testing.T) {
 
 			_, err := validatorClient.CheckDoppelGanger(
 				t.Context(),
-				&ethpb.DoppelGangerRequest{
+				&silapb.DoppelGangerRequest{
 					ValidatorRequests: testCase.inputValidatorRequests,
 				},
 			)

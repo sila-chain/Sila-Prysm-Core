@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/verification"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -43,7 +43,7 @@ func TestBlobStorage_SaveBlobData(t *testing.T) {
 		require.Equal(t, true, bytes.Equal(existingSidecarData, content))
 
 		// Deserialize the BlobSidecar from the saved file data.
-		savedSidecar := &ethpb.BlobSidecar{}
+		savedSidecar := &silapb.BlobSidecar{}
 		err = savedSidecar.UnmarshalSSZ(content)
 		require.NoError(t, err)
 

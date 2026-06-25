@@ -13,20 +13,20 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func TestBeaconState_NoDeadlock_Phase0(t *testing.T) {
 	count := uint64(100)
-	vals := make([]*ethpb.Validator, 0, count)
+	vals := make([]*silapb.Validator, 0, count)
 	for i := uint64(1); i < count; i++ {
 		var someRoot [32]byte
 		var someKey [fieldparams.BLSPubkeyLength]byte
 		copy(someRoot[:], strconv.Itoa(int(i)))
 		copy(someKey[:], strconv.Itoa(int(i)))
-		vals = append(vals, &ethpb.Validator{
+		vals = append(vals, &silapb.Validator{
 			PublicKey:                  someKey[:],
 			WithdrawalCredentials:      someRoot[:],
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,
@@ -37,7 +37,7 @@ func TestBeaconState_NoDeadlock_Phase0(t *testing.T) {
 			WithdrawableEpoch:          1,
 		})
 	}
-	newState, err := InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{
+	newState, err := InitializeFromProtoUnsafePhase0(&silapb.BeaconState{
 		Validators: vals,
 	})
 	assert.NoError(t, err)
@@ -72,13 +72,13 @@ func TestBeaconState_NoDeadlock_Phase0(t *testing.T) {
 
 func TestBeaconState_NoDeadlock_Altair(t *testing.T) {
 	count := uint64(100)
-	vals := make([]*ethpb.Validator, 0, count)
+	vals := make([]*silapb.Validator, 0, count)
 	for i := uint64(1); i < count; i++ {
 		var someRoot [32]byte
 		var someKey [fieldparams.BLSPubkeyLength]byte
 		copy(someRoot[:], strconv.Itoa(int(i)))
 		copy(someKey[:], strconv.Itoa(int(i)))
-		vals = append(vals, &ethpb.Validator{
+		vals = append(vals, &silapb.Validator{
 			PublicKey:                  someKey[:],
 			WithdrawalCredentials:      someRoot[:],
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,
@@ -89,7 +89,7 @@ func TestBeaconState_NoDeadlock_Altair(t *testing.T) {
 			WithdrawableEpoch:          1,
 		})
 	}
-	st, err := InitializeFromProtoUnsafeAltair(&ethpb.BeaconStateAltair{
+	st, err := InitializeFromProtoUnsafeAltair(&silapb.BeaconStateAltair{
 		Validators: vals,
 	})
 	assert.NoError(t, err)
@@ -124,13 +124,13 @@ func TestBeaconState_NoDeadlock_Altair(t *testing.T) {
 
 func TestBeaconState_NoDeadlock_Bellatrix(t *testing.T) {
 	count := uint64(100)
-	vals := make([]*ethpb.Validator, 0, count)
+	vals := make([]*silapb.Validator, 0, count)
 	for i := uint64(1); i < count; i++ {
 		var someRoot [32]byte
 		var someKey [fieldparams.BLSPubkeyLength]byte
 		copy(someRoot[:], strconv.Itoa(int(i)))
 		copy(someKey[:], strconv.Itoa(int(i)))
-		vals = append(vals, &ethpb.Validator{
+		vals = append(vals, &silapb.Validator{
 			PublicKey:                  someKey[:],
 			WithdrawalCredentials:      someRoot[:],
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,
@@ -141,7 +141,7 @@ func TestBeaconState_NoDeadlock_Bellatrix(t *testing.T) {
 			WithdrawableEpoch:          1,
 		})
 	}
-	st, err := InitializeFromProtoUnsafeBellatrix(&ethpb.BeaconStateBellatrix{
+	st, err := InitializeFromProtoUnsafeBellatrix(&silapb.BeaconStateBellatrix{
 		Validators: vals,
 	})
 	assert.NoError(t, err)
@@ -176,13 +176,13 @@ func TestBeaconState_NoDeadlock_Bellatrix(t *testing.T) {
 
 func TestBeaconState_NoDeadlock_Capella(t *testing.T) {
 	count := uint64(100)
-	vals := make([]*ethpb.Validator, 0, count)
+	vals := make([]*silapb.Validator, 0, count)
 	for i := uint64(1); i < count; i++ {
 		var someRoot [32]byte
 		var someKey [fieldparams.BLSPubkeyLength]byte
 		copy(someRoot[:], strconv.Itoa(int(i)))
 		copy(someKey[:], strconv.Itoa(int(i)))
-		vals = append(vals, &ethpb.Validator{
+		vals = append(vals, &silapb.Validator{
 			PublicKey:                  someKey[:],
 			WithdrawalCredentials:      someRoot[:],
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,
@@ -193,7 +193,7 @@ func TestBeaconState_NoDeadlock_Capella(t *testing.T) {
 			WithdrawableEpoch:          1,
 		})
 	}
-	st, err := InitializeFromProtoUnsafeCapella(&ethpb.BeaconStateCapella{
+	st, err := InitializeFromProtoUnsafeCapella(&silapb.BeaconStateCapella{
 		Validators: vals,
 	})
 	assert.NoError(t, err)
@@ -228,13 +228,13 @@ func TestBeaconState_NoDeadlock_Capella(t *testing.T) {
 
 func TestBeaconState_NoDeadlock_Deneb(t *testing.T) {
 	count := uint64(100)
-	vals := make([]*ethpb.Validator, 0, count)
+	vals := make([]*silapb.Validator, 0, count)
 	for i := uint64(1); i < count; i++ {
 		var someRoot [32]byte
 		var someKey [fieldparams.BLSPubkeyLength]byte
 		copy(someRoot[:], strconv.Itoa(int(i)))
 		copy(someKey[:], strconv.Itoa(int(i)))
-		vals = append(vals, &ethpb.Validator{
+		vals = append(vals, &silapb.Validator{
 			PublicKey:                  someKey[:],
 			WithdrawalCredentials:      someRoot[:],
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,
@@ -245,7 +245,7 @@ func TestBeaconState_NoDeadlock_Deneb(t *testing.T) {
 			WithdrawableEpoch:          1,
 		})
 	}
-	st, err := InitializeFromProtoUnsafeDeneb(&ethpb.BeaconStateDeneb{
+	st, err := InitializeFromProtoUnsafeDeneb(&silapb.BeaconStateDeneb{
 		Validators: vals,
 	})
 	assert.NoError(t, err)
@@ -303,7 +303,7 @@ func TestBeaconState_AppendBalanceWithTrie(t *testing.T) {
 }
 
 func TestBeaconState_ModifyPreviousParticipationBits(t *testing.T) {
-	st, err := InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{})
+	st, err := InitializeFromProtoUnsafePhase0(&silapb.BeaconState{})
 	assert.NoError(t, err)
 	assert.ErrorContains(t, "ModifyPreviousParticipationBits is not supported", st.ModifyPreviousParticipationBits(func(val []byte) ([]byte, error) {
 		return nil, nil
@@ -311,7 +311,7 @@ func TestBeaconState_ModifyPreviousParticipationBits(t *testing.T) {
 }
 
 func TestBeaconState_ModifyCurrentParticipationBits(t *testing.T) {
-	st, err := InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{})
+	st, err := InitializeFromProtoUnsafePhase0(&silapb.BeaconState{})
 	assert.NoError(t, err)
 	assert.ErrorContains(t, "ModifyCurrentParticipationBits is not supported", st.ModifyCurrentParticipationBits(func(val []byte) ([]byte, error) {
 		return nil, nil
@@ -340,14 +340,14 @@ func TestDuplicateDirtyIndices(t *testing.T) {
 
 func generateState(t *testing.T) state.BeaconState {
 	count := uint64(100)
-	vals := make([]*ethpb.Validator, 0, count)
+	vals := make([]*silapb.Validator, 0, count)
 	bals := make([]uint64, 0, count)
 	for i := uint64(1); i < count; i++ {
 		var someRoot [32]byte
 		var someKey [fieldparams.BLSPubkeyLength]byte
 		copy(someRoot[:], strconv.Itoa(int(i)))
 		copy(someKey[:], strconv.Itoa(int(i)))
-		vals = append(vals, &ethpb.Validator{
+		vals = append(vals, &silapb.Validator{
 			PublicKey:                  someKey[:],
 			WithdrawalCredentials:      someRoot[:],
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,
@@ -373,22 +373,22 @@ func generateState(t *testing.T) state.BeaconState {
 	for i := range mockrandaoMixes {
 		mockrandaoMixes[i] = zeroHash[:]
 	}
-	newState, err := InitializeFromProtoPhase0(&ethpb.BeaconState{
+	newState, err := InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot:                  1,
 		GenesisValidatorsRoot: make([]byte, 32),
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 			Epoch:           0,
 		},
-		LatestBlockHeader: &ethpb.BeaconBlockHeader{
+		LatestBlockHeader: &silapb.BeaconBlockHeader{
 			ParentRoot: make([]byte, fieldparams.RootLength),
 			StateRoot:  make([]byte, fieldparams.RootLength),
 			BodyRoot:   make([]byte, fieldparams.RootLength),
 		},
 		Validators: vals,
 		Balances:   bals,
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},
@@ -396,9 +396,9 @@ func generateState(t *testing.T) state.BeaconState {
 		StateRoots:                  mockstateRoots,
 		RandaoMixes:                 mockrandaoMixes,
 		JustificationBits:           bitfield.NewBitvector4(),
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		CurrentJustifiedCheckpoint:  &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		CurrentJustifiedCheckpoint:  &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 		Slashings:                   make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
 	})
 	assert.NoError(t, err)

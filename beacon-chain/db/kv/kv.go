@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/file"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/dgraph-io/ristretto/v2"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
@@ -116,7 +116,7 @@ type Store struct {
 	db                  *bolt.DB
 	databasePath        string
 	blockCache          *ristretto.Cache[string, interfaces.ReadOnlySignedBeaconBlock]
-	validatorEntryCache *ristretto.Cache[[]byte, *ethpb.Validator]
+	validatorEntryCache *ristretto.Cache[[]byte, *silapb.Validator]
 	stateSummaryCache   *stateSummaryCache
 	stateDiffCache      *stateDiffCache
 	ctx                 context.Context
@@ -199,7 +199,7 @@ func NewKVStore(ctx context.Context, dirPath string, opts ...KVStoreOption) (*St
 		return nil, err
 	}
 
-	validatorCache, err := ristretto.NewCache(&ristretto.Config[[]byte, *ethpb.Validator]{
+	validatorCache, err := ristretto.NewCache(&ristretto.Config[[]byte, *silapb.Validator]{
 		NumCounters: NumOfValidatorEntries, // number of entries in cache (2 Million).
 		MaxCost:     ValidatorEntryMaxCost, // maximum size of the cache (64Mb)
 		BufferItems: 64,                    // number of keys per Get buffer.

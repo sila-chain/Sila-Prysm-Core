@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	payloadattestation "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/payload-attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // BlobVerifier defines the methods implemented by the ROBlobVerifier.
@@ -96,7 +96,7 @@ type SignedProposerPreferencesVerifier interface {
 
 // NewSignedProposerPreferencesVerifier is a function signature that can be used by code that needs to be
 // able to mock Initializer.NewSignedProposerPreferencesVerifier without complex setup.
-type NewSignedProposerPreferencesVerifier func(p *ethpb.SignedProposerPreferences, reqs []Requirement) SignedProposerPreferencesVerifier
+type NewSignedProposerPreferencesVerifier func(p *silapb.SignedProposerPreferences, reqs []Requirement) SignedProposerPreferencesVerifier
 
 // ExecutionPayloadBidVerifier defines the methods implemented by the ROSignedExecutionPayloadBid verifier.
 type ExecutionPayloadBidVerifier interface {

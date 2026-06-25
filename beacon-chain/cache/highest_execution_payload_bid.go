@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 type executionPayloadBidKey struct {
@@ -16,14 +16,14 @@ type executionPayloadBidKey struct {
 // HighestExecutionPayloadBidCache stores the highest bid for each
 // (slot, parent_block_hash, parent_block_root) tuple.
 type HighestExecutionPayloadBidCache struct {
-	bids map[executionPayloadBidKey]*ethpb.SignedExecutionPayloadBid
+	bids map[executionPayloadBidKey]*silapb.SignedExecutionPayloadBid
 	lock sync.RWMutex
 }
 
 // NewHighestExecutionPayloadBidCache initializes a highest-bid cache.
 func NewHighestExecutionPayloadBidCache() *HighestExecutionPayloadBidCache {
 	return &HighestExecutionPayloadBidCache{
-		bids: make(map[executionPayloadBidKey]*ethpb.SignedExecutionPayloadBid),
+		bids: make(map[executionPayloadBidKey]*silapb.SignedExecutionPayloadBid),
 	}
 }
 
@@ -32,7 +32,7 @@ func (c *HighestExecutionPayloadBidCache) Get(
 	slot primitives.Slot,
 	parentHash [32]byte,
 	parentRoot [32]byte,
-) (*ethpb.SignedExecutionPayloadBid, bool) {
+) (*silapb.SignedExecutionPayloadBid, bool) {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
 
@@ -46,7 +46,7 @@ func (c *HighestExecutionPayloadBidCache) Get(
 
 // SetIfHigher inserts the bid if absent, or replaces the cached bid only if
 // the incoming value is strictly greater.
-func (c *HighestExecutionPayloadBidCache) SetIfHigher(bid *ethpb.SignedExecutionPayloadBid) bool {
+func (c *HighestExecutionPayloadBidCache) SetIfHigher(bid *silapb.SignedExecutionPayloadBid) bool {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 

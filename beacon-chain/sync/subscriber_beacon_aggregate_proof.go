@@ -6,16 +6,16 @@ import (
 	"fmt"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"google.golang.org/protobuf/proto"
 )
 
 // beaconAggregateProofSubscriber forwards the incoming validated aggregated attestation and proof to the
 // attestation pool for processing.
 func (s *Service) beaconAggregateProofSubscriber(_ context.Context, msg proto.Message) error {
-	a, ok := msg.(ethpb.SignedAggregateAttAndProof)
+	a, ok := msg.(silapb.SignedAggregateAttAndProof)
 	if !ok {
-		return fmt.Errorf("message was not type ethpb.SignedAggregateAttAndProof, type=%T", msg)
+		return fmt.Errorf("message was not type silapb.SignedAggregateAttAndProof, type=%T", msg)
 	}
 
 	aggregate := a.AggregateAttestationAndProof().AggregateVal()

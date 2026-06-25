@@ -3,7 +3,7 @@ package util
 import (
 	"testing"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -13,7 +13,7 @@ func TestNewBeaconState(t *testing.T) {
 	require.NoError(t, err)
 	b, err := st.MarshalSSZ()
 	require.NoError(t, err)
-	got := &ethpb.BeaconState{}
+	got := &silapb.BeaconState{}
 	require.NoError(t, got.UnmarshalSSZ(b))
 	assert.DeepEqual(t, st.ToProtoUnsafe(), got)
 }
@@ -23,7 +23,7 @@ func TestNewBeaconStateAltair(t *testing.T) {
 	require.NoError(t, err)
 	b, err := st.MarshalSSZ()
 	require.NoError(t, err)
-	got := &ethpb.BeaconStateAltair{}
+	got := &silapb.BeaconStateAltair{}
 	require.NoError(t, got.UnmarshalSSZ(b))
 	assert.DeepEqual(t, st.ToProtoUnsafe(), got)
 }
@@ -33,7 +33,7 @@ func TestNewBeaconStateBellatrix(t *testing.T) {
 	require.NoError(t, err)
 	b, err := st.MarshalSSZ()
 	require.NoError(t, err)
-	got := &ethpb.BeaconStateBellatrix{}
+	got := &silapb.BeaconStateBellatrix{}
 	require.NoError(t, got.UnmarshalSSZ(b))
 	assert.DeepEqual(t, st.ToProtoUnsafe(), got)
 }
@@ -43,7 +43,7 @@ func TestNewBeaconStateCapella(t *testing.T) {
 	require.NoError(t, err)
 	b, err := st.MarshalSSZ()
 	require.NoError(t, err)
-	got := &ethpb.BeaconStateCapella{}
+	got := &silapb.BeaconStateCapella{}
 	require.NoError(t, got.UnmarshalSSZ(b))
 	assert.DeepEqual(t, st.ToProtoUnsafe(), got)
 }
@@ -53,7 +53,7 @@ func TestNewBeaconStateDeneb(t *testing.T) {
 	require.NoError(t, err)
 	b, err := st.MarshalSSZ()
 	require.NoError(t, err)
-	got := &ethpb.BeaconStateDeneb{}
+	got := &silapb.BeaconStateDeneb{}
 	require.NoError(t, got.UnmarshalSSZ(b))
 	assert.DeepEqual(t, st.ToProtoUnsafe(), got)
 }
@@ -63,7 +63,7 @@ func TestNewBeaconStateElectra(t *testing.T) {
 	require.NoError(t, err)
 	b, err := st.MarshalSSZ()
 	require.NoError(t, err)
-	got := &ethpb.BeaconStateElectra{}
+	got := &silapb.BeaconStateElectra{}
 	require.NoError(t, got.UnmarshalSSZ(b))
 	assert.DeepEqual(t, st.ToProtoUnsafe(), got)
 }
@@ -73,7 +73,7 @@ func TestNewBeaconStateFulu(t *testing.T) {
 	require.NoError(t, err)
 	b, err := st.MarshalSSZ()
 	require.NoError(t, err)
-	got := &ethpb.BeaconStateFulu{}
+	got := &silapb.BeaconStateFulu{}
 	require.NoError(t, got.UnmarshalSSZ(b))
 	assert.DeepEqual(t, st.ToProtoUnsafe(), got)
 }
@@ -83,7 +83,7 @@ func TestNewBeaconStateGloas(t *testing.T) {
 	require.NoError(t, err)
 	b, err := st.MarshalSSZ()
 	require.NoError(t, err)
-	got := &ethpb.BeaconStateGloas{}
+	got := &silapb.BeaconStateGloas{}
 	require.NoError(t, got.UnmarshalSSZ(b))
 	assert.DeepEqual(t, st.ToProtoUnsafe(), got)
 }

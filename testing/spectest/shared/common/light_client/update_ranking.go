@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	lightclienttypes "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/light-client"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/utils"
@@ -88,31 +88,31 @@ func runLightClientUpdateRankingTest(t *testing.T, testFolderPath string, v int)
 func createUpdate(t *testing.T, ssz []byte, v int) interfaces.LightClientUpdate {
 	switch v {
 	case version.Altair:
-		updateBase := &ethpb.LightClientUpdateAltair{}
+		updateBase := &silapb.LightClientUpdateAltair{}
 		require.NoError(t, updateBase.UnmarshalSSZ(ssz), "Failed to unmarshal")
 		update, err := lightclienttypes.NewWrappedUpdateAltair(updateBase)
 		require.NoError(t, err)
 		return update
 	case version.Bellatrix:
-		updateBase := &ethpb.LightClientUpdateAltair{}
+		updateBase := &silapb.LightClientUpdateAltair{}
 		require.NoError(t, updateBase.UnmarshalSSZ(ssz), "Failed to unmarshal")
 		update, err := lightclienttypes.NewWrappedUpdateAltair(updateBase)
 		require.NoError(t, err)
 		return update
 	case version.Capella:
-		updateBase := &ethpb.LightClientUpdateCapella{}
+		updateBase := &silapb.LightClientUpdateCapella{}
 		require.NoError(t, updateBase.UnmarshalSSZ(ssz), "Failed to unmarshal")
 		update, err := lightclienttypes.NewWrappedUpdateCapella(updateBase)
 		require.NoError(t, err)
 		return update
 	case version.Deneb:
-		updateBase := &ethpb.LightClientUpdateDeneb{}
+		updateBase := &silapb.LightClientUpdateDeneb{}
 		require.NoError(t, updateBase.UnmarshalSSZ(ssz), "Failed to unmarshal")
 		update, err := lightclienttypes.NewWrappedUpdateDeneb(updateBase)
 		require.NoError(t, err)
 		return update
 	case version.Electra:
-		updateBase := &ethpb.LightClientUpdateElectra{}
+		updateBase := &silapb.LightClientUpdateElectra{}
 		require.NoError(t, updateBase.UnmarshalSSZ(ssz), "Failed to unmarshal")
 		update, err := lightclienttypes.NewWrappedUpdateElectra(updateBase)
 		require.NoError(t, err)

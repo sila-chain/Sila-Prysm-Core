@@ -23,7 +23,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/messagehandler"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -790,7 +790,7 @@ func (s *Service) filterNeededPeers(pids []peer.ID) []peer.ID {
 		wantedSubnets[subnet] = true
 	}
 
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.Attestation]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.Attestation]()]
 
 	pidSet := make(map[peer.ID]bool, len(pids))
 	for _, pid := range pids {

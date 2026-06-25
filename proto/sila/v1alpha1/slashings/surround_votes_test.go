@@ -4,13 +4,13 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 func TestIsSurround(t *testing.T) {
 	type args struct {
-		a *ethpb.IndexedAttestation
-		b *ethpb.IndexedAttestation
+		a *silapb.IndexedAttestation
+		b *silapb.IndexedAttestation
 	}
 	tests := []struct {
 		name string
@@ -83,11 +83,11 @@ func TestIsSurround(t *testing.T) {
 	}
 }
 
-func createAttestation(source, target primitives.Epoch) *ethpb.IndexedAttestation {
-	return &ethpb.IndexedAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: source},
-			Target: &ethpb.Checkpoint{Epoch: target},
+func createAttestation(source, target primitives.Epoch) *silapb.IndexedAttestation {
+	return &silapb.IndexedAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: source},
+			Target: &silapb.Checkpoint{Epoch: target},
 		},
 	}
 }

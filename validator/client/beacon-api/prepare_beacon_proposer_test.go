@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -63,7 +63,7 @@ func TestPrepareBeaconProposer_Valid(t *testing.T) {
 	decodedFeeRecipient3, err := hexutil.Decode(feeRecipient3)
 	require.NoError(t, err)
 
-	protoRecipients := []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+	protoRecipients := []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 		{
 			ValidatorIndex: 1,
 			FeeRecipient:   decodedFeeRecipient1,

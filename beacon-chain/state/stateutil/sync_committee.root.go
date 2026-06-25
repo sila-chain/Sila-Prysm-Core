@@ -3,14 +3,14 @@ package stateutil
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash/htr"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
 // SyncCommitteeRoot computes the HashTreeRoot Merkleization of a committee root.
 // a SyncCommitteeRoot struct according to the Sila
 // Simple Serialize specification.
-func SyncCommitteeRoot(committee *ethpb.SyncCommittee) ([32]byte, error) {
+func SyncCommitteeRoot(committee *silapb.SyncCommittee) ([32]byte, error) {
 	var fieldRoots [][32]byte
 	if committee == nil {
 		return [32]byte{}, nil

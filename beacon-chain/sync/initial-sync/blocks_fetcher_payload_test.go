@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -31,9 +31,9 @@ func makeGloasBlock(t *testing.T, slot primitives.Slot, parentRoot [32]byte, par
 
 // makeEnvelope creates an ROSignedExecutionPayloadEnvelope with the given slot, blockHash, and parentHash.
 func makeEnvelope(t *testing.T, slot primitives.Slot, blockHash [32]byte, parentHash [32]byte) interfaces.ROSignedExecutionPayloadEnvelope {
-	env := &ethpb.SignedExecutionPayloadEnvelope{
+	env := &silapb.SignedExecutionPayloadEnvelope{
 		Signature: make([]byte, fieldparams.BLSSignatureLength),
-		Message: &ethpb.ExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			BeaconBlockRoot:       make([]byte, fieldparams.RootLength),
 			ParentBeaconBlockRoot: make([]byte, fieldparams.RootLength),
 			ExecutionRequests:     &enginev1.ExecutionRequests{},

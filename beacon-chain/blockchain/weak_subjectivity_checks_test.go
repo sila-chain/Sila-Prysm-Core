@@ -7,7 +7,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -25,7 +25,7 @@ func TestService_VerifyWeakSubjectivityRoot(t *testing.T) {
 		wsVerified     bool
 		disabled       bool
 		wantErr        error
-		checkpt        *ethpb.Checkpoint
+		checkpt        *silapb.Checkpoint
 		finalizedEpoch primitives.Epoch
 		name           string
 	}{
@@ -35,29 +35,29 @@ func TestService_VerifyWeakSubjectivityRoot(t *testing.T) {
 		},
 		{
 			name:           "not yet to verify, ws epoch higher than finalized epoch",
-			checkpt:        &ethpb.Checkpoint{Root: bytesutil.PadTo([]byte{'a'}, 32), Epoch: blockEpoch},
+			checkpt:        &silapb.Checkpoint{Root: bytesutil.PadTo([]byte{'a'}, 32), Epoch: blockEpoch},
 			finalizedEpoch: blockEpoch - 1,
 		},
 		{
 			name:           "can't find the block in DB",
-			checkpt:        &ethpb.Checkpoint{Root: bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength), Epoch: 1},
+			checkpt:        &silapb.Checkpoint{Root: bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength), Epoch: 1},
 			finalizedEpoch: blockEpoch + 1,
 			wantErr:        errWSBlockNotFound,
 		},
 		{
 			name:           "can't find the block corresponds to ws epoch in DB",
-			checkpt:        &ethpb.Checkpoint{Root: r[:], Epoch: blockEpoch - 2}, // Root belongs in epoch 1.
+			checkpt:        &silapb.Checkpoint{Root: r[:], Epoch: blockEpoch - 2}, // Root belongs in epoch 1.
 			finalizedEpoch: blockEpoch - 1,
 			wantErr:        errWSBlockNotFoundInEpoch,
 		},
 		{
 			name:           "can verify and pass",
-			checkpt:        &ethpb.Checkpoint{Root: r[:], Epoch: blockEpoch},
+			checkpt:        &silapb.Checkpoint{Root: r[:], Epoch: blockEpoch},
 			finalizedEpoch: blockEpoch + 1,
 		},
 		{
 			name:           "equal epoch",
-			checkpt:        &ethpb.Checkpoint{Root: r[:], Epoch: blockEpoch},
+			checkpt:        &silapb.Checkpoint{Root: r[:], Epoch: blockEpoch},
 			finalizedEpoch: blockEpoch,
 		},
 	}

@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"google.golang.org/grpc/codes"
@@ -27,7 +27,7 @@ import (
 //
 // GetAttestationData requests that the beacon node produce an attestation data object,
 // which the validator acting as an attester will then sign.
-func (vs *Server) GetAttestationData(ctx context.Context, req *ethpb.AttestationDataRequest) (*ethpb.AttestationData, error) {
+func (vs *Server) GetAttestationData(ctx context.Context, req *silapb.AttestationDataRequest) (*silapb.AttestationData, error) {
 	ctx, span := trace.StartSpan(ctx, "AttesterServer.RequestAttestation")
 	defer span.End()
 	span.SetAttributes(
@@ -49,7 +49,7 @@ func (vs *Server) GetAttestationData(ctx context.Context, req *ethpb.Attestation
 //
 // ProposeAttestation is a function called by an attester to vote
 // on a block via an attestation object as defined in the Sila specification.
-func (vs *Server) ProposeAttestation(ctx context.Context, att *ethpb.Attestation) (*ethpb.AttestResponse, error) {
+func (vs *Server) ProposeAttestation(ctx context.Context, att *silapb.Attestation) (*silapb.AttestResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "AttesterServer.ProposeAttestation")
 	defer span.End()
 
@@ -83,7 +83,7 @@ func (vs *Server) ProposeAttestation(ctx context.Context, att *ethpb.Attestation
 // ProposeAttestationElectra is a function called by an attester to vote
 // on a block via an attestation object as defined in the Sila specification.
 // Used for Post Electra
-func (vs *Server) ProposeAttestationElectra(ctx context.Context, singleAtt *ethpb.SingleAttestation) (*ethpb.AttestResponse, error) {
+func (vs *Server) ProposeAttestationElectra(ctx context.Context, singleAtt *silapb.SingleAttestation) (*silapb.AttestResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "AttesterServer.ProposeAttestationElectra")
 	defer span.End()
 
@@ -125,7 +125,7 @@ func (vs *Server) ProposeAttestationElectra(ctx context.Context, singleAtt *ethp
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // SubscribeCommitteeSubnets subscribes to the committee ID subnet given subscribe request.
-func (vs *Server) SubscribeCommitteeSubnets(ctx context.Context, req *ethpb.CommitteeSubnetsSubscribeRequest) (*emptypb.Empty, error) {
+func (vs *Server) SubscribeCommitteeSubnets(ctx context.Context, req *silapb.CommitteeSubnetsSubscribeRequest) (*emptypb.Empty, error) {
 	ctx, span := trace.StartSpan(ctx, "AttesterServer.SubscribeCommitteeSubnets")
 	defer span.End()
 
@@ -174,9 +174,9 @@ func (vs *Server) SubscribeCommitteeSubnets(ctx context.Context, req *ethpb.Comm
 
 func (vs *Server) proposeAtt(
 	ctx context.Context,
-	att ethpb.Att,
+	att silapb.Att,
 	committeeIndex primitives.CommitteeIndex,
-) (*ethpb.AttestResponse, error) {
+) (*silapb.AttestResponse, error) {
 	if _, err := bls.SignatureFromBytes(att.GetSignature()); err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Incorrect attestation signature")
 	}
@@ -247,7 +247,7 @@ func (vs *Server) proposeAtt(
 		return nil, status.Errorf(codes.Internal, "Could not broadcast attestation: %v", err)
 	}
 
-	return &ethpb.AttestResponse{
+	return &silapb.AttestResponse{
 		AttestationDataRoot: root[:],
 	}, nil
 }

@@ -28,7 +28,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -45,7 +45,7 @@ func individualVotesHelper(t *testing.T, request *structs.GetIndividualVotesRequ
 	defer srv.Close()
 	req := httptest.NewRequest(
 		http.MethodGet,
-		"http://example.com/eth/v1/beacon/individual_votes",
+		"http://example.com/sila/v1/beacon/individual_votes",
 		&buf,
 	)
 	client := &http.Client{}
@@ -233,11 +233,11 @@ func TestServer_GetIndividualVotes_Working(t *testing.T) {
 	require.NoError(t, beaconState.SetBlockRoots(br))
 	att2.Data.Target.Root = rt[:]
 	att2.Data.BeaconBlockRoot = newRt[:]
-	err = beaconState.AppendPreviousEpochAttestations(&ethpb.PendingAttestation{
+	err = beaconState.AppendPreviousEpochAttestations(&silapb.PendingAttestation{
 		Data: att1.Data, AggregationBits: bf, InclusionDelay: 1,
 	})
 	require.NoError(t, err)
-	err = beaconState.AppendCurrentEpochAttestations(&ethpb.PendingAttestation{
+	err = beaconState.AppendCurrentEpochAttestations(&silapb.PendingAttestation{
 		Data: att2.Data, AggregationBits: bf, InclusionDelay: 1,
 	})
 	require.NoError(t, err)
@@ -680,7 +680,7 @@ func TestServer_GetChainHead_NoGenesis(t *testing.T) {
 	require.NoError(t, err)
 	cases := []struct {
 		name       string
-		zeroSetter func(val *ethpb.Checkpoint) error
+		zeroSetter func(val *silapb.Checkpoint) error
 	}{
 		{
 			name:       "zero-value prev justified",
@@ -695,16 +695,16 @@ func TestServer_GetChainHead_NoGenesis(t *testing.T) {
 			zeroSetter: s.SetFinalizedCheckpoint,
 		},
 	}
-	finalized := &ethpb.Checkpoint{Epoch: 1, Root: gRoot[:]}
-	prevJustified := &ethpb.Checkpoint{Epoch: 2, Root: gRoot[:]}
-	justified := &ethpb.Checkpoint{Epoch: 3, Root: gRoot[:]}
+	finalized := &silapb.Checkpoint{Epoch: 1, Root: gRoot[:]}
+	prevJustified := &silapb.Checkpoint{Epoch: 2, Root: gRoot[:]}
+	justified := &silapb.Checkpoint{Epoch: 3, Root: gRoot[:]}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			require.NoError(t, s.SetPreviousJustifiedCheckpoint(prevJustified))
 			require.NoError(t, s.SetCurrentJustifiedCheckpoint(justified))
 			require.NoError(t, s.SetFinalizedCheckpoint(finalized))
-			require.NoError(t, c.zeroSetter(&ethpb.Checkpoint{Epoch: 0, Root: params.BeaconConfig().ZeroHash[:]}))
+			require.NoError(t, c.zeroSetter(&silapb.Checkpoint{Epoch: 0, Root: params.BeaconConfig().ZeroHash[:]}))
 		})
 		wsb, err := blocks.NewSignedBeaconBlock(genBlock)
 		require.NoError(t, err)
@@ -737,9 +737,9 @@ func TestServer_GetChainHead_NoFinalizedBlock(t *testing.T) {
 	bs, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, bs.SetSlot(1))
-	require.NoError(t, bs.SetPreviousJustifiedCheckpoint(&ethpb.Checkpoint{Epoch: 3, Root: bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)}))
-	require.NoError(t, bs.SetCurrentJustifiedCheckpoint(&ethpb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte{'B'}, fieldparams.RootLength)}))
-	require.NoError(t, bs.SetFinalizedCheckpoint(&ethpb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'C'}, fieldparams.RootLength)}))
+	require.NoError(t, bs.SetPreviousJustifiedCheckpoint(&silapb.Checkpoint{Epoch: 3, Root: bytesutil.PadTo([]byte{'A'}, fieldparams.RootLength)}))
+	require.NoError(t, bs.SetCurrentJustifiedCheckpoint(&silapb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte{'B'}, fieldparams.RootLength)}))
+	require.NoError(t, bs.SetFinalizedCheckpoint(&silapb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'C'}, fieldparams.RootLength)}))
 
 	genBlock := util.NewBeaconBlock()
 	genBlock.Block.ParentRoot = bytesutil.PadTo([]byte{'G'}, fieldparams.RootLength)
@@ -823,11 +823,11 @@ func TestServer_GetChainHead(t *testing.T) {
 	pjRoot, err := prevJustifiedBlock.Block.HashTreeRoot()
 	require.NoError(t, err)
 
-	st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot:                        1,
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Epoch: 3, Root: pjRoot[:]},
-		CurrentJustifiedCheckpoint:  &ethpb.Checkpoint{Epoch: 2, Root: jRoot[:]},
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Epoch: 1, Root: fRoot[:]},
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Epoch: 3, Root: pjRoot[:]},
+		CurrentJustifiedCheckpoint:  &silapb.Checkpoint{Epoch: 2, Root: jRoot[:]},
+		FinalizedCheckpoint:         &silapb.Checkpoint{Epoch: 1, Root: fRoot[:]},
 	})
 	require.NoError(t, err)
 

@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
@@ -38,8 +38,8 @@ func TestServer_circuitBreakBuilder(t *testing.T) {
 	require.Equal(t, true, b)
 	require.LogsContain(t, hook, "Circuit breaker activated due to missing consecutive slot. Ignore if mev-boost is not used")
 
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	ctx := t.Context()
 	st, blkRoot, err := createState(1, [32]byte{'a'}, [32]byte{}, params.BeaconConfig().ZeroHash, ojc, ofc)
 	require.NoError(t, err)
@@ -93,7 +93,7 @@ func TestServer_validatorRegistered(t *testing.T) {
 	f := bytesutil.PadTo([]byte{}, fieldparams.FeeRecipientLength)
 	p := bytesutil.PadTo([]byte{}, fieldparams.BLSPubkeyLength)
 	require.NoError(t, db.SaveRegistrationsByValidatorIDs(ctx, []primitives.ValidatorIndex{0, 1},
-		[]*ethpb.ValidatorRegistrationV1{{FeeRecipient: f, Timestamp: uint64(time.Now().Unix()), Pubkey: p}, {FeeRecipient: f, Timestamp: uint64(time.Now().Unix()), Pubkey: p}}))
+		[]*silapb.ValidatorRegistrationV1{{FeeRecipient: f, Timestamp: uint64(time.Now().Unix()), Pubkey: p}, {FeeRecipient: f, Timestamp: uint64(time.Now().Unix()), Pubkey: p}}))
 
 	reg, err = proposerServer.validatorRegistered(ctx, 0)
 	require.NoError(t, err)
@@ -135,7 +135,7 @@ func TestServer_canUseBuilder(t *testing.T) {
 	f := bytesutil.PadTo([]byte{}, fieldparams.FeeRecipientLength)
 	p := bytesutil.PadTo([]byte{}, fieldparams.BLSPubkeyLength)
 	require.NoError(t, db.SaveRegistrationsByValidatorIDs(ctx, []primitives.ValidatorIndex{0},
-		[]*ethpb.ValidatorRegistrationV1{{FeeRecipient: f, Timestamp: uint64(time.Now().Unix()), Pubkey: p}}))
+		[]*silapb.ValidatorRegistrationV1{{FeeRecipient: f, Timestamp: uint64(time.Now().Unix()), Pubkey: p}}))
 
 	reg, err = proposerServer.canUseBuilder(ctx, params.BeaconConfig().MaxBuilderConsecutiveMissedSlots-1, 0)
 	require.NoError(t, err)
@@ -147,11 +147,11 @@ func createState(
 	blockRoot [32]byte,
 	parentRoot [32]byte,
 	payloadHash [32]byte,
-	justified *ethpb.Checkpoint,
-	finalized *ethpb.Checkpoint,
+	justified *silapb.Checkpoint,
+	finalized *silapb.Checkpoint,
 ) (state.BeaconState, blocks.ROBlock, error) {
 
-	base := &ethpb.BeaconStateBellatrix{
+	base := &silapb.BeaconStateBellatrix{
 		Slot:                       slot,
 		RandaoMixes:                make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 		BlockRoots:                 make([][]byte, 1),
@@ -160,7 +160,7 @@ func createState(
 		LatestExecutionPayloadHeader: &enginev1.ExecutionPayloadHeader{
 			BlockHash: payloadHash[:],
 		},
-		LatestBlockHeader: &ethpb.BeaconBlockHeader{
+		LatestBlockHeader: &silapb.BeaconBlockHeader{
 			ParentRoot: parentRoot[:],
 		},
 	}
@@ -170,11 +170,11 @@ func createState(
 	if err != nil {
 		return nil, blocks.ROBlock{}, err
 	}
-	blk := &ethpb.SignedBeaconBlockBellatrix{
-		Block: &ethpb.BeaconBlockBellatrix{
+	blk := &silapb.SignedBeaconBlockBellatrix{
+		Block: &silapb.BeaconBlockBellatrix{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body: &ethpb.BeaconBlockBodyBellatrix{
+			Body: &silapb.BeaconBlockBodyBellatrix{
 				ExecutionPayload: &enginev1.ExecutionPayload{
 					BlockHash: payloadHash[:],
 				},

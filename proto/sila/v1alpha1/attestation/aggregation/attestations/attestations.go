@@ -2,13 +2,13 @@ package attestations
 
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation"
 	"github.com/pkg/errors"
 )
 
 // attList represents list of attestations, defined for easier en masse operations (filtering, sorting).
-type attList []ethpb.Att
+type attList []silapb.Att
 
 // BLS aggregate signature aliases for testing / benchmark substitution. These methods are
 // significantly more expensive than the inner logic of AggregateAttestations so they must be
@@ -24,18 +24,18 @@ var ErrInvalidAttestationCount = errors.New("invalid number of attestations")
 // Aggregation occurs in-place i.e. contents of input array will be modified. Should you need to
 // preserve input attestations, clone them before aggregating:
 //
-//	clonedAtts := make([]*ethpb.Attestation, len(atts))
+//	clonedAtts := make([]*silapb.Attestation, len(atts))
 //	for i, a := range atts {
 //	    clonedAtts[i] = stateTrie.CopyAttestation(a)
 //	}
 //	aggregatedAtts, err := attaggregation.Aggregate(clonedAtts)
-func Aggregate(atts []ethpb.Att) ([]ethpb.Att, error) {
+func Aggregate(atts []silapb.Att) ([]silapb.Att, error) {
 	return MaxCoverAttestationAggregation(atts)
 }
 
 // AggregateDisjointOneBitAtts aggregates unaggregated attestations with the
 // exact same attestation data.
-func AggregateDisjointOneBitAtts(atts []ethpb.Att) (ethpb.Att, error) {
+func AggregateDisjointOneBitAtts(atts []silapb.Att) (silapb.Att, error) {
 	if len(atts) == 0 {
 		return nil, nil
 	}
@@ -71,7 +71,7 @@ func AggregateDisjointOneBitAtts(atts []ethpb.Att) (ethpb.Att, error) {
 }
 
 // AggregatePair aggregates pair of attestations a1 and a2 together.
-func AggregatePair(a1, a2 *ethpb.Attestation) (*ethpb.Attestation, error) {
+func AggregatePair(a1, a2 *silapb.Attestation) (*silapb.Attestation, error) {
 	o, err := a1.AggregationBits.Overlaps(a2.AggregationBits)
 	if err != nil {
 		return nil, err

@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/proto"
@@ -22,13 +22,13 @@ func (s *Service) dataColumnSubscriber(ctx context.Context, msg proto.Message) e
 
 	var sidecar blocks.VerifiedRODataColumn
 	switch dc := msg.(type) {
-	case *ethpb.DataColumnSidecar:
+	case *silapb.DataColumnSidecar:
 		ro, err := blocks.NewRODataColumn(dc)
 		if err != nil {
 			return err
 		}
 		sidecar = blocks.NewVerifiedRODataColumn(ro)
-	case *ethpb.DataColumnSidecarGloas:
+	case *silapb.DataColumnSidecarGloas:
 		ro, err := blocks.NewRODataColumnGloas(dc)
 		if err != nil {
 			return err

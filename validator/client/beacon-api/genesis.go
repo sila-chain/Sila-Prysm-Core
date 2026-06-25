@@ -12,7 +12,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -26,7 +26,7 @@ type beaconApiGenesisProvider struct {
 	once    sync.Once
 }
 
-func (c *beaconApiValidatorClient) waitForChainStart(ctx context.Context) (*ethpb.ChainStartResponse, error) {
+func (c *beaconApiValidatorClient) waitForChainStart(ctx context.Context) (*silapb.ChainStartResponse, error) {
 	genesis, err := c.genesisProvider.Genesis(ctx)
 
 	for err != nil {
@@ -55,7 +55,7 @@ func (c *beaconApiValidatorClient) waitForChainStart(ctx context.Context) (*ethp
 		return nil, errors.Wrap(err, "failed to decode genesis validators root")
 	}
 
-	chainStartResponse := &ethpb.ChainStartResponse{
+	chainStartResponse := &silapb.ChainStartResponse{
 		Started:               true,
 		GenesisTime:           genesisTime,
 		GenesisValidatorsRoot: genesisValidatorRoot,

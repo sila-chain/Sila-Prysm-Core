@@ -7,7 +7,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/transition"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/utils"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -35,7 +35,7 @@ func RunSlotProcessingTests(t *testing.T, config string) {
 			require.NoError(t, err)
 			preBeaconStateSSZ, err := snappy.Decode(nil /* dst */, preBeaconStateFile)
 			require.NoError(t, err, "Failed to decompress")
-			base := &ethpb.BeaconStateCapella{}
+			base := &silapb.BeaconStateCapella{}
 			require.NoError(t, base.UnmarshalSSZ(preBeaconStateSSZ), "Failed to unmarshal")
 			beaconState, err := state_native.InitializeFromProtoUnsafeCapella(base)
 			require.NoError(t, err)
@@ -50,7 +50,7 @@ func RunSlotProcessingTests(t *testing.T, config string) {
 			require.NoError(t, err)
 			postBeaconStateSSZ, err := snappy.Decode(nil /* dst */, postBeaconStateFile)
 			require.NoError(t, err, "Failed to decompress")
-			postBeaconState := &ethpb.BeaconStateCapella{}
+			postBeaconState := &silapb.BeaconStateCapella{}
 			require.NoError(t, postBeaconState.UnmarshalSSZ(postBeaconStateSSZ), "Failed to unmarshal")
 			postState, err := transition.ProcessSlots(context.Background(), beaconState, beaconState.Slot().Add(slotsCount))
 			require.NoError(t, err)

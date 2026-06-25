@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -151,7 +151,7 @@ func (f *ForkChoice) InsertNode(ctx context.Context, state state.BeaconState, ro
 }
 
 // updateCheckpoints update the checkpoints when inserting a new node.
-func (f *ForkChoice) updateCheckpoints(ctx context.Context, jc, fc *ethpb.Checkpoint) error {
+func (f *ForkChoice) updateCheckpoints(ctx context.Context, jc, fc *silapb.Checkpoint) error {
 	if jc.Epoch > f.store.justifiedCheckpoint.Epoch {
 		f.store.prevJustifiedCheckpoint = f.store.justifiedCheckpoint
 		jcRoot := bytesutil.ToBytes32(jc.Root)
@@ -634,19 +634,19 @@ func (f *ForkChoice) UnrealizedJustifiedPayloadBlockHash() [32]byte {
 
 // ForkChoiceDump returns a full dump of forkchoice.
 func (f *ForkChoice) ForkChoiceDump(ctx context.Context) (*forkchoice2.Dump, error) {
-	jc := &ethpb.Checkpoint{
+	jc := &silapb.Checkpoint{
 		Epoch: f.store.justifiedCheckpoint.Epoch,
 		Root:  f.store.justifiedCheckpoint.Root[:],
 	}
-	ujc := &ethpb.Checkpoint{
+	ujc := &silapb.Checkpoint{
 		Epoch: f.store.unrealizedJustifiedCheckpoint.Epoch,
 		Root:  f.store.unrealizedJustifiedCheckpoint.Root[:],
 	}
-	fc := &ethpb.Checkpoint{
+	fc := &silapb.Checkpoint{
 		Epoch: f.store.finalizedCheckpoint.Epoch,
 		Root:  f.store.finalizedCheckpoint.Root[:],
 	}
-	ufc := &ethpb.Checkpoint{
+	ufc := &silapb.Checkpoint{
 		Epoch: f.store.unrealizedFinalizedCheckpoint.Epoch,
 		Root:  f.store.unrealizedFinalizedCheckpoint.Root[:],
 	}
@@ -677,19 +677,19 @@ func (f *ForkChoice) ForkChoiceDump(ctx context.Context) (*forkchoice2.Dump, err
 
 // ForkChoiceDumpV2 returns a Gloas-aware dump of forkchoice, emitting one entry per (root, payload_status) tuple.
 func (f *ForkChoice) ForkChoiceDumpV2(ctx context.Context) (*forkchoice2.DumpV2, error) {
-	jc := &ethpb.Checkpoint{
+	jc := &silapb.Checkpoint{
 		Epoch: f.store.justifiedCheckpoint.Epoch,
 		Root:  f.store.justifiedCheckpoint.Root[:],
 	}
-	ujc := &ethpb.Checkpoint{
+	ujc := &silapb.Checkpoint{
 		Epoch: f.store.unrealizedJustifiedCheckpoint.Epoch,
 		Root:  f.store.unrealizedJustifiedCheckpoint.Root[:],
 	}
-	fc := &ethpb.Checkpoint{
+	fc := &silapb.Checkpoint{
 		Epoch: f.store.finalizedCheckpoint.Epoch,
 		Root:  f.store.finalizedCheckpoint.Root[:],
 	}
-	ufc := &ethpb.Checkpoint{
+	ufc := &silapb.Checkpoint{
 		Epoch: f.store.unrealizedFinalizedCheckpoint.Epoch,
 		Root:  f.store.unrealizedFinalizedCheckpoint.Root[:],
 	}

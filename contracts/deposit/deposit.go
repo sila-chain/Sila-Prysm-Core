@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -26,8 +26,8 @@ import (
 //	- Send a transaction on the Ethereum 1.0 chain to DEPOSIT_CONTRACT_ADDRESS executing `deposit(pubkey: bytes[48], withdrawal_credentials: bytes[32], signature: bytes[96])` along with a deposit of amount Gwei.
 //
 // See: https://github.com/sila-chain/Sila-Consensus-Specs/blob/master/specs/validator/0_beacon-chain-validator.md#submit-deposit
-func DepositInput(depositKey, withdrawalKey bls.SecretKey, amountInGwei uint64) (*ethpb.Deposit_Data, [32]byte, error) {
-	depositMessage := &ethpb.DepositMessage{
+func DepositInput(depositKey, withdrawalKey bls.SecretKey, amountInGwei uint64) (*silapb.Deposit_Data, [32]byte, error) {
+	depositMessage := &silapb.DepositMessage{
 		PublicKey:             depositKey.PublicKey().Marshal(),
 		WithdrawalCredentials: WithdrawalCredentialsHash(withdrawalKey),
 		Amount:                amountInGwei,
@@ -46,11 +46,11 @@ func DepositInput(depositKey, withdrawalKey bls.SecretKey, amountInGwei uint64) 
 	if err != nil {
 		return nil, [32]byte{}, err
 	}
-	root, err := (&ethpb.SigningData{ObjectRoot: sr[:], Domain: domain}).HashTreeRoot()
+	root, err := (&silapb.SigningData{ObjectRoot: sr[:], Domain: domain}).HashTreeRoot()
 	if err != nil {
 		return nil, [32]byte{}, err
 	}
-	di := &ethpb.Deposit_Data{
+	di := &silapb.Deposit_Data{
 		PublicKey:             depositMessage.PublicKey,
 		WithdrawalCredentials: depositMessage.WithdrawalCredentials,
 		Amount:                depositMessage.Amount,
@@ -80,7 +80,7 @@ func WithdrawalCredentialsHash(withdrawalKey bls.SecretKey) []byte {
 }
 
 // VerifyDepositSignature verifies the correctness of Eth1 deposit BLS signature
-func VerifyDepositSignature(dd *ethpb.Deposit_Data, domain []byte) error {
+func VerifyDepositSignature(dd *silapb.Deposit_Data, domain []byte) error {
 	ddCopy := dd.Copy()
 	publicKey, err := bls.PublicKeyFromBytes(ddCopy.PublicKey)
 	if err != nil {
@@ -90,7 +90,7 @@ func VerifyDepositSignature(dd *ethpb.Deposit_Data, domain []byte) error {
 	if err != nil {
 		return errors.Wrap(err, "could not convert bytes to signature")
 	}
-	di := &ethpb.DepositMessage{
+	di := &silapb.DepositMessage{
 		PublicKey:             ddCopy.PublicKey,
 		WithdrawalCredentials: ddCopy.WithdrawalCredentials,
 		Amount:                ddCopy.Amount,
@@ -99,7 +99,7 @@ func VerifyDepositSignature(dd *ethpb.Deposit_Data, domain []byte) error {
 	if err != nil {
 		return errors.Wrap(err, "could not get signing root")
 	}
-	signingData := &ethpb.SigningData{
+	signingData := &silapb.SigningData{
 		ObjectRoot: root[:],
 		Domain:     domain,
 	}

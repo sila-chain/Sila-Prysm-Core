@@ -6,7 +6,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -17,14 +17,14 @@ func TestFork(t *testing.T) {
 	tests := []struct {
 		name        string
 		targetEpoch primitives.Epoch
-		want        *ethpb.Fork
+		want        *silapb.Fork
 		wantErr     bool
 		setConfg    func()
 	}{
 		{
 			name:        "genesis fork",
 			targetEpoch: 0,
-			want: &ethpb.Fork{
+			want: &silapb.Fork{
 				Epoch:           cfg.GenesisEpoch,
 				CurrentVersion:  cfg.GenesisForkVersion,
 				PreviousVersion: cfg.GenesisForkVersion,
@@ -33,7 +33,7 @@ func TestFork(t *testing.T) {
 		{
 			name:        "altair on fork",
 			targetEpoch: cfg.AltairForkEpoch,
-			want: &ethpb.Fork{
+			want: &silapb.Fork{
 				Epoch:           cfg.AltairForkEpoch,
 				CurrentVersion:  cfg.AltairForkVersion,
 				PreviousVersion: cfg.GenesisForkVersion,
@@ -42,7 +42,7 @@ func TestFork(t *testing.T) {
 		{
 			name:        "altair post fork",
 			targetEpoch: cfg.CapellaForkEpoch + 1,
-			want: &ethpb.Fork{
+			want: &silapb.Fork{
 				Epoch:           cfg.CapellaForkEpoch,
 				CurrentVersion:  cfg.CapellaForkVersion,
 				PreviousVersion: cfg.BellatrixForkVersion,
@@ -51,7 +51,7 @@ func TestFork(t *testing.T) {
 		{
 			name:        "3 forks, pre-fork",
 			targetEpoch: cfg.ElectraForkEpoch - 1,
-			want: &ethpb.Fork{
+			want: &silapb.Fork{
 				Epoch:           cfg.DenebForkEpoch,
 				CurrentVersion:  cfg.DenebForkVersion,
 				PreviousVersion: cfg.CapellaForkVersion,
@@ -60,7 +60,7 @@ func TestFork(t *testing.T) {
 		{
 			name:        "3 forks, on fork",
 			targetEpoch: cfg.ElectraForkEpoch,
-			want: &ethpb.Fork{
+			want: &silapb.Fork{
 				Epoch:           cfg.ElectraForkEpoch,
 				CurrentVersion:  cfg.ElectraForkVersion,
 				PreviousVersion: cfg.DenebForkVersion,
@@ -168,7 +168,7 @@ func TestForkFromConfig_UsesPassedConfig(t *testing.T) {
 	// Test at Altair fork epoch - should use the passed config's versions
 	fork := params.ForkFromConfig(testCfg, testCfg.AltairForkEpoch)
 
-	want := &ethpb.Fork{
+	want := &silapb.Fork{
 		Epoch:           testCfg.AltairForkEpoch,
 		CurrentVersion:  testCfg.AltairForkVersion,
 		PreviousVersion: testCfg.GenesisForkVersion,

@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -86,9 +86,9 @@ func TestHashProtoFuzz(t *testing.T) {
 }
 
 func BenchmarkHashProto(b *testing.B) {
-	att := &ethpb.Attestation{
+	att := &silapb.Attestation{
 		AggregationBits: nil,
-		Data: &ethpb.AttestationData{
+		Data: &silapb.AttestationData{
 			Slot:            5,
 			CommitteeIndex:  3,
 			BeaconBlockRoot: []byte{},

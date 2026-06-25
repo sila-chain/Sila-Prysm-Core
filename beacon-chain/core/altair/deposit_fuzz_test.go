@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/altair"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/fuzz"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	gofuzz "github.com/google/gofuzz"
@@ -13,8 +13,8 @@ import (
 
 func TestFuzzProcessDeposits_10000(t *testing.T) {
 	fuzzer := gofuzz.NewWithSeed(0)
-	state := &ethpb.BeaconStateAltair{}
-	deposits := make([]*ethpb.Deposit, 100)
+	state := &silapb.BeaconStateAltair{}
+	deposits := make([]*silapb.Deposit, 100)
 	ctx := t.Context()
 	for i := range 10000 {
 		fuzzer.Fuzz(state)
@@ -33,8 +33,8 @@ func TestFuzzProcessDeposits_10000(t *testing.T) {
 
 func TestFuzzProcessPreGenesisDeposit_10000(t *testing.T) {
 	fuzzer := gofuzz.NewWithSeed(0)
-	state := &ethpb.BeaconStateAltair{}
-	deposit := &ethpb.Deposit{}
+	state := &silapb.BeaconStateAltair{}
+	deposit := &silapb.Deposit{}
 	ctx := t.Context()
 
 	for i := range 10000 {
@@ -42,7 +42,7 @@ func TestFuzzProcessPreGenesisDeposit_10000(t *testing.T) {
 		fuzzer.Fuzz(deposit)
 		s, err := state_native.InitializeFromProtoUnsafeAltair(state)
 		require.NoError(t, err)
-		r, err := altair.ProcessPreGenesisDeposits(ctx, s, []*ethpb.Deposit{deposit})
+		r, err := altair.ProcessPreGenesisDeposits(ctx, s, []*silapb.Deposit{deposit})
 		if err != nil && r != nil {
 			t.Fatalf("return value should be nil on err. found: %v on error: %v for state: %v and block: %v", r, err, state, deposit)
 		}
@@ -52,8 +52,8 @@ func TestFuzzProcessPreGenesisDeposit_10000(t *testing.T) {
 
 func TestFuzzProcessPreGenesisDeposit_Phase0_10000(t *testing.T) {
 	fuzzer := gofuzz.NewWithSeed(0)
-	state := &ethpb.BeaconState{}
-	deposit := &ethpb.Deposit{}
+	state := &silapb.BeaconState{}
+	deposit := &silapb.Deposit{}
 	ctx := t.Context()
 
 	for i := range 10000 {
@@ -61,7 +61,7 @@ func TestFuzzProcessPreGenesisDeposit_Phase0_10000(t *testing.T) {
 		fuzzer.Fuzz(deposit)
 		s, err := state_native.InitializeFromProtoUnsafePhase0(state)
 		require.NoError(t, err)
-		r, err := altair.ProcessPreGenesisDeposits(ctx, s, []*ethpb.Deposit{deposit})
+		r, err := altair.ProcessPreGenesisDeposits(ctx, s, []*silapb.Deposit{deposit})
 		if err != nil && r != nil {
 			t.Fatalf("return value should be nil on err. found: %v on error: %v for state: %v and block: %v", r, err, state, deposit)
 		}
@@ -71,8 +71,8 @@ func TestFuzzProcessPreGenesisDeposit_Phase0_10000(t *testing.T) {
 
 func TestFuzzProcessDeposit_Phase0_10000(t *testing.T) {
 	fuzzer := gofuzz.NewWithSeed(0)
-	state := &ethpb.BeaconState{}
-	deposit := &ethpb.Deposit{}
+	state := &silapb.BeaconState{}
+	deposit := &silapb.Deposit{}
 
 	for i := range 10000 {
 		fuzzer.Fuzz(state)
@@ -89,8 +89,8 @@ func TestFuzzProcessDeposit_Phase0_10000(t *testing.T) {
 
 func TestFuzzProcessDeposit_10000(t *testing.T) {
 	fuzzer := gofuzz.NewWithSeed(0)
-	state := &ethpb.BeaconStateAltair{}
-	deposit := &ethpb.Deposit{}
+	state := &silapb.BeaconStateAltair{}
+	deposit := &silapb.Deposit{}
 
 	for i := range 10000 {
 		fuzzer.Fuzz(state)

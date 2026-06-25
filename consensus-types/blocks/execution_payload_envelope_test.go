@@ -9,12 +9,12 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
-func validExecutionPayloadEnvelope() *ethpb.ExecutionPayloadEnvelope {
+func validExecutionPayloadEnvelope() *silapb.ExecutionPayloadEnvelope {
 	payload := &enginev1.ExecutionPayloadGloas{
 		ParentHash:    bytes.Repeat([]byte{0x01}, 32),
 		FeeRecipient:  bytes.Repeat([]byte{0x02}, 20),
@@ -35,7 +35,7 @@ func validExecutionPayloadEnvelope() *ethpb.ExecutionPayloadEnvelope {
 		SlotNumber:    9,
 	}
 
-	return &ethpb.ExecutionPayloadEnvelope{
+	return &silapb.ExecutionPayloadEnvelope{
 		Payload: payload,
 		ExecutionRequests: &enginev1.ExecutionRequests{
 			Deposits: []*enginev1.DepositRequest{
@@ -93,7 +93,7 @@ func TestWrappedROExecutionPayloadEnvelope(t *testing.T) {
 
 func TestWrappedROSignedExecutionPayloadEnvelope(t *testing.T) {
 	t.Run("returns error for invalid signature length", func(t *testing.T) {
-		signed := &ethpb.SignedExecutionPayloadEnvelope{
+		signed := &silapb.SignedExecutionPayloadEnvelope{
 			Message:   validExecutionPayloadEnvelope(),
 			Signature: bytes.Repeat([]byte{0xAA}, 95),
 		}
@@ -107,7 +107,7 @@ func TestWrappedROSignedExecutionPayloadEnvelope(t *testing.T) {
 	})
 
 	t.Run("returns error on nil message", func(t *testing.T) {
-		signed := &ethpb.SignedExecutionPayloadEnvelope{
+		signed := &silapb.SignedExecutionPayloadEnvelope{
 			Signature: bytes.Repeat([]byte{0xAA}, 96),
 		}
 		_, err := blocks.WrappedROSignedExecutionPayloadEnvelope(signed)
@@ -116,7 +116,7 @@ func TestWrappedROSignedExecutionPayloadEnvelope(t *testing.T) {
 
 	t.Run("wraps and provides envelope/signing data", func(t *testing.T) {
 		sig := bytes.Repeat([]byte{0xAB}, 96)
-		signed := &ethpb.SignedExecutionPayloadEnvelope{
+		signed := &silapb.SignedExecutionPayloadEnvelope{
 			Message:   validExecutionPayloadEnvelope(),
 			Signature: sig,
 		}

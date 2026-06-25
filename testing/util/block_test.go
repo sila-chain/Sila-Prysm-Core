@@ -11,8 +11,8 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpbv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
-	ethpbalpha "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapbv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
+	silapbalpha "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -193,7 +193,7 @@ func TestGenerateFullBlock_ValidVoluntaryExits(t *testing.T) {
 }
 
 func TestHydrateSignedBeaconBlock_NoError(t *testing.T) {
-	b := &ethpbalpha.SignedBeaconBlock{}
+	b := &silapbalpha.SignedBeaconBlock{}
 	b = HydrateSignedBeaconBlock(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
@@ -204,7 +204,7 @@ func TestHydrateSignedBeaconBlock_NoError(t *testing.T) {
 }
 
 func TestHydrateV1SignedBeaconBlock_NoError(t *testing.T) {
-	b := &ethpbv1.SignedBeaconBlock{}
+	b := &silapbv1.SignedBeaconBlock{}
 	b = HydrateV1SignedBeaconBlock(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
@@ -215,7 +215,7 @@ func TestHydrateV1SignedBeaconBlock_NoError(t *testing.T) {
 }
 
 func TestHydrateSignedBeaconBlockAltair_NoError(t *testing.T) {
-	b := &ethpbalpha.SignedBeaconBlockAltair{}
+	b := &silapbalpha.SignedBeaconBlockAltair{}
 	b = HydrateSignedBeaconBlockAltair(b)
 
 	// HTR should not error. It errors with incorrect field length sizes.
@@ -228,7 +228,7 @@ func TestHydrateSignedBeaconBlockAltair_NoError(t *testing.T) {
 }
 
 func TestHydrateSignedBlindedBeaconBlockBellatrix_NoError(t *testing.T) {
-	b := &ethpbalpha.SignedBlindedBeaconBlockBellatrix{}
+	b := &silapbalpha.SignedBlindedBeaconBlockBellatrix{}
 	b = HydrateSignedBlindedBeaconBlockBellatrix(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
@@ -239,7 +239,7 @@ func TestHydrateSignedBlindedBeaconBlockBellatrix_NoError(t *testing.T) {
 }
 
 func TestHydrateBlindedBeaconBlockBellatrix_NoError(t *testing.T) {
-	b := &ethpbalpha.BlindedBeaconBlockBellatrix{}
+	b := &silapbalpha.BlindedBeaconBlockBellatrix{}
 	b = HydrateBlindedBeaconBlockBellatrix(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
@@ -248,14 +248,14 @@ func TestHydrateBlindedBeaconBlockBellatrix_NoError(t *testing.T) {
 }
 
 func TestHydrateBlindedBeaconBlockBodyBellatrix_NoError(t *testing.T) {
-	b := &ethpbalpha.BlindedBeaconBlockBodyBellatrix{}
+	b := &silapbalpha.BlindedBeaconBlockBodyBellatrix{}
 	b = HydrateBlindedBeaconBlockBodyBellatrix(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
 }
 
 func TestHydrateSignedBeaconBlockCapella_NoError(t *testing.T) {
-	b := &ethpbalpha.SignedBeaconBlockCapella{}
+	b := &silapbalpha.SignedBeaconBlockCapella{}
 	b = HydrateSignedBeaconBlockCapella(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
@@ -266,7 +266,7 @@ func TestHydrateSignedBeaconBlockCapella_NoError(t *testing.T) {
 }
 
 func TestHydrateBeaconBlockCapella_NoError(t *testing.T) {
-	b := &ethpbalpha.BeaconBlockCapella{}
+	b := &silapbalpha.BeaconBlockCapella{}
 	b = HydrateBeaconBlockCapella(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
@@ -275,14 +275,14 @@ func TestHydrateBeaconBlockCapella_NoError(t *testing.T) {
 }
 
 func TestHydrateBeaconBlockBodyCapella_NoError(t *testing.T) {
-	b := &ethpbalpha.BeaconBlockBodyCapella{}
+	b := &silapbalpha.BeaconBlockBodyCapella{}
 	b = HydrateBeaconBlockBodyCapella(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
 }
 
 func TestHydrateSignedBlindedBeaconBlockCapella_NoError(t *testing.T) {
-	b := &ethpbalpha.SignedBlindedBeaconBlockCapella{}
+	b := &silapbalpha.SignedBlindedBeaconBlockCapella{}
 	b = HydrateSignedBlindedBeaconBlockCapella(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
@@ -293,7 +293,7 @@ func TestHydrateSignedBlindedBeaconBlockCapella_NoError(t *testing.T) {
 }
 
 func TestHydrateBlindedBeaconBlockCapella_NoError(t *testing.T) {
-	b := &ethpbalpha.BlindedBeaconBlockCapella{}
+	b := &silapbalpha.BlindedBeaconBlockCapella{}
 	b = HydrateBlindedBeaconBlockCapella(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
@@ -302,7 +302,7 @@ func TestHydrateBlindedBeaconBlockCapella_NoError(t *testing.T) {
 }
 
 func TestHydrateBlindedBeaconBlockBodyCapella_NoError(t *testing.T) {
-	b := &ethpbalpha.BlindedBeaconBlockBodyCapella{}
+	b := &silapbalpha.BlindedBeaconBlockBodyCapella{}
 	b = HydrateBlindedBeaconBlockBodyCapella(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
@@ -350,7 +350,7 @@ func Test_PostDenebPbGenericBlock_ErrorsForPlainBlock(t *testing.T) {
 }
 
 func TestHydrateSignedBeaconBlockGloas_NoError(t *testing.T) {
-	b := &ethpbalpha.SignedBeaconBlockGloas{}
+	b := &silapbalpha.SignedBeaconBlockGloas{}
 	b = HydrateSignedBeaconBlockGloas(b)
 	_, err := b.HashTreeRoot()
 	require.NoError(t, err)
@@ -361,7 +361,7 @@ func TestHydrateSignedBeaconBlockGloas_NoError(t *testing.T) {
 }
 
 func TestHydratePayloadAttestation_NoError(t *testing.T) {
-	p := &ethpbalpha.PayloadAttestation{}
+	p := &silapbalpha.PayloadAttestation{}
 	p = HydratePayloadAttestation(p)
 	_, err := p.HashTreeRoot()
 	require.NoError(t, err)

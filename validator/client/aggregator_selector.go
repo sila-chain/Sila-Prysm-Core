@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
 	lru "github.com/hashicorp/golang-lru"
@@ -29,7 +29,7 @@ type aggregatorSelector interface {
 	// a (slot, committee) pair. Returns false if already claimed.
 	ClaimAggregateSlot(slot primitives.Slot, committeeIndex primitives.CommitteeIndex) bool
 	SyncCommitteeAggregators(ctx context.Context, slot primitives.Slot, pubkeys [][fieldparams.BLSPubkeyLength]byte) ([][fieldparams.BLSPubkeyLength]byte, error)
-	SyncCommitteeSelectionProofs(ctx context.Context, slot primitives.Slot, pubKey [fieldparams.BLSPubkeyLength]byte, indexRes *ethpb.SyncSubcommitteeIndexResponse) ([][]byte, error)
+	SyncCommitteeSelectionProofs(ctx context.Context, slot primitives.Slot, pubKey [fieldparams.BLSPubkeyLength]byte, indexRes *silapb.SyncSubcommitteeIndexResponse) ([][]byte, error)
 }
 
 // errSelectionProofNotFound is returned when a selection proof is not cached
@@ -129,7 +129,7 @@ type syncSelectionProof struct {
 
 // signSyncSelectionProofs fetches subcommittee indices and signs selection data for a single pubkey.
 func (p *localSelector) signSyncSelectionProofs(ctx context.Context, slot primitives.Slot, pubKey [fieldparams.BLSPubkeyLength]byte) ([]syncSelectionProof, error) {
-	res, err := p.v.validatorClient.SyncSubcommitteeIndex(ctx, &ethpb.SyncSubcommitteeIndexRequest{
+	res, err := p.v.validatorClient.SyncSubcommitteeIndex(ctx, &silapb.SyncSubcommitteeIndexRequest{
 		PublicKey: pubKey[:],
 		Slot:      slot,
 	})
@@ -173,7 +173,7 @@ func (p *localSelector) SyncCommitteeAggregators(ctx context.Context, slot primi
 	return aggregators, nil
 }
 
-func (p *localSelector) SyncCommitteeSelectionProofs(ctx context.Context, slot primitives.Slot, pubKey [fieldparams.BLSPubkeyLength]byte, indexRes *ethpb.SyncSubcommitteeIndexResponse) ([][]byte, error) {
+func (p *localSelector) SyncCommitteeSelectionProofs(ctx context.Context, slot primitives.Slot, pubKey [fieldparams.BLSPubkeyLength]byte, indexRes *silapb.SyncSubcommitteeIndexResponse) ([][]byte, error) {
 	ctx, span := trace.StartSpan(ctx, "localSelector.SyncCommitteeSelectionProofs")
 	defer span.End()
 
@@ -254,7 +254,7 @@ func (p *distributedSelector) RefreshSelectionProofs(ctx context.Context) error 
 func (p *distributedSelector) fetchSelectionProofs(ctx context.Context) (map[attSelectionKey]iface.BeaconCommitteeSelection, error) {
 	var req []iface.BeaconCommitteeSelection
 	for pk, duty := range p.v.duties.snapshot().currentDuties() {
-		if duty.Status != ethpb.ValidatorStatus_ACTIVE && duty.Status != ethpb.ValidatorStatus_EXITING {
+		if duty.Status != silapb.ValidatorStatus_ACTIVE && duty.Status != silapb.ValidatorStatus_EXITING {
 			continue
 		}
 		slotSig, err := p.v.signSlotWithSelectionProof(ctx, pk, duty.AttesterSlot)
@@ -330,7 +330,7 @@ func (p *distributedSelector) SyncCommitteeAggregators(_ context.Context, _ prim
 	return pubkeys, nil
 }
 
-func (p *distributedSelector) SyncCommitteeSelectionProofs(ctx context.Context, slot primitives.Slot, pubKey [fieldparams.BLSPubkeyLength]byte, indexRes *ethpb.SyncSubcommitteeIndexResponse) ([][]byte, error) {
+func (p *distributedSelector) SyncCommitteeSelectionProofs(ctx context.Context, slot primitives.Slot, pubKey [fieldparams.BLSPubkeyLength]byte, indexRes *silapb.SyncSubcommitteeIndexResponse) ([][]byte, error) {
 	ctx, span := trace.StartSpan(ctx, "distributedSelector.SyncCommitteeSelectionProofs")
 	defer span.End()
 

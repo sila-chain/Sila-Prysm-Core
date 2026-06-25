@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -51,7 +51,7 @@ func TestSigningRoot_ComputeDomainAndSign(t *testing.T) {
 	tests := []struct {
 		name       string
 		genState   func(t *testing.T) (state.BeaconState, []bls.SecretKey)
-		genBlock   func(t *testing.T, st state.BeaconState, keys []bls.SecretKey) *ethpb.SignedBeaconBlock
+		genBlock   func(t *testing.T, st state.BeaconState, keys []bls.SecretKey) *silapb.SignedBeaconBlock
 		domainType [4]byte
 		want       []byte
 	}{
@@ -62,7 +62,7 @@ func TestSigningRoot_ComputeDomainAndSign(t *testing.T) {
 				require.NoError(t, beaconState.SetSlot(beaconState.Slot()+1))
 				return beaconState, privKeys
 			},
-			genBlock: func(t *testing.T, st state.BeaconState, keys []bls.SecretKey) *ethpb.SignedBeaconBlock {
+			genBlock: func(t *testing.T, st state.BeaconState, keys []bls.SecretKey) *silapb.SignedBeaconBlock {
 				block, err := util.GenerateFullBlock(st, keys, nil, 1)
 				require.NoError(t, err)
 				return block
@@ -112,7 +112,7 @@ func TestSigningRoot_ComputeForkDigest(t *testing.T) {
 
 func TestFuzzverifySigningRoot_10000(_ *testing.T) {
 	fuzzer := fuzz.NewWithSeed(0)
-	st := &ethpb.BeaconState{}
+	st := &silapb.BeaconState{}
 	var pubkey [fieldparams.BLSPubkeyLength]byte
 	var sig [96]byte
 	var domain [4]byte

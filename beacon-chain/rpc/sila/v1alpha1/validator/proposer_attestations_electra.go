@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // computeOnChainAggregate constructs a final aggregate form a list of network aggregates with equal attestation data.
@@ -39,8 +39,8 @@ import (
 //			committee_bits=committee_bits,
 //			signature=signature,
 //		)
-func computeOnChainAggregate(aggregates []ethpb.Att) ([]ethpb.Att, error) {
-	aggsByDataRoot := make(map[[32]byte][]ethpb.Att)
+func computeOnChainAggregate(aggregates []silapb.Att) ([]silapb.Att, error) {
+	aggsByDataRoot := make(map[[32]byte][]silapb.Att)
 	for _, agg := range aggregates {
 		key, err := agg.GetData().HashTreeRoot()
 		if err != nil {
@@ -50,14 +50,14 @@ func computeOnChainAggregate(aggregates []ethpb.Att) ([]ethpb.Att, error) {
 		if ok {
 			aggsByDataRoot[key] = append(existing, agg)
 		} else {
-			aggsByDataRoot[key] = []ethpb.Att{agg}
+			aggsByDataRoot[key] = []silapb.Att{agg}
 		}
 	}
 
-	result := make([]ethpb.Att, 0)
+	result := make([]silapb.Att, 0)
 
 	for _, aggs := range aggsByDataRoot {
-		slices.SortFunc(aggs, func(a, b ethpb.Att) int {
+		slices.SortFunc(aggs, func(a, b silapb.Att) int {
 			return cmp.Compare(a.GetCommitteeIndex(), b.GetCommitteeIndex())
 		})
 
@@ -84,7 +84,7 @@ func computeOnChainAggregate(aggregates []ethpb.Att) ([]ethpb.Att, error) {
 			aggregationBits.SetBitAt(bi, true)
 		}
 
-		att := &ethpb.AttestationElectra{
+		att := &silapb.AttestationElectra{
 			AggregationBits: aggregationBits,
 			Data:            aggs[0].GetData(),
 			CommitteeBits:   cb,

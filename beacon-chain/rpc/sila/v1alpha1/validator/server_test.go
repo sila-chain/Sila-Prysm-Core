@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/mock"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -38,14 +38,14 @@ func TestValidatorIndex_OK(t *testing.T) {
 
 	pubKey := pubKey(1)
 
-	err = st.SetValidators([]*ethpb.Validator{{PublicKey: pubKey}})
+	err = st.SetValidators([]*silapb.Validator{{PublicKey: pubKey}})
 	require.NoError(t, err)
 
 	Server := &Server{
 		HeadFetcher: &mockChain.ChainService{State: st},
 	}
 
-	req := &ethpb.ValidatorIndexRequest{
+	req := &silapb.ValidatorIndexRequest{
 		PublicKey: pubKey,
 	}
 	_, err = Server.ValidatorIndex(t.Context(), req)
@@ -57,7 +57,7 @@ func TestValidatorIndex_StateEmpty(t *testing.T) {
 		HeadFetcher: &mockChain.ChainService{},
 	}
 	pubKey := pubKey(1)
-	req := &ethpb.ValidatorIndexRequest{
+	req := &silapb.ValidatorIndexRequest{
 		PublicKey: pubKey,
 	}
 	_, err := Server.ValidatorIndex(t.Context(), req)
@@ -65,9 +65,9 @@ func TestValidatorIndex_StateEmpty(t *testing.T) {
 }
 
 func TestWaitForActivation_ContextClosed(t *testing.T) {
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot:       0,
-		Validators: []*ethpb.Validator{},
+		Validators: []*silapb.Validator{},
 	})
 	require.NoError(t, err)
 	block := util.NewBeaconBlock()
@@ -86,7 +86,7 @@ func TestWaitForActivation_ContextClosed(t *testing.T) {
 		DepositFetcher:    depositCache,
 		HeadFetcher:       &mockChain.ChainService{State: beaconState, Root: genesisRoot[:]},
 	}
-	req := &ethpb.ValidatorActivationRequest{
+	req := &silapb.ValidatorActivationRequest{
 		PublicKeys: [][]byte{pubKey(1)},
 	}
 
@@ -118,9 +118,9 @@ func TestWaitForActivation_MultipleStatuses(t *testing.T) {
 	pubKey2 := priv2.PublicKey().Marshal()
 	pubKey3 := priv3.PublicKey().Marshal()
 
-	beaconState := &ethpb.BeaconState{
+	beaconState := &silapb.BeaconState{
 		Slot: 4000,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{
 				PublicKey:       pubKey1,
 				ActivationEpoch: 1,
@@ -150,7 +150,7 @@ func TestWaitForActivation_MultipleStatuses(t *testing.T) {
 		ChainStartFetcher: &mockExecution.Chain{},
 		HeadFetcher:       &mockChain.ChainService{State: s, Root: genesisRoot[:]},
 	}
-	req := &ethpb.ValidatorActivationRequest{
+	req := &silapb.ValidatorActivationRequest{
 		PublicKeys: [][]byte{pubKey1, pubKey2, pubKey3},
 	}
 	ctrl := gomock.NewController(t)
@@ -159,20 +159,20 @@ func TestWaitForActivation_MultipleStatuses(t *testing.T) {
 	mockChainStream := mock.NewMockBeaconNodeValidator_WaitForActivationServer(ctrl)
 	mockChainStream.EXPECT().Context().Return(t.Context())
 	mockChainStream.EXPECT().Send(
-		&ethpb.ValidatorActivationResponse{
-			Statuses: []*ethpb.ValidatorActivationResponse_Status{
+		&silapb.ValidatorActivationResponse{
+			Statuses: []*silapb.ValidatorActivationResponse_Status{
 				{
 					PublicKey: pubKey1,
-					Status: &ethpb.ValidatorStatusResponse{
-						Status:          ethpb.ValidatorStatus_ACTIVE,
+					Status: &silapb.ValidatorStatusResponse{
+						Status:          silapb.ValidatorStatus_ACTIVE,
 						ActivationEpoch: 1,
 					},
 					Index: 0,
 				},
 				{
 					PublicKey: pubKey2,
-					Status: &ethpb.ValidatorStatusResponse{
-						Status:                    ethpb.ValidatorStatus_PENDING,
+					Status: &silapb.ValidatorStatusResponse{
+						Status:                    silapb.ValidatorStatus_PENDING,
 						ActivationEpoch:           params.BeaconConfig().FarFutureEpoch,
 						PositionInActivationQueue: 1,
 					},
@@ -180,8 +180,8 @@ func TestWaitForActivation_MultipleStatuses(t *testing.T) {
 				},
 				{
 					PublicKey: pubKey3,
-					Status: &ethpb.ValidatorStatusResponse{
-						Status: ethpb.ValidatorStatus_EXITED,
+					Status: &silapb.ValidatorStatusResponse{
+						Status: silapb.ValidatorStatus_EXITED,
 					},
 					Index: 2,
 				},
@@ -239,7 +239,7 @@ func TestWaitForChainStart_AlreadyStarted(t *testing.T) {
 	defer ctrl.Finish()
 	mockStream := mock.NewMockBeaconNodeValidator_WaitForChainStartServer(ctrl)
 	mockStream.EXPECT().Send(
-		&ethpb.ChainStartResponse{
+		&silapb.ChainStartResponse{
 			Started:               true,
 			GenesisTime:           uint64(time.Unix(0, 0).Unix()),
 			GenesisValidatorsRoot: genesisValidatorsRoot[:],
@@ -299,7 +299,7 @@ func TestWaitForChainStart_NotStartedThenLogFired(t *testing.T) {
 	defer ctrl.Finish()
 	mockStream := mock.NewMockBeaconNodeValidator_WaitForChainStartServer(ctrl)
 	mockStream.EXPECT().Send(
-		&ethpb.ChainStartResponse{
+		&silapb.ChainStartResponse{
 			Started:               true,
 			GenesisTime:           uint64(time.Unix(0, 0).Unix()),
 			GenesisValidatorsRoot: genesisValidatorsRoot[:],
@@ -318,10 +318,10 @@ func TestWaitForChainStart_NotStartedThenLogFired(t *testing.T) {
 	require.LogsContain(t, hook, "Sending genesis time")
 }
 
-func testSigDomainForSlot(t *testing.T, domain [4]byte, chsrv *mockChain.ChainService, epoch primitives.Epoch) *ethpb.DomainResponse {
+func testSigDomainForSlot(t *testing.T, domain [4]byte, chsrv *mockChain.ChainService, epoch primitives.Epoch) *silapb.DomainResponse {
 	cfg := params.BeaconConfig()
 	gvr := genesis.ValidatorsRoot()
-	s, err := state_native.InitializeFromProtoUnsafeDeneb(&ethpb.BeaconStateDeneb{
+	s, err := state_native.InitializeFromProtoUnsafeDeneb(&silapb.BeaconStateDeneb{
 		Slot:                  primitives.Slot(epoch) * cfg.SlotsPerEpoch,
 		GenesisValidatorsRoot: gvr[:],
 	})
@@ -332,7 +332,7 @@ func testSigDomainForSlot(t *testing.T, domain [4]byte, chsrv *mockChain.ChainSe
 		ChainStartFetcher: &mockExecution.Chain{},
 		HeadFetcher:       chsrv,
 	}
-	domainResp, err := vs.DomainData(t.Context(), &ethpb.DomainRequest{
+	domainResp, err := vs.DomainData(t.Context(), &silapb.DomainRequest{
 		Epoch:  epoch,
 		Domain: domain[:],
 	})

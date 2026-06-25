@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -17,7 +17,7 @@ func TestDepositRequestsStartIndex(t *testing.T) {
 	})
 	t.Run("electra returns expected value", func(t *testing.T) {
 		want := uint64(2)
-		dState, err := state_native.InitializeFromProtoElectra(&ethpb.BeaconStateElectra{DepositRequestsStartIndex: want})
+		dState, err := state_native.InitializeFromProtoElectra(&silapb.BeaconStateElectra{DepositRequestsStartIndex: want})
 		require.NoError(t, err)
 		got, err := dState.DepositRequestsStartIndex()
 		require.NoError(t, err)

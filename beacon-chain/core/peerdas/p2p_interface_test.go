@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila/p2p/enr"
@@ -113,14 +113,14 @@ func Test_VerifyKZGInclusionProofColumn(t *testing.T) {
 		require.NoError(t, err)
 	}
 
-	pbBody := &ethpb.BeaconBlockBodyDeneb{
+	pbBody := &silapb.BeaconBlockBodyDeneb{
 		RandaoReveal: make([]byte, 96),
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
 		Graffiti: make([]byte, 32),
-		SyncAggregate: &ethpb.SyncAggregate{
+		SyncAggregate: &silapb.SyncAggregate{
 			SyncCommitteeBits:      make([]byte, fieldparams.SyncAggregateSyncCommitteeBytesLength),
 			SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 		},
@@ -151,35 +151,35 @@ func Test_VerifyKZGInclusionProofColumn(t *testing.T) {
 	testCases := []struct {
 		name              string
 		expectedError     error
-		dataColumnSidecar *ethpb.DataColumnSidecar
+		dataColumnSidecar *silapb.DataColumnSidecar
 	}{
 		{
 			name:              "nilSignedBlockHeader",
 			expectedError:     peerdas.ErrNilBlockHeader,
-			dataColumnSidecar: &ethpb.DataColumnSidecar{},
+			dataColumnSidecar: &silapb.DataColumnSidecar{},
 		},
 		{
 			name:          "nilHeader",
 			expectedError: peerdas.ErrNilBlockHeader,
-			dataColumnSidecar: &ethpb.DataColumnSidecar{
-				SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{},
+			dataColumnSidecar: &silapb.DataColumnSidecar{
+				SignedBlockHeader: &silapb.SignedBeaconBlockHeader{},
 			},
 		},
 		{
 			name:          "invalidBodyRoot",
 			expectedError: peerdas.ErrBadRootLength,
-			dataColumnSidecar: &ethpb.DataColumnSidecar{
-				SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-					Header: &ethpb.BeaconBlockHeader{},
+			dataColumnSidecar: &silapb.DataColumnSidecar{
+				SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+					Header: &silapb.BeaconBlockHeader{},
 				},
 			},
 		},
 		{
 			name:          "unverifiedMerkleProof",
 			expectedError: peerdas.ErrInvalidInclusionProof,
-			dataColumnSidecar: &ethpb.DataColumnSidecar{
-				SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-					Header: &ethpb.BeaconBlockHeader{
+			dataColumnSidecar: &silapb.DataColumnSidecar{
+				SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+					Header: &silapb.BeaconBlockHeader{
 						BodyRoot: make([]byte, 32),
 					},
 				},
@@ -189,10 +189,10 @@ func Test_VerifyKZGInclusionProofColumn(t *testing.T) {
 		{
 			name:          "nominal",
 			expectedError: nil,
-			dataColumnSidecar: &ethpb.DataColumnSidecar{
+			dataColumnSidecar: &silapb.DataColumnSidecar{
 				KzgCommitments: kzgCommitments,
-				SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-					Header: &ethpb.BeaconBlockHeader{
+				SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+					Header: &silapb.BeaconBlockHeader{
 						BodyRoot: root[:],
 					},
 				},
@@ -216,7 +216,7 @@ func Test_VerifyKZGInclusionProofColumn(t *testing.T) {
 }
 
 func TestVerifyDataColumnSidecarInclusionProof_SkipsGloas(t *testing.T) {
-	dc := &ethpb.DataColumnSidecarGloas{Index: 0, Column: [][]byte{{0x01}}, KzgProofs: [][]byte{make([]byte, 48)}}
+	dc := &silapb.DataColumnSidecarGloas{Index: 0, Column: [][]byte{{0x01}}, KzgProofs: [][]byte{make([]byte, 48)}}
 	roCol, err := blocks.NewRODataColumnGloas(dc)
 	require.NoError(t, err)
 	require.NoError(t, peerdas.VerifyDataColumnSidecarInclusionProof(roCol))
@@ -380,7 +380,7 @@ func createTestSidecar(t *testing.T, index uint64, column, kzgCommitments, kzgPr
 	signedBlockHeader, err := signedBeaconBlock.Header()
 	require.NoError(t, err)
 
-	sidecar := &ethpb.DataColumnSidecar{
+	sidecar := &silapb.DataColumnSidecar{
 		Index:             index,
 		Column:            column,
 		KzgCommitments:    kzgCommitments,

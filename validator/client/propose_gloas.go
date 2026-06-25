@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -24,8 +24,8 @@ func (v *validator) signExecutionPayloadEnvelope(
 	ctx context.Context,
 	pubKey [fieldparams.BLSPubkeyLength]byte,
 	slot primitives.Slot,
-	envelope *ethpb.ExecutionPayloadEnvelope,
-) (*ethpb.SignedExecutionPayloadEnvelope, error) {
+	envelope *silapb.ExecutionPayloadEnvelope,
+) (*silapb.SignedExecutionPayloadEnvelope, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.signExecutionPayloadEnvelope")
 	defer span.End()
 
@@ -57,7 +57,7 @@ func (v *validator) signExecutionPayloadEnvelope(
 		return nil, errors.Wrap(err, "could not sign execution payload envelope")
 	}
 
-	return &ethpb.SignedExecutionPayloadEnvelope{
+	return &silapb.SignedExecutionPayloadEnvelope{
 		Message:   envelope,
 		Signature: sig.Marshal(),
 	}, nil
@@ -129,7 +129,7 @@ func (v *validator) publishSelfBuildBlinded(
 	ctx context.Context,
 	pubKey [fieldparams.BLSPubkeyLength]byte,
 	slot primitives.Slot,
-	blinded *ethpb.WireBlindedExecutionPayloadEnvelope,
+	blinded *silapb.WireBlindedExecutionPayloadEnvelope,
 ) error {
 	if blinded == nil {
 		return errors.New("nil blinded execution payload envelope")
@@ -155,7 +155,7 @@ func (v *validator) publishSelfBuildBlinded(
 	if err != nil {
 		return errors.Wrap(err, "could not sign blinded execution payload envelope")
 	}
-	signed := &ethpb.SignedWireBlindedExecutionPayloadEnvelope{Message: blinded, Signature: sig.Marshal()}
+	signed := &silapb.SignedWireBlindedExecutionPayloadEnvelope{Message: blinded, Signature: sig.Marshal()}
 	if _, err := v.validatorClient.PublishBlindedExecutionPayloadEnvelope(ctx, signed); err != nil {
 		return errors.Wrap(err, "failed to publish blinded execution payload envelope")
 	}

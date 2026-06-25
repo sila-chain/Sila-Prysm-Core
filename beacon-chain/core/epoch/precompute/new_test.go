@@ -6,20 +6,20 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/epoch/precompute"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func TestNew(t *testing.T) {
 	ffe := params.BeaconConfig().FarFutureEpoch
-	s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot: params.BeaconConfig().SlotsPerEpoch,
 		// Validator 0 is slashed
 		// Validator 1 is withdrawable
 		// Validator 2 is active prev epoch and current epoch
 		// Validator 3 is active prev epoch
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{Slashed: true, WithdrawableEpoch: ffe, EffectiveBalance: 100},
 			{EffectiveBalance: 100},
 			{WithdrawableEpoch: ffe, ExitEpoch: ffe, EffectiveBalance: 100},

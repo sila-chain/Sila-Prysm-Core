@@ -11,7 +11,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -57,7 +57,7 @@ import (
 //	  return state
 //
 // This method differs from the spec so as to process deposits beforehand instead of the end of the function.
-func GenesisBeaconState(ctx context.Context, deposits []*ethpb.Deposit, genesisTime uint64, eth1Data *ethpb.Eth1Data) (state.BeaconState, error) {
+func GenesisBeaconState(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, eth1Data *silapb.Eth1Data) (state.BeaconState, error) {
 	st, err := EmptyGenesisState()
 	if err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func GenesisBeaconState(ctx context.Context, deposits []*ethpb.Deposit, genesisT
 // are not represented in the deposit contract and are only found in the genesis state validator registry. In order
 // to ensure the deposit root and count match the empty deposit contract deployed in a testnet genesis block, the root
 // of an empty deposit trie is computed and used as Eth1Data.deposit_root, and the deposit count is set to 0.
-func PreminedGenesisBeaconState(ctx context.Context, deposits []*ethpb.Deposit, genesisTime uint64, eth1Data *ethpb.Eth1Data) (state.BeaconState, error) {
+func PreminedGenesisBeaconState(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, eth1Data *silapb.Eth1Data) (state.BeaconState, error) {
 	st, err := EmptyGenesisState()
 	if err != nil {
 		return nil, err
@@ -105,7 +105,7 @@ func PreminedGenesisBeaconState(ctx context.Context, deposits []*ethpb.Deposit, 
 	if err != nil {
 		return nil, err
 	}
-	if err := st.SetEth1Data(&ethpb.Eth1Data{DepositRoot: dr[:], BlockHash: eth1Data.BlockHash}); err != nil {
+	if err := st.SetEth1Data(&silapb.Eth1Data{DepositRoot: dr[:], BlockHash: eth1Data.BlockHash}); err != nil {
 		return nil, err
 	}
 	if err := st.SetEth1DepositIndex(0); err != nil {
@@ -116,7 +116,7 @@ func PreminedGenesisBeaconState(ctx context.Context, deposits []*ethpb.Deposit, 
 
 // OptimizedGenesisBeaconState is used to create a state that has already processed deposits. This is to efficiently
 // create a mainnet state at chainstart.
-func OptimizedGenesisBeaconState(genesisTime uint64, preState state.BeaconState, eth1Data *ethpb.Eth1Data) (state.BeaconState, error) {
+func OptimizedGenesisBeaconState(genesisTime uint64, preState state.BeaconState, eth1Data *silapb.Eth1Data) (state.BeaconState, error) {
 	if eth1Data == nil {
 		return nil, errors.New("no eth1data provided for genesis state")
 	}
@@ -153,13 +153,13 @@ func OptimizedGenesisBeaconState(genesisTime uint64, preState state.BeaconState,
 		return nil, errors.Wrapf(err, "could not hash tree root genesis validators %v", err)
 	}
 
-	st := &ethpb.BeaconState{
+	st := &silapb.BeaconState{
 		// Misc fields.
 		Slot:                  0,
 		GenesisTime:           genesisTime,
 		GenesisValidatorsRoot: genesisValidatorsRoot[:],
 
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			Epoch:           0,
@@ -173,16 +173,16 @@ func OptimizedGenesisBeaconState(genesisTime uint64, preState state.BeaconState,
 		RandaoMixes: randaoMixes,
 
 		// Finality.
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
 		JustificationBits: []byte{0},
-		FinalizedCheckpoint: &ethpb.Checkpoint{
+		FinalizedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
@@ -191,18 +191,18 @@ func OptimizedGenesisBeaconState(genesisTime uint64, preState state.BeaconState,
 		BlockRoots:                blockRoots,
 		StateRoots:                stateRoots,
 		Slashings:                 slashings,
-		CurrentEpochAttestations:  []*ethpb.PendingAttestation{},
-		PreviousEpochAttestations: []*ethpb.PendingAttestation{},
+		CurrentEpochAttestations:  []*silapb.PendingAttestation{},
+		PreviousEpochAttestations: []*silapb.PendingAttestation{},
 
 		// Eth1 data.
 		Eth1Data:         eth1Data,
-		Eth1DataVotes:    []*ethpb.Eth1Data{},
+		Eth1DataVotes:    []*silapb.Eth1Data{},
 		Eth1DepositIndex: preState.Eth1DepositIndex(),
 	}
 
-	bodyRoot, err := (&ethpb.BeaconBlockBody{
+	bodyRoot, err := (&silapb.BeaconBlockBody{
 		RandaoReveal: make([]byte, 96),
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},
@@ -212,7 +212,7 @@ func OptimizedGenesisBeaconState(genesisTime uint64, preState state.BeaconState,
 		return nil, errors.Wrap(err, "could not hash tree root empty block body")
 	}
 
-	st.LatestBlockHeader = &ethpb.BeaconBlockHeader{
+	st.LatestBlockHeader = &silapb.BeaconBlockHeader{
 		ParentRoot: zeroHash,
 		StateRoot:  zeroHash,
 		BodyRoot:   bodyRoot[:],
@@ -235,10 +235,10 @@ func EmptyGenesisState() (state.BeaconState, error) {
 	for i := range mixes {
 		mixes[i] = make([]byte, fieldparams.RootLength)
 	}
-	st := &ethpb.BeaconState{
+	st := &silapb.BeaconState{
 		// Misc fields.
 		Slot: 0,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			Epoch:           0,
@@ -247,17 +247,17 @@ func EmptyGenesisState() (state.BeaconState, error) {
 		StateRoots:  stateRoots,
 		RandaoMixes: mixes,
 		// Validator registry fields.
-		Validators: []*ethpb.Validator{},
+		Validators: []*silapb.Validator{},
 		Balances:   []uint64{},
 
 		JustificationBits:         []byte{0},
 		HistoricalRoots:           [][]byte{},
-		CurrentEpochAttestations:  []*ethpb.PendingAttestation{},
-		PreviousEpochAttestations: []*ethpb.PendingAttestation{},
+		CurrentEpochAttestations:  []*silapb.PendingAttestation{},
+		PreviousEpochAttestations: []*silapb.PendingAttestation{},
 
 		// Eth1 data.
-		Eth1Data:         &ethpb.Eth1Data{},
-		Eth1DataVotes:    []*ethpb.Eth1Data{},
+		Eth1Data:         &silapb.Eth1Data{},
+		Eth1DataVotes:    []*silapb.Eth1Data{},
 		Eth1DepositIndex: 0,
 	}
 	return state_native.InitializeFromProtoUnsafePhase0(st)

@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
@@ -22,7 +22,7 @@ import (
 // lookahead, signature) because the validator client is trusted.
 func (vs *Server) SubmitSignedProposerPreferences(
 	ctx context.Context,
-	req *ethpb.SubmitSignedProposerPreferencesRequest,
+	req *silapb.SubmitSignedProposerPreferencesRequest,
 ) (*emptypb.Empty, error) {
 	ctx, span := trace.StartSpan(ctx, "ValidatorServer.SubmitSignedProposerPreferences")
 	defer span.End()

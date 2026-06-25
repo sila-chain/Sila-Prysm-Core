@@ -24,7 +24,7 @@ import (
 	leakybucket "github.com/sila-chain/Sila-Consensus-Core/v7/container/leaky-bucket"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -198,11 +198,11 @@ func TestRecentBeaconBlocks_RPCRequestSent(t *testing.T) {
 	require.NoError(t, err)
 	blockBRoot, err := blockB.Block.HashTreeRoot()
 	require.NoError(t, err)
-	genesisState, err := transition.GenesisBeaconState(t.Context(), nil, 0, &ethpb.Eth1Data{})
+	genesisState, err := transition.GenesisBeaconState(t.Context(), nil, 0, &silapb.Eth1Data{})
 	require.NoError(t, err)
 	require.NoError(t, genesisState.SetSlot(111))
 	require.NoError(t, genesisState.UpdateBlockRootAtIndex(111%uint64(params.BeaconConfig().SlotsPerHistoricalRoot), blockARoot))
-	finalizedCheckpt := &ethpb.Checkpoint{
+	finalizedCheckpt := &silapb.Checkpoint{
 		Epoch: 5,
 		Root:  blockBRoot[:],
 	}
@@ -240,7 +240,7 @@ func TestRecentBeaconBlocks_RPCRequestSent(t *testing.T) {
 		out := new(p2pTypes.BeaconBlockByRootsReq)
 		assert.NoError(t, p2.Encoding().DecodeWithMaxLength(stream, out))
 		assert.DeepEqual(t, &expectedRoots, out, "Did not receive expected message")
-		response := []*ethpb.SignedBeaconBlock{blockB, blockA}
+		response := []*silapb.SignedBeaconBlock{blockB, blockA}
 		for _, blk := range response {
 			_, err := stream.Write([]byte{responseCodeSuccess})
 			assert.NoError(t, err, "Could not write to stream")
@@ -272,11 +272,11 @@ func TestRecentBeaconBlocks_RPCRequestSent_IncorrectRoot(t *testing.T) {
 	require.NoError(t, err)
 	blockBRoot, err := blockB.Block.HashTreeRoot()
 	require.NoError(t, err)
-	genesisState, err := transition.GenesisBeaconState(t.Context(), nil, 0, &ethpb.Eth1Data{})
+	genesisState, err := transition.GenesisBeaconState(t.Context(), nil, 0, &silapb.Eth1Data{})
 	require.NoError(t, err)
 	require.NoError(t, genesisState.SetSlot(111))
 	require.NoError(t, genesisState.UpdateBlockRootAtIndex(111%uint64(params.BeaconConfig().SlotsPerHistoricalRoot), blockARoot))
-	finalizedCheckpt := &ethpb.Checkpoint{
+	finalizedCheckpt := &silapb.Checkpoint{
 		Epoch: 5,
 		Root:  blockBRoot[:],
 	}
@@ -315,7 +315,7 @@ func TestRecentBeaconBlocks_RPCRequestSent_IncorrectRoot(t *testing.T) {
 		assert.NoError(t, p2.Encoding().DecodeWithMaxLength(stream, out))
 		assert.DeepEqual(t, &expectedRoots, out, "Did not receive expected message")
 		blockB.Block.Slot = 123123 // Give it a bad slot
-		response := []*ethpb.SignedBeaconBlock{blockB, blockA}
+		response := []*silapb.SignedBeaconBlock{blockB, blockA}
 		for _, blk := range response {
 			_, err := stream.Write([]byte{responseCodeSuccess})
 			assert.NoError(t, err, "Could not write to stream")
@@ -385,7 +385,7 @@ func TestRequestPendingBlobs(t *testing.T) {
 		p1.Connect(p2)
 		require.Equal(t, 1, len(p1.BHost.Network().Peers()))
 		chain := &mock.ChainService{
-			FinalizedCheckPoint: &ethpb.Checkpoint{
+			FinalizedCheckPoint: &silapb.Checkpoint{
 				Epoch: 1,
 				Root:  make([]byte, 32),
 			},
@@ -394,7 +394,7 @@ func TestRequestPendingBlobs(t *testing.T) {
 		}
 		p1.Peers().Add(new(enr.Record), p2.PeerID(), nil, network.DirOutbound)
 		p1.Peers().SetConnectionState(p2.PeerID(), peers.Connected)
-		p1.Peers().SetChainState(p2.PeerID(), &ethpb.StatusV2{FinalizedEpoch: 1})
+		p1.Peers().SetChainState(p2.PeerID(), &silapb.StatusV2{FinalizedEpoch: 1})
 		s := &Service{
 			cfg: &config{
 				p2p:         p1,
@@ -432,8 +432,8 @@ func TestConstructPendingBlobsRequest(t *testing.T) {
 	}
 
 	// Has indices.
-	header := &ethpb.SignedBeaconBlockHeader{
-		Header: &ethpb.BeaconBlockHeader{
+	header := &silapb.SignedBeaconBlockHeader{
+		Header: &silapb.BeaconBlockHeader{
 			ParentRoot: bytesutil.PadTo([]byte{}, 32),
 			StateRoot:  bytesutil.PadTo([]byte{}, 32),
 			BodyRoot:   bytesutil.PadTo([]byte{}, 32),
@@ -450,7 +450,7 @@ func TestConstructPendingBlobsRequest(t *testing.T) {
 		require.NoError(t, bs.Save(vscs[i]))
 	}
 
-	expected := []*ethpb.BlobIdentifier{
+	expected := []*silapb.BlobIdentifier{
 		{Index: 1, BlockRoot: root[:]},
 	}
 	actual, err = s.constructPendingBlobsRequest(root, count)
@@ -463,7 +463,7 @@ func TestFilterUnknownIndices(t *testing.T) {
 	blockRoot := [32]byte{}
 	count := 5
 
-	expected := []*ethpb.BlobIdentifier{
+	expected := []*silapb.BlobIdentifier{
 		{Index: 3, BlockRoot: blockRoot[:]},
 		{Index: 4, BlockRoot: blockRoot[:]},
 	}

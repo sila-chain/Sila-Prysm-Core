@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/blst"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -24,28 +24,28 @@ func Test_computeOnChainAggregate(t *testing.T) {
 	require.NoError(t, err)
 	sig := key.Sign([]byte{'X'})
 
-	data1 := &ethpb.AttestationData{
+	data1 := &silapb.AttestationData{
 		Slot:            123,
 		CommitteeIndex:  123,
 		BeaconBlockRoot: bytesutil.PadTo([]byte("root"), 32),
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: 123,
 			Root:  bytesutil.PadTo([]byte("root"), 32),
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: 123,
 			Root:  bytesutil.PadTo([]byte("root"), 32),
 		},
 	}
-	data2 := &ethpb.AttestationData{
+	data2 := &silapb.AttestationData{
 		Slot:            456,
 		CommitteeIndex:  456,
 		BeaconBlockRoot: bytesutil.PadTo([]byte("root"), 32),
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: 456,
 			Root:  bytesutil.PadTo([]byte("root"), 32),
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: 456,
 			Root:  bytesutil.PadTo([]byte("root"), 32),
 		},
@@ -54,13 +54,13 @@ func Test_computeOnChainAggregate(t *testing.T) {
 	t.Run("single aggregate", func(t *testing.T) {
 		cb := primitives.NewAttestationCommitteeBits()
 		cb.SetBitAt(0, true)
-		att := &ethpb.AttestationElectra{
+		att := &silapb.AttestationElectra{
 			AggregationBits: bitfield.Bitlist{0b00011111},
 			Data:            data1,
 			CommitteeBits:   cb,
 			Signature:       sig.Marshal(),
 		}
-		result, err := computeOnChainAggregate([]ethpb.Att{att})
+		result, err := computeOnChainAggregate([]silapb.Att{att})
 		require.NoError(t, err)
 		require.Equal(t, 1, len(result))
 		assert.DeepEqual(t, att.AggregationBits, result[0].GetAggregationBits())
@@ -70,7 +70,7 @@ func Test_computeOnChainAggregate(t *testing.T) {
 	t.Run("all aggregates for one root", func(t *testing.T) {
 		cb := primitives.NewAttestationCommitteeBits()
 		cb.SetBitAt(0, true)
-		att1 := &ethpb.AttestationElectra{
+		att1 := &silapb.AttestationElectra{
 			AggregationBits: bitfield.Bitlist{0b00010011}, // aggregation bits 0,1
 			Data:            data1,
 			CommitteeBits:   cb,
@@ -78,13 +78,13 @@ func Test_computeOnChainAggregate(t *testing.T) {
 		}
 		cb = primitives.NewAttestationCommitteeBits()
 		cb.SetBitAt(1, true)
-		att2 := &ethpb.AttestationElectra{
+		att2 := &silapb.AttestationElectra{
 			AggregationBits: bitfield.Bitlist{0b00010011}, // aggregation bits 0,1
 			Data:            data1,
 			CommitteeBits:   cb,
 			Signature:       sig.Marshal(),
 		}
-		result, err := computeOnChainAggregate([]ethpb.Att{att1, att2})
+		result, err := computeOnChainAggregate([]silapb.Att{att1, att2})
 		require.NoError(t, err)
 		require.Equal(t, 1, len(result))
 		assert.DeepEqual(t, bitfield.Bitlist{0b00110011, 0b00000001}, result[0].GetAggregationBits())
@@ -97,7 +97,7 @@ func Test_computeOnChainAggregate(t *testing.T) {
 	t.Run("aggregates for multiple roots", func(t *testing.T) {
 		cb := primitives.NewAttestationCommitteeBits()
 		cb.SetBitAt(0, true)
-		att1 := &ethpb.AttestationElectra{
+		att1 := &silapb.AttestationElectra{
 			AggregationBits: bitfield.Bitlist{0b00010011}, // aggregation bits 0,1
 			Data:            data1,
 			CommitteeBits:   cb,
@@ -105,7 +105,7 @@ func Test_computeOnChainAggregate(t *testing.T) {
 		}
 		cb = primitives.NewAttestationCommitteeBits()
 		cb.SetBitAt(1, true)
-		att2 := &ethpb.AttestationElectra{
+		att2 := &silapb.AttestationElectra{
 			AggregationBits: bitfield.Bitlist{0b00010011}, // aggregation bits 0,1
 			Data:            data1,
 			CommitteeBits:   cb,
@@ -113,7 +113,7 @@ func Test_computeOnChainAggregate(t *testing.T) {
 		}
 		cb = primitives.NewAttestationCommitteeBits()
 		cb.SetBitAt(0, true)
-		att3 := &ethpb.AttestationElectra{
+		att3 := &silapb.AttestationElectra{
 			AggregationBits: bitfield.Bitlist{0b00011001}, // aggregation bits 0,3
 			Data:            data2,
 			CommitteeBits:   cb,
@@ -121,13 +121,13 @@ func Test_computeOnChainAggregate(t *testing.T) {
 		}
 		cb = primitives.NewAttestationCommitteeBits()
 		cb.SetBitAt(1, true)
-		att4 := &ethpb.AttestationElectra{
+		att4 := &silapb.AttestationElectra{
 			AggregationBits: bitfield.Bitlist{0b00010010}, // aggregation bits 1
 			Data:            data2,
 			CommitteeBits:   cb,
 			Signature:       sig.Marshal(),
 		}
-		result, err := computeOnChainAggregate([]ethpb.Att{att1, att2, att3, att4})
+		result, err := computeOnChainAggregate([]silapb.Att{att1, att2, att3, att4})
 		require.NoError(t, err)
 		require.Equal(t, 2, len(result))
 		cb = primitives.NewAttestationCommitteeBits()

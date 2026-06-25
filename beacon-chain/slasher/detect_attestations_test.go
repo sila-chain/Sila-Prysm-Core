@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -656,7 +656,7 @@ func Test_processAttestations(t *testing.T) {
 
 				// Initialize validators in the state.
 				numVals := params.BeaconConfig().MinGenesisActiveValidatorCount
-				validators := make([]*ethpb.Validator, numVals)
+				validators := make([]*silapb.Validator, numVals)
 				privateKeys := make([]bls.SecretKey, numVals)
 
 				for i := range numVals {
@@ -671,7 +671,7 @@ func Test_processAttestations(t *testing.T) {
 					publicKey := privateKey.PublicKey().Marshal()
 
 					// Initialize the validator.
-					validator := &ethpb.Validator{PublicKey: publicKey}
+					validator := &silapb.Validator{PublicKey: publicKey}
 
 					// Add the validator to the list.
 					validators[i] = validator
@@ -712,7 +712,7 @@ func Test_processAttestations(t *testing.T) {
 					}
 
 					// Build expected attester slashings.
-					expectedSlashings := make(map[[fieldparams.RootLength]byte]ethpb.AttSlashing, len(step.expectedSlashingsInfo))
+					expectedSlashings := make(map[[fieldparams.RootLength]byte]silapb.AttSlashing, len(step.expectedSlashingsInfo))
 
 					for _, slashingInfo := range step.expectedSlashingsInfo {
 						// Create attestations.
@@ -739,17 +739,17 @@ func Test_processAttestations(t *testing.T) {
 						)
 
 						// Create the attester slashing.
-						var expectedSlashing ethpb.AttSlashing
+						var expectedSlashing silapb.AttSlashing
 
 						if slashingInfo.ver >= version.Electra {
-							expectedSlashing = &ethpb.AttesterSlashingElectra{
-								Attestation_1: wrapper_1.IndexedAttestation.(*ethpb.IndexedAttestationElectra),
-								Attestation_2: wrapper_2.IndexedAttestation.(*ethpb.IndexedAttestationElectra),
+							expectedSlashing = &silapb.AttesterSlashingElectra{
+								Attestation_1: wrapper_1.IndexedAttestation.(*silapb.IndexedAttestationElectra),
+								Attestation_2: wrapper_2.IndexedAttestation.(*silapb.IndexedAttestationElectra),
 							}
 						} else {
-							expectedSlashing = &ethpb.AttesterSlashing{
-								Attestation_1: wrapper_1.IndexedAttestation.(*ethpb.IndexedAttestation),
-								Attestation_2: wrapper_2.IndexedAttestation.(*ethpb.IndexedAttestation),
+							expectedSlashing = &silapb.AttesterSlashing{
+								Attestation_1: wrapper_1.IndexedAttestation.(*silapb.IndexedAttestation),
+								Attestation_2: wrapper_2.IndexedAttestation.(*silapb.IndexedAttestation),
 							}
 						}
 
@@ -1246,7 +1246,7 @@ func Test_applyAttestationForValidator_MinSpanChunk(t *testing.T) {
 	)
 	require.NoError(t, err)
 	require.IsNil(t, slashing)
-	att.IndexedAttestation.(*ethpb.IndexedAttestation).AttestingIndices = []uint64{uint64(validatorIdx)}
+	att.IndexedAttestation.(*silapb.IndexedAttestation).AttestingIndices = []uint64{uint64(validatorIdx)}
 	err = slasherDB.SaveAttestationRecordsForValidators(
 		ctx,
 		[]*slashertypes.IndexedAttestationWrapper{att},
@@ -1303,7 +1303,7 @@ func Test_applyAttestationForValidator_MaxSpanChunk(t *testing.T) {
 	)
 	require.NoError(t, err)
 	require.Equal(t, true, slashing == nil)
-	att.IndexedAttestation.(*ethpb.IndexedAttestation).AttestingIndices = []uint64{uint64(validatorIdx)}
+	att.IndexedAttestation.(*silapb.IndexedAttestation).AttestingIndices = []uint64{uint64(validatorIdx)}
 	err = slasherDB.SaveAttestationRecordsForValidators(
 		ctx,
 		[]*slashertypes.IndexedAttestationWrapper{att},
@@ -1653,13 +1653,13 @@ func createAttestationWrapperEmptySig(
 	indices []uint64,
 	beaconBlockRoot []byte,
 ) *slashertypes.IndexedAttestationWrapper {
-	data := &ethpb.AttestationData{
+	data := &silapb.AttestationData{
 		BeaconBlockRoot: bytesutil.PadTo(beaconBlockRoot, 32),
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: source,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: target,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
@@ -1670,7 +1670,7 @@ func createAttestationWrapperEmptySig(
 
 	if ver >= version.Electra {
 		return &slashertypes.IndexedAttestationWrapper{
-			IndexedAttestation: &ethpb.IndexedAttestationElectra{
+			IndexedAttestation: &silapb.IndexedAttestationElectra{
 				AttestingIndices: indices,
 				Data:             data,
 				Signature:        params.BeaconConfig().EmptySignature[:],
@@ -1680,7 +1680,7 @@ func createAttestationWrapperEmptySig(
 	}
 
 	return &slashertypes.IndexedAttestationWrapper{
-		IndexedAttestation: &ethpb.IndexedAttestation{
+		IndexedAttestation: &silapb.IndexedAttestation{
 			AttestingIndices: indices,
 			Data:             data,
 			Signature:        params.BeaconConfig().EmptySignature[:],
@@ -1703,13 +1703,13 @@ func createAttestationWrapper(
 	beaconBlockRoot []byte,
 ) *slashertypes.IndexedAttestationWrapper {
 	// Create attestation data.
-	attestationData := &ethpb.AttestationData{
+	attestationData := &silapb.AttestationData{
 		BeaconBlockRoot: bytesutil.PadTo(beaconBlockRoot, 32),
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: source,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: target,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
@@ -1745,7 +1745,7 @@ func createAttestationWrapper(
 	// Create the attestation wrapper.
 	if ver >= version.Electra {
 		return &slashertypes.IndexedAttestationWrapper{
-			IndexedAttestation: &ethpb.IndexedAttestationElectra{
+			IndexedAttestation: &silapb.IndexedAttestationElectra{
 				AttestingIndices: indices,
 				Data:             attestationData,
 				Signature:        signature,
@@ -1755,7 +1755,7 @@ func createAttestationWrapper(
 	}
 
 	return &slashertypes.IndexedAttestationWrapper{
-		IndexedAttestation: &ethpb.IndexedAttestation{
+		IndexedAttestation: &silapb.IndexedAttestation{
 			AttestingIndices: indices,
 			Data:             attestationData,
 			Signature:        signature,

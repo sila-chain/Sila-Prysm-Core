@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz/detect"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz/equality"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	prefixed "github.com/sila-chain/Sila-Consensus-Core/v7/runtime/logging/logrus-prefixed-formatter"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/kr/pretty"
@@ -68,29 +68,29 @@ var prettyCommand = &cli.Command{
 		var data fssz.Unmarshaler
 		switch sszType {
 		case "block":
-			data = &ethpb.BeaconBlock{}
+			data = &silapb.BeaconBlock{}
 		case "signed_block":
-			data = &ethpb.SignedBeaconBlock{}
+			data = &silapb.SignedBeaconBlock{}
 		case "blinded_block":
-			data = &ethpb.BlindedBeaconBlockBellatrix{}
+			data = &silapb.BlindedBeaconBlockBellatrix{}
 		case "attestation":
-			data = &ethpb.Attestation{}
+			data = &silapb.Attestation{}
 		case "block_header":
-			data = &ethpb.BeaconBlockHeader{}
+			data = &silapb.BeaconBlockHeader{}
 		case "deposit":
-			data = &ethpb.Deposit{}
+			data = &silapb.Deposit{}
 		case "deposit_message":
-			data = &ethpb.DepositMessage{}
+			data = &silapb.DepositMessage{}
 		case "proposer_slashing":
-			data = &ethpb.ProposerSlashing{}
+			data = &silapb.ProposerSlashing{}
 		case "signed_block_header":
-			data = &ethpb.SignedBeaconBlockHeader{}
+			data = &silapb.SignedBeaconBlockHeader{}
 		case "signed_voluntary_exit":
-			data = &ethpb.SignedVoluntaryExit{}
+			data = &silapb.SignedVoluntaryExit{}
 		case "voluntary_exit":
-			data = &ethpb.VoluntaryExit{}
+			data = &silapb.VoluntaryExit{}
 		case "state_capella":
-			data = &ethpb.BeaconStateCapella{}
+			data = &silapb.BeaconStateCapella{}
 		default:
 			log.Fatal("Invalid type")
 		}
@@ -372,7 +372,7 @@ func prettyPrint(sszPath string, data fssz.Unmarshaler) {
 func benchmarkHash(sszPath string, sszType string) {
 	switch sszType {
 	case "state_capella":
-		st := &ethpb.BeaconStateCapella{}
+		st := &silapb.BeaconStateCapella{}
 		rawFile, err := os.ReadFile(sszPath) // #nosec G304
 		if err != nil {
 			log.Fatal(err)

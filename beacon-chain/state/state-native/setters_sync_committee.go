@@ -2,12 +2,12 @@ package state_native
 
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native/types"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
 
 // SetCurrentSyncCommittee for the beacon state.
-func (b *BeaconState) SetCurrentSyncCommittee(val *ethpb.SyncCommittee) error {
+func (b *BeaconState) SetCurrentSyncCommittee(val *silapb.SyncCommittee) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
@@ -21,7 +21,7 @@ func (b *BeaconState) SetCurrentSyncCommittee(val *ethpb.SyncCommittee) error {
 }
 
 // SetNextSyncCommittee for the beacon state.
-func (b *BeaconState) SetNextSyncCommittee(val *ethpb.SyncCommittee) error {
+func (b *BeaconState) SetNextSyncCommittee(val *silapb.SyncCommittee) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 

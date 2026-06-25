@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
@@ -15,7 +15,7 @@ import (
 // Aggregation occurs in many rounds, up until no more aggregation is possible (all attestations
 // are overlapping).
 // See https://hackmd.io/@farazdagi/in-place-attagg for design and rationale.
-func MaxCoverAttestationAggregation(atts []ethpb.Att) ([]ethpb.Att, error) {
+func MaxCoverAttestationAggregation(atts []silapb.Att) ([]silapb.Att, error) {
 	if len(atts) < 2 {
 		return atts, nil
 	}
@@ -112,7 +112,7 @@ func MaxCoverAttestationAggregation(atts []ethpb.Att) ([]ethpb.Att, error) {
 }
 
 // NewMaxCover returns initialized Maximum Coverage problem for attestations aggregation.
-func NewMaxCover(atts []*ethpb.Attestation) *aggregation.MaxCoverProblem {
+func NewMaxCover(atts []*silapb.Attestation) *aggregation.MaxCoverProblem {
 	candidates := make([]*aggregation.MaxCoverCandidate, len(atts))
 	for i := range atts {
 		candidates[i] = aggregation.NewMaxCoverCandidate(i, &atts[i].AggregationBits)
@@ -121,7 +121,7 @@ func NewMaxCover(atts []*ethpb.Attestation) *aggregation.MaxCoverProblem {
 }
 
 // aggregate returns list as an aggregated attestation.
-func (al attList) aggregate(coverage bitfield.Bitlist) (*ethpb.Attestation, error) {
+func (al attList) aggregate(coverage bitfield.Bitlist) (*silapb.Attestation, error) {
 	if len(al) < 2 {
 		return nil, errors.Wrap(ErrInvalidAttestationCount, "cannot aggregate")
 	}
@@ -133,7 +133,7 @@ func (al attList) aggregate(coverage bitfield.Bitlist) (*ethpb.Attestation, erro
 		}
 		signs[i] = sig
 	}
-	return &ethpb.Attestation{
+	return &silapb.Attestation{
 		AggregationBits: coverage,
 		Data:            al[0].GetData().Copy(),
 		Signature:       aggregateSignatures(signs).Marshal(),
@@ -150,7 +150,7 @@ func padSelectedKeys(keys []int, pad int) []int {
 
 // aggregateAttestations combines signatures of selected attestations into a single aggregate attestation, and
 // pushes that aggregated attestation into the position of the first of selected attestations.
-func aggregateAttestations(atts []ethpb.Att, keys []int, coverage *bitfield.Bitlist64) (targetIdx int, err error) {
+func aggregateAttestations(atts []silapb.Att, keys []int, coverage *bitfield.Bitlist64) (targetIdx int, err error) {
 	if len(keys) < 2 || atts == nil || len(atts) < 2 {
 		return targetIdx, errors.Wrap(ErrInvalidAttestationCount, "cannot aggregate")
 	}
@@ -158,7 +158,7 @@ func aggregateAttestations(atts []ethpb.Att, keys []int, coverage *bitfield.Bitl
 		return targetIdx, errors.New("invalid or empty coverage")
 	}
 
-	var data *ethpb.AttestationData
+	var data *silapb.AttestationData
 	signs := make([]bls.Signature, 0, len(keys))
 	for i, idx := range keys {
 		sig, err := signatureFromBytes(atts[idx].GetSignature())
@@ -173,14 +173,14 @@ func aggregateAttestations(atts []ethpb.Att, keys []int, coverage *bitfield.Bitl
 	}
 	// Put aggregated attestation at a position of the first selected attestation.
 	if atts[0].Version() == version.Phase0 {
-		atts[targetIdx] = &ethpb.Attestation{
+		atts[targetIdx] = &silapb.Attestation{
 			// Append size byte, which will be unnecessary on switch to Bitlist64.
 			AggregationBits: coverage.ToBitlist(),
 			Data:            data,
 			Signature:       aggregateSignatures(signs).Marshal(),
 		}
 	} else {
-		atts[targetIdx] = &ethpb.AttestationElectra{
+		atts[targetIdx] = &silapb.AttestationElectra{
 			// Append size byte, which will be unnecessary on switch to Bitlist64.
 			AggregationBits: coverage.ToBitlist(),
 			CommitteeBits:   atts[0].CommitteeBitsVal().Bytes(),
@@ -194,7 +194,7 @@ func aggregateAttestations(atts []ethpb.Att, keys []int, coverage *bitfield.Bitl
 // rearrangeProcessedAttestations pushes processed attestations to the end of the slice, returning
 // the number of items re-arranged (so that caller can cut the slice, and allow processed items to be
 // garbage collected).
-func rearrangeProcessedAttestations(atts []ethpb.Att, candidates []*bitfield.Bitlist64, processedKeys []int) {
+func rearrangeProcessedAttestations(atts []silapb.Att, candidates []*bitfield.Bitlist64, processedKeys []int) {
 	if atts == nil || candidates == nil || processedKeys == nil {
 		return
 	}
@@ -226,7 +226,7 @@ func (al attList) merge(al1 attList) attList {
 
 // selectUsingKeys returns only items with specified keys.
 func (al attList) selectUsingKeys(keys []int) attList {
-	filtered := make([]ethpb.Att, len(keys))
+	filtered := make([]silapb.Att, len(keys))
 	for i, key := range keys {
 		filtered[i] = al[key]
 	}

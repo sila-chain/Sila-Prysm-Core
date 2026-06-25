@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	logTest "github.com/sirupsen/logrus/hooks/test"
@@ -15,8 +15,8 @@ func TestProcessSyncCommitteeContribution(t *testing.T) {
 	hook := logTest.NewGlobal()
 	s := setupService(t)
 
-	contrib := &ethpb.SignedContributionAndProof{
-		Message: &ethpb.ContributionAndProof{
+	contrib := &silapb.SignedContributionAndProof{
+		Message: &silapb.ContributionAndProof{
 			AggregatorIndex: 1,
 		},
 	}
@@ -31,10 +31,10 @@ func TestProcessSyncAggregate(t *testing.T) {
 	s := setupService(t)
 	beaconState, _ := util.DeterministicGenesisStateAltair(t, 256)
 
-	block := &ethpb.BeaconBlockAltair{
+	block := &silapb.BeaconBlockAltair{
 		Slot: 2,
-		Body: &ethpb.BeaconBlockBodyAltair{
-			SyncAggregate: &ethpb.SyncAggregate{
+		Body: &silapb.BeaconBlockBodyAltair{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits: bitfield.Bitvector512{
 					0x31, 0xff, 0xff, 0xff, 0xff, 0x3f, 0xff, 0xff,
 					0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,

@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	validatormock "github.com/sila-chain/Sila-Consensus-Core/v7/testing/validator-mock"
 	"github.com/dgraph-io/ristretto/v2"
@@ -28,9 +28,9 @@ func TestSubmitValidatorRegistrations(t *testing.T) {
 
 			ctx := t.Context()
 			validatorRegsBatchSize := 2
-			require.NoError(t, nil, SubmitValidatorRegistrations(ctx, m.validatorClient, []*ethpb.SignedValidatorRegistrationV1{}, validatorRegsBatchSize))
+			require.NoError(t, nil, SubmitValidatorRegistrations(ctx, m.validatorClient, []*silapb.SignedValidatorRegistrationV1{}, validatorRegsBatchSize))
 
-			regs := [...]*ethpb.ValidatorRegistrationV1{
+			regs := [...]*silapb.ValidatorRegistrationV1{
 				{
 					FeeRecipient: bytesutil.PadTo([]byte("fee"), 20),
 					GasLimit:     123,
@@ -53,8 +53,8 @@ func TestSubmitValidatorRegistrations(t *testing.T) {
 
 			gomock.InOrder(
 				m.validatorClient.EXPECT().
-					SubmitValidatorRegistrations(gomock.Any(), &ethpb.SignedValidatorRegistrationsV1{
-						Messages: []*ethpb.SignedValidatorRegistrationV1{
+					SubmitValidatorRegistrations(gomock.Any(), &silapb.SignedValidatorRegistrationsV1{
+						Messages: []*silapb.SignedValidatorRegistrationV1{
 							{
 								Message:   regs[0],
 								Signature: params.BeaconConfig().ZeroHash[:],
@@ -68,8 +68,8 @@ func TestSubmitValidatorRegistrations(t *testing.T) {
 					Return(nil, nil),
 
 				m.validatorClient.EXPECT().
-					SubmitValidatorRegistrations(gomock.Any(), &ethpb.SignedValidatorRegistrationsV1{
-						Messages: []*ethpb.SignedValidatorRegistrationV1{
+					SubmitValidatorRegistrations(gomock.Any(), &silapb.SignedValidatorRegistrationsV1{
+						Messages: []*silapb.SignedValidatorRegistrationV1{
 							{
 								Message:   regs[2],
 								Signature: params.BeaconConfig().ZeroHash[:],
@@ -81,7 +81,7 @@ func TestSubmitValidatorRegistrations(t *testing.T) {
 
 			require.NoError(t, nil, SubmitValidatorRegistrations(
 				ctx, m.validatorClient,
-				[]*ethpb.SignedValidatorRegistrationV1{
+				[]*silapb.SignedValidatorRegistrationV1{
 					{
 						Message:   regs[0],
 						Signature: params.BeaconConfig().ZeroHash[:],
@@ -109,7 +109,7 @@ func TestSubmitValidatorRegistration_CantSign(t *testing.T) {
 
 			ctx := t.Context()
 			validatorRegsBatchSize := 500
-			reg := &ethpb.ValidatorRegistrationV1{
+			reg := &silapb.ValidatorRegistrationV1{
 				FeeRecipient: bytesutil.PadTo([]byte("fee"), 20),
 				GasLimit:     123456,
 				Timestamp:    uint64(time.Now().Unix()),
@@ -117,14 +117,14 @@ func TestSubmitValidatorRegistration_CantSign(t *testing.T) {
 			}
 
 			m.validatorClient.EXPECT().
-				SubmitValidatorRegistrations(gomock.Any(), &ethpb.SignedValidatorRegistrationsV1{
-					Messages: []*ethpb.SignedValidatorRegistrationV1{
+				SubmitValidatorRegistrations(gomock.Any(), &silapb.SignedValidatorRegistrationsV1{
+					Messages: []*silapb.SignedValidatorRegistrationV1{
 						{Message: reg,
 							Signature: params.BeaconConfig().ZeroHash[:]},
 					},
 				}).
 				Return(nil, errors.New("could not sign"))
-			require.ErrorContains(t, "could not sign", SubmitValidatorRegistrations(ctx, m.validatorClient, []*ethpb.SignedValidatorRegistrationV1{
+			require.ErrorContains(t, "could not sign", SubmitValidatorRegistrations(ctx, m.validatorClient, []*silapb.SignedValidatorRegistrationV1{
 				{Message: reg,
 					Signature: params.BeaconConfig().ZeroHash[:]},
 			}, validatorRegsBatchSize))
@@ -139,7 +139,7 @@ func Test_signValidatorRegistration(t *testing.T) {
 			defer finish()
 
 			ctx := t.Context()
-			reg := &ethpb.ValidatorRegistrationV1{
+			reg := &silapb.ValidatorRegistrationV1{
 				FeeRecipient: bytesutil.PadTo([]byte("fee"), 20),
 				GasLimit:     123456,
 				Timestamp:    uint64(time.Now().Unix()),
@@ -154,7 +154,7 @@ func Test_signValidatorRegistration(t *testing.T) {
 func Test_signProposerPreferences(t *testing.T) {
 	kp := randKeypair(t)
 	km := newMockKeymanager(t, kp)
-	pref := &ethpb.ProposerPreferences{
+	pref := &silapb.ProposerPreferences{
 		DependentRoot:  bytesutil.PadTo([]byte("dep"), 32),
 		ProposalSlot:   123,
 		ValidatorIndex: 456,
@@ -173,7 +173,7 @@ func Test_signProposerPreferences(t *testing.T) {
 	client := validatormock.NewMockValidatorClient(ctrl)
 	client.EXPECT().
 		DomainData(gomock.Any(), gomock.Any()).
-		Return(&ethpb.DomainResponse{SignatureDomain: domain}, nil)
+		Return(&silapb.DomainResponse{SignatureDomain: domain}, nil)
 
 	cache, err := ristretto.NewCache(&ristretto.Config[string, proto.Message]{
 		NumCounters: 1920,
@@ -208,14 +208,14 @@ func TestValidator_SignValidatorRegistrationRequest(t *testing.T) {
 		require.NoError(t, err)
 		tests := []struct {
 			name            string
-			arg             *ethpb.ValidatorRegistrationV1
+			arg             *silapb.ValidatorRegistrationV1
 			validatorSetter func(t *testing.T) *validator
 			isCached        bool
 			err             string
 		}{
 			{
 				name: " Happy Path cached",
-				arg: &ethpb.ValidatorRegistrationV1{
+				arg: &silapb.ValidatorRegistrationV1{
 					Pubkey:       validatorKey.PublicKey().Marshal(),
 					FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
 					GasLimit:     30000000,
@@ -224,12 +224,12 @@ func TestValidator_SignValidatorRegistrationRequest(t *testing.T) {
 				validatorSetter: func(t *testing.T) *validator {
 					v := validator{
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						genesisTime:                  time.Unix(0, 0),
 					}
-					v.signedValidatorRegistrations[bytesutil.ToBytes48(validatorKey.PublicKey().Marshal())] = &ethpb.SignedValidatorRegistrationV1{
-						Message: &ethpb.ValidatorRegistrationV1{
+					v.signedValidatorRegistrations[bytesutil.ToBytes48(validatorKey.PublicKey().Marshal())] = &silapb.SignedValidatorRegistrationV1{
+						Message: &silapb.ValidatorRegistrationV1{
 							Pubkey:       validatorKey.PublicKey().Marshal(),
 							GasLimit:     30000000,
 							FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
@@ -243,7 +243,7 @@ func TestValidator_SignValidatorRegistrationRequest(t *testing.T) {
 			},
 			{
 				name: " Happy Path not cached gas updated",
-				arg: &ethpb.ValidatorRegistrationV1{
+				arg: &silapb.ValidatorRegistrationV1{
 					Pubkey:       validatorKey.PublicKey().Marshal(),
 					FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
 					GasLimit:     30000000,
@@ -252,12 +252,12 @@ func TestValidator_SignValidatorRegistrationRequest(t *testing.T) {
 				validatorSetter: func(t *testing.T) *validator {
 					v := validator{
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						genesisTime:                  time.Unix(0, 0),
 					}
-					v.signedValidatorRegistrations[bytesutil.ToBytes48(validatorKey.PublicKey().Marshal())] = &ethpb.SignedValidatorRegistrationV1{
-						Message: &ethpb.ValidatorRegistrationV1{
+					v.signedValidatorRegistrations[bytesutil.ToBytes48(validatorKey.PublicKey().Marshal())] = &silapb.SignedValidatorRegistrationV1{
+						Message: &silapb.ValidatorRegistrationV1{
 							Pubkey:       validatorKey.PublicKey().Marshal(),
 							GasLimit:     35000000,
 							FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
@@ -271,7 +271,7 @@ func TestValidator_SignValidatorRegistrationRequest(t *testing.T) {
 			},
 			{
 				name: " Happy Path not cached feerecipient updated",
-				arg: &ethpb.ValidatorRegistrationV1{
+				arg: &silapb.ValidatorRegistrationV1{
 					Pubkey:       validatorKey.PublicKey().Marshal(),
 					FeeRecipient: byteval,
 					GasLimit:     30000000,
@@ -280,12 +280,12 @@ func TestValidator_SignValidatorRegistrationRequest(t *testing.T) {
 				validatorSetter: func(t *testing.T) *validator {
 					v := validator{
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						genesisTime:                  time.Unix(0, 0),
 					}
-					v.signedValidatorRegistrations[bytesutil.ToBytes48(validatorKey.PublicKey().Marshal())] = &ethpb.SignedValidatorRegistrationV1{
-						Message: &ethpb.ValidatorRegistrationV1{
+					v.signedValidatorRegistrations[bytesutil.ToBytes48(validatorKey.PublicKey().Marshal())] = &silapb.SignedValidatorRegistrationV1{
+						Message: &silapb.ValidatorRegistrationV1{
 							Pubkey:       validatorKey.PublicKey().Marshal(),
 							GasLimit:     30000000,
 							FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
@@ -299,7 +299,7 @@ func TestValidator_SignValidatorRegistrationRequest(t *testing.T) {
 			},
 			{
 				name: " Happy Path not cached first Entry",
-				arg: &ethpb.ValidatorRegistrationV1{
+				arg: &silapb.ValidatorRegistrationV1{
 					Pubkey:       validatorKey.PublicKey().Marshal(),
 					FeeRecipient: byteval,
 					GasLimit:     30000000,
@@ -308,7 +308,7 @@ func TestValidator_SignValidatorRegistrationRequest(t *testing.T) {
 				validatorSetter: func(t *testing.T) *validator {
 					v := validator{
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						genesisTime:                  time.Unix(0, 0),
 					}
@@ -343,12 +343,12 @@ func TestValidator_SignValidatorRegistrationRequest(t *testing.T) {
 
 func TestChunkSignedValidatorRegistrationV1(t *testing.T) {
 	tests := map[string]struct {
-		regs      []*ethpb.SignedValidatorRegistrationV1
+		regs      []*silapb.SignedValidatorRegistrationV1
 		chunkSize int
-		expected  [][]*ethpb.SignedValidatorRegistrationV1
+		expected  [][]*silapb.SignedValidatorRegistrationV1
 	}{
 		"All buckets are full": {
-			regs: []*ethpb.SignedValidatorRegistrationV1{
+			regs: []*silapb.SignedValidatorRegistrationV1{
 				{Signature: []byte("1")},
 				{Signature: []byte("2")},
 				{Signature: []byte("3")},
@@ -357,7 +357,7 @@ func TestChunkSignedValidatorRegistrationV1(t *testing.T) {
 				{Signature: []byte("6")},
 			},
 			chunkSize: 3,
-			expected: [][]*ethpb.SignedValidatorRegistrationV1{
+			expected: [][]*silapb.SignedValidatorRegistrationV1{
 				{
 					{Signature: []byte("1")},
 					{Signature: []byte("2")},
@@ -371,7 +371,7 @@ func TestChunkSignedValidatorRegistrationV1(t *testing.T) {
 			},
 		},
 		"Last bucket is not full": {
-			regs: []*ethpb.SignedValidatorRegistrationV1{
+			regs: []*silapb.SignedValidatorRegistrationV1{
 				{Signature: []byte("1")},
 				{Signature: []byte("2")},
 				{Signature: []byte("3")},
@@ -381,7 +381,7 @@ func TestChunkSignedValidatorRegistrationV1(t *testing.T) {
 				{Signature: []byte("7")},
 			},
 			chunkSize: 3,
-			expected: [][]*ethpb.SignedValidatorRegistrationV1{
+			expected: [][]*silapb.SignedValidatorRegistrationV1{
 				{
 					{Signature: []byte("1")},
 					{Signature: []byte("2")},
@@ -398,13 +398,13 @@ func TestChunkSignedValidatorRegistrationV1(t *testing.T) {
 			},
 		},
 		"Not enough items": {
-			regs: []*ethpb.SignedValidatorRegistrationV1{
+			regs: []*silapb.SignedValidatorRegistrationV1{
 				{Signature: []byte("1")},
 				{Signature: []byte("2")},
 				{Signature: []byte("3")},
 			},
 			chunkSize: 42,
-			expected: [][]*ethpb.SignedValidatorRegistrationV1{
+			expected: [][]*silapb.SignedValidatorRegistrationV1{
 				{
 					{Signature: []byte("1")},
 					{Signature: []byte("2")},
@@ -413,13 +413,13 @@ func TestChunkSignedValidatorRegistrationV1(t *testing.T) {
 			},
 		},
 		"Null chunk size": {
-			regs: []*ethpb.SignedValidatorRegistrationV1{
+			regs: []*silapb.SignedValidatorRegistrationV1{
 				{Signature: []byte("1")},
 				{Signature: []byte("2")},
 				{Signature: []byte("3")},
 			},
 			chunkSize: 0,
-			expected: [][]*ethpb.SignedValidatorRegistrationV1{
+			expected: [][]*silapb.SignedValidatorRegistrationV1{
 				{
 					{Signature: []byte("1")},
 					{Signature: []byte("2")},
@@ -428,13 +428,13 @@ func TestChunkSignedValidatorRegistrationV1(t *testing.T) {
 			},
 		},
 		"Negative chunk size": {
-			regs: []*ethpb.SignedValidatorRegistrationV1{
+			regs: []*silapb.SignedValidatorRegistrationV1{
 				{Signature: []byte("1")},
 				{Signature: []byte("2")},
 				{Signature: []byte("3")},
 			},
 			chunkSize: -1,
-			expected: [][]*ethpb.SignedValidatorRegistrationV1{
+			expected: [][]*silapb.SignedValidatorRegistrationV1{
 				{
 					{Signature: []byte("1")},
 					{Signature: []byte("2")},

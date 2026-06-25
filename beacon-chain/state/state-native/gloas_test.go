@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/stretchr/testify/require"
 )
 
@@ -14,7 +14,7 @@ func TestBuildersVal(t *testing.T) {
 
 	require.Nil(t, st.buildersVal())
 
-	st.builders = []*ethpb.Builder{
+	st.builders = []*silapb.Builder{
 		{Pubkey: []byte{0x01}, ExecutionAddress: []byte{0x02}, Balance: 3},
 		nil,
 	}
@@ -48,7 +48,7 @@ func TestPTCWindowVal(t *testing.T) {
 
 	require.Nil(t, st.ptcWindowVal())
 
-	st.ptcWindow = []*ethpb.PTCs{
+	st.ptcWindow = []*silapb.PTCs{
 		{ValidatorIndices: []primitives.ValidatorIndex{1, 2}},
 		nil,
 	}

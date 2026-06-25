@@ -107,7 +107,7 @@ func TestServer_CreateWallet_Local(t *testing.T) {
 	err = json.NewEncoder(&buf).Encode(importReq)
 	require.NoError(t, err)
 
-	req = httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/keystores"), &buf)
+	req = httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/keystores"), &buf)
 	wr = httptest.NewRecorder()
 	wr.Body = &bytes.Buffer{}
 	s.ImportKeystores(wr, req)

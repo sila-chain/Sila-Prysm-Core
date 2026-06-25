@@ -3,26 +3,26 @@ package kv
 import (
 	"sync"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 const stateSummaryCachePruneCount = 128
 
 // stateSummaryCache caches state summary object.
 type stateSummaryCache struct {
-	initSyncStateSummaries     map[[32]byte]*ethpb.StateSummary
+	initSyncStateSummaries     map[[32]byte]*silapb.StateSummary
 	initSyncStateSummariesLock sync.RWMutex
 }
 
 // newStateSummaryCache creates a new state summary cache.
 func newStateSummaryCache() *stateSummaryCache {
 	return &stateSummaryCache{
-		initSyncStateSummaries: make(map[[32]byte]*ethpb.StateSummary),
+		initSyncStateSummaries: make(map[[32]byte]*silapb.StateSummary),
 	}
 }
 
 // put saves a state summary to the initial sync state summaries cache.
-func (c *stateSummaryCache) put(r [32]byte, b *ethpb.StateSummary) {
+func (c *stateSummaryCache) put(r [32]byte, b *silapb.StateSummary) {
 	c.initSyncStateSummariesLock.Lock()
 	defer c.initSyncStateSummariesLock.Unlock()
 	c.initSyncStateSummaries[r] = b
@@ -46,7 +46,7 @@ func (c *stateSummaryCache) delete(r [32]byte) {
 
 // get retrieves a state summary from the initial sync state summaries cache using the root of
 // the block.
-func (c *stateSummaryCache) get(r [32]byte) *ethpb.StateSummary {
+func (c *stateSummaryCache) get(r [32]byte) *silapb.StateSummary {
 	c.initSyncStateSummariesLock.RLock()
 	defer c.initSyncStateSummariesLock.RUnlock()
 	b := c.initSyncStateSummaries[r]
@@ -62,11 +62,11 @@ func (c *stateSummaryCache) len() int {
 
 // GetAll retrieves all the beacon state summaries from the initial sync state summaries cache, the returned
 // state summaries are unordered.
-func (c *stateSummaryCache) getAll() []*ethpb.StateSummary {
+func (c *stateSummaryCache) getAll() []*silapb.StateSummary {
 	c.initSyncStateSummariesLock.RLock()
 	defer c.initSyncStateSummariesLock.RUnlock()
 
-	summaries := make([]*ethpb.StateSummary, 0, len(c.initSyncStateSummaries))
+	summaries := make([]*silapb.StateSummary, 0, len(c.initSyncStateSummaries))
 	for _, b := range c.initSyncStateSummaries {
 		summaries = append(summaries, b)
 	}
@@ -77,5 +77,5 @@ func (c *stateSummaryCache) getAll() []*ethpb.StateSummary {
 func (c *stateSummaryCache) clear() {
 	c.initSyncStateSummariesLock.Lock()
 	defer c.initSyncStateSummariesLock.Unlock()
-	c.initSyncStateSummaries = make(map[[32]byte]*ethpb.StateSummary)
+	c.initSyncStateSummaries = make(map[[32]byte]*silapb.StateSummary)
 }

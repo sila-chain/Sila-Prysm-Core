@@ -7,12 +7,12 @@ import (
 	params "github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
 // Eth1DataRootWithHasher returns the hash tree root of input `eth1Data`.
-func Eth1DataRootWithHasher(eth1Data *ethpb.Eth1Data) ([32]byte, error) {
+func Eth1DataRootWithHasher(eth1Data *silapb.Eth1Data) ([32]byte, error) {
 	if eth1Data == nil {
 		return [32]byte{}, errors.New("nil eth1 data")
 	}
@@ -40,7 +40,7 @@ func Eth1DataRootWithHasher(eth1Data *ethpb.Eth1Data) ([32]byte, error) {
 }
 
 // Eth1DatasRoot returns the hash tree root of input `eth1Datas`.
-func Eth1DatasRoot(eth1Datas []*ethpb.Eth1Data) ([32]byte, error) {
+func Eth1DatasRoot(eth1Datas []*silapb.Eth1Data) ([32]byte, error) {
 	eth1VotesRoots := make([][32]byte, 0, len(eth1Datas))
 	for i := range eth1Datas {
 		eth1, err := Eth1DataRootWithHasher(eth1Datas[i])

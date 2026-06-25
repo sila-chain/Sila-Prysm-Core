@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	common "github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/common/ssz_static"
 	"github.com/pkg/errors"
@@ -20,9 +20,9 @@ func ExampleRunSSZStaticTests() {
 		var obj any
 		switch objectName {
 		case "Attestation":
-			obj = &ethpb.Attestation{}
+			obj = &silapb.Attestation{}
 		case "BeaconState":
-			obj = &ethpb.BeaconState{}
+			obj = &silapb.BeaconState{}
 		case "Eth1Block":
 			// Some types may not apply to sila, but exist in the spec test folders. It is OK to
 			// skip these tests with a valid justification. Otherwise, the test should fail with an
@@ -47,9 +47,9 @@ func ExampleRunSSZStaticTests() {
 	// is used and you want to ensure it passes spectests.
 	customHTR := func(t *testing.T, htrs []common.HTR, object any) []common.HTR {
 		switch object.(type) {
-		case *ethpb.BeaconState:
+		case *silapb.BeaconState:
 			htrs = append(htrs, func(s any) ([32]byte, error) {
-				beaconState, err := state_native.InitializeFromProtoPhase0(s.(*ethpb.BeaconState))
+				beaconState, err := state_native.InitializeFromProtoPhase0(s.(*silapb.BeaconState))
 				require.NoError(t, err)
 				return beaconState.HashTreeRoot(context.TODO())
 			})

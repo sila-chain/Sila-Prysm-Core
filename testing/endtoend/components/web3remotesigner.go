@@ -176,7 +176,7 @@ func (w *Web3RemoteSigner) PublicKeys(ctx context.Context) ([]bls.PublicKey, err
 	w.wait(ctx)
 
 	client := &http.Client{}
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("http://localhost:%d/api/v1/eth2/publicKeys", Web3RemoteSignerPort), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("http://localhost:%d/api/v1/sila/publicKeys", Web3RemoteSignerPort), nil)
 	if err != nil {
 		return nil, err
 	}

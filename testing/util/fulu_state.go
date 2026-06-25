@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -41,7 +41,7 @@ func DeterministicGenesisStateFulu(t testing.TB, numValidators uint64) (state.Be
 
 // setKeysToActiveFulu is a function to set the validators to active post fulu, fulu no longer processes deposits based on eth1data
 func setKeysToActiveFulu(beaconState state.BeaconState) error {
-	vals := make([]*ethpb.Validator, len(beaconState.Validators()))
+	vals := make([]*silapb.Validator, len(beaconState.Validators()))
 	for i, val := range beaconState.Validators() {
 		val.ActivationEpoch = 0
 		val.EffectiveBalance = params.BeaconConfig().MinActivationBalance
@@ -51,7 +51,7 @@ func setKeysToActiveFulu(beaconState state.BeaconState) error {
 }
 
 // genesisBeaconStateFulu returns the genesis beacon state.
-func genesisBeaconStateFulu(ctx context.Context, deposits []*ethpb.Deposit, genesisTime uint64, eth1Data *ethpb.Eth1Data) (state.BeaconState, error) {
+func genesisBeaconStateFulu(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, eth1Data *silapb.Eth1Data) (state.BeaconState, error) {
 	st, err := emptyGenesisStateFulu()
 	if err != nil {
 		return nil, err
@@ -73,16 +73,16 @@ func genesisBeaconStateFulu(ctx context.Context, deposits []*ethpb.Deposit, gene
 
 // emptyGenesisStateFulu returns an empty genesis state in Fulu format.
 func emptyGenesisStateFulu() (state.BeaconState, error) {
-	st := &ethpb.BeaconStateFulu{
+	st := &silapb.BeaconStateFulu{
 		// Misc fields.
 		Slot: 0,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().ElectraForkVersion,
 			CurrentVersion:  params.BeaconConfig().FuluForkVersion,
 			Epoch:           0,
 		},
 		// Validator registry fields.
-		Validators:       []*ethpb.Validator{},
+		Validators:       []*silapb.Validator{},
 		Balances:         []uint64{},
 		InactivityScores: []uint64{},
 
@@ -92,8 +92,8 @@ func emptyGenesisStateFulu() (state.BeaconState, error) {
 		PreviousEpochParticipation: []byte{},
 
 		// Eth1 data.
-		Eth1Data:         &ethpb.Eth1Data{},
-		Eth1DataVotes:    []*ethpb.Eth1Data{},
+		Eth1Data:         &silapb.Eth1Data{},
+		Eth1DataVotes:    []*silapb.Eth1Data{},
 		Eth1DepositIndex: 0,
 
 		LatestExecutionPayloadHeader: &enginev1.ExecutionPayloadHeaderDeneb{},
@@ -109,7 +109,7 @@ func emptyGenesisStateFulu() (state.BeaconState, error) {
 	return state_native.InitializeFromProtoUnsafeFulu(st)
 }
 
-func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preState state.BeaconState, eth1Data *ethpb.Eth1Data) (state.BeaconState, error) {
+func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preState state.BeaconState, eth1Data *silapb.Eth1Data) (state.BeaconState, error) {
 	if eth1Data == nil {
 		return nil, errors.New("no eth1data provided for genesis state")
 	}
@@ -163,13 +163,13 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 		return nil, err
 	}
 
-	st := &ethpb.BeaconStateFulu{
+	st := &silapb.BeaconStateFulu{
 		// Misc fields.
 		Slot:                  0,
 		GenesisTime:           genesisTime,
 		GenesisValidatorsRoot: genesisValidatorsRoot[:],
 
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			Epoch:           0,
@@ -186,16 +186,16 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 		RandaoMixes: randaoMixes,
 
 		// Finality.
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
 		JustificationBits: []byte{0},
-		FinalizedCheckpoint: &ethpb.Checkpoint{
+		FinalizedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
@@ -207,7 +207,7 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 
 		// Eth1 data.
 		Eth1Data:         eth1Data,
-		Eth1DataVotes:    []*ethpb.Eth1Data{},
+		Eth1DataVotes:    []*silapb.Eth1Data{},
 		Eth1DepositIndex: preState.Eth1DepositIndex(),
 
 		// Electra Data
@@ -215,20 +215,20 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 		ExitBalanceToConsume:          helpers.ActivationExitChurnLimit(primitives.Gwei(tab)),
 		EarliestConsolidationEpoch:    helpers.ActivationExitEpoch(slots.ToEpoch(preState.Slot())),
 		ConsolidationBalanceToConsume: helpers.ConsolidationChurnLimit(primitives.Gwei(tab)),
-		PendingDeposits:               make([]*ethpb.PendingDeposit, 0),
-		PendingPartialWithdrawals:     make([]*ethpb.PendingPartialWithdrawal, 0),
-		PendingConsolidations:         make([]*ethpb.PendingConsolidation, 0),
+		PendingDeposits:               make([]*silapb.PendingDeposit, 0),
+		PendingPartialWithdrawals:     make([]*silapb.PendingPartialWithdrawal, 0),
+		PendingConsolidations:         make([]*silapb.PendingConsolidation, 0),
 	}
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
-	bodyRoot, err := (&ethpb.BeaconBlockBodyElectra{
+	bodyRoot, err := (&silapb.BeaconBlockBodyElectra{
 		RandaoReveal: make([]byte, 96),
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},
 		Graffiti: make([]byte, 32),
-		SyncAggregate: &ethpb.SyncAggregate{
+		SyncAggregate: &silapb.SyncAggregate{
 			SyncCommitteeBits:      scBits[:],
 			SyncCommitteeSignature: make([]byte, 96),
 		},
@@ -254,7 +254,7 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 		return nil, errors.Wrap(err, "could not hash tree root empty block body")
 	}
 
-	st.LatestBlockHeader = &ethpb.BeaconBlockHeader{
+	st.LatestBlockHeader = &silapb.BeaconBlockHeader{
 		ParentRoot: zeroHash,
 		StateRoot:  zeroHash,
 		BodyRoot:   bodyRoot[:],
@@ -270,11 +270,11 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 	if err != nil {
 		return nil, err
 	}
-	st.CurrentSyncCommittee = &ethpb.SyncCommittee{
+	st.CurrentSyncCommittee = &silapb.SyncCommittee{
 		Pubkeys:         pubKeys,
 		AggregatePubkey: aggregated.Marshal(),
 	}
-	st.NextSyncCommittee = &ethpb.SyncCommittee{
+	st.NextSyncCommittee = &silapb.SyncCommittee{
 		Pubkeys:         pubKeys,
 		AggregatePubkey: aggregated.Marshal(),
 	}

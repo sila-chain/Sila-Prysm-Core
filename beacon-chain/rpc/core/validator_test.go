@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/validator"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -29,10 +29,10 @@ func TestRegisterSyncSubnetProto(t *testing.T) {
 	for i := range 100 {
 		committee = append(committee, pubKey(uint64(i)))
 	}
-	sCommittee := &ethpb.SyncCommittee{
+	sCommittee := &silapb.SyncCommittee{
 		Pubkeys: committee,
 	}
-	registerSyncSubnetProto(0, 0, k, sCommittee, ethpb.ValidatorStatus_ACTIVE)
+	registerSyncSubnetProto(0, 0, k, sCommittee, silapb.ValidatorStatus_ACTIVE)
 	coms, _, ok, exp := cache.SyncSubnetIDs.GetSyncCommitteeSubnets(k, 0)
 	require.Equal(t, true, ok, "No cache entry found for validator")
 	assert.Equal(t, uint64(1), uint64(len(coms)))
@@ -51,7 +51,7 @@ func TestRegisterSyncSubnet(t *testing.T) {
 	for i := range 100 {
 		committee = append(committee, pubKey(uint64(i)))
 	}
-	sCommittee := &ethpb.SyncCommittee{
+	sCommittee := &silapb.SyncCommittee{
 		Pubkeys: committee,
 	}
 	registerSyncSubnet(0, 0, k, sCommittee, validator.Active)
@@ -85,20 +85,20 @@ func TestService_SubmitSignedAggregateSelectionProof(t *testing.T) {
 		s.Broadcaster = broadcaster
 		fakeSig, err := hexutil.Decode("0x1b66ac1fb663c9bc59509846d6ec05345bd908eda73e670af888da41af171505cc411d61252fb6cb3fa0017b679f8bb2305b26a285fa2737f175668d0dff91cc1b66ac1fb663c9bc59509846d6ec05345bd908eda73e670af888da41af171505")
 		require.NoError(t, err)
-		agg := &ethpb.SignedAggregateAttestationAndProofElectra{
-			Message: &ethpb.AggregateAttestationAndProofElectra{
+		agg := &silapb.SignedAggregateAttestationAndProofElectra{
+			Message: &silapb.AggregateAttestationAndProofElectra{
 				AggregatorIndex: 72,
-				Aggregate: &ethpb.AttestationElectra{
+				Aggregate: &silapb.AttestationElectra{
 					AggregationBits: make([]byte, 4),
-					Data: &ethpb.AttestationData{
+					Data: &silapb.AttestationData{
 						Slot:            75,
 						CommitteeIndex:  76,
 						BeaconBlockRoot: make([]byte, 32),
-						Source: &ethpb.Checkpoint{
+						Source: &silapb.Checkpoint{
 							Epoch: 78,
 							Root:  make([]byte, 32),
 						},
-						Target: &ethpb.Checkpoint{
+						Target: &silapb.Checkpoint{
 							Epoch: 80,
 							Root:  make([]byte, 32),
 						},
@@ -118,10 +118,10 @@ func TestService_SubmitSignedAggregateSelectionProof(t *testing.T) {
 	t.Run("Phase 0 post electra", func(t *testing.T) {
 		slot, err = slots.EpochEnd(params.BeaconConfig().ElectraForkEpoch)
 		require.NoError(t, err)
-		agg := &ethpb.SignedAggregateAttestationAndProof{
-			Message: &ethpb.AggregateAttestationAndProof{
-				Aggregate: &ethpb.Attestation{
-					Data: &ethpb.AttestationData{},
+		agg := &silapb.SignedAggregateAttestationAndProof{
+			Message: &silapb.AggregateAttestationAndProof{
+				Aggregate: &silapb.Attestation{
+					Data: &silapb.AttestationData{},
 				},
 			},
 			Signature: make([]byte, 96),
@@ -132,10 +132,10 @@ func TestService_SubmitSignedAggregateSelectionProof(t *testing.T) {
 
 	t.Run("electra agg pre electra", func(t *testing.T) {
 		slot = primitives.Slot(0)
-		agg := &ethpb.SignedAggregateAttestationAndProofElectra{
-			Message: &ethpb.AggregateAttestationAndProofElectra{
-				Aggregate: &ethpb.AttestationElectra{
-					Data: &ethpb.AttestationData{},
+		agg := &silapb.SignedAggregateAttestationAndProofElectra{
+			Message: &silapb.AggregateAttestationAndProofElectra{
+				Aggregate: &silapb.AttestationElectra{
+					Data: &silapb.AttestationData{},
 				},
 			},
 			Signature: make([]byte, 96),
@@ -268,7 +268,7 @@ func TestPayloadAttestationData(t *testing.T) {
 		require.NotNil(t, rpcErr)
 		assert.Equal(t, ErrorReason(Unavailable), rpcErr.Reason)
 		assert.ErrorContains(t, "not yet final", rpcErr.Err)
-		assert.Equal(t, (*ethpb.PayloadAttestationData)(nil), s.payloadAttestationData.Load())
+		assert.Equal(t, (*silapb.PayloadAttestationData)(nil), s.payloadAttestationData.Load())
 	})
 	t.Run("before PTC deadline but final → returns data early", func(t *testing.T) {
 		params.SetupTestConfigCleanup(t)
@@ -358,7 +358,7 @@ func TestPayloadAttestationData(t *testing.T) {
 		s := &Service{GenesisTimeFetcher: chain, ForkchoiceFetcher: chain}
 
 		const callers = 16
-		results := make([]*ethpb.PayloadAttestationData, callers)
+		results := make([]*silapb.PayloadAttestationData, callers)
 		start := make(chan struct{})
 		var wg sync.WaitGroup
 		for i := range callers {
@@ -394,7 +394,7 @@ func TestValidatorActiveSetChanges(t *testing.T) {
 	t.Run("nominal", func(t *testing.T) {
 		const numValidators = 8
 
-		validators := make([]*ethpb.Validator, numValidators)
+		validators := make([]*silapb.Validator, numValidators)
 		for i := range validators {
 			activationEpoch := params.BeaconConfig().FarFutureEpoch
 			withdrawableEpoch := params.BeaconConfig().FarFutureEpoch
@@ -419,7 +419,7 @@ func TestValidatorActiveSetChanges(t *testing.T) {
 				withdrawableEpoch = params.BeaconConfig().MinValidatorWithdrawabilityDelay
 				balance = params.BeaconConfig().EjectionBalance
 			}
-			validators[i] = &ethpb.Validator{
+			validators[i] = &silapb.Validator{
 				ActivationEpoch:       activationEpoch,
 				PublicKey:             pubKey(uint64(i)),
 				EffectiveBalance:      balance,

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/validator"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -18,5 +18,5 @@ type ValidatorCount struct {
 // SilaChainClient defines an interface required to implement all the sila specific custom endpoints.
 type SilaChainClient interface {
 	ValidatorCount(context.Context, string, []validator.Status) ([]ValidatorCount, error)
-	ValidatorPerformance(context.Context, *ethpb.ValidatorPerformanceRequest) (*ethpb.ValidatorPerformanceResponse, error)
+	ValidatorPerformance(context.Context, *silapb.ValidatorPerformanceRequest) (*silapb.ValidatorPerformanceResponse, error)
 }

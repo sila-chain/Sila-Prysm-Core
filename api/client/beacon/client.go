@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -120,7 +120,7 @@ func (c *Client) GetBlockRoot(ctx context.Context, blockId StateOrBlockId) ([32]
 // Block identifier can be one of: "head" (canonical head in node's view), "genesis", "finalized",
 // <slot>, <hex encoded blockRoot with 0x prefix>. Variables of type StateOrBlockId are exported by this package
 // for the named identifiers.
-func (c *Client) GetFork(ctx context.Context, stateId StateOrBlockId) (*ethpb.Fork, error) {
+func (c *Client) GetFork(ctx context.Context, stateId StateOrBlockId) (*silapb.Fork, error) {
 	body, err := c.Get(ctx, getForkTpl(stateId))
 	if err != nil {
 		return nil, errors.Wrapf(err, "error requesting fork by state id = %s", stateId)

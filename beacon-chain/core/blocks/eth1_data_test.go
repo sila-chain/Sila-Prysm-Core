@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -17,10 +17,10 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func FakeDeposits(n uint64) []*ethpb.Eth1Data {
-	deposits := make([]*ethpb.Eth1Data, n)
+func FakeDeposits(n uint64) []*silapb.Eth1Data {
+	deposits := make([]*silapb.Eth1Data, n)
 	for i := range n {
-		deposits[i] = &ethpb.Eth1Data{
+		deposits[i] = &silapb.Eth1Data{
 			DepositCount: 1,
 			DepositRoot:  bytesutil.PadTo([]byte("root"), 32),
 		}
@@ -30,14 +30,14 @@ func FakeDeposits(n uint64) []*ethpb.Eth1Data {
 
 func TestEth1DataHasEnoughSupport(t *testing.T) {
 	tests := []struct {
-		stateVotes         []*ethpb.Eth1Data
-		data               *ethpb.Eth1Data
+		stateVotes         []*silapb.Eth1Data
+		data               *silapb.Eth1Data
 		hasSupport         bool
 		votingPeriodLength primitives.Epoch
 	}{
 		{
 			stateVotes: FakeDeposits(uint64(params.BeaconConfig().SlotsPerEpoch.Mul(4))),
-			data: &ethpb.Eth1Data{
+			data: &silapb.Eth1Data{
 				DepositCount: 1,
 				DepositRoot:  bytesutil.PadTo([]byte("root"), 32),
 			},
@@ -45,7 +45,7 @@ func TestEth1DataHasEnoughSupport(t *testing.T) {
 			votingPeriodLength: 7,
 		}, {
 			stateVotes: FakeDeposits(uint64(params.BeaconConfig().SlotsPerEpoch.Mul(4))),
-			data: &ethpb.Eth1Data{
+			data: &silapb.Eth1Data{
 				DepositCount: 1,
 				DepositRoot:  bytesutil.PadTo([]byte("root"), 32),
 			},
@@ -53,7 +53,7 @@ func TestEth1DataHasEnoughSupport(t *testing.T) {
 			votingPeriodLength: 8,
 		}, {
 			stateVotes: FakeDeposits(uint64(params.BeaconConfig().SlotsPerEpoch.Mul(4))),
-			data: &ethpb.Eth1Data{
+			data: &silapb.Eth1Data{
 				DepositCount: 1,
 				DepositRoot:  bytesutil.PadTo([]byte("root"), 32),
 			},
@@ -69,7 +69,7 @@ func TestEth1DataHasEnoughSupport(t *testing.T) {
 			c.EpochsPerEth1VotingPeriod = tt.votingPeriodLength
 			params.OverrideBeaconConfig(c)
 
-			s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+			s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 				Eth1DataVotes: tt.stateVotes,
 			})
 			require.NoError(t, err)
@@ -90,8 +90,8 @@ func TestEth1DataHasEnoughSupport(t *testing.T) {
 
 func TestAreEth1DataEqual(t *testing.T) {
 	type args struct {
-		a *ethpb.Eth1Data
-		b *ethpb.Eth1Data
+		a *silapb.Eth1Data
+		b *silapb.Eth1Data
 	}
 	tests := []struct {
 		name string
@@ -110,7 +110,7 @@ func TestAreEth1DataEqual(t *testing.T) {
 			name: "false when only one is nil",
 			args: args{
 				a: nil,
-				b: &ethpb.Eth1Data{
+				b: &silapb.Eth1Data{
 					DepositRoot:  make([]byte, 32),
 					DepositCount: 0,
 					BlockHash:    make([]byte, 32),
@@ -121,12 +121,12 @@ func TestAreEth1DataEqual(t *testing.T) {
 		{
 			name: "true when real equality",
 			args: args{
-				a: &ethpb.Eth1Data{
+				a: &silapb.Eth1Data{
 					DepositRoot:  make([]byte, 32),
 					DepositCount: 0,
 					BlockHash:    make([]byte, 32),
 				},
-				b: &ethpb.Eth1Data{
+				b: &silapb.Eth1Data{
 					DepositRoot:  make([]byte, 32),
 					DepositCount: 0,
 					BlockHash:    make([]byte, 32),
@@ -137,12 +137,12 @@ func TestAreEth1DataEqual(t *testing.T) {
 		{
 			name: "false is field value differs",
 			args: args{
-				a: &ethpb.Eth1Data{
+				a: &silapb.Eth1Data{
 					DepositRoot:  make([]byte, 32),
 					DepositCount: 0,
 					BlockHash:    make([]byte, 32),
 				},
-				b: &ethpb.Eth1Data{
+				b: &silapb.Eth1Data{
 					DepositRoot:  make([]byte, 32),
 					DepositCount: 64,
 					BlockHash:    make([]byte, 32),
@@ -159,15 +159,15 @@ func TestAreEth1DataEqual(t *testing.T) {
 }
 
 func TestProcessEth1Data_SetsCorrectly(t *testing.T) {
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-		Eth1DataVotes: []*ethpb.Eth1Data{},
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+		Eth1DataVotes: []*silapb.Eth1Data{},
 	})
 	require.NoError(t, err)
 
 	b := util.NewBeaconBlock()
-	b.Block = &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
-			Eth1Data: &ethpb.Eth1Data{
+	b.Block = &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot: []byte{2},
 				BlockHash:   []byte{3},
 			},

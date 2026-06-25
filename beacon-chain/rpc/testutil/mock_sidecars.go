@@ -1,14 +1,14 @@
 package testutil
 
-import ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+import silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 
 // CreateDataColumnSidecar generates a filled dummy data column sidecar
-func CreateDataColumnSidecar(index uint64, data []byte) *ethpb.DataColumnSidecar {
-	return &ethpb.DataColumnSidecar{
+func CreateDataColumnSidecar(index uint64, data []byte) *silapb.DataColumnSidecar {
+	return &silapb.DataColumnSidecar{
 		Index:  index,
 		Column: [][]byte{data},
-		SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-			Header: &ethpb.BeaconBlockHeader{
+		SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+			Header: &silapb.BeaconBlockHeader{
 				Slot:          1,
 				ProposerIndex: 1,
 				ParentRoot:    make([]byte, 32),
@@ -24,12 +24,12 @@ func CreateDataColumnSidecar(index uint64, data []byte) *ethpb.DataColumnSidecar
 }
 
 // CreateBlobSidecar generates a filled dummy data blob sidecar
-func CreateBlobSidecar(index uint64, blob []byte) *ethpb.BlobSidecar {
-	return &ethpb.BlobSidecar{
+func CreateBlobSidecar(index uint64, blob []byte) *silapb.BlobSidecar {
+	return &silapb.BlobSidecar{
 		Index: index,
 		Blob:  blob,
-		SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-			Header: &ethpb.BeaconBlockHeader{
+		SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+			Header: &silapb.BeaconBlockHeader{
 				Slot:          1,
 				ProposerIndex: 1,
 				ParentRoot:    make([]byte, 32),

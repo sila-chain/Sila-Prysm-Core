@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -201,8 +201,8 @@ func TestGetBeaconBlock_Phase0Valid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Phase0{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Phase0{
 			Phase0: proto,
 		},
 	}
@@ -263,8 +263,8 @@ func TestGetBeaconBlock_SSZ_BellatrixValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Bellatrix{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Bellatrix{
 			Bellatrix: proto,
 		},
 		IsBlinded: false,
@@ -305,8 +305,8 @@ func TestGetBeaconBlock_SSZ_BlindedBellatrixValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_BlindedBellatrix{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_BlindedBellatrix{
 			BlindedBellatrix: proto,
 		},
 		IsBlinded: true,
@@ -347,8 +347,8 @@ func TestGetBeaconBlock_SSZ_CapellaValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Capella{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Capella{
 			Capella: proto,
 		},
 		IsBlinded: false,
@@ -389,8 +389,8 @@ func TestGetBeaconBlock_SSZ_BlindedCapellaValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_BlindedCapella{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_BlindedCapella{
 			BlindedCapella: proto,
 		},
 		IsBlinded: true,
@@ -431,8 +431,8 @@ func TestGetBeaconBlock_SSZ_DenebValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Deneb{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Deneb{
 			Deneb: proto,
 		},
 		IsBlinded: false,
@@ -473,8 +473,8 @@ func TestGetBeaconBlock_SSZ_BlindedDenebValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_BlindedDeneb{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_BlindedDeneb{
 			BlindedDeneb: proto,
 		},
 		IsBlinded: true,
@@ -515,8 +515,8 @@ func TestGetBeaconBlock_SSZ_ElectraValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Electra{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Electra{
 			Electra: proto,
 		},
 		IsBlinded: false,
@@ -557,8 +557,8 @@ func TestGetBeaconBlock_SSZ_BlindedElectraValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_BlindedElectra{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_BlindedElectra{
 			BlindedElectra: proto,
 		},
 		IsBlinded: true,
@@ -599,8 +599,8 @@ func TestGetBeaconBlock_SSZ_FuluValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Fulu{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Fulu{
 			Fulu: proto,
 		},
 		IsBlinded: false,
@@ -641,8 +641,8 @@ func TestGetBeaconBlock_SSZ_BlindedFuluValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_BlindedFulu{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_BlindedFulu{
 			BlindedFulu: proto,
 		},
 		IsBlinded: true,
@@ -803,8 +803,8 @@ func TestGetBeaconBlock_SSZ_Phase0Valid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Phase0{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Phase0{
 			Phase0: proto,
 		},
 		IsBlinded: false,
@@ -845,8 +845,8 @@ func TestGetBeaconBlock_SSZ_AltairValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Altair{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Altair{
 			Altair: proto,
 		},
 		IsBlinded: false,
@@ -889,8 +889,8 @@ func TestGetBeaconBlock_AltairValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Altair{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Altair{
 			Altair: proto,
 		},
 	}
@@ -933,8 +933,8 @@ func TestGetBeaconBlock_BellatrixValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Bellatrix{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Bellatrix{
 			Bellatrix: proto,
 		},
 		IsBlinded: false,
@@ -978,8 +978,8 @@ func TestGetBeaconBlock_BlindedBellatrixValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_BlindedBellatrix{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_BlindedBellatrix{
 			BlindedBellatrix: proto,
 		},
 		IsBlinded: true,
@@ -1023,8 +1023,8 @@ func TestGetBeaconBlock_CapellaValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Capella{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Capella{
 			Capella: proto,
 		},
 		IsBlinded: false,
@@ -1068,8 +1068,8 @@ func TestGetBeaconBlock_BlindedCapellaValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_BlindedCapella{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_BlindedCapella{
 			BlindedCapella: proto,
 		},
 		IsBlinded: true,
@@ -1113,8 +1113,8 @@ func TestGetBeaconBlock_FuluValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Fulu{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Fulu{
 			Fulu: proto,
 		},
 		IsBlinded: false,
@@ -1158,8 +1158,8 @@ func TestGetBeaconBlock_BlindedFuluValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_BlindedFulu{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_BlindedFulu{
 			BlindedFulu: proto,
 		},
 		IsBlinded: true,
@@ -1203,8 +1203,8 @@ func TestGetBeaconBlock_DenebValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Deneb{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Deneb{
 			Deneb: proto,
 		},
 		IsBlinded: false,
@@ -1248,8 +1248,8 @@ func TestGetBeaconBlock_BlindedDenebValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_BlindedDeneb{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_BlindedDeneb{
 			BlindedDeneb: proto,
 		},
 		IsBlinded: true,
@@ -1293,8 +1293,8 @@ func TestGetBeaconBlock_ElectraValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Electra{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Electra{
 			Electra: proto,
 		},
 		IsBlinded: false,
@@ -1338,8 +1338,8 @@ func TestGetBeaconBlock_BlindedElectraValid(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_BlindedElectra{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_BlindedElectra{
 			BlindedElectra: proto,
 		},
 		IsBlinded: true,
@@ -1362,7 +1362,7 @@ func TestGetBeaconBlock_GloasValid_SSZ_WithPayload(t *testing.T) {
 	defer ctrl.Finish()
 
 	proto := testhelpers.GenerateProtoGloasBeaconBlock()
-	contents := &ethpb.BeaconBlockContentsGloas{
+	contents := &silapb.BeaconBlockContentsGloas{
 		Block:                    proto,
 		ExecutionPayloadEnvelope: testhelpers.GenerateProtoExecutionPayloadEnvelope(),
 	}
@@ -1397,8 +1397,8 @@ func TestGetBeaconBlock_GloasValid_SSZ_WithPayload(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Gloas{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Gloas{
 			Gloas: proto,
 		},
 	}
@@ -1445,8 +1445,8 @@ func TestGetBeaconBlock_GloasValid_SSZ_WithoutPayload(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(ctx, slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	expectedBeaconBlock := &ethpb.GenericBeaconBlock{
-		Block: &ethpb.GenericBeaconBlock_Gloas{
+	expectedBeaconBlock := &silapb.GenericBeaconBlock{
+		Block: &silapb.GenericBeaconBlock_Gloas{
 			Gloas: proto,
 		},
 	}
@@ -1492,7 +1492,7 @@ func TestGetBeaconBlock_GloasValid_JSON_WithoutPayload(t *testing.T) {
 	beaconBlock, err := validatorClient.beaconBlock(t.Context(), slot, randaoReveal, graffiti)
 	require.NoError(t, err)
 
-	assert.DeepEqual(t, &ethpb.GenericBeaconBlock{Block: &ethpb.GenericBeaconBlock_Gloas{Gloas: proto}}, beaconBlock)
+	assert.DeepEqual(t, &silapb.GenericBeaconBlock{Block: &silapb.GenericBeaconBlock_Gloas{Gloas: proto}}, beaconBlock)
 }
 
 func TestGetBeaconBlock_GloasRejectsJSONWithPayload(t *testing.T) {

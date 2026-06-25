@@ -8,7 +8,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	logTest "github.com/sirupsen/logrus/hooks/test"
@@ -159,7 +159,7 @@ func TestService_filterAttestations(t *testing.T) {
 			name: "Nil attestation data gets dropped",
 			input: []*slashertypes.IndexedAttestationWrapper{
 				{
-					IndexedAttestation: &ethpb.IndexedAttestation{},
+					IndexedAttestation: &silapb.IndexedAttestation{},
 				},
 			},
 			inputEpoch:    0,
@@ -169,8 +169,8 @@ func TestService_filterAttestations(t *testing.T) {
 			name: "Nil attestation source and target gets dropped",
 			input: []*slashertypes.IndexedAttestationWrapper{
 				{
-					IndexedAttestation: &ethpb.IndexedAttestation{
-						Data: &ethpb.AttestationData{},
+					IndexedAttestation: &silapb.IndexedAttestation{
+						Data: &silapb.AttestationData{},
 					},
 				},
 			},
@@ -181,9 +181,9 @@ func TestService_filterAttestations(t *testing.T) {
 			name: "Nil attestation source and good target gets dropped",
 			input: []*slashertypes.IndexedAttestationWrapper{
 				{
-					IndexedAttestation: &ethpb.IndexedAttestation{
-						Data: &ethpb.AttestationData{
-							Target: &ethpb.Checkpoint{},
+					IndexedAttestation: &silapb.IndexedAttestation{
+						Data: &silapb.AttestationData{
+							Target: &silapb.Checkpoint{},
 						},
 					},
 				},
@@ -195,9 +195,9 @@ func TestService_filterAttestations(t *testing.T) {
 			name: "Nil attestation target and good source gets dropped",
 			input: []*slashertypes.IndexedAttestationWrapper{
 				{
-					IndexedAttestation: &ethpb.IndexedAttestation{
-						Data: &ethpb.AttestationData{
-							Source: &ethpb.Checkpoint{},
+					IndexedAttestation: &silapb.IndexedAttestation{
+						Data: &silapb.AttestationData{
+							Source: &silapb.Checkpoint{},
 						},
 					},
 				},
@@ -267,27 +267,27 @@ func TestService_filterAttestations(t *testing.T) {
 func Test_logSlashingEvent(t *testing.T) {
 	tests := []struct {
 		name     string
-		slashing *ethpb.AttesterSlashing
+		slashing *silapb.AttesterSlashing
 	}{
 		{
 			name: "Surrounding vote",
-			slashing: &ethpb.AttesterSlashing{
-				Attestation_1: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*ethpb.IndexedAttestation),
-				Attestation_2: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*ethpb.IndexedAttestation),
+			slashing: &silapb.AttesterSlashing{
+				Attestation_1: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*silapb.IndexedAttestation),
+				Attestation_2: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*silapb.IndexedAttestation),
 			},
 		},
 		{
 			name: "Surrounded vote",
-			slashing: &ethpb.AttesterSlashing{
-				Attestation_1: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*ethpb.IndexedAttestation),
-				Attestation_2: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*ethpb.IndexedAttestation),
+			slashing: &silapb.AttesterSlashing{
+				Attestation_1: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*silapb.IndexedAttestation),
+				Attestation_2: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*silapb.IndexedAttestation),
 			},
 		},
 		{
 			name: "Double vote",
-			slashing: &ethpb.AttesterSlashing{
-				Attestation_1: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*ethpb.IndexedAttestation),
-				Attestation_2: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*ethpb.IndexedAttestation),
+			slashing: &silapb.AttesterSlashing{
+				Attestation_1: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*silapb.IndexedAttestation),
+				Attestation_2: createAttestationWrapperEmptySig(t, version.Phase0, 0, 0, nil, nil).IndexedAttestation.(*silapb.IndexedAttestation),
 			},
 		},
 	}
@@ -303,7 +303,7 @@ func Test_logSlashingEvent(t *testing.T) {
 func Test_validateAttestationIntegrity(t *testing.T) {
 	tests := []struct {
 		name string
-		att  *ethpb.IndexedAttestation
+		att  *silapb.IndexedAttestation
 		want bool
 	}{
 		{
@@ -313,42 +313,42 @@ func Test_validateAttestationIntegrity(t *testing.T) {
 		},
 		{
 			name: "Nil attestation data returns false",
-			att:  &ethpb.IndexedAttestation{},
+			att:  &silapb.IndexedAttestation{},
 			want: false,
 		},
 		{
 			name: "Nil attestation source and target returns false",
-			att: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{},
+			att: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{},
 			},
 			want: false,
 		},
 		{
 			name: "Nil attestation source and good target returns false",
-			att: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Target: &ethpb.Checkpoint{},
+			att: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Target: &silapb.Checkpoint{},
 				},
 			},
 			want: false,
 		},
 		{
 			name: "Nil attestation target and good source returns false",
-			att: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{},
+			att: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{},
 				},
 			},
 			want: false,
 		},
 		{
 			name: "Source > target returns false",
-			att: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{
+			att: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{
 						Epoch: 1,
 					},
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 0,
 					},
 				},
@@ -357,12 +357,12 @@ func Test_validateAttestationIntegrity(t *testing.T) {
 		},
 		{
 			name: "Source == target returns false",
-			att: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{
+			att: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{
 						Epoch: 1,
 					},
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 1,
 					},
 				},
@@ -371,12 +371,12 @@ func Test_validateAttestationIntegrity(t *testing.T) {
 		},
 		{
 			name: "Source < target returns true",
-			att: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{
+			att: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{
 						Epoch: 1,
 					},
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 2,
 					},
 				},
@@ -385,12 +385,12 @@ func Test_validateAttestationIntegrity(t *testing.T) {
 		},
 		{
 			name: "Source 0 target 0 returns true (genesis epoch attestations)",
-			att: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{
+			att: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{
 						Epoch: 0,
 					},
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 0,
 					},
 				},
@@ -409,7 +409,7 @@ func Test_validateAttestationIntegrity(t *testing.T) {
 
 func Test_validateBlockHeaderIntegrity(t *testing.T) {
 	type args struct {
-		header *ethpb.SignedBeaconBlockHeader
+		header *silapb.SignedBeaconBlockHeader
 	}
 	fakeSig := make([]byte, 96)
 	copy(fakeSig, "hi")
@@ -428,22 +428,22 @@ func Test_validateBlockHeaderIntegrity(t *testing.T) {
 		{
 			name: "nil inner header",
 			args: args{
-				header: &ethpb.SignedBeaconBlockHeader{},
+				header: &silapb.SignedBeaconBlockHeader{},
 			},
 			want: false,
 		},
 		{
 			name: "bad signature 1",
 			args: args{
-				header: &ethpb.SignedBeaconBlockHeader{Header: &ethpb.BeaconBlockHeader{}, Signature: []byte("hi")},
+				header: &silapb.SignedBeaconBlockHeader{Header: &silapb.BeaconBlockHeader{}, Signature: []byte("hi")},
 			},
 			want: false,
 		},
 		{
 			name: "bad signature 2",
 			args: args{
-				header: &ethpb.SignedBeaconBlockHeader{
-					Header:    &ethpb.BeaconBlockHeader{},
+				header: &silapb.SignedBeaconBlockHeader{
+					Header:    &silapb.BeaconBlockHeader{},
 					Signature: make([]byte, fieldparams.BLSSignatureLength+1),
 				},
 			},
@@ -452,14 +452,14 @@ func Test_validateBlockHeaderIntegrity(t *testing.T) {
 		{
 			name: "empty signature",
 			args: args{
-				header: &ethpb.SignedBeaconBlockHeader{Header: &ethpb.BeaconBlockHeader{}},
+				header: &silapb.SignedBeaconBlockHeader{Header: &silapb.BeaconBlockHeader{}},
 			},
 			want: false,
 		},
 		{
 			name: "OK",
 			args: args{
-				header: &ethpb.SignedBeaconBlockHeader{Header: &ethpb.BeaconBlockHeader{}, Signature: fakeSig},
+				header: &silapb.SignedBeaconBlockHeader{Header: &silapb.BeaconBlockHeader{}, Signature: fakeSig},
 			},
 			want: true,
 		},

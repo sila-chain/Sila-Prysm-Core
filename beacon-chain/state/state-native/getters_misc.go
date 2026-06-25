@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
 
@@ -45,7 +45,7 @@ func (b *BeaconState) Slot() primitives.Slot {
 }
 
 // Fork version of the beacon chain.
-func (b *BeaconState) Fork() *ethpb.Fork {
+func (b *BeaconState) Fork() *silapb.Fork {
 	if b.fork == nil {
 		return nil
 	}
@@ -58,7 +58,7 @@ func (b *BeaconState) Fork() *ethpb.Fork {
 
 // forkVal version of the beacon chain.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) forkVal() *ethpb.Fork {
+func (b *BeaconState) forkVal() *silapb.Fork {
 	if b.fork == nil {
 		return nil
 	}
@@ -67,7 +67,7 @@ func (b *BeaconState) forkVal() *ethpb.Fork {
 	copy(prevVersion, b.fork.PreviousVersion)
 	currVersion := make([]byte, len(b.fork.CurrentVersion))
 	copy(currVersion, b.fork.CurrentVersion)
-	return &ethpb.Fork{
+	return &silapb.Fork{
 		PreviousVersion: prevVersion,
 		CurrentVersion:  currVersion,
 		Epoch:           b.fork.Epoch,
@@ -87,7 +87,7 @@ func (b *BeaconState) HistoricalRoots() [][]byte {
 }
 
 // HistoricalSummaries of the beacon state.
-func (b *BeaconState) HistoricalSummaries() ([]*ethpb.HistoricalSummary, error) {
+func (b *BeaconState) HistoricalSummaries() ([]*silapb.HistoricalSummary, error) {
 	if b.version < version.Capella {
 		return nil, errNotSupported("HistoricalSummaries", b.version)
 	}
@@ -104,6 +104,6 @@ func (b *BeaconState) HistoricalSummaries() ([]*ethpb.HistoricalSummary, error) 
 
 // historicalSummariesVal of the beacon state.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) historicalSummariesVal() []*ethpb.HistoricalSummary {
-	return ethpb.CopySlice(b.historicalSummaries)
+func (b *BeaconState) historicalSummariesVal() []*silapb.HistoricalSummary {
+	return silapb.CopySlice(b.historicalSummaries)
 }

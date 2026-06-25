@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -29,7 +29,7 @@ func TestProposer_GetSyncAggregate_OK(t *testing.T) {
 	}
 
 	r := params.BeaconConfig().ZeroHash
-	conts := []*ethpb.SyncCommitteeContribution{
+	conts := []*silapb.SyncCommitteeContribution{
 		{Slot: 1, SubcommitteeIndex: 0, Signature: bls.NewAggregateSignature().Marshal(), AggregationBits: []byte{0b0001}, BlockRoot: r[:]},
 		{Slot: 1, SubcommitteeIndex: 0, Signature: bls.NewAggregateSignature().Marshal(), AggregationBits: []byte{0b1001}, BlockRoot: r[:]},
 		{Slot: 1, SubcommitteeIndex: 0, Signature: bls.NewAggregateSignature().Marshal(), AggregationBits: []byte{0b1110}, BlockRoot: r[:]},
@@ -74,7 +74,7 @@ func TestServer_SetSyncAggregate_EmptyCase(t *testing.T) {
 	require.NoError(t, err)
 
 	emptySig := [96]byte{0xC0}
-	want := &ethpb.SyncAggregate{
+	want := &silapb.SyncAggregate{
 		SyncCommitteeBits:      make([]byte, params.BeaconConfig().SyncCommitteeSize/8),
 		SyncCommitteeSignature: emptySig[:],
 	}
@@ -94,13 +94,13 @@ func TestProposer_GetSyncAggregate_IncludesSyncCommitteeMessages(t *testing.T) {
 	helpers.ClearCache()
 	st, err := util.NewBeaconStateAltair()
 	require.NoError(t, err)
-	vals := make([]*ethpb.Validator, 4)
-	vals[0] = &ethpb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf0}, 48)}
-	vals[1] = &ethpb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf1}, 48)}
-	vals[2] = &ethpb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf2}, 48)}
-	vals[3] = &ethpb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf3}, 48)}
+	vals := make([]*silapb.Validator, 4)
+	vals[0] = &silapb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf0}, 48)}
+	vals[1] = &silapb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf1}, 48)}
+	vals[2] = &silapb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf2}, 48)}
+	vals[3] = &silapb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf3}, 48)}
 	require.NoError(t, st.SetValidators(vals))
-	sc := &ethpb.SyncCommittee{
+	sc := &silapb.SyncCommittee{
 		Pubkeys: make([][]byte, params.BeaconConfig().SyncCommitteeSize),
 	}
 	sc.Pubkeys[0] = vals[0].PublicKey
@@ -117,7 +117,7 @@ func TestProposer_GetSyncAggregate_IncludesSyncCommitteeMessages(t *testing.T) {
 	}
 
 	r := params.BeaconConfig().ZeroHash
-	msgs := []*ethpb.SyncCommitteeMessage{
+	msgs := []*silapb.SyncCommitteeMessage{
 		{Slot: 1, BlockRoot: r[:], ValidatorIndex: 0, Signature: bls.NewAggregateSignature().Marshal()},
 		{Slot: 1, BlockRoot: r[:], ValidatorIndex: 1, Signature: bls.NewAggregateSignature().Marshal()},
 		{Slot: 1, BlockRoot: r[:], ValidatorIndex: 2, Signature: bls.NewAggregateSignature().Marshal()},
@@ -126,11 +126,11 @@ func TestProposer_GetSyncAggregate_IncludesSyncCommitteeMessages(t *testing.T) {
 	for _, msg := range msgs {
 		require.NoError(t, proposerServer.SyncCommitteePool.SaveSyncCommitteeMessage(msg))
 	}
-	subcommittee0AggBits := ethpb.NewSyncCommitteeAggregationBits()
+	subcommittee0AggBits := silapb.NewSyncCommitteeAggregationBits()
 	subcommittee0AggBits.SetBitAt(3, true)
-	subcommittee1AggBits := ethpb.NewSyncCommitteeAggregationBits()
+	subcommittee1AggBits := silapb.NewSyncCommitteeAggregationBits()
 	subcommittee1AggBits.SetBitAt(3, true)
-	conts := []*ethpb.SyncCommitteeContribution{
+	conts := []*silapb.SyncCommitteeContribution{
 		{Slot: 1, SubcommitteeIndex: 0, Signature: bls.NewAggregateSignature().Marshal(), AggregationBits: subcommittee0AggBits, BlockRoot: r[:]},
 		{Slot: 1, SubcommitteeIndex: 1, Signature: bls.NewAggregateSignature().Marshal(), AggregationBits: subcommittee1AggBits, BlockRoot: r[:]},
 	}
@@ -155,13 +155,13 @@ func Test_aggregatedSyncCommitteeMessages_NoIntersectionWithPoolContributions(t 
 	helpers.ClearCache()
 	st, err := util.NewBeaconStateAltair()
 	require.NoError(t, err)
-	vals := make([]*ethpb.Validator, 4)
-	vals[0] = &ethpb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf0}, 48)}
-	vals[1] = &ethpb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf1}, 48)}
-	vals[2] = &ethpb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf2}, 48)}
-	vals[3] = &ethpb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf3}, 48)}
+	vals := make([]*silapb.Validator, 4)
+	vals[0] = &silapb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf0}, 48)}
+	vals[1] = &silapb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf1}, 48)}
+	vals[2] = &silapb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf2}, 48)}
+	vals[3] = &silapb.Validator{PublicKey: bytesutil.PadTo([]byte{0xf3}, 48)}
 	require.NoError(t, st.SetValidators(vals))
-	sc := &ethpb.SyncCommittee{
+	sc := &silapb.SyncCommittee{
 		Pubkeys: make([][]byte, params.BeaconConfig().SyncCommitteeSize),
 	}
 	sc.Pubkeys[0] = vals[0].PublicKey
@@ -176,7 +176,7 @@ func Test_aggregatedSyncCommitteeMessages_NoIntersectionWithPoolContributions(t 
 	}
 
 	r := params.BeaconConfig().ZeroHash
-	msgs := []*ethpb.SyncCommitteeMessage{
+	msgs := []*silapb.SyncCommitteeMessage{
 		{Slot: 1, BlockRoot: r[:], ValidatorIndex: 0, Signature: bls.NewAggregateSignature().Marshal()},
 		{Slot: 1, BlockRoot: r[:], ValidatorIndex: 1, Signature: bls.NewAggregateSignature().Marshal()},
 		{Slot: 1, BlockRoot: r[:], ValidatorIndex: 2, Signature: bls.NewAggregateSignature().Marshal()},
@@ -185,9 +185,9 @@ func Test_aggregatedSyncCommitteeMessages_NoIntersectionWithPoolContributions(t 
 	for _, msg := range msgs {
 		require.NoError(t, proposerServer.SyncCommitteePool.SaveSyncCommitteeMessage(msg))
 	}
-	subcommitteeAggBits := ethpb.NewSyncCommitteeAggregationBits()
+	subcommitteeAggBits := silapb.NewSyncCommitteeAggregationBits()
 	subcommitteeAggBits.SetBitAt(3, true)
-	cont := &ethpb.SyncCommitteeContribution{
+	cont := &silapb.SyncCommitteeContribution{
 		Slot:              1,
 		SubcommitteeIndex: 0,
 		Signature:         bls.NewAggregateSignature().Marshal(),
@@ -195,7 +195,7 @@ func Test_aggregatedSyncCommitteeMessages_NoIntersectionWithPoolContributions(t 
 		BlockRoot:         r[:],
 	}
 
-	aggregated, err := proposerServer.aggregatedSyncCommitteeMessages(t.Context(), 1, r, []*ethpb.SyncCommitteeContribution{cont}, st)
+	aggregated, err := proposerServer.aggregatedSyncCommitteeMessages(t.Context(), 1, r, []*silapb.SyncCommitteeContribution{cont}, st)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(aggregated))
 	assert.Equal(t, false, aggregated[0].AggregationBits.BitAt(3))
@@ -212,10 +212,10 @@ func TestGetSyncAggregate_CorrectStateAtSyncCommitteePeriodBoundary(t *testing.T
 	postEpochState := preEpochState.Copy()
 	require.NoError(t, postEpochState.SetSlot(primitives.Slot(syncPeriodBoundaryEpoch)*slotsPerEpoch+2)) // After 2 missed slots
 
-	oldCommittee := &ethpb.SyncCommittee{
+	oldCommittee := &silapb.SyncCommittee{
 		Pubkeys: make([][]byte, params.BeaconConfig().SyncCommitteeSize),
 	}
-	newCommittee := &ethpb.SyncCommittee{
+	newCommittee := &silapb.SyncCommittee{
 		Pubkeys: make([][]byte, params.BeaconConfig().SyncCommitteeSize),
 	}
 
@@ -243,13 +243,13 @@ func TestGetSyncAggregate_CorrectStateAtSyncCommitteePeriodBoundary(t *testing.T
 	slot := primitives.Slot(syncPeriodBoundaryEpoch)*slotsPerEpoch + 1 // First slot of new epoch
 	blockRoot := [32]byte{0x01, 0x02, 0x03}
 
-	msg1 := &ethpb.SyncCommitteeMessage{
+	msg1 := &silapb.SyncCommitteeMessage{
 		Slot:           slot,
 		BlockRoot:      blockRoot[:],
 		ValidatorIndex: 0, // This validator is in position 0 of OLD committee
 		Signature:      bls.NewAggregateSignature().Marshal(),
 	}
-	msg2 := &ethpb.SyncCommitteeMessage{
+	msg2 := &silapb.SyncCommitteeMessage{
 		Slot:           slot,
 		BlockRoot:      blockRoot[:],
 		ValidatorIndex: 1, // This validator is in position 1 of OLD committee

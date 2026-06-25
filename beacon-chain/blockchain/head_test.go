@@ -15,8 +15,8 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpbv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapbv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -46,8 +46,8 @@ func TestSaveHead_Different(t *testing.T) {
 	oldBlock := util.SaveBlock(t, t.Context(), service.cfg.BeaconDB, util.NewBeaconBlock())
 	oldRoot, err := oldBlock.Block().HashTreeRoot()
 	require.NoError(t, err)
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	state, blkRoot, err := prepareForkchoiceState(ctx, oldBlock.Block().Slot(), oldRoot, oldBlock.Block().ParentRoot(), [32]byte{}, ojc, ofc)
 	require.NoError(t, err)
 	require.NoError(t, service.cfg.ForkChoiceStore.InsertNode(ctx, state, blkRoot))
@@ -73,7 +73,7 @@ func TestSaveHead_Different(t *testing.T) {
 	headState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, headState.SetSlot(1))
-	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(t.Context(), &ethpb.StateSummary{Slot: 1, Root: newRoot[:]}))
+	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(t.Context(), &silapb.StateSummary{Slot: 1, Root: newRoot[:]}))
 	require.NoError(t, service.cfg.BeaconDB.SaveState(t.Context(), headState, newRoot))
 	require.NoError(t, service.saveHead(t.Context(), newRoot, wsb, headState, false))
 
@@ -99,8 +99,8 @@ func TestSaveHead_Different_Reorg(t *testing.T) {
 	oldBlock := util.SaveBlock(t, t.Context(), service.cfg.BeaconDB, util.NewBeaconBlock())
 	oldRoot, err := oldBlock.Block().HashTreeRoot()
 	require.NoError(t, err)
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	state, blkRoot, err := prepareForkchoiceState(ctx, oldBlock.Block().Slot(), oldRoot, oldBlock.Block().ParentRoot(), [32]byte{}, ojc, ofc)
 	require.NoError(t, err)
 	require.NoError(t, service.cfg.ForkChoiceStore.InsertNode(ctx, state, blkRoot))
@@ -128,7 +128,7 @@ func TestSaveHead_Different_Reorg(t *testing.T) {
 	headState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, headState.SetSlot(1))
-	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(t.Context(), &ethpb.StateSummary{Slot: 1, Root: newRoot[:]}))
+	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(t.Context(), &silapb.StateSummary{Slot: 1, Root: newRoot[:]}))
 	require.NoError(t, service.cfg.BeaconDB.SaveState(t.Context(), headState, newRoot))
 	require.NoError(t, service.saveHead(t.Context(), newRoot, wsb, headState, false))
 
@@ -156,21 +156,21 @@ func Test_notifyNewHeadEvent(t *testing.T) {
 		srv.SetGenesisTime(time.Now())
 		notifier := srv.cfg.StateNotifier.(*mock.MockStateNotifier)
 		srv.originBlockRoot = [32]byte{1}
-		st, blk, err := prepareForkchoiceState(t.Context(), 0, [32]byte{}, [32]byte{}, [32]byte{}, &ethpb.Checkpoint{}, &ethpb.Checkpoint{})
+		st, blk, err := prepareForkchoiceState(t.Context(), 0, [32]byte{}, [32]byte{}, [32]byte{}, &silapb.Checkpoint{}, &silapb.Checkpoint{})
 		require.NoError(t, err)
 		require.NoError(t, srv.cfg.ForkChoiceStore.InsertNode(t.Context(), st, blk))
 		newHeadStateRoot := [32]byte{2}
 		newHeadRoot := [32]byte{3}
-		st, blk, err = prepareForkchoiceState(t.Context(), 1, newHeadRoot, [32]byte{}, [32]byte{}, &ethpb.Checkpoint{}, &ethpb.Checkpoint{})
+		st, blk, err = prepareForkchoiceState(t.Context(), 1, newHeadRoot, [32]byte{}, [32]byte{}, &silapb.Checkpoint{}, &silapb.Checkpoint{})
 		require.NoError(t, err)
 		require.NoError(t, srv.cfg.ForkChoiceStore.InsertNode(t.Context(), st, blk))
 		require.NoError(t, srv.notifyNewHeadEvent(t.Context(), 1, newHeadStateRoot[:], newHeadRoot[:]))
 		events := notifier.ReceivedEvents()
 		require.Equal(t, 1, len(events))
 
-		eventHead, ok := events[0].Data.(*ethpbv1.EventHead)
+		eventHead, ok := events[0].Data.(*silapbv1.EventHead)
 		require.Equal(t, true, ok)
-		wanted := &ethpbv1.EventHead{
+		wanted := &silapbv1.EventHead{
 			Slot:                      1,
 			Block:                     newHeadRoot[:],
 			State:                     newHeadStateRoot[:],
@@ -187,7 +187,7 @@ func Test_notifyNewHeadEvent(t *testing.T) {
 		srv.SetGenesisTime(time.Now())
 		srv.originBlockRoot = genesisRoot
 		notifier := srv.cfg.StateNotifier.(*mock.MockStateNotifier)
-		st, blk, err := prepareForkchoiceState(t.Context(), 0, [32]byte{}, [32]byte{}, [32]byte{}, &ethpb.Checkpoint{}, &ethpb.Checkpoint{})
+		st, blk, err := prepareForkchoiceState(t.Context(), 0, [32]byte{}, [32]byte{}, [32]byte{}, &silapb.Checkpoint{}, &silapb.Checkpoint{})
 		require.NoError(t, err)
 		require.NoError(t, srv.cfg.ForkChoiceStore.InsertNode(t.Context(), st, blk))
 		epoch1Start, err := slots.EpochStart(1)
@@ -198,7 +198,7 @@ func Test_notifyNewHeadEvent(t *testing.T) {
 
 		newHeadStateRoot := [32]byte{2}
 		newHeadRoot := [32]byte{3}
-		st, blk, err = prepareForkchoiceState(t.Context(), 0, newHeadRoot, [32]byte{}, [32]byte{}, &ethpb.Checkpoint{}, &ethpb.Checkpoint{})
+		st, blk, err = prepareForkchoiceState(t.Context(), 0, newHeadRoot, [32]byte{}, [32]byte{}, &silapb.Checkpoint{}, &silapb.Checkpoint{})
 		require.NoError(t, err)
 		require.NoError(t, srv.cfg.ForkChoiceStore.InsertNode(t.Context(), st, blk))
 		err = srv.notifyNewHeadEvent(t.Context(), epoch2Start, newHeadStateRoot[:], newHeadRoot[:])
@@ -206,9 +206,9 @@ func Test_notifyNewHeadEvent(t *testing.T) {
 		events := notifier.ReceivedEvents()
 		require.Equal(t, 1, len(events))
 
-		eventHead, ok := events[0].Data.(*ethpbv1.EventHead)
+		eventHead, ok := events[0].Data.(*silapbv1.EventHead)
 		require.Equal(t, true, ok)
-		wanted := &ethpbv1.EventHead{
+		wanted := &silapbv1.EventHead{
 			Slot:                      epoch2Start,
 			Block:                     newHeadRoot[:],
 			State:                     newHeadStateRoot[:],
@@ -223,12 +223,12 @@ func Test_notifyNewHeadEvent(t *testing.T) {
 		srv.SetGenesisTime(time.Now())
 		notifier := srv.cfg.StateNotifier.(*mock.MockStateNotifier)
 		srv.originBlockRoot = [32]byte{1}
-		st, blk, err := prepareForkchoiceState(t.Context(), 0, [32]byte{}, [32]byte{}, [32]byte{}, &ethpb.Checkpoint{}, &ethpb.Checkpoint{})
+		st, blk, err := prepareForkchoiceState(t.Context(), 0, [32]byte{}, [32]byte{}, [32]byte{}, &silapb.Checkpoint{}, &silapb.Checkpoint{})
 		require.NoError(t, err)
 		require.NoError(t, srv.cfg.ForkChoiceStore.InsertNode(t.Context(), st, blk))
 		newHeadStateRoot := [32]byte{2}
 		newHeadRoot := [32]byte{3}
-		st, blk, err = prepareForkchoiceState(t.Context(), 32, newHeadRoot, [32]byte{}, [32]byte{}, &ethpb.Checkpoint{}, &ethpb.Checkpoint{})
+		st, blk, err = prepareForkchoiceState(t.Context(), 32, newHeadRoot, [32]byte{}, [32]byte{}, &silapb.Checkpoint{}, &silapb.Checkpoint{})
 		require.NoError(t, err)
 		require.NoError(t, srv.cfg.ForkChoiceStore.InsertNode(t.Context(), st, blk))
 		newHeadSlot := params.BeaconConfig().SlotsPerEpoch
@@ -236,9 +236,9 @@ func Test_notifyNewHeadEvent(t *testing.T) {
 		events := notifier.ReceivedEvents()
 		require.Equal(t, 1, len(events))
 
-		eventHead, ok := events[0].Data.(*ethpbv1.EventHead)
+		eventHead, ok := events[0].Data.(*silapbv1.EventHead)
 		require.Equal(t, true, ok)
-		wanted := &ethpbv1.EventHead{
+		wanted := &silapbv1.EventHead{
 			Slot:                      newHeadSlot,
 			Block:                     newHeadRoot[:],
 			State:                     newHeadStateRoot[:],
@@ -253,11 +253,11 @@ func Test_notifyNewHeadEvent(t *testing.T) {
 		srv.SetGenesisTime(time.Now())
 		notifier := srv.cfg.StateNotifier.(*mock.MockStateNotifier)
 		srv.originBlockRoot = [32]byte{0xab}
-		st, blk, err := prepareForkchoiceState(t.Context(), 0, [32]byte{}, [32]byte{}, [32]byte{}, &ethpb.Checkpoint{}, &ethpb.Checkpoint{})
+		st, blk, err := prepareForkchoiceState(t.Context(), 0, [32]byte{}, [32]byte{}, [32]byte{}, &silapb.Checkpoint{}, &silapb.Checkpoint{})
 		require.NoError(t, err)
 		require.NoError(t, srv.cfg.ForkChoiceStore.InsertNode(t.Context(), st, blk))
 		newHeadRoot := [32]byte{3}
-		st, blk, err = prepareForkchoiceState(t.Context(), 32, newHeadRoot, [32]byte{}, [32]byte{}, &ethpb.Checkpoint{}, &ethpb.Checkpoint{})
+		st, blk, err = prepareForkchoiceState(t.Context(), 32, newHeadRoot, [32]byte{}, [32]byte{}, &silapb.Checkpoint{}, &silapb.Checkpoint{})
 		require.NoError(t, err)
 		require.NoError(t, srv.cfg.ForkChoiceStore.InsertNode(t.Context(), st, blk))
 		newHeadSlot := params.BeaconConfig().SlotsPerEpoch
@@ -265,7 +265,7 @@ func Test_notifyNewHeadEvent(t *testing.T) {
 		events := notifier.ReceivedEvents()
 		require.Equal(t, 1, len(events))
 
-		eventHead, ok := events[0].Data.(*ethpbv1.EventHead)
+		eventHead, ok := events[0].Data.(*silapbv1.EventHead)
 		require.Equal(t, true, ok)
 		// DependentRoot(0) returns zero hash since the forkchoice tree is sparse.
 		// The fix ensures it falls back to originBlockRoot instead of sending zeros.
@@ -290,8 +290,8 @@ func TestRetrieveHead_ReadOnly(t *testing.T) {
 	newHeadSignedBlock := util.NewBeaconBlock()
 	newHeadSignedBlock.Block.Slot = 1
 	newHeadBlock := newHeadSignedBlock.Block
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 
 	wsb := util.SaveBlock(t, t.Context(), service.cfg.BeaconDB, newHeadSignedBlock)
 	newRoot, err := newHeadBlock.HashTreeRoot()
@@ -306,7 +306,7 @@ func TestRetrieveHead_ReadOnly(t *testing.T) {
 	headState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, headState.SetSlot(1))
-	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(t.Context(), &ethpb.StateSummary{Slot: 1, Root: newRoot[:]}))
+	require.NoError(t, service.cfg.BeaconDB.SaveStateSummary(t.Context(), &silapb.StateSummary{Slot: 1, Root: newRoot[:]}))
 	require.NoError(t, service.cfg.BeaconDB.SaveState(t.Context(), headState, newRoot))
 	require.NoError(t, service.saveHead(t.Context(), newRoot, wsb, headState, false))
 
@@ -356,10 +356,10 @@ func TestSaveOrphanedAtts(t *testing.T) {
 	blk4.Block.ParentRoot = rG[:]
 	r4, err := blk4.Block.HashTreeRoot()
 	require.NoError(t, err)
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 
-	for _, blk := range []*ethpb.SignedBeaconBlock{blkG, blk1, blk2, blk3, blk4} {
+	for _, blk := range []*silapb.SignedBeaconBlock{blkG, blk1, blk2, blk3, blk4} {
 		r, err := blk.Block.HashTreeRoot()
 		require.NoError(t, err)
 		state, blkRoot, err := prepareForkchoiceState(ctx, blk.Block.Slot, r, bytesutil.ToBytes32(blk.Block.ParentRoot), [32]byte{}, ojc, ofc)
@@ -370,7 +370,7 @@ func TestSaveOrphanedAtts(t *testing.T) {
 
 	require.NoError(t, service.saveOrphanedOperations(ctx, r3, r4))
 	require.Equal(t, 3, service.cfg.AttPool.AggregatedAttestationCount())
-	wantAtts := []ethpb.Att{
+	wantAtts := []silapb.Att{
 		blk3.Block.Body.Attestations[0],
 		blk2.Block.Body.Attestations[0],
 		blk1.Block.Body.Attestations[0],
@@ -422,10 +422,10 @@ func TestSaveOrphanedAttsElectra(t *testing.T) {
 	blk4.Block.ParentRoot = rG[:]
 	r4, err := blk4.Block.HashTreeRoot()
 	require.NoError(t, err)
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 
-	for _, blk := range []*ethpb.SignedBeaconBlockElectra{blkG, blk1, blk2, blk3, blk4} {
+	for _, blk := range []*silapb.SignedBeaconBlockElectra{blkG, blk1, blk2, blk3, blk4} {
 		r, err := blk.Block.HashTreeRoot()
 		require.NoError(t, err)
 		state, blkRoot, err := prepareForkchoiceState(ctx, blk.Block.Slot, r, bytesutil.ToBytes32(blk.Block.ParentRoot), [32]byte{}, ojc, ofc)
@@ -436,7 +436,7 @@ func TestSaveOrphanedAttsElectra(t *testing.T) {
 
 	require.NoError(t, service.saveOrphanedOperations(ctx, r3, r4))
 	require.Equal(t, 3, len(service.cfg.AttPool.BlockAttestations()))
-	wantAtts := []ethpb.Att{
+	wantAtts := []silapb.Att{
 		blk3.Block.Body.Attestations[0],
 		blk2.Block.Body.Attestations[0],
 		blk1.Block.Body.Attestations[0],
@@ -499,10 +499,10 @@ func TestSaveOrphanedOps(t *testing.T) {
 	blk4.Block.ParentRoot = rG[:]
 	r4, err := blk4.Block.HashTreeRoot()
 	require.NoError(t, err)
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 
-	for _, blk := range []*ethpb.SignedBeaconBlock{blkG, blk1, blk2, blk3, blk4} {
+	for _, blk := range []*silapb.SignedBeaconBlock{blkG, blk1, blk2, blk3, blk4} {
 		r, err := blk.Block.HashTreeRoot()
 		require.NoError(t, err)
 		state, blkRoot, err := prepareForkchoiceState(ctx, blk.Block.Slot, r, bytesutil.ToBytes32(blk.Block.ParentRoot), [32]byte{}, ojc, ofc)
@@ -513,7 +513,7 @@ func TestSaveOrphanedOps(t *testing.T) {
 
 	require.NoError(t, service.saveOrphanedOperations(ctx, r3, r4))
 	require.Equal(t, 3, service.cfg.AttPool.AggregatedAttestationCount())
-	wantAtts := []ethpb.Att{
+	wantAtts := []silapb.Att{
 		blk3.Block.Body.Attestations[0],
 		blk2.Block.Body.Attestations[0],
 		blk1.Block.Body.Attestations[0],
@@ -569,10 +569,10 @@ func TestSaveOrphanedAtts_CanFilter(t *testing.T) {
 	blk4.Block.ParentRoot = rG[:]
 	r4, err := blk4.Block.HashTreeRoot()
 	require.NoError(t, err)
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 
-	for _, blk := range []*ethpb.SignedBeaconBlockCapella{blkG, blk1, blk2, blk4} {
+	for _, blk := range []*silapb.SignedBeaconBlockCapella{blkG, blk1, blk2, blk4} {
 		r, err := blk.Block.HashTreeRoot()
 		require.NoError(t, err)
 		state, blkRoot, err := prepareForkchoiceState(ctx, blk.Block.Slot, r, bytesutil.ToBytes32(blk.Block.ParentRoot), [32]byte{}, ojc, ofc)
@@ -628,9 +628,9 @@ func TestSaveOrphanedAtts_DoublyLinkedTrie(t *testing.T) {
 	r4, err := blk4.Block.HashTreeRoot()
 	require.NoError(t, err)
 
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	for _, blk := range []*ethpb.SignedBeaconBlock{blkG, blk1, blk2, blk3, blk4} {
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	for _, blk := range []*silapb.SignedBeaconBlock{blkG, blk1, blk2, blk3, blk4} {
 		r, err := blk.Block.HashTreeRoot()
 		require.NoError(t, err)
 		state, blkRoot, err := prepareForkchoiceState(ctx, blk.Block.Slot, r, bytesutil.ToBytes32(blk.Block.ParentRoot), [32]byte{}, ojc, ofc)
@@ -641,7 +641,7 @@ func TestSaveOrphanedAtts_DoublyLinkedTrie(t *testing.T) {
 
 	require.NoError(t, service.saveOrphanedOperations(ctx, r3, r4))
 	require.Equal(t, 3, service.cfg.AttPool.AggregatedAttestationCount())
-	wantAtts := []ethpb.Att{
+	wantAtts := []silapb.Att{
 		blk3.Block.Body.Attestations[0],
 		blk2.Block.Body.Attestations[0],
 		blk1.Block.Body.Attestations[0],
@@ -687,9 +687,9 @@ func TestSaveOrphanedAtts_CanFilter_DoublyLinkedTrie(t *testing.T) {
 	r4, err := blk4.Block.HashTreeRoot()
 	require.NoError(t, err)
 
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	for _, blk := range []*ethpb.SignedBeaconBlock{blkG, blk1, blk2, blk4} {
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	for _, blk := range []*silapb.SignedBeaconBlock{blkG, blk1, blk2, blk4} {
 		r, err := blk.Block.HashTreeRoot()
 		require.NoError(t, err)
 		state, blkRoot, err := prepareForkchoiceState(ctx, blk.Block.Slot, r, bytesutil.ToBytes32(blk.Block.ParentRoot), [32]byte{}, ojc, ofc)
@@ -706,7 +706,7 @@ func TestUpdateHead_noSavedChanges(t *testing.T) {
 	service, tr := minimalTestService(t)
 	ctx, beaconDB, fcs := tr.ctx, tr.db, tr.fcs
 
-	ojp := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojp := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	st, blkRoot, err := prepareForkchoiceState(ctx, 0, [32]byte{}, [32]byte{}, [32]byte{}, ojp, ojp)
 	require.NoError(t, err)
 	require.NoError(t, fcs.InsertNode(ctx, st, blkRoot))
@@ -714,7 +714,7 @@ func TestUpdateHead_noSavedChanges(t *testing.T) {
 	bellatrixBlk := util.SaveBlock(t, ctx, beaconDB, util.NewBeaconBlockBellatrix())
 	bellatrixBlkRoot, err := bellatrixBlk.Block().HashTreeRoot()
 	require.NoError(t, err)
-	fcp := &ethpb.Checkpoint{
+	fcp := &silapb.Checkpoint{
 		Root:  bellatrixBlkRoot[:],
 		Epoch: 0,
 	}

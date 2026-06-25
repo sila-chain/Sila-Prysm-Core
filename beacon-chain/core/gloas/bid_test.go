@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -23,34 +23,34 @@ import (
 )
 
 type stubBlockBody struct {
-	signedBid *ethpb.SignedExecutionPayloadBid
+	signedBid *silapb.SignedExecutionPayloadBid
 }
 
 func (s stubBlockBody) Version() int                                 { return version.Gloas }
 func (s stubBlockBody) RandaoReveal() [96]byte                       { return [96]byte{} }
-func (s stubBlockBody) Eth1Data() *ethpb.Eth1Data                    { return nil }
+func (s stubBlockBody) Eth1Data() *silapb.Eth1Data                    { return nil }
 func (s stubBlockBody) Graffiti() [32]byte                           { return [32]byte{} }
-func (s stubBlockBody) ProposerSlashings() []*ethpb.ProposerSlashing { return nil }
-func (s stubBlockBody) AttesterSlashings() []ethpb.AttSlashing       { return nil }
-func (s stubBlockBody) Attestations() []ethpb.Att                    { return nil }
-func (s stubBlockBody) Deposits() []*ethpb.Deposit                   { return nil }
-func (s stubBlockBody) VoluntaryExits() []*ethpb.SignedVoluntaryExit { return nil }
-func (s stubBlockBody) SyncAggregate() (*ethpb.SyncAggregate, error) { return nil, nil }
+func (s stubBlockBody) ProposerSlashings() []*silapb.ProposerSlashing { return nil }
+func (s stubBlockBody) AttesterSlashings() []silapb.AttSlashing       { return nil }
+func (s stubBlockBody) Attestations() []silapb.Att                    { return nil }
+func (s stubBlockBody) Deposits() []*silapb.Deposit                   { return nil }
+func (s stubBlockBody) VoluntaryExits() []*silapb.SignedVoluntaryExit { return nil }
+func (s stubBlockBody) SyncAggregate() (*silapb.SyncAggregate, error) { return nil, nil }
 func (s stubBlockBody) IsNil() bool                                  { return s.signedBid == nil }
 func (s stubBlockBody) HashTreeRoot() ([32]byte, error)              { return [32]byte{}, nil }
 func (s stubBlockBody) Proto() (proto.Message, error)                { return nil, nil }
 func (s stubBlockBody) Execution() (interfaces.ExecutionData, error) { return nil, nil }
-func (s stubBlockBody) BLSToExecutionChanges() ([]*ethpb.SignedBLSToExecutionChange, error) {
+func (s stubBlockBody) BLSToExecutionChanges() ([]*silapb.SignedBLSToExecutionChange, error) {
 	return nil, nil
 }
 func (s stubBlockBody) BlobKzgCommitments() ([][]byte, error) { return nil, nil }
 func (s stubBlockBody) ExecutionRequests() (*enginev1.ExecutionRequests, error) {
 	return nil, nil
 }
-func (s stubBlockBody) PayloadAttestations() ([]*ethpb.PayloadAttestation, error) {
+func (s stubBlockBody) PayloadAttestations() ([]*silapb.PayloadAttestation, error) {
 	return nil, nil
 }
-func (s stubBlockBody) SignedExecutionPayloadBid() (*ethpb.SignedExecutionPayloadBid, error) {
+func (s stubBlockBody) SignedExecutionPayloadBid() (*silapb.SignedExecutionPayloadBid, error) {
 	return s.signedBid, nil
 }
 func (s stubBlockBody) ParentExecutionRequests() (*enginev1.ExecutionRequests, error) {
@@ -112,10 +112,10 @@ func buildGloasState(t *testing.T, slot primitives.Slot, proposerIdx primitives.
 	withdrawalCreds[0] = cfg.BuilderWithdrawalPrefixByte
 
 	validatorCount := int(proposerIdx) + 1
-	validators := make([]*ethpb.Validator, validatorCount)
+	validators := make([]*silapb.Validator, validatorCount)
 	balances := make([]uint64, validatorCount)
 	for i := range validatorCount {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:                  builderPubkey[:],
 			WithdrawalCredentials:      withdrawalCreds,
 			EffectiveBalance:           balance,
@@ -128,16 +128,16 @@ func buildGloasState(t *testing.T, slot primitives.Slot, proposerIdx primitives.
 		balances[i] = balance
 	}
 
-	payments := make([]*ethpb.BuilderPendingPayment, cfg.SlotsPerEpoch*2)
+	payments := make([]*silapb.BuilderPendingPayment, cfg.SlotsPerEpoch*2)
 	for i := range payments {
-		payments[i] = &ethpb.BuilderPendingPayment{Withdrawal: &ethpb.BuilderPendingWithdrawal{}}
+		payments[i] = &silapb.BuilderPendingPayment{Withdrawal: &silapb.BuilderPendingWithdrawal{}}
 	}
 
-	var builders []*ethpb.Builder
+	var builders []*silapb.Builder
 	if builderIdx != params.BeaconConfig().BuilderIndexSelfBuild {
 		builderCount := int(builderIdx) + 1
-		builders = make([]*ethpb.Builder, builderCount)
-		builders[builderCount-1] = &ethpb.Builder{
+		builders = make([]*silapb.Builder, builderCount)
+		builders[builderCount-1] = &silapb.Builder{
 			Pubkey:            builderPubkey[:],
 			Version:           []byte{0},
 			ExecutionAddress:  bytes.Repeat([]byte{0x01}, 20),
@@ -147,10 +147,10 @@ func buildGloasState(t *testing.T, slot primitives.Slot, proposerIdx primitives.
 		}
 	}
 
-	stProto := &ethpb.BeaconStateGloas{
+	stProto := &silapb.BeaconStateGloas{
 		Slot:                  slot,
 		GenesisValidatorsRoot: bytes.Repeat([]byte{0x11}, 32),
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			CurrentVersion:  bytes.Repeat([]byte{0x22}, 4),
 			PreviousVersion: bytes.Repeat([]byte{0x22}, 4),
 			Epoch:           0,
@@ -162,9 +162,9 @@ func buildGloasState(t *testing.T, slot primitives.Slot, proposerIdx primitives.
 		Balances:                  balances,
 		LatestBlockHash:           latestHash[:],
 		BuilderPendingPayments:    payments,
-		BuilderPendingWithdrawals: []*ethpb.BuilderPendingWithdrawal{},
+		BuilderPendingWithdrawals: []*silapb.BuilderPendingWithdrawal{},
 		Builders:                  builders,
-		FinalizedCheckpoint: &ethpb.Checkpoint{
+		FinalizedCheckpoint: &silapb.Checkpoint{
 			Epoch: 1,
 		},
 	}
@@ -174,7 +174,7 @@ func buildGloasState(t *testing.T, slot primitives.Slot, proposerIdx primitives.
 	return st.(*state_native.BeaconState)
 }
 
-func signBid(t *testing.T, sk common.SecretKey, bid *ethpb.ExecutionPayloadBid, fork *ethpb.Fork, genesisRoot [32]byte) [96]byte {
+func signBid(t *testing.T, sk common.SecretKey, bid *silapb.ExecutionPayloadBid, fork *silapb.Fork, genesisRoot [32]byte) [96]byte {
 	t.Helper()
 	epoch := slots.ToEpoch(primitives.Slot(bid.Slot))
 	domain, err := signing.Domain(fork, epoch, params.BeaconConfig().DomainBeaconBuilder, genesisRoot[:])
@@ -218,7 +218,7 @@ func TestProcessExecutionPayloadBid_SelfBuildSuccess(t *testing.T) {
 	pubKey := [48]byte{}
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinActivationBalance+1000, randao, latestHash, pubKey)
 
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       latestHash[:],
 		ParentBlockRoot:       bytes.Repeat([]byte{0xCC}, 32),
 		BlockHash:             bytes.Repeat([]byte{0xDD}, 32),
@@ -232,7 +232,7 @@ func TestProcessExecutionPayloadBid_SelfBuildSuccess(t *testing.T) {
 		FeeRecipient:          bytes.Repeat([]byte{0xFF}, 20),
 		ExecutionRequestsRoot: make([]byte, 32),
 	}
-	signed := &ethpb.SignedExecutionPayloadBid{
+	signed := &silapb.SignedExecutionPayloadBid{
 		Message:   bid,
 		Signature: common.InfiniteSignature[:],
 	}
@@ -247,7 +247,7 @@ func TestProcessExecutionPayloadBid_SelfBuildSuccess(t *testing.T) {
 
 	require.NoError(t, ProcessExecutionPayloadBid(state, block))
 
-	stateProto, ok := state.ToProto().(*ethpb.BeaconStateGloas)
+	stateProto, ok := state.ToProto().(*silapb.BeaconStateGloas)
 	require.Equal(t, true, ok)
 	slotIndex := params.BeaconConfig().SlotsPerEpoch + (slot % params.BeaconConfig().SlotsPerEpoch)
 	require.Equal(t, primitives.Gwei(0), stateProto.BuilderPendingPayments[slotIndex].Withdrawal.Amount)
@@ -261,7 +261,7 @@ func TestProcessExecutionPayloadBid_SelfBuildNonZeroAmountFails(t *testing.T) {
 	latestHash := [32]byte{1}
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinActivationBalance+1000, randao, latestHash, [48]byte{})
 
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       latestHash[:],
 		ParentBlockRoot:       bytes.Repeat([]byte{0xAA}, 32),
 		BlockHash:             bytes.Repeat([]byte{0xBB}, 32),
@@ -274,7 +274,7 @@ func TestProcessExecutionPayloadBid_SelfBuildNonZeroAmountFails(t *testing.T) {
 		FeeRecipient:          bytes.Repeat([]byte{0xDD}, 20),
 		ExecutionRequestsRoot: make([]byte, 32),
 	}
-	signed := &ethpb.SignedExecutionPayloadBid{
+	signed := &silapb.SignedExecutionPayloadBid{
 		Message:   bid,
 		Signature: common.InfiniteSignature[:],
 	}
@@ -306,7 +306,7 @@ func TestProcessExecutionPayloadBid_PendingPaymentAndCacheBid(t *testing.T) {
 	balance := params.BeaconConfig().MinActivationBalance + 1_000_000
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, balance, randao, latestHash, pubKey)
 
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       latestHash[:],
 		ParentBlockRoot:       bytes.Repeat([]byte{0xCC}, 32),
 		BlockHash:             bytes.Repeat([]byte{0xDD}, 32),
@@ -323,7 +323,7 @@ func TestProcessExecutionPayloadBid_PendingPaymentAndCacheBid(t *testing.T) {
 
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
-	signed := &ethpb.SignedExecutionPayloadBid{
+	signed := &silapb.SignedExecutionPayloadBid{
 		Message:   bid,
 		Signature: sig[:],
 	}
@@ -338,7 +338,7 @@ func TestProcessExecutionPayloadBid_PendingPaymentAndCacheBid(t *testing.T) {
 
 	require.NoError(t, ProcessExecutionPayloadBid(state, block))
 
-	stateProto, ok := state.ToProto().(*ethpb.BeaconStateGloas)
+	stateProto, ok := state.ToProto().(*silapb.BeaconStateGloas)
 	require.Equal(t, true, ok)
 	slotIndex := params.BeaconConfig().SlotsPerEpoch + (slot % params.BeaconConfig().SlotsPerEpoch)
 	require.Equal(t, primitives.Gwei(500_000), stateProto.BuilderPendingPayments[slotIndex].Withdrawal.Amount)
@@ -362,13 +362,13 @@ func TestProcessExecutionPayloadBid_BuilderNotActive(t *testing.T) {
 
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinDepositAmount+1000, randao, latestHash, pubKey)
 	// Make builder inactive by setting withdrawable_epoch.
-	stateProto := state.ToProto().(*ethpb.BeaconStateGloas)
+	stateProto := state.ToProto().(*silapb.BeaconStateGloas)
 	stateProto.Builders[int(builderIdx)].WithdrawableEpoch = 0
 	stateIface, err := state_native.InitializeFromProtoGloas(stateProto)
 	require.NoError(t, err)
 	state = stateIface.(*state_native.BeaconState)
 
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       latestHash[:],
 		ParentBlockRoot:       bytes.Repeat([]byte{0x03}, 32),
 		BlockHash:             bytes.Repeat([]byte{0x04}, 32),
@@ -384,7 +384,7 @@ func TestProcessExecutionPayloadBid_BuilderNotActive(t *testing.T) {
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
-	signed := &ethpb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
+	signed := &silapb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
 	block := stubBlock{
 		slot:       slot,
 		proposer:   proposerIdx,
@@ -410,19 +410,19 @@ func TestProcessExecutionPayloadBid_CannotCoverBid(t *testing.T) {
 	copy(pubKey[:], sk.PublicKey().Marshal())
 
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinDepositAmount+10, randao, latestHash, pubKey)
-	stateProto := state.ToProto().(*ethpb.BeaconStateGloas)
+	stateProto := state.ToProto().(*silapb.BeaconStateGloas)
 	// Add pending balances to push below required balance.
-	stateProto.BuilderPendingWithdrawals = []*ethpb.BuilderPendingWithdrawal{
+	stateProto.BuilderPendingWithdrawals = []*silapb.BuilderPendingWithdrawal{
 		{Amount: 15, BuilderIndex: builderIdx},
 	}
-	stateProto.BuilderPendingPayments = []*ethpb.BuilderPendingPayment{
-		{Withdrawal: &ethpb.BuilderPendingWithdrawal{Amount: 20, BuilderIndex: builderIdx}},
+	stateProto.BuilderPendingPayments = []*silapb.BuilderPendingPayment{
+		{Withdrawal: &silapb.BuilderPendingWithdrawal{Amount: 20, BuilderIndex: builderIdx}},
 	}
 	stateIface, err := state_native.InitializeFromProtoGloas(stateProto)
 	require.NoError(t, err)
 	state = stateIface.(*state_native.BeaconState)
 
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       latestHash[:],
 		ParentBlockRoot:       bytes.Repeat([]byte{0xCC}, 32),
 		BlockHash:             bytes.Repeat([]byte{0xDD}, 32),
@@ -438,7 +438,7 @@ func TestProcessExecutionPayloadBid_CannotCoverBid(t *testing.T) {
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
-	signed := &ethpb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
+	signed := &silapb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
 	block := stubBlock{
 		slot:       slot,
 		proposer:   proposerIdx,
@@ -465,7 +465,7 @@ func TestProcessExecutionPayloadBid_InvalidSignature(t *testing.T) {
 
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinDepositAmount+1000, randao, latestHash, pubKey)
 
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       latestHash[:],
 		ParentBlockRoot:       bytes.Repeat([]byte{0xCC}, 32),
 		BlockHash:             bytes.Repeat([]byte{0xDD}, 32),
@@ -481,7 +481,7 @@ func TestProcessExecutionPayloadBid_InvalidSignature(t *testing.T) {
 	}
 	// Use an invalid signature.
 	invalidSig := [96]byte{1}
-	signed := &ethpb.SignedExecutionPayloadBid{Message: bid, Signature: invalidSig[:]}
+	signed := &silapb.SignedExecutionPayloadBid{Message: bid, Signature: invalidSig[:]}
 	block := stubBlock{
 		slot:       slot,
 		proposer:   proposerIdx,
@@ -503,7 +503,7 @@ func TestProcessExecutionPayloadBid_TooManyBlobCommitments(t *testing.T) {
 	pubKey := [48]byte{}
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinActivationBalance+1000, randao, latestHash, pubKey)
 
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       latestHash[:],
 		ParentBlockRoot:       bytes.Repeat([]byte{0xCC}, 32),
 		BlockHash:             bytes.Repeat([]byte{0xDD}, 32),
@@ -514,7 +514,7 @@ func TestProcessExecutionPayloadBid_TooManyBlobCommitments(t *testing.T) {
 		FeeRecipient:          bytes.Repeat([]byte{0xFF}, 20),
 		ExecutionRequestsRoot: make([]byte, 32),
 	}
-	signed := &ethpb.SignedExecutionPayloadBid{
+	signed := &silapb.SignedExecutionPayloadBid{
 		Message:   bid,
 		Signature: common.InfiniteSignature[:],
 	}
@@ -545,7 +545,7 @@ func TestProcessExecutionPayloadBid_SlotMismatch(t *testing.T) {
 
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinDepositAmount+1000, randao, latestHash, pubKey)
 
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       latestHash[:],
 		ParentBlockRoot:       bytes.Repeat([]byte{0xAA}, 32),
 		BlockHash:             bytes.Repeat([]byte{0xBB}, 32),
@@ -561,7 +561,7 @@ func TestProcessExecutionPayloadBid_SlotMismatch(t *testing.T) {
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
-	signed := &ethpb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
+	signed := &silapb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
 	block := stubBlock{
 		slot:       slot,
 		proposer:   proposerIdx,
@@ -588,7 +588,7 @@ func TestProcessExecutionPayloadBid_ParentHashMismatch(t *testing.T) {
 
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinDepositAmount+1000, randao, latestHash, pubKey)
 
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       bytes.Repeat([]byte{0x11}, 32), // mismatch
 		ParentBlockRoot:       bytes.Repeat([]byte{0x22}, 32),
 		BlockHash:             bytes.Repeat([]byte{0x33}, 32),
@@ -604,7 +604,7 @@ func TestProcessExecutionPayloadBid_ParentHashMismatch(t *testing.T) {
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
-	signed := &ethpb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
+	signed := &silapb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
 	block := stubBlock{
 		slot:       slot,
 		proposer:   proposerIdx,
@@ -632,7 +632,7 @@ func TestProcessExecutionPayloadBid_ParentRootMismatch(t *testing.T) {
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinDepositAmount+1000, randao, latestHash, pubKey)
 
 	parentRoot := bytes.Repeat([]byte{0x22}, 32)
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       latestHash[:],
 		ParentBlockRoot:       parentRoot,
 		BlockHash:             bytes.Repeat([]byte{0x33}, 32),
@@ -648,7 +648,7 @@ func TestProcessExecutionPayloadBid_ParentRootMismatch(t *testing.T) {
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
-	signed := &ethpb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
+	signed := &silapb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
 	block := stubBlock{
 		slot:       slot,
 		proposer:   proposerIdx,
@@ -675,7 +675,7 @@ func TestProcessExecutionPayloadBid_PrevRandaoMismatch(t *testing.T) {
 
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinDepositAmount+1000, randao, latestHash, pubKey)
 
-	bid := &ethpb.ExecutionPayloadBid{
+	bid := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       latestHash[:],
 		ParentBlockRoot:       bytes.Repeat([]byte{0x22}, 32),
 		BlockHash:             bytes.Repeat([]byte{0x33}, 32),
@@ -691,7 +691,7 @@ func TestProcessExecutionPayloadBid_PrevRandaoMismatch(t *testing.T) {
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
-	signed := &ethpb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
+	signed := &silapb.SignedExecutionPayloadBid{Message: bid, Signature: sig[:]}
 	block := stubBlock{
 		slot:       slot,
 		proposer:   proposerIdx,

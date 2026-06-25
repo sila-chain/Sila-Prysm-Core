@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/core/peer"
 )
@@ -32,7 +32,7 @@ func (s *Service) validateBlsToExecutionChange(ctx context.Context, pid peer.ID,
 		return pubsub.ValidationReject, err
 	}
 
-	blsChange, ok := m.(*ethpb.SignedBLSToExecutionChange)
+	blsChange, ok := m.(*silapb.SignedBLSToExecutionChange)
 	if !ok {
 		return pubsub.ValidationReject, errWrongMessage
 	}
@@ -54,7 +54,7 @@ func (s *Service) validateBlsToExecutionChange(ctx context.Context, pid peer.ID,
 		return pubsub.ValidationReject, err
 	}
 	// Validate the signature of the message using our batch gossip verifier.
-	sigBatch, err := blocks.BLSChangesSignatureBatch(st, []*ethpb.SignedBLSToExecutionChange{blsChange})
+	sigBatch, err := blocks.BLSChangesSignatureBatch(st, []*silapb.SignedBLSToExecutionChange{blsChange})
 	if err != nil {
 		return pubsub.ValidationReject, err
 	}

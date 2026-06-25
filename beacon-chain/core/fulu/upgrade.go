@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -125,11 +125,11 @@ func ConvertToFulu(beaconState state.BeaconState) (state.BeaconState, error) {
 	if err != nil {
 		return nil, err
 	}
-	s := &ethpb.BeaconStateFulu{
+	s := &silapb.BeaconStateFulu{
 		GenesisTime:           uint64(beaconState.GenesisTime().Unix()),
 		GenesisValidatorsRoot: beaconState.GenesisValidatorsRoot(),
 		Slot:                  beaconState.Slot(),
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: beaconState.Fork().CurrentVersion,
 			CurrentVersion:  params.BeaconConfig().FuluForkVersion,
 			Epoch:           time.CurrentEpoch(beaconState),

@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
 )
@@ -547,7 +547,7 @@ func blobSidecarsFromDataColumnSidecars(roBlock blocks.ROBlock, dataColumnSideca
 		}
 
 		// Build the blob sidecar.
-		blobSidecar := &ethpb.BlobSidecar{
+		blobSidecar := &silapb.BlobSidecar{
 			Index:                    uint64(blobIndex),
 			Blob:                     blob[:],
 			KzgCommitment:            kzgCommitment[:],

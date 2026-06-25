@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -424,12 +424,12 @@ func setHeadState(t *testing.T, headState state.BeaconState, publicKeys [][48]by
 	epoch := primitives.Epoch(1)
 	require.NoError(t, headState.SetSlot(params.BeaconConfig().SlotsPerEpoch.Mul(uint64(epoch+1))))
 	if headState.Version() < version.Altair {
-		atts := make([]*ethpb.PendingAttestation, 3)
+		atts := make([]*silapb.PendingAttestation, 3)
 		for i := range atts {
-			atts[i] = &ethpb.PendingAttestation{
-				Data: &ethpb.AttestationData{
-					Target: &ethpb.Checkpoint{Root: make([]byte, 32)},
-					Source: &ethpb.Checkpoint{Root: make([]byte, 32)},
+			atts[i] = &silapb.PendingAttestation{
+				Data: &silapb.AttestationData{
+					Target: &silapb.Checkpoint{Root: make([]byte, 32)},
+					Source: &silapb.Checkpoint{Root: make([]byte, 32)},
 				},
 				AggregationBits: bitfield.Bitlist{},
 				InclusionDelay:  1,
@@ -443,7 +443,7 @@ func setHeadState(t *testing.T, headState state.BeaconState, publicKeys [][48]by
 	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerEth}
 	require.NoError(t, headState.SetBalances(balances))
 
-	validators := []*ethpb.Validator{
+	validators := []*silapb.Validator{
 		{
 			PublicKey:       publicKeys[0][:],
 			ActivationEpoch: 5,

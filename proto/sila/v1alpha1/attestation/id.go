@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
@@ -24,7 +24,7 @@ const (
 type Id [32]byte
 
 // NewId --
-func NewId(att ethpb.Att, source IdSource) (Id, error) {
+func NewId(att silapb.Att, source IdSource) (Id, error) {
 	if att.IsNil() {
 		return Id{}, errors.New("nil attestation")
 	}

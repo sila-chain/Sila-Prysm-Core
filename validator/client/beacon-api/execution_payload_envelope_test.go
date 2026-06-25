@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -23,8 +23,8 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-func testProtoEnvelope() *ethpb.ExecutionPayloadEnvelope {
-	return &ethpb.ExecutionPayloadEnvelope{
+func testProtoEnvelope() *silapb.ExecutionPayloadEnvelope {
+	return &silapb.ExecutionPayloadEnvelope{
 		Payload: &enginev1.ExecutionPayloadGloas{
 			ParentHash:    bytesutil.PadTo([]byte("parent"), 32),
 			FeeRecipient:  bytesutil.PadTo([]byte("fee"), 20),
@@ -104,7 +104,7 @@ func TestPublishBlindedExecutionPayloadEnvelope(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	signed := &ethpb.SignedExecutionPayloadEnvelope{Message: testProtoEnvelope(), Signature: bytesutil.PadTo([]byte("sig"), 96)}
+	signed := &silapb.SignedExecutionPayloadEnvelope{Message: testProtoEnvelope(), Signature: bytesutil.PadTo([]byte("sig"), 96)}
 	signedBlinded, err := structs.SignedWireBlindedFromFull(signed)
 	require.NoError(t, err)
 	expectedBody, err := signedBlinded.MarshalSSZ()
@@ -132,7 +132,7 @@ func TestPublishBlindedExecutionPayloadEnvelope_JSONFallbackOn406(t *testing.T) 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	signed := &ethpb.SignedExecutionPayloadEnvelope{Message: testProtoEnvelope(), Signature: bytesutil.PadTo([]byte("sig"), 96)}
+	signed := &silapb.SignedExecutionPayloadEnvelope{Message: testProtoEnvelope(), Signature: bytesutil.PadTo([]byte("sig"), 96)}
 	signedBlinded, err := structs.SignedWireBlindedFromFull(signed)
 	require.NoError(t, err)
 	msg, err := structs.BlindedExecutionPayloadEnvelopeFromConsensus(signedBlinded.Message)
@@ -170,14 +170,14 @@ func TestPublishExecutionPayloadEnvelope_StatelessSendsContents(t *testing.T) {
 	defer ctrl.Finish()
 
 	envelope := testProtoEnvelope()
-	signed := &ethpb.SignedExecutionPayloadEnvelope{
+	signed := &silapb.SignedExecutionPayloadEnvelope{
 		Message:   envelope,
 		Signature: bytesutil.PadTo([]byte("sig"), 96),
 	}
 	blob := bytesutil.PadTo([]byte("blob"), 131072)
 	proof := bytesutil.PadTo([]byte("proof"), 48)
 
-	expectedBody, err := (&ethpb.SignedExecutionPayloadEnvelopeContents{
+	expectedBody, err := (&silapb.SignedExecutionPayloadEnvelopeContents{
 		SignedExecutionPayloadEnvelope: signed,
 		KzgProofs:                      [][]byte{proof},
 		Blobs:                          [][]byte{blob},
@@ -209,14 +209,14 @@ func TestPublishExecutionPayloadEnvelope_StatelessSendsContents(t *testing.T) {
 
 	// Cache must be drained after publish.
 	cached, _, _ := client.envelopeCache.peek(primitives.Slot(envelope.Payload.SlotNumber))
-	assert.Equal(t, (*ethpb.ExecutionPayloadEnvelope)(nil), cached)
+	assert.Equal(t, (*silapb.ExecutionPayloadEnvelope)(nil), cached)
 }
 
 func TestPublishExecutionPayloadEnvelope_StatelessCacheMissErrors(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	signed := &ethpb.SignedExecutionPayloadEnvelope{
+	signed := &silapb.SignedExecutionPayloadEnvelope{
 		Message:   testProtoEnvelope(),
 		Signature: bytesutil.PadTo([]byte("sig"), 96),
 	}
@@ -237,7 +237,7 @@ func TestPublishExecutionPayloadEnvelope_Error(t *testing.T) {
 	defer ctrl.Finish()
 
 	envelope := testProtoEnvelope()
-	signed := &ethpb.SignedExecutionPayloadEnvelope{
+	signed := &silapb.SignedExecutionPayloadEnvelope{
 		Message:   envelope,
 		Signature: bytesutil.PadTo([]byte("sig"), 96),
 	}

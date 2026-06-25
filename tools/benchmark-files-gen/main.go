@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/file"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/interop"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/benchmark"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -120,17 +120,17 @@ func generateMarshalledFullStateAndBlock() error {
 		NumAttestations: benchmark.AttestationsPerEpoch / uint64(slotsPerEpoch),
 	}
 
-	var atts []*ethpb.Attestation
+	var atts []*silapb.Attestation
 	for i := slotOffset + 1; i < slotsPerEpoch+slotOffset; i++ {
 		generatedAttsForSlot, err := util.GenerateAttestations(beaconState, privs, attConfig.NumAttestations, i, false)
 		if err != nil {
 			return err
 		}
-		attsForSlot := make([]*ethpb.Attestation, len(generatedAttsForSlot))
+		attsForSlot := make([]*silapb.Attestation, len(generatedAttsForSlot))
 		for j, att := range generatedAttsForSlot {
-			a, ok := att.(*ethpb.Attestation)
+			a, ok := att.(*silapb.Attestation)
 			if !ok {
-				return errors.New("attestation is not of type *ethpb.Attestation")
+				return errors.New("attestation is not of type *silapb.Attestation")
 			}
 			attsForSlot[j] = a
 		}
@@ -238,7 +238,7 @@ func genesisBeaconState() (state.BeaconState, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot read genesis state file")
 	}
-	genesisState := &ethpb.BeaconState{}
+	genesisState := &silapb.BeaconState{}
 	if err := genesisState.UnmarshalSSZ(beaconBytes); err != nil {
 		return nil, errors.Wrap(err, "cannot unmarshal genesis state file")
 	}

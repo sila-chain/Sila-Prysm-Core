@@ -8,7 +8,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	multi_value_slice "github.com/sila-chain/Sila-Consensus-Core/v7/container/multi-value-slice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
@@ -117,7 +117,7 @@ type MultiValueValidators = multi_value_slice.Slice[stateutil.CompactValidator]
 
 // NewMultiValueValidators creates a new slice whose shared items will be populated with input values.
 // It converts the protobuf validators to compact representation internally.
-func NewMultiValueValidators(vals []*ethpb.Validator) *MultiValueValidators {
+func NewMultiValueValidators(vals []*silapb.Validator) *MultiValueValidators {
 	compactVals := stateutil.CompactValidatorsFromProto(vals)
 	mv := &MultiValueValidators{}
 	mv.Init(compactVals)

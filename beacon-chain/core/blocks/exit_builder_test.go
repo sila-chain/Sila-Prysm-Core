@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -38,7 +38,7 @@ func newGloasStateWithBuilder(t *testing.T, builderIndex primitives.BuilderIndex
 
 	cfg := params.BeaconConfig()
 
-	builder := &ethpb.Builder{
+	builder := &silapb.Builder{
 		Pubkey:            priv.PublicKey().Marshal(),
 		WithdrawableEpoch: cfg.FarFutureEpoch,
 		DepositEpoch:      0,
@@ -46,12 +46,12 @@ func newGloasStateWithBuilder(t *testing.T, builderIndex primitives.BuilderIndex
 		ExecutionAddress:  make([]byte, 20),
 	}
 
-	builders := make([]*ethpb.Builder, int(builderIndex)+1)
+	builders := make([]*silapb.Builder, int(builderIndex)+1)
 	for i := range builders {
 		if primitives.BuilderIndex(i) == builderIndex {
 			builders[i] = builder
 		} else {
-			builders[i] = &ethpb.Builder{
+			builders[i] = &silapb.Builder{
 				Pubkey:            make([]byte, 48),
 				WithdrawableEpoch: cfg.FarFutureEpoch,
 				DepositEpoch:      0,
@@ -60,22 +60,22 @@ func newGloasStateWithBuilder(t *testing.T, builderIndex primitives.BuilderIndex
 		}
 	}
 
-	stProto := &ethpb.BeaconStateGloas{
+	stProto := &silapb.BeaconStateGloas{
 		Slot: cfg.SlotsPerEpoch * primitives.Slot(epoch),
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: cfg.FuluForkVersion,
 			CurrentVersion:  cfg.GloasForkVersion,
 			Epoch:           cfg.GloasForkEpoch,
 		},
 		GenesisValidatorsRoot: make([]byte, 32),
-		FinalizedCheckpoint: &ethpb.Checkpoint{
+		FinalizedCheckpoint: &silapb.Checkpoint{
 			Epoch: epoch - 1,
 			Root:  make([]byte, 32),
 		},
-		CurrentJustifiedCheckpoint:  &ethpb.Checkpoint{Root: make([]byte, 32)},
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, 32)},
+		CurrentJustifiedCheckpoint:  &silapb.Checkpoint{Root: make([]byte, 32)},
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, 32)},
 		Builders:                    builders,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{
 				ExitEpoch:       cfg.FarFutureEpoch,
 				ActivationEpoch: 0,
@@ -105,7 +105,7 @@ func newGloasStateWithBuilder(t *testing.T, builderIndex primitives.BuilderIndex
 	return st, priv
 }
 
-func signBuilderExit(t *testing.T, st state.ReadOnlyBeaconState, exit *ethpb.VoluntaryExit, priv bls.SecretKey) *ethpb.SignedVoluntaryExit {
+func signBuilderExit(t *testing.T, st state.ReadOnlyBeaconState, exit *silapb.VoluntaryExit, priv bls.SecretKey) *silapb.SignedVoluntaryExit {
 	t.Helper()
 
 	sb, err := signing.ComputeDomainAndSign(st, exit.Epoch, exit, params.BeaconConfig().DomainVoluntaryExit, priv)
@@ -113,7 +113,7 @@ func signBuilderExit(t *testing.T, st state.ReadOnlyBeaconState, exit *ethpb.Vol
 	sig, err := bls.SignatureFromBytes(sb)
 	require.NoError(t, err)
 
-	return &ethpb.SignedVoluntaryExit{
+	return &silapb.SignedVoluntaryExit{
 		Exit:      exit,
 		Signature: sig.Marshal(),
 	}
@@ -126,7 +126,7 @@ func TestVerifyExitAndSignature_BuilderExit_HappyPath(t *testing.T) {
 	epoch := primitives.Epoch(10)
 	st, priv := newGloasStateWithBuilder(t, builderIndex, epoch)
 
-	exit := &ethpb.VoluntaryExit{
+	exit := &silapb.VoluntaryExit{
 		ValidatorIndex: builderIndex.ToValidatorIndex(),
 		Epoch:          epoch,
 	}
@@ -149,7 +149,7 @@ func TestVerifyExitAndSignature_BuilderNotActive(t *testing.T) {
 	builder.WithdrawableEpoch = 5
 	require.NoError(t, st.UpdateBuilderAtIndex(builderIndex, builder))
 
-	exit := &ethpb.VoluntaryExit{
+	exit := &silapb.VoluntaryExit{
 		ValidatorIndex: builderIndex.ToValidatorIndex(),
 		Epoch:          epoch,
 	}
@@ -167,7 +167,7 @@ func TestVerifyExitAndSignature_BuilderPendingWithdrawal(t *testing.T) {
 	st, priv := newGloasStateWithBuilder(t, builderIndex, epoch)
 
 	// Give the builder a pending withdrawal.
-	require.NoError(t, st.AppendBuilderPendingWithdrawals([]*ethpb.BuilderPendingWithdrawal{
+	require.NoError(t, st.AppendBuilderPendingWithdrawals([]*silapb.BuilderPendingWithdrawal{
 		{
 			BuilderIndex: builderIndex,
 			Amount:       1000,
@@ -175,7 +175,7 @@ func TestVerifyExitAndSignature_BuilderPendingWithdrawal(t *testing.T) {
 		},
 	}))
 
-	exit := &ethpb.VoluntaryExit{
+	exit := &silapb.VoluntaryExit{
 		ValidatorIndex: builderIndex.ToValidatorIndex(),
 		Epoch:          epoch,
 	}
@@ -195,7 +195,7 @@ func TestVerifyExitAndSignature_BuilderBadSignature(t *testing.T) {
 	wrongKey, err := bls.RandKey()
 	require.NoError(t, err)
 
-	exit := &ethpb.VoluntaryExit{
+	exit := &silapb.VoluntaryExit{
 		ValidatorIndex: builderIndex.ToValidatorIndex(),
 		Epoch:          epoch,
 	}
@@ -212,7 +212,7 @@ func TestVerifyExitAndSignature_BuilderExitInFuture(t *testing.T) {
 	epoch := primitives.Epoch(10)
 	st, priv := newGloasStateWithBuilder(t, builderIndex, epoch)
 
-	exit := &ethpb.VoluntaryExit{
+	exit := &silapb.VoluntaryExit{
 		ValidatorIndex: builderIndex.ToValidatorIndex(),
 		Epoch:          epoch + 1, // Future epoch.
 	}
@@ -229,13 +229,13 @@ func TestProcessVoluntaryExits_BuilderExit(t *testing.T) {
 	epoch := primitives.Epoch(10)
 	st, priv := newGloasStateWithBuilder(t, builderIndex, epoch)
 
-	exit := &ethpb.VoluntaryExit{
+	exit := &silapb.VoluntaryExit{
 		ValidatorIndex: builderIndex.ToValidatorIndex(),
 		Epoch:          epoch,
 	}
 	signed := signBuilderExit(t, st, exit, priv)
 
-	newState, err := blocks.ProcessVoluntaryExits(t.Context(), st, []*ethpb.SignedVoluntaryExit{signed}, validators.ExitInformation(st))
+	newState, err := blocks.ProcessVoluntaryExits(t.Context(), st, []*silapb.SignedVoluntaryExit{signed}, validators.ExitInformation(st))
 	require.NoError(t, err)
 
 	// Verify builder's withdrawable epoch was set.
@@ -258,18 +258,18 @@ func TestProcessVoluntaryExits_BuilderExitPreGloas(t *testing.T) {
 	epoch := primitives.Epoch(10)
 	builderIndex := primitives.BuilderIndex(0)
 
-	stProto := &ethpb.BeaconStateFulu{
+	stProto := &silapb.BeaconStateFulu{
 		Slot: cfg.SlotsPerEpoch * primitives.Slot(epoch),
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: cfg.DenebForkVersion,
 			CurrentVersion:  cfg.FuluForkVersion,
 			Epoch:           cfg.FuluForkEpoch,
 		},
 		GenesisValidatorsRoot:       make([]byte, 32),
-		FinalizedCheckpoint:         &ethpb.Checkpoint{Root: make([]byte, 32)},
-		CurrentJustifiedCheckpoint:  &ethpb.Checkpoint{Root: make([]byte, 32)},
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, 32)},
-		Validators: []*ethpb.Validator{
+		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, 32)},
+		CurrentJustifiedCheckpoint:  &silapb.Checkpoint{Root: make([]byte, 32)},
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, 32)},
+		Validators: []*silapb.Validator{
 			{ExitEpoch: cfg.FarFutureEpoch, ActivationEpoch: 0, PublicKey: make([]byte, 48)},
 		},
 		Balances:    []uint64{32_000_000_000},
@@ -291,8 +291,8 @@ func TestProcessVoluntaryExits_BuilderExitPreGloas(t *testing.T) {
 	st, err := state_native.InitializeFromProtoUnsafeFulu(stProto)
 	require.NoError(t, err)
 
-	signed := &ethpb.SignedVoluntaryExit{
-		Exit: &ethpb.VoluntaryExit{
+	signed := &silapb.SignedVoluntaryExit{
+		Exit: &silapb.VoluntaryExit{
 			ValidatorIndex: builderIndex.ToValidatorIndex(),
 			Epoch:          epoch,
 		},
@@ -302,6 +302,6 @@ func TestProcessVoluntaryExits_BuilderExitPreGloas(t *testing.T) {
 	// On pre-Gloas state, builder-flagged exits are not routed to the builder path.
 	// ProcessVoluntaryExits treats the builder-flagged index as a regular validator index,
 	// which fails because no such validator exists.
-	_, err = blocks.ProcessVoluntaryExits(t.Context(), st, []*ethpb.SignedVoluntaryExit{signed}, validators.ExitInformation(st))
+	_, err = blocks.ProcessVoluntaryExits(t.Context(), st, []*silapb.SignedVoluntaryExit{signed}, validators.ExitInformation(st))
 	require.ErrorContains(t, "out of bounds", err)
 }

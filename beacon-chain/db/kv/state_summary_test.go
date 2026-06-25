@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -15,7 +15,7 @@ func TestStateSummary_CanSaveRetrieve(t *testing.T) {
 	ctx := t.Context()
 	r1 := bytesutil.ToBytes32([]byte{'A'})
 	r2 := bytesutil.ToBytes32([]byte{'B'})
-	s1 := &ethpb.StateSummary{Slot: 1, Root: r1[:]}
+	s1 := &silapb.StateSummary{Slot: 1, Root: r1[:]}
 
 	// State summary should not exist yet.
 	require.Equal(t, false, db.HasStateSummary(ctx, r1), "State summary should not be saved")
@@ -27,7 +27,7 @@ func TestStateSummary_CanSaveRetrieve(t *testing.T) {
 	assert.DeepEqual(t, s1, saved, "State summary does not equal")
 
 	// Save a new state summary.
-	s2 := &ethpb.StateSummary{Slot: 2, Root: r2[:]}
+	s2 := &silapb.StateSummary{Slot: 2, Root: r2[:]}
 
 	// State summary should not exist yet.
 	require.Equal(t, false, db.HasStateSummary(ctx, r2), "State summary should not be saved")
@@ -42,18 +42,18 @@ func TestStateSummary_CanSaveRetrieve(t *testing.T) {
 func TestStateSummary_CacheToDB(t *testing.T) {
 	db := setupDB(t)
 
-	summaries := make([]*ethpb.StateSummary, stateSummaryCachePruneCount-1)
+	summaries := make([]*silapb.StateSummary, stateSummaryCachePruneCount-1)
 	for i := range summaries {
-		summaries[i] = &ethpb.StateSummary{Slot: primitives.Slot(i), Root: bytesutil.PadTo(bytesutil.Uint64ToBytesLittleEndian(uint64(i)), 32)}
+		summaries[i] = &silapb.StateSummary{Slot: primitives.Slot(i), Root: bytesutil.PadTo(bytesutil.Uint64ToBytesLittleEndian(uint64(i)), 32)}
 	}
 
 	require.NoError(t, db.SaveStateSummaries(t.Context(), summaries))
 	require.Equal(t, db.stateSummaryCache.len(), stateSummaryCachePruneCount-1)
 
-	require.NoError(t, db.SaveStateSummary(t.Context(), &ethpb.StateSummary{Slot: 1000, Root: []byte{'a', 'b'}}))
+	require.NoError(t, db.SaveStateSummary(t.Context(), &silapb.StateSummary{Slot: 1000, Root: []byte{'a', 'b'}}))
 	require.Equal(t, db.stateSummaryCache.len(), stateSummaryCachePruneCount)
 
-	require.NoError(t, db.SaveStateSummary(t.Context(), &ethpb.StateSummary{Slot: 1001, Root: []byte{'c', 'd'}}))
+	require.NoError(t, db.SaveStateSummary(t.Context(), &silapb.StateSummary{Slot: 1001, Root: []byte{'c', 'd'}}))
 	require.Equal(t, db.stateSummaryCache.len(), 1)
 
 	for i := range summaries {
@@ -66,7 +66,7 @@ func TestStateSummary_CanDelete(t *testing.T) {
 	db := setupDB(t)
 	ctx := t.Context()
 	r1 := bytesutil.ToBytes32([]byte{'A'})
-	s1 := &ethpb.StateSummary{Slot: 1, Root: r1[:]}
+	s1 := &silapb.StateSummary{Slot: 1, Root: r1[:]}
 
 	require.Equal(t, false, db.HasStateSummary(ctx, r1), "State summary should not be saved")
 	require.NoError(t, db.SaveStateSummary(ctx, s1))

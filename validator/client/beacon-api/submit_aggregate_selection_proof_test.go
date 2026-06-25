@@ -8,7 +8,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -36,7 +36,7 @@ func TestSubmitAggregateSelectionProof(t *testing.T) {
 	attestationDataRootBytes, err := attestationDataProto.HashTreeRoot()
 	require.NoError(t, err)
 
-	aggregateAttestation := &ethpb.Attestation{
+	aggregateAttestation := &silapb.Attestation{
 		AggregationBits: testhelpers.FillByteSlice(4, 74),
 		Data:            attestationDataProto,
 		Signature:       testhelpers.FillByteSlice(96, 82),
@@ -147,8 +147,8 @@ func TestSubmitAggregateSelectionProof(t *testing.T) {
 			slotSignatureBytes, err := hexutil.Decode(slotSignature)
 			require.NoError(t, err)
 
-			expectedResponse := &ethpb.AggregateSelectionResponse{
-				AggregateAndProof: &ethpb.AggregateAttestationAndProof{
+			expectedResponse := &silapb.AggregateSelectionResponse{
+				AggregateAndProof: &silapb.AggregateAttestationAndProof{
 					AggregatorIndex: primitives.ValidatorIndex(55293),
 					Aggregate:       aggregateAttestation,
 					SelectionProof:  slotSignatureBytes,
@@ -169,7 +169,7 @@ func TestSubmitAggregateSelectionProof(t *testing.T) {
 			if test.committeesAtSlot != 0 {
 				committees = test.committeesAtSlot
 			}
-			actualResponse, err := validatorClient.submitAggregateSelectionProof(ctx, &ethpb.AggregateSelectionRequest{
+			actualResponse, err := validatorClient.submitAggregateSelectionProof(ctx, &silapb.AggregateSelectionRequest{
 				Slot:           slot,
 				CommitteeIndex: committeeIndex,
 				PublicKey:      pubkey,
@@ -204,7 +204,7 @@ func TestSubmitAggregateSelectionProofElectra(t *testing.T) {
 	attestationDataRootBytes, err := attestationDataProto.HashTreeRoot()
 	require.NoError(t, err)
 
-	aggregateAttestation := &ethpb.AttestationElectra{
+	aggregateAttestation := &silapb.AttestationElectra{
 		AggregationBits: testhelpers.FillByteSlice(4, 74),
 		Data:            attestationDataProto,
 		Signature:       testhelpers.FillByteSlice(96, 82),
@@ -316,8 +316,8 @@ func TestSubmitAggregateSelectionProofElectra(t *testing.T) {
 			slotSignatureBytes, err := hexutil.Decode(slotSignature)
 			require.NoError(t, err)
 
-			expectedResponse := &ethpb.AggregateSelectionElectraResponse{
-				AggregateAndProof: &ethpb.AggregateAttestationAndProofElectra{
+			expectedResponse := &silapb.AggregateSelectionElectraResponse{
+				AggregateAndProof: &silapb.AggregateAttestationAndProofElectra{
 					AggregatorIndex: primitives.ValidatorIndex(55293),
 					Aggregate:       aggregateAttestation,
 					SelectionProof:  slotSignatureBytes,
@@ -338,7 +338,7 @@ func TestSubmitAggregateSelectionProofElectra(t *testing.T) {
 			if test.committeesAtSlot != 0 {
 				committees = test.committeesAtSlot
 			}
-			actualResponse, err := validatorClient.submitAggregateSelectionProofElectra(ctx, &ethpb.AggregateSelectionRequest{
+			actualResponse, err := validatorClient.submitAggregateSelectionProofElectra(ctx, &silapb.AggregateSelectionRequest{
 				Slot:           slot,
 				CommitteeIndex: committeeIndex,
 				PublicKey:      pubkey,

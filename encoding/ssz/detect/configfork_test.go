@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -216,7 +216,7 @@ func TestUnmarshalState(t *testing.T) {
 	for _, c := range cases {
 		st, err := stateForVersion(c.version)
 		require.NoError(t, err)
-		require.NoError(t, st.SetFork(&ethpb.Fork{
+		require.NoError(t, st.SetFork(&silapb.Fork{
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  c.forkversion[:],
 			Epoch:           0,
@@ -800,7 +800,7 @@ func TestUnmarshalStateStandalone(t *testing.T) {
 			// Create a state for the specific version
 			originalState, err := stateForVersion(c.version)
 			require.NoError(t, err)
-			require.NoError(t, originalState.SetFork(&ethpb.Fork{
+			require.NoError(t, originalState.SetFork(&silapb.Fork{
 				PreviousVersion: make([]byte, 4),
 				CurrentVersion:  c.forkversion[:],
 				Epoch:           0,

@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -40,7 +40,7 @@ func (s *Service) validateExecutionPayloadBidGossip(ctx context.Context, pid pee
 		return pubsub.ValidationReject, err
 	}
 
-	signedBid, ok := m.(*ethpb.SignedExecutionPayloadBid)
+	signedBid, ok := m.(*silapb.SignedExecutionPayloadBid)
 	if !ok {
 		return pubsub.ValidationReject, errWrongMessage
 	}
@@ -134,7 +134,7 @@ func (s *Service) validateExecutionPayloadBidGossip(ctx context.Context, pid pee
 }
 
 func (s *Service) executionPayloadBidSubscriber(_ context.Context, msg proto.Message) error {
-	signedBid, ok := msg.(*ethpb.SignedExecutionPayloadBid)
+	signedBid, ok := msg.(*silapb.SignedExecutionPayloadBid)
 	if !ok {
 		return errWrongMessage
 	}
@@ -167,6 +167,6 @@ func (s *Service) isHighestExecutionPayloadBid(bid interfaces.ROExecutionPayload
 	return bid.Value() > cached.Message.Value
 }
 
-func (s *Service) setHighestExecutionPayloadBid(signedBid *ethpb.SignedExecutionPayloadBid) {
+func (s *Service) setHighestExecutionPayloadBid(signedBid *silapb.SignedExecutionPayloadBid) {
 	s.highestExecutionPayloadBidCache.SetIfHigher(signedBid)
 }

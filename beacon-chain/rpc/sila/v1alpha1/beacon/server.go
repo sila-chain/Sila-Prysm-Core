@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/core"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // Server defines a server implementation of the gRPC Beacon Chain service,
@@ -43,8 +43,8 @@ type Server struct {
 	AttestationsPool            attestations.Pool
 	SlashingsPool               slashings.PoolManager
 	ChainStartChan              chan time.Time
-	ReceivedAttestationsBuffer  chan *ethpb.Attestation
-	CollectedAttestationsBuffer chan []*ethpb.Attestation
+	ReceivedAttestationsBuffer  chan *silapb.Attestation
+	CollectedAttestationsBuffer chan []*silapb.Attestation
 	StateGen                    stategen.StateManager
 	SyncChecker                 sync.Checker
 	ReplayerBuilder             stategen.ReplayerBuilder

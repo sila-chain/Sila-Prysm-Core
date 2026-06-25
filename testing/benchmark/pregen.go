@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 )
 
@@ -49,7 +49,7 @@ func PreGenState1Epoch() (state.BeaconState, error) {
 	if err != nil {
 		return nil, err
 	}
-	beaconState := &ethpb.BeaconState{}
+	beaconState := &silapb.BeaconState{}
 	if err := beaconState.UnmarshalSSZ(beaconBytes); err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func PreGenstateFullEpochs() (state.BeaconState, error) {
 	if err != nil {
 		return nil, err
 	}
-	beaconState := &ethpb.BeaconState{}
+	beaconState := &silapb.BeaconState{}
 	if err := beaconState.UnmarshalSSZ(beaconBytes); err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func PreGenstateFullEpochs() (state.BeaconState, error) {
 }
 
 // PreGenFullBlock unmarshals the pre-generated signed beacon block containing an epochs worth of attestations and returns it.
-func PreGenFullBlock() (*ethpb.SignedBeaconBlock, error) {
+func PreGenFullBlock() (*silapb.SignedBeaconBlock, error) {
 	path, err := bazel.Runfile(filePath(FullBlockFileName))
 	if err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ func PreGenFullBlock() (*ethpb.SignedBeaconBlock, error) {
 	if err != nil {
 		return nil, err
 	}
-	beaconBlock := &ethpb.SignedBeaconBlock{}
+	beaconBlock := &silapb.SignedBeaconBlock{}
 	if err := beaconBlock.UnmarshalSSZ(blockBytes); err != nil {
 		return nil, err
 	}

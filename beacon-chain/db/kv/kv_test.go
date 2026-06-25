@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/flags"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -147,7 +147,7 @@ func Test_setupBlockStorageType(t *testing.T) {
 		root, err := wrappedBlock.Block().HashTreeRoot()
 		require.NoError(t, err)
 		require.NoError(t, store.SaveBlock(ctx, wrappedBlock))
-		require.NoError(t, store.SaveStateSummary(ctx, &ethpb.StateSummary{Root: root[:]}))
+		require.NoError(t, store.SaveStateSummary(ctx, &silapb.StateSummary{Root: root[:]}))
 		require.NoError(t, store.SaveHeadBlockRoot(ctx, root))
 		retrievedBlk, err := store.Block(ctx, root)
 		require.NoError(t, err)
@@ -168,7 +168,7 @@ func Test_setupBlockStorageType(t *testing.T) {
 		root, err := wrappedBlock.Block().HashTreeRoot()
 		require.NoError(t, err)
 		require.NoError(t, store.SaveBlock(ctx, wrappedBlock))
-		require.NoError(t, store.SaveStateSummary(ctx, &ethpb.StateSummary{Root: root[:]}))
+		require.NoError(t, store.SaveStateSummary(ctx, &silapb.StateSummary{Root: root[:]}))
 		require.NoError(t, store.SaveHeadBlockRoot(ctx, root))
 		retrievedBlk, err := store.Block(ctx, root)
 		require.NoError(t, err)
@@ -191,7 +191,7 @@ func Test_setupBlockStorageType(t *testing.T) {
 		root, err := wrappedBlock.Block().HashTreeRoot()
 		require.NoError(t, err)
 		require.NoError(t, store.SaveBlock(ctx, wrappedBlock))
-		require.NoError(t, store.SaveStateSummary(ctx, &ethpb.StateSummary{Root: root[:]}))
+		require.NoError(t, store.SaveStateSummary(ctx, &silapb.StateSummary{Root: root[:]}))
 		require.NoError(t, store.SaveHeadBlockRoot(ctx, root))
 		retrievedBlk, err := store.Block(ctx, root)
 		require.NoError(t, err)
@@ -257,7 +257,7 @@ func Test_setupBlockStorageType(t *testing.T) {
 		root, err := wrappedBlock.Block().HashTreeRoot()
 		require.NoError(t, err)
 		require.NoError(t, store.SaveBlock(ctx, wrappedBlock))
-		require.NoError(t, store.SaveStateSummary(ctx, &ethpb.StateSummary{Root: root[:]}))
+		require.NoError(t, store.SaveStateSummary(ctx, &silapb.StateSummary{Root: root[:]}))
 		require.NoError(t, store.SaveHeadBlockRoot(ctx, root))
 		retrievedBlk, err := store.Block(ctx, root)
 		require.NoError(t, err)
@@ -301,7 +301,7 @@ func Test_setupBlockStorageType(t *testing.T) {
 		root, err := wrappedBlock.Block().HashTreeRoot()
 		require.NoError(t, err)
 		require.NoError(t, store.SaveBlock(ctx, wrappedBlock))
-		require.NoError(t, store.SaveStateSummary(ctx, &ethpb.StateSummary{Root: root[:]}))
+		require.NoError(t, store.SaveStateSummary(ctx, &silapb.StateSummary{Root: root[:]}))
 		require.NoError(t, store.SaveHeadBlockRoot(ctx, root))
 		retrievedBlk, err := store.Block(ctx, root)
 		require.NoError(t, err)

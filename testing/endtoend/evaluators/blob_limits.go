@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/policies"
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
@@ -48,7 +48,7 @@ var BlobLimitsRespected = e2etypes.Evaluator{
 
 func blobsIncludedInBlocks(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconChainClient(conn)
+	client := silapb.NewBeaconChainClient(conn)
 
 	chainHead, err := client.GetChainHead(context.Background(), &emptypb.Empty{})
 	if err != nil {
@@ -66,7 +66,7 @@ func blobsIncludedInBlocks(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientC
 		return nil
 	}
 
-	req := &ethpb.ListBlocksRequest{QueryFilter: &ethpb.ListBlocksRequest_Epoch{Epoch: epoch}}
+	req := &silapb.ListBlocksRequest{QueryFilter: &silapb.ListBlocksRequest_Epoch{Epoch: epoch}}
 	blks, err := client.ListBeaconBlocks(context.Background(), req)
 	if err != nil {
 		return errors.Wrap(err, "failed to get blocks from beacon-chain")
@@ -108,8 +108,8 @@ func blobsIncludedInBlocks(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientC
 
 func blobLimitsRespected(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	nodeClient := ethpb.NewNodeClient(conn)
-	beaconClient := ethpb.NewBeaconChainClient(conn)
+	nodeClient := silapb.NewNodeClient(conn)
+	beaconClient := silapb.NewBeaconChainClient(conn)
 
 	genesis, err := nodeClient.GetGenesis(context.Background(), &emptypb.Empty{})
 	if err != nil {
@@ -130,7 +130,7 @@ func blobLimitsRespected(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientCon
 		return nil
 	}
 
-	req := &ethpb.ListBlocksRequest{QueryFilter: &ethpb.ListBlocksRequest_Epoch{Epoch: epochToCheck}}
+	req := &silapb.ListBlocksRequest{QueryFilter: &silapb.ListBlocksRequest_Epoch{Epoch: epochToCheck}}
 	blks, err := beaconClient.ListBeaconBlocks(context.Background(), req)
 	if err != nil {
 		return errors.Wrap(err, "failed to get blocks from beacon-chain")

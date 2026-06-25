@@ -7,15 +7,15 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	v "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/validators"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
-func (vs *Server) getSlashings(ctx context.Context, head state.BeaconState) ([]*ethpb.ProposerSlashing, []ethpb.AttSlashing) {
+func (vs *Server) getSlashings(ctx context.Context, head state.BeaconState) ([]*silapb.ProposerSlashing, []silapb.AttSlashing) {
 	var err error
 	proposerSlashings := vs.SlashingsPool.PendingProposerSlashings(ctx, head, false /*noLimit*/)
 	attSlashings := vs.SlashingsPool.PendingAttesterSlashings(ctx, head, false /*noLimit*/)
-	validProposerSlashings := make([]*ethpb.ProposerSlashing, 0, len(proposerSlashings))
-	validAttSlashings := make([]ethpb.AttSlashing, 0, len(attSlashings))
+	validProposerSlashings := make([]*silapb.ProposerSlashing, 0, len(proposerSlashings))
+	validAttSlashings := make([]silapb.AttSlashing, 0, len(attSlashings))
 	if len(proposerSlashings) == 0 && len(attSlashings) == 0 {
 		return validProposerSlashings, validAttSlashings
 	}

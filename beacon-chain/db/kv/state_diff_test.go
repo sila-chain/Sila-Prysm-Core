@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/math"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -924,7 +924,7 @@ func createState(t *testing.T, slot primitives.Slot, v int) (state.ReadOnlyBeaco
 	case version.Phase0:
 		st, err = util.NewBeaconState()
 		require.NoError(t, err)
-		err = st.SetFork(&ethpb.Fork{
+		err = st.SetFork(&silapb.Fork{
 			PreviousVersion: p.GenesisForkVersion,
 			CurrentVersion:  p.GenesisForkVersion,
 			Epoch:           0,
@@ -933,7 +933,7 @@ func createState(t *testing.T, slot primitives.Slot, v int) (state.ReadOnlyBeaco
 	case version.Altair:
 		st, err = util.NewBeaconStateAltair()
 		require.NoError(t, err)
-		err = st.SetFork(&ethpb.Fork{
+		err = st.SetFork(&silapb.Fork{
 			PreviousVersion: p.GenesisForkVersion,
 			CurrentVersion:  p.AltairForkVersion,
 			Epoch:           p.AltairForkEpoch,
@@ -942,7 +942,7 @@ func createState(t *testing.T, slot primitives.Slot, v int) (state.ReadOnlyBeaco
 	case version.Bellatrix:
 		st, err = util.NewBeaconStateBellatrix()
 		require.NoError(t, err)
-		err = st.SetFork(&ethpb.Fork{
+		err = st.SetFork(&silapb.Fork{
 			PreviousVersion: p.AltairForkVersion,
 			CurrentVersion:  p.BellatrixForkVersion,
 			Epoch:           p.BellatrixForkEpoch,
@@ -951,7 +951,7 @@ func createState(t *testing.T, slot primitives.Slot, v int) (state.ReadOnlyBeaco
 	case version.Capella:
 		st, err = util.NewBeaconStateCapella()
 		require.NoError(t, err)
-		err = st.SetFork(&ethpb.Fork{
+		err = st.SetFork(&silapb.Fork{
 			PreviousVersion: p.BellatrixForkVersion,
 			CurrentVersion:  p.CapellaForkVersion,
 			Epoch:           p.CapellaForkEpoch,
@@ -960,7 +960,7 @@ func createState(t *testing.T, slot primitives.Slot, v int) (state.ReadOnlyBeaco
 	case version.Deneb:
 		st, err = util.NewBeaconStateDeneb()
 		require.NoError(t, err)
-		err = st.SetFork(&ethpb.Fork{
+		err = st.SetFork(&silapb.Fork{
 			PreviousVersion: p.CapellaForkVersion,
 			CurrentVersion:  p.DenebForkVersion,
 			Epoch:           p.DenebForkEpoch,
@@ -969,7 +969,7 @@ func createState(t *testing.T, slot primitives.Slot, v int) (state.ReadOnlyBeaco
 	case version.Electra:
 		st, err = util.NewBeaconStateElectra()
 		require.NoError(t, err)
-		err = st.SetFork(&ethpb.Fork{
+		err = st.SetFork(&silapb.Fork{
 			PreviousVersion: p.DenebForkVersion,
 			CurrentVersion:  p.ElectraForkVersion,
 			Epoch:           p.ElectraForkEpoch,
@@ -978,7 +978,7 @@ func createState(t *testing.T, slot primitives.Slot, v int) (state.ReadOnlyBeaco
 	case version.Fulu:
 		st, err = util.NewBeaconStateFulu()
 		require.NoError(t, err)
-		err = st.SetFork(&ethpb.Fork{
+		err = st.SetFork(&silapb.Fork{
 			PreviousVersion: p.ElectraForkVersion,
 			CurrentVersion:  p.FuluForkVersion,
 			Epoch:           p.FuluForkEpoch,
@@ -987,7 +987,7 @@ func createState(t *testing.T, slot primitives.Slot, v int) (state.ReadOnlyBeaco
 	case version.Gloas:
 		st, err = util.NewBeaconStateGloas()
 		require.NoError(t, err)
-		err = st.SetFork(&ethpb.Fork{
+		err = st.SetFork(&silapb.Fork{
 			PreviousVersion: p.FuluForkVersion,
 			CurrentVersion:  p.GloasForkVersion,
 			Epoch:           p.GloasForkEpoch,

@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -18,7 +18,7 @@ import (
 
 func TestBeaconState_ValidatorAtIndexReadOnly_HandlesNilSlice_Phase0(t *testing.T) {
 	testtmpl.VerifyBeaconStateValidatorAtIndexReadOnlyHandlesNilSlice(t, func() (state.BeaconState, error) {
-		return statenative.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{
+		return statenative.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{
 			Validators: nil,
 		})
 	})
@@ -26,7 +26,7 @@ func TestBeaconState_ValidatorAtIndexReadOnly_HandlesNilSlice_Phase0(t *testing.
 
 func TestBeaconState_ValidatorAtIndexReadOnly_HandlesNilSlice_Altair(t *testing.T) {
 	testtmpl.VerifyBeaconStateValidatorAtIndexReadOnlyHandlesNilSlice(t, func() (state.BeaconState, error) {
-		return statenative.InitializeFromProtoUnsafeAltair(&ethpb.BeaconStateAltair{
+		return statenative.InitializeFromProtoUnsafeAltair(&silapb.BeaconStateAltair{
 			Validators: nil,
 		})
 	})
@@ -34,7 +34,7 @@ func TestBeaconState_ValidatorAtIndexReadOnly_HandlesNilSlice_Altair(t *testing.
 
 func TestBeaconState_ValidatorAtIndexReadOnly_HandlesNilSlice_Bellatrix(t *testing.T) {
 	testtmpl.VerifyBeaconStateValidatorAtIndexReadOnlyHandlesNilSlice(t, func() (state.BeaconState, error) {
-		return statenative.InitializeFromProtoUnsafeBellatrix(&ethpb.BeaconStateBellatrix{
+		return statenative.InitializeFromProtoUnsafeBellatrix(&silapb.BeaconStateBellatrix{
 			Validators: nil,
 		})
 	})
@@ -42,7 +42,7 @@ func TestBeaconState_ValidatorAtIndexReadOnly_HandlesNilSlice_Bellatrix(t *testi
 
 func TestBeaconState_ValidatorAtIndexReadOnly_HandlesNilSlice_Capella(t *testing.T) {
 	testtmpl.VerifyBeaconStateValidatorAtIndexReadOnlyHandlesNilSlice(t, func() (state.BeaconState, error) {
-		return statenative.InitializeFromProtoUnsafeCapella(&ethpb.BeaconStateCapella{
+		return statenative.InitializeFromProtoUnsafeCapella(&silapb.BeaconStateCapella{
 			Validators: nil,
 		})
 	})
@@ -50,7 +50,7 @@ func TestBeaconState_ValidatorAtIndexReadOnly_HandlesNilSlice_Capella(t *testing
 
 func TestBeaconState_ValidatorAtIndexReadOnly_HandlesNilSlice_Deneb(t *testing.T) {
 	testtmpl.VerifyBeaconStateValidatorAtIndexReadOnlyHandlesNilSlice(t, func() (state.BeaconState, error) {
-		return statenative.InitializeFromProtoUnsafeDeneb(&ethpb.BeaconStateDeneb{
+		return statenative.InitializeFromProtoUnsafeDeneb(&silapb.BeaconStateDeneb{
 			Validators: nil,
 		})
 	})
@@ -86,8 +86,8 @@ func TestEffectiveBalanceAtIndex(t *testing.T) {
 }
 
 func TestPendingBalanceToWithdraw(t *testing.T) {
-	pb := &ethpb.BeaconStateElectra{
-		PendingPartialWithdrawals: []*ethpb.PendingPartialWithdrawal{
+	pb := &silapb.BeaconStateElectra{
+		PendingPartialWithdrawals: []*silapb.PendingPartialWithdrawal{
 			{
 				Amount: 100,
 			},
@@ -123,8 +123,8 @@ func TestAggregateKeyFromIndices(t *testing.T) {
 }
 
 func TestHasPendingBalanceToWithdraw(t *testing.T) {
-	pb := &ethpb.BeaconStateElectra{
-		PendingPartialWithdrawals: []*ethpb.PendingPartialWithdrawal{
+	pb := &silapb.BeaconStateElectra{
+		PendingPartialWithdrawals: []*silapb.PendingPartialWithdrawal{
 			{
 				Amount: 100,
 				Index:  1,
@@ -165,12 +165,12 @@ func TestHasPendingBalanceToWithdraw(t *testing.T) {
 func BenchmarkValidatorsReadOnlySeq(b *testing.B) {
 	const n = 2_300_000 // ~ number of validators on mainnet at the time of writing
 
-	vals := make([]*ethpb.Validator, n)
+	vals := make([]*silapb.Validator, n)
 	for i := range vals {
 		pk := make([]byte, 48)
 		wc := make([]byte, 32)
 		pk[0] = byte(i)
-		vals[i] = &ethpb.Validator{
+		vals[i] = &silapb.Validator{
 			PublicKey:             pk,
 			WithdrawalCredentials: wc,
 			EffectiveBalance:      32_000_000_000,
@@ -178,7 +178,7 @@ func BenchmarkValidatorsReadOnlySeq(b *testing.B) {
 			ActivationEpoch:       1,
 		}
 	}
-	st, err := statenative.InitializeFromProtoUnsafeDeneb(&ethpb.BeaconStateDeneb{Validators: vals})
+	st, err := statenative.InitializeFromProtoUnsafeDeneb(&silapb.BeaconStateDeneb{Validators: vals})
 	require.NoError(b, err)
 
 	b.ReportAllocs()
@@ -194,12 +194,12 @@ func BenchmarkValidatorsReadOnlySeq(b *testing.B) {
 func BenchmarkValidatorsReadOnly(b *testing.B) {
 	const n = 2_300_000 // ~ number of validators on mainnet at the time of writing
 
-	vals := make([]*ethpb.Validator, n)
+	vals := make([]*silapb.Validator, n)
 	for i := range vals {
 		pk := make([]byte, 48)
 		wc := make([]byte, 32)
 		pk[0] = byte(i)
-		vals[i] = &ethpb.Validator{
+		vals[i] = &silapb.Validator{
 			PublicKey:             pk,
 			WithdrawalCredentials: wc,
 			EffectiveBalance:      32_000_000_000,
@@ -207,7 +207,7 @@ func BenchmarkValidatorsReadOnly(b *testing.B) {
 			ActivationEpoch:       1,
 		}
 	}
-	st, err := statenative.InitializeFromProtoUnsafeDeneb(&ethpb.BeaconStateDeneb{Validators: vals})
+	st, err := statenative.InitializeFromProtoUnsafeDeneb(&silapb.BeaconStateDeneb{Validators: vals})
 	require.NoError(b, err)
 
 	b.ReportAllocs()

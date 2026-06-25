@@ -7,7 +7,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/interop"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/components"
 	e2e "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/params"
@@ -67,7 +67,7 @@ func valKeyMap() (map[string]bool, error) {
 
 func feeRecipientIsPresent(_ *types.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconChainClient(conn)
+	client := silapb.NewBeaconChainClient(conn)
 	chainHead, err := client.GetChainHead(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		return errors.Wrap(err, "failed to get chain head")
@@ -76,7 +76,7 @@ func feeRecipientIsPresent(_ *types.EvaluationContext, conns ...*grpc.ClientConn
 	if epoch > 0 {
 		epoch--
 	}
-	req := &ethpb.ListBlocksRequest{QueryFilter: &ethpb.ListBlocksRequest_Epoch{Epoch: epoch}}
+	req := &silapb.ListBlocksRequest{QueryFilter: &silapb.ListBlocksRequest_Epoch{Epoch: epoch}}
 	blks, err := client.ListBeaconBlocks(context.Background(), req)
 	if err != nil {
 		return errors.Wrap(err, "failed to list blocks")
@@ -112,8 +112,8 @@ func feeRecipientIsPresent(_ *types.EvaluationContext, conns ...*grpc.ClientConn
 			}
 
 			fr := common.BytesToAddress(payload.FeeRecipient)
-			gvr := &ethpb.GetValidatorRequest{
-				QueryFilter: &ethpb.GetValidatorRequest_Index{
+			gvr := &silapb.GetValidatorRequest{
+				QueryFilter: &silapb.GetValidatorRequest_Index{
 					Index: ctr.GetBellatrixBlock().Block.ProposerIndex,
 				},
 			}

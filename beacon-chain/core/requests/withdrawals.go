@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -195,7 +195,7 @@ func ProcessWithdrawalRequests(ctx context.Context, st state.BeaconState, wrs []
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to add withdrawability delay to exit queue epoch")
 			}
-			if err := st.AppendPendingPartialWithdrawal(&ethpb.PendingPartialWithdrawal{
+			if err := st.AppendPendingPartialWithdrawal(&silapb.PendingPartialWithdrawal{
 				Index:             vIdx,
 				Amount:            toWithdraw,
 				WithdrawableEpoch: withdrawableEpoch,

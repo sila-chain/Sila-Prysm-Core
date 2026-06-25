@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -28,11 +28,11 @@ import (
 )
 
 func TestService_beaconBlockSubscriber(t *testing.T) {
-	pooledAttestations := []*ethpb.Attestation{
+	pooledAttestations := []*silapb.Attestation{
 		// Aggregated.
-		util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b00011111}}),
+		util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b00011111}}),
 		// Unaggregated.
-		util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b00010001}}),
+		util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b00010001}}),
 	}
 
 	type args struct {
@@ -47,7 +47,7 @@ func TestService_beaconBlockSubscriber(t *testing.T) {
 		{
 			name: "invalid block does not remove attestations",
 			args: args{
-				msg: func() *ethpb.SignedBeaconBlock {
+				msg: func() *silapb.SignedBeaconBlock {
 					b := util.NewBeaconBlock()
 					b.Block.Body.Attestations = pooledAttestations
 					return b
@@ -137,9 +137,9 @@ func TestService_BeaconBlockSubscribe_UndefinedEeError(t *testing.T) {
 func TestProcessSidecarsFromExecutionFromBlock(t *testing.T) {
 	t.Run("blobs", func(t *testing.T) {
 		rob, err := blocks.NewROBlob(
-			&ethpb.BlobSidecar{
-				SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-					Header: &ethpb.BeaconBlockHeader{
+			&silapb.BlobSidecar{
+				SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+					Header: &silapb.BeaconBlockHeader{
 						ParentRoot: make([]byte, 32),
 						BodyRoot:   make([]byte, 32),
 						StateRoot:  make([]byte, 32),
@@ -224,9 +224,9 @@ func TestProcessSidecarsFromExecutionFromBlock(t *testing.T) {
 		allColumns := make([]blocks.VerifiedRODataColumn, 128)
 		for i := range allColumns {
 			rod, err := blocks.NewRODataColumn(
-				&ethpb.DataColumnSidecar{
-					SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+				&silapb.DataColumnSidecar{
+					SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							ParentRoot:    make([]byte, 32),
 							BodyRoot:      make([]byte, 32),
 							StateRoot:     make([]byte, 32),
@@ -323,7 +323,7 @@ func TestProcessSidecarsFromExecutionFromBlock(t *testing.T) {
 		allColumns := make([]blocks.VerifiedRODataColumn, 128)
 		for i := range allColumns {
 			gdc, err := blocks.NewRODataColumnGloas(
-				&ethpb.DataColumnSidecarGloas{
+				&silapb.DataColumnSidecarGloas{
 					Index:           uint64(i),
 					Slot:            primitives.Slot(1),
 					BeaconBlockRoot: make([]byte, 32),

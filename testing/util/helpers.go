@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/rand"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/pkg/errors"
@@ -50,18 +50,18 @@ func BlockSignature(
 	// copy the state since we need to process slots
 	bState = bState.Copy()
 	switch b := block.(type) {
-	case *ethpb.BeaconBlock:
-		wsb, err = blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlock{Block: b})
-	case *ethpb.BeaconBlockAltair:
-		wsb, err = blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockAltair{Block: b})
-	case *ethpb.BeaconBlockBellatrix:
-		wsb, err = blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockBellatrix{Block: b})
-	case *ethpb.BeaconBlockCapella:
-		wsb, err = blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockCapella{Block: b})
-	case *ethpb.BeaconBlockDeneb:
-		wsb, err = blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockDeneb{Block: b})
-	case *ethpb.BeaconBlockElectra:
-		wsb, err = blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockElectra{Block: b})
+	case *silapb.BeaconBlock:
+		wsb, err = blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlock{Block: b})
+	case *silapb.BeaconBlockAltair:
+		wsb, err = blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockAltair{Block: b})
+	case *silapb.BeaconBlockBellatrix:
+		wsb, err = blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockBellatrix{Block: b})
+	case *silapb.BeaconBlockCapella:
+		wsb, err = blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockCapella{Block: b})
+	case *silapb.BeaconBlockDeneb:
+		wsb, err = blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockDeneb{Block: b})
+	case *silapb.BeaconBlockElectra:
+		wsb, err = blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockElectra{Block: b})
 	default:
 		return nil, fmt.Errorf("unsupported block type %T", b)
 	}
@@ -74,17 +74,17 @@ func BlockSignature(
 	}
 
 	switch b := block.(type) {
-	case *ethpb.BeaconBlock:
+	case *silapb.BeaconBlock:
 		b.StateRoot = s[:]
-	case *ethpb.BeaconBlockAltair:
+	case *silapb.BeaconBlockAltair:
 		b.StateRoot = s[:]
-	case *ethpb.BeaconBlockBellatrix:
+	case *silapb.BeaconBlockBellatrix:
 		b.StateRoot = s[:]
-	case *ethpb.BeaconBlockCapella:
+	case *silapb.BeaconBlockCapella:
 		b.StateRoot = s[:]
-	case *ethpb.BeaconBlockDeneb:
+	case *silapb.BeaconBlockDeneb:
 		b.StateRoot = s[:]
-	case *ethpb.BeaconBlockElectra:
+	case *silapb.BeaconBlockElectra:
 		b.StateRoot = s[:]
 	}
 
@@ -92,17 +92,17 @@ func BlockSignature(
 	// function deterministic on beacon state slot.
 	var blockSlot primitives.Slot
 	switch b := block.(type) {
-	case *ethpb.BeaconBlock:
+	case *silapb.BeaconBlock:
 		blockSlot = b.Slot
-	case *ethpb.BeaconBlockAltair:
+	case *silapb.BeaconBlockAltair:
 		blockSlot = b.Slot
-	case *ethpb.BeaconBlockBellatrix:
+	case *silapb.BeaconBlockBellatrix:
 		blockSlot = b.Slot
-	case *ethpb.BeaconBlockCapella:
+	case *silapb.BeaconBlockCapella:
 		blockSlot = b.Slot
-	case *ethpb.BeaconBlockDeneb:
+	case *silapb.BeaconBlockDeneb:
 		blockSlot = b.Slot
-	case *ethpb.BeaconBlockElectra:
+	case *silapb.BeaconBlockElectra:
 		blockSlot = b.Slot
 	}
 
@@ -119,17 +119,17 @@ func BlockSignature(
 
 	var blockRoot [32]byte
 	switch b := block.(type) {
-	case *ethpb.BeaconBlock:
+	case *silapb.BeaconBlock:
 		blockRoot, err = signing.ComputeSigningRoot(b, domain)
-	case *ethpb.BeaconBlockAltair:
+	case *silapb.BeaconBlockAltair:
 		blockRoot, err = signing.ComputeSigningRoot(b, domain)
-	case *ethpb.BeaconBlockBellatrix:
+	case *silapb.BeaconBlockBellatrix:
 		blockRoot, err = signing.ComputeSigningRoot(b, domain)
-	case *ethpb.BeaconBlockCapella:
+	case *silapb.BeaconBlockCapella:
 		blockRoot, err = signing.ComputeSigningRoot(b, domain)
-	case *ethpb.BeaconBlockDeneb:
+	case *silapb.BeaconBlockDeneb:
 		blockRoot, err = signing.ComputeSigningRoot(b, domain)
-	case *ethpb.BeaconBlockElectra:
+	case *silapb.BeaconBlockElectra:
 		blockRoot, err = signing.ComputeSigningRoot(b, domain)
 	}
 	if err != nil {

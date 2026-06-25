@@ -2,7 +2,7 @@ package state_native
 
 import (
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // executionPayloadAvailabilityVal returns a copy of the execution payload availability.
@@ -20,12 +20,12 @@ func (b *BeaconState) executionPayloadAvailabilityVal() []byte {
 
 // builderPendingPaymentsVal returns a copy of the builder pending payments.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) builderPendingPaymentsVal() []*ethpb.BuilderPendingPayment {
+func (b *BeaconState) builderPendingPaymentsVal() []*silapb.BuilderPendingPayment {
 	if b.builderPendingPayments == nil {
 		return nil
 	}
 
-	payments := make([]*ethpb.BuilderPendingPayment, len(b.builderPendingPayments))
+	payments := make([]*silapb.BuilderPendingPayment, len(b.builderPendingPayments))
 	for i, payment := range b.builderPendingPayments {
 		payments[i] = payment.Copy()
 	}
@@ -35,12 +35,12 @@ func (b *BeaconState) builderPendingPaymentsVal() []*ethpb.BuilderPendingPayment
 
 // builderPendingWithdrawalsVal returns a copy of the builder pending withdrawals.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) builderPendingWithdrawalsVal() []*ethpb.BuilderPendingWithdrawal {
+func (b *BeaconState) builderPendingWithdrawalsVal() []*silapb.BuilderPendingWithdrawal {
 	if b.builderPendingWithdrawals == nil {
 		return nil
 	}
 
-	withdrawals := make([]*ethpb.BuilderPendingWithdrawal, len(b.builderPendingWithdrawals))
+	withdrawals := make([]*silapb.BuilderPendingWithdrawal, len(b.builderPendingWithdrawals))
 	for i, withdrawal := range b.builderPendingWithdrawals {
 		withdrawals[i] = withdrawal.Copy()
 	}
@@ -50,15 +50,15 @@ func (b *BeaconState) builderPendingWithdrawalsVal() []*ethpb.BuilderPendingWith
 
 // buildersVal returns a copy of the builders registry.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) buildersVal() []*ethpb.Builder {
+func (b *BeaconState) buildersVal() []*silapb.Builder {
 	if b.builders == nil {
 		return nil
 	}
 
-	builders := make([]*ethpb.Builder, len(b.builders))
+	builders := make([]*silapb.Builder, len(b.builders))
 	for i := range builders {
 		builder := b.builders[i]
-		builders[i] = ethpb.CopyBuilder(builder)
+		builders[i] = silapb.CopyBuilder(builder)
 	}
 
 	return builders
@@ -94,6 +94,6 @@ func (b *BeaconState) payloadExpectedWithdrawalsVal() []*enginev1.Withdrawal {
 
 // ptcWindowVal returns a copy of the cached PTC window.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) ptcWindowVal() []*ethpb.PTCs {
-	return ethpb.CopyPTCWindow(b.ptcWindow)
+func (b *BeaconState) ptcWindowVal() []*silapb.PTCs {
+	return silapb.CopyPTCWindow(b.ptcWindow)
 }

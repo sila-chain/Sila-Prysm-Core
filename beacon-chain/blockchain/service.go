@@ -34,7 +34,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -93,7 +93,7 @@ type config struct {
 	AttService               *attestations.Service
 	StateGen                 *stategen.State
 	SlasherAttestationsFeed  *event.Feed
-	WeakSubjectivityCheckpt  *ethpb.Checkpoint
+	WeakSubjectivityCheckpt  *silapb.Checkpoint
 	BlockFetcher             execution.POWBlockFetcher
 	FinalizedStateAtStartUp  state.BeaconState
 	ExecutionEngineCaller    execution.EngineCaller
@@ -366,7 +366,7 @@ func (s *Service) initializeBeaconChain(
 	ctx context.Context,
 	genesisTime time.Time,
 	preGenesisState state.BeaconState,
-	eth1data *ethpb.Eth1Data) (state.BeaconState, error) {
+	eth1data *silapb.Eth1Data) (state.BeaconState, error) {
 	ctx, span := trace.StartSpan(ctx, "beacon-chain.Service.initializeBeaconChain")
 	defer span.End()
 	s.genesisTime = genesisTime.Truncate(time.Second) // Genesis time has a precision of 1 second.

@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -109,7 +109,7 @@ func TestSetExecutionPayloadBid(t *testing.T) {
 func TestSetBuilderPendingPayment(t *testing.T) {
 	t.Run("previous fork returns expected error", func(t *testing.T) {
 		st := &BeaconState{version: version.Fulu}
-		err := st.SetBuilderPendingPayment(0, &ethpb.BuilderPendingPayment{})
+		err := st.SetBuilderPendingPayment(0, &silapb.BuilderPendingPayment{})
 		require.ErrorContains(t, "is not supported", err)
 	})
 
@@ -117,11 +117,11 @@ func TestSetBuilderPendingPayment(t *testing.T) {
 		st := &BeaconState{
 			version:                version.Gloas,
 			dirtyFields:            make(map[types.FieldIndex]bool),
-			builderPendingPayments: make([]*ethpb.BuilderPendingPayment, 2),
+			builderPendingPayments: make([]*silapb.BuilderPendingPayment, 2),
 		}
-		payment := &ethpb.BuilderPendingPayment{
+		payment := &silapb.BuilderPendingPayment{
 			Weight: 2,
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				Amount:       99,
 				BuilderIndex: 1,
 			},
@@ -140,10 +140,10 @@ func TestSetBuilderPendingPayment(t *testing.T) {
 		st := &BeaconState{
 			version:                version.Gloas,
 			dirtyFields:            make(map[types.FieldIndex]bool),
-			builderPendingPayments: make([]*ethpb.BuilderPendingPayment, 1),
+			builderPendingPayments: make([]*silapb.BuilderPendingPayment, 1),
 		}
 
-		err := st.SetBuilderPendingPayment(2, &ethpb.BuilderPendingPayment{})
+		err := st.SetBuilderPendingPayment(2, &silapb.BuilderPendingPayment{})
 
 		require.ErrorContains(t, "out of range", err)
 		require.Equal(t, false, st.dirtyFields[types.BuilderPendingPayments])
@@ -161,11 +161,11 @@ func TestClearBuilderPendingPayment(t *testing.T) {
 		st := &BeaconState{
 			version:                version.Gloas,
 			dirtyFields:            make(map[types.FieldIndex]bool),
-			builderPendingPayments: make([]*ethpb.BuilderPendingPayment, 2),
+			builderPendingPayments: make([]*silapb.BuilderPendingPayment, 2),
 		}
-		st.builderPendingPayments[1] = &ethpb.BuilderPendingPayment{
+		st.builderPendingPayments[1] = &silapb.BuilderPendingPayment{
 			Weight: 2,
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				Amount:       99,
 				BuilderIndex: 1,
 			},
@@ -180,7 +180,7 @@ func TestClearBuilderPendingPayment(t *testing.T) {
 		st := &BeaconState{
 			version:                version.Gloas,
 			dirtyFields:            make(map[types.FieldIndex]bool),
-			builderPendingPayments: make([]*ethpb.BuilderPendingPayment, 1),
+			builderPendingPayments: make([]*silapb.BuilderPendingPayment, 1),
 		}
 
 		err := st.ClearBuilderPendingPayment(2)
@@ -255,13 +255,13 @@ func TestUpdatePendingPaymentWeight(t *testing.T) {
 				slot - 1: rootB,
 			})
 
-			att := &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
+			att := &silapb.Attestation{
+				Data: &silapb.AttestationData{
 					Slot:            slot,
 					CommitteeIndex:  0,
 					BeaconBlockRoot: tt.blockRoot,
-					Source:          &ethpb.Checkpoint{},
-					Target: &ethpb.Checkpoint{
+					Source:          &silapb.Checkpoint{},
+					Target: &silapb.Checkpoint{
 						Epoch: tt.targetEpoch,
 					},
 				},
@@ -285,12 +285,12 @@ func TestUpdatePendingPaymentWeight(t *testing.T) {
 
 func TestRotateBuilderPendingPayments(t *testing.T) {
 	totalPayments := 2 * params.BeaconConfig().SlotsPerEpoch
-	payments := make([]*ethpb.BuilderPendingPayment, totalPayments)
+	payments := make([]*silapb.BuilderPendingPayment, totalPayments)
 	for i := range payments {
 		idx := uint64(i)
-		payments[i] = &ethpb.BuilderPendingPayment{
+		payments[i] = &silapb.BuilderPendingPayment{
 			Weight: primitives.Gwei(idx * 100e9),
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 				Amount:       primitives.Gwei(idx * 1e9),
 				BuilderIndex: primitives.BuilderIndex(idx + 100),
@@ -298,7 +298,7 @@ func TestRotateBuilderPendingPayments(t *testing.T) {
 		}
 	}
 
-	statePb, err := InitializeFromProtoUnsafeGloas(&ethpb.BeaconStateGloas{
+	statePb, err := InitializeFromProtoUnsafeGloas(&silapb.BeaconStateGloas{
 		BuilderPendingPayments: payments,
 	})
 	require.NoError(t, err)
@@ -400,7 +400,7 @@ func TestDecreaseWithdrawalBalances(t *testing.T) {
 				types.Builders: stateutil.NewRef(1),
 			},
 			balancesMultiValue: NewMultiValueBalances([]uint64{100, 200, 300}),
-			builders: []*ethpb.Builder{
+			builders: []*silapb.Builder{
 				{Balance: 1000},
 				{Balance: 50},
 			},
@@ -435,7 +435,7 @@ func TestDecreaseWithdrawalBalances(t *testing.T) {
 			sharedFieldReferences: map[types.FieldIndex]*stateutil.Reference{
 				types.Builders: stateutil.NewRef(1),
 			},
-			builders: []*ethpb.Builder{{Balance: 5}},
+			builders: []*silapb.Builder{{Balance: 5}},
 		}
 
 		err := st.DecreaseWithdrawalBalances([]*enginev1.Withdrawal{
@@ -461,7 +461,7 @@ func TestDequeueBuilderPendingWithdrawals(t *testing.T) {
 			sharedFieldReferences: map[types.FieldIndex]*stateutil.Reference{
 				types.BuilderPendingWithdrawals: stateutil.NewRef(1),
 			},
-			builderPendingWithdrawals: []*ethpb.BuilderPendingWithdrawal{{Amount: 1}},
+			builderPendingWithdrawals: []*silapb.BuilderPendingWithdrawal{{Amount: 1}},
 		}
 
 		err := st.DequeueBuilderPendingWithdrawals(2)
@@ -477,7 +477,7 @@ func TestDequeueBuilderPendingWithdrawals(t *testing.T) {
 			sharedFieldReferences: map[types.FieldIndex]*stateutil.Reference{
 				types.BuilderPendingWithdrawals: stateutil.NewRef(1),
 			},
-			builderPendingWithdrawals: []*ethpb.BuilderPendingWithdrawal{{Amount: 1}},
+			builderPendingWithdrawals: []*silapb.BuilderPendingWithdrawal{{Amount: 1}},
 		}
 
 		require.NoError(t, st.DequeueBuilderPendingWithdrawals(0))
@@ -493,7 +493,7 @@ func TestDequeueBuilderPendingWithdrawals(t *testing.T) {
 			sharedFieldReferences: map[types.FieldIndex]*stateutil.Reference{
 				types.BuilderPendingWithdrawals: stateutil.NewRef(1),
 			},
-			builderPendingWithdrawals: []*ethpb.BuilderPendingWithdrawal{
+			builderPendingWithdrawals: []*silapb.BuilderPendingWithdrawal{
 				{Amount: 1},
 				{Amount: 2},
 				{Amount: 3},
@@ -510,7 +510,7 @@ func TestDequeueBuilderPendingWithdrawals(t *testing.T) {
 
 	t.Run("copy-on-write preserves shared state", func(t *testing.T) {
 		sharedRef := stateutil.NewRef(2)
-		sharedWithdrawals := []*ethpb.BuilderPendingWithdrawal{
+		sharedWithdrawals := []*silapb.BuilderPendingWithdrawal{
 			{Amount: 1},
 			{Amount: 2},
 			{Amount: 3},
@@ -561,13 +561,13 @@ func TestSetNextWithdrawalBuilderIndex(t *testing.T) {
 }
 
 func TestAppendBuilderPendingWithdrawal_CopyOnWrite(t *testing.T) {
-	wd := &ethpb.BuilderPendingWithdrawal{
+	wd := &silapb.BuilderPendingWithdrawal{
 		FeeRecipient: make([]byte, 20),
 		Amount:       1,
 		BuilderIndex: 2,
 	}
-	statePb, err := InitializeFromProtoUnsafeGloas(&ethpb.BeaconStateGloas{
-		BuilderPendingWithdrawals: []*ethpb.BuilderPendingWithdrawal{wd},
+	statePb, err := InitializeFromProtoUnsafeGloas(&silapb.BeaconStateGloas{
+		BuilderPendingWithdrawals: []*silapb.BuilderPendingWithdrawal{wd},
 	})
 	require.NoError(t, err)
 
@@ -577,12 +577,12 @@ func TestAppendBuilderPendingWithdrawal_CopyOnWrite(t *testing.T) {
 	copied := st.Copy().(*BeaconState)
 	require.Equal(t, uint(2), st.sharedFieldReferences[types.BuilderPendingWithdrawals].Refs())
 
-	appended := &ethpb.BuilderPendingWithdrawal{
+	appended := &silapb.BuilderPendingWithdrawal{
 		FeeRecipient: make([]byte, 20),
 		Amount:       4,
 		BuilderIndex: 5,
 	}
-	require.NoError(t, copied.AppendBuilderPendingWithdrawals([]*ethpb.BuilderPendingWithdrawal{appended}))
+	require.NoError(t, copied.AppendBuilderPendingWithdrawals([]*silapb.BuilderPendingWithdrawal{appended}))
 
 	require.Equal(t, 1, len(st.builderPendingWithdrawals))
 	require.Equal(t, 2, len(copied.builderPendingWithdrawals))
@@ -600,12 +600,12 @@ func TestAppendBuilderPendingWithdrawals(t *testing.T) {
 		sharedFieldReferences: map[types.FieldIndex]*stateutil.Reference{
 			types.BuilderPendingWithdrawals: stateutil.NewRef(1),
 		},
-		builderPendingWithdrawals: make([]*ethpb.BuilderPendingWithdrawal, 0),
+		builderPendingWithdrawals: make([]*silapb.BuilderPendingWithdrawal, 0),
 	}
 
-	first := &ethpb.BuilderPendingWithdrawal{Amount: 1}
-	second := &ethpb.BuilderPendingWithdrawal{Amount: 2}
-	require.NoError(t, st.AppendBuilderPendingWithdrawals([]*ethpb.BuilderPendingWithdrawal{first, second}))
+	first := &silapb.BuilderPendingWithdrawal{Amount: 1}
+	second := &silapb.BuilderPendingWithdrawal{Amount: 2}
+	require.NoError(t, st.AppendBuilderPendingWithdrawals([]*silapb.BuilderPendingWithdrawal{first, second}))
 
 	require.Equal(t, 2, len(st.builderPendingWithdrawals))
 	require.DeepEqual(t, first, st.builderPendingWithdrawals[0])
@@ -615,7 +615,7 @@ func TestAppendBuilderPendingWithdrawals(t *testing.T) {
 
 func TestAppendBuilderPendingWithdrawals_UnsupportedVersion(t *testing.T) {
 	st := &BeaconState{version: version.Electra}
-	err := st.AppendBuilderPendingWithdrawals([]*ethpb.BuilderPendingWithdrawal{{}})
+	err := st.AppendBuilderPendingWithdrawals([]*silapb.BuilderPendingWithdrawal{{}})
 	require.ErrorContains(t, "AppendBuilderPendingWithdrawals", err)
 }
 
@@ -674,23 +674,23 @@ func buildGloasStateForPaymentWeightTest(
 		randaoMixes[i] = bytes.Repeat([]byte{0x55}, 32)
 	}
 
-	validator := &ethpb.Validator{
+	validator := &silapb.Validator{
 		PublicKey:             bytes.Repeat([]byte{0x01}, 48),
 		WithdrawalCredentials: append([]byte{cfg.ETH1AddressWithdrawalPrefixByte}, bytes.Repeat([]byte{0x02}, 31)...),
 		EffectiveBalance:      cfg.MinActivationBalance,
 	}
 
-	payments := make([]*ethpb.BuilderPendingPayment, cfg.SlotsPerEpoch*2)
+	payments := make([]*silapb.BuilderPendingPayment, cfg.SlotsPerEpoch*2)
 	for i := range payments {
-		payments[i] = &ethpb.BuilderPendingPayment{
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+		payments[i] = &silapb.BuilderPendingPayment{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 			},
 		}
 	}
-	payments[paymentIdx] = &ethpb.BuilderPendingPayment{
+	payments[paymentIdx] = &silapb.BuilderPendingPayment{
 		Weight: weight,
-		Withdrawal: &ethpb.BuilderPendingWithdrawal{
+		Withdrawal: &silapb.BuilderPendingWithdrawal{
 			FeeRecipient: make([]byte, 20),
 			Amount:       amount,
 		},
@@ -698,19 +698,19 @@ func buildGloasStateForPaymentWeightTest(
 
 	execPayloadAvailability := make([]byte, cfg.SlotsPerHistoricalRoot/8)
 
-	stProto := &ethpb.BeaconStateGloas{
+	stProto := &silapb.BeaconStateGloas{
 		Slot:                         stateSlot,
 		GenesisValidatorsRoot:        bytes.Repeat([]byte{0x33}, 32),
 		BlockRoots:                   blockRoots,
 		StateRoots:                   stateRoots,
 		RandaoMixes:                  randaoMixes,
 		ExecutionPayloadAvailability: execPayloadAvailability,
-		Validators:                   []*ethpb.Validator{validator},
+		Validators:                   []*silapb.Validator{validator},
 		Balances:                     []uint64{cfg.MinActivationBalance},
 		CurrentEpochParticipation:    []byte{0},
 		PreviousEpochParticipation:   []byte{0},
 		BuilderPendingPayments:       payments,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			CurrentVersion:  bytes.Repeat([]byte{0x66}, 4),
 			PreviousVersion: bytes.Repeat([]byte{0x66}, 4),
 			Epoch:           0,
@@ -725,7 +725,7 @@ func buildGloasStateForPaymentWeightTest(
 func newGloasStateWithAvailability(t *testing.T, availability []byte) *BeaconState {
 	t.Helper()
 
-	st, err := InitializeFromProtoUnsafeGloas(&ethpb.BeaconStateGloas{
+	st, err := InitializeFromProtoUnsafeGloas(&silapb.BeaconStateGloas{
 		ExecutionPayloadAvailability: availability,
 	})
 	require.NoError(t, err)
@@ -806,7 +806,7 @@ func TestIncreaseBuilderBalance(t *testing.T) {
 			sharedFieldReferences: map[types.FieldIndex]*stateutil.Reference{
 				types.Builders: stateutil.NewRef(1),
 			},
-			builders: []*ethpb.Builder{},
+			builders: []*silapb.Builder{},
 		}
 
 		err := st.IncreaseBuilderBalance(0, 1)
@@ -821,7 +821,7 @@ func TestIncreaseBuilderBalance(t *testing.T) {
 			sharedFieldReferences: map[types.FieldIndex]*stateutil.Reference{
 				types.Builders: stateutil.NewRef(1),
 			},
-			builders: []*ethpb.Builder{nil},
+			builders: []*silapb.Builder{nil},
 		}
 
 		err := st.IncreaseBuilderBalance(0, 1)
@@ -830,14 +830,14 @@ func TestIncreaseBuilderBalance(t *testing.T) {
 	})
 
 	t.Run("increments and marks dirty", func(t *testing.T) {
-		orig := &ethpb.Builder{Balance: 10}
+		orig := &silapb.Builder{Balance: 10}
 		st := &BeaconState{
 			version:     version.Gloas,
 			dirtyFields: make(map[types.FieldIndex]bool),
 			sharedFieldReferences: map[types.FieldIndex]*stateutil.Reference{
 				types.Builders: stateutil.NewRef(1),
 			},
-			builders: []*ethpb.Builder{orig},
+			builders: []*silapb.Builder{orig},
 		}
 
 		require.NoError(t, st.IncreaseBuilderBalance(0, 5))
@@ -849,9 +849,9 @@ func TestIncreaseBuilderBalance(t *testing.T) {
 }
 
 func TestIncreaseBuilderBalance_CopyOnWrite(t *testing.T) {
-	orig := &ethpb.Builder{Balance: 10}
-	statePb, err := InitializeFromProtoUnsafeGloas(&ethpb.BeaconStateGloas{
-		Builders: []*ethpb.Builder{orig},
+	orig := &silapb.Builder{Balance: 10}
+	statePb, err := InitializeFromProtoUnsafeGloas(&silapb.BeaconStateGloas{
+		Builders: []*silapb.Builder{orig},
 	})
 	require.NoError(t, err)
 
@@ -891,7 +891,7 @@ func TestAddBuilderFromDeposit(t *testing.T) {
 			sharedFieldReferences: map[types.FieldIndex]*stateutil.Reference{
 				types.Builders: stateutil.NewRef(1),
 			},
-			builders: []*ethpb.Builder{
+			builders: []*silapb.Builder{
 				{
 					WithdrawableEpoch: 0,
 					Balance:           0,
@@ -926,7 +926,7 @@ func TestAddBuilderFromDeposit(t *testing.T) {
 			sharedFieldReferences: map[types.FieldIndex]*stateutil.Reference{
 				types.Builders: stateutil.NewRef(1),
 			},
-			builders: []*ethpb.Builder{
+			builders: []*silapb.Builder{
 				{
 					WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
 					Balance:           1,
@@ -949,9 +949,9 @@ func TestAddBuilderFromDeposit_CopyOnWrite(t *testing.T) {
 	copy(wc[:], bytes.Repeat([]byte{0xBB}, 32))
 	wc[0] = 0x42 // version byte
 
-	statePb, err := InitializeFromProtoUnsafeGloas(&ethpb.BeaconStateGloas{
+	statePb, err := InitializeFromProtoUnsafeGloas(&silapb.BeaconStateGloas{
 		Slot: 0,
-		Builders: []*ethpb.Builder{
+		Builders: []*silapb.Builder{
 			{
 				WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
 				Balance:           1,
@@ -984,9 +984,9 @@ func TestOnboardBuildersFromPendingDeposits(t *testing.T) {
 		sk, err := bls.RandKey()
 		require.NoError(t, err)
 		pubkey := sk.PublicKey().Marshal()
-		validator := &ethpb.Validator{PublicKey: pubkey}
+		validator := &silapb.Validator{PublicKey: pubkey}
 		builderCreds := builderWithdrawalCredentials(0xAB)
-		deposit := &ethpb.PendingDeposit{
+		deposit := &silapb.PendingDeposit{
 			PublicKey:             pubkey,
 			WithdrawalCredentials: builderCreds,
 			Amount:                10,
@@ -994,7 +994,7 @@ func TestOnboardBuildersFromPendingDeposits(t *testing.T) {
 			Slot:                  0,
 		}
 
-		st := newGloasState(t, []*ethpb.Validator{validator}, nil, []*ethpb.PendingDeposit{deposit}, 0)
+		st := newGloasState(t, []*silapb.Validator{validator}, nil, []*silapb.PendingDeposit{deposit}, 0)
 		require.NoError(t, st.OnboardBuildersFromPendingDeposits())
 		require.Equal(t, 1, len(st.pendingDeposits))
 		require.Equal(t, 0, len(st.builders))
@@ -1008,7 +1008,7 @@ func TestOnboardBuildersFromPendingDeposits(t *testing.T) {
 		depSlot := primitives.Slot(params.BeaconConfig().SlotsPerEpoch*2 + 1)
 		deposit := newPendingDeposit(t, sk, builderCreds, amount, depSlot, true)
 
-		st := newGloasState(t, nil, nil, []*ethpb.PendingDeposit{deposit}, 0)
+		st := newGloasState(t, nil, nil, []*silapb.PendingDeposit{deposit}, 0)
 		require.NoError(t, st.OnboardBuildersFromPendingDeposits())
 		require.Equal(t, 0, len(st.pendingDeposits))
 		require.Equal(t, 1, len(st.builders))
@@ -1024,7 +1024,7 @@ func TestOnboardBuildersFromPendingDeposits(t *testing.T) {
 		sk, err := bls.RandKey()
 		require.NoError(t, err)
 		pubkey := sk.PublicKey().Marshal()
-		builder := &ethpb.Builder{
+		builder := &silapb.Builder{
 			Pubkey:            pubkey,
 			Balance:           10,
 			WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
@@ -1032,7 +1032,7 @@ func TestOnboardBuildersFromPendingDeposits(t *testing.T) {
 		nonBuilderCreds := nonBuilderWithdrawalCredentials()
 		deposit := newPendingDeposit(t, sk, nonBuilderCreds, 5, 0, false)
 
-		st := newGloasState(t, nil, []*ethpb.Builder{builder}, []*ethpb.PendingDeposit{deposit}, 0)
+		st := newGloasState(t, nil, []*silapb.Builder{builder}, []*silapb.PendingDeposit{deposit}, 0)
 		require.NoError(t, st.OnboardBuildersFromPendingDeposits())
 		require.Equal(t, 0, len(st.pendingDeposits))
 		require.Equal(t, 1, len(st.builders))
@@ -1045,7 +1045,7 @@ func TestOnboardBuildersFromPendingDeposits(t *testing.T) {
 		builderCreds := builderWithdrawalCredentials(0xDD)
 		deposit := newPendingDeposit(t, sk, builderCreds, 10, 0, false)
 
-		st := newGloasState(t, nil, nil, []*ethpb.PendingDeposit{deposit}, 0)
+		st := newGloasState(t, nil, nil, []*silapb.PendingDeposit{deposit}, 0)
 		require.NoError(t, st.OnboardBuildersFromPendingDeposits())
 		require.Equal(t, 0, len(st.pendingDeposits))
 		require.Equal(t, 0, len(st.builders))
@@ -1060,7 +1060,7 @@ func TestOnboardBuildersFromPendingDeposits(t *testing.T) {
 		depositValidator := newPendingDeposit(t, sk, validatorCreds, 5, 0, true)
 		depositBuilder := newPendingDeposit(t, sk, builderCreds, 7, 0, true)
 
-		st := newGloasState(t, nil, nil, []*ethpb.PendingDeposit{depositValidator, depositBuilder}, 0)
+		st := newGloasState(t, nil, nil, []*silapb.PendingDeposit{depositValidator, depositBuilder}, 0)
 		require.NoError(t, st.OnboardBuildersFromPendingDeposits())
 		require.Equal(t, 2, len(st.pendingDeposits))
 		require.Equal(t, 0, len(st.builders))
@@ -1072,7 +1072,7 @@ func TestOnboardBuildersFromPendingDeposits(t *testing.T) {
 		validatorCreds := nonBuilderWithdrawalCredentials()
 		deposit := newPendingDeposit(t, sk, validatorCreds, 5, 0, false)
 
-		st := newGloasState(t, nil, nil, []*ethpb.PendingDeposit{deposit}, 0)
+		st := newGloasState(t, nil, nil, []*silapb.PendingDeposit{deposit}, 0)
 		require.NoError(t, st.OnboardBuildersFromPendingDeposits())
 		require.Equal(t, 1, len(st.pendingDeposits))
 		require.Equal(t, 0, len(st.builders))
@@ -1086,7 +1086,7 @@ func TestOnboardBuildersFromPendingDeposits(t *testing.T) {
 		depositCreate := newPendingDeposit(t, sk, builderCreds, 10, depSlot, true)
 		depositTopUp := newPendingDeposit(t, sk, builderCreds, 5, depSlot, true)
 
-		st := newGloasState(t, nil, nil, []*ethpb.PendingDeposit{depositCreate, depositTopUp}, 0)
+		st := newGloasState(t, nil, nil, []*silapb.PendingDeposit{depositCreate, depositTopUp}, 0)
 		require.NoError(t, st.OnboardBuildersFromPendingDeposits())
 		require.Equal(t, 0, len(st.pendingDeposits))
 		require.Equal(t, 1, len(st.builders))
@@ -1102,7 +1102,7 @@ func TestOnboardBuildersFromPendingDeposits(t *testing.T) {
 		depositInvalidValidator := newPendingDeposit(t, sk, validatorCreds, 5, 0, false)
 		depositBuilder := newPendingDeposit(t, sk, builderCreds, 7, 0, true)
 
-		st := newGloasState(t, nil, nil, []*ethpb.PendingDeposit{depositInvalidValidator, depositBuilder}, 0)
+		st := newGloasState(t, nil, nil, []*silapb.PendingDeposit{depositInvalidValidator, depositBuilder}, 0)
 		require.NoError(t, st.OnboardBuildersFromPendingDeposits())
 		require.Equal(t, 1, len(st.pendingDeposits))
 		require.DeepEqual(t, depositInvalidValidator, st.pendingDeposits[0])
@@ -1113,13 +1113,13 @@ func TestOnboardBuildersFromPendingDeposits(t *testing.T) {
 
 func newGloasState(
 	t *testing.T,
-	validators []*ethpb.Validator,
-	builders []*ethpb.Builder,
-	pendingDeposits []*ethpb.PendingDeposit,
+	validators []*silapb.Validator,
+	builders []*silapb.Builder,
+	pendingDeposits []*silapb.PendingDeposit,
 	slot primitives.Slot,
 ) *BeaconState {
 	t.Helper()
-	statePb, err := InitializeFromProtoUnsafeGloas(&ethpb.BeaconStateGloas{
+	statePb, err := InitializeFromProtoUnsafeGloas(&silapb.BeaconStateGloas{
 		Slot:            slot,
 		Validators:      validators,
 		Builders:        builders,
@@ -1154,13 +1154,13 @@ func newPendingDeposit(
 	amount uint64,
 	slot primitives.Slot,
 	valid bool,
-) *ethpb.PendingDeposit {
+) *silapb.PendingDeposit {
 	t.Helper()
 	signature := make([]byte, fieldparams.BLSSignatureLength)
 	if valid {
 		signature = signDeposit(t, sk, withdrawalCredentials, amount)
 	}
-	return &ethpb.PendingDeposit{
+	return &silapb.PendingDeposit{
 		PublicKey:             sk.PublicKey().Marshal(),
 		WithdrawalCredentials: withdrawalCredentials,
 		Amount:                amount,
@@ -1173,7 +1173,7 @@ func signDeposit(t *testing.T, sk bls.SecretKey, withdrawalCredentials []byte, a
 	t.Helper()
 	domain, err := signing.ComputeDomain(params.BeaconConfig().DomainDeposit, nil, nil)
 	require.NoError(t, err)
-	msg := &ethpb.DepositMessage{
+	msg := &silapb.DepositMessage{
 		PublicKey:             sk.PublicKey().Marshal(),
 		WithdrawalCredentials: withdrawalCredentials,
 		Amount:                amount,

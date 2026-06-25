@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/hdiff"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/math"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	pkgerrors "github.com/pkg/errors"
 	"go.etcd.io/bbolt"
@@ -357,49 +357,49 @@ func addKey(v int, bytes []byte) ([]byte, error) {
 func decodeStateSnapshot(enc []byte) (state.BeaconState, error) {
 	switch {
 	case hasGloasKey(enc):
-		var gloasState ethpb.BeaconStateGloas
+		var gloasState silapb.BeaconStateGloas
 		if err := gloasState.UnmarshalSSZ(enc[len(gloasKey):]); err != nil {
 			return nil, err
 		}
 		return statenative.InitializeFromProtoUnsafeGloas(&gloasState)
 	case hasFuluKey(enc):
-		var fuluState ethpb.BeaconStateFulu
+		var fuluState silapb.BeaconStateFulu
 		if err := fuluState.UnmarshalSSZ(enc[len(fuluKey):]); err != nil {
 			return nil, err
 		}
 		return statenative.InitializeFromProtoUnsafeFulu(&fuluState)
 	case HasElectraKey(enc):
-		var electraState ethpb.BeaconStateElectra
+		var electraState silapb.BeaconStateElectra
 		if err := electraState.UnmarshalSSZ(enc[len(ElectraKey):]); err != nil {
 			return nil, err
 		}
 		return statenative.InitializeFromProtoUnsafeElectra(&electraState)
 	case hasDenebKey(enc):
-		var denebState ethpb.BeaconStateDeneb
+		var denebState silapb.BeaconStateDeneb
 		if err := denebState.UnmarshalSSZ(enc[len(denebKey):]); err != nil {
 			return nil, err
 		}
 		return statenative.InitializeFromProtoUnsafeDeneb(&denebState)
 	case hasCapellaKey(enc):
-		var capellaState ethpb.BeaconStateCapella
+		var capellaState silapb.BeaconStateCapella
 		if err := capellaState.UnmarshalSSZ(enc[len(capellaKey):]); err != nil {
 			return nil, err
 		}
 		return statenative.InitializeFromProtoUnsafeCapella(&capellaState)
 	case hasBellatrixKey(enc):
-		var bellatrixState ethpb.BeaconStateBellatrix
+		var bellatrixState silapb.BeaconStateBellatrix
 		if err := bellatrixState.UnmarshalSSZ(enc[len(bellatrixKey):]); err != nil {
 			return nil, err
 		}
 		return statenative.InitializeFromProtoUnsafeBellatrix(&bellatrixState)
 	case hasAltairKey(enc):
-		var altairState ethpb.BeaconStateAltair
+		var altairState silapb.BeaconStateAltair
 		if err := altairState.UnmarshalSSZ(enc[len(altairKey):]); err != nil {
 			return nil, err
 		}
 		return statenative.InitializeFromProtoUnsafeAltair(&altairState)
 	case hasPhase0Key(enc):
-		var phase0State ethpb.BeaconState
+		var phase0State silapb.BeaconState
 		if err := phase0State.UnmarshalSSZ(enc[len(phase0Key):]); err != nil {
 			return nil, err
 		}

@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -18,7 +18,7 @@ import (
 func TestExecuteStateTransitionNoVerify_FullProcess(t *testing.T) {
 	beaconState, privKeys := util.DeterministicGenesisState(t, 100)
 
-	eth1Data := &ethpb.Eth1Data{
+	eth1Data := &silapb.Eth1Data{
 		DepositCount: 100,
 		DepositRoot:  bytesutil.PadTo([]byte{2}, 32),
 		BlockHash:    make([]byte, 32),
@@ -30,7 +30,7 @@ func TestExecuteStateTransitionNoVerify_FullProcess(t *testing.T) {
 	bh := beaconState.LatestBlockHeader()
 	bh.Slot = beaconState.Slot()
 	require.NoError(t, beaconState.SetLatestBlockHeader(bh))
-	require.NoError(t, beaconState.SetEth1DataVotes([]*ethpb.Eth1Data{eth1Data}))
+	require.NoError(t, beaconState.SetEth1DataVotes([]*silapb.Eth1Data{eth1Data}))
 
 	require.NoError(t, beaconState.SetSlot(beaconState.Slot()+1))
 	epoch := time.CurrentEpoch(beaconState)
@@ -74,7 +74,7 @@ func TestExecuteStateTransitionNoVerify_FullProcess(t *testing.T) {
 func TestExecuteStateTransitionNoVerifySignature_CouldNotVerifyStateRoot(t *testing.T) {
 	beaconState, privKeys := util.DeterministicGenesisState(t, 100)
 
-	eth1Data := &ethpb.Eth1Data{
+	eth1Data := &silapb.Eth1Data{
 		DepositCount: 100,
 		DepositRoot:  bytesutil.PadTo([]byte{2}, 32),
 		BlockHash:    make([]byte, 32),
@@ -86,7 +86,7 @@ func TestExecuteStateTransitionNoVerifySignature_CouldNotVerifyStateRoot(t *test
 	bh := beaconState.LatestBlockHeader()
 	bh.Slot = beaconState.Slot()
 	require.NoError(t, beaconState.SetLatestBlockHeader(bh))
-	require.NoError(t, beaconState.SetEth1DataVotes([]*ethpb.Eth1Data{eth1Data}))
+	require.NoError(t, beaconState.SetEth1DataVotes([]*silapb.Eth1Data{eth1Data}))
 
 	require.NoError(t, beaconState.SetSlot(beaconState.Slot()+1))
 	epoch := time.CurrentEpoch(beaconState)

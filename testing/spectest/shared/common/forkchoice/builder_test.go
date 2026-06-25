@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -38,7 +38,7 @@ func TestPoWBlock(t *testing.T) {
 	blk, err := blocks.NewSignedBeaconBlock(util.NewBeaconBlock())
 	require.NoError(t, err)
 	builder := NewBuilder(t, st, blk)
-	builder.PoWBlock(&ethpb.PowBlock{BlockHash: []byte{1, 2, 3}})
+	builder.PoWBlock(&silapb.PowBlock{BlockHash: []byte{1, 2, 3}})
 
 	require.Equal(t, 1, len(builder.execMock.powBlocks))
 }

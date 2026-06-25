@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -21,13 +21,13 @@ import (
 )
 
 func TestSlashableAttestationData_CanSlash(t *testing.T) {
-	att1 := util.HydrateAttestationData(&ethpb.AttestationData{
-		Target: &ethpb.Checkpoint{Epoch: 1, Root: make([]byte, 32)},
-		Source: &ethpb.Checkpoint{Root: bytesutil.PadTo([]byte{'A'}, 32)},
+	att1 := util.HydrateAttestationData(&silapb.AttestationData{
+		Target: &silapb.Checkpoint{Epoch: 1, Root: make([]byte, 32)},
+		Source: &silapb.Checkpoint{Root: bytesutil.PadTo([]byte{'A'}, 32)},
 	})
-	att2 := util.HydrateAttestationData(&ethpb.AttestationData{
-		Target: &ethpb.Checkpoint{Epoch: 1, Root: make([]byte, 32)},
-		Source: &ethpb.Checkpoint{Root: bytesutil.PadTo([]byte{'B'}, 32)},
+	att2 := util.HydrateAttestationData(&silapb.AttestationData{
+		Target: &silapb.Checkpoint{Epoch: 1, Root: make([]byte, 32)},
+		Source: &silapb.Checkpoint{Root: bytesutil.PadTo([]byte{'B'}, 32)},
 	})
 	assert.Equal(t, true, blocks.IsSlashableAttestationData(att1, att2), "Atts should have been slashable")
 	att1.Target.Epoch = 4
@@ -37,28 +37,28 @@ func TestSlashableAttestationData_CanSlash(t *testing.T) {
 }
 
 func TestProcessAttesterSlashings_DataNotSlashable(t *testing.T) {
-	slashings := []*ethpb.AttesterSlashing{{
-		Attestation_1: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{}),
-		Attestation_2: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
-			Data: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Epoch: 1},
-				Target: &ethpb.Checkpoint{Epoch: 1}},
+	slashings := []*silapb.AttesterSlashing{{
+		Attestation_1: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{}),
+		Attestation_2: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
+			Data: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Epoch: 1},
+				Target: &silapb.Checkpoint{Epoch: 1}},
 		})}}
 
 	currentSlot := primitives.Slot(0)
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-		Validators: []*ethpb.Validator{{}},
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+		Validators: []*silapb.Validator{{}},
 		Slot:       currentSlot,
 	})
 	require.NoError(t, err)
 	b := util.NewBeaconBlock()
-	b.Block = &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
+	b.Block = &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
 			AttesterSlashings: slashings,
 		},
 	}
-	ss := make([]ethpb.AttSlashing, len(b.Block.Body.AttesterSlashings))
+	ss := make([]silapb.AttSlashing, len(b.Block.Body.AttesterSlashings))
 	for i, s := range b.Block.Body.AttesterSlashings {
 		ss[i] = s
 	}
@@ -69,34 +69,34 @@ func TestProcessAttesterSlashings_DataNotSlashable(t *testing.T) {
 func TestProcessAttesterSlashings_IndexedAttestationFailedToVerify(t *testing.T) {
 	currentSlot := primitives.Slot(0)
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-		Validators: []*ethpb.Validator{{}},
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+		Validators: []*silapb.Validator{{}},
 		Slot:       currentSlot,
 	})
 	require.NoError(t, err)
 
-	slashings := []*ethpb.AttesterSlashing{
+	slashings := []*silapb.AttesterSlashing{
 		{
-			Attestation_1: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: 1},
+			Attestation_1: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: 1},
 				},
 				AttestingIndices: make([]uint64, params.BeaconConfig().MaxValidatorsPerCommittee+1),
 			}),
-			Attestation_2: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+			Attestation_2: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 				AttestingIndices: make([]uint64, params.BeaconConfig().MaxValidatorsPerCommittee+1),
 			}),
 		},
 	}
 
 	b := util.NewBeaconBlock()
-	b.Block = &ethpb.BeaconBlock{
-		Body: &ethpb.BeaconBlockBody{
+	b.Block = &silapb.BeaconBlock{
+		Body: &silapb.BeaconBlockBody{
 			AttesterSlashings: slashings,
 		},
 	}
 
-	ss := make([]ethpb.AttSlashing, len(b.Block.Body.AttesterSlashings))
+	ss := make([]silapb.AttSlashing, len(b.Block.Body.AttesterSlashings))
 	for i, s := range b.Block.Body.AttesterSlashings {
 		ss[i] = s
 	}
@@ -112,30 +112,30 @@ func TestProcessAttesterSlashings_AppliesCorrectStatus(t *testing.T) {
 	stateDeneb, keysDeneb := util.DeterministicGenesisStateDeneb(t, 100)
 	stateElectra, keysElectra := util.DeterministicGenesisStateElectra(t, 100)
 
-	att1Phase0 := util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: 1},
+	att1Phase0 := util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: 1},
 		},
 		AttestingIndices: []uint64{0, 1},
 	})
-	att2Phase0 := util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+	att2Phase0 := util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 		AttestingIndices: []uint64{0, 1},
 	})
-	att1Electra := util.HydrateIndexedAttestationElectra(&ethpb.IndexedAttestationElectra{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: 1},
+	att1Electra := util.HydrateIndexedAttestationElectra(&silapb.IndexedAttestationElectra{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: 1},
 		},
 		AttestingIndices: []uint64{0, 1},
 	})
-	att2Electra := util.HydrateIndexedAttestationElectra(&ethpb.IndexedAttestationElectra{
+	att2Electra := util.HydrateIndexedAttestationElectra(&silapb.IndexedAttestationElectra{
 		AttestingIndices: []uint64{0, 1},
 	})
 
-	slashingPhase0 := &ethpb.AttesterSlashing{
+	slashingPhase0 := &silapb.AttesterSlashing{
 		Attestation_1: att1Phase0,
 		Attestation_2: att2Phase0,
 	}
-	slashingElectra := &ethpb.AttesterSlashingElectra{
+	slashingElectra := &silapb.AttesterSlashingElectra{
 		Attestation_1: att1Electra,
 		Attestation_2: att2Electra,
 	}
@@ -144,9 +144,9 @@ func TestProcessAttesterSlashings_AppliesCorrectStatus(t *testing.T) {
 		name           string
 		st             state.BeaconState
 		keys           []bls.SecretKey
-		att1           ethpb.IndexedAtt
-		att2           ethpb.IndexedAtt
-		slashing       ethpb.AttSlashing
+		att1           silapb.IndexedAtt
+		att2           silapb.IndexedAtt
+		slashing       silapb.AttSlashing
 		slashedBalance uint64
 	}
 
@@ -222,9 +222,9 @@ func TestProcessAttesterSlashings_AppliesCorrectStatus(t *testing.T) {
 			aggregateSig := bls.AggregateSignatures([]bls.Signature{sig0, sig1})
 
 			if tc.att1.Version() >= version.Electra {
-				tc.att1.(*ethpb.IndexedAttestationElectra).Signature = aggregateSig.Marshal()
+				tc.att1.(*silapb.IndexedAttestationElectra).Signature = aggregateSig.Marshal()
 			} else {
-				tc.att1.(*ethpb.IndexedAttestation).Signature = aggregateSig.Marshal()
+				tc.att1.(*silapb.IndexedAttestation).Signature = aggregateSig.Marshal()
 			}
 
 			signingRoot, err = signing.ComputeSigningRoot(tc.att2.GetData(), domain)
@@ -234,9 +234,9 @@ func TestProcessAttesterSlashings_AppliesCorrectStatus(t *testing.T) {
 			aggregateSig = bls.AggregateSignatures([]bls.Signature{sig0, sig1})
 
 			if tc.att2.Version() >= version.Electra {
-				tc.att2.(*ethpb.IndexedAttestationElectra).Signature = aggregateSig.Marshal()
+				tc.att2.(*silapb.IndexedAttestationElectra).Signature = aggregateSig.Marshal()
 			} else {
-				tc.att2.(*ethpb.IndexedAttestation).Signature = aggregateSig.Marshal()
+				tc.att2.(*silapb.IndexedAttestation).Signature = aggregateSig.Marshal()
 			}
 
 			currentSlot := 2 * params.BeaconConfig().SlotsPerEpoch
@@ -244,11 +244,11 @@ func TestProcessAttesterSlashings_AppliesCorrectStatus(t *testing.T) {
 
 			// Verify that ProcessAttesterSlashingsNoVerify and ProcessAttesterSlashings have the same outcome.
 			stNoVerify := tc.st.Copy()
-			newStateNoVerify, err := blocks.ProcessAttesterSlashingsNoVerify(t.Context(), stNoVerify, []ethpb.AttSlashing{tc.slashing}, v.ExitInformation(stNoVerify))
+			newStateNoVerify, err := blocks.ProcessAttesterSlashingsNoVerify(t.Context(), stNoVerify, []silapb.AttSlashing{tc.slashing}, v.ExitInformation(stNoVerify))
 			require.NoError(t, err)
 			sszNoVerify, err := newStateNoVerify.MarshalSSZ()
 			require.NoError(t, err)
-			newState, err := blocks.ProcessAttesterSlashings(t.Context(), tc.st, []ethpb.AttSlashing{tc.slashing}, v.ExitInformation(tc.st))
+			newState, err := blocks.ProcessAttesterSlashings(t.Context(), tc.st, []silapb.AttSlashing{tc.slashing}, v.ExitInformation(tc.st))
 			require.NoError(t, err)
 			ssz, err := newState.MarshalSSZ()
 			require.NoError(t, err)
@@ -290,29 +290,29 @@ func TestProcessAttesterSlashing_ExitEpochGetsUpdated(t *testing.T) {
 	vals[3].EffectiveBalance = uint64(perEpochChurn / 3)
 	require.NoError(t, st.SetValidators(vals))
 
-	sl1att1 := util.HydrateIndexedAttestationElectra(&ethpb.IndexedAttestationElectra{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: 1},
+	sl1att1 := util.HydrateIndexedAttestationElectra(&silapb.IndexedAttestationElectra{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: 1},
 		},
 		AttestingIndices: []uint64{0, 1},
 	})
-	sl1att2 := util.HydrateIndexedAttestationElectra(&ethpb.IndexedAttestationElectra{
+	sl1att2 := util.HydrateIndexedAttestationElectra(&silapb.IndexedAttestationElectra{
 		AttestingIndices: []uint64{0, 1},
 	})
-	slashing1 := &ethpb.AttesterSlashingElectra{
+	slashing1 := &silapb.AttesterSlashingElectra{
 		Attestation_1: sl1att1,
 		Attestation_2: sl1att2,
 	}
-	sl2att1 := util.HydrateIndexedAttestationElectra(&ethpb.IndexedAttestationElectra{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: 1},
+	sl2att1 := util.HydrateIndexedAttestationElectra(&silapb.IndexedAttestationElectra{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: 1},
 		},
 		AttestingIndices: []uint64{2, 3},
 	})
-	sl2att2 := util.HydrateIndexedAttestationElectra(&ethpb.IndexedAttestationElectra{
+	sl2att2 := util.HydrateIndexedAttestationElectra(&silapb.IndexedAttestationElectra{
 		AttestingIndices: []uint64{2, 3},
 	})
-	slashing2 := &ethpb.AttesterSlashingElectra{
+	slashing2 := &silapb.AttesterSlashingElectra{
 		Attestation_1: sl2att1,
 		Attestation_2: sl2att2,
 	}
@@ -350,7 +350,7 @@ func TestProcessAttesterSlashing_ExitEpochGetsUpdated(t *testing.T) {
 
 	exitInfo := v.ExitInformation(st)
 	assert.Equal(t, primitives.Epoch(0), exitInfo.HighestExitEpoch)
-	_, err = blocks.ProcessAttesterSlashings(t.Context(), st, []ethpb.AttSlashing{slashing1, slashing2}, exitInfo)
+	_, err = blocks.ProcessAttesterSlashings(t.Context(), st, []silapb.AttSlashing{slashing1, slashing2}, exitInfo)
 	require.NoError(t, err)
 	assert.Equal(t, primitives.Epoch(6), exitInfo.HighestExitEpoch)
 }

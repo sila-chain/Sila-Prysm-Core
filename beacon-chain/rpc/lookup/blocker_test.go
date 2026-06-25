@@ -22,7 +22,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -55,7 +55,7 @@ func TestGetBlock(t *testing.T) {
 	b4.Block.ParentRoot = bytesutil.PadTo([]byte{8}, 32)
 	util.SaveBlock(t, ctx, beaconDB, b4)
 
-	wsb, err := blocks.NewSignedBeaconBlock(headBlock.Block.(*ethpb.BeaconBlockContainer_Phase0Block).Phase0Block)
+	wsb, err := blocks.NewSignedBeaconBlock(headBlock.Block.(*silapb.BeaconBlockContainer_Phase0Block).Phase0Block)
 	require.NoError(t, err)
 
 	fetcher := &BeaconDbBlocker{
@@ -64,8 +64,8 @@ func TestGetBlock(t *testing.T) {
 			DB:                         beaconDB,
 			Block:                      wsb,
 			Root:                       headBlock.BlockRoot,
-			FinalizedCheckPoint:        &ethpb.Checkpoint{Root: blkContainers[64].BlockRoot},
-			CurrentJustifiedCheckPoint: &ethpb.Checkpoint{Root: blkContainers[32].BlockRoot},
+			FinalizedCheckPoint:        &silapb.Checkpoint{Root: blkContainers[64].BlockRoot},
+			CurrentJustifiedCheckPoint: &silapb.Checkpoint{Root: blkContainers[32].BlockRoot},
 			CanonicalRoots:             canonicalRoots,
 		},
 	}
@@ -76,13 +76,13 @@ func TestGetBlock(t *testing.T) {
 	tests := []struct {
 		name    string
 		blockID []byte
-		want    *ethpb.SignedBeaconBlock
+		want    *silapb.SignedBeaconBlock
 		wantErr bool
 	}{
 		{
 			name:    "slot",
 			blockID: []byte("30"),
-			want:    blkContainers[30].Block.(*ethpb.BeaconBlockContainer_Phase0Block).Phase0Block,
+			want:    blkContainers[30].Block.(*silapb.BeaconBlockContainer_Phase0Block).Phase0Block,
 		},
 		{
 			name:    "bad formatting",
@@ -92,7 +92,7 @@ func TestGetBlock(t *testing.T) {
 		{
 			name:    "canonical",
 			blockID: []byte("30"),
-			want:    blkContainers[30].Block.(*ethpb.BeaconBlockContainer_Phase0Block).Phase0Block,
+			want:    blkContainers[30].Block.(*silapb.BeaconBlockContainer_Phase0Block).Phase0Block,
 		},
 		{
 			name:    "non canonical",
@@ -102,17 +102,17 @@ func TestGetBlock(t *testing.T) {
 		{
 			name:    "head",
 			blockID: []byte("head"),
-			want:    headBlock.Block.(*ethpb.BeaconBlockContainer_Phase0Block).Phase0Block,
+			want:    headBlock.Block.(*silapb.BeaconBlockContainer_Phase0Block).Phase0Block,
 		},
 		{
 			name:    "finalized",
 			blockID: []byte("finalized"),
-			want:    blkContainers[64].Block.(*ethpb.BeaconBlockContainer_Phase0Block).Phase0Block,
+			want:    blkContainers[64].Block.(*silapb.BeaconBlockContainer_Phase0Block).Phase0Block,
 		},
 		{
 			name:    "justified",
 			blockID: []byte("justified"),
-			want:    blkContainers[32].Block.(*ethpb.BeaconBlockContainer_Phase0Block).Phase0Block,
+			want:    blkContainers[32].Block.(*silapb.BeaconBlockContainer_Phase0Block).Phase0Block,
 		},
 		{
 			name:    "genesis",
@@ -127,7 +127,7 @@ func TestGetBlock(t *testing.T) {
 		{
 			name:    "root",
 			blockID: blkContainers[20].BlockRoot,
-			want:    blkContainers[20].Block.(*ethpb.BeaconBlockContainer_Phase0Block).Phase0Block,
+			want:    blkContainers[20].Block.(*silapb.BeaconBlockContainer_Phase0Block).Phase0Block,
 		},
 		{
 			name:    "non-existent root",
@@ -137,7 +137,7 @@ func TestGetBlock(t *testing.T) {
 		{
 			name:    "hex",
 			blockID: []byte(hexutil.Encode(blkContainers[20].BlockRoot)),
-			want:    blkContainers[20].Block.(*ethpb.BeaconBlockContainer_Phase0Block).Phase0Block,
+			want:    blkContainers[20].Block.(*silapb.BeaconBlockContainer_Phase0Block).Phase0Block,
 		},
 		{
 			name:    "no block",
@@ -159,7 +159,7 @@ func TestGetBlock(t *testing.T) {
 			require.NoError(t, err)
 			pb, err := result.Proto()
 			require.NoError(t, err)
-			pbBlock, ok := pb.(*ethpb.SignedBeaconBlock)
+			pbBlock, ok := pb.(*silapb.SignedBeaconBlock)
 			require.Equal(t, true, ok)
 			if !reflect.DeepEqual(pbBlock, tt.want) {
 				t.Error("Expected blocks to equal")
@@ -180,7 +180,7 @@ func TestBlockRoot(t *testing.T) {
 	}
 	headBlock := blkContainers[len(blkContainers)-1]
 
-	wsb, err := blocks.NewSignedBeaconBlock(headBlock.Block.(*ethpb.BeaconBlockContainer_Phase0Block).Phase0Block)
+	wsb, err := blocks.NewSignedBeaconBlock(headBlock.Block.(*silapb.BeaconBlockContainer_Phase0Block).Phase0Block)
 	require.NoError(t, err)
 
 	fetcher := &BeaconDbBlocker{
@@ -189,8 +189,8 @@ func TestBlockRoot(t *testing.T) {
 			DB:                         beaconDB,
 			Block:                      wsb,
 			Root:                       headBlock.BlockRoot,
-			FinalizedCheckPoint:        &ethpb.Checkpoint{Root: blkContainers[64].BlockRoot},
-			CurrentJustifiedCheckPoint: &ethpb.Checkpoint{Root: blkContainers[32].BlockRoot},
+			FinalizedCheckPoint:        &silapb.Checkpoint{Root: blkContainers[64].BlockRoot},
+			CurrentJustifiedCheckPoint: &silapb.Checkpoint{Root: blkContainers[32].BlockRoot},
 			CanonicalRoots:             canonicalRoots,
 		},
 	}
@@ -323,7 +323,7 @@ func TestBlobsErrorHandling(t *testing.T) {
 		blocker := &BeaconDbBlocker{
 			BeaconDB: db,
 			ChainInfoFetcher: &mockChain.ChainService{
-				FinalizedCheckPoint: &ethpb.Checkpoint{Root: nonExistentRoot},
+				FinalizedCheckPoint: &silapb.Checkpoint{Root: nonExistentRoot},
 			},
 		}
 
@@ -340,7 +340,7 @@ func TestBlobsErrorHandling(t *testing.T) {
 		blocker := &BeaconDbBlocker{
 			BeaconDB: db,
 			ChainInfoFetcher: &mockChain.ChainService{
-				CurrentJustifiedCheckPoint: &ethpb.Checkpoint{Root: nonExistentRoot},
+				CurrentJustifiedCheckPoint: &silapb.Checkpoint{Root: nonExistentRoot},
 			},
 		}
 
@@ -473,7 +473,7 @@ func TestGetBlob(t *testing.T) {
 
 	t.Run("finalized", func(t *testing.T) {
 		blocker := &BeaconDbBlocker{
-			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &ethpb.Checkpoint{Root: denebBlockRoot[:]}},
+			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &silapb.Checkpoint{Root: denebBlockRoot[:]}},
 			GenesisTimeFetcher: &testutil.MockGenesisTimeFetcher{
 				Genesis: time.Now(),
 			},
@@ -488,7 +488,7 @@ func TestGetBlob(t *testing.T) {
 
 	t.Run("justified", func(t *testing.T) {
 		blocker := &BeaconDbBlocker{
-			ChainInfoFetcher: &mockChain.ChainService{CurrentJustifiedCheckPoint: &ethpb.Checkpoint{Root: denebBlockRoot[:]}},
+			ChainInfoFetcher: &mockChain.ChainService{CurrentJustifiedCheckPoint: &silapb.Checkpoint{Root: denebBlockRoot[:]}},
 			GenesisTimeFetcher: &testutil.MockGenesisTimeFetcher{
 				Genesis: time.Now(),
 			},
@@ -534,7 +534,7 @@ func TestGetBlob(t *testing.T) {
 		const index = 2
 
 		blocker := &BeaconDbBlocker{
-			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &ethpb.Checkpoint{Root: denebBlockRoot[:]}},
+			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &silapb.Checkpoint{Root: denebBlockRoot[:]}},
 			GenesisTimeFetcher: &testutil.MockGenesisTimeFetcher{
 				Genesis: time.Now(),
 			},
@@ -558,7 +558,7 @@ func TestGetBlob(t *testing.T) {
 
 	t.Run("no blobs returns an empty array", func(t *testing.T) {
 		blocker := &BeaconDbBlocker{
-			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &ethpb.Checkpoint{Root: denebBlockRoot[:]}},
+			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &silapb.Checkpoint{Root: denebBlockRoot[:]}},
 			GenesisTimeFetcher: &testutil.MockGenesisTimeFetcher{
 				Genesis: time.Now(),
 			},
@@ -573,7 +573,7 @@ func TestGetBlob(t *testing.T) {
 
 	t.Run("no blob at index", func(t *testing.T) {
 		blocker := &BeaconDbBlocker{
-			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &ethpb.Checkpoint{Root: denebBlockRoot[:]}},
+			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &silapb.Checkpoint{Root: denebBlockRoot[:]}},
 			GenesisTimeFetcher: &testutil.MockGenesisTimeFetcher{
 				Genesis: time.Now(),
 			},
@@ -589,7 +589,7 @@ func TestGetBlob(t *testing.T) {
 
 	t.Run("index too big", func(t *testing.T) {
 		blocker := &BeaconDbBlocker{
-			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &ethpb.Checkpoint{Root: denebBlockRoot[:]}},
+			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &silapb.Checkpoint{Root: denebBlockRoot[:]}},
 			GenesisTimeFetcher: &testutil.MockGenesisTimeFetcher{
 				Genesis: time.Now(),
 			},
@@ -800,7 +800,7 @@ func TestBlobs_CommitmentOrdering(t *testing.T) {
 	// Set up the blocker
 	chainService := &mockChain.ChainService{
 		Genesis: time.Now(),
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  fuluBlockRoot[:],
 		},
@@ -1038,7 +1038,7 @@ func TestGetDataColumns(t *testing.T) {
 		setupFulu(t)
 
 		blocker := &BeaconDbBlocker{
-			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &ethpb.Checkpoint{Root: fuluBlockRoot[:]}},
+			ChainInfoFetcher: &mockChain.ChainService{FinalizedCheckPoint: &silapb.Checkpoint{Root: fuluBlockRoot[:]}},
 			GenesisTimeFetcher: &testutil.MockGenesisTimeFetcher{
 				Genesis: time.Now(),
 			},
@@ -1055,7 +1055,7 @@ func TestGetDataColumns(t *testing.T) {
 		setupFulu(t)
 
 		blocker := &BeaconDbBlocker{
-			ChainInfoFetcher: &mockChain.ChainService{CurrentJustifiedCheckPoint: &ethpb.Checkpoint{Root: fuluBlockRoot[:]}},
+			ChainInfoFetcher: &mockChain.ChainService{CurrentJustifiedCheckPoint: &silapb.Checkpoint{Root: fuluBlockRoot[:]}},
 			GenesisTimeFetcher: &testutil.MockGenesisTimeFetcher{
 				Genesis: time.Now(),
 			},

@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -86,7 +86,7 @@ func (v *validator) SubmitPayloadAttestation(ctx context.Context, slot primitive
 		return
 	}
 
-	msg := &ethpb.PayloadAttestationMessage{
+	msg := &silapb.PayloadAttestationMessage{
 		ValidatorIndex: duty.ValidatorIndex,
 		Data:           data,
 		Signature:      sig.Marshal(),

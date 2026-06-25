@@ -11,7 +11,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/build/bazel"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/file"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	validatormock "github.com/sila-chain/Sila-Consensus-Core/v7/testing/validator-mock"
@@ -29,7 +29,7 @@ func TestExitAccountsCli_OK(t *testing.T) {
 
 	mockValidatorClient.EXPECT().
 		ValidatorIndex(gomock.Any(), gomock.Any()).
-		Return(&ethpb.ValidatorIndexResponse{Index: 1}, nil)
+		Return(&silapb.ValidatorIndexResponse{Index: 1}, nil)
 
 	// Any time in the past will suffice
 	genesisTime := &timestamppb.Timestamp{
@@ -38,15 +38,15 @@ func TestExitAccountsCli_OK(t *testing.T) {
 
 	mockNodeClient.EXPECT().
 		Genesis(gomock.Any(), gomock.Any()).
-		Return(&ethpb.Genesis{GenesisTime: genesisTime}, nil)
+		Return(&silapb.Genesis{GenesisTime: genesisTime}, nil)
 
 	mockValidatorClient.EXPECT().
 		DomainData(gomock.Any(), gomock.Any()).
-		Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
+		Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
 
 	mockValidatorClient.EXPECT().
-		ProposeExit(gomock.Any(), gomock.AssignableToTypeOf(&ethpb.SignedVoluntaryExit{})).
-		Return(&ethpb.ProposeExitResponse{}, nil)
+		ProposeExit(gomock.Any(), gomock.AssignableToTypeOf(&silapb.SignedVoluntaryExit{})).
+		Return(&silapb.ProposeExitResponse{}, nil)
 
 	walletDir, _, passwordFilePath := setupWalletAndPasswordsDir(t)
 	// Write a directory where we will import keys from.
@@ -121,11 +121,11 @@ func TestExitAccountsCli_OK_AllPublicKeys(t *testing.T) {
 
 	mockValidatorClient.EXPECT().
 		ValidatorIndex(gomock.Any(), gomock.Any()).
-		Return(&ethpb.ValidatorIndexResponse{Index: 0}, nil)
+		Return(&silapb.ValidatorIndexResponse{Index: 0}, nil)
 
 	mockValidatorClient.EXPECT().
 		ValidatorIndex(gomock.Any(), gomock.Any()).
-		Return(&ethpb.ValidatorIndexResponse{Index: 1}, nil)
+		Return(&silapb.ValidatorIndexResponse{Index: 1}, nil)
 
 	// Any time in the past will suffice
 	genesisTime := &timestamppb.Timestamp{
@@ -134,17 +134,17 @@ func TestExitAccountsCli_OK_AllPublicKeys(t *testing.T) {
 
 	mockNodeClient.EXPECT().
 		Genesis(gomock.Any(), gomock.Any()).
-		Return(&ethpb.Genesis{GenesisTime: genesisTime}, nil)
+		Return(&silapb.Genesis{GenesisTime: genesisTime}, nil)
 
 	mockValidatorClient.EXPECT().
 		DomainData(gomock.Any(), gomock.Any()).
 		Times(2).
-		Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
+		Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
 
 	mockValidatorClient.EXPECT().
-		ProposeExit(gomock.Any(), gomock.AssignableToTypeOf(&ethpb.SignedVoluntaryExit{})).
+		ProposeExit(gomock.Any(), gomock.AssignableToTypeOf(&silapb.SignedVoluntaryExit{})).
 		Times(2).
-		Return(&ethpb.ProposeExitResponse{}, nil)
+		Return(&silapb.ProposeExitResponse{}, nil)
 
 	walletDir, _, passwordFilePath := setupWalletAndPasswordsDir(t)
 	// Write a directory where we will import keys from.
@@ -227,7 +227,7 @@ func TestExitAccountsCli_OK_ForceExit(t *testing.T) {
 
 	mockValidatorClient.EXPECT().
 		ValidatorIndex(gomock.Any(), gomock.Any()).
-		Return(&ethpb.ValidatorIndexResponse{Index: 1}, nil)
+		Return(&silapb.ValidatorIndexResponse{Index: 1}, nil)
 
 	// Any time in the past will suffice
 	genesisTime := &timestamppb.Timestamp{
@@ -236,15 +236,15 @@ func TestExitAccountsCli_OK_ForceExit(t *testing.T) {
 
 	mockNodeClient.EXPECT().
 		Genesis(gomock.Any(), gomock.Any()).
-		Return(&ethpb.Genesis{GenesisTime: genesisTime}, nil)
+		Return(&silapb.Genesis{GenesisTime: genesisTime}, nil)
 
 	mockValidatorClient.EXPECT().
 		DomainData(gomock.Any(), gomock.Any()).
-		Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
+		Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
 
 	mockValidatorClient.EXPECT().
-		ProposeExit(gomock.Any(), gomock.AssignableToTypeOf(&ethpb.SignedVoluntaryExit{})).
-		Return(&ethpb.ProposeExitResponse{}, nil)
+		ProposeExit(gomock.Any(), gomock.AssignableToTypeOf(&silapb.SignedVoluntaryExit{})).
+		Return(&silapb.ProposeExitResponse{}, nil)
 
 	walletDir, _, passwordFilePath := setupWalletAndPasswordsDir(t)
 	// Write a directory where we will import keys from.
@@ -316,7 +316,7 @@ func TestExitAccountsCli_WriteJSON_NoBroadcast(t *testing.T) {
 
 	mockValidatorClient.EXPECT().
 		ValidatorIndex(gomock.Any(), gomock.Any()).
-		Return(&ethpb.ValidatorIndexResponse{Index: 1}, nil)
+		Return(&silapb.ValidatorIndexResponse{Index: 1}, nil)
 
 	// Any time in the past will suffice
 	genesisTime := &timestamppb.Timestamp{
@@ -325,11 +325,11 @@ func TestExitAccountsCli_WriteJSON_NoBroadcast(t *testing.T) {
 
 	mockNodeClient.EXPECT().
 		Genesis(gomock.Any(), gomock.Any()).
-		Return(&ethpb.Genesis{GenesisTime: genesisTime}, nil)
+		Return(&silapb.Genesis{GenesisTime: genesisTime}, nil)
 
 	mockValidatorClient.EXPECT().
 		DomainData(gomock.Any(), gomock.Any()).
-		Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
+		Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
 
 	walletDir, _, passwordFilePath := setupWalletAndPasswordsDir(t)
 	// Write a directory where we will import keys from.

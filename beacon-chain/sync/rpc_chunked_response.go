@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	libp2pcore "github.com/libp2p/go-libp2p/core"
 	"github.com/pkg/errors"
@@ -166,7 +166,7 @@ func WriteLightClientFinalityUpdateChunk(stream libp2pcore.Stream, tor blockchai
 
 // WriteExecutionPayloadEnvelopeChunk writes execution payload envelope chunk object to stream.
 // response_chunk  ::= <result> | <context-bytes> | <encoding-dependent-header> | <encoded-payload>
-func WriteExecutionPayloadEnvelopeChunk(stream libp2pcore.Stream, encoding encoder.NetworkEncoding, envelope *ethpb.SignedExecutionPayloadEnvelope) error {
+func WriteExecutionPayloadEnvelopeChunk(stream libp2pcore.Stream, encoding encoder.NetworkEncoding, envelope *silapb.SignedExecutionPayloadEnvelope) error {
 	if _, err := stream.Write([]byte{responseCodeSuccess}); err != nil {
 		return err
 	}

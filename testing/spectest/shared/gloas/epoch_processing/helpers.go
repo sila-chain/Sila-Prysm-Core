@@ -8,7 +8,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
@@ -31,7 +31,7 @@ func RunEpochOperationTest(
 	require.NoError(t, err)
 	preBeaconStateSSZ, err := snappy.Decode(nil /* dst */, preBeaconStateFile)
 	require.NoError(t, err, "Failed to decompress")
-	preBeaconStateBase := &ethpb.BeaconStateGloas{}
+	preBeaconStateBase := &silapb.BeaconStateGloas{}
 	if err := preBeaconStateBase.UnmarshalSSZ(preBeaconStateSSZ); err != nil {
 		t.Fatalf("Failed to unmarshal: %v", err)
 	}
@@ -55,7 +55,7 @@ func RunEpochOperationTest(
 		require.NoError(t, err)
 		postBeaconStateSSZ, err := snappy.Decode(nil /* dst */, postBeaconStateFile)
 		require.NoError(t, err, "Failed to decompress")
-		postBeaconState := &ethpb.BeaconStateGloas{}
+		postBeaconState := &silapb.BeaconStateGloas{}
 		if err := postBeaconState.UnmarshalSSZ(postBeaconStateSSZ); err != nil {
 			t.Fatalf("Failed to unmarshal: %v", err)
 		}

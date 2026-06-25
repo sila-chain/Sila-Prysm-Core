@@ -41,7 +41,7 @@ func GoodCapitalization() {
 
 	// Acceptable edge cases - these should NOT trigger
 	Info("404 validator not found")                      // Numbers are OK
-	Info("/eth/v1/beacon/blocks endpoint")               // Paths are OK
+	Info("/sila/v1/beacon/blocks endpoint")               // Paths are OK
 	Info("config=mainnet")                               // Config format is OK
 	Info("https://beacon-node.example.com")              // URLs are OK
 	Infof("%s network started", "mainnet")               // Format specifiers are OK

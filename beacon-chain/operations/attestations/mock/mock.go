@@ -6,15 +6,15 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 var _ attestations.Pool = &PoolMock{}
 
 // PoolMock --
 type PoolMock struct {
-	AggregatedAtts   []ethpb.Att
-	UnaggregatedAtts []ethpb.Att
+	AggregatedAtts   []silapb.Att
+	UnaggregatedAtts []silapb.Att
 }
 
 // AggregateUnaggregatedAttestations --
@@ -28,38 +28,38 @@ func (*PoolMock) AggregateUnaggregatedAttestationsBySlotIndex(_ context.Context,
 }
 
 // SaveAggregatedAttestation --
-func (*PoolMock) SaveAggregatedAttestation(_ ethpb.Att) error {
+func (*PoolMock) SaveAggregatedAttestation(_ silapb.Att) error {
 	panic("implement me")
 }
 
 // SaveAggregatedAttestations --
-func (m *PoolMock) SaveAggregatedAttestations(atts []ethpb.Att) error {
+func (m *PoolMock) SaveAggregatedAttestations(atts []silapb.Att) error {
 	m.AggregatedAtts = append(m.AggregatedAtts, atts...)
 	return nil
 }
 
 // AggregatedAttestations --
-func (m *PoolMock) AggregatedAttestations() []ethpb.Att {
+func (m *PoolMock) AggregatedAttestations() []silapb.Att {
 	return m.AggregatedAtts
 }
 
 // AggregatedAttestationsBySlotIndex --
-func (*PoolMock) AggregatedAttestationsBySlotIndex(_ context.Context, _ primitives.Slot, _ primitives.CommitteeIndex) []*ethpb.Attestation {
+func (*PoolMock) AggregatedAttestationsBySlotIndex(_ context.Context, _ primitives.Slot, _ primitives.CommitteeIndex) []*silapb.Attestation {
 	panic("implement me")
 }
 
 // AggregatedAttestationsBySlotIndexElectra --
-func (*PoolMock) AggregatedAttestationsBySlotIndexElectra(_ context.Context, _ primitives.Slot, _ primitives.CommitteeIndex) []*ethpb.AttestationElectra {
+func (*PoolMock) AggregatedAttestationsBySlotIndexElectra(_ context.Context, _ primitives.Slot, _ primitives.CommitteeIndex) []*silapb.AttestationElectra {
 	panic("implement me")
 }
 
 // DeleteAggregatedAttestation --
-func (*PoolMock) DeleteAggregatedAttestation(_ ethpb.Att) error {
+func (*PoolMock) DeleteAggregatedAttestation(_ silapb.Att) error {
 	panic("implement me")
 }
 
 // HasAggregatedAttestation --
-func (*PoolMock) HasAggregatedAttestation(_ ethpb.Att) (bool, error) {
+func (*PoolMock) HasAggregatedAttestation(_ silapb.Att) (bool, error) {
 	panic("implement me")
 }
 
@@ -79,33 +79,33 @@ func (*PoolMock) SeenAggregatedAttestationCount() int {
 }
 
 // SaveUnaggregatedAttestation --
-func (*PoolMock) SaveUnaggregatedAttestation(_ ethpb.Att) error {
+func (*PoolMock) SaveUnaggregatedAttestation(_ silapb.Att) error {
 	panic("implement me")
 }
 
 // SaveUnaggregatedAttestations --
-func (m *PoolMock) SaveUnaggregatedAttestations(atts []ethpb.Att) error {
+func (m *PoolMock) SaveUnaggregatedAttestations(atts []silapb.Att) error {
 	m.UnaggregatedAtts = append(m.UnaggregatedAtts, atts...)
 	return nil
 }
 
 // UnaggregatedAttestations --
-func (m *PoolMock) UnaggregatedAttestations() []ethpb.Att {
+func (m *PoolMock) UnaggregatedAttestations() []silapb.Att {
 	return m.UnaggregatedAtts
 }
 
 // UnaggregatedAttestationsBySlotIndex --
-func (*PoolMock) UnaggregatedAttestationsBySlotIndex(_ context.Context, _ primitives.Slot, _ primitives.CommitteeIndex) []*ethpb.Attestation {
+func (*PoolMock) UnaggregatedAttestationsBySlotIndex(_ context.Context, _ primitives.Slot, _ primitives.CommitteeIndex) []*silapb.Attestation {
 	panic("implement me")
 }
 
 // UnaggregatedAttestationsBySlotIndexElectra --
-func (*PoolMock) UnaggregatedAttestationsBySlotIndexElectra(_ context.Context, _ primitives.Slot, _ primitives.CommitteeIndex) []*ethpb.AttestationElectra {
+func (*PoolMock) UnaggregatedAttestationsBySlotIndexElectra(_ context.Context, _ primitives.Slot, _ primitives.CommitteeIndex) []*silapb.AttestationElectra {
 	panic("implement me")
 }
 
 // DeleteUnaggregatedAttestation --
-func (*PoolMock) DeleteUnaggregatedAttestation(_ ethpb.Att) error {
+func (*PoolMock) DeleteUnaggregatedAttestation(_ silapb.Att) error {
 	panic("implement me")
 }
 
@@ -120,42 +120,42 @@ func (*PoolMock) UnaggregatedAttestationCount() int {
 }
 
 // SaveBlockAttestation --
-func (*PoolMock) SaveBlockAttestation(_ ethpb.Att) error {
+func (*PoolMock) SaveBlockAttestation(_ silapb.Att) error {
 	panic("implement me")
 }
 
 // SaveBlockAttestations --
-func (*PoolMock) SaveBlockAttestations(_ []ethpb.Att) error {
+func (*PoolMock) SaveBlockAttestations(_ []silapb.Att) error {
 	panic("implement me")
 }
 
 // BlockAttestations --
-func (*PoolMock) BlockAttestations() []ethpb.Att {
+func (*PoolMock) BlockAttestations() []silapb.Att {
 	panic("implement me")
 }
 
 // DeleteBlockAttestation --
-func (*PoolMock) DeleteBlockAttestation(_ ethpb.Att) error {
+func (*PoolMock) DeleteBlockAttestation(_ silapb.Att) error {
 	panic("implement me")
 }
 
 // SaveForkchoiceAttestation --
-func (*PoolMock) SaveForkchoiceAttestation(_ ethpb.Att) error {
+func (*PoolMock) SaveForkchoiceAttestation(_ silapb.Att) error {
 	panic("implement me")
 }
 
 // SaveForkchoiceAttestations --
-func (*PoolMock) SaveForkchoiceAttestations(_ []ethpb.Att) error {
+func (*PoolMock) SaveForkchoiceAttestations(_ []silapb.Att) error {
 	panic("implement me")
 }
 
 // ForkchoiceAttestations --
-func (*PoolMock) ForkchoiceAttestations() []ethpb.Att {
+func (*PoolMock) ForkchoiceAttestations() []silapb.Att {
 	panic("implement me")
 }
 
 // DeleteForkchoiceAttestation --
-func (*PoolMock) DeleteForkchoiceAttestation(_ ethpb.Att) error {
+func (*PoolMock) DeleteForkchoiceAttestation(_ silapb.Att) error {
 	panic("implement me")
 }
 

@@ -6,15 +6,15 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
 
 func Test_logStateTransitionData(t *testing.T) {
-	payloadBlk := &ethpb.BeaconBlockBellatrix{
-		Body: &ethpb.BeaconBlockBodyBellatrix{
-			SyncAggregate: &ethpb.SyncAggregate{},
+	payloadBlk := &silapb.BeaconBlockBellatrix{
+		Body: &silapb.BeaconBlockBodyBellatrix{
+			SyncAggregate: &silapb.SyncAggregate{},
 			ExecutionPayload: &enginev1.ExecutionPayload{
 				BlockHash:    []byte{1, 2, 3},
 				Transactions: [][]byte{{}, {}},
@@ -30,7 +30,7 @@ func Test_logStateTransitionData(t *testing.T) {
 	}{
 		{name: "empty block body",
 			b: func() interfaces.ReadOnlyBeaconBlock {
-				wb, err := blocks.NewBeaconBlock(&ethpb.BeaconBlock{Body: &ethpb.BeaconBlockBody{}})
+				wb, err := blocks.NewBeaconBlock(&silapb.BeaconBlock{Body: &silapb.BeaconBlockBody{}})
 				require.NoError(t, err)
 				return wb
 			},
@@ -38,7 +38,7 @@ func Test_logStateTransitionData(t *testing.T) {
 		},
 		{name: "has attestation",
 			b: func() interfaces.ReadOnlyBeaconBlock {
-				wb, err := blocks.NewBeaconBlock(&ethpb.BeaconBlock{Body: &ethpb.BeaconBlockBody{Attestations: []*ethpb.Attestation{{}}}})
+				wb, err := blocks.NewBeaconBlock(&silapb.BeaconBlock{Body: &silapb.BeaconBlockBody{Attestations: []*silapb.Attestation{{}}}})
 				require.NoError(t, err)
 				return wb
 			},
@@ -47,9 +47,9 @@ func Test_logStateTransitionData(t *testing.T) {
 		{name: "has deposit",
 			b: func() interfaces.ReadOnlyBeaconBlock {
 				wb, err := blocks.NewBeaconBlock(
-					&ethpb.BeaconBlock{Body: &ethpb.BeaconBlockBody{
-						Attestations: []*ethpb.Attestation{{}},
-						Deposits:     []*ethpb.Deposit{{}}}})
+					&silapb.BeaconBlock{Body: &silapb.BeaconBlockBody{
+						Attestations: []*silapb.Attestation{{}},
+						Deposits:     []*silapb.Deposit{{}}}})
 				require.NoError(t, err)
 				return wb
 			},
@@ -57,8 +57,8 @@ func Test_logStateTransitionData(t *testing.T) {
 		},
 		{name: "has attester slashing",
 			b: func() interfaces.ReadOnlyBeaconBlock {
-				wb, err := blocks.NewBeaconBlock(&ethpb.BeaconBlock{Body: &ethpb.BeaconBlockBody{
-					AttesterSlashings: []*ethpb.AttesterSlashing{{}}}})
+				wb, err := blocks.NewBeaconBlock(&silapb.BeaconBlock{Body: &silapb.BeaconBlockBody{
+					AttesterSlashings: []*silapb.AttesterSlashing{{}}}})
 				require.NoError(t, err)
 				return wb
 			},
@@ -66,8 +66,8 @@ func Test_logStateTransitionData(t *testing.T) {
 		},
 		{name: "has proposer slashing",
 			b: func() interfaces.ReadOnlyBeaconBlock {
-				wb, err := blocks.NewBeaconBlock(&ethpb.BeaconBlock{Body: &ethpb.BeaconBlockBody{
-					ProposerSlashings: []*ethpb.ProposerSlashing{{}}}})
+				wb, err := blocks.NewBeaconBlock(&silapb.BeaconBlock{Body: &silapb.BeaconBlockBody{
+					ProposerSlashings: []*silapb.ProposerSlashing{{}}}})
 				require.NoError(t, err)
 				return wb
 			},
@@ -75,8 +75,8 @@ func Test_logStateTransitionData(t *testing.T) {
 		},
 		{name: "has exit",
 			b: func() interfaces.ReadOnlyBeaconBlock {
-				wb, err := blocks.NewBeaconBlock(&ethpb.BeaconBlock{Body: &ethpb.BeaconBlockBody{
-					VoluntaryExits: []*ethpb.SignedVoluntaryExit{{}}}})
+				wb, err := blocks.NewBeaconBlock(&silapb.BeaconBlock{Body: &silapb.BeaconBlockBody{
+					VoluntaryExits: []*silapb.SignedVoluntaryExit{{}}}})
 				require.NoError(t, err)
 				return wb
 			},
@@ -84,12 +84,12 @@ func Test_logStateTransitionData(t *testing.T) {
 		},
 		{name: "has everything",
 			b: func() interfaces.ReadOnlyBeaconBlock {
-				wb, err := blocks.NewBeaconBlock(&ethpb.BeaconBlock{Body: &ethpb.BeaconBlockBody{
-					Attestations:      []*ethpb.Attestation{{}},
-					Deposits:          []*ethpb.Deposit{{}},
-					AttesterSlashings: []*ethpb.AttesterSlashing{{}},
-					ProposerSlashings: []*ethpb.ProposerSlashing{{}},
-					VoluntaryExits:    []*ethpb.SignedVoluntaryExit{{}}}})
+				wb, err := blocks.NewBeaconBlock(&silapb.BeaconBlock{Body: &silapb.BeaconBlockBody{
+					Attestations:      []*silapb.Attestation{{}},
+					Deposits:          []*silapb.Deposit{{}},
+					AttesterSlashings: []*silapb.AttesterSlashing{{}},
+					ProposerSlashings: []*silapb.ProposerSlashing{{}},
+					VoluntaryExits:    []*silapb.SignedVoluntaryExit{{}}}})
 				require.NoError(t, err)
 				return wb
 			},

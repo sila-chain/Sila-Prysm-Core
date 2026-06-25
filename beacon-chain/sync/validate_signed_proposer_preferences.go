@@ -10,7 +10,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -37,7 +37,7 @@ func (s *Service) validateSignedProposerPreferencesGossip(ctx context.Context, p
 		return pubsub.ValidationReject, err
 	}
 
-	signedPreferences, ok := m.(*ethpb.SignedProposerPreferences)
+	signedPreferences, ok := m.(*silapb.SignedProposerPreferences)
 	if !ok {
 		return pubsub.ValidationReject, errWrongMessage
 	}

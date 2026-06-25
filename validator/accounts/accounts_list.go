@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/accounts/wallet"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/keymanager"
@@ -38,7 +38,7 @@ func listValidatorIndices(ctx context.Context, km keymanager.IKeymanager, client
 	for i := range pubKeys {
 		pks = append(pks, pubKeys[i][:])
 	}
-	req := &ethpb.MultipleValidatorStatusRequest{PublicKeys: pks}
+	req := &silapb.MultipleValidatorStatusRequest{PublicKeys: pks}
 	resp, err := client.MultipleValidatorStatus(ctx, req)
 	if err != nil {
 		return errors.Wrap(err, "could not request validator indices")

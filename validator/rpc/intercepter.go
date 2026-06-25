@@ -80,9 +80,9 @@ func (s *Server) AuthTokenHandler(next http.Handler) http.Handler {
 
 func isValidatorKeymanagerAPIPath(path string) bool {
 	keymanagerPrefixes := [...]string{
-		"/eth/v1/keystores",
-		"/eth/v1/remotekeys",
-		"/eth/v1/validator/",
+		"/sila/v1/keystores",
+		"/sila/v1/remotekeys",
+		"/sila/v1/validator/",
 		"/sila/v1/keystores",
 		"/sila/v1/remotekeys",
 		"/sila/v1/validator/",

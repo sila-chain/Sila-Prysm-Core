@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // ProcessBlockHeader validates a block by its header.
@@ -138,7 +138,7 @@ func ProcessBlockHeaderNoVerify(
 		return nil, fmt.Errorf("proposer at index %d was previously slashed", idx)
 	}
 
-	if err := beaconState.SetLatestBlockHeader(&ethpb.BeaconBlockHeader{
+	if err := beaconState.SetLatestBlockHeader(&silapb.BeaconBlockHeader{
 		Slot:          slot,
 		ProposerIndex: proposerIndex,
 		ParentRoot:    parentRoot,

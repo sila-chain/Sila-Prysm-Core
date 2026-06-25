@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -45,24 +45,24 @@ func TestSubmitAggregateAndProof_SignFails(t *testing.T) {
 			defer finish()
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey: validatorKey.PublicKey().Marshal(),
 			})
 
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().SubmitAggregateSelectionProof(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AggregateSelectionRequest{}),
+				gomock.AssignableToTypeOf(&silapb.AggregateSelectionRequest{}),
 				gomock.Any(),
 				gomock.Any(),
-			).Return(&ethpb.AggregateSelectionResponse{
-				AggregateAndProof: &ethpb.AggregateAttestationAndProof{
+			).Return(&silapb.AggregateSelectionResponse{
+				AggregateAndProof: &silapb.AggregateAttestationAndProof{
 					AggregatorIndex: 0,
-					Aggregate: util.HydrateAttestation(&ethpb.Attestation{
+					Aggregate: util.HydrateAttestation(&silapb.Attestation{
 						AggregationBits: make([]byte, 1),
 					}),
 					SelectionProof: make([]byte, 96),
@@ -72,7 +72,7 @@ func TestSubmitAggregateAndProof_SignFails(t *testing.T) {
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Return(&ethpb.DomainResponse{SignatureDomain: nil}, errors.New("bad domain root"))
+			).Return(&silapb.DomainResponse{SignatureDomain: nil}, errors.New("bad domain root"))
 
 			validator.SubmitAggregateAndProof(t.Context(), 0, pubKey)
 		})
@@ -86,24 +86,24 @@ func TestSubmitAggregateAndProof_Ok(t *testing.T) {
 			defer finish()
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey: validatorKey.PublicKey().Marshal(),
 			})
 
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().SubmitAggregateSelectionProof(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AggregateSelectionRequest{}),
+				gomock.AssignableToTypeOf(&silapb.AggregateSelectionRequest{}),
 				gomock.Any(),
 				gomock.Any(),
-			).Return(&ethpb.AggregateSelectionResponse{
-				AggregateAndProof: &ethpb.AggregateAttestationAndProof{
+			).Return(&silapb.AggregateSelectionResponse{
+				AggregateAndProof: &silapb.AggregateAttestationAndProof{
 					AggregatorIndex: 0,
-					Aggregate: util.HydrateAttestation(&ethpb.Attestation{
+					Aggregate: util.HydrateAttestation(&silapb.Attestation{
 						AggregationBits: make([]byte, 1),
 					}),
 					SelectionProof: make([]byte, 96),
@@ -113,12 +113,12 @@ func TestSubmitAggregateAndProof_Ok(t *testing.T) {
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().SubmitSignedAggregateSelectionProof(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.SignedAggregateSubmitRequest{}),
-			).Return(&ethpb.SignedAggregateSubmitResponse{AttestationDataRoot: make([]byte, 32)}, nil)
+				gomock.AssignableToTypeOf(&silapb.SignedAggregateSubmitRequest{}),
+			).Return(&silapb.SignedAggregateSubmitResponse{AttestationDataRoot: make([]byte, 32)}, nil)
 
 			validator.SubmitAggregateAndProof(t.Context(), 0, pubKey)
 		})
@@ -135,24 +135,24 @@ func TestSubmitAggregateAndProof_Ok(t *testing.T) {
 			defer finish()
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey: validatorKey.PublicKey().Marshal(),
 			})
 
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().SubmitAggregateSelectionProofElectra(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AggregateSelectionRequest{}),
+				gomock.AssignableToTypeOf(&silapb.AggregateSelectionRequest{}),
 				gomock.Any(),
 				gomock.Any(),
-			).Return(&ethpb.AggregateSelectionElectraResponse{
-				AggregateAndProof: &ethpb.AggregateAttestationAndProofElectra{
+			).Return(&silapb.AggregateSelectionElectraResponse{
+				AggregateAndProof: &silapb.AggregateAttestationAndProofElectra{
 					AggregatorIndex: 0,
-					Aggregate: util.HydrateAttestationElectra(&ethpb.AttestationElectra{
+					Aggregate: util.HydrateAttestationElectra(&silapb.AttestationElectra{
 						AggregationBits: make([]byte, 1),
 					}),
 					SelectionProof: make([]byte, 96),
@@ -162,12 +162,12 @@ func TestSubmitAggregateAndProof_Ok(t *testing.T) {
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().SubmitSignedAggregateSelectionProofElectra(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.SignedAggregateSubmitElectraRequest{}),
-			).Return(&ethpb.SignedAggregateSubmitResponse{AttestationDataRoot: make([]byte, 32)}, nil)
+				gomock.AssignableToTypeOf(&silapb.SignedAggregateSubmitElectraRequest{}),
+			).Return(&silapb.SignedAggregateSubmitResponse{AttestationDataRoot: make([]byte, 32)}, nil)
 
 			validator.SubmitAggregateAndProof(t.Context(), params.BeaconConfig().SlotsPerEpoch.Mul(electraForkEpoch), pubKey)
 		})
@@ -185,7 +185,7 @@ func TestSubmitAggregateAndProof_Distributed(t *testing.T) {
 
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:      validatorKey.PublicKey().Marshal(),
 				ValidatorIndex: validatorIdx,
 				AttesterSlot:   slot,
@@ -207,13 +207,13 @@ func TestSubmitAggregateAndProof_Distributed(t *testing.T) {
 
 			m.validatorClient.EXPECT().SubmitAggregateSelectionProof(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AggregateSelectionRequest{}),
+				gomock.AssignableToTypeOf(&silapb.AggregateSelectionRequest{}),
 				gomock.Any(),
 				gomock.Any(),
-			).Return(&ethpb.AggregateSelectionResponse{
-				AggregateAndProof: &ethpb.AggregateAttestationAndProof{
+			).Return(&silapb.AggregateSelectionResponse{
+				AggregateAndProof: &silapb.AggregateAttestationAndProof{
 					AggregatorIndex: 0,
-					Aggregate: util.HydrateAttestation(&ethpb.Attestation{
+					Aggregate: util.HydrateAttestation(&silapb.Attestation{
 						AggregationBits: make([]byte, 1),
 					}),
 					SelectionProof: make([]byte, 96),
@@ -223,12 +223,12 @@ func TestSubmitAggregateAndProof_Distributed(t *testing.T) {
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().SubmitSignedAggregateSelectionProof(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.SignedAggregateSubmitRequest{}),
-			).Return(&ethpb.SignedAggregateSubmitResponse{AttestationDataRoot: make([]byte, 32)}, nil)
+				gomock.AssignableToTypeOf(&silapb.SignedAggregateSubmitRequest{}),
+			).Return(&silapb.SignedAggregateSubmitResponse{AttestationDataRoot: make([]byte, 32)}, nil)
 
 			validator.SubmitAggregateAndProof(ctx, slot, pubKey)
 		})
@@ -284,12 +284,12 @@ func TestAggregateAndProofSignature_CanSignValidSignature(t *testing.T) {
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
-				&ethpb.DomainRequest{Epoch: 0, Domain: params.BeaconConfig().DomainAggregateAndProof[:]},
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+				&silapb.DomainRequest{Epoch: 0, Domain: params.BeaconConfig().DomainAggregateAndProof[:]},
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
-			agg := &ethpb.AggregateAttestationAndProof{
+			agg := &silapb.AggregateAttestationAndProof{
 				AggregatorIndex: 0,
-				Aggregate: util.HydrateAttestation(&ethpb.Attestation{
+				Aggregate: util.HydrateAttestation(&silapb.Attestation{
 					AggregationBits: bitfield.NewBitlist(1),
 				}),
 				SelectionProof: make([]byte, 96),
@@ -315,12 +315,12 @@ func TestAggregateAndProofSignature_CanSignValidSignature(t *testing.T) {
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
-				&ethpb.DomainRequest{Epoch: 0, Domain: params.BeaconConfig().DomainAggregateAndProof[:]},
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+				&silapb.DomainRequest{Epoch: 0, Domain: params.BeaconConfig().DomainAggregateAndProof[:]},
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
-			agg := &ethpb.AggregateAttestationAndProofElectra{
+			agg := &silapb.AggregateAttestationAndProofElectra{
 				AggregatorIndex: 0,
-				Aggregate: util.HydrateAttestationElectra(&ethpb.AttestationElectra{
+				Aggregate: util.HydrateAttestationElectra(&silapb.AttestationElectra{
 					AggregationBits: bitfield.NewBitlist(1),
 				}),
 				SelectionProof: make([]byte, 96),

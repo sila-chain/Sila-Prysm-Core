@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila/common"
@@ -43,7 +43,7 @@ func TestServer_getExecutionPayload(t *testing.T) {
 	b1r, err := b1pb.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, b1pb)
-	require.NoError(t, nonTransitionSt.SetFinalizedCheckpoint(&ethpb.Checkpoint{
+	require.NoError(t, nonTransitionSt.SetFinalizedCheckpoint(&silapb.Checkpoint{
 		Root: b1r[:],
 	}))
 
@@ -55,7 +55,7 @@ func TestServer_getExecutionPayload(t *testing.T) {
 	b2r, err := b2pb.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, b2pb)
-	require.NoError(t, transitionSt.SetFinalizedCheckpoint(&ethpb.Checkpoint{
+	require.NoError(t, transitionSt.SetFinalizedCheckpoint(&silapb.Checkpoint{
 		Root: b2r[:],
 	}))
 
@@ -67,7 +67,7 @@ func TestServer_getExecutionPayload(t *testing.T) {
 	b2rCapella, err := b2pbCapella.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, b2pbCapella)
-	require.NoError(t, capellaTransitionState.SetFinalizedCheckpoint(&ethpb.Checkpoint{
+	require.NoError(t, capellaTransitionState.SetFinalizedCheckpoint(&silapb.Checkpoint{
 		Root: b2rCapella[:],
 	}))
 
@@ -185,7 +185,7 @@ func TestServer_getParentBlockHash_Gloas_Full(t *testing.T) {
 	blockHash := bytesutil.ToBytes32([]byte("block-hash"))
 	parentBlockHash := bytesutil.ToBytes32([]byte("parent-block-hash"))
 	headRoot := bytesutil.ToBytes32([]byte("head-root"))
-	st, err := util.NewBeaconStateGloas(func(state *ethpb.BeaconStateGloas) error {
+	st, err := util.NewBeaconStateGloas(func(state *silapb.BeaconStateGloas) error {
 		state.LatestExecutionPayloadBid.BlockHash = blockHash[:]
 		state.LatestExecutionPayloadBid.ParentBlockHash = parentBlockHash[:]
 		return nil
@@ -211,7 +211,7 @@ func TestServer_getParentBlockHash_Gloas_Empty(t *testing.T) {
 	blockHash := bytesutil.ToBytes32([]byte("block-hash"))
 	parentBlockHash := bytesutil.ToBytes32([]byte("parent-block-hash"))
 	headRoot := bytesutil.ToBytes32([]byte("head-root"))
-	st, err := util.NewBeaconStateGloas(func(state *ethpb.BeaconStateGloas) error {
+	st, err := util.NewBeaconStateGloas(func(state *silapb.BeaconStateGloas) error {
 		state.LatestExecutionPayloadBid.BlockHash = blockHash[:]
 		state.LatestExecutionPayloadBid.ParentBlockHash = parentBlockHash[:]
 		return nil
@@ -249,7 +249,7 @@ func TestServer_getExecutionPayloadContextTimeout(t *testing.T) {
 	b1r, err := b1pb.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, b1pb)
-	require.NoError(t, nonTransitionSt.SetFinalizedCheckpoint(&ethpb.Checkpoint{
+	require.NoError(t, nonTransitionSt.SetFinalizedCheckpoint(&silapb.Checkpoint{
 		Root: b1r[:],
 	}))
 
@@ -289,7 +289,7 @@ func TestServer_getExecutionPayload_UnexpectedFeeRecipient(t *testing.T) {
 	b1r, err := b1pb.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, b1pb)
-	require.NoError(t, nonTransitionSt.SetFinalizedCheckpoint(&ethpb.Checkpoint{
+	require.NoError(t, nonTransitionSt.SetFinalizedCheckpoint(&silapb.Checkpoint{
 		Root: b1r[:],
 	}))
 
@@ -301,7 +301,7 @@ func TestServer_getExecutionPayload_UnexpectedFeeRecipient(t *testing.T) {
 	b2r, err := b2pb.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, b2pb)
-	require.NoError(t, transitionSt.SetFinalizedCheckpoint(&ethpb.Checkpoint{
+	require.NoError(t, transitionSt.SetFinalizedCheckpoint(&silapb.Checkpoint{
 		Root: b2r[:],
 	}))
 

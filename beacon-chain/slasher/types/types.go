@@ -2,7 +2,7 @@ package types
 
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // ChunkKind to differentiate what kind of span we are working
@@ -30,13 +30,13 @@ func (c ChunkKind) String() string {
 // The wrapper is needed to overcome the limitation of the event feed library
 // which doesn't work well with interface types.
 type WrappedIndexedAtt struct {
-	ethpb.IndexedAtt
+	silapb.IndexedAtt
 }
 
 // IndexedAttestationWrapper contains an indexed attestation with its
 // data root to reduce duplicated computation.
 type IndexedAttestationWrapper struct {
-	IndexedAttestation ethpb.IndexedAtt
+	IndexedAttestation silapb.IndexedAtt
 	DataRoot           [32]byte
 }
 
@@ -60,7 +60,7 @@ type DoubleBlockProposal struct {
 // SignedBlockHeaderWrapper contains an signed beacon block header with its
 // header root to reduce duplicated computation.
 type SignedBlockHeaderWrapper struct {
-	SignedBeaconBlockHeader *ethpb.SignedBeaconBlockHeader
+	SignedBeaconBlockHeader *silapb.SignedBeaconBlockHeader
 	HeaderRoot              [32]byte
 }
 

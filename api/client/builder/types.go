@@ -172,7 +172,7 @@ type BuilderBid struct {
 	Pubkey hexutil.Bytes                   `json:"pubkey"`
 }
 
-// ExecHeaderResponseCapella is the response of builder API /eth/v1/builder/header/{slot}/{parent_hash}/{pubkey} for Capella.
+// ExecHeaderResponseCapella is the response of builder API /sila/v1/builder/header/{slot}/{parent_hash}/{pubkey} for Capella.
 type ExecHeaderResponseCapella struct {
 	Version string `json:"version"`
 	Data    struct {
@@ -215,7 +215,7 @@ type BuilderBidCapella struct {
 	Pubkey hexutil.Bytes                          `json:"pubkey"`
 }
 
-// ExecPayloadResponseCapella is the builder API /eth/v1/builder/blinded_blocks for Capella.
+// ExecPayloadResponseCapella is the builder API /sila/v1/builder/blinded_blocks for Capella.
 type ExecPayloadResponseCapella struct {
 	Version string                          `json:"version"`
 	Data    structs.ExecutionPayloadCapella `json:"data"`
@@ -280,7 +280,7 @@ type Withdrawal struct {
 	Amount         Uint256       `json:"amount"`
 }
 
-// SignedBlindedBeaconBlockBellatrix is the request object for builder API /eth/v1/builder/blinded_blocks.
+// SignedBlindedBeaconBlockBellatrix is the request object for builder API /sila/v1/builder/blinded_blocks.
 type SignedBlindedBeaconBlockBellatrix struct {
 	*eth.SignedBlindedBeaconBlockBellatrix
 }
@@ -339,7 +339,7 @@ func (h *BeaconBlockHeader) MarshalJSON() ([]byte, error) {
 	})
 }
 
-// ExecHeaderResponseDeneb is the header response for builder API /eth/v1/builder/header/{slot}/{parent_hash}/{pubkey}.
+// ExecHeaderResponseDeneb is the header response for builder API /sila/v1/builder/header/{slot}/{parent_hash}/{pubkey}.
 type ExecHeaderResponseDeneb struct {
 	Version string `json:"version"`
 	Data    struct {
@@ -394,7 +394,7 @@ type BuilderBidDeneb struct {
 	Pubkey             hexutil.Bytes                        `json:"pubkey"`
 }
 
-// ExecPayloadResponseDeneb the response to the build API /eth/v1/builder/blinded_blocks that includes the version, execution payload object , and blobs bundle object.
+// ExecPayloadResponseDeneb the response to the build API /sila/v1/builder/blinded_blocks that includes the version, execution payload object , and blobs bundle object.
 type ExecPayloadResponseDeneb struct {
 	Version string                               `json:"version"`
 	Data    *ExecutionPayloadDenebAndBlobsBundle `json:"data"`
@@ -512,7 +512,7 @@ func (r *ExecutionPayloadDenebAndBlobsBundle) BundleProto() (*v1.BlobsBundle, er
 	return r.BlobsBundle.ToProto()
 }
 
-// ExecHeaderResponseElectra is the header response for builder API /eth/v1/builder/header/{slot}/{parent_hash}/{pubkey}.
+// ExecHeaderResponseElectra is the header response for builder API /sila/v1/builder/header/{slot}/{parent_hash}/{pubkey}.
 type ExecHeaderResponseElectra struct {
 	Version string `json:"version"`
 	Data    struct {

@@ -1,7 +1,7 @@
 syntax = "proto3";
 package ethereum.validator.accounts.v2;
 
-import "proto/eth/ext/options.proto";
+import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1alpha1/attestation.proto";
 import "proto/sila/v1alpha1/beacon_block.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";

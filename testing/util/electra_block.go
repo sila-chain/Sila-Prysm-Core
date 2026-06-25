@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
 	"github.com/pkg/errors"
@@ -32,7 +32,7 @@ func GenerateFullBlockElectra(
 	privs []bls.SecretKey,
 	conf *BlockGenConfig,
 	slot primitives.Slot,
-) (*ethpb.SignedBeaconBlockElectra, error) {
+) (*silapb.SignedBeaconBlockElectra, error) {
 	ctx := context.Background()
 	currentSlot := bState.Slot()
 	if currentSlot > slot {
@@ -45,7 +45,7 @@ func GenerateFullBlockElectra(
 	}
 
 	var err error
-	var pSlashings []*ethpb.ProposerSlashing
+	var pSlashings []*silapb.ProposerSlashing
 	numToGen := conf.NumProposerSlashings
 	if numToGen > 0 {
 		pSlashings, err = generateProposerSlashings(bState, privs, numToGen)
@@ -55,41 +55,41 @@ func GenerateFullBlockElectra(
 	}
 
 	numToGen = conf.NumAttesterSlashings
-	var aSlashings []*ethpb.AttesterSlashingElectra
+	var aSlashings []*silapb.AttesterSlashingElectra
 	if numToGen > 0 {
 		generated, err := generateAttesterSlashings(bState, privs, numToGen)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed generating %d attester slashings:", numToGen)
 		}
-		aSlashings = make([]*ethpb.AttesterSlashingElectra, len(generated))
+		aSlashings = make([]*silapb.AttesterSlashingElectra, len(generated))
 		var ok bool
 		for i, s := range generated {
-			aSlashings[i], ok = s.(*ethpb.AttesterSlashingElectra)
+			aSlashings[i], ok = s.(*silapb.AttesterSlashingElectra)
 			if !ok {
-				return nil, fmt.Errorf("attester slashing has the wrong type (expected %T, got %T)", &ethpb.AttesterSlashingElectra{}, s)
+				return nil, fmt.Errorf("attester slashing has the wrong type (expected %T, got %T)", &silapb.AttesterSlashingElectra{}, s)
 			}
 		}
 	}
 
 	numToGen = conf.NumAttestations
-	var atts []*ethpb.AttestationElectra
+	var atts []*silapb.AttestationElectra
 	if numToGen > 0 {
 		generatedAtts, err := GenerateAttestations(bState, privs, numToGen, slot, false)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed generating %d attestations:", numToGen)
 		}
-		atts = make([]*ethpb.AttestationElectra, len(generatedAtts))
+		atts = make([]*silapb.AttestationElectra, len(generatedAtts))
 		var ok bool
 		for i, a := range generatedAtts {
-			atts[i], ok = a.(*ethpb.AttestationElectra)
+			atts[i], ok = a.(*silapb.AttestationElectra)
 			if !ok {
-				return nil, fmt.Errorf("attestation has the wrong type (expected %T, got %T)", &ethpb.AttestationElectra{}, a)
+				return nil, fmt.Errorf("attestation has the wrong type (expected %T, got %T)", &silapb.AttestationElectra{}, a)
 			}
 		}
 	}
 
 	numToGen = conf.NumDeposits
-	var newDeposits []*ethpb.Deposit
+	var newDeposits []*silapb.Deposit
 	eth1Data := bState.Eth1Data()
 	if numToGen > 0 {
 		newDeposits, eth1Data, err = generateDepositsAndEth1Data(bState, numToGen)
@@ -99,7 +99,7 @@ func GenerateFullBlockElectra(
 	}
 
 	numToGen = conf.NumVoluntaryExits
-	var exits []*ethpb.SignedVoluntaryExit
+	var exits []*silapb.SignedVoluntaryExit
 	if numToGen > 0 {
 		exits, err = generateVoluntaryExits(bState, privs, numToGen)
 		if err != nil {
@@ -188,7 +188,7 @@ func GenerateFullBlockElectra(
 		Withdrawals:   newWithdrawals,
 	}
 	var syncCommitteeBits []byte
-	currSize := new(ethpb.SyncAggregate).SyncCommitteeBits.Len()
+	currSize := new(silapb.SyncAggregate).SyncCommitteeBits.Len()
 	switch currSize {
 	case 512:
 		syncCommitteeBits = bitfield.NewBitvector512()
@@ -197,7 +197,7 @@ func GenerateFullBlockElectra(
 	default:
 		return nil, errors.New("invalid bit vector size")
 	}
-	newSyncAggregate := &ethpb.SyncAggregate{
+	newSyncAggregate := &silapb.SyncAggregate{
 		SyncCommitteeBits:      syncCommitteeBits,
 		SyncCommitteeSignature: append([]byte{0xC0}, make([]byte, 95)...),
 	}
@@ -227,7 +227,7 @@ func GenerateFullBlockElectra(
 		return nil, errors.Wrap(err, "could not compute beacon proposer index")
 	}
 
-	changes := make([]*ethpb.SignedBLSToExecutionChange, conf.NumBLSChanges)
+	changes := make([]*silapb.SignedBLSToExecutionChange, conf.NumBLSChanges)
 	for i := uint64(0); i < conf.NumBLSChanges; i++ {
 		changes[i], err = GenerateBLSToExecutionChange(bState, privs[i+1], primitives.ValidatorIndex(i))
 		if err != nil {
@@ -235,11 +235,11 @@ func GenerateFullBlockElectra(
 		}
 	}
 
-	block := &ethpb.BeaconBlockElectra{
+	block := &silapb.BeaconBlockElectra{
 		Slot:          slot,
 		ParentRoot:    parentRoot[:],
 		ProposerIndex: idx,
-		Body: &ethpb.BeaconBlockBodyElectra{
+		Body: &silapb.BeaconBlockBodyElectra{
 			Eth1Data:              eth1Data,
 			RandaoReveal:          reveal,
 			ProposerSlashings:     pSlashings,
@@ -261,7 +261,7 @@ func GenerateFullBlockElectra(
 		return nil, errors.Wrap(err, "could not compute block signature")
 	}
 
-	return &ethpb.SignedBeaconBlockElectra{Block: block, Signature: signature.Marshal()}, nil
+	return &silapb.SignedBeaconBlockElectra{Block: block, Signature: signature.Marshal()}, nil
 }
 
 func generateWithdrawalRequests(
@@ -331,7 +331,7 @@ func generateDepositRequests(
 		randPrefixIndex := nBig.Uint64()
 		withdrawalCred[0] = prefixes[randPrefixIndex]
 
-		depositMessage := &ethpb.DepositMessage{
+		depositMessage := &silapb.DepositMessage{
 			PublicKey:             privs[valIndex].PublicKey().Marshal(),
 			Amount:                amount,
 			WithdrawalCredentials: withdrawalCred,

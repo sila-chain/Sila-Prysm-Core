@@ -4,7 +4,7 @@ import (
 	"math/big"
 	"testing"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 )
 
@@ -12,7 +12,7 @@ var _ PendingDepositsFetcher = (*Cache)(nil)
 
 func TestInsertPendingDeposit_OK(t *testing.T) {
 	dc := Cache{}
-	dc.InsertPendingDeposit(t.Context(), &ethpb.Deposit{}, 111, 100, [32]byte{})
+	dc.InsertPendingDeposit(t.Context(), &silapb.Deposit{}, 111, 100, [32]byte{})
 
 	assert.Equal(t, 1, len(dc.pendingDeposits), "deposit not inserted")
 }
@@ -27,14 +27,14 @@ func TestInsertPendingDeposit_ignoresNilDeposit(t *testing.T) {
 func TestPendingDeposits_OK(t *testing.T) {
 	dc := Cache{}
 
-	dc.pendingDeposits = []*ethpb.DepositContainer{
-		{Eth1BlockHeight: 2, Deposit: &ethpb.Deposit{Proof: [][]byte{[]byte("A")}}},
-		{Eth1BlockHeight: 4, Deposit: &ethpb.Deposit{Proof: [][]byte{[]byte("B")}}},
-		{Eth1BlockHeight: 6, Deposit: &ethpb.Deposit{Proof: [][]byte{[]byte("c")}}},
+	dc.pendingDeposits = []*silapb.DepositContainer{
+		{Eth1BlockHeight: 2, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("A")}}},
+		{Eth1BlockHeight: 4, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("B")}}},
+		{Eth1BlockHeight: 6, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("c")}}},
 	}
 
 	deposits := dc.PendingDeposits(t.Context(), big.NewInt(4))
-	expected := []*ethpb.Deposit{
+	expected := []*silapb.Deposit{
 		{Proof: [][]byte{[]byte("A")}},
 		{Proof: [][]byte{[]byte("B")}},
 	}

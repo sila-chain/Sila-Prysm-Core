@@ -6,15 +6,15 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 )
 
-func testDutyStore(current ...*ethpb.ValidatorDuty) *dutyStore {
+func testDutyStore(current ...*silapb.ValidatorDuty) *dutyStore {
 	ds := &dutyStore{}
 	ds.data = dutyStoreData{
-		currentDuties:  make(map[pubkey]*ethpb.ValidatorDuty),
-		nextDuties:     make(map[pubkey]*ethpb.ValidatorDuty),
+		currentDuties:  make(map[pubkey]*silapb.ValidatorDuty),
+		nextDuties:     make(map[pubkey]*silapb.ValidatorDuty),
 		proposerSlots:  make(map[primitives.ValidatorIndex][]primitives.Slot),
 		ptcSlots:       make(map[primitives.ValidatorIndex][]primitives.Slot),
 		syncCurrentMap: make(map[primitives.ValidatorIndex]bool),
@@ -48,7 +48,7 @@ func TestDutyStore_Uninitialized(t *testing.T) {
 
 	d, ok := ds.currentDuty(pubkey{})
 	assert.Equal(t, false, ok)
-	assert.Equal(t, (*ethpb.ValidatorDuty)(nil), d)
+	assert.Equal(t, (*silapb.ValidatorDuty)(nil), d)
 
 	assert.Equal(t, true, ds.proposerSlots(0) == nil)
 	assert.Equal(t, true, ds.ptcSlots(0) == nil)
@@ -65,8 +65,8 @@ func TestDutyStore_Write(t *testing.T) {
 	pk1 := bytesutil.ToBytes48([]byte{1})
 	pk2 := bytesutil.ToBytes48([]byte{2})
 
-	container := &ethpb.ValidatorDutiesContainer{
-		CurrentEpochDuties: []*ethpb.ValidatorDuty{
+	container := &silapb.ValidatorDutiesContainer{
+		CurrentEpochDuties: []*silapb.ValidatorDuty{
 			{
 				PublicKey:       pk1[:],
 				ValidatorIndex:  10,
@@ -76,7 +76,7 @@ func TestDutyStore_Write(t *testing.T) {
 				IsSyncCommittee: true,
 			},
 		},
-		NextEpochDuties: []*ethpb.ValidatorDuty{
+		NextEpochDuties: []*silapb.ValidatorDuty{
 			{
 				PublicKey:       pk2[:],
 				ValidatorIndex:  20,
@@ -133,7 +133,7 @@ func TestDutyStore_Write(t *testing.T) {
 }
 
 func TestDutyStore_Reset(t *testing.T) {
-	ds := testDutyStore(&ethpb.ValidatorDuty{PublicKey: make([]byte, 48)})
+	ds := testDutyStore(&silapb.ValidatorDuty{PublicKey: make([]byte, 48)})
 	ds.data.prevDependentRoot = []byte("prev")
 	ds.data.currDependentRoot = []byte("curr")
 	assert.Equal(t, true, ds.isInitialized())
@@ -150,7 +150,7 @@ func TestDutyStoreData_Reset(t *testing.T) {
 			epoch:             9,
 			missingNext:       missingNextPtc,
 			indices:           []primitives.ValidatorIndex{1, 5, 7},
-			currentDuties:     map[pubkey]*ethpb.ValidatorDuty{{}: {}},
+			currentDuties:     map[pubkey]*silapb.ValidatorDuty{{}: {}},
 			prevDependentRoot: []byte("prev"),
 		}
 	}
@@ -165,8 +165,8 @@ func TestDutyStoreData_Reset(t *testing.T) {
 
 	t.Run("setFromContainer drops stale indices on a populated struct", func(t *testing.T) {
 		d := populated()
-		d.setFromContainer(&ethpb.ValidatorDutiesContainer{
-			CurrentEpochDuties: []*ethpb.ValidatorDuty{{PublicKey: make([]byte, 48), ValidatorIndex: 2}},
+		d.setFromContainer(&silapb.ValidatorDutiesContainer{
+			CurrentEpochDuties: []*silapb.ValidatorDuty{{PublicKey: make([]byte, 48), ValidatorIndex: 2}},
 		})
 		assert.Equal(t, true, d.indices == nil)
 		// With indices cleared, a stale validator set can't satisfy canPromote
@@ -177,7 +177,7 @@ func TestDutyStoreData_Reset(t *testing.T) {
 }
 
 func TestDutyStore_WriteNilResets(t *testing.T) {
-	ds := testDutyStore(&ethpb.ValidatorDuty{PublicKey: make([]byte, 48)})
+	ds := testDutyStore(&silapb.ValidatorDuty{PublicKey: make([]byte, 48)})
 	assert.Equal(t, true, ds.isInitialized())
 
 	{
@@ -192,9 +192,9 @@ func TestDutyStore_WriteSkipsNilDuties(t *testing.T) {
 	ds := &dutyStore{}
 	{
 		var data dutyStoreData
-		data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-			CurrentEpochDuties: []*ethpb.ValidatorDuty{nil, {PublicKey: make([]byte, 48), ValidatorIndex: 1}},
-			NextEpochDuties:    []*ethpb.ValidatorDuty{nil},
+		data.setFromContainer(&silapb.ValidatorDutiesContainer{
+			CurrentEpochDuties: []*silapb.ValidatorDuty{nil, {PublicKey: make([]byte, 48), ValidatorIndex: 1}},
+			NextEpochDuties:    []*silapb.ValidatorDuty{nil},
 		})
 		ds.write(data)
 	}

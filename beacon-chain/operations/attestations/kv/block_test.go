@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/go-bitfield"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -14,16 +14,16 @@ import (
 func TestKV_BlockAttestation_CanSaveRetrieve(t *testing.T) {
 	cache := NewAttCaches()
 
-	att1 := util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b1101}})
-	att2 := util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 2}, AggregationBits: bitfield.Bitlist{0b1101}})
-	att3 := util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 3}, AggregationBits: bitfield.Bitlist{0b1101}})
-	atts := []ethpb.Att{att1, att2, att3}
+	att1 := util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b1101}})
+	att2 := util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 2}, AggregationBits: bitfield.Bitlist{0b1101}})
+	att3 := util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 3}, AggregationBits: bitfield.Bitlist{0b1101}})
+	atts := []silapb.Att{att1, att2, att3}
 
 	for _, att := range atts {
 		require.NoError(t, cache.SaveBlockAttestation(att))
 	}
 	// Diff bit length should not panic.
-	att4 := util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 3}, AggregationBits: bitfield.Bitlist{0b11011}})
+	att4 := util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 3}, AggregationBits: bitfield.Bitlist{0b11011}})
 	if err := cache.SaveBlockAttestation(att4); err != bitfield.ErrBitlistDifferentLength {
 		t.Errorf("Unexpected error: wanted %v, got %v", bitfield.ErrBitlistDifferentLength, err)
 	}
@@ -40,10 +40,10 @@ func TestKV_BlockAttestation_CanSaveRetrieve(t *testing.T) {
 func TestKV_BlockAttestation_CanDelete(t *testing.T) {
 	cache := NewAttCaches()
 
-	att1 := util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b1101}})
-	att2 := util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 2}, AggregationBits: bitfield.Bitlist{0b1101}})
-	att3 := util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 3}, AggregationBits: bitfield.Bitlist{0b1101}})
-	atts := []ethpb.Att{att1, att2, att3}
+	att1 := util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b1101}})
+	att2 := util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 2}, AggregationBits: bitfield.Bitlist{0b1101}})
+	att3 := util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 3}, AggregationBits: bitfield.Bitlist{0b1101}})
+	atts := []silapb.Att{att1, att2, att3}
 
 	for _, att := range atts {
 		require.NoError(t, cache.SaveBlockAttestation(att))
@@ -53,6 +53,6 @@ func TestKV_BlockAttestation_CanDelete(t *testing.T) {
 	require.NoError(t, cache.DeleteBlockAttestation(att3))
 
 	returned := cache.BlockAttestations()
-	wanted := []ethpb.Att{att2}
+	wanted := []silapb.Att{att2}
 	assert.DeepEqual(t, wanted, returned)
 }

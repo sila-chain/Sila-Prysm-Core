@@ -6,7 +6,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -14,13 +14,13 @@ import (
 func TestNewRODataColumnWithAndWithoutRoot(t *testing.T) {
 	cases := []struct {
 		name   string
-		dcFunc func(t *testing.T) *ethpb.DataColumnSidecar
+		dcFunc func(t *testing.T) *silapb.DataColumnSidecar
 		err    error
 		root   []byte
 	}{
 		{
 			name: "nil signed data column",
-			dcFunc: func(t *testing.T) *ethpb.DataColumnSidecar {
+			dcFunc: func(t *testing.T) *silapb.DataColumnSidecar {
 				return nil
 			},
 			err:  errNilDataColumn,
@@ -28,8 +28,8 @@ func TestNewRODataColumnWithAndWithoutRoot(t *testing.T) {
 		},
 		{
 			name: "nil signed block header",
-			dcFunc: func(t *testing.T) *ethpb.DataColumnSidecar {
-				return &ethpb.DataColumnSidecar{
+			dcFunc: func(t *testing.T) *silapb.DataColumnSidecar {
+				return &silapb.DataColumnSidecar{
 					SignedBlockHeader: nil,
 				}
 			},
@@ -38,9 +38,9 @@ func TestNewRODataColumnWithAndWithoutRoot(t *testing.T) {
 		},
 		{
 			name: "nil inner header",
-			dcFunc: func(t *testing.T) *ethpb.DataColumnSidecar {
-				return &ethpb.DataColumnSidecar{
-					SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
+			dcFunc: func(t *testing.T) *silapb.DataColumnSidecar {
+				return &silapb.DataColumnSidecar{
+					SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
 						Header: nil,
 					},
 				}
@@ -50,10 +50,10 @@ func TestNewRODataColumnWithAndWithoutRoot(t *testing.T) {
 		},
 		{
 			name: "nil signature",
-			dcFunc: func(t *testing.T) *ethpb.DataColumnSidecar {
-				return &ethpb.DataColumnSidecar{
-					SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+			dcFunc: func(t *testing.T) *silapb.DataColumnSidecar {
+				return &silapb.DataColumnSidecar{
+					SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							ParentRoot: make([]byte, fieldparams.RootLength),
 							StateRoot:  make([]byte, fieldparams.RootLength),
 							BodyRoot:   make([]byte, fieldparams.RootLength),
@@ -67,10 +67,10 @@ func TestNewRODataColumnWithAndWithoutRoot(t *testing.T) {
 		},
 		{
 			name: "nominal",
-			dcFunc: func(t *testing.T) *ethpb.DataColumnSidecar {
-				return &ethpb.DataColumnSidecar{
-					SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+			dcFunc: func(t *testing.T) *silapb.DataColumnSidecar {
+				return &silapb.DataColumnSidecar{
+					SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							ParentRoot: make([]byte, fieldparams.RootLength),
 							StateRoot:  make([]byte, fieldparams.RootLength),
 							BodyRoot:   make([]byte, fieldparams.RootLength),
@@ -127,9 +127,9 @@ func TestDataColumn_Slot(t *testing.T) {
 	slot := primitives.Slot(1)
 
 	dataColumn := &RODataColumn{
-		fulu: &ethpb.DataColumnSidecar{
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+		fulu: &silapb.DataColumnSidecar{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					Slot: slot,
 				},
 			},
@@ -142,9 +142,9 @@ func TestDataColumn_Slot(t *testing.T) {
 func TestDataColumn_ParentRoot(t *testing.T) {
 	root := [fieldparams.RootLength]byte{1}
 	dataColumn := &RODataColumn{
-		fulu: &ethpb.DataColumnSidecar{
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+		fulu: &silapb.DataColumnSidecar{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					ParentRoot: root[:],
 				},
 			},
@@ -159,9 +159,9 @@ func TestDataColumn_ParentRoot(t *testing.T) {
 func TestDataColumn_ProposerIndex(t *testing.T) {
 	proposerIndex := primitives.ValidatorIndex(1)
 	dataColumn := &RODataColumn{
-		fulu: &ethpb.DataColumnSidecar{
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+		fulu: &silapb.DataColumnSidecar{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					ProposerIndex: proposerIndex,
 				},
 			},

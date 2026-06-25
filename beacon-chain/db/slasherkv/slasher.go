@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/golang/snappy"
 	"github.com/pkg/errors"
@@ -474,11 +474,11 @@ func (s *Store) SaveSlasherChunks(
 // If so, it returns a double block proposal object.
 func (s *Store) CheckDoubleBlockProposals(
 	ctx context.Context, incomingProposals []*slashertypes.SignedBlockHeaderWrapper,
-) ([]*ethpb.ProposerSlashing, error) {
+) ([]*silapb.ProposerSlashing, error) {
 	_, span := trace.StartSpan(ctx, "BeaconDB.CheckDoubleBlockProposals")
 	defer span.End()
 
-	proposerSlashings := make([]*ethpb.ProposerSlashing, 0, len(incomingProposals))
+	proposerSlashings := make([]*silapb.ProposerSlashing, 0, len(incomingProposals))
 
 	err := s.db.View(func(tx *bolt.Tx) error {
 		// Retrieve the proposal records bucket
@@ -509,7 +509,7 @@ func (s *Store) CheckDoubleBlockProposals(
 					return err
 				}
 
-				proposerSlashings = append(proposerSlashings, &ethpb.ProposerSlashing{
+				proposerSlashings = append(proposerSlashings, &silapb.ProposerSlashing{
 					Header_1: existingProposalWrapper.SignedBeaconBlockHeader,
 					Header_2: incomingProposal.SignedBeaconBlockHeader,
 				})
@@ -598,7 +598,7 @@ func (s *Store) SaveBlockProposals(
 func (s *Store) HighestAttestations(
 	_ context.Context,
 	indices []primitives.ValidatorIndex,
-) ([]*ethpb.HighestAttestation, error) {
+) ([]*silapb.HighestAttestation, error) {
 	if len(indices) == 0 {
 		return nil, nil
 	}
@@ -613,7 +613,7 @@ func (s *Store) HighestAttestations(
 		encodedIndices[i] = encodeValidatorIndex(valIdx)
 	}
 
-	history := make([]*ethpb.HighestAttestation, 0, len(encodedIndices))
+	history := make([]*silapb.HighestAttestation, 0, len(encodedIndices))
 	err = s.db.View(func(tx *bolt.Tx) error {
 		signingRootsBkt := tx.Bucket(attestationDataRootsBucket)
 		attRecordsBkt := tx.Bucket(attestationRecordsBucket)
@@ -629,7 +629,7 @@ func (s *Store) HighestAttestations(
 					if err != nil {
 						return err
 					}
-					highestAtt := &ethpb.HighestAttestation{
+					highestAtt := &silapb.HighestAttestation{
 						ValidatorIndex:     uint64(indices[i]),
 						HighestSourceEpoch: attWrapper.IndexedAttestation.GetData().Source.Epoch,
 						HighestTargetEpoch: attWrapper.IndexedAttestation.GetData().Target.Epoch,
@@ -737,11 +737,11 @@ func decodeAttestationRecord(encoded []byte) (*slashertypes.IndexedAttestationWr
 	}
 
 	// Decode attestation.
-	var decodedAtt ethpb.IndexedAtt
+	var decodedAtt silapb.IndexedAtt
 	if postElectra {
-		decodedAtt = &ethpb.IndexedAttestationElectra{}
+		decodedAtt = &silapb.IndexedAttestationElectra{}
 	} else {
-		decodedAtt = &ethpb.IndexedAttestation{}
+		decodedAtt = &silapb.IndexedAttestation{}
 	}
 
 	if err = decodedAtt.UnmarshalSSZ(decodedAttBytes); err != nil {
@@ -780,7 +780,7 @@ func decodeProposalRecord(encoded []byte) (*slashertypes.SignedBlockHeaderWrappe
 		)
 	}
 	dataRoot := encoded[:rootSize]
-	decodedBlkHdr := &ethpb.SignedBeaconBlockHeader{}
+	decodedBlkHdr := &silapb.SignedBeaconBlockHeader{}
 	decodedHdrBytes, err := snappy.Decode(nil, encoded[rootSize:])
 	if err != nil {
 		return nil, err

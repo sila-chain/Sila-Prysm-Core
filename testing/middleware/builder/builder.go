@@ -40,10 +40,10 @@ import (
 )
 
 const (
-	statusPath   = "GET /eth/v1/builder/status"
-	registerPath = "POST /eth/v1/builder/validators"
-	headerPath   = "GET /eth/v1/builder/header/{slot}/{parent_hash}/{pubkey}"
-	blindedPath  = "POST /eth/v1/builder/blinded_blocks"
+	statusPath   = "GET /sila/v1/builder/status"
+	registerPath = "POST /sila/v1/builder/validators"
+	headerPath   = "GET /sila/v1/builder/header/{slot}/{parent_hash}/{pubkey}"
+	blindedPath  = "POST /sila/v1/builder/blinded_blocks"
 
 	// ForkchoiceUpdatedMethod v1 request string for JSON-RPC.
 	ForkchoiceUpdatedMethod = "silaEngine_forkchoiceUpdatedV1"
@@ -265,7 +265,7 @@ func (p *Builder) handleEngineCalls(req, resp []byte) {
 }
 
 func (*Builder) isBuilderCall(req *http.Request) bool {
-	return strings.Contains(req.URL.Path, "/eth/v1/builder/")
+	return strings.Contains(req.URL.Path, "/sila/v1/builder/")
 }
 
 func (p *Builder) registerValidators(w http.ResponseWriter, req *http.Request) {

@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -42,7 +42,7 @@ var (
 //	  Check if ``validator`` is active.
 //	  """
 //	  return validator.activation_epoch <= epoch < validator.exit_epoch
-func IsActiveValidator(validator *ethpb.Validator, epoch primitives.Epoch) bool {
+func IsActiveValidator(validator *silapb.Validator, epoch primitives.Epoch) bool {
 	return checkValidatorActiveStatus(validator.ActivationEpoch, validator.ExitEpoch, epoch)
 }
 
@@ -482,7 +482,7 @@ func isEligibleForActivationQueueElectra(activationEligibilityEpoch primitives.E
 //	      # Has not yet been activated
 //	      and validator.activation_epoch == FAR_FUTURE_EPOCH
 //	  )
-func IsEligibleForActivation(state state.ReadOnlyCheckpoint, validator *ethpb.Validator) bool {
+func IsEligibleForActivation(state state.ReadOnlyCheckpoint, validator *silapb.Validator) bool {
 	finalizedEpoch := state.FinalizedCheckpointEpoch()
 	return isEligibleForActivation(validator.ActivationEligibilityEpoch, validator.ActivationEpoch, finalizedEpoch)
 }
@@ -520,7 +520,7 @@ func LastActivatedValidatorIndex(ctx context.Context, st state.ReadOnlyBeaconSta
 // IsSameWithdrawalCredentials returns true if both validators have the same withdrawal credentials.
 //
 //	return a.withdrawal_credentials[12:] == b.withdrawal_credentials[12:]
-func IsSameWithdrawalCredentials(a, b *ethpb.Validator) bool {
+func IsSameWithdrawalCredentials(a, b *silapb.Validator) bool {
 	if a == nil || b == nil {
 		return false
 	}

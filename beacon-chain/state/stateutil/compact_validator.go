@@ -7,11 +7,11 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // CompactValidator is a fixed-size, pointer-free representation of a validator.
-// It stores the same data as *ethpb.Validator but in a flat 128-byte struct
+// It stores the same data as *silapb.Validator but in a flat 128-byte struct
 // with zero heap pointers.
 // (The used size is 121 bytes, but the struct is padded to 128 bytes for alignment.)
 type CompactValidator struct {
@@ -26,7 +26,7 @@ type CompactValidator struct {
 }
 
 // CompactValidatorsFromProto converts a slice of protobuf Validators to CompactValidators.
-func CompactValidatorsFromProto(validators []*ethpb.Validator) []CompactValidator {
+func CompactValidatorsFromProto(validators []*silapb.Validator) []CompactValidator {
 	compactValidators := make([]CompactValidator, len(validators))
 	for i, validator := range validators {
 		if validator != nil {
@@ -38,8 +38,8 @@ func CompactValidatorsFromProto(validators []*ethpb.Validator) []CompactValidato
 }
 
 // CompactValidatorsToProto converts a slice of CompactValidators to protobuf Validators.
-func CompactValidatorsToProto(compactValidators []CompactValidator) []*ethpb.Validator {
-	validators := make([]*ethpb.Validator, len(compactValidators))
+func CompactValidatorsToProto(compactValidators []CompactValidator) []*silapb.Validator {
+	validators := make([]*silapb.Validator, len(compactValidators))
 	for i := range compactValidators {
 		validators[i] = compactValidators[i].ToProto()
 	}
@@ -48,7 +48,7 @@ func CompactValidatorsToProto(compactValidators []CompactValidator) []*ethpb.Val
 }
 
 // CompactValidatorFromProto converts a protobuf Validator to a CompactValidator.
-func CompactValidatorFromProto(v *ethpb.Validator) CompactValidator {
+func CompactValidatorFromProto(v *silapb.Validator) CompactValidator {
 	var publicKey [fieldparams.BLSPubkeyLength]byte
 	copy(publicKey[:], v.PublicKey)
 
@@ -68,14 +68,14 @@ func CompactValidatorFromProto(v *ethpb.Validator) CompactValidator {
 }
 
 // ToProto converts a CompactValidator back to a protobuf Validator.
-func (cv *CompactValidator) ToProto() *ethpb.Validator {
+func (cv *CompactValidator) ToProto() *silapb.Validator {
 	publicKey := make([]byte, fieldparams.BLSPubkeyLength)
 	copy(publicKey, cv.PublicKey[:])
 
 	withdrawalCredentials := make([]byte, 32)
 	copy(withdrawalCredentials, cv.WithdrawalCredentials[:])
 
-	return &ethpb.Validator{
+	return &silapb.Validator{
 		PublicKey:                  publicKey,
 		WithdrawalCredentials:      withdrawalCredentials,
 		EffectiveBalance:           cv.EffectiveBalance,

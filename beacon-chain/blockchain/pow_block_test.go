@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	gethtypes "github.com/sila-chain/Sila/core/types"
@@ -124,10 +124,10 @@ func Test_validateMergeBlock(t *testing.T) {
 		},
 		TotalDifficulty: "0x1",
 	}
-	blk := &ethpb.SignedBeaconBlockBellatrix{
-		Block: &ethpb.BeaconBlockBellatrix{
+	blk := &silapb.SignedBeaconBlockBellatrix{
+		Block: &silapb.BeaconBlockBellatrix{
 			Slot: 1,
-			Body: &ethpb.BeaconBlockBodyBellatrix{
+			Body: &silapb.BeaconBlockBodyBellatrix{
 				ExecutionPayload: &enginev1.ExecutionPayload{
 					ParentHash: a[:],
 				},
@@ -222,7 +222,7 @@ func Test_validateTerminalBlockHash(t *testing.T) {
 	service, tr := minimalTestService(t)
 	ctx := tr.ctx
 
-	blk, err := blocks.NewSignedBeaconBlock(util.HydrateSignedBeaconBlockBellatrix(&ethpb.SignedBeaconBlockBellatrix{}))
+	blk, err := blocks.NewSignedBeaconBlock(util.HydrateSignedBeaconBlockBellatrix(&silapb.SignedBeaconBlockBellatrix{}))
 	require.NoError(t, err)
 	blk.SetSlot(1)
 	require.NoError(t, blk.SetExecution(wrapped))

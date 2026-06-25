@@ -7,7 +7,7 @@ import (
 
 	kzgSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/kzg"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/utils"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -57,12 +57,12 @@ func TestVerifyBlobKZGProofBatch(t *testing.T) {
 				require.NoError(t, err)
 				kzgBytes, err := hex.DecodeString(kzgs[i][2:])
 				require.NoError(t, err)
-				sidecar := &ethpb.BlobSidecar{
+				sidecar := &silapb.BlobSidecar{
 					Blob:          blobBytes,
 					KzgProof:      proofBytes,
 					KzgCommitment: kzgBytes,
 				}
-				sidecar.SignedBlockHeader = util.HydrateSignedBeaconHeader(&ethpb.SignedBeaconBlockHeader{})
+				sidecar.SignedBlockHeader = util.HydrateSignedBeaconHeader(&silapb.SignedBeaconBlockHeader{})
 				sc, err := blocks.NewROBlob(sidecar)
 				require.NoError(t, err)
 				sidecars = append(sidecars, sc)

@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	doublylinkedlist "github.com/sila-chain/Sila-Consensus-Core/v7/container/doubly-linked-list"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sirupsen/logrus"
@@ -17,33 +17,33 @@ import (
 // PoolManager maintains pending and seen voluntary exits.
 // This pool is used by proposers to insert voluntary exits into new blocks.
 type PoolManager interface {
-	PendingExits() ([]*ethpb.SignedVoluntaryExit, error)
-	ExitsForInclusion(st state.ReadOnlyBeaconState, slot types.Slot) ([]*ethpb.SignedVoluntaryExit, error)
-	InsertVoluntaryExit(exit *ethpb.SignedVoluntaryExit)
-	MarkIncluded(exit *ethpb.SignedVoluntaryExit)
+	PendingExits() ([]*silapb.SignedVoluntaryExit, error)
+	ExitsForInclusion(st state.ReadOnlyBeaconState, slot types.Slot) ([]*silapb.SignedVoluntaryExit, error)
+	InsertVoluntaryExit(exit *silapb.SignedVoluntaryExit)
+	MarkIncluded(exit *silapb.SignedVoluntaryExit)
 }
 
 // Pool is a concrete implementation of PoolManager.
 type Pool struct {
 	lock    sync.RWMutex
-	pending doublylinkedlist.List[*ethpb.SignedVoluntaryExit]
-	m       map[types.ValidatorIndex]*doublylinkedlist.Node[*ethpb.SignedVoluntaryExit]
+	pending doublylinkedlist.List[*silapb.SignedVoluntaryExit]
+	m       map[types.ValidatorIndex]*doublylinkedlist.Node[*silapb.SignedVoluntaryExit]
 }
 
 // NewPool returns an initialized pool.
 func NewPool() *Pool {
 	return &Pool{
-		pending: doublylinkedlist.List[*ethpb.SignedVoluntaryExit]{},
-		m:       make(map[types.ValidatorIndex]*doublylinkedlist.Node[*ethpb.SignedVoluntaryExit]),
+		pending: doublylinkedlist.List[*silapb.SignedVoluntaryExit]{},
+		m:       make(map[types.ValidatorIndex]*doublylinkedlist.Node[*silapb.SignedVoluntaryExit]),
 	}
 }
 
 // PendingExits returns all objects from the pool.
-func (p *Pool) PendingExits() ([]*ethpb.SignedVoluntaryExit, error) {
+func (p *Pool) PendingExits() ([]*silapb.SignedVoluntaryExit, error) {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
 
-	result := make([]*ethpb.SignedVoluntaryExit, p.pending.Len())
+	result := make([]*silapb.SignedVoluntaryExit, p.pending.Len())
 	node := p.pending.First()
 	var err error
 	for i := 0; node != nil; i++ {
@@ -61,10 +61,10 @@ func (p *Pool) PendingExits() ([]*ethpb.SignedVoluntaryExit, error) {
 
 // ExitsForInclusion returns objects that are ready for inclusion at the given slot. This method will not
 // return more than the block enforced MaxVoluntaryExits.
-func (p *Pool) ExitsForInclusion(st state.ReadOnlyBeaconState, slot types.Slot) ([]*ethpb.SignedVoluntaryExit, error) {
+func (p *Pool) ExitsForInclusion(st state.ReadOnlyBeaconState, slot types.Slot) ([]*silapb.SignedVoluntaryExit, error) {
 	p.lock.RLock()
 	length := int(min(float64(params.BeaconConfig().MaxVoluntaryExits), float64(p.pending.Len())))
-	result := make([]*ethpb.SignedVoluntaryExit, 0, length)
+	result := make([]*silapb.SignedVoluntaryExit, 0, length)
 	node := p.pending.First()
 	for node != nil && len(result) < length {
 		exit, err := node.Value()
@@ -123,7 +123,7 @@ func (p *Pool) ExitsForInclusion(st state.ReadOnlyBeaconState, slot types.Slot) 
 }
 
 // InsertVoluntaryExit into the pool.
-func (p *Pool) InsertVoluntaryExit(exit *ethpb.SignedVoluntaryExit) {
+func (p *Pool) InsertVoluntaryExit(exit *silapb.SignedVoluntaryExit) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
@@ -138,7 +138,7 @@ func (p *Pool) InsertVoluntaryExit(exit *ethpb.SignedVoluntaryExit) {
 
 // MarkIncluded is used when an exit has been included in a beacon block. Every block seen by this
 // node should call this method to include the exit. This will remove the exit from the pool.
-func (p *Pool) MarkIncluded(exit *ethpb.SignedVoluntaryExit) {
+func (p *Pool) MarkIncluded(exit *silapb.SignedVoluntaryExit) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 

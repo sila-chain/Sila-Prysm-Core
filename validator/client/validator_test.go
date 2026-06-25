@@ -29,7 +29,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	blsmock "github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common/mock"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -184,7 +184,7 @@ func TestWaitForChainStart_SetsGenesisInfo(t *testing.T) {
 			client.EXPECT().WaitForChainStart(
 				gomock.Any(),
 				&emptypb.Empty{},
-			).Return(&ethpb.ChainStartResponse{
+			).Return(&silapb.ChainStartResponse{
 				Started:               true,
 				GenesisTime:           uint64(genesis.Unix()),
 				GenesisValidatorsRoot: genesisValidatorsRoot[:],
@@ -200,7 +200,7 @@ func TestWaitForChainStart_SetsGenesisInfo(t *testing.T) {
 			client.EXPECT().WaitForChainStart(
 				gomock.Any(),
 				&emptypb.Empty{},
-			).Return(&ethpb.ChainStartResponse{
+			).Return(&silapb.ChainStartResponse{
 				Started:               true,
 				GenesisTime:           uint64(genesis.Unix()),
 				GenesisValidatorsRoot: genesisValidatorsRoot[:],
@@ -227,7 +227,7 @@ func TestWaitForChainStart_SetsGenesisInfo_IncorrectSecondTry(t *testing.T) {
 			client.EXPECT().WaitForChainStart(
 				gomock.Any(),
 				&emptypb.Empty{},
-			).Return(&ethpb.ChainStartResponse{
+			).Return(&silapb.ChainStartResponse{
 				Started:               true,
 				GenesisTime:           uint64(genesis.Unix()),
 				GenesisValidatorsRoot: genesisValidatorsRoot[:],
@@ -245,7 +245,7 @@ func TestWaitForChainStart_SetsGenesisInfo_IncorrectSecondTry(t *testing.T) {
 			client.EXPECT().WaitForChainStart(
 				gomock.Any(),
 				&emptypb.Empty{},
-			).Return(&ethpb.ChainStartResponse{
+			).Return(&silapb.ChainStartResponse{
 				Started:               true,
 				GenesisTime:           uint64(genesis.Unix()),
 				GenesisValidatorsRoot: genesisValidatorsRoot[:],
@@ -270,7 +270,7 @@ func TestWaitForChainStart_ContextCanceled(t *testing.T) {
 	client.EXPECT().WaitForChainStart(
 		gomock.Any(),
 		&emptypb.Empty{},
-	).Return(&ethpb.ChainStartResponse{
+	).Return(&silapb.ChainStartResponse{
 		Started:               true,
 		GenesisTime:           genesis,
 		GenesisValidatorsRoot: genesisValidatorsRoot,
@@ -312,7 +312,7 @@ func TestWaitSync_ContextCanceled(t *testing.T) {
 	n.EXPECT().SyncStatus(
 		gomock.Any(),
 		gomock.Any(),
-	).Return(&ethpb.SyncStatus{Syncing: true}, nil)
+	).Return(&silapb.SyncStatus{Syncing: true}, nil)
 
 	assert.ErrorContains(t, cancelledCtx, v.WaitForSync(ctx))
 }
@@ -329,7 +329,7 @@ func TestWaitSync_NotSyncing(t *testing.T) {
 	n.EXPECT().SyncStatus(
 		gomock.Any(),
 		gomock.Any(),
-	).Return(&ethpb.SyncStatus{Syncing: false}, nil)
+	).Return(&silapb.SyncStatus{Syncing: false}, nil)
 
 	require.NoError(t, v.WaitForSync(t.Context()))
 }
@@ -346,12 +346,12 @@ func TestWaitSync_Syncing(t *testing.T) {
 	n.EXPECT().SyncStatus(
 		gomock.Any(),
 		gomock.Any(),
-	).Return(&ethpb.SyncStatus{Syncing: true}, nil)
+	).Return(&silapb.SyncStatus{Syncing: true}, nil)
 
 	n.EXPECT().SyncStatus(
 		gomock.Any(),
 		gomock.Any(),
-	).Return(&ethpb.SyncStatus{Syncing: false}, nil)
+	).Return(&silapb.SyncStatus{Syncing: false}, nil)
 
 	require.NoError(t, v.WaitForSync(t.Context()))
 }
@@ -362,7 +362,7 @@ func TestRolesAt_OK(t *testing.T) {
 			v, m, validatorKey, finish := setup(t, isSlashingProtectionMinimal)
 			defer finish()
 
-			v.duties = testDutyStore(&ethpb.ValidatorDuty{
+			v.duties = testDutyStore(&silapb.ValidatorDuty{
 				CommitteeIndex:  1,
 				AttesterSlot:    1,
 				PublicKey:       validatorKey.PublicKey().Marshal(),
@@ -370,7 +370,7 @@ func TestRolesAt_OK(t *testing.T) {
 				PtcSlots:        []primitives.Slot{1},
 			})
 			nextPk := bytesutil.ToBytes48(validatorKey.PublicKey().Marshal())
-			v.duties.data.nextDuties[nextPk] = &ethpb.ValidatorDuty{
+			v.duties.data.nextDuties[nextPk] = &silapb.ValidatorDuty{
 				CommitteeIndex:  1,
 				AttesterSlot:    1,
 				PublicKey:       validatorKey.PublicKey().Marshal(),
@@ -381,15 +381,15 @@ func TestRolesAt_OK(t *testing.T) {
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().SyncSubcommitteeIndex(
 				gomock.Any(), // ctx
-				&ethpb.SyncSubcommitteeIndexRequest{
+				&silapb.SyncSubcommitteeIndexRequest{
 					PublicKey: validatorKey.PublicKey().Marshal(),
 					Slot:      1,
 				},
-			).Return(&ethpb.SyncSubcommitteeIndexResponse{}, nil /*err*/)
+			).Return(&silapb.SyncSubcommitteeIndexResponse{}, nil /*err*/)
 
 			roleMap, err := v.RolesAt(t.Context(), 1)
 			require.NoError(t, err)
@@ -401,13 +401,13 @@ func TestRolesAt_OK(t *testing.T) {
 			assert.Equal(t, iface.RolePTCMember, roleMap[pk][3])
 
 			// Test sync committee role at epoch boundary.
-			v.duties = testDutyStore(&ethpb.ValidatorDuty{
+			v.duties = testDutyStore(&silapb.ValidatorDuty{
 				CommitteeIndex:  1,
 				AttesterSlot:    1,
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				IsSyncCommittee: false,
 			})
-			v.duties.data.nextDuties[nextPk] = &ethpb.ValidatorDuty{
+			v.duties.data.nextDuties[nextPk] = &silapb.ValidatorDuty{
 				CommitteeIndex:  1,
 				AttesterSlot:    1,
 				PublicKey:       validatorKey.PublicKey().Marshal(),
@@ -417,11 +417,11 @@ func TestRolesAt_OK(t *testing.T) {
 
 			m.validatorClient.EXPECT().SyncSubcommitteeIndex(
 				gomock.Any(), // ctx
-				&ethpb.SyncSubcommitteeIndexRequest{
+				&silapb.SyncSubcommitteeIndexRequest{
 					PublicKey: validatorKey.PublicKey().Marshal(),
 					Slot:      31,
 				},
-			).Return(&ethpb.SyncSubcommitteeIndexResponse{}, nil /*err*/)
+			).Return(&silapb.SyncSubcommitteeIndexResponse{}, nil /*err*/)
 
 			roleMap, err = v.RolesAt(t.Context(), params.BeaconConfig().SlotsPerEpoch-1)
 			require.NoError(t, err)
@@ -436,7 +436,7 @@ func TestRolesAt_DoesNotAssignProposer_Slot0(t *testing.T) {
 			v, m, validatorKey, finish := setup(t, isSlashingProtectionMinimal)
 			defer finish()
 
-			v.duties = testDutyStore(&ethpb.ValidatorDuty{
+			v.duties = testDutyStore(&silapb.ValidatorDuty{
 				CommitteeIndex: 1,
 				AttesterSlot:   0,
 				ProposerSlots:  []primitives.Slot{0},
@@ -446,7 +446,7 @@ func TestRolesAt_DoesNotAssignProposer_Slot0(t *testing.T) {
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			roleMap, err := v.RolesAt(t.Context(), 0)
 			require.NoError(t, err)
@@ -471,8 +471,8 @@ func TestCheckAndLogValidatorStatus_OK(t *testing.T) {
 			status: &validatorStatus{
 				publicKey: pubKeys[0],
 				index:     nonexistentIndex,
-				status: &ethpb.ValidatorStatusResponse{
-					Status: ethpb.ValidatorStatus_UNKNOWN_STATUS,
+				status: &silapb.ValidatorStatusResponse{
+					Status: silapb.ValidatorStatus_UNKNOWN_STATUS,
 				},
 			},
 			log:    "Waiting for deposit to be observed by beacon node",
@@ -483,8 +483,8 @@ func TestCheckAndLogValidatorStatus_OK(t *testing.T) {
 			status: &validatorStatus{
 				publicKey: pubKeys[0],
 				index:     30,
-				status: &ethpb.ValidatorStatusResponse{
-					Status:                    ethpb.ValidatorStatus_DEPOSITED,
+				status: &silapb.ValidatorStatusResponse{
+					Status:                    silapb.ValidatorStatus_DEPOSITED,
 					PositionInActivationQueue: 30,
 				},
 			},
@@ -496,8 +496,8 @@ func TestCheckAndLogValidatorStatus_OK(t *testing.T) {
 			status: &validatorStatus{
 				publicKey: pubKeys[0],
 				index:     50,
-				status: &ethpb.ValidatorStatusResponse{
-					Status:                    ethpb.ValidatorStatus_PENDING,
+				status: &silapb.ValidatorStatusResponse{
+					Status:                    silapb.ValidatorStatus_PENDING,
 					ActivationEpoch:           params.BeaconConfig().FarFutureEpoch,
 					PositionInActivationQueue: 6,
 				},
@@ -510,8 +510,8 @@ func TestCheckAndLogValidatorStatus_OK(t *testing.T) {
 			status: &validatorStatus{
 				publicKey: pubKeys[0],
 				index:     89,
-				status: &ethpb.ValidatorStatusResponse{
-					Status: ethpb.ValidatorStatus_ACTIVE,
+				status: &silapb.ValidatorStatusResponse{
+					Status: silapb.ValidatorStatus_ACTIVE,
 				},
 			},
 			active: true,
@@ -521,8 +521,8 @@ func TestCheckAndLogValidatorStatus_OK(t *testing.T) {
 			status: &validatorStatus{
 				publicKey: pubKeys[0],
 				index:     89,
-				status: &ethpb.ValidatorStatusResponse{
-					Status: ethpb.ValidatorStatus_EXITING,
+				status: &silapb.ValidatorStatusResponse{
+					Status: silapb.ValidatorStatus_EXITING,
 				},
 			},
 			active: true,
@@ -531,8 +531,8 @@ func TestCheckAndLogValidatorStatus_OK(t *testing.T) {
 			name: "EXITED",
 			status: &validatorStatus{
 				publicKey: pubKeys[0],
-				status: &ethpb.ValidatorStatusResponse{
-					Status: ethpb.ValidatorStatus_EXITED,
+				status: &silapb.ValidatorStatusResponse{
+					Status: silapb.ValidatorStatus_EXITED,
 				},
 			},
 			log:    "Validator exited",
@@ -547,7 +547,7 @@ func TestCheckAndLogValidatorStatus_OK(t *testing.T) {
 			client := validatormock.NewMockValidatorClient(ctrl)
 			v := validator{
 				validatorClient: client,
-				duties: testDutyStore(&ethpb.ValidatorDuty{
+				duties: testDutyStore(&silapb.ValidatorDuty{
 					CommitteeIndex: 1,
 				}),
 				pubkeyToStatus: make(map[[48]byte]*validatorStatus),
@@ -563,13 +563,13 @@ func TestCheckAndLogValidatorStatus_OK(t *testing.T) {
 }
 
 type doppelGangerRequestMatcher struct {
-	req *ethpb.DoppelGangerRequest
+	req *silapb.DoppelGangerRequest
 }
 
 var _ gomock.Matcher = (*doppelGangerRequestMatcher)(nil)
 
 func (m *doppelGangerRequestMatcher) Matches(x any) bool {
-	r, ok := x.(*ethpb.DoppelGangerRequest)
+	r, ok := x.(*silapb.DoppelGangerRequest)
 	if !ok {
 		panic("Invalid match type")
 	}
@@ -601,7 +601,7 @@ func TestValidator_CheckDoppelGanger(t *testing.T) {
 					keys, err := km.FetchValidatingPublicKeys(t.Context())
 					assert.NoError(t, err)
 					db := dbTest.SetupDB(t, t.TempDir(), keys, isSlashingProtectionMinimal)
-					req := &ethpb.DoppelGangerRequest{ValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{}}
+					req := &silapb.DoppelGangerRequest{ValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{}}
 					for _, k := range keys {
 						pkey := k
 						att := createAttestation(10, 12)
@@ -612,7 +612,7 @@ func TestValidator_CheckDoppelGanger(t *testing.T) {
 						if isSlashingProtectionMinimal {
 							signedRoot = nil
 						}
-						req.ValidatorRequests = append(req.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{PublicKey: pkey[:], Epoch: att.Data.Target.Epoch, SignedRoot: signedRoot})
+						req.ValidatorRequests = append(req.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{PublicKey: pkey[:], Epoch: att.Data.Target.Epoch, SignedRoot: signedRoot})
 					}
 					v := &validator{
 						validatorClient: client,
@@ -635,8 +635,8 @@ func TestValidator_CheckDoppelGanger(t *testing.T) {
 					keys, err := km.FetchValidatingPublicKeys(t.Context())
 					assert.NoError(t, err)
 					db := dbTest.SetupDB(t, t.TempDir(), keys, isSlashingProtectionMinimal)
-					req := &ethpb.DoppelGangerRequest{ValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{}}
-					resp := &ethpb.DoppelGangerResponse{Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{}}
+					req := &silapb.DoppelGangerRequest{ValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{}}
+					resp := &silapb.DoppelGangerResponse{Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{}}
 					for i, k := range keys {
 						pkey := k
 						att := createAttestation(10, 12)
@@ -644,7 +644,7 @@ func TestValidator_CheckDoppelGanger(t *testing.T) {
 						assert.NoError(t, err)
 						assert.NoError(t, db.SaveAttestationForPubKey(t.Context(), pkey, rt, att))
 						if i%3 == 0 {
-							resp.Responses = append(resp.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{PublicKey: pkey[:], DuplicateExists: true})
+							resp.Responses = append(resp.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{PublicKey: pkey[:], DuplicateExists: true})
 						}
 
 						signedRoot := rt[:]
@@ -652,7 +652,7 @@ func TestValidator_CheckDoppelGanger(t *testing.T) {
 							signedRoot = nil
 						}
 
-						req.ValidatorRequests = append(req.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{PublicKey: pkey[:], Epoch: att.Data.Target.Epoch, SignedRoot: signedRoot})
+						req.ValidatorRequests = append(req.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{PublicKey: pkey[:], Epoch: att.Data.Target.Epoch, SignedRoot: signedRoot})
 
 					}
 					v := &validator{
@@ -676,8 +676,8 @@ func TestValidator_CheckDoppelGanger(t *testing.T) {
 					keys, err := km.FetchValidatingPublicKeys(t.Context())
 					assert.NoError(t, err)
 					db := dbTest.SetupDB(t, t.TempDir(), keys, isSlashingProtectionMinimal)
-					req := &ethpb.DoppelGangerRequest{ValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{}}
-					resp := &ethpb.DoppelGangerResponse{Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{}}
+					req := &silapb.DoppelGangerRequest{ValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{}}
+					resp := &silapb.DoppelGangerResponse{Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{}}
 					for i, k := range keys {
 						pkey := k
 						att := createAttestation(10, 12)
@@ -685,14 +685,14 @@ func TestValidator_CheckDoppelGanger(t *testing.T) {
 						assert.NoError(t, err)
 						assert.NoError(t, db.SaveAttestationForPubKey(t.Context(), pkey, rt, att))
 						if i%9 == 0 {
-							resp.Responses = append(resp.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{PublicKey: pkey[:], DuplicateExists: true})
+							resp.Responses = append(resp.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{PublicKey: pkey[:], DuplicateExists: true})
 						}
 						signedRoot := rt[:]
 						if isSlashingProtectionMinimal {
 							signedRoot = nil
 						}
 
-						req.ValidatorRequests = append(req.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{PublicKey: pkey[:], Epoch: att.Data.Target.Epoch, SignedRoot: signedRoot})
+						req.ValidatorRequests = append(req.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{PublicKey: pkey[:], Epoch: att.Data.Target.Epoch, SignedRoot: signedRoot})
 					}
 					v := &validator{
 						validatorClient: client,
@@ -715,8 +715,8 @@ func TestValidator_CheckDoppelGanger(t *testing.T) {
 					keys, err := km.FetchValidatingPublicKeys(t.Context())
 					assert.NoError(t, err)
 					db := dbTest.SetupDB(t, t.TempDir(), keys, isSlashingProtectionMinimal)
-					req := &ethpb.DoppelGangerRequest{ValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{}}
-					resp := &ethpb.DoppelGangerResponse{Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{}}
+					req := &silapb.DoppelGangerRequest{ValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{}}
+					resp := &silapb.DoppelGangerResponse{Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{}}
 					attLimit := 5
 					for i, k := range keys {
 						pkey := k
@@ -732,11 +732,11 @@ func TestValidator_CheckDoppelGanger(t *testing.T) {
 							}
 
 							if j == attLimit-1 {
-								req.ValidatorRequests = append(req.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{PublicKey: pkey[:], Epoch: att.Data.Target.Epoch, SignedRoot: signedRoot})
+								req.ValidatorRequests = append(req.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{PublicKey: pkey[:], Epoch: att.Data.Target.Epoch, SignedRoot: signedRoot})
 							}
 						}
 						if i%3 == 0 {
-							resp.Responses = append(resp.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{PublicKey: pkey[:], DuplicateExists: true})
+							resp.Responses = append(resp.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{PublicKey: pkey[:], DuplicateExists: true})
 						}
 					}
 					v := &validator{
@@ -761,11 +761,11 @@ func TestValidator_CheckDoppelGanger(t *testing.T) {
 					keys, err := km.FetchValidatingPublicKeys(t.Context())
 					assert.NoError(t, err)
 					db := dbTest.SetupDB(t, t.TempDir(), keys, isSlashingProtectionMinimal)
-					resp := &ethpb.DoppelGangerResponse{Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{}}
-					req := &ethpb.DoppelGangerRequest{ValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{}}
+					resp := &silapb.DoppelGangerResponse{Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{}}
+					req := &silapb.DoppelGangerRequest{ValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{}}
 					for _, k := range keys {
-						resp.Responses = append(resp.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{PublicKey: k[:], DuplicateExists: false})
-						req.ValidatorRequests = append(req.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{PublicKey: k[:], SignedRoot: make([]byte, 32), Epoch: 0})
+						resp.Responses = append(resp.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{PublicKey: k[:], DuplicateExists: false})
+						req.ValidatorRequests = append(req.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{PublicKey: k[:], SignedRoot: make([]byte, 32), Epoch: 0})
 					}
 					v := &validator{
 						validatorClient: client,
@@ -842,14 +842,14 @@ func TestValidatorAttestationsAreOrdered(t *testing.T) {
 	}
 }
 
-func createAttestation(source, target primitives.Epoch) *ethpb.IndexedAttestation {
-	return &ethpb.IndexedAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{
+func createAttestation(source, target primitives.Epoch) *silapb.IndexedAttestation {
+	return &silapb.IndexedAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{
 				Epoch: source,
 				Root:  make([]byte, 32),
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: target,
 				Root:  make([]byte, 32),
 			},
@@ -871,11 +871,11 @@ func TestIsSyncCommitteeAggregator_OK(t *testing.T) {
 
 			m.validatorClient.EXPECT().SyncSubcommitteeIndex(
 				gomock.Any(), // ctx
-				&ethpb.SyncSubcommitteeIndexRequest{
+				&silapb.SyncSubcommitteeIndexRequest{
 					PublicKey: validatorKey.PublicKey().Marshal(),
 					Slot:      1,
 				},
-			).Return(&ethpb.SyncSubcommitteeIndexResponse{}, nil /*err*/)
+			).Return(&silapb.SyncSubcommitteeIndexResponse{}, nil /*err*/)
 
 			pk48 := bytesutil.ToBytes48(pubKey)
 			aggregators, err := v.aggSelector.SyncCommitteeAggregators(t.Context(), slot, [][fieldparams.BLSPubkeyLength]byte{pk48})
@@ -889,15 +889,15 @@ func TestIsSyncCommitteeAggregator_OK(t *testing.T) {
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().SyncSubcommitteeIndex(
 				gomock.Any(), // ctx
-				&ethpb.SyncSubcommitteeIndexRequest{
+				&silapb.SyncSubcommitteeIndexRequest{
 					PublicKey: validatorKey.PublicKey().Marshal(),
 					Slot:      1,
 				},
-			).Return(&ethpb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{0}}, nil /*err*/)
+			).Return(&silapb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{0}}, nil /*err*/)
 
 			aggregators, err = v.aggSelector.SyncCommitteeAggregators(t.Context(), slot, [][fieldparams.BLSPubkeyLength]byte{pk48})
 			require.NoError(t, err)
@@ -1020,11 +1020,11 @@ func TestValidator_WaitForKeymanagerInitialization_Interop(t *testing.T) {
 }
 
 type PrepareBeaconProposerRequestMatcher struct {
-	expectedRecipients []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer
+	expectedRecipients []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer
 }
 
 func (m *PrepareBeaconProposerRequestMatcher) Matches(x any) bool {
-	req, ok := x.(*ethpb.PrepareBeaconProposerRequest)
+	req, ok := x.(*silapb.PrepareBeaconProposerRequest)
 	if !ok {
 		return false
 	}
@@ -1091,7 +1091,7 @@ func TestValidator_PushSettings(t *testing.T) {
 						nodeClient:                   nodeClient,
 						db:                           db,
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						interopKeysConfig: &local.InteropKeymanagerConfig{
 							NumValidatorKeys: 2,
@@ -1107,24 +1107,24 @@ func TestValidator_PushSettings(t *testing.T) {
 					require.NoError(t, err)
 					v.pubkeyToStatus[keys[0]] = &validatorStatus{
 						publicKey: keys[0][:],
-						status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+						status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 						index:     primitives.ValidatorIndex(1),
 					}
 					v.pubkeyToStatus[keys[1]] = &validatorStatus{
 						publicKey: keys[1][:],
-						status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+						status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 						index:     primitives.ValidatorIndex(2),
 					}
 					client.EXPECT().MultipleValidatorStatus(
 						gomock.Any(),
 						gomock.Any()).Return(
-						&ethpb.MultipleValidatorStatusResponse{
-							Statuses:   []*ethpb.ValidatorStatusResponse{{Status: ethpb.ValidatorStatus_ACTIVE}, {Status: ethpb.ValidatorStatus_ACTIVE}},
+						&silapb.MultipleValidatorStatusResponse{
+							Statuses:   []*silapb.ValidatorStatusResponse{{Status: silapb.ValidatorStatus_ACTIVE}, {Status: silapb.ValidatorStatus_ACTIVE}},
 							PublicKeys: [][]byte{keys[0][:], keys[1][:]},
 							Indices:    []primitives.ValidatorIndex{1, 2},
 						}, nil)
 					client.EXPECT().PrepareBeaconProposer(gomock.Any(), &PrepareBeaconProposerRequestMatcher{
-						expectedRecipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+						expectedRecipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 							{FeeRecipient: common.HexToAddress("0x055Fb65722E7b2455043BFEBf6177F1D2e9738D9").Bytes(), ValidatorIndex: 1},
 							{FeeRecipient: common.HexToAddress(defaultFeeHex).Bytes(), ValidatorIndex: 2},
 						},
@@ -1182,7 +1182,7 @@ func TestValidator_PushSettings(t *testing.T) {
 						nodeClient:                   nodeClient,
 						db:                           db,
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						interopKeysConfig: &local.InteropKeymanagerConfig{
 							NumValidatorKeys: 2,
@@ -1198,24 +1198,24 @@ func TestValidator_PushSettings(t *testing.T) {
 					require.NoError(t, err)
 					v.pubkeyToStatus[keys[0]] = &validatorStatus{
 						publicKey: keys[0][:],
-						status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+						status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 						index:     primitives.ValidatorIndex(1),
 					}
 					v.pubkeyToStatus[keys[1]] = &validatorStatus{
 						publicKey: keys[1][:],
-						status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+						status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 						index:     primitives.ValidatorIndex(2),
 					}
 					client.EXPECT().MultipleValidatorStatus(
 						gomock.Any(),
 						gomock.Any()).Return(
-						&ethpb.MultipleValidatorStatusResponse{
-							Statuses:   []*ethpb.ValidatorStatusResponse{{Status: ethpb.ValidatorStatus_ACTIVE}, {Status: ethpb.ValidatorStatus_ACTIVE}},
+						&silapb.MultipleValidatorStatusResponse{
+							Statuses:   []*silapb.ValidatorStatusResponse{{Status: silapb.ValidatorStatus_ACTIVE}, {Status: silapb.ValidatorStatus_ACTIVE}},
 							PublicKeys: [][]byte{keys[0][:], keys[1][:]},
 							Indices:    []primitives.ValidatorIndex{1, 2},
 						}, nil)
 					client.EXPECT().PrepareBeaconProposer(gomock.Any(), &PrepareBeaconProposerRequestMatcher{
-						expectedRecipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+						expectedRecipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 							{FeeRecipient: common.HexToAddress("0x055Fb65722E7b2455043BFEBf6177F1D2e9738D9").Bytes(), ValidatorIndex: 1},
 							{FeeRecipient: common.HexToAddress(defaultFeeHex).Bytes(), ValidatorIndex: 2},
 						},
@@ -1268,7 +1268,7 @@ func TestValidator_PushSettings(t *testing.T) {
 						nodeClient:                   nodeClient,
 						db:                           db,
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						interopKeysConfig: &local.InteropKeymanagerConfig{
 							NumValidatorKeys: 2,
@@ -1284,24 +1284,24 @@ func TestValidator_PushSettings(t *testing.T) {
 					require.NoError(t, err)
 					v.pubkeyToStatus[keys[0]] = &validatorStatus{
 						publicKey: keys[0][:],
-						status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+						status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 						index:     primitives.ValidatorIndex(1),
 					}
 					v.pubkeyToStatus[keys[1]] = &validatorStatus{
 						publicKey: keys[1][:],
-						status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+						status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 						index:     primitives.ValidatorIndex(2),
 					}
 					client.EXPECT().MultipleValidatorStatus(
 						gomock.Any(),
 						gomock.Any()).Return(
-						&ethpb.MultipleValidatorStatusResponse{
-							Statuses:   []*ethpb.ValidatorStatusResponse{{Status: ethpb.ValidatorStatus_ACTIVE}, {Status: ethpb.ValidatorStatus_ACTIVE}},
+						&silapb.MultipleValidatorStatusResponse{
+							Statuses:   []*silapb.ValidatorStatusResponse{{Status: silapb.ValidatorStatus_ACTIVE}, {Status: silapb.ValidatorStatus_ACTIVE}},
 							PublicKeys: [][]byte{keys[0][:], keys[1][:]},
 							Indices:    []primitives.ValidatorIndex{1, 2},
 						}, nil)
 					client.EXPECT().PrepareBeaconProposer(gomock.Any(), &PrepareBeaconProposerRequestMatcher{
-						expectedRecipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+						expectedRecipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 							{FeeRecipient: common.HexToAddress("0x055Fb65722E7b2455043BFEBf6177F1D2e9738D9").Bytes(), ValidatorIndex: 1},
 							{FeeRecipient: common.HexToAddress(defaultFeeHex).Bytes(), ValidatorIndex: 2},
 						},
@@ -1338,7 +1338,7 @@ func TestValidator_PushSettings(t *testing.T) {
 						nodeClient:                   nodeClient,
 						db:                           db,
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						interopKeysConfig: &local.InteropKeymanagerConfig{
 							NumValidatorKeys: 1,
@@ -1369,14 +1369,14 @@ func TestValidator_PushSettings(t *testing.T) {
 					require.NoError(t, err)
 					v.pubkeyToStatus[keys[0]] = &validatorStatus{
 						publicKey: keys[0][:],
-						status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+						status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 						index:     primitives.ValidatorIndex(1),
 					}
 					client.EXPECT().MultipleValidatorStatus(
 						gomock.Any(),
 						gomock.Any()).Return(
-						&ethpb.MultipleValidatorStatusResponse{
-							Statuses:   []*ethpb.ValidatorStatusResponse{{Status: ethpb.ValidatorStatus_ACTIVE}},
+						&silapb.MultipleValidatorStatusResponse{
+							Statuses:   []*silapb.ValidatorStatusResponse{{Status: silapb.ValidatorStatus_ACTIVE}},
 							PublicKeys: [][]byte{keys[0][:]},
 							Indices:    []primitives.ValidatorIndex{1},
 						}, nil)
@@ -1385,8 +1385,8 @@ func TestValidator_PushSettings(t *testing.T) {
 						gomock.Any(),
 						gomock.Any(),
 					).Return(&empty.Empty{}, nil)
-					client.EXPECT().PrepareBeaconProposer(gomock.Any(), &ethpb.PrepareBeaconProposerRequest{
-						Recipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+					client.EXPECT().PrepareBeaconProposer(gomock.Any(), &silapb.PrepareBeaconProposerRequest{
+						Recipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 							{FeeRecipient: common.HexToAddress(defaultFeeHex).Bytes(), ValidatorIndex: 1},
 						},
 					}).Return(nil, nil)
@@ -1411,7 +1411,7 @@ func TestValidator_PushSettings(t *testing.T) {
 						nodeClient:                   nodeClient,
 						db:                           db,
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						interopKeysConfig: &local.InteropKeymanagerConfig{
 							NumValidatorKeys: 1,
@@ -1439,14 +1439,14 @@ func TestValidator_PushSettings(t *testing.T) {
 					require.NoError(t, err)
 					v.pubkeyToStatus[keys[0]] = &validatorStatus{
 						publicKey: keys[0][:],
-						status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+						status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 						index:     primitives.ValidatorIndex(1),
 					}
 					client.EXPECT().MultipleValidatorStatus(
 						gomock.Any(),
 						gomock.Any()).Return(
-						&ethpb.MultipleValidatorStatusResponse{
-							Statuses:   []*ethpb.ValidatorStatusResponse{{Status: ethpb.ValidatorStatus_ACTIVE}},
+						&silapb.MultipleValidatorStatusResponse{
+							Statuses:   []*silapb.ValidatorStatusResponse{{Status: silapb.ValidatorStatus_ACTIVE}},
 							PublicKeys: [][]byte{keys[0][:]},
 							Indices:    []primitives.ValidatorIndex{1},
 						}, nil)
@@ -1454,8 +1454,8 @@ func TestValidator_PushSettings(t *testing.T) {
 						gomock.Any(),
 						gomock.Any(),
 					).Return(&empty.Empty{}, nil)
-					client.EXPECT().PrepareBeaconProposer(gomock.Any(), &ethpb.PrepareBeaconProposerRequest{
-						Recipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+					client.EXPECT().PrepareBeaconProposer(gomock.Any(), &silapb.PrepareBeaconProposerRequest{
+						Recipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 							{FeeRecipient: common.HexToAddress(defaultFeeHex).Bytes(), ValidatorIndex: 1},
 						},
 					}).Return(nil, nil)
@@ -1480,7 +1480,7 @@ func TestValidator_PushSettings(t *testing.T) {
 						nodeClient:                   nodeClient,
 						db:                           db,
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						interopKeysConfig: &local.InteropKeymanagerConfig{
 							NumValidatorKeys: 1,
@@ -1496,19 +1496,19 @@ func TestValidator_PushSettings(t *testing.T) {
 					require.NoError(t, err)
 					v.pubkeyToStatus[keys[0]] = &validatorStatus{
 						publicKey: keys[0][:],
-						status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+						status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 						index:     primitives.ValidatorIndex(1),
 					}
 					client.EXPECT().MultipleValidatorStatus(
 						gomock.Any(),
 						gomock.Any()).Return(
-						&ethpb.MultipleValidatorStatusResponse{
-							Statuses:   []*ethpb.ValidatorStatusResponse{{Status: ethpb.ValidatorStatus_ACTIVE}},
+						&silapb.MultipleValidatorStatusResponse{
+							Statuses:   []*silapb.ValidatorStatusResponse{{Status: silapb.ValidatorStatus_ACTIVE}},
 							PublicKeys: [][]byte{keys[0][:]},
 							Indices:    []primitives.ValidatorIndex{1},
 						}, nil)
-					client.EXPECT().PrepareBeaconProposer(gomock.Any(), &ethpb.PrepareBeaconProposerRequest{
-						Recipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+					client.EXPECT().PrepareBeaconProposer(gomock.Any(), &silapb.PrepareBeaconProposerRequest{
+						Recipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 							{FeeRecipient: common.HexToAddress("0x0").Bytes(), ValidatorIndex: 1},
 						},
 					}).Return(nil, nil)
@@ -1537,7 +1537,7 @@ func TestValidator_PushSettings(t *testing.T) {
 						validatorClient:              client,
 						db:                           db,
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						interopKeysConfig: &local.InteropKeymanagerConfig{
 							NumValidatorKeys: 1,
@@ -1559,8 +1559,8 @@ func TestValidator_PushSettings(t *testing.T) {
 					client.EXPECT().MultipleValidatorStatus(
 						gomock.Any(),
 						gomock.Any()).Return(
-						&ethpb.MultipleValidatorStatusResponse{
-							Statuses:   []*ethpb.ValidatorStatusResponse{{Status: ethpb.ValidatorStatus_UNKNOWN_STATUS}},
+						&silapb.MultipleValidatorStatusResponse{
+							Statuses:   []*silapb.ValidatorStatusResponse{{Status: silapb.ValidatorStatus_UNKNOWN_STATUS}},
 							PublicKeys: [][]byte{keys[0][:]},
 							Indices:    []primitives.ValidatorIndex{unknownIndex},
 						}, nil)
@@ -1584,7 +1584,7 @@ func TestValidator_PushSettings(t *testing.T) {
 						nodeClient:                   nodeClient,
 						db:                           db,
 						pubkeyToStatus:               make(map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus),
-						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+						signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 						enableAPI:                    false,
 						interopKeysConfig: &local.InteropKeymanagerConfig{
 							NumValidatorKeys: 1,
@@ -1600,14 +1600,14 @@ func TestValidator_PushSettings(t *testing.T) {
 					require.NoError(t, err)
 					v.pubkeyToStatus[keys[0]] = &validatorStatus{
 						publicKey: keys[0][:],
-						status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+						status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 						index:     primitives.ValidatorIndex(1),
 					}
 					client.EXPECT().MultipleValidatorStatus(
 						gomock.Any(),
 						gomock.Any()).Return(
-						&ethpb.MultipleValidatorStatusResponse{
-							Statuses:   []*ethpb.ValidatorStatusResponse{{Status: ethpb.ValidatorStatus_ACTIVE}},
+						&silapb.MultipleValidatorStatusResponse{
+							Statuses:   []*silapb.ValidatorStatusResponse{{Status: silapb.ValidatorStatus_ACTIVE}},
 							PublicKeys: [][]byte{keys[0][:]},
 							Indices:    []primitives.ValidatorIndex{1},
 						}, nil)
@@ -1634,8 +1634,8 @@ func TestValidator_PushSettings(t *testing.T) {
 						},
 					})
 					require.NoError(t, err)
-					client.EXPECT().PrepareBeaconProposer(gomock.Any(), &ethpb.PrepareBeaconProposerRequest{
-						Recipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+					client.EXPECT().PrepareBeaconProposer(gomock.Any(), &silapb.PrepareBeaconProposerRequest{
+						Recipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 							{FeeRecipient: common.HexToAddress("0x0").Bytes(), ValidatorIndex: 1},
 						},
 					}).Return(nil, nil)
@@ -1745,8 +1745,8 @@ func TestValidator_buildProposerSettingsRequests_WithoutDefaultConfig(t *testing
 	client.EXPECT().MultipleValidatorStatus(
 		gomock.Any(),
 		gomock.Any()).Return(
-		&ethpb.MultipleValidatorStatusResponse{
-			Statuses:   []*ethpb.ValidatorStatusResponse{{Status: ethpb.ValidatorStatus_ACTIVE}, {Status: ethpb.ValidatorStatus_ACTIVE}, {Status: ethpb.ValidatorStatus_UNKNOWN_STATUS}, {Status: ethpb.ValidatorStatus_ACTIVE}},
+		&silapb.MultipleValidatorStatusResponse{
+			Statuses:   []*silapb.ValidatorStatusResponse{{Status: silapb.ValidatorStatus_ACTIVE}, {Status: silapb.ValidatorStatus_ACTIVE}, {Status: silapb.ValidatorStatus_UNKNOWN_STATUS}, {Status: silapb.ValidatorStatus_ACTIVE}},
 			PublicKeys: [][]byte{pubkey1[:], pubkey2[:], pubkey3[:], pubkey4[:]},
 			Indices:    []primitives.ValidatorIndex{1, 2, unknownIndex, 4},
 		}, nil)
@@ -1780,12 +1780,12 @@ func TestValidator_buildProposerSettingsRequests_WithoutDefaultConfig(t *testing
 		pubkeyToStatus: map[[48]byte]*validatorStatus{
 			pubkey1: {
 				publicKey: pubkey1[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 				index:     1,
 			},
 			pubkey4: {
 				publicKey: pubkey4[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 				index:     4,
 			},
 		},
@@ -1793,7 +1793,7 @@ func TestValidator_buildProposerSettingsRequests_WithoutDefaultConfig(t *testing
 
 	pubkeys := [][fieldparams.BLSPubkeyLength]byte{pubkey1, pubkey2, pubkey3, pubkey4}
 
-	expected := []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+	expected := []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 		{
 			ValidatorIndex: 1,
 			FeeRecipient:   feeRecipient1[:],
@@ -1833,8 +1833,8 @@ func TestValidator_filterAndCacheActiveKeys(t *testing.T) {
 		client.EXPECT().MultipleValidatorStatus(
 			gomock.Any(),
 			gomock.Any()).Return(
-			&ethpb.MultipleValidatorStatusResponse{
-				Statuses:   []*ethpb.ValidatorStatusResponse{{Status: ethpb.ValidatorStatus_ACTIVE}, {Status: ethpb.ValidatorStatus_ACTIVE}, {Status: ethpb.ValidatorStatus_UNKNOWN_STATUS}, {Status: ethpb.ValidatorStatus_ACTIVE}},
+			&silapb.MultipleValidatorStatusResponse{
+				Statuses:   []*silapb.ValidatorStatusResponse{{Status: silapb.ValidatorStatus_ACTIVE}, {Status: silapb.ValidatorStatus_ACTIVE}, {Status: silapb.ValidatorStatus_UNKNOWN_STATUS}, {Status: silapb.ValidatorStatus_ACTIVE}},
 				PublicKeys: [][]byte{pubkey1[:], pubkey2[:], pubkey3[:], pubkey4[:]},
 				Indices:    []primitives.ValidatorIndex{1, 2, unknownIndex, 4},
 			}, nil)
@@ -1857,8 +1857,8 @@ func TestValidator_filterAndCacheActiveKeys(t *testing.T) {
 		client.EXPECT().MultipleValidatorStatus(
 			gomock.Any(),
 			gomock.Any()).Return(
-			&ethpb.MultipleValidatorStatusResponse{
-				Statuses:   []*ethpb.ValidatorStatusResponse{{Status: ethpb.ValidatorStatus_ACTIVE}, {Status: ethpb.ValidatorStatus_ACTIVE}, {Status: ethpb.ValidatorStatus_UNKNOWN_STATUS}, {Status: ethpb.ValidatorStatus_ACTIVE}},
+			&silapb.MultipleValidatorStatusResponse{
+				Statuses:   []*silapb.ValidatorStatusResponse{{Status: silapb.ValidatorStatus_ACTIVE}, {Status: silapb.ValidatorStatus_ACTIVE}, {Status: silapb.ValidatorStatus_UNKNOWN_STATUS}, {Status: silapb.ValidatorStatus_ACTIVE}},
 				PublicKeys: [][]byte{pubkey1[:], pubkey2[:], pubkey3[:], pubkey4[:]},
 				Indices:    []primitives.ValidatorIndex{1, 2, unknownIndex, 4},
 			}, nil)
@@ -1867,22 +1867,22 @@ func TestValidator_filterAndCacheActiveKeys(t *testing.T) {
 			pubkeyToStatus: map[[48]byte]*validatorStatus{
 				pubkey1: {
 					publicKey: pubkey1[:],
-					status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+					status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 					index:     1,
 				},
 				pubkey2: {
 					publicKey: pubkey2[:],
-					status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+					status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 					index:     2,
 				},
 				pubkey3: {
 					publicKey: pubkey3[:],
-					status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE}, // gets overridden
+					status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE}, // gets overridden
 					index:     3,
 				},
 				pubkey4: {
 					publicKey: pubkey4[:],
-					status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+					status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 					index:     4,
 				},
 			},
@@ -1898,12 +1898,12 @@ func TestValidator_filterAndCacheActiveKeys(t *testing.T) {
 			pubkeyToStatus: map[[48]byte]*validatorStatus{
 				pubkey1: {
 					publicKey: pubkey1[:],
-					status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+					status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 					index:     1,
 				},
 				pubkey4: {
 					publicKey: pubkey4[:],
-					status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+					status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 					index:     4,
 				},
 			},
@@ -1944,15 +1944,15 @@ func TestValidator_buildProposerSettingsRequests_WithDefaultConfig(t *testing.T)
 
 	defaultFeeRecipient := feeRecipientFromString(t, "0xdddddddddddddddddddddddddddddddddddddddd")
 
-	pubkeyToStatus := map[[fieldparams.BLSPubkeyLength]byte]ethpb.ValidatorStatus{
-		pubkey1: ethpb.ValidatorStatus_ACTIVE,
-		pubkey2: ethpb.ValidatorStatus_ACTIVE,
-		pubkey3: ethpb.ValidatorStatus_UNKNOWN_STATUS,
-		pubkey4: ethpb.ValidatorStatus_ACTIVE,
-		pubkey5: ethpb.ValidatorStatus_EXITED,
-		pubkey6: ethpb.ValidatorStatus_PENDING,
-		pubkey7: ethpb.ValidatorStatus_PENDING,
-		pubkey8: ethpb.ValidatorStatus_EXITING,
+	pubkeyToStatus := map[[fieldparams.BLSPubkeyLength]byte]silapb.ValidatorStatus{
+		pubkey1: silapb.ValidatorStatus_ACTIVE,
+		pubkey2: silapb.ValidatorStatus_ACTIVE,
+		pubkey3: silapb.ValidatorStatus_UNKNOWN_STATUS,
+		pubkey4: silapb.ValidatorStatus_ACTIVE,
+		pubkey5: silapb.ValidatorStatus_EXITED,
+		pubkey6: silapb.ValidatorStatus_PENDING,
+		pubkey7: silapb.ValidatorStatus_PENDING,
+		pubkey8: silapb.ValidatorStatus_EXITING,
 	}
 
 	pubkeyToActivationEpoch := map[[fieldparams.BLSPubkeyLength]byte]primitives.Epoch{
@@ -1985,12 +1985,12 @@ func TestValidator_buildProposerSettingsRequests_WithDefaultConfig(t *testing.T)
 
 	client.EXPECT().MultipleValidatorStatus(
 		gomock.Any(),
-		gomock.Any()).DoAndReturn(func(ctx context.Context, val *ethpb.MultipleValidatorStatusRequest) (*ethpb.MultipleValidatorStatusResponse, error) {
-		resp := &ethpb.MultipleValidatorStatusResponse{}
+		gomock.Any()).DoAndReturn(func(ctx context.Context, val *silapb.MultipleValidatorStatusRequest) (*silapb.MultipleValidatorStatusResponse, error) {
+		resp := &silapb.MultipleValidatorStatusResponse{}
 
 		for _, k := range val.PublicKeys {
 			resp.PublicKeys = append(resp.PublicKeys, bytesutil.SafeCopyBytes(k))
-			resp.Statuses = append(resp.Statuses, &ethpb.ValidatorStatusResponse{
+			resp.Statuses = append(resp.Statuses, &silapb.ValidatorStatusResponse{
 				Status:          pubkeyToStatus[bytesutil.ToBytes48(k)],
 				ActivationEpoch: pubkeyToActivationEpoch[bytesutil.ToBytes48(k)],
 			})
@@ -2034,42 +2034,42 @@ func TestValidator_buildProposerSettingsRequests_WithDefaultConfig(t *testing.T)
 		pubkeyToStatus: map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus{
 			pubkey1: {
 				publicKey: pubkey1[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 				index:     1,
 			},
 			pubkey2: {
 				publicKey: pubkey2[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 				index:     2,
 			},
 			pubkey3: {
 				publicKey: pubkey3[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_UNKNOWN_STATUS},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_UNKNOWN_STATUS},
 				index:     unknownIndex,
 			},
 			pubkey4: {
 				publicKey: pubkey4[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 				index:     4,
 			},
 			pubkey5: {
 				publicKey: pubkey5[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 				index:     5,
 			},
 			pubkey6: {
 				publicKey: pubkey6[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 				index:     6,
 			},
 			pubkey7: {
 				publicKey: pubkey7[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 				index:     7,
 			},
 			pubkey8: {
 				publicKey: pubkey8[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 				index:     8,
 			},
 		},
@@ -2086,7 +2086,7 @@ func TestValidator_buildProposerSettingsRequests_WithDefaultConfig(t *testing.T)
 		pubkey8,
 	}
 
-	expected := []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+	expected := []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 		{
 			ValidatorIndex: 1,
 			FeeRecipient:   feeRecipient1[:],
@@ -2155,7 +2155,7 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		pubkeyToStatus: map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus{
 			kp.pub: {
 				publicKey: kp.pub[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 				index:     1,
 			},
 		},
@@ -2191,19 +2191,19 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
 				PrevDependentRoot: testProposerPrefDependentRoot,
@@ -2225,19 +2225,19 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{nextEpochProposerSlot},
 					},
 				},
@@ -2251,7 +2251,7 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		// using the same epoch will hit the cache. Use AnyTimes() here.
 		client.EXPECT().
 			DomainData(gomock.Any(), gomock.Any()).
-			Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil).
+			Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil).
 			AnyTimes()
 
 		prefs := v.buildProposerPreferences(t.Context(), km, midEpochSlot, false)
@@ -2272,19 +2272,19 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{nextEpochProposerSlot},
 					},
 				},
@@ -2308,19 +2308,19 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{nextEpochProposerSlot},
 					},
 				},
@@ -2348,19 +2348,19 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{slot1, slot2},
 					},
 				},
@@ -2389,19 +2389,19 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_EXITED,
+						Status:         silapb.ValidatorStatus_EXITED,
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_EXITED,
+						Status:         silapb.ValidatorStatus_EXITED,
 						ProposerSlots:  []primitives.Slot{nextEpochProposerSlot},
 					},
 				},
@@ -2448,19 +2448,19 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{nextEpochProposerSlot},
 					},
 				},
@@ -2501,20 +2501,20 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{currentEpochSlot},
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
 				PrevDependentRoot: testProposerPrefDependentRoot,
@@ -2542,20 +2542,20 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{currentEpochSlot},
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{nextEpochSlot},
 					},
 				},
@@ -2584,20 +2584,20 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{3},
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
 				PrevDependentRoot: testProposerPrefDependentRoot,
@@ -2620,20 +2620,20 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{5},
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
 				PrevDependentRoot: testProposerPrefDependentRoot,
@@ -2662,20 +2662,20 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{5},
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
 				PrevDependentRoot: testProposerPrefDependentRoot,
@@ -2690,28 +2690,28 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		// Simulate new validator added with a different proposal slot.
 		v.pubkeyToStatus[kp2.pub] = &validatorStatus{
 			publicKey: kp2.pub[:],
-			status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+			status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 			index:     2,
 		}
 		v.duties = &dutyStore{}
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{5},
 					},
 					{
 						PublicKey:      kp2.pub[:],
 						ValidatorIndex: 2,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{7},
 					},
 				},
-				NextEpochDuties:   []*ethpb.ValidatorDuty{},
+				NextEpochDuties:   []*silapb.ValidatorDuty{},
 				PrevDependentRoot: testProposerPrefDependentRoot,
 				CurrDependentRoot: testProposerPrefDependentRoot,
 			})
@@ -2736,19 +2736,19 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 					},
 				},
-				NextEpochDuties: []*ethpb.ValidatorDuty{
+				NextEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{nextEpochProposerSlot},
 					},
 				},
@@ -2770,23 +2770,23 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 
 		client.EXPECT().
 			DomainData(gomock.Any(), gomock.Any()).
-			Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil).
+			Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil).
 			AnyTimes()
 
 		v.duties = &dutyStore{}
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{midEpochSlot + 2},
 					},
 				},
-				NextEpochDuties:   []*ethpb.ValidatorDuty{},
+				NextEpochDuties:   []*silapb.ValidatorDuty{},
 				PrevDependentRoot: testProposerPrefDependentRoot,
 				CurrDependentRoot: testProposerPrefDependentRoot,
 			})
@@ -2814,23 +2814,23 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 
 		client.EXPECT().
 			DomainData(gomock.Any(), gomock.Any()).
-			Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil).
+			Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil).
 			AnyTimes()
 
 		v.duties = &dutyStore{}
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  []primitives.Slot{5},
 					},
 				},
-				NextEpochDuties:   []*ethpb.ValidatorDuty{},
+				NextEpochDuties:   []*silapb.ValidatorDuty{},
 				PrevDependentRoot: testProposerPrefDependentRoot,
 				CurrDependentRoot: testProposerPrefDependentRoot,
 			})
@@ -2854,7 +2854,7 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 
 		client.EXPECT().
 			DomainData(gomock.Any(), gomock.Any()).
-			Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil).
+			Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil).
 			AnyTimes()
 
 		proposalSlots := []primitives.Slot{
@@ -2865,16 +2865,16 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		v.submittedPrefSlots = make(map[primitives.Slot]bool)
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      kp.pub[:],
 						ValidatorIndex: 1,
-						Status:         ethpb.ValidatorStatus_ACTIVE,
+						Status:         silapb.ValidatorStatus_ACTIVE,
 						ProposerSlots:  proposalSlots,
 					},
 				},
-				NextEpochDuties:   []*ethpb.ValidatorDuty{},
+				NextEpochDuties:   []*silapb.ValidatorDuty{},
 				PrevDependentRoot: testProposerPrefDependentRoot,
 				CurrDependentRoot: testProposerPrefDependentRoot,
 			})
@@ -2884,7 +2884,7 @@ func TestValidator_buildProposerPreferences(t *testing.T) {
 		ctx := t.Context()
 		const builders = 8
 		var wg sync.WaitGroup
-		results := make([][]*ethpb.SignedProposerPreferences, builders)
+		results := make([][]*silapb.SignedProposerPreferences, builders)
 		for i := range builders {
 			wg.Add(1)
 			go func(i int) {
@@ -2934,7 +2934,7 @@ func TestValidator_buildSignedRegReqs_DefaultConfigDisabled(t *testing.T) {
 	signature.EXPECT().Marshal().Return([]byte{})
 
 	v := validator{
-		signedValidatorRegistrations: map[[48]byte]*ethpb.SignedValidatorRegistrationV1{},
+		signedValidatorRegistrations: map[[48]byte]*silapb.SignedValidatorRegistrationV1{},
 		validatorClient:              client,
 		proposerSettings: &proposer.Settings{
 			DefaultConfig: &proposer.Option{
@@ -2984,17 +2984,17 @@ func TestValidator_buildSignedRegReqs_DefaultConfigDisabled(t *testing.T) {
 	}
 	v.pubkeyToStatus[pubkey1] = &validatorStatus{
 		publicKey: pubkey1[:],
-		status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+		status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 		index:     1,
 	}
 	v.pubkeyToStatus[pubkey2] = &validatorStatus{
 		publicKey: pubkey2[:],
-		status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+		status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 		index:     2,
 	}
 	v.pubkeyToStatus[pubkey3] = &validatorStatus{
 		publicKey: pubkey3[:],
-		status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+		status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 		index:     3,
 	}
 	actual := v.buildSignedRegReqs(ctx, pubkeys, signer, 0, false)
@@ -3033,7 +3033,7 @@ func TestValidator_buildSignedRegReqs_DefaultConfigEnabled(t *testing.T) {
 	signature := blsmock.NewMockSignature(ctrl)
 	signature.EXPECT().Marshal().Return([]byte{}).AnyTimes()
 	v := validator{
-		signedValidatorRegistrations: map[[48]byte]*ethpb.SignedValidatorRegistrationV1{},
+		signedValidatorRegistrations: map[[48]byte]*silapb.SignedValidatorRegistrationV1{},
 		validatorClient:              client,
 		proposerSettings: &proposer.Settings{
 			DefaultConfig: &proposer.Option{
@@ -3083,17 +3083,17 @@ func TestValidator_buildSignedRegReqs_DefaultConfigEnabled(t *testing.T) {
 	}
 	v.pubkeyToStatus[pubkey1] = &validatorStatus{
 		publicKey: pubkey1[:],
-		status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+		status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 		index:     1,
 	}
 	v.pubkeyToStatus[pubkey2] = &validatorStatus{
 		publicKey: pubkey2[:],
-		status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+		status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 		index:     2,
 	}
 	v.pubkeyToStatus[pubkey3] = &validatorStatus{
 		publicKey: pubkey3[:],
-		status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+		status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 		index:     3,
 	}
 	actual := v.buildSignedRegReqs(ctx, pubkeys, signer, 0, false)
@@ -3111,7 +3111,7 @@ func TestValidator_buildSignedRegReqs_DefaultConfigEnabled(t *testing.T) {
 	t.Run("mid epoch only pushes newly added key", func(t *testing.T) {
 		v.pubkeyToStatus[pubkey4] = &validatorStatus{
 			publicKey: pubkey4[:],
-			status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+			status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 			index:     4,
 		}
 		pubkeys = append(pubkeys, pubkey4)
@@ -3143,7 +3143,7 @@ func TestValidator_buildSignedRegReqs_SignerOnError(t *testing.T) {
 	client := validatormock.NewMockValidatorClient(ctrl)
 
 	v := validator{
-		signedValidatorRegistrations: map[[48]byte]*ethpb.SignedValidatorRegistrationV1{},
+		signedValidatorRegistrations: map[[48]byte]*silapb.SignedValidatorRegistrationV1{},
 		validatorClient:              client,
 		proposerSettings: &proposer.Settings{
 			DefaultConfig: &proposer.Option{
@@ -3186,7 +3186,7 @@ func TestValidator_buildSignedRegReqs_TimestampBeforeGenesis(t *testing.T) {
 	signature := blsmock.NewMockSignature(ctrl)
 
 	v := validator{
-		signedValidatorRegistrations: map[[48]byte]*ethpb.SignedValidatorRegistrationV1{},
+		signedValidatorRegistrations: map[[48]byte]*silapb.SignedValidatorRegistrationV1{},
 		validatorClient:              client,
 		genesisTime:                  time.Now().Add(1000 * time.Second),
 		proposerSettings: &proposer.Settings{
@@ -3221,7 +3221,7 @@ func TestValidator_buildSignedRegReqs_TimestampBeforeGenesis(t *testing.T) {
 	}
 	v.pubkeyToStatus[pubkey1] = &validatorStatus{
 		publicKey: pubkey1[:],
-		status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+		status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 		index:     1,
 	}
 	actual := v.buildSignedRegReqs(ctx, pubkeys, signer, 0, false)
@@ -3255,13 +3255,13 @@ func TestUpdateValidatorStatusCache(t *testing.T) {
 	}
 
 	client := validatormock.NewMockValidatorClient(ctrl)
-	mockResponse := &ethpb.MultipleValidatorStatusResponse{
+	mockResponse := &silapb.MultipleValidatorStatusResponse{
 		PublicKeys: statusRequestKeys,
-		Statuses: []*ethpb.ValidatorStatusResponse{
+		Statuses: []*silapb.ValidatorStatusResponse{
 			{
-				Status: ethpb.ValidatorStatus_ACTIVE,
+				Status: silapb.ValidatorStatus_ACTIVE,
 			}, {
-				Status: ethpb.ValidatorStatus_EXITING,
+				Status: silapb.ValidatorStatus_EXITING,
 			}},
 		Indices: []primitives.ValidatorIndex{1, 2},
 	}
@@ -3279,8 +3279,8 @@ func TestUpdateValidatorStatusCache(t *testing.T) {
 		pubkeyToStatus: map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus{
 			[fieldparams.BLSPubkeyLength]byte{0x03}: { // add non existent key and status to cache, should be fully removed on update
 				publicKey: []byte{0x03},
-				status: &ethpb.ValidatorStatusResponse{
-					Status: ethpb.ValidatorStatus_ACTIVE,
+				status: &silapb.ValidatorStatusResponse{
+					Status: silapb.ValidatorStatus_ACTIVE,
 				},
 				index: 3,
 			},
@@ -3319,20 +3319,20 @@ func TestGetAttestationData_PreElectraNoCaching(t *testing.T) {
 	// Pre-Electra slot (Electra fork epoch is far in the future by default)
 	preElectraSlot := primitives.Slot(10)
 
-	expectedData := &ethpb.AttestationData{
+	expectedData := &silapb.AttestationData{
 		Slot:            preElectraSlot,
 		CommitteeIndex:  5,
 		BeaconBlockRoot: bytesutil.PadTo([]byte("root"), 32),
-		Source:          &ethpb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte("source"), 32)},
-		Target:          &ethpb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte("target"), 32)},
+		Source:          &silapb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte("source"), 32)},
+		Target:          &silapb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte("target"), 32)},
 	}
 
 	// Each call should go to the beacon node (no caching pre-Electra)
-	client.EXPECT().AttestationData(gomock.Any(), &ethpb.AttestationDataRequest{
+	client.EXPECT().AttestationData(gomock.Any(), &silapb.AttestationDataRequest{
 		Slot:           preElectraSlot,
 		CommitteeIndex: 5,
 	}).Return(expectedData, nil)
-	client.EXPECT().AttestationData(gomock.Any(), &ethpb.AttestationDataRequest{
+	client.EXPECT().AttestationData(gomock.Any(), &silapb.AttestationDataRequest{
 		Slot:           preElectraSlot,
 		CommitteeIndex: 7,
 	}).Return(expectedData, nil)
@@ -3368,16 +3368,16 @@ func TestGetAttestationData_PostElectraCaching(t *testing.T) {
 	// Post-Electra slot
 	postElectraSlot := primitives.Slot(params.BeaconConfig().SlotsPerEpoch + 5)
 
-	expectedData := &ethpb.AttestationData{
+	expectedData := &silapb.AttestationData{
 		Slot:            postElectraSlot,
 		CommitteeIndex:  0,
 		BeaconBlockRoot: bytesutil.PadTo([]byte("root"), 32),
-		Source:          &ethpb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte("source"), 32)},
-		Target:          &ethpb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte("target"), 32)},
+		Source:          &silapb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte("source"), 32)},
+		Target:          &silapb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte("target"), 32)},
 	}
 
 	// Only ONE call should go to the beacon node (caching post-Electra)
-	client.EXPECT().AttestationData(gomock.Any(), &ethpb.AttestationDataRequest{
+	client.EXPECT().AttestationData(gomock.Any(), &silapb.AttestationDataRequest{
 		Slot:           postElectraSlot,
 		CommitteeIndex: 0,
 	}).Return(expectedData, nil).Times(1)
@@ -3418,27 +3418,27 @@ func TestGetAttestationData_PostElectraCacheInvalidatesOnNewSlot(t *testing.T) {
 	slot1 := primitives.Slot(params.BeaconConfig().SlotsPerEpoch + 5)
 	slot2 := primitives.Slot(params.BeaconConfig().SlotsPerEpoch + 6)
 
-	dataSlot1 := &ethpb.AttestationData{
+	dataSlot1 := &silapb.AttestationData{
 		Slot:            slot1,
 		CommitteeIndex:  0,
 		BeaconBlockRoot: bytesutil.PadTo([]byte("root1"), 32),
-		Source:          &ethpb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte("source"), 32)},
-		Target:          &ethpb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte("target"), 32)},
+		Source:          &silapb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte("source"), 32)},
+		Target:          &silapb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte("target"), 32)},
 	}
-	dataSlot2 := &ethpb.AttestationData{
+	dataSlot2 := &silapb.AttestationData{
 		Slot:            slot2,
 		CommitteeIndex:  0,
 		BeaconBlockRoot: bytesutil.PadTo([]byte("root2"), 32),
-		Source:          &ethpb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte("source"), 32)},
-		Target:          &ethpb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte("target"), 32)},
+		Source:          &silapb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte("source"), 32)},
+		Target:          &silapb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte("target"), 32)},
 	}
 
 	// Expect one call per slot
-	client.EXPECT().AttestationData(gomock.Any(), &ethpb.AttestationDataRequest{
+	client.EXPECT().AttestationData(gomock.Any(), &silapb.AttestationDataRequest{
 		Slot:           slot1,
 		CommitteeIndex: 0,
 	}).Return(dataSlot1, nil).Times(1)
-	client.EXPECT().AttestationData(gomock.Any(), &ethpb.AttestationDataRequest{
+	client.EXPECT().AttestationData(gomock.Any(), &silapb.AttestationDataRequest{
 		Slot:           slot2,
 		CommitteeIndex: 0,
 	}).Return(dataSlot2, nil).Times(1)
@@ -3478,23 +3478,23 @@ func TestGetAttestationData_PostElectraConcurrentAccess(t *testing.T) {
 
 	postElectraSlot := primitives.Slot(params.BeaconConfig().SlotsPerEpoch + 5)
 
-	expectedData := &ethpb.AttestationData{
+	expectedData := &silapb.AttestationData{
 		Slot:            postElectraSlot,
 		CommitteeIndex:  0,
 		BeaconBlockRoot: bytesutil.PadTo([]byte("root"), 32),
-		Source:          &ethpb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte("source"), 32)},
-		Target:          &ethpb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte("target"), 32)},
+		Source:          &silapb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte("source"), 32)},
+		Target:          &silapb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte("target"), 32)},
 	}
 
 	// Should only call beacon node once despite concurrent requests
-	client.EXPECT().AttestationData(gomock.Any(), &ethpb.AttestationDataRequest{
+	client.EXPECT().AttestationData(gomock.Any(), &silapb.AttestationDataRequest{
 		Slot:           postElectraSlot,
 		CommitteeIndex: 0,
 	}).Return(expectedData, nil).Times(1)
 
 	var wg sync.WaitGroup
 	numGoroutines := 10
-	results := make([]*ethpb.AttestationData, numGoroutines)
+	results := make([]*silapb.AttestationData, numGoroutines)
 	errs := make([]error, numGoroutines)
 
 	for idx := range numGoroutines {

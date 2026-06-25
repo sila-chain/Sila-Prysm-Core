@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -16,10 +16,10 @@ import (
 
 type DoppelGangerInfo struct {
 	validatorEpoch primitives.Epoch
-	response       *ethpb.DoppelGangerResponse_ValidatorResponse
+	response       *silapb.DoppelGangerResponse_ValidatorResponse
 }
 
-func (c *beaconApiValidatorClient) checkDoppelGanger(ctx context.Context, in *ethpb.DoppelGangerRequest) (*ethpb.DoppelGangerResponse, error) {
+func (c *beaconApiValidatorClient) checkDoppelGanger(ctx context.Context, in *silapb.DoppelGangerRequest) (*silapb.DoppelGangerResponse, error) {
 	// Check if there is any doppelganger validator for the last 2 epochs.
 	// - Check if the beacon node is synced
 	// - If we are in Phase0, we consider there is no doppelganger.
@@ -32,8 +32,8 @@ func (c *beaconApiValidatorClient) checkDoppelGanger(ctx context.Context, in *et
 
 	// Check inputs are correct.
 	if in == nil || in.ValidatorRequests == nil || len(in.ValidatorRequests) == 0 {
-		return &ethpb.DoppelGangerResponse{
-			Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{},
+		return &silapb.DoppelGangerResponse{
+			Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{},
 		}, nil
 	}
 
@@ -54,7 +54,7 @@ func (c *beaconApiValidatorClient) checkDoppelGanger(ctx context.Context, in *et
 
 		stringPubKeyToDoppelGangerInfo[stringPubKey] = DoppelGangerInfo{
 			validatorEpoch: vr.Epoch,
-			response: &ethpb.DoppelGangerResponse_ValidatorResponse{
+			response: &silapb.DoppelGangerResponse_ValidatorResponse{
 				PublicKey:       pubKey,
 				DuplicateExists: false,
 			},
@@ -205,14 +205,14 @@ func (c *beaconApiValidatorClient) checkDoppelGanger(ctx context.Context, in *et
 func buildResponse(
 	stringPubKeys []string,
 	stringPubKeyToDoppelGangerHelper map[string]DoppelGangerInfo,
-) *ethpb.DoppelGangerResponse {
-	responses := make([]*ethpb.DoppelGangerResponse_ValidatorResponse, len(stringPubKeys))
+) *silapb.DoppelGangerResponse {
+	responses := make([]*silapb.DoppelGangerResponse_ValidatorResponse, len(stringPubKeys))
 
 	for i, spk := range stringPubKeys {
 		responses[i] = stringPubKeyToDoppelGangerHelper[spk].response
 	}
 
-	return &ethpb.DoppelGangerResponse{
+	return &silapb.DoppelGangerResponse{
 		Responses: responses,
 	}
 }

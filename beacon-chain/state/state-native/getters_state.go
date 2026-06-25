@@ -3,7 +3,7 @@ package state_native
 import (
 	customtypes "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native/custom-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stateutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
@@ -19,7 +19,7 @@ func (b *BeaconState) ToProtoUnsafe() any {
 	br := b.blockRootsVal().Slice()
 	sr := b.stateRootsVal().Slice()
 	rm := b.randaoMixesVal().Slice()
-	var vals []*ethpb.Validator
+	var vals []*silapb.Validator
 	var bals []uint64
 	var inactivityScores []uint64
 
@@ -35,7 +35,7 @@ func (b *BeaconState) ToProtoUnsafe() any {
 
 	switch b.version {
 	case version.Phase0:
-		return &ethpb.BeaconState{
+		return &silapb.BeaconState{
 			GenesisTime:                 b.genesisTime,
 			GenesisValidatorsRoot:       gvrCopy[:],
 			Slot:                        b.slot,
@@ -59,7 +59,7 @@ func (b *BeaconState) ToProtoUnsafe() any {
 			FinalizedCheckpoint:         b.finalizedCheckpoint,
 		}
 	case version.Altair:
-		return &ethpb.BeaconStateAltair{
+		return &silapb.BeaconStateAltair{
 			GenesisTime:                 b.genesisTime,
 			GenesisValidatorsRoot:       gvrCopy[:],
 			Slot:                        b.slot,
@@ -86,7 +86,7 @@ func (b *BeaconState) ToProtoUnsafe() any {
 			NextSyncCommittee:           b.nextSyncCommittee,
 		}
 	case version.Bellatrix:
-		return &ethpb.BeaconStateBellatrix{
+		return &silapb.BeaconStateBellatrix{
 			GenesisTime:                  b.genesisTime,
 			GenesisValidatorsRoot:        gvrCopy[:],
 			Slot:                         b.slot,
@@ -114,7 +114,7 @@ func (b *BeaconState) ToProtoUnsafe() any {
 			LatestExecutionPayloadHeader: b.latestExecutionPayloadHeader,
 		}
 	case version.Capella:
-		return &ethpb.BeaconStateCapella{
+		return &silapb.BeaconStateCapella{
 			GenesisTime:                  b.genesisTime,
 			GenesisValidatorsRoot:        gvrCopy[:],
 			Slot:                         b.slot,
@@ -145,7 +145,7 @@ func (b *BeaconState) ToProtoUnsafe() any {
 			HistoricalSummaries:          b.historicalSummaries,
 		}
 	case version.Deneb:
-		return &ethpb.BeaconStateDeneb{
+		return &silapb.BeaconStateDeneb{
 			GenesisTime:                  b.genesisTime,
 			GenesisValidatorsRoot:        gvrCopy[:],
 			Slot:                         b.slot,
@@ -176,7 +176,7 @@ func (b *BeaconState) ToProtoUnsafe() any {
 			HistoricalSummaries:          b.historicalSummaries,
 		}
 	case version.Electra:
-		return &ethpb.BeaconStateElectra{
+		return &silapb.BeaconStateElectra{
 			GenesisTime:                   b.genesisTime,
 			GenesisValidatorsRoot:         gvrCopy[:],
 			Slot:                          b.slot,
@@ -217,7 +217,7 @@ func (b *BeaconState) ToProtoUnsafe() any {
 		}
 	case version.Fulu:
 
-		return &ethpb.BeaconStateFulu{
+		return &silapb.BeaconStateFulu{
 			GenesisTime:                   b.genesisTime,
 			GenesisValidatorsRoot:         gvrCopy[:],
 			Slot:                          b.slot,
@@ -259,7 +259,7 @@ func (b *BeaconState) ToProtoUnsafe() any {
 		}
 	case version.Gloas:
 
-		return &ethpb.BeaconStateGloas{
+		return &silapb.BeaconStateGloas{
 			GenesisTime:                   b.genesisTime,
 			GenesisValidatorsRoot:         gvrCopy[:],
 			Slot:                          b.slot,
@@ -333,7 +333,7 @@ func (b *BeaconState) ToProto() any {
 
 	switch b.version {
 	case version.Phase0:
-		return &ethpb.BeaconState{
+		return &silapb.BeaconState{
 			GenesisTime:                 b.genesisTime,
 			GenesisValidatorsRoot:       gvrCopy[:],
 			Slot:                        b.slot,
@@ -357,7 +357,7 @@ func (b *BeaconState) ToProto() any {
 			FinalizedCheckpoint:         b.finalizedCheckpointVal(),
 		}
 	case version.Altair:
-		return &ethpb.BeaconStateAltair{
+		return &silapb.BeaconStateAltair{
 			GenesisTime:                 b.genesisTime,
 			GenesisValidatorsRoot:       gvrCopy[:],
 			Slot:                        b.slot,
@@ -384,7 +384,7 @@ func (b *BeaconState) ToProto() any {
 			NextSyncCommittee:           b.nextSyncCommitteeVal(),
 		}
 	case version.Bellatrix:
-		return &ethpb.BeaconStateBellatrix{
+		return &silapb.BeaconStateBellatrix{
 			GenesisTime:                  b.genesisTime,
 			GenesisValidatorsRoot:        gvrCopy[:],
 			Slot:                         b.slot,
@@ -412,7 +412,7 @@ func (b *BeaconState) ToProto() any {
 			LatestExecutionPayloadHeader: b.latestExecutionPayloadHeader.Copy(),
 		}
 	case version.Capella:
-		return &ethpb.BeaconStateCapella{
+		return &silapb.BeaconStateCapella{
 			GenesisTime:                  b.genesisTime,
 			GenesisValidatorsRoot:        gvrCopy[:],
 			Slot:                         b.slot,
@@ -443,7 +443,7 @@ func (b *BeaconState) ToProto() any {
 			HistoricalSummaries:          b.historicalSummariesVal(),
 		}
 	case version.Deneb:
-		return &ethpb.BeaconStateDeneb{
+		return &silapb.BeaconStateDeneb{
 			GenesisTime:                  b.genesisTime,
 			GenesisValidatorsRoot:        gvrCopy[:],
 			Slot:                         b.slot,
@@ -474,7 +474,7 @@ func (b *BeaconState) ToProto() any {
 			HistoricalSummaries:          b.historicalSummariesVal(),
 		}
 	case version.Electra:
-		return &ethpb.BeaconStateElectra{
+		return &silapb.BeaconStateElectra{
 			GenesisTime:                   b.genesisTime,
 			GenesisValidatorsRoot:         gvrCopy[:],
 			Slot:                          b.slot,
@@ -515,7 +515,7 @@ func (b *BeaconState) ToProto() any {
 		}
 	case version.Fulu:
 
-		return &ethpb.BeaconStateFulu{
+		return &silapb.BeaconStateFulu{
 			GenesisTime:                   b.genesisTime,
 			GenesisValidatorsRoot:         gvrCopy[:],
 			Slot:                          b.slot,
@@ -557,7 +557,7 @@ func (b *BeaconState) ToProto() any {
 		}
 	case version.Gloas:
 
-		return &ethpb.BeaconStateGloas{
+		return &silapb.BeaconStateGloas{
 			GenesisTime:                   b.genesisTime,
 			GenesisValidatorsRoot:         gvrCopy[:],
 			Slot:                          b.slot,
@@ -647,18 +647,18 @@ func (b *BeaconState) StateRootAtIndex(idx uint64) ([]byte, error) {
 
 // ProtobufBeaconStatePhase0 transforms an input into beacon state in the form of protobuf.
 // Error is returned if the input is not type protobuf beacon state.
-func ProtobufBeaconStatePhase0(s any) (*ethpb.BeaconState, error) {
-	pbState, ok := s.(*ethpb.BeaconState)
+func ProtobufBeaconStatePhase0(s any) (*silapb.BeaconState, error) {
+	pbState, ok := s.(*silapb.BeaconState)
 	if !ok {
-		return nil, errors.New("input is not type ethpb.BeaconState")
+		return nil, errors.New("input is not type silapb.BeaconState")
 	}
 	return pbState, nil
 }
 
 // ProtobufBeaconStateAltair transforms an input into beacon state Altair in the form of protobuf.
 // Error is returned if the input is not type protobuf beacon state.
-func ProtobufBeaconStateAltair(s any) (*ethpb.BeaconStateAltair, error) {
-	pbState, ok := s.(*ethpb.BeaconStateAltair)
+func ProtobufBeaconStateAltair(s any) (*silapb.BeaconStateAltair, error) {
+	pbState, ok := s.(*silapb.BeaconStateAltair)
 	if !ok {
 		return nil, errors.New("input is not type pb.BeaconStateAltair")
 	}
@@ -667,8 +667,8 @@ func ProtobufBeaconStateAltair(s any) (*ethpb.BeaconStateAltair, error) {
 
 // ProtobufBeaconStateBellatrix transforms an input into beacon state Bellatrix in the form of protobuf.
 // Error is returned if the input is not type protobuf beacon state.
-func ProtobufBeaconStateBellatrix(s any) (*ethpb.BeaconStateBellatrix, error) {
-	pbState, ok := s.(*ethpb.BeaconStateBellatrix)
+func ProtobufBeaconStateBellatrix(s any) (*silapb.BeaconStateBellatrix, error) {
+	pbState, ok := s.(*silapb.BeaconStateBellatrix)
 	if !ok {
 		return nil, errors.New("input is not type pb.BeaconStateBellatrix")
 	}
@@ -677,8 +677,8 @@ func ProtobufBeaconStateBellatrix(s any) (*ethpb.BeaconStateBellatrix, error) {
 
 // ProtobufBeaconStateCapella transforms an input into beacon state Capella in the form of protobuf.
 // Error is returned if the input is not type protobuf beacon state.
-func ProtobufBeaconStateCapella(s any) (*ethpb.BeaconStateCapella, error) {
-	pbState, ok := s.(*ethpb.BeaconStateCapella)
+func ProtobufBeaconStateCapella(s any) (*silapb.BeaconStateCapella, error) {
+	pbState, ok := s.(*silapb.BeaconStateCapella)
 	if !ok {
 		return nil, errors.New("input is not type pb.BeaconStateCapella")
 	}
@@ -687,8 +687,8 @@ func ProtobufBeaconStateCapella(s any) (*ethpb.BeaconStateCapella, error) {
 
 // ProtobufBeaconStateDeneb transforms an input into beacon state Deneb in the form of protobuf.
 // Error is returned if the input is not type protobuf beacon state.
-func ProtobufBeaconStateDeneb(s any) (*ethpb.BeaconStateDeneb, error) {
-	pbState, ok := s.(*ethpb.BeaconStateDeneb)
+func ProtobufBeaconStateDeneb(s any) (*silapb.BeaconStateDeneb, error) {
+	pbState, ok := s.(*silapb.BeaconStateDeneb)
 	if !ok {
 		return nil, errors.New("input is not type pb.BeaconStateDeneb")
 	}
@@ -697,8 +697,8 @@ func ProtobufBeaconStateDeneb(s any) (*ethpb.BeaconStateDeneb, error) {
 
 // ProtobufBeaconStateElectra transforms an input into beacon state Electra in the form of protobuf.
 // Error is returned if the input is not type protobuf beacon state.
-func ProtobufBeaconStateElectra(s any) (*ethpb.BeaconStateElectra, error) {
-	pbState, ok := s.(*ethpb.BeaconStateElectra)
+func ProtobufBeaconStateElectra(s any) (*silapb.BeaconStateElectra, error) {
+	pbState, ok := s.(*silapb.BeaconStateElectra)
 	if !ok {
 		return nil, errors.New("input is not type pb.BeaconStateElectra")
 	}
@@ -707,8 +707,8 @@ func ProtobufBeaconStateElectra(s any) (*ethpb.BeaconStateElectra, error) {
 
 // ProtobufBeaconStateFulu transforms an input into beacon state Fulu in the form of protobuf.
 // Error is returned if the input is not type protobuf beacon state.
-func ProtobufBeaconStateFulu(s any) (*ethpb.BeaconStateFulu, error) {
-	pbState, ok := s.(*ethpb.BeaconStateFulu)
+func ProtobufBeaconStateFulu(s any) (*silapb.BeaconStateFulu, error) {
+	pbState, ok := s.(*silapb.BeaconStateFulu)
 	if !ok {
 		return nil, errors.New("input is not type pb.BeaconStateFulu")
 	}
@@ -717,8 +717,8 @@ func ProtobufBeaconStateFulu(s any) (*ethpb.BeaconStateFulu, error) {
 
 // ProtobufBeaconStateGloas transforms an input into beacon state Gloas in the form of protobuf.
 // Error is returned if the input is not type protobuf beacon state.
-func ProtobufBeaconStateGloas(s any) (*ethpb.BeaconStateGloas, error) {
-	pbState, ok := s.(*ethpb.BeaconStateGloas)
+func ProtobufBeaconStateGloas(s any) (*silapb.BeaconStateGloas, error) {
+	pbState, ok := s.(*silapb.BeaconStateGloas)
 	if !ok {
 		return nil, errors.New("input is not type pb.BeaconStateGloas")
 	}

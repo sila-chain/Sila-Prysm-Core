@@ -13,16 +13,16 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/rand"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
-func (s *Simulator) generateAttestationsForSlot(ctx context.Context, ver int, slot primitives.Slot) ([]ethpb.IndexedAtt, []ethpb.AttSlashing, error) {
-	attestations := make([]ethpb.IndexedAtt, 0)
-	slashings := make([]ethpb.AttSlashing, 0)
+func (s *Simulator) generateAttestationsForSlot(ctx context.Context, ver int, slot primitives.Slot) ([]silapb.IndexedAtt, []silapb.AttSlashing, error) {
+	attestations := make([]silapb.IndexedAtt, 0)
+	slashings := make([]silapb.AttSlashing, 0)
 	currentEpoch := slots.ToEpoch(slot)
 
 	committeesPerSlot := helpers.SlotCommitteeCount(s.srvConfig.Params.NumValidators)
@@ -39,15 +39,15 @@ func (s *Simulator) generateAttestationsForSlot(ctx context.Context, ver int, sl
 	startIdx := valsPerSlot * uint64(slot%s.srvConfig.Params.SlotsPerEpoch)
 	endIdx := startIdx + valsPerCommittee
 	for c := primitives.CommitteeIndex(0); uint64(c) < committeesPerSlot; c++ {
-		attData := &ethpb.AttestationData{
+		attData := &silapb.AttestationData{
 			Slot:            slot,
 			CommitteeIndex:  c,
 			BeaconBlockRoot: bytesutil.PadTo([]byte("block"), 32),
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: sourceEpoch,
 				Root:  bytesutil.PadTo([]byte("source"), 32),
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: currentEpoch,
 				Root:  bytesutil.PadTo([]byte("target"), 32),
 			},
@@ -61,15 +61,15 @@ func (s *Simulator) generateAttestationsForSlot(ctx context.Context, ver int, sl
 				indices = append(indices, idx)
 			}
 
-			var att ethpb.IndexedAtt
+			var att silapb.IndexedAtt
 			if ver >= version.Electra {
-				att = &ethpb.IndexedAttestationElectra{
+				att = &silapb.IndexedAttestationElectra{
 					AttestingIndices: indices,
 					Data:             attData,
 					Signature:        params.BeaconConfig().EmptySignature[:],
 				}
 			} else {
-				att = &ethpb.IndexedAttestation{
+				att = &silapb.IndexedAttestation{
 					AttestingIndices: indices,
 					Data:             attData,
 					Signature:        params.BeaconConfig().EmptySignature[:],
@@ -88,9 +88,9 @@ func (s *Simulator) generateAttestationsForSlot(ctx context.Context, ver int, sl
 			}
 
 			if ver >= version.Electra {
-				att.(*ethpb.IndexedAttestationElectra).Signature = aggSig.Marshal()
+				att.(*silapb.IndexedAttestationElectra).Signature = aggSig.Marshal()
 			} else {
-				att.(*ethpb.IndexedAttestation).Signature = aggSig.Marshal()
+				att.(*silapb.IndexedAttestation).Signature = aggSig.Marshal()
 			}
 
 			attestations = append(attestations, att)
@@ -102,9 +102,9 @@ func (s *Simulator) generateAttestationsForSlot(ctx context.Context, ver int, sl
 				}
 
 				if ver >= version.Electra {
-					slashableAtt.(*ethpb.IndexedAttestationElectra).Signature = aggSig.Marshal()
+					slashableAtt.(*silapb.IndexedAttestationElectra).Signature = aggSig.Marshal()
 				} else {
-					slashableAtt.(*ethpb.IndexedAttestation).Signature = aggSig.Marshal()
+					slashableAtt.(*silapb.IndexedAttestation).Signature = aggSig.Marshal()
 				}
 
 				slashedIndices = append(slashedIndices, slashableAtt.GetAttestingIndices()...)
@@ -119,30 +119,30 @@ func (s *Simulator) generateAttestationsForSlot(ctx context.Context, ver int, sl
 					return nil, nil, errors.Wrap(err, "cannot compte `slashableAtt` hash tree root")
 				}
 
-				var slashing ethpb.AttSlashing
+				var slashing silapb.AttSlashing
 				if ver >= version.Electra {
-					slashing = &ethpb.AttesterSlashingElectra{
-						Attestation_1: att.(*ethpb.IndexedAttestationElectra),
-						Attestation_2: slashableAtt.(*ethpb.IndexedAttestationElectra),
+					slashing = &silapb.AttesterSlashingElectra{
+						Attestation_1: att.(*silapb.IndexedAttestationElectra),
+						Attestation_2: slashableAtt.(*silapb.IndexedAttestationElectra),
 					}
 				} else {
-					slashing = &ethpb.AttesterSlashing{
-						Attestation_1: att.(*ethpb.IndexedAttestation),
-						Attestation_2: slashableAtt.(*ethpb.IndexedAttestation),
+					slashing = &silapb.AttesterSlashing{
+						Attestation_1: att.(*silapb.IndexedAttestation),
+						Attestation_2: slashableAtt.(*silapb.IndexedAttestation),
 					}
 				}
 
 				// Ensure the attestation with the lower data root is the first attestation.
 				if bytes.Compare(attDataRoot[:], slashableAttDataRoot[:]) > 0 {
 					if ver >= version.Electra {
-						slashing = &ethpb.AttesterSlashingElectra{
-							Attestation_1: slashableAtt.(*ethpb.IndexedAttestationElectra),
-							Attestation_2: att.(*ethpb.IndexedAttestationElectra),
+						slashing = &silapb.AttesterSlashingElectra{
+							Attestation_1: slashableAtt.(*silapb.IndexedAttestationElectra),
+							Attestation_2: att.(*silapb.IndexedAttestationElectra),
 						}
 					} else {
-						slashing = &ethpb.AttesterSlashing{
-							Attestation_1: slashableAtt.(*ethpb.IndexedAttestation),
-							Attestation_2: att.(*ethpb.IndexedAttestation),
+						slashing = &silapb.AttesterSlashing{
+							Attestation_1: slashableAtt.(*silapb.IndexedAttestation),
+							Attestation_2: att.(*silapb.IndexedAttestation),
 						}
 					}
 				}
@@ -164,7 +164,7 @@ func (s *Simulator) generateAttestationsForSlot(ctx context.Context, ver int, sl
 }
 
 func (s *Simulator) aggregateSigForAttestation(
-	beaconState state.ReadOnlyBeaconState, att ethpb.IndexedAtt,
+	beaconState state.ReadOnlyBeaconState, att silapb.IndexedAtt,
 ) (bls.Signature, error) {
 	domain, err := signing.Domain(
 		beaconState.Fork(),
@@ -187,63 +187,63 @@ func (s *Simulator) aggregateSigForAttestation(
 	return bls.AggregateSignatures(sigs), nil
 }
 
-func makeSlashableFromAtt(att ethpb.IndexedAtt, indices []uint64) ethpb.IndexedAtt {
+func makeSlashableFromAtt(att silapb.IndexedAtt, indices []uint64) silapb.IndexedAtt {
 	if att.GetData().Source.Epoch <= 2 {
 		return makeDoubleVoteFromAtt(att, indices)
 	}
-	attData := &ethpb.AttestationData{
+	attData := &silapb.AttestationData{
 		Slot:            att.GetData().Slot,
 		CommitteeIndex:  att.GetData().CommitteeIndex,
 		BeaconBlockRoot: att.GetData().BeaconBlockRoot,
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: att.GetData().Source.Epoch - 3,
 			Root:  att.GetData().Source.Root,
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: att.GetData().Target.Epoch,
 			Root:  att.GetData().Target.Root,
 		},
 	}
 
 	if att.Version() >= version.Electra {
-		return &ethpb.IndexedAttestationElectra{
+		return &silapb.IndexedAttestationElectra{
 			AttestingIndices: indices,
 			Data:             attData,
 			Signature:        params.BeaconConfig().EmptySignature[:],
 		}
 	}
 
-	return &ethpb.IndexedAttestation{
+	return &silapb.IndexedAttestation{
 		AttestingIndices: indices,
 		Data:             attData,
 		Signature:        params.BeaconConfig().EmptySignature[:],
 	}
 }
 
-func makeDoubleVoteFromAtt(att ethpb.IndexedAtt, indices []uint64) ethpb.IndexedAtt {
-	attData := &ethpb.AttestationData{
+func makeDoubleVoteFromAtt(att silapb.IndexedAtt, indices []uint64) silapb.IndexedAtt {
+	attData := &silapb.AttestationData{
 		Slot:            att.GetData().Slot,
 		CommitteeIndex:  att.GetData().CommitteeIndex,
 		BeaconBlockRoot: bytesutil.PadTo([]byte("slash me"), 32),
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: att.GetData().Source.Epoch,
 			Root:  att.GetData().Source.Root,
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: att.GetData().Target.Epoch,
 			Root:  att.GetData().Target.Root,
 		},
 	}
 
 	if att.Version() >= version.Electra {
-		return &ethpb.IndexedAttestationElectra{
+		return &silapb.IndexedAttestationElectra{
 			AttestingIndices: indices,
 			Data:             attData,
 			Signature:        params.BeaconConfig().EmptySignature[:],
 		}
 	}
 
-	return &ethpb.IndexedAttestation{
+	return &silapb.IndexedAttestation{
 		AttestingIndices: indices,
 		Data:             attData,
 		Signature:        params.BeaconConfig().EmptySignature[:],

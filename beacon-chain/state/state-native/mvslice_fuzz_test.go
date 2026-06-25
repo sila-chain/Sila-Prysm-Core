@@ -4,13 +4,13 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func FuzzMultiValueBalances(f *testing.F) {
 	bals := make([]uint64, 65536)
-	firstState, err := InitializeFromProtoPhase0(&ethpb.BeaconState{Balances: bals})
+	firstState, err := InitializeFromProtoPhase0(&silapb.BeaconState{Balances: bals})
 	require.NoError(f, err)
 
 	f.Fuzz(func(t *testing.T, index uint16, value uint64) {

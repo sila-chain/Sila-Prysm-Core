@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -87,7 +87,7 @@ type HeadFetcher interface {
 	HeadStateReadOnly(ctx context.Context) (state.ReadOnlyBeaconState, error)
 	HeadValidatorsIndices(ctx context.Context, epoch primitives.Epoch) ([]primitives.ValidatorIndex, error)
 	HeadGenesisValidatorsRoot() [32]byte
-	HeadETH1Data() *ethpb.Eth1Data
+	HeadETH1Data() *silapb.Eth1Data
 	HeadPublicKeyToValidatorIndex(pubKey [fieldparams.BLSPubkeyLength]byte) (primitives.ValidatorIndex, bool)
 	HeadValidatorIndexToPublicKey(ctx context.Context, index primitives.ValidatorIndex) ([fieldparams.BLSPubkeyLength]byte, error)
 	ChainHeads() ([][32]byte, []primitives.Slot)
@@ -99,7 +99,7 @@ type HeadFetcher interface {
 
 // ForkFetcher retrieves the current fork information of the Sila beacon chain.
 type ForkFetcher interface {
-	CurrentFork() *ethpb.Fork
+	CurrentFork() *silapb.Fork
 	GenesisFetcher
 	TimeFetcher
 }
@@ -118,9 +118,9 @@ type CanonicalFetcher interface {
 // FinalizationFetcher defines a common interface for methods in blockchain service which
 // directly retrieve finalization and justification related data.
 type FinalizationFetcher interface {
-	FinalizedCheckpt() *ethpb.Checkpoint
-	CurrentJustifiedCheckpt() *ethpb.Checkpoint
-	PreviousJustifiedCheckpt() *ethpb.Checkpoint
+	FinalizedCheckpt() *silapb.Checkpoint
+	CurrentJustifiedCheckpt() *silapb.Checkpoint
+	PreviousJustifiedCheckpt() *silapb.Checkpoint
 	UnrealizedJustifiedPayloadBlockHash() [32]byte
 	FinalizedBlockHash() [32]byte
 	InForkchoice([32]byte) bool
@@ -135,27 +135,27 @@ type OptimisticModeFetcher interface {
 }
 
 // FinalizedCheckpt returns the latest finalized checkpoint from chain store.
-func (s *Service) FinalizedCheckpt() *ethpb.Checkpoint {
+func (s *Service) FinalizedCheckpt() *silapb.Checkpoint {
 	s.cfg.ForkChoiceStore.RLock()
 	defer s.cfg.ForkChoiceStore.RUnlock()
 	cp := s.cfg.ForkChoiceStore.FinalizedCheckpoint()
-	return &ethpb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
+	return &silapb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
 }
 
 // PreviousJustifiedCheckpt returns the current justified checkpoint from chain store.
-func (s *Service) PreviousJustifiedCheckpt() *ethpb.Checkpoint {
+func (s *Service) PreviousJustifiedCheckpt() *silapb.Checkpoint {
 	s.cfg.ForkChoiceStore.RLock()
 	defer s.cfg.ForkChoiceStore.RUnlock()
 	cp := s.cfg.ForkChoiceStore.PreviousJustifiedCheckpoint()
-	return &ethpb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
+	return &silapb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
 }
 
 // CurrentJustifiedCheckpt returns the current justified checkpoint from chain store.
-func (s *Service) CurrentJustifiedCheckpt() *ethpb.Checkpoint {
+func (s *Service) CurrentJustifiedCheckpt() *silapb.Checkpoint {
 	s.cfg.ForkChoiceStore.RLock()
 	defer s.cfg.ForkChoiceStore.RUnlock()
 	cp := s.cfg.ForkChoiceStore.JustifiedCheckpoint()
-	return &ethpb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
+	return &silapb.Checkpoint{Epoch: cp.Epoch, Root: bytesutil.SafeCopyBytes(cp.Root[:])}
 }
 
 // HeadSlot returns the slot of the head of the chain.
@@ -274,12 +274,12 @@ func (s *Service) HeadGenesisValidatorsRoot() [32]byte {
 }
 
 // HeadETH1Data returns the eth1data of the current head state.
-func (s *Service) HeadETH1Data() *ethpb.Eth1Data {
+func (s *Service) HeadETH1Data() *silapb.Eth1Data {
 	s.headLock.RLock()
 	defer s.headLock.RUnlock()
 
 	if !s.hasHeadState() {
-		return &ethpb.Eth1Data{}
+		return &silapb.Eth1Data{}
 	}
 	return s.head.state.Eth1Data()
 }
@@ -302,12 +302,12 @@ func (s *Service) GenesisValidatorsRoot() [32]byte {
 }
 
 // CurrentFork retrieves the latest fork information of the beacon chain.
-func (s *Service) CurrentFork() *ethpb.Fork {
+func (s *Service) CurrentFork() *silapb.Fork {
 	s.headLock.RLock()
 	defer s.headLock.RUnlock()
 
 	if !s.hasHeadState() {
-		return &ethpb.Fork{
+		return &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 		}
@@ -576,13 +576,13 @@ func (s *Service) SetGenesisTime(t time.Time) {
 	s.genesisTime = t.Truncate(time.Second) // Genesis time has a precision of 1 second.
 }
 
-func (s *Service) recoverStateSummary(ctx context.Context, blockRoot [32]byte) (*ethpb.StateSummary, error) {
+func (s *Service) recoverStateSummary(ctx context.Context, blockRoot [32]byte) (*silapb.StateSummary, error) {
 	if s.cfg.BeaconDB.HasBlock(ctx, blockRoot) {
 		b, err := s.cfg.BeaconDB.Block(ctx, blockRoot)
 		if err != nil {
 			return nil, err
 		}
-		summary := &ethpb.StateSummary{Slot: b.Block().Slot(), Root: blockRoot[:]}
+		summary := &silapb.StateSummary{Slot: b.Block().Slot(), Root: blockRoot[:]}
 		if err := s.cfg.BeaconDB.SaveStateSummary(ctx, summary); err != nil {
 			return nil, err
 		}

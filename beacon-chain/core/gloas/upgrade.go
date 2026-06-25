@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -187,15 +187,15 @@ func UpgradeToGloas(beaconState state.BeaconState) (state.BeaconState, error) {
 //
 //	    return empty_previous_epoch + ptcs
 //	</spec>
-func initializePTCWindow(ctx context.Context, st state.ReadOnlyBeaconState) ([]*ethpb.PTCs, error) {
+func initializePTCWindow(ctx context.Context, st state.ReadOnlyBeaconState) ([]*silapb.PTCs, error) {
 	currentEpoch := slots.ToEpoch(st.Slot())
 	slotsPerEpoch := params.BeaconConfig().SlotsPerEpoch
 	windowSize := slotsPerEpoch.Mul(uint64(2 + params.BeaconConfig().MinSeedLookahead))
-	window := make([]*ethpb.PTCs, 0, windowSize)
+	window := make([]*silapb.PTCs, 0, windowSize)
 
 	// Previous epoch has no cached data at fork time — fill with empty slots.
 	for range slotsPerEpoch {
-		window = append(window, &ethpb.PTCs{
+		window = append(window, &silapb.PTCs{
 			ValidatorIndices: make([]primitives.ValidatorIndex, fieldparams.PTCSize),
 		})
 	}
@@ -211,7 +211,7 @@ func initializePTCWindow(ctx context.Context, st state.ReadOnlyBeaconState) ([]*
 		if err != nil {
 			return nil, err
 		}
-		window = append(window, &ethpb.PTCs{ValidatorIndices: ptc})
+		window = append(window, &silapb.PTCs{ValidatorIndices: ptc})
 	}
 
 	return window, nil
@@ -300,10 +300,10 @@ func upgradeToGloas(beaconState state.BeaconState) (state.BeaconState, error) {
 		executionPayloadAvailability[i] = 0xff
 	}
 
-	builderPendingPayments := make([]*ethpb.BuilderPendingPayment, int(params.BeaconConfig().SlotsPerEpoch*2))
+	builderPendingPayments := make([]*silapb.BuilderPendingPayment, int(params.BeaconConfig().SlotsPerEpoch*2))
 	for i := range builderPendingPayments {
-		builderPendingPayments[i] = &ethpb.BuilderPendingPayment{
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+		builderPendingPayments[i] = &silapb.BuilderPendingPayment{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
 			},
 		}
@@ -314,11 +314,11 @@ func upgradeToGloas(beaconState state.BeaconState) (state.BeaconState, error) {
 		return nil, errors.Wrap(err, "could not compute empty execution requests root")
 	}
 
-	s := &ethpb.BeaconStateGloas{
+	s := &silapb.BeaconStateGloas{
 		GenesisTime:           uint64(beaconState.GenesisTime().Unix()),
 		GenesisValidatorsRoot: beaconState.GenesisValidatorsRoot(),
 		Slot:                  beaconState.Slot(),
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: beaconState.Fork().CurrentVersion,
 			CurrentVersion:  params.BeaconConfig().GloasForkVersion,
 			Epoch:           time.CurrentEpoch(beaconState),
@@ -343,7 +343,7 @@ func upgradeToGloas(beaconState state.BeaconState) (state.BeaconState, error) {
 		InactivityScores:            inactivityScores,
 		CurrentSyncCommittee:        currentSyncCommittee,
 		NextSyncCommittee:           nextSyncCommittee,
-		LatestExecutionPayloadBid: &ethpb.ExecutionPayloadBid{
+		LatestExecutionPayloadBid: &silapb.ExecutionPayloadBid{
 			BlockHash:             payloadHeader.BlockHash(),
 			GasLimit:              payloadHeader.GasLimit(),
 			FeeRecipient:          make([]byte, fieldparams.FeeRecipientLength),
@@ -365,11 +365,11 @@ func upgradeToGloas(beaconState state.BeaconState) (state.BeaconState, error) {
 		PendingPartialWithdrawals:     pendingPartialWithdrawals,
 		PendingConsolidations:         pendingConsolidations,
 		ProposerLookahead:             proposerLookahead,
-		Builders:                      []*ethpb.Builder{},
+		Builders:                      []*silapb.Builder{},
 		NextWithdrawalBuilderIndex:    primitives.BuilderIndex(0),
 		ExecutionPayloadAvailability:  executionPayloadAvailability,
 		BuilderPendingPayments:        builderPendingPayments,
-		BuilderPendingWithdrawals:     []*ethpb.BuilderPendingWithdrawal{},
+		BuilderPendingWithdrawals:     []*silapb.BuilderPendingWithdrawal{},
 		LatestBlockHash:               payloadHeader.BlockHash(),
 		PayloadExpectedWithdrawals:    []*enginev1.Withdrawal{},
 	}

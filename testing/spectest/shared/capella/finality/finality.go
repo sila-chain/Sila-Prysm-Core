@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/utils"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -41,7 +41,7 @@ func RunFinalityTest(t *testing.T, config string) {
 			require.NoError(t, err)
 			preBeaconStateSSZ, err := snappy.Decode(nil /* dst */, preBeaconStateFile)
 			require.NoError(t, err, "Failed to decompress")
-			beaconStateBase := &ethpb.BeaconStateCapella{}
+			beaconStateBase := &silapb.BeaconStateCapella{}
 			require.NoError(t, beaconStateBase.UnmarshalSSZ(preBeaconStateSSZ), "Failed to unmarshal")
 			beaconState, err := state_native.InitializeFromProtoUnsafeCapella(beaconStateBase)
 			require.NoError(t, err)
@@ -60,7 +60,7 @@ func RunFinalityTest(t *testing.T, config string) {
 				require.NoError(t, err)
 				blockSSZ, err := snappy.Decode(nil /* dst */, blockFile)
 				require.NoError(t, err, "Failed to decompress")
-				block := &ethpb.SignedBeaconBlockCapella{}
+				block := &silapb.SignedBeaconBlockCapella{}
 				require.NoError(t, block.UnmarshalSSZ(blockSSZ), "Failed to unmarshal")
 				wsb, err := blocks.NewSignedBeaconBlock(block)
 				require.NoError(t, err)
@@ -74,7 +74,7 @@ func RunFinalityTest(t *testing.T, config string) {
 			require.NoError(t, err)
 			postBeaconStateSSZ, err := snappy.Decode(nil /* dst */, postBeaconStateFile)
 			require.NoError(t, err, "Failed to decompress")
-			postBeaconState := &ethpb.BeaconStateCapella{}
+			postBeaconState := &silapb.BeaconStateCapella{}
 			require.NoError(t, postBeaconState.UnmarshalSSZ(postBeaconStateSSZ), "Failed to unmarshal")
 			pbState, err := state_native.ProtobufBeaconStateCapella(beaconState.ToProtoUnsafe())
 			require.NoError(t, err)

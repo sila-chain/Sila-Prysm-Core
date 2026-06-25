@@ -10,7 +10,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/encoder"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -128,195 +128,195 @@ type ValidatorCreator struct{}
 type BLSToExecutionChangeCreator struct{}
 type SignedBLSToExecutionChangeCreator struct{}
 
-func (AttestationCreator) Create() MarshalerProtoMessage        { return &ethpb.Attestation{} }
-func (AttestationElectraCreator) Create() MarshalerProtoMessage { return &ethpb.AttestationElectra{} }
+func (AttestationCreator) Create() MarshalerProtoMessage        { return &silapb.Attestation{} }
+func (AttestationElectraCreator) Create() MarshalerProtoMessage { return &silapb.AttestationElectra{} }
 func (AggregateAttestationAndProofCreator) Create() MarshalerProtoMessage {
-	return &ethpb.AggregateAttestationAndProof{}
+	return &silapb.AggregateAttestationAndProof{}
 }
 func (AggregateAttestationAndProofElectraCreator) Create() MarshalerProtoMessage {
-	return &ethpb.AggregateAttestationAndProofElectra{}
+	return &silapb.AggregateAttestationAndProofElectra{}
 }
 func (SignedAggregateAttestationAndProofCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedAggregateAttestationAndProof{}
+	return &silapb.SignedAggregateAttestationAndProof{}
 }
 func (SignedAggregateAttestationAndProofElectraCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedAggregateAttestationAndProofElectra{}
+	return &silapb.SignedAggregateAttestationAndProofElectra{}
 }
-func (AttestationDataCreator) Create() MarshalerProtoMessage   { return &ethpb.AttestationData{} }
-func (CheckpointCreator) Create() MarshalerProtoMessage        { return &ethpb.Checkpoint{} }
-func (BeaconBlockCreator) Create() MarshalerProtoMessage       { return &ethpb.BeaconBlock{} }
-func (SignedBeaconBlockCreator) Create() MarshalerProtoMessage { return &ethpb.SignedBeaconBlock{} }
-func (BeaconBlockAltairCreator) Create() MarshalerProtoMessage { return &ethpb.BeaconBlockAltair{} }
+func (AttestationDataCreator) Create() MarshalerProtoMessage   { return &silapb.AttestationData{} }
+func (CheckpointCreator) Create() MarshalerProtoMessage        { return &silapb.Checkpoint{} }
+func (BeaconBlockCreator) Create() MarshalerProtoMessage       { return &silapb.BeaconBlock{} }
+func (SignedBeaconBlockCreator) Create() MarshalerProtoMessage { return &silapb.SignedBeaconBlock{} }
+func (BeaconBlockAltairCreator) Create() MarshalerProtoMessage { return &silapb.BeaconBlockAltair{} }
 func (SignedBeaconBlockAltairCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBeaconBlockAltair{}
+	return &silapb.SignedBeaconBlockAltair{}
 }
-func (BeaconBlockBodyCreator) Create() MarshalerProtoMessage { return &ethpb.BeaconBlockBody{} }
+func (BeaconBlockBodyCreator) Create() MarshalerProtoMessage { return &silapb.BeaconBlockBody{} }
 func (BeaconBlockBodyAltairCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BeaconBlockBodyAltair{}
+	return &silapb.BeaconBlockBodyAltair{}
 }
-func (ProposerSlashingCreator) Create() MarshalerProtoMessage { return &ethpb.ProposerSlashing{} }
-func (AttesterSlashingCreator) Create() MarshalerProtoMessage { return &ethpb.AttesterSlashing{} }
+func (ProposerSlashingCreator) Create() MarshalerProtoMessage { return &silapb.ProposerSlashing{} }
+func (AttesterSlashingCreator) Create() MarshalerProtoMessage { return &silapb.AttesterSlashing{} }
 func (AttesterSlashingElectraCreator) Create() MarshalerProtoMessage {
-	return &ethpb.AttesterSlashingElectra{}
+	return &silapb.AttesterSlashingElectra{}
 }
-func (DepositCreator) Create() MarshalerProtoMessage       { return &ethpb.Deposit{} }
-func (VoluntaryExitCreator) Create() MarshalerProtoMessage { return &ethpb.VoluntaryExit{} }
+func (DepositCreator) Create() MarshalerProtoMessage       { return &silapb.Deposit{} }
+func (VoluntaryExitCreator) Create() MarshalerProtoMessage { return &silapb.VoluntaryExit{} }
 func (SignedVoluntaryExitCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedVoluntaryExit{}
+	return &silapb.SignedVoluntaryExit{}
 }
-func (Eth1DataCreator) Create() MarshalerProtoMessage          { return &ethpb.Eth1Data{} }
-func (BeaconBlockHeaderCreator) Create() MarshalerProtoMessage { return &ethpb.BeaconBlockHeader{} }
+func (Eth1DataCreator) Create() MarshalerProtoMessage          { return &silapb.Eth1Data{} }
+func (BeaconBlockHeaderCreator) Create() MarshalerProtoMessage { return &silapb.BeaconBlockHeader{} }
 func (SignedBeaconBlockHeaderCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBeaconBlockHeader{}
+	return &silapb.SignedBeaconBlockHeader{}
 }
-func (IndexedAttestationCreator) Create() MarshalerProtoMessage { return &ethpb.IndexedAttestation{} }
+func (IndexedAttestationCreator) Create() MarshalerProtoMessage { return &silapb.IndexedAttestation{} }
 func (IndexedAttestationElectraCreator) Create() MarshalerProtoMessage {
-	return &ethpb.IndexedAttestationElectra{}
+	return &silapb.IndexedAttestationElectra{}
 }
-func (SyncAggregateCreator) Create() MarshalerProtoMessage { return &ethpb.SyncAggregate{} }
+func (SyncAggregateCreator) Create() MarshalerProtoMessage { return &silapb.SyncAggregate{} }
 func (SignedBeaconBlockBellatrixCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBeaconBlockBellatrix{}
+	return &silapb.SignedBeaconBlockBellatrix{}
 }
 func (BeaconBlockBellatrixCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BeaconBlockBellatrix{}
+	return &silapb.BeaconBlockBellatrix{}
 }
 func (BeaconBlockBodyBellatrixCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BeaconBlockBodyBellatrix{}
+	return &silapb.BeaconBlockBodyBellatrix{}
 }
 func (SignedBlindedBeaconBlockBellatrixCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBlindedBeaconBlockBellatrix{}
+	return &silapb.SignedBlindedBeaconBlockBellatrix{}
 }
 func (BlindedBeaconBlockBellatrixCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BlindedBeaconBlockBellatrix{}
+	return &silapb.BlindedBeaconBlockBellatrix{}
 }
 func (BlindedBeaconBlockBodyBellatrixCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BlindedBeaconBlockBodyBellatrix{}
+	return &silapb.BlindedBeaconBlockBodyBellatrix{}
 }
 func (SignedBeaconBlockContentsDenebCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBeaconBlockContentsDeneb{}
+	return &silapb.SignedBeaconBlockContentsDeneb{}
 }
 func (BeaconBlockContentsDenebCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BeaconBlockContentsDeneb{}
+	return &silapb.BeaconBlockContentsDeneb{}
 }
 func (SignedBeaconBlockDenebCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBeaconBlockDeneb{}
+	return &silapb.SignedBeaconBlockDeneb{}
 }
-func (BeaconBlockDenebCreator) Create() MarshalerProtoMessage { return &ethpb.BeaconBlockDeneb{} }
+func (BeaconBlockDenebCreator) Create() MarshalerProtoMessage { return &silapb.BeaconBlockDeneb{} }
 func (BeaconBlockBodyDenebCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BeaconBlockBodyDeneb{}
+	return &silapb.BeaconBlockBodyDeneb{}
 }
 func (SignedBeaconBlockCapellaCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBeaconBlockCapella{}
+	return &silapb.SignedBeaconBlockCapella{}
 }
-func (BeaconBlockCapellaCreator) Create() MarshalerProtoMessage { return &ethpb.BeaconBlockCapella{} }
+func (BeaconBlockCapellaCreator) Create() MarshalerProtoMessage { return &silapb.BeaconBlockCapella{} }
 func (BeaconBlockBodyCapellaCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BeaconBlockBodyCapella{}
+	return &silapb.BeaconBlockBodyCapella{}
 }
 func (SignedBlindedBeaconBlockCapellaCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBlindedBeaconBlockCapella{}
+	return &silapb.SignedBlindedBeaconBlockCapella{}
 }
 func (BlindedBeaconBlockCapellaCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BlindedBeaconBlockCapella{}
+	return &silapb.BlindedBeaconBlockCapella{}
 }
 func (BlindedBeaconBlockBodyCapellaCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BlindedBeaconBlockBodyCapella{}
+	return &silapb.BlindedBeaconBlockBodyCapella{}
 }
 func (SignedBlindedBeaconBlockDenebCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBlindedBeaconBlockDeneb{}
+	return &silapb.SignedBlindedBeaconBlockDeneb{}
 }
 func (BlindedBeaconBlockDenebCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BlindedBeaconBlockDeneb{}
+	return &silapb.BlindedBeaconBlockDeneb{}
 }
 func (BlindedBeaconBlockBodyDenebCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BlindedBeaconBlockBodyDeneb{}
+	return &silapb.BlindedBeaconBlockBodyDeneb{}
 }
 func (SignedBeaconBlockElectraCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBeaconBlockElectra{}
+	return &silapb.SignedBeaconBlockElectra{}
 }
-func (BeaconBlockElectraCreator) Create() MarshalerProtoMessage { return &ethpb.BeaconBlockElectra{} }
+func (BeaconBlockElectraCreator) Create() MarshalerProtoMessage { return &silapb.BeaconBlockElectra{} }
 func (BeaconBlockBodyElectraCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BeaconBlockBodyElectra{}
+	return &silapb.BeaconBlockBodyElectra{}
 }
 func (SignedBlindedBeaconBlockElectraCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBlindedBeaconBlockElectra{}
+	return &silapb.SignedBlindedBeaconBlockElectra{}
 }
 func (BlindedBeaconBlockElectraCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BlindedBeaconBlockElectra{}
+	return &silapb.BlindedBeaconBlockElectra{}
 }
 func (BlindedBeaconBlockBodyElectraCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BlindedBeaconBlockBodyElectra{}
+	return &silapb.BlindedBeaconBlockBodyElectra{}
 }
 func (ValidatorRegistrationV1Creator) Create() MarshalerProtoMessage {
-	return &ethpb.ValidatorRegistrationV1{}
+	return &silapb.ValidatorRegistrationV1{}
 }
 func (SignedValidatorRegistrationV1Creator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedValidatorRegistrationV1{}
+	return &silapb.SignedValidatorRegistrationV1{}
 }
-func (BuilderBidCreator) Create() MarshalerProtoMessage         { return &ethpb.BuilderBid{} }
-func (BuilderBidCapellaCreator) Create() MarshalerProtoMessage  { return &ethpb.BuilderBidCapella{} }
-func (BuilderBidDenebCreator) Create() MarshalerProtoMessage    { return &ethpb.BuilderBidDeneb{} }
-func (BlobSidecarCreator) Create() MarshalerProtoMessage        { return &ethpb.BlobSidecar{} }
-func (BlobSidecarsCreator) Create() MarshalerProtoMessage       { return &ethpb.BlobSidecars{} }
-func (Deposit_DataCreator) Create() MarshalerProtoMessage       { return &ethpb.Deposit_Data{} }
-func (BeaconStateCreator) Create() MarshalerProtoMessage        { return &ethpb.BeaconState{} }
-func (BeaconStateAltairCreator) Create() MarshalerProtoMessage  { return &ethpb.BeaconStateAltair{} }
-func (ForkCreator) Create() MarshalerProtoMessage               { return &ethpb.Fork{} }
-func (PendingAttestationCreator) Create() MarshalerProtoMessage { return &ethpb.PendingAttestation{} }
-func (HistoricalBatchCreator) Create() MarshalerProtoMessage    { return &ethpb.HistoricalBatch{} }
-func (SigningDataCreator) Create() MarshalerProtoMessage        { return &ethpb.SigningData{} }
-func (ForkDataCreator) Create() MarshalerProtoMessage           { return &ethpb.ForkData{} }
-func (DepositMessageCreator) Create() MarshalerProtoMessage     { return &ethpb.DepositMessage{} }
-func (SyncCommitteeCreator) Create() MarshalerProtoMessage      { return &ethpb.SyncCommittee{} }
+func (BuilderBidCreator) Create() MarshalerProtoMessage         { return &silapb.BuilderBid{} }
+func (BuilderBidCapellaCreator) Create() MarshalerProtoMessage  { return &silapb.BuilderBidCapella{} }
+func (BuilderBidDenebCreator) Create() MarshalerProtoMessage    { return &silapb.BuilderBidDeneb{} }
+func (BlobSidecarCreator) Create() MarshalerProtoMessage        { return &silapb.BlobSidecar{} }
+func (BlobSidecarsCreator) Create() MarshalerProtoMessage       { return &silapb.BlobSidecars{} }
+func (Deposit_DataCreator) Create() MarshalerProtoMessage       { return &silapb.Deposit_Data{} }
+func (BeaconStateCreator) Create() MarshalerProtoMessage        { return &silapb.BeaconState{} }
+func (BeaconStateAltairCreator) Create() MarshalerProtoMessage  { return &silapb.BeaconStateAltair{} }
+func (ForkCreator) Create() MarshalerProtoMessage               { return &silapb.Fork{} }
+func (PendingAttestationCreator) Create() MarshalerProtoMessage { return &silapb.PendingAttestation{} }
+func (HistoricalBatchCreator) Create() MarshalerProtoMessage    { return &silapb.HistoricalBatch{} }
+func (SigningDataCreator) Create() MarshalerProtoMessage        { return &silapb.SigningData{} }
+func (ForkDataCreator) Create() MarshalerProtoMessage           { return &silapb.ForkData{} }
+func (DepositMessageCreator) Create() MarshalerProtoMessage     { return &silapb.DepositMessage{} }
+func (SyncCommitteeCreator) Create() MarshalerProtoMessage      { return &silapb.SyncCommittee{} }
 func (SyncAggregatorSelectionDataCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SyncAggregatorSelectionData{}
+	return &silapb.SyncAggregatorSelectionData{}
 }
 func (BeaconStateBellatrixCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BeaconStateBellatrix{}
+	return &silapb.BeaconStateBellatrix{}
 }
-func (BeaconStateCapellaCreator) Create() MarshalerProtoMessage { return &ethpb.BeaconStateCapella{} }
-func (BeaconStateDenebCreator) Create() MarshalerProtoMessage   { return &ethpb.BeaconStateDeneb{} }
-func (BeaconStateElectraCreator) Create() MarshalerProtoMessage { return &ethpb.BeaconStateElectra{} }
-func (PowBlockCreator) Create() MarshalerProtoMessage           { return &ethpb.PowBlock{} }
-func (HistoricalSummaryCreator) Create() MarshalerProtoMessage  { return &ethpb.HistoricalSummary{} }
-func (BlobIdentifierCreator) Create() MarshalerProtoMessage     { return &ethpb.BlobIdentifier{} }
+func (BeaconStateCapellaCreator) Create() MarshalerProtoMessage { return &silapb.BeaconStateCapella{} }
+func (BeaconStateDenebCreator) Create() MarshalerProtoMessage   { return &silapb.BeaconStateDeneb{} }
+func (BeaconStateElectraCreator) Create() MarshalerProtoMessage { return &silapb.BeaconStateElectra{} }
+func (PowBlockCreator) Create() MarshalerProtoMessage           { return &silapb.PowBlock{} }
+func (HistoricalSummaryCreator) Create() MarshalerProtoMessage  { return &silapb.HistoricalSummary{} }
+func (BlobIdentifierCreator) Create() MarshalerProtoMessage     { return &silapb.BlobIdentifier{} }
 func (PendingDepositCreator) Create() MarshalerProtoMessage {
-	return &ethpb.PendingDeposit{}
+	return &silapb.PendingDeposit{}
 }
 func (PendingPartialWithdrawalCreator) Create() MarshalerProtoMessage {
-	return &ethpb.PendingPartialWithdrawal{}
+	return &silapb.PendingPartialWithdrawal{}
 }
 func (PendingConsolidationCreator) Create() MarshalerProtoMessage {
-	return &ethpb.PendingConsolidation{}
+	return &silapb.PendingConsolidation{}
 }
-func (StatusCreator) Create() MarshalerProtoMessage { return &ethpb.Status{} }
+func (StatusCreator) Create() MarshalerProtoMessage { return &silapb.Status{} }
 func (BeaconBlocksByRangeRequestCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BeaconBlocksByRangeRequest{}
+	return &silapb.BeaconBlocksByRangeRequest{}
 }
-func (ENRForkIDCreator) Create() MarshalerProtoMessage  { return &ethpb.ENRForkID{} }
-func (MetaDataV0Creator) Create() MarshalerProtoMessage { return &ethpb.MetaDataV0{} }
-func (MetaDataV1Creator) Create() MarshalerProtoMessage { return &ethpb.MetaDataV1{} }
+func (ENRForkIDCreator) Create() MarshalerProtoMessage  { return &silapb.ENRForkID{} }
+func (MetaDataV0Creator) Create() MarshalerProtoMessage { return &silapb.MetaDataV0{} }
+func (MetaDataV1Creator) Create() MarshalerProtoMessage { return &silapb.MetaDataV1{} }
 func (BlobSidecarsByRangeRequestCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BlobSidecarsByRangeRequest{}
+	return &silapb.BlobSidecarsByRangeRequest{}
 }
-func (DepositSnapshotCreator) Create() MarshalerProtoMessage { return &ethpb.DepositSnapshot{} }
+func (DepositSnapshotCreator) Create() MarshalerProtoMessage { return &silapb.DepositSnapshot{} }
 func (SyncCommitteeMessageCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SyncCommitteeMessage{}
+	return &silapb.SyncCommitteeMessage{}
 }
 func (SyncCommitteeContributionCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SyncCommitteeContribution{}
+	return &silapb.SyncCommitteeContribution{}
 }
 func (ContributionAndProofCreator) Create() MarshalerProtoMessage {
-	return &ethpb.ContributionAndProof{}
+	return &silapb.ContributionAndProof{}
 }
 func (SignedContributionAndProofCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedContributionAndProof{}
+	return &silapb.SignedContributionAndProof{}
 }
-func (ValidatorCreator) Create() MarshalerProtoMessage { return &ethpb.Validator{} }
+func (ValidatorCreator) Create() MarshalerProtoMessage { return &silapb.Validator{} }
 func (BLSToExecutionChangeCreator) Create() MarshalerProtoMessage {
-	return &ethpb.BLSToExecutionChange{}
+	return &silapb.BLSToExecutionChange{}
 }
 func (SignedBLSToExecutionChangeCreator) Create() MarshalerProtoMessage {
-	return &ethpb.SignedBLSToExecutionChange{}
+	return &silapb.SignedBLSToExecutionChange{}
 }
 
 var creators = []MarshalerProtoCreator{
@@ -531,7 +531,7 @@ func TestSszNetworkEncoder_RoundTrip_SignedVoluntaryExit(t *testing.T) {
 	buf := new(bytes.Buffer)
 
 	data := []byte("\x12`000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n\n0000000000")
-	msg := &ethpb.SignedVoluntaryExit{}
+	msg := &silapb.SignedVoluntaryExit{}
 
 	if err := proto.Unmarshal(data, msg); err != nil {
 		t.Logf("Failed to unmarshal: %v", err)
@@ -540,7 +540,7 @@ func TestSszNetworkEncoder_RoundTrip_SignedVoluntaryExit(t *testing.T) {
 
 	_, err := e.EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	decoded := &ethpb.SignedVoluntaryExit{}
+	decoded := &silapb.SignedVoluntaryExit{}
 	require.NoError(t, e.DecodeGossip(buf.Bytes(), decoded))
 	assertProtoMessagesEqual(t, decoded, msg)
 }
@@ -553,7 +553,7 @@ func TestSszNetworkEncoder_RoundTrip(t *testing.T) {
 
 func TestSszNetworkEncoder_FailsSnappyLength(t *testing.T) {
 	e := &encoder.SszNetworkEncoder{}
-	att := &ethpb.Fork{}
+	att := &silapb.Fork{}
 	data := make([]byte, 32)
 	binary.PutUvarint(data, encoder.MaxPayloadSize+1)
 	err := e.DecodeGossip(data, att)
@@ -562,7 +562,7 @@ func TestSszNetworkEncoder_FailsSnappyLength(t *testing.T) {
 
 func TestSszNetworkEncoder_ExceedsMaxCompressedLimit(t *testing.T) {
 	e := &encoder.SszNetworkEncoder{}
-	att := &ethpb.Fork{}
+	att := &silapb.Fork{}
 	data := make([]byte, encoder.MaxCompressedLen(encoder.MaxPayloadSize)+1)
 	err := e.DecodeGossip(data, att)
 	require.ErrorContains(t, "gossip message exceeds maximum compressed limit", err)
@@ -570,14 +570,14 @@ func TestSszNetworkEncoder_ExceedsMaxCompressedLimit(t *testing.T) {
 
 func testRoundTripWithLength(t *testing.T, e *encoder.SszNetworkEncoder) {
 	buf := new(bytes.Buffer)
-	msg := &ethpb.Fork{
+	msg := &silapb.Fork{
 		PreviousVersion: []byte("fooo"),
 		CurrentVersion:  []byte("barr"),
 		Epoch:           9001,
 	}
 	_, err := e.EncodeWithMaxLength(buf, msg)
 	require.NoError(t, err)
-	decoded := &ethpb.Fork{}
+	decoded := &silapb.Fork{}
 	require.NoError(t, e.DecodeWithMaxLength(buf, decoded))
 	if !proto.Equal(decoded, msg) {
 		t.Logf("decoded=%+v\n", decoded)
@@ -587,14 +587,14 @@ func testRoundTripWithLength(t *testing.T, e *encoder.SszNetworkEncoder) {
 
 func testRoundTripWithGossip(t *testing.T, e *encoder.SszNetworkEncoder) {
 	buf := new(bytes.Buffer)
-	msg := &ethpb.Fork{
+	msg := &silapb.Fork{
 		PreviousVersion: []byte("fooo"),
 		CurrentVersion:  []byte("barr"),
 		Epoch:           9001,
 	}
 	_, err := e.EncodeGossip(buf, msg)
 	require.NoError(t, err)
-	decoded := &ethpb.Fork{}
+	decoded := &silapb.Fork{}
 	require.NoError(t, e.DecodeGossip(buf.Bytes(), decoded))
 	if !proto.Equal(decoded, msg) {
 		t.Logf("decoded=%+v\n", decoded)
@@ -604,7 +604,7 @@ func testRoundTripWithGossip(t *testing.T, e *encoder.SszNetworkEncoder) {
 
 func TestSszNetworkEncoder_EncodeWithMaxLength(t *testing.T) {
 	buf := new(bytes.Buffer)
-	msg := &ethpb.Fork{
+	msg := &silapb.Fork{
 		PreviousVersion: []byte("fooo"),
 		CurrentVersion:  []byte("barr"),
 		Epoch:           9001,
@@ -631,7 +631,7 @@ func TestSszNetworkEncoder_DecodeWithMaxLength(t *testing.T) {
 	_, err = buf.Write(make([]byte, maxPayloadSize+1))
 	require.NoError(t, err)
 	params.OverrideBeaconNetworkConfig(c)
-	decoded := &ethpb.Fork{}
+	decoded := &silapb.Fork{}
 	err = e.DecodeWithMaxLength(buf, decoded)
 	wanted := fmt.Sprintf("goes over the provided max limit of %d", maxPayloadSize)
 	assert.ErrorContains(t, wanted, err)
@@ -647,13 +647,13 @@ func TestSszNetworkEncoder_DecodeWithMultipleFrames(t *testing.T) {
 	maxPayloadSize := uint64(1 << 22)
 	encoder.MaxPayloadSize = maxPayloadSize
 	params.OverrideBeaconNetworkConfig(c)
-	_, err := e.EncodeWithMaxLength(buf, st.ToProtoUnsafe().(*ethpb.BeaconState))
+	_, err := e.EncodeWithMaxLength(buf, st.ToProtoUnsafe().(*silapb.BeaconState))
 	require.NoError(t, err)
 	// Max snappy block size
 	if buf.Len() <= 76490 {
 		t.Errorf("buffer smaller than expected, wanted > %d but got %d", 76490, buf.Len())
 	}
-	decoded := new(ethpb.BeaconState)
+	decoded := new(silapb.BeaconState)
 	err = e.DecodeWithMaxLength(buf, decoded)
 	assert.NoError(t, err)
 }
@@ -676,7 +676,7 @@ func TestSszNetworkEncoder_MaxInt64(t *testing.T) {
 func TestSszNetworkEncoder_DecodeWithBadSnappyStream(t *testing.T) {
 	st := newBadSnappyStream()
 	e := &encoder.SszNetworkEncoder{}
-	decoded := new(ethpb.Fork)
+	decoded := new(silapb.Fork)
 	err := e.DecodeWithMaxLength(st, decoded)
 	assert.ErrorContains(t, io.EOF.Error(), err)
 }

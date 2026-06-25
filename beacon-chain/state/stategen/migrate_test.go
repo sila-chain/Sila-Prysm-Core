@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -94,14 +94,14 @@ func TestMigrateToCold_RegeneratePath(t *testing.T) {
 	r1, err := b1.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, ctx, service.beaconDB, b1)
-	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Slot: 1, Root: r1[:]}))
+	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Slot: 1, Root: r1[:]}))
 
 	b4, err := util.GenerateFullBlock(beaconState, pks, util.DefaultBlockGenConfig(), 4)
 	require.NoError(t, err)
 	r4, err := b4.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, ctx, service.beaconDB, b4)
-	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Slot: 4, Root: r4[:]}))
+	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Slot: 4, Root: r4[:]}))
 	service.finalizedInfo = &finalizedInfo{
 		slot:  0,
 		root:  genesisStateRoot,
@@ -173,7 +173,7 @@ func TestMigrateToCold_ParallelCalls(t *testing.T) {
 	r1, err := b1.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, ctx, service.beaconDB, b1)
-	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Slot: 1, Root: r1[:]}))
+	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Slot: 1, Root: r1[:]}))
 
 	b4, err := util.GenerateFullBlock(beaconState, pks, util.DefaultBlockGenConfig(), 4)
 	require.NoError(t, err)
@@ -184,7 +184,7 @@ func TestMigrateToCold_ParallelCalls(t *testing.T) {
 	r4, err := b4.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, ctx, service.beaconDB, b4)
-	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Slot: 4, Root: r4[:]}))
+	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Slot: 4, Root: r4[:]}))
 
 	b7, err := util.GenerateFullBlock(beaconState, pks, util.DefaultBlockGenConfig(), 7)
 	require.NoError(t, err)
@@ -195,7 +195,7 @@ func TestMigrateToCold_ParallelCalls(t *testing.T) {
 	r7, err := b7.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, ctx, service.beaconDB, b7)
-	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Slot: 7, Root: r7[:]}))
+	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Slot: 7, Root: r7[:]}))
 
 	service.finalizedInfo = &finalizedInfo{
 		slot:  0,
@@ -339,7 +339,7 @@ func TestMigrateToColdHdiff_SkipsSlotsNotInDiffTree(t *testing.T) {
 	r20, err := b20.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, ctx, beaconDB, b20)
-	require.NoError(t, beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Slot: 20, Root: r20[:]}))
+	require.NoError(t, beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Slot: 20, Root: r20[:]}))
 
 	// Put finalized state in cache.
 	finalizedState := beaconState.Copy()
@@ -519,7 +519,7 @@ func TestMigrateToColdHdiff_BoundaryCacheMiss_UseTargetSlotRoot(t *testing.T) {
 	require.NoError(t, beaconDB.SaveGenesisBlockRoot(ctx, gRoot))
 	// Slot 0 base snapshot for state-diff.
 	require.NoError(t, beaconDB.SaveState(ctx, genesisState, gRoot))
-	require.NoError(t, beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Slot: 0, Root: gRoot[:]}))
+	require.NoError(t, beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Slot: 0, Root: gRoot[:]}))
 
 	service.finalizedInfo = &finalizedInfo{
 		slot:  0,
@@ -542,7 +542,7 @@ func TestMigrateToColdHdiff_BoundaryCacheMiss_UseTargetSlotRoot(t *testing.T) {
 		root, err := b.Block.HashTreeRoot()
 		require.NoError(t, err)
 		util.SaveBlock(t, ctx, beaconDB, b)
-		require.NoError(t, beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Slot: slot, Root: root[:]}))
+		require.NoError(t, beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Slot: slot, Root: root[:]}))
 
 		current = nextState
 		switch slot {

@@ -17,7 +17,7 @@ package sila.eth.v1;
 
 import "google/protobuf/descriptor.proto";
 
-import "proto/eth/ext/options.proto";
+import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1/beacon_block.proto";
 
 option csharp_namespace = "Sila.Eth.v1";

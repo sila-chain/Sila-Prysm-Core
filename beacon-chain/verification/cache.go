@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	lru "github.com/hashicorp/golang-lru"
 	"github.com/sirupsen/logrus"
@@ -27,7 +27,7 @@ const (
 // validatorAtIndexer defines the method needed to retrieve a validator by its index.
 // This interface is satisfied by state.BeaconState, but can also be satisfied by a cache.
 type validatorAtIndexer interface {
-	ValidatorAtIndex(idx primitives.ValidatorIndex) (*ethpb.Validator, error)
+	ValidatorAtIndex(idx primitives.ValidatorIndex) (*silapb.Validator, error)
 }
 
 // signatureCache represents a type that can perform signature verification and cache the result so that it

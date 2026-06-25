@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -16,7 +16,7 @@ import (
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // GetPeer returns the data known about the peer defined by the provided peer id.
-func (ds *Server) GetPeer(_ context.Context, peerReq *ethpb.PeerRequest) (*ethpb.DebugPeerResponse, error) {
+func (ds *Server) GetPeer(_ context.Context, peerReq *silapb.PeerRequest) (*silapb.DebugPeerResponse, error) {
 	pid, err := peer.Decode(peerReq.PeerId)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Unable to parse provided peer id: %v", err)
@@ -28,8 +28,8 @@ func (ds *Server) GetPeer(_ context.Context, peerReq *ethpb.PeerRequest) (*ethpb
 //
 // ListPeers returns all peers known to the host node, regardless of if they are connected/
 // disconnected.
-func (ds *Server) ListPeers(_ context.Context, _ *empty.Empty) (*ethpb.DebugPeerResponses, error) {
-	var responses []*ethpb.DebugPeerResponse
+func (ds *Server) ListPeers(_ context.Context, _ *empty.Empty) (*silapb.DebugPeerResponses, error) {
+	var responses []*silapb.DebugPeerResponse
 	for _, pid := range ds.PeersFetcher.Peers().All() {
 		resp, err := ds.getPeer(pid)
 		if err != nil {
@@ -37,10 +37,10 @@ func (ds *Server) ListPeers(_ context.Context, _ *empty.Empty) (*ethpb.DebugPeer
 		}
 		responses = append(responses, resp)
 	}
-	return &ethpb.DebugPeerResponses{Responses: responses}, nil
+	return &silapb.DebugPeerResponses{Responses: responses}, nil
 }
 
-func (ds *Server) getPeer(pid peer.ID) (*ethpb.DebugPeerResponse, error) {
+func (ds *Server) getPeer(pid peer.ID) (*silapb.DebugPeerResponse, error) {
 	peers := ds.PeersFetcher.Peers()
 	peerStore := ds.PeerManager.Host().Peerstore()
 	addr, err := peers.Address(pid)
@@ -51,12 +51,12 @@ func (ds *Server) getPeer(pid peer.ID) (*ethpb.DebugPeerResponse, error) {
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "Requested peer does not exist: %v", err)
 	}
-	pbDirection := ethpb.PeerDirection_UNKNOWN
+	pbDirection := silapb.PeerDirection_UNKNOWN
 	switch dir {
 	case network.DirInbound:
-		pbDirection = ethpb.PeerDirection_INBOUND
+		pbDirection = silapb.PeerDirection_INBOUND
 	case network.DirOutbound:
-		pbDirection = ethpb.PeerDirection_OUTBOUND
+		pbDirection = silapb.PeerDirection_OUTBOUND
 	}
 	connState, err := peers.ConnectionState(pid)
 	if err != nil {
@@ -96,7 +96,7 @@ func (ds *Server) getPeer(pid peer.ID) (*ethpb.DebugPeerResponse, error) {
 	if err != nil || !ok {
 		aVersion = ""
 	}
-	peerInfo := &ethpb.DebugPeerResponse_PeerInfo{
+	peerInfo := &silapb.DebugPeerResponse_PeerInfo{
 		Protocols:       protocol.ConvertToStrings(protocols),
 		FaultCount:      uint64(resp),
 		ProtocolVersion: pVersion,
@@ -129,7 +129,7 @@ func (ds *Server) getPeer(pid peer.ID) (*ethpb.DebugPeerResponse, error) {
 	if err != nil {
 		// In the event chain state is non existent, we
 		// initialize with the zero value.
-		pStatus = new(ethpb.StatusV2)
+		pStatus = new(silapb.StatusV2)
 	}
 	lastUpdated, err := peers.ChainStateLastUpdated(pid)
 	if err != nil {
@@ -143,7 +143,7 @@ func (ds *Server) getPeer(pid peer.ID) (*ethpb.DebugPeerResponse, error) {
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "Requested peer does not exist: %v", err)
 	}
-	scoreInfo := &ethpb.ScoreInfo{
+	scoreInfo := &silapb.ScoreInfo{
 		OverallScore:       float32(peers.Scorers().Score(pid)),
 		ProcessedBlocks:    peers.Scorers().BlockProviderScorer().ProcessedBlocks(pid),
 		BlockProviderScore: float32(peers.Scorers().BlockProviderScorer().Score(pid)),
@@ -154,7 +154,7 @@ func (ds *Server) getPeer(pid peer.ID) (*ethpb.DebugPeerResponse, error) {
 	}
 
 	// Convert statusV2 into status
-	peerStatus := &ethpb.Status{
+	peerStatus := &silapb.Status{
 		ForkDigest:     pStatus.ForkDigest,
 		FinalizedRoot:  pStatus.FinalizedRoot,
 		FinalizedEpoch: pStatus.FinalizedEpoch,
@@ -162,10 +162,10 @@ func (ds *Server) getPeer(pid peer.ID) (*ethpb.DebugPeerResponse, error) {
 		HeadSlot:       pStatus.HeadSlot,
 	}
 
-	return &ethpb.DebugPeerResponse{
+	return &silapb.DebugPeerResponse{
 		ListeningAddresses: stringAddrs,
 		Direction:          pbDirection,
-		ConnectionState:    ethpb.ConnectionState(connState),
+		ConnectionState:    silapb.ConnectionState(connState),
 		PeerId:             pid.String(),
 		Enr:                enr,
 		PeerInfo:           peerInfo,

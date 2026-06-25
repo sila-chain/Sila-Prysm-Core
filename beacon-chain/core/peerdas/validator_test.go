@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -35,9 +35,9 @@ func TestValidatorsCustodyRequirement(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			validators := make([]*ethpb.Validator, 0, tc.count)
+			validators := make([]*silapb.Validator, 0, tc.count)
 			for range tc.count {
-				validator := &ethpb.Validator{
+				validator := &silapb.Validator{
 					EffectiveBalance: balance,
 				}
 
@@ -49,7 +49,7 @@ func TestValidatorsCustodyRequirement(t *testing.T) {
 				validatorsIndex[primitives.ValidatorIndex(i)] = true
 			}
 
-			beaconState, err := state_native.InitializeFromProtoFulu(&ethpb.BeaconStateFulu{Validators: validators})
+			beaconState, err := state_native.InitializeFromProtoFulu(&silapb.BeaconStateFulu{Validators: validators})
 			require.NoError(t, err)
 
 			actual, err := peerdas.ValidatorsCustodyRequirement(beaconState, validatorsIndex)

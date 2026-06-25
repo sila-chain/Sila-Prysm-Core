@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -59,7 +59,7 @@ func TestSaveHeadIfNeeded_ProposingAndOverride_SkipsSave(t *testing.T) {
 
 	parentRoot := [32]byte{'a'}
 	headRoot := [32]byte{'b'}
-	ojc := &ethpb.Checkpoint{}
+	ojc := &silapb.Checkpoint{}
 	st, ro, err := prepareForkchoiceState(ctx, 1, parentRoot, [32]byte{}, [32]byte{}, ojc, ojc)
 	require.NoError(t, err)
 	require.NoError(t, fcs.InsertNode(ctx, st, ro))

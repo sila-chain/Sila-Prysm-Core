@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -23,7 +23,7 @@ func createInvalidTestDataColumns(t *testing.T, count int) []blocks.RODataColumn
 	if len(dataColumns) > 0 {
 		sidecar := dataColumns[0].DataColumnSidecar()
 		if len(sidecar.Column) > 0 && len(sidecar.Column[0]) > 0 {
-			corruptedSidecar := &ethpb.DataColumnSidecar{
+			corruptedSidecar := &silapb.DataColumnSidecar{
 				Index:                        sidecar.Index,
 				KzgCommitments:               make([][]byte, len(sidecar.KzgCommitments)),
 				KzgProofs:                    make([][]byte, len(sidecar.KzgProofs)),

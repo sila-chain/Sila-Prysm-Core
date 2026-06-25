@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -660,14 +660,14 @@ func TestGetDutiesForEpoch_Error(t *testing.T) {
 				vals[i] = validatorForDuty{
 					pubkey: pubkeys[i],
 					index:  validatorIndices[i],
-					status: ethpb.ValidatorStatus_ACTIVE,
+					status: silapb.ValidatorStatus_ACTIVE,
 				}
 			}
 
 			validatorClient := &beaconApiValidatorClient{dutiesProvider: dutiesProvider}
 			err := validatorClient.dutiesForEpoch(
 				ctx,
-				&ethpb.ValidatorDutiesContainer{},
+				&silapb.ValidatorDutiesContainer{},
 				epoch,
 				vals,
 				true,
@@ -767,7 +767,7 @@ func TestGetDutiesForEpoch_Valid(t *testing.T) {
 				proposerSlots[7],
 			}
 
-			expectedDuties := []*ethpb.DutiesResponse_Duty{
+			expectedDuties := []*silapb.DutiesResponse_Duty{
 				{
 					Committee: []primitives.ValidatorIndex{
 						validatorIndices[0],
@@ -776,7 +776,7 @@ func TestGetDutiesForEpoch_Valid(t *testing.T) {
 					CommitteeIndex:   committeeIndices[0],
 					AttesterSlot:     committeeSlots[0],
 					PublicKey:        pubkeys[0],
-					Status:           ethpb.ValidatorStatus_ACTIVE,
+					Status:           silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex:   validatorIndices[0],
 					CommitteesAtSlot: 1,
 				},
@@ -788,7 +788,7 @@ func TestGetDutiesForEpoch_Valid(t *testing.T) {
 					CommitteeIndex:   committeeIndices[0],
 					AttesterSlot:     committeeSlots[0],
 					PublicKey:        pubkeys[1],
-					Status:           ethpb.ValidatorStatus_ACTIVE,
+					Status:           silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex:   validatorIndices[1],
 					CommitteesAtSlot: 1,
 				},
@@ -800,7 +800,7 @@ func TestGetDutiesForEpoch_Valid(t *testing.T) {
 					CommitteeIndex:   committeeIndices[1],
 					AttesterSlot:     committeeSlots[1],
 					PublicKey:        pubkeys[2],
-					Status:           ethpb.ValidatorStatus_ACTIVE,
+					Status:           silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex:   validatorIndices[2],
 					CommitteesAtSlot: 1,
 				},
@@ -812,7 +812,7 @@ func TestGetDutiesForEpoch_Valid(t *testing.T) {
 					CommitteeIndex:   committeeIndices[1],
 					AttesterSlot:     committeeSlots[1],
 					PublicKey:        pubkeys[3],
-					Status:           ethpb.ValidatorStatus_ACTIVE,
+					Status:           silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex:   validatorIndices[3],
 					CommitteesAtSlot: 1,
 				},
@@ -824,7 +824,7 @@ func TestGetDutiesForEpoch_Valid(t *testing.T) {
 					CommitteeIndex:   committeeIndices[2],
 					AttesterSlot:     committeeSlots[2],
 					PublicKey:        pubkeys[4],
-					Status:           ethpb.ValidatorStatus_ACTIVE,
+					Status:           silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex:   validatorIndices[4],
 					ProposerSlots:    expectedProposerSlots1,
 					CommitteesAtSlot: 1,
@@ -837,7 +837,7 @@ func TestGetDutiesForEpoch_Valid(t *testing.T) {
 					CommitteeIndex:   committeeIndices[2],
 					AttesterSlot:     committeeSlots[2],
 					PublicKey:        pubkeys[5],
-					Status:           ethpb.ValidatorStatus_ACTIVE,
+					Status:           silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex:   validatorIndices[5],
 					ProposerSlots:    expectedProposerSlots2,
 					IsSyncCommittee:  testCase.fetchSyncDuties,
@@ -845,38 +845,38 @@ func TestGetDutiesForEpoch_Valid(t *testing.T) {
 				},
 				{
 					PublicKey:       pubkeys[6],
-					Status:          ethpb.ValidatorStatus_ACTIVE,
+					Status:          silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex:  validatorIndices[6],
 					ProposerSlots:   expectedProposerSlots3,
 					IsSyncCommittee: testCase.fetchSyncDuties,
 				},
 				{
 					PublicKey:       pubkeys[7],
-					Status:          ethpb.ValidatorStatus_ACTIVE,
+					Status:          silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex:  validatorIndices[7],
 					ProposerSlots:   expectedProposerSlots4,
 					IsSyncCommittee: testCase.fetchSyncDuties,
 				},
 				{
 					PublicKey:       pubkeys[8],
-					Status:          ethpb.ValidatorStatus_ACTIVE,
+					Status:          silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex:  validatorIndices[8],
 					IsSyncCommittee: testCase.fetchSyncDuties,
 				},
 				{
 					PublicKey:       pubkeys[9],
-					Status:          ethpb.ValidatorStatus_ACTIVE,
+					Status:          silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex:  validatorIndices[9],
 					IsSyncCommittee: testCase.fetchSyncDuties,
 				},
 				{
 					PublicKey:      pubkeys[10],
-					Status:         ethpb.ValidatorStatus_ACTIVE,
+					Status:         silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex: validatorIndices[10],
 				},
 				{
 					PublicKey:      pubkeys[11],
-					Status:         ethpb.ValidatorStatus_ACTIVE,
+					Status:         silapb.ValidatorStatus_ACTIVE,
 					ValidatorIndex: validatorIndices[11],
 				},
 			}
@@ -887,10 +887,10 @@ func TestGetDutiesForEpoch_Valid(t *testing.T) {
 				vals[i] = validatorForDuty{
 					pubkey: pubkeys[i],
 					index:  validatorIndices[i],
-					status: ethpb.ValidatorStatus_ACTIVE,
+					status: silapb.ValidatorStatus_ACTIVE,
 				}
 			}
-			dutiesContainer := &ethpb.ValidatorDutiesContainer{}
+			dutiesContainer := &silapb.ValidatorDutiesContainer{}
 			err := validatorClient.dutiesForEpoch(
 				ctx,
 				dutiesContainer,
@@ -939,7 +939,7 @@ func TestGetDuties_Valid(t *testing.T) {
 				vals[i] = validatorForDuty{
 					pubkey: pubkeys[i],
 					index:  validatorIndices[i],
-					status: ethpb.ValidatorStatus_ACTIVE,
+					status: silapb.ValidatorStatus_ACTIVE,
 				}
 			}
 
@@ -1139,7 +1139,7 @@ func TestGetDuties_Valid(t *testing.T) {
 				stateValidatorsProvider: stateValidatorsProvider,
 			}
 
-			expectedContainer := &ethpb.ValidatorDutiesContainer{}
+			expectedContainer := &silapb.ValidatorDutiesContainer{}
 			err := validatorClient.dutiesForEpoch(
 				ctx,
 				expectedContainer,
@@ -1150,7 +1150,7 @@ func TestGetDuties_Valid(t *testing.T) {
 			require.NoError(t, err)
 
 			expectedCurrentEpochDuties := expectedContainer.CurrentEpochDuties
-			expectedNextContainer := &ethpb.ValidatorDutiesContainer{}
+			expectedNextContainer := &silapb.ValidatorDutiesContainer{}
 			err = validatorClient.dutiesForEpoch(
 				ctx,
 				expectedNextContainer,
@@ -1161,12 +1161,12 @@ func TestGetDuties_Valid(t *testing.T) {
 			require.NoError(t, err)
 
 			expectedNextEpochDuties := expectedNextContainer.CurrentEpochDuties
-			expectedDuties := &ethpb.ValidatorDutiesContainer{
+			expectedDuties := &silapb.ValidatorDutiesContainer{
 				CurrentEpochDuties: expectedCurrentEpochDuties,
 				NextEpochDuties:    expectedNextEpochDuties,
 			}
 
-			duties, err := validatorClient.duties(ctx, &ethpb.DutiesRequest{
+			duties, err := validatorClient.duties(ctx, &silapb.DutiesRequest{
 				Epoch:      testCase.epoch,
 				PublicKeys: append(pubkeys, []byte("0xunknown")),
 			})
@@ -1199,7 +1199,7 @@ func TestGetDuties_GetStateValidatorsFailed(t *testing.T) {
 		stateValidatorsProvider: stateValidatorsProvider,
 	}
 
-	_, err := validatorClient.duties(ctx, &ethpb.DutiesRequest{
+	_, err := validatorClient.duties(ctx, &silapb.DutiesRequest{
 		Epoch:      1,
 		PublicKeys: [][]byte{},
 	})
@@ -1260,7 +1260,7 @@ func TestGetDuties_GetDutiesForEpochFailed(t *testing.T) {
 		dutiesProvider:          dutiesProvider,
 	}
 
-	_, err := validatorClient.duties(ctx, &ethpb.DutiesRequest{
+	_, err := validatorClient.duties(ctx, &silapb.DutiesRequest{
 		Epoch:      1,
 		PublicKeys: [][]byte{pubkey},
 	})

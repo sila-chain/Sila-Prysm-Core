@@ -3,7 +3,7 @@ package validator
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
 
@@ -12,7 +12,7 @@ func (vs *Server) setBlsToExecData(blk interfaces.SignedBeaconBlock, headState s
 	if blk.Version() < version.Capella {
 		return
 	}
-	if err := blk.SetBLSToExecutionChanges([]*ethpb.SignedBLSToExecutionChange{}); err != nil {
+	if err := blk.SetBLSToExecutionChanges([]*silapb.SignedBLSToExecutionChange{}); err != nil {
 		log.WithError(err).Error("Could not set bls to execution data in block")
 		return
 	}

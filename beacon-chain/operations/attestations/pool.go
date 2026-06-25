@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations/kv"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // Pool defines the necessary methods for Sila attestations pool to serve
@@ -15,34 +15,34 @@ import (
 type Pool interface {
 	// For Aggregated attestations
 	AggregateUnaggregatedAttestations(ctx context.Context) error
-	SaveAggregatedAttestation(att ethpb.Att) error
-	SaveAggregatedAttestations(atts []ethpb.Att) error
-	AggregatedAttestations() []ethpb.Att
-	AggregatedAttestationsBySlotIndex(ctx context.Context, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) []*ethpb.Attestation
-	AggregatedAttestationsBySlotIndexElectra(ctx context.Context, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) []*ethpb.AttestationElectra
-	DeleteAggregatedAttestation(att ethpb.Att) error
-	HasAggregatedAttestation(att ethpb.Att) (bool, error)
+	SaveAggregatedAttestation(att silapb.Att) error
+	SaveAggregatedAttestations(atts []silapb.Att) error
+	AggregatedAttestations() []silapb.Att
+	AggregatedAttestationsBySlotIndex(ctx context.Context, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) []*silapb.Attestation
+	AggregatedAttestationsBySlotIndexElectra(ctx context.Context, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) []*silapb.AttestationElectra
+	DeleteAggregatedAttestation(att silapb.Att) error
+	HasAggregatedAttestation(att silapb.Att) (bool, error)
 	AggregatedAttestationCount() int
 	// Seen aggregated attestations.
 	DeleteSeenAggregatedAttestationsBefore(expirySlot primitives.Slot)
 	SeenAggregatedAttestationCount() int
 	// For unaggregated attestations.
-	SaveUnaggregatedAttestation(att ethpb.Att) error
-	SaveUnaggregatedAttestations(atts []ethpb.Att) error
-	UnaggregatedAttestations() []ethpb.Att
-	UnaggregatedAttestationsBySlotIndex(ctx context.Context, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) []*ethpb.Attestation
-	UnaggregatedAttestationsBySlotIndexElectra(ctx context.Context, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) []*ethpb.AttestationElectra
-	DeleteUnaggregatedAttestation(att ethpb.Att) error
+	SaveUnaggregatedAttestation(att silapb.Att) error
+	SaveUnaggregatedAttestations(atts []silapb.Att) error
+	UnaggregatedAttestations() []silapb.Att
+	UnaggregatedAttestationsBySlotIndex(ctx context.Context, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) []*silapb.Attestation
+	UnaggregatedAttestationsBySlotIndexElectra(ctx context.Context, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) []*silapb.AttestationElectra
+	DeleteUnaggregatedAttestation(att silapb.Att) error
 	DeleteSeenUnaggregatedAttestations() (int, error)
 	UnaggregatedAttestationCount() int
 	// For attestations that were included in the block.
-	SaveBlockAttestation(att ethpb.Att) error
-	BlockAttestations() []ethpb.Att
-	DeleteBlockAttestation(att ethpb.Att) error
+	SaveBlockAttestation(att silapb.Att) error
+	BlockAttestations() []silapb.Att
+	DeleteBlockAttestation(att silapb.Att) error
 	// For attestations to be passed to fork choice.
-	SaveForkchoiceAttestations(atts []ethpb.Att) error
-	ForkchoiceAttestations() []ethpb.Att
-	DeleteForkchoiceAttestation(att ethpb.Att) error
+	SaveForkchoiceAttestations(atts []silapb.Att) error
+	ForkchoiceAttestations() []silapb.Att
+	DeleteForkchoiceAttestation(att silapb.Att) error
 	ForkchoiceAttestationCount() int
 }
 

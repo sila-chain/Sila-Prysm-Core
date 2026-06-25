@@ -3,7 +3,7 @@ package migration
 import (
 	"testing"
 
-	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
+	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 

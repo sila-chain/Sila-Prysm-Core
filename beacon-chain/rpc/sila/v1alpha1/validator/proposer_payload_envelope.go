@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -38,7 +38,7 @@ func (vs *Server) storeExecutionPayloadEnvelope(
 	payload := extractExecutionPayloadGloas(local)
 
 	parentRoot := sBlk.Block().ParentRoot()
-	envelope := &ethpb.ExecutionPayloadEnvelope{
+	envelope := &silapb.ExecutionPayloadEnvelope{
 		Payload:               payload,
 		ExecutionRequests:     local.ExecutionRequests,
 		BuilderIndex:          params.BeaconConfig().BuilderIndexSelfBuild,
@@ -77,13 +77,13 @@ func extractExecutionPayloadGloas(local *consensusblocks.GetPayloadResponse) *en
 }
 
 // GetExecutionPayloadEnvelope implements the gRPC endpoint:
-// /eth/v1alpha1/validator/execution_payload_envelope/{slot}/{builder_index}
+// /sila/v1alpha1/validator/execution_payload_envelope/{slot}/{builder_index}
 // It returns the stored execution payload envelope for a slot/builder and, for
 // self-build envelopes, computes the post-payload state root on demand.
 func (vs *Server) GetExecutionPayloadEnvelope(
 	ctx context.Context,
-	req *ethpb.ExecutionPayloadEnvelopeRequest,
-) (*ethpb.ExecutionPayloadEnvelopeResponse, error) {
+	req *silapb.ExecutionPayloadEnvelopeRequest,
+) (*silapb.ExecutionPayloadEnvelopeResponse, error) {
 	_, span := trace.StartSpan(ctx, "ProposerServer.GetExecutionPayloadEnvelope")
 	defer span.End()
 
@@ -103,7 +103,7 @@ func (vs *Server) GetExecutionPayloadEnvelope(
 			"execution payload envelope not found for slot %d", req.Slot)
 	}
 
-	return &ethpb.ExecutionPayloadEnvelopeResponse{
+	return &silapb.ExecutionPayloadEnvelopeResponse{
 		Envelope: contents.Envelope,
 	}, nil
 }
@@ -111,10 +111,10 @@ func (vs *Server) GetExecutionPayloadEnvelope(
 // PublishExecutionPayloadEnvelope validates and broadcasts a signed execution payload envelope.
 // This is called by validators after signing the envelope retrieved from GetExecutionPayloadEnvelope.
 //
-// gRPC endpoint: POST /eth/v1alpha1/validator/execution_payload_envelope
+// gRPC endpoint: POST /sila/v1alpha1/validator/execution_payload_envelope
 func (vs *Server) PublishExecutionPayloadEnvelope(
 	ctx context.Context,
-	req *ethpb.SignedExecutionPayloadEnvelope,
+	req *silapb.SignedExecutionPayloadEnvelope,
 ) (*emptypb.Empty, error) {
 	ctx, span := trace.StartSpan(ctx, "ProposerServer.PublishExecutionPayloadEnvelope")
 	defer span.End()

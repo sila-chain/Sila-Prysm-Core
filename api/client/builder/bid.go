@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	ssz "github.com/sila-chain/fastssz"
 )
@@ -43,11 +43,11 @@ type BidElectra interface {
 }
 
 type signedBuilderBid struct {
-	p *ethpb.SignedBuilderBid
+	p *silapb.SignedBuilderBid
 }
 
 // WrappedSignedBuilderBid is a constructor which wraps a protobuf signed bit into an interface.
-func WrappedSignedBuilderBid(p *ethpb.SignedBuilderBid) (SignedBid, error) {
+func WrappedSignedBuilderBid(p *silapb.SignedBuilderBid) (SignedBid, error) {
 	w := signedBuilderBid{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -76,11 +76,11 @@ func (b signedBuilderBid) IsNil() bool {
 }
 
 type signedBuilderBidCapella struct {
-	p *ethpb.SignedBuilderBidCapella
+	p *silapb.SignedBuilderBidCapella
 }
 
 // WrappedSignedBuilderBidCapella is a constructor which wraps a protobuf signed bit into an interface.
-func WrappedSignedBuilderBidCapella(p *ethpb.SignedBuilderBidCapella) (SignedBid, error) {
+func WrappedSignedBuilderBidCapella(p *silapb.SignedBuilderBidCapella) (SignedBid, error) {
 	w := signedBuilderBidCapella{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -109,11 +109,11 @@ func (b signedBuilderBidCapella) IsNil() bool {
 }
 
 type builderBid struct {
-	p *ethpb.BuilderBid
+	p *silapb.BuilderBid
 }
 
 // WrappedBuilderBid is a constructor which wraps a protobuf bid into an interface.
-func WrappedBuilderBid(p *ethpb.BuilderBid) (Bid, error) {
+func WrappedBuilderBid(p *silapb.BuilderBid) (Bid, error) {
 	w := builderBid{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -157,11 +157,11 @@ func (b builderBid) HashTreeRootWith(hh *ssz.Hasher) error {
 }
 
 type builderBidCapella struct {
-	p *ethpb.BuilderBidCapella
+	p *silapb.BuilderBidCapella
 }
 
 // WrappedBuilderBidCapella is a constructor which wraps a protobuf bid into an interface.
-func WrappedBuilderBidCapella(p *ethpb.BuilderBidCapella) (Bid, error) {
+func WrappedBuilderBidCapella(p *silapb.BuilderBidCapella) (Bid, error) {
 	w := builderBidCapella{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -206,11 +206,11 @@ func (b builderBidCapella) HashTreeRootWith(hh *ssz.Hasher) error {
 }
 
 type builderBidDeneb struct {
-	p *ethpb.BuilderBidDeneb
+	p *silapb.BuilderBidDeneb
 }
 
 // WrappedBuilderBidDeneb is a constructor which wraps a protobuf bid into an interface.
-func WrappedBuilderBidDeneb(p *ethpb.BuilderBidDeneb) (Bid, error) {
+func WrappedBuilderBidDeneb(p *silapb.BuilderBidDeneb) (Bid, error) {
 	w := builderBidDeneb{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -260,11 +260,11 @@ func (b builderBidDeneb) BlobKzgCommitments() [][]byte {
 }
 
 type signedBuilderBidDeneb struct {
-	p *ethpb.SignedBuilderBidDeneb
+	p *silapb.SignedBuilderBidDeneb
 }
 
 // WrappedSignedBuilderBidDeneb is a constructor which wraps a protobuf signed bit into an interface.
-func WrappedSignedBuilderBidDeneb(p *ethpb.SignedBuilderBidDeneb) (SignedBid, error) {
+func WrappedSignedBuilderBidDeneb(p *silapb.SignedBuilderBidDeneb) (SignedBid, error) {
 	w := signedBuilderBidDeneb{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -293,11 +293,11 @@ func (b signedBuilderBidDeneb) IsNil() bool {
 }
 
 type builderBidElectra struct {
-	p *ethpb.BuilderBidElectra
+	p *silapb.BuilderBidElectra
 }
 
 // WrappedBuilderBidElectra is a constructor which wraps a protobuf bid into an interface.
-func WrappedBuilderBidElectra(p *ethpb.BuilderBidElectra) (Bid, error) {
+func WrappedBuilderBidElectra(p *silapb.BuilderBidElectra) (Bid, error) {
 	w := builderBidElectra{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -352,11 +352,11 @@ func (b builderBidElectra) BlobKzgCommitments() [][]byte {
 }
 
 type signedBuilderBidElectra struct {
-	p *ethpb.SignedBuilderBidElectra
+	p *silapb.SignedBuilderBidElectra
 }
 
 // WrappedSignedBuilderBidElectra is a constructor which wraps a protobuf signed bit into an interface.
-func WrappedSignedBuilderBidElectra(p *ethpb.SignedBuilderBidElectra) (SignedBid, error) {
+func WrappedSignedBuilderBidElectra(p *silapb.SignedBuilderBidElectra) (SignedBid, error) {
 	w := signedBuilderBidElectra{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped

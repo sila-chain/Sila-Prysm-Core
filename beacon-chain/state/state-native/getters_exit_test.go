@@ -5,7 +5,7 @@ import (
 
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -18,7 +18,7 @@ func TestExitBalanceToConsume(t *testing.T) {
 	})
 	t.Run("electra returns expected value", func(t *testing.T) {
 		want := primitives.Gwei(2)
-		dState, err := state_native.InitializeFromProtoElectra(&ethpb.BeaconStateElectra{ExitBalanceToConsume: want})
+		dState, err := state_native.InitializeFromProtoElectra(&silapb.BeaconStateElectra{ExitBalanceToConsume: want})
 		require.NoError(t, err)
 		got, err := dState.ExitBalanceToConsume()
 		require.NoError(t, err)
@@ -34,7 +34,7 @@ func TestEarliestExitEpoch(t *testing.T) {
 	})
 	t.Run("electra returns expected value", func(t *testing.T) {
 		want := primitives.Epoch(2)
-		dState, err := state_native.InitializeFromProtoElectra(&ethpb.BeaconStateElectra{EarliestExitEpoch: want})
+		dState, err := state_native.InitializeFromProtoElectra(&silapb.BeaconStateElectra{EarliestExitEpoch: want})
 		require.NoError(t, err)
 		got, err := dState.EarliestExitEpoch()
 		require.NoError(t, err)

@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -32,7 +32,7 @@ func TestIsActiveValidator_OK(t *testing.T) {
 		{a: 64, b: true},
 	}
 	for _, test := range tests {
-		validator := &ethpb.Validator{ActivationEpoch: 10, ExitEpoch: 100}
+		validator := &silapb.Validator{ActivationEpoch: 10, ExitEpoch: 100}
 		assert.Equal(t, test.b, helpers.IsActiveValidator(validator, test.a), "IsActiveValidator(%d)", test.a)
 	}
 }
@@ -48,8 +48,8 @@ func TestIsActiveValidatorUsingTrie_OK(t *testing.T) {
 		{a: 1000, b: false},
 		{a: 64, b: true},
 	}
-	val := &ethpb.Validator{ActivationEpoch: 10, ExitEpoch: 100}
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Validators: []*ethpb.Validator{val}})
+	val := &silapb.Validator{ActivationEpoch: 10, ExitEpoch: 100}
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Validators: []*silapb.Validator{val}})
 	require.NoError(t, err)
 	for _, test := range tests {
 		readOnlyVal, err := beaconState.ValidatorAtIndexReadOnly(0)
@@ -76,9 +76,9 @@ func TestIsActiveNonSlashedValidatorUsingTrie_OK(t *testing.T) {
 		{a: 64, s: true, b: false},
 	}
 	for _, test := range tests {
-		val := &ethpb.Validator{ActivationEpoch: 10, ExitEpoch: 100}
+		val := &silapb.Validator{ActivationEpoch: 10, ExitEpoch: 100}
 		val.Slashed = test.s
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Validators: []*ethpb.Validator{val}})
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Validators: []*silapb.Validator{val}})
 		require.NoError(t, err)
 		readOnlyVal, err := beaconState.ValidatorAtIndexReadOnly(0)
 		require.NoError(t, err)
@@ -89,13 +89,13 @@ func TestIsActiveNonSlashedValidatorUsingTrie_OK(t *testing.T) {
 func TestIsSlashableValidator_OK(t *testing.T) {
 	tests := []struct {
 		name      string
-		validator *ethpb.Validator
+		validator *silapb.Validator
 		epoch     primitives.Epoch
 		slashable bool
 	}{
 		{
 			name: "Unset withdrawable, slashable",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
 			},
 			epoch:     0,
@@ -103,7 +103,7 @@ func TestIsSlashableValidator_OK(t *testing.T) {
 		},
 		{
 			name: "before withdrawable, slashable",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				WithdrawableEpoch: 5,
 			},
 			epoch:     3,
@@ -111,7 +111,7 @@ func TestIsSlashableValidator_OK(t *testing.T) {
 		},
 		{
 			name: "inactive, not slashable",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				ActivationEpoch:   5,
 				WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
 			},
@@ -120,7 +120,7 @@ func TestIsSlashableValidator_OK(t *testing.T) {
 		},
 		{
 			name: "after withdrawable, not slashable",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				WithdrawableEpoch: 3,
 			},
 			epoch:     3,
@@ -128,7 +128,7 @@ func TestIsSlashableValidator_OK(t *testing.T) {
 		},
 		{
 			name: "slashed and withdrawable, not slashable",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				Slashed:           true,
 				ExitEpoch:         params.BeaconConfig().FarFutureEpoch,
 				WithdrawableEpoch: 1,
@@ -138,7 +138,7 @@ func TestIsSlashableValidator_OK(t *testing.T) {
 		},
 		{
 			name: "slashed, not slashable",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				Slashed:           true,
 				ExitEpoch:         params.BeaconConfig().FarFutureEpoch,
 				WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
@@ -148,7 +148,7 @@ func TestIsSlashableValidator_OK(t *testing.T) {
 		},
 		{
 			name: "inactive and slashed, not slashable",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				Slashed:           true,
 				ActivationEpoch:   4,
 				ExitEpoch:         params.BeaconConfig().FarFutureEpoch,
@@ -167,7 +167,7 @@ func TestIsSlashableValidator_OK(t *testing.T) {
 				assert.Equal(t, test.slashable, slashableValidator, "Expected active validator slashable to be %t", test.slashable)
 			})
 			t.Run("with trie", func(t *testing.T) {
-				beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Validators: []*ethpb.Validator{test.validator}})
+				beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Validators: []*silapb.Validator{test.validator}})
 				require.NoError(t, err)
 				readOnlyVal, err := beaconState.ValidatorAtIndexReadOnly(0)
 				require.NoError(t, err)
@@ -183,14 +183,14 @@ func TestBeaconProposerIndex_OK(t *testing.T) {
 	c := params.BeaconConfig()
 	c.MinGenesisActiveValidatorCount = 16384
 	params.OverrideBeaconConfig(c)
-	validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount/8)
+	validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount/8)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		Slot:        0,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -240,9 +240,9 @@ func TestBeaconProposerIndex_BadState(t *testing.T) {
 	c := params.BeaconConfig()
 	c.MinGenesisActiveValidatorCount = 16384
 	params.OverrideBeaconConfig(c)
-	validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount/8)
+	validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount/8)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
@@ -251,7 +251,7 @@ func TestBeaconProposerIndex_BadState(t *testing.T) {
 		roots[i] = make([]byte, fieldparams.RootLength)
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		Slot:        0,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -269,14 +269,14 @@ func TestBeaconProposerIndex_BadState(t *testing.T) {
 func TestComputeProposerIndex_Compatibility(t *testing.T) {
 	helpers.ClearCache()
 
-	validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
+	validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
@@ -321,13 +321,13 @@ func TestActiveValidatorCount_Genesis(t *testing.T) {
 	helpers.ClearCache()
 
 	c := 1000
-	validators := make([]*ethpb.Validator, c)
+	validators := make([]*silapb.Validator, c)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot:        0,
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -356,14 +356,14 @@ func TestChurnLimit_OK(t *testing.T) {
 	for _, test := range tests {
 		helpers.ClearCache()
 
-		validators := make([]*ethpb.Validator, test.validatorCount)
+		validators := make([]*silapb.Validator, test.validatorCount)
 		for i := range validators {
-			validators[i] = &ethpb.Validator{
+			validators[i] = &silapb.Validator{
 				ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 			}
 		}
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot:        1,
 			Validators:  validators,
 			RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -390,15 +390,15 @@ func TestChurnLimitDeneb_OK(t *testing.T) {
 		helpers.ClearCache()
 
 		// Create validators
-		validators := make([]*ethpb.Validator, test.validatorCount)
+		validators := make([]*silapb.Validator, test.validatorCount)
 		for i := range validators {
-			validators[i] = &ethpb.Validator{
+			validators[i] = &silapb.Validator{
 				ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 			}
 		}
 
 		// Initialize beacon state
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot:        1,
 			Validators:  validators,
 			RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -420,7 +420,7 @@ func TestChurnLimitDeneb_OK(t *testing.T) {
 func TestActiveValidatorIndices(t *testing.T) {
 	//farFutureEpoch := params.BeaconConfig().FarFutureEpoch
 	type args struct {
-		state *ethpb.BeaconState
+		state *silapb.BeaconState
 		epoch primitives.Epoch
 	}
 	tests := []struct {
@@ -432,9 +432,9 @@ func TestActiveValidatorIndices(t *testing.T) {
 		/*{
 			name: "all_active_epoch_10",
 			args: args{
-				state: &ethpb.BeaconState{
+				state: &silapb.BeaconState{
 					RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
-					Validators: []*ethpb.Validator{
+					Validators: []*silapb.Validator{
 						{
 							ActivationEpoch: 0,
 							ExitEpoch:       farFutureEpoch,
@@ -456,9 +456,9 @@ func TestActiveValidatorIndices(t *testing.T) {
 		{
 			name: "some_active_epoch_10",
 			args: args{
-				state: &ethpb.BeaconState{
+				state: &silapb.BeaconState{
 					RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
-					Validators: []*ethpb.Validator{
+					Validators: []*silapb.Validator{
 						{
 							ActivationEpoch: 0,
 							ExitEpoch:       farFutureEpoch,
@@ -480,9 +480,9 @@ func TestActiveValidatorIndices(t *testing.T) {
 		{
 			name: "some_active_with_recent_new_epoch_10",
 			args: args{
-				state: &ethpb.BeaconState{
+				state: &silapb.BeaconState{
 					RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
-					Validators: []*ethpb.Validator{
+					Validators: []*silapb.Validator{
 						{
 							ActivationEpoch: 0,
 							ExitEpoch:       farFutureEpoch,
@@ -508,9 +508,9 @@ func TestActiveValidatorIndices(t *testing.T) {
 		{
 			name: "some_active_with_recent_new_epoch_10",
 			args: args{
-				state: &ethpb.BeaconState{
+				state: &silapb.BeaconState{
 					RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
-					Validators: []*ethpb.Validator{
+					Validators: []*silapb.Validator{
 						{
 							ActivationEpoch: 0,
 							ExitEpoch:       farFutureEpoch,
@@ -536,9 +536,9 @@ func TestActiveValidatorIndices(t *testing.T) {
 		{
 			name: "some_active_with_recent_new_epoch_10",
 			args: args{
-				state: &ethpb.BeaconState{
+				state: &silapb.BeaconState{
 					RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
-					Validators: []*ethpb.Validator{
+					Validators: []*silapb.Validator{
 						{
 							ActivationEpoch: 0,
 							ExitEpoch:       farFutureEpoch,
@@ -581,7 +581,7 @@ func TestActiveValidatorIndices(t *testing.T) {
 func TestComputeProposerIndex(t *testing.T) {
 	seed := bytesutil.ToBytes32([]byte("seed"))
 	type args struct {
-		validators []*ethpb.Validator
+		validators []*silapb.Validator
 		indices    []primitives.ValidatorIndex
 		seed       [32]byte
 	}
@@ -595,7 +595,7 @@ func TestComputeProposerIndex(t *testing.T) {
 		{
 			name: "all_active_indices",
 			args: args{
-				validators: []*ethpb.Validator{
+				validators: []*silapb.Validator{
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
@@ -610,7 +610,7 @@ func TestComputeProposerIndex(t *testing.T) {
 		{ // Regression test for https://github.com/sila-chain/sila/issues/4259.
 			name: "1_active_index",
 			args: args{
-				validators: []*ethpb.Validator{
+				validators: []*silapb.Validator{
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
@@ -625,7 +625,7 @@ func TestComputeProposerIndex(t *testing.T) {
 		{
 			name: "empty_active_indices",
 			args: args{
-				validators: []*ethpb.Validator{
+				validators: []*silapb.Validator{
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
@@ -640,7 +640,7 @@ func TestComputeProposerIndex(t *testing.T) {
 		{
 			name: "active_indices_out_of_range",
 			args: args{
-				validators: []*ethpb.Validator{
+				validators: []*silapb.Validator{
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
@@ -655,7 +655,7 @@ func TestComputeProposerIndex(t *testing.T) {
 		{
 			name: "second_half_active",
 			args: args{
-				validators: []*ethpb.Validator{
+				validators: []*silapb.Validator{
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
@@ -676,7 +676,7 @@ func TestComputeProposerIndex(t *testing.T) {
 			name:             "electra_probability_changes",
 			isElectraOrAbove: true,
 			args: args{
-				validators: []*ethpb.Validator{
+				validators: []*silapb.Validator{
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
@@ -692,7 +692,7 @@ func TestComputeProposerIndex(t *testing.T) {
 			name:             "electra_probability_changes_all_active",
 			isElectraOrAbove: true,
 			args: args{
-				validators: []*ethpb.Validator{
+				validators: []*silapb.Validator{
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalanceElectra},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalanceElectra},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance}, // skip this one
@@ -708,7 +708,7 @@ func TestComputeProposerIndex(t *testing.T) {
 			name:             "electra_probability_returns_first_validator_with_criteria",
 			isElectraOrAbove: true,
 			args: args{
-				validators: []*ethpb.Validator{
+				validators: []*silapb.Validator{
 					{EffectiveBalance: 1},
 					{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalanceElectra},
 					{EffectiveBalance: 1},
@@ -725,11 +725,11 @@ func TestComputeProposerIndex(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			helpers.ClearCache()
 
-			bState := &ethpb.BeaconState{Validators: tt.args.validators}
+			bState := &silapb.BeaconState{Validators: tt.args.validators}
 			stTrie, err := state_native.InitializeFromProtoUnsafePhase0(bState)
 			require.NoError(t, err)
 			if tt.isElectraOrAbove {
-				stTrie, err = state_native.InitializeFromProtoUnsafeElectra(&ethpb.BeaconStateElectra{Validators: tt.args.validators})
+				stTrie, err = state_native.InitializeFromProtoUnsafeElectra(&silapb.BeaconStateElectra{Validators: tt.args.validators})
 				require.NoError(t, err)
 			}
 
@@ -747,37 +747,37 @@ func TestComputeProposerIndex(t *testing.T) {
 func TestIsEligibleForActivationQueue(t *testing.T) {
 	tests := []struct {
 		name         string
-		validator    *ethpb.Validator
+		validator    *silapb.Validator
 		currentEpoch primitives.Epoch
 		want         bool
 	}{
 		{
 			name:         "Eligible",
-			validator:    &ethpb.Validator{ActivationEligibilityEpoch: params.BeaconConfig().FarFutureEpoch, EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
+			validator:    &silapb.Validator{ActivationEligibilityEpoch: params.BeaconConfig().FarFutureEpoch, EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 			currentEpoch: primitives.Epoch(params.BeaconConfig().ElectraForkEpoch - 1),
 			want:         true,
 		},
 		{
 			name:         "Incorrect activation eligibility epoch",
-			validator:    &ethpb.Validator{ActivationEligibilityEpoch: 1, EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
+			validator:    &silapb.Validator{ActivationEligibilityEpoch: 1, EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},
 			currentEpoch: primitives.Epoch(params.BeaconConfig().ElectraForkEpoch - 1),
 			want:         false,
 		},
 		{
 			name:         "Not enough balance",
-			validator:    &ethpb.Validator{ActivationEligibilityEpoch: params.BeaconConfig().FarFutureEpoch, EffectiveBalance: 1},
+			validator:    &silapb.Validator{ActivationEligibilityEpoch: params.BeaconConfig().FarFutureEpoch, EffectiveBalance: 1},
 			currentEpoch: primitives.Epoch(params.BeaconConfig().ElectraForkEpoch - 1),
 			want:         false,
 		},
 		{
 			name:         "More than max effective balance before electra",
-			validator:    &ethpb.Validator{ActivationEligibilityEpoch: params.BeaconConfig().FarFutureEpoch, EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance + 1},
+			validator:    &silapb.Validator{ActivationEligibilityEpoch: params.BeaconConfig().FarFutureEpoch, EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance + 1},
 			currentEpoch: primitives.Epoch(params.BeaconConfig().ElectraForkEpoch - 1),
 			want:         false,
 		},
 		{
 			name:         "More than min activation balance after electra",
-			validator:    &ethpb.Validator{ActivationEligibilityEpoch: params.BeaconConfig().FarFutureEpoch, EffectiveBalance: params.BeaconConfig().MinActivationBalance + 1},
+			validator:    &silapb.Validator{ActivationEligibilityEpoch: params.BeaconConfig().FarFutureEpoch, EffectiveBalance: params.BeaconConfig().MinActivationBalance + 1},
 			currentEpoch: primitives.Epoch(params.BeaconConfig().ElectraForkEpoch),
 			want:         true,
 		},
@@ -796,21 +796,21 @@ func TestIsEligibleForActivationQueue(t *testing.T) {
 func TestIsIsEligibleForActivation(t *testing.T) {
 	tests := []struct {
 		name      string
-		validator *ethpb.Validator
-		state     *ethpb.BeaconState
+		validator *silapb.Validator
+		state     *silapb.BeaconState
 		want      bool
 	}{
 		{"Eligible",
-			&ethpb.Validator{ActivationEligibilityEpoch: 1, ActivationEpoch: params.BeaconConfig().FarFutureEpoch},
-			&ethpb.BeaconState{FinalizedCheckpoint: &ethpb.Checkpoint{Epoch: 2}},
+			&silapb.Validator{ActivationEligibilityEpoch: 1, ActivationEpoch: params.BeaconConfig().FarFutureEpoch},
+			&silapb.BeaconState{FinalizedCheckpoint: &silapb.Checkpoint{Epoch: 2}},
 			true},
 		{"Not yet finalized",
-			&ethpb.Validator{ActivationEligibilityEpoch: 1, ActivationEpoch: params.BeaconConfig().FarFutureEpoch},
-			&ethpb.BeaconState{FinalizedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+			&silapb.Validator{ActivationEligibilityEpoch: 1, ActivationEpoch: params.BeaconConfig().FarFutureEpoch},
+			&silapb.BeaconState{FinalizedCheckpoint: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			false},
 		{"Incorrect activation epoch",
-			&ethpb.Validator{ActivationEligibilityEpoch: 1},
-			&ethpb.BeaconState{FinalizedCheckpoint: &ethpb.Checkpoint{Epoch: 2}},
+			&silapb.Validator{ActivationEligibilityEpoch: 1},
+			&silapb.BeaconState{FinalizedCheckpoint: &silapb.Checkpoint{Epoch: 2}},
 			false},
 	}
 	for _, tt := range tests {
@@ -824,7 +824,7 @@ func TestIsIsEligibleForActivation(t *testing.T) {
 	}
 }
 
-func computeProposerIndexWithValidators(validators []*ethpb.Validator, activeIndices []primitives.ValidatorIndex, seed [32]byte) (primitives.ValidatorIndex, error) {
+func computeProposerIndexWithValidators(validators []*silapb.Validator, activeIndices []primitives.ValidatorIndex, seed [32]byte) (primitives.ValidatorIndex, error) {
 	length := uint64(len(activeIndices))
 	if length == 0 {
 		return 0, errors.New("empty active indices list")
@@ -856,13 +856,13 @@ func computeProposerIndexWithValidators(validators []*ethpb.Validator, activeInd
 func TestLastActivatedValidatorIndex_OK(t *testing.T) {
 	helpers.ClearCache()
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{})
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{})
 	require.NoError(t, err)
 
-	validators := make([]*ethpb.Validator, 4)
+	validators := make([]*silapb.Validator, 4)
 	balances := make([]uint64, len(validators))
 	for i := range uint64(4) {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             make([]byte, params.BeaconConfig().BLSPubkeyLength),
 			WithdrawalCredentials: make([]byte, 32),
 			EffectiveBalance:      32 * 1e9,
@@ -897,12 +897,12 @@ func TestProposerIndexFromCheckpoint(t *testing.T) {
 
 func TestHasETH1WithdrawalCredentials(t *testing.T) {
 	creds := []byte{0xFA, 0xCC}
-	v := &ethpb.Validator{WithdrawalCredentials: creds}
+	v := &silapb.Validator{WithdrawalCredentials: creds}
 	roV, err := state_native.NewValidator(v)
 	require.NoError(t, err)
 	require.Equal(t, false, roV.HasETH1WithdrawalCredentials())
 	creds = []byte{params.BeaconConfig().ETH1AddressWithdrawalPrefixByte, 0xCC}
-	v = &ethpb.Validator{WithdrawalCredentials: creds}
+	v = &silapb.Validator{WithdrawalCredentials: creds}
 	roV, err = state_native.NewValidator(v)
 	require.NoError(t, err)
 	require.Equal(t, true, roV.HasETH1WithdrawalCredentials())
@@ -912,14 +912,14 @@ func TestHasETH1WithdrawalCredentials(t *testing.T) {
 func TestHasCompoundingWithdrawalCredential(t *testing.T) {
 	tests := []struct {
 		name      string
-		validator *ethpb.Validator
+		validator *silapb.Validator
 		want      bool
 	}{
 		{"Has compounding withdrawal credential",
-			&ethpb.Validator{WithdrawalCredentials: bytesutil.PadTo([]byte{params.BeaconConfig().CompoundingWithdrawalPrefixByte}, 32)},
+			&silapb.Validator{WithdrawalCredentials: bytesutil.PadTo([]byte{params.BeaconConfig().CompoundingWithdrawalPrefixByte}, 32)},
 			true},
 		{"Does not have compounding withdrawal credential",
-			&ethpb.Validator{WithdrawalCredentials: bytesutil.PadTo([]byte{0x00}, 32)},
+			&silapb.Validator{WithdrawalCredentials: bytesutil.PadTo([]byte{0x00}, 32)},
 			false},
 	}
 	for _, tt := range tests {
@@ -934,17 +934,17 @@ func TestHasCompoundingWithdrawalCredential(t *testing.T) {
 func TestHasExecutionWithdrawalCredentials(t *testing.T) {
 	tests := []struct {
 		name      string
-		validator *ethpb.Validator
+		validator *silapb.Validator
 		want      bool
 	}{
 		{"Has compounding withdrawal credential",
-			&ethpb.Validator{WithdrawalCredentials: bytesutil.PadTo([]byte{params.BeaconConfig().CompoundingWithdrawalPrefixByte}, 32)},
+			&silapb.Validator{WithdrawalCredentials: bytesutil.PadTo([]byte{params.BeaconConfig().CompoundingWithdrawalPrefixByte}, 32)},
 			true},
 		{"Has eth1 withdrawal credential",
-			&ethpb.Validator{WithdrawalCredentials: bytesutil.PadTo([]byte{params.BeaconConfig().ETH1AddressWithdrawalPrefixByte}, 32)},
+			&silapb.Validator{WithdrawalCredentials: bytesutil.PadTo([]byte{params.BeaconConfig().ETH1AddressWithdrawalPrefixByte}, 32)},
 			true},
 		{"Does not have compounding withdrawal credential or eth1 withdrawal credential",
-			&ethpb.Validator{WithdrawalCredentials: bytesutil.PadTo([]byte{0x00}, 32)},
+			&silapb.Validator{WithdrawalCredentials: bytesutil.PadTo([]byte{0x00}, 32)},
 			false},
 	}
 	for _, tt := range tests {
@@ -959,7 +959,7 @@ func TestHasExecutionWithdrawalCredentials(t *testing.T) {
 func TestIsFullyWithdrawableValidator(t *testing.T) {
 	tests := []struct {
 		name      string
-		validator *ethpb.Validator
+		validator *silapb.Validator
 		balance   uint64
 		epoch     primitives.Epoch
 		fork      int
@@ -967,7 +967,7 @@ func TestIsFullyWithdrawableValidator(t *testing.T) {
 	}{
 		{
 			name: "No ETH1 prefix",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				WithdrawalCredentials: []byte{0xFA, 0xCC},
 				WithdrawableEpoch:     2,
 			},
@@ -977,7 +977,7 @@ func TestIsFullyWithdrawableValidator(t *testing.T) {
 		},
 		{
 			name: "Wrong withdrawable epoch",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				WithdrawalCredentials: []byte{params.BeaconConfig().ETH1AddressWithdrawalPrefixByte, 0xCC},
 				WithdrawableEpoch:     2,
 			},
@@ -987,7 +987,7 @@ func TestIsFullyWithdrawableValidator(t *testing.T) {
 		},
 		{
 			name: "No balance",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				WithdrawalCredentials: []byte{params.BeaconConfig().ETH1AddressWithdrawalPrefixByte, 0xCC},
 				WithdrawableEpoch:     2,
 			},
@@ -997,7 +997,7 @@ func TestIsFullyWithdrawableValidator(t *testing.T) {
 		},
 		{
 			name: "Fully withdrawable",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				WithdrawalCredentials: []byte{params.BeaconConfig().ETH1AddressWithdrawalPrefixByte, 0xCC},
 				WithdrawableEpoch:     2,
 			},
@@ -1007,7 +1007,7 @@ func TestIsFullyWithdrawableValidator(t *testing.T) {
 		},
 		{
 			name: "Fully withdrawable compounding validator electra",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				WithdrawalCredentials: []byte{params.BeaconConfig().CompoundingWithdrawalPrefixByte, 0xCC},
 				WithdrawableEpoch:     2,
 			},
@@ -1030,7 +1030,7 @@ func TestIsFullyWithdrawableValidator(t *testing.T) {
 func TestIsPartiallyWithdrawableValidator(t *testing.T) {
 	tests := []struct {
 		name      string
-		validator *ethpb.Validator
+		validator *silapb.Validator
 		balance   uint64
 		epoch     primitives.Epoch
 		fork      int
@@ -1038,7 +1038,7 @@ func TestIsPartiallyWithdrawableValidator(t *testing.T) {
 	}{
 		{
 			name: "No ETH1 prefix",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 				WithdrawalCredentials: []byte{0xFA, 0xCC},
 			},
@@ -1048,7 +1048,7 @@ func TestIsPartiallyWithdrawableValidator(t *testing.T) {
 		},
 		{
 			name: "No balance",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 				WithdrawalCredentials: []byte{params.BeaconConfig().ETH1AddressWithdrawalPrefixByte, 0xCC},
 			},
@@ -1058,7 +1058,7 @@ func TestIsPartiallyWithdrawableValidator(t *testing.T) {
 		},
 		{
 			name: "Partially withdrawable",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
 				WithdrawalCredentials: []byte{params.BeaconConfig().ETH1AddressWithdrawalPrefixByte, 0xCC},
 			},
@@ -1068,7 +1068,7 @@ func TestIsPartiallyWithdrawableValidator(t *testing.T) {
 		},
 		{
 			name: "Fully withdrawable vanilla validator electra",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				EffectiveBalance:      params.BeaconConfig().MinActivationBalance,
 				WithdrawalCredentials: []byte{params.BeaconConfig().ETH1AddressWithdrawalPrefixByte, 0xCC},
 			},
@@ -1079,7 +1079,7 @@ func TestIsPartiallyWithdrawableValidator(t *testing.T) {
 		},
 		{
 			name: "Fully withdrawable compounding validator electra",
-			validator: &ethpb.Validator{
+			validator: &silapb.Validator{
 				EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalanceElectra,
 				WithdrawalCredentials: []byte{params.BeaconConfig().CompoundingWithdrawalPrefixByte, 0xCC},
 			},
@@ -1107,20 +1107,20 @@ func TestIsSameWithdrawalCredentials(t *testing.T) {
 
 	tests := []struct {
 		name string
-		a    *ethpb.Validator
-		b    *ethpb.Validator
+		a    *silapb.Validator
+		b    *silapb.Validator
 		want bool
 	}{
 		{
 			"Same credentials",
-			&ethpb.Validator{WithdrawalCredentials: makeWithdrawalCredentials([]byte("same"))},
-			&ethpb.Validator{WithdrawalCredentials: makeWithdrawalCredentials([]byte("same"))},
+			&silapb.Validator{WithdrawalCredentials: makeWithdrawalCredentials([]byte("same"))},
+			&silapb.Validator{WithdrawalCredentials: makeWithdrawalCredentials([]byte("same"))},
 			true,
 		},
 		{
 			"Different credentials",
-			&ethpb.Validator{WithdrawalCredentials: makeWithdrawalCredentials([]byte("foo"))},
-			&ethpb.Validator{WithdrawalCredentials: makeWithdrawalCredentials([]byte("bar"))},
+			&silapb.Validator{WithdrawalCredentials: makeWithdrawalCredentials([]byte("foo"))},
+			&silapb.Validator{WithdrawalCredentials: makeWithdrawalCredentials([]byte("bar"))},
 			false,
 		},
 		{"Handles nil case", nil, nil, false},
@@ -1135,17 +1135,17 @@ func TestIsSameWithdrawalCredentials(t *testing.T) {
 func TestValidatorMaxEffectiveBalance(t *testing.T) {
 	tests := []struct {
 		name      string
-		validator *ethpb.Validator
+		validator *silapb.Validator
 		want      uint64
 	}{
 		{
 			name:      "Compounding withdrawal credential",
-			validator: &ethpb.Validator{WithdrawalCredentials: []byte{params.BeaconConfig().CompoundingWithdrawalPrefixByte, 0xCC}},
+			validator: &silapb.Validator{WithdrawalCredentials: []byte{params.BeaconConfig().CompoundingWithdrawalPrefixByte, 0xCC}},
 			want:      params.BeaconConfig().MaxEffectiveBalanceElectra,
 		},
 		{
 			name:      "Vanilla credentials",
-			validator: &ethpb.Validator{WithdrawalCredentials: []byte{params.BeaconConfig().ETH1AddressWithdrawalPrefixByte, 0xCC}},
+			validator: &silapb.Validator{WithdrawalCredentials: []byte{params.BeaconConfig().ETH1AddressWithdrawalPrefixByte, 0xCC}},
 			want:      params.BeaconConfig().MinActivationBalance,
 		},
 	}
@@ -1169,7 +1169,7 @@ func TestBeaconProposerIndexAtSlotFulu(t *testing.T) {
 	lookahead[0] = 15
 	lookahead[1] = 16
 	lookahead[34] = 42
-	pbState := ethpb.BeaconStateFulu{
+	pbState := silapb.BeaconStateFulu{
 		Slot:              100,
 		ProposerLookahead: lookahead,
 	}

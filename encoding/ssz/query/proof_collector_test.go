@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stateutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	ssz "github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	sszquerypb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/ssz_query/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -394,7 +394,7 @@ func TestProofCollector_MixinLengthAndCollect(t *testing.T) {
 }
 
 func BenchmarkOptimizedValidatorRoots(b *testing.B) {
-	validators := make([]*ethpb.Validator, 1000)
+	validators := make([]*silapb.Validator, 1000)
 	for i := range validators {
 		validators[i] = makeTestValidator(i)
 	}
@@ -411,7 +411,7 @@ func BenchmarkOptimizedValidatorRoots(b *testing.B) {
 }
 
 func BenchmarkProofCollectorMerkleize(b *testing.B) {
-	validators := make([]*ethpb.Validator, 1000)
+	validators := make([]*silapb.Validator, 1000)
 	for i := range validators {
 		validators[i] = makeTestValidator(i)
 	}
@@ -432,7 +432,7 @@ func BenchmarkProofCollectorMerkleize(b *testing.B) {
 	}
 }
 
-func makeTestValidator(i int) *ethpb.Validator {
+func makeTestValidator(i int) *silapb.Validator {
 	pubkey := make([]byte, 48)
 	for j := range pubkey {
 		pubkey[j] = byte(i + j)
@@ -443,7 +443,7 @@ func makeTestValidator(i int) *ethpb.Validator {
 		withdrawalCredentials[j] = byte(255 - ((i + j) % 256))
 	}
 
-	return &ethpb.Validator{
+	return &silapb.Validator{
 		PublicKey:                  pubkey,
 		WithdrawalCredentials:      withdrawalCredentials,
 		EffectiveBalance:           uint64(32000000000 + i),

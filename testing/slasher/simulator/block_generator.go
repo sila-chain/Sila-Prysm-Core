@@ -10,14 +10,14 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/rand"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 func (s *Simulator) generateBlockHeadersForSlot(
 	ctx context.Context, slot primitives.Slot,
-) ([]*ethpb.SignedBeaconBlockHeader, []*ethpb.ProposerSlashing, error) {
-	blocks := make([]*ethpb.SignedBeaconBlockHeader, 0)
-	slashings := make([]*ethpb.ProposerSlashing, 0)
+) ([]*silapb.SignedBeaconBlockHeader, []*silapb.ProposerSlashing, error) {
+	blocks := make([]*silapb.SignedBeaconBlockHeader, 0)
+	slashings := make([]*silapb.ProposerSlashing, 0)
 	proposer := rand.NewGenerator().Uint64() % s.srvConfig.Params.NumValidators
 
 	var parentRoot [32]byte
@@ -25,8 +25,8 @@ func (s *Simulator) generateBlockHeadersForSlot(
 	if err != nil {
 		return nil, nil, err
 	}
-	block := &ethpb.SignedBeaconBlockHeader{
-		Header: &ethpb.BeaconBlockHeader{
+	block := &silapb.SignedBeaconBlockHeader{
+		Header: &silapb.BeaconBlockHeader{
 			Slot:          slot,
 			ProposerIndex: primitives.ValidatorIndex(proposer),
 			ParentRoot:    bytesutil.PadTo([]byte{}, 32),
@@ -43,8 +43,8 @@ func (s *Simulator) generateBlockHeadersForSlot(
 	blocks = append(blocks, block)
 	if rand.NewGenerator().Float64() < s.srvConfig.Params.ProposerSlashingProbab {
 		log.WithField("proposerIndex", proposer).Infof("Slashable block made")
-		slashableBlock := &ethpb.SignedBeaconBlockHeader{
-			Header: &ethpb.BeaconBlockHeader{
+		slashableBlock := &silapb.SignedBeaconBlockHeader{
+			Header: &silapb.BeaconBlockHeader{
 				Slot:          slot,
 				ProposerIndex: primitives.ValidatorIndex(proposer),
 				ParentRoot:    bytesutil.PadTo([]byte{}, 32),
@@ -60,7 +60,7 @@ func (s *Simulator) generateBlockHeadersForSlot(
 		slashableBlock.Signature = sig.Marshal()
 
 		blocks = append(blocks, slashableBlock)
-		slashings = append(slashings, &ethpb.ProposerSlashing{
+		slashings = append(slashings, &silapb.ProposerSlashing{
 			Header_1: block,
 			Header_2: slashableBlock,
 		})
@@ -70,7 +70,7 @@ func (s *Simulator) generateBlockHeadersForSlot(
 
 func (s *Simulator) signBlockHeader(
 	beaconState state.BeaconState,
-	header *ethpb.SignedBeaconBlockHeader,
+	header *silapb.SignedBeaconBlockHeader,
 ) (bls.Signature, error) {
 	domain, err := signing.Domain(
 		beaconState.Fork(),
@@ -85,7 +85,7 @@ func (s *Simulator) signBlockHeader(
 	if err != nil {
 		return nil, err
 	}
-	container := &ethpb.SigningData{
+	container := &silapb.SigningData{
 		ObjectRoot: htr[:],
 		Domain:     domain,
 	}

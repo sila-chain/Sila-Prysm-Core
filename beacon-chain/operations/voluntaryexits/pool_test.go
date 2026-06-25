@@ -10,7 +10,7 @@ import (
 	types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -25,14 +25,14 @@ func TestPendingExits(t *testing.T) {
 	})
 	t.Run("non-empty pool", func(t *testing.T) {
 		pool := NewPool()
-		pool.InsertVoluntaryExit(&ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		pool.InsertVoluntaryExit(&silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				Epoch:          0,
 				ValidatorIndex: 0,
 			},
 		})
-		pool.InsertVoluntaryExit(&ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		pool.InsertVoluntaryExit(&silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				Epoch:          0,
 				ValidatorIndex: 1,
 			},
@@ -44,8 +44,8 @@ func TestPendingExits(t *testing.T) {
 }
 
 func TestExitsForInclusion(t *testing.T) {
-	spb := &ethpb.BeaconStateCapella{
-		Fork: &ethpb.Fork{
+	spb := &silapb.BeaconStateCapella{
+		Fork: &silapb.Fork{
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 		},
@@ -53,12 +53,12 @@ func TestExitsForInclusion(t *testing.T) {
 	stateSlot := types.Slot(uint64(params.BeaconConfig().ShardCommitteePeriod) * uint64(params.BeaconConfig().SlotsPerEpoch))
 	spb.Slot = stateSlot
 	numValidators := 2 * params.BeaconConfig().MaxVoluntaryExits
-	validators := make([]*ethpb.Validator, numValidators)
-	exits := make([]*ethpb.VoluntaryExit, numValidators)
+	validators := make([]*silapb.Validator, numValidators)
+	exits := make([]*silapb.VoluntaryExit, numValidators)
 	privKeys := make([]common.SecretKey, numValidators)
 
 	for i := range validators {
-		v := &ethpb.Validator{}
+		v := &silapb.Validator{}
 		if i == len(validators)-2 {
 			// exit for this validator is invalid
 			v.ExitEpoch = 0
@@ -71,7 +71,7 @@ func TestExitsForInclusion(t *testing.T) {
 		pubkey := priv.PublicKey().Marshal()
 		v.PublicKey = pubkey
 
-		message := &ethpb.VoluntaryExit{
+		message := &silapb.VoluntaryExit{
 			ValidatorIndex: types.ValidatorIndex(i),
 		}
 		// exit for future slot
@@ -86,12 +86,12 @@ func TestExitsForInclusion(t *testing.T) {
 	st, err := state_native.InitializeFromProtoCapella(spb)
 	require.NoError(t, err)
 
-	signedExits := make([]*ethpb.SignedVoluntaryExit, numValidators)
+	signedExits := make([]*silapb.SignedVoluntaryExit, numValidators)
 	for i, message := range exits {
 		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainVoluntaryExit, privKeys[i])
 		require.NoError(t, err)
 
-		signed := &ethpb.SignedVoluntaryExit{
+		signed := &silapb.SignedVoluntaryExit{
 			Exit:      message,
 			Signature: signature,
 		}
@@ -153,8 +153,8 @@ func TestExitsForInclusion(t *testing.T) {
 func TestInsertExit(t *testing.T) {
 	t.Run("empty pool", func(t *testing.T) {
 		pool := NewPool()
-		exit := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		exit := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(0),
 			},
 		}
@@ -169,13 +169,13 @@ func TestInsertExit(t *testing.T) {
 	})
 	t.Run("item in pool", func(t *testing.T) {
 		pool := NewPool()
-		old := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		old := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(0),
 			},
 		}
-		exit := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		exit := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(1),
 			},
 		}
@@ -196,14 +196,14 @@ func TestInsertExit(t *testing.T) {
 	})
 	t.Run("validator index already exists", func(t *testing.T) {
 		pool := NewPool()
-		old := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		old := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(0),
 			},
 			Signature: []byte("old"),
 		}
-		exit := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		exit := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(0),
 			},
 			Signature: []byte("exit"),
@@ -223,8 +223,8 @@ func TestInsertExit(t *testing.T) {
 func TestMarkIncluded(t *testing.T) {
 	t.Run("one element in pool", func(t *testing.T) {
 		pool := NewPool()
-		exit := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		exit := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(0),
 			}}
 		pool.InsertVoluntaryExit(exit)
@@ -235,16 +235,16 @@ func TestMarkIncluded(t *testing.T) {
 	})
 	t.Run("first of multiple elements", func(t *testing.T) {
 		pool := NewPool()
-		first := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		first := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(0),
 			}}
-		second := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		second := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(1),
 			}}
-		third := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		third := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(2),
 			}}
 		pool.InsertVoluntaryExit(first)
@@ -257,16 +257,16 @@ func TestMarkIncluded(t *testing.T) {
 	})
 	t.Run("last of multiple elements", func(t *testing.T) {
 		pool := NewPool()
-		first := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		first := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(0),
 			}}
-		second := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		second := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(1),
 			}}
-		third := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		third := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(2),
 			}}
 		pool.InsertVoluntaryExit(first)
@@ -279,16 +279,16 @@ func TestMarkIncluded(t *testing.T) {
 	})
 	t.Run("in the middle of multiple elements", func(t *testing.T) {
 		pool := NewPool()
-		first := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		first := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(0),
 			}}
-		second := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		second := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(1),
 			}}
-		third := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		third := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(2),
 			}}
 		pool.InsertVoluntaryExit(first)
@@ -301,16 +301,16 @@ func TestMarkIncluded(t *testing.T) {
 	})
 	t.Run("not in pool", func(t *testing.T) {
 		pool := NewPool()
-		first := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		first := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(0),
 			}}
-		second := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		second := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(1),
 			}}
-		exit := &ethpb.SignedVoluntaryExit{
-			Exit: &ethpb.VoluntaryExit{
+		exit := &silapb.SignedVoluntaryExit{
+			Exit: &silapb.VoluntaryExit{
 				ValidatorIndex: types.ValidatorIndex(2),
 			}}
 		pool.InsertVoluntaryExit(first)

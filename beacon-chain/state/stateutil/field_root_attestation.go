@@ -7,7 +7,7 @@ import (
 
 	params "github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -17,7 +17,7 @@ func RootsArrayHashTreeRoot(vals [][]byte, length uint64) ([32]byte, error) {
 	return ArraysRoot(vals, length)
 }
 
-func EpochAttestationsRoot(atts []*ethpb.PendingAttestation) ([32]byte, error) {
+func EpochAttestationsRoot(atts []*silapb.PendingAttestation) ([32]byte, error) {
 	max := params.BeaconConfig().CurrentEpochAttestationsLength()
 	if uint64(len(atts)) > max {
 		return [32]byte{}, fmt.Errorf("epoch attestation exceeds max length %d", max)
@@ -47,7 +47,7 @@ func EpochAttestationsRoot(atts []*ethpb.PendingAttestation) ([32]byte, error) {
 	return res, nil
 }
 
-func pendingAttestationRoot(att *ethpb.PendingAttestation) ([32]byte, error) {
+func pendingAttestationRoot(att *silapb.PendingAttestation) ([32]byte, error) {
 	if att == nil {
 		return [32]byte{}, errors.New("nil pending attestation")
 	}

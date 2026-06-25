@@ -3,14 +3,14 @@ package helpers
 import (
 	"testing"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 func TestForksEqual(t *testing.T) {
 	tests := []struct {
 		name string
-		s    *ethpb.Fork
-		t    *ethpb.Fork
+		s    *silapb.Fork
+		t    *silapb.Fork
 		want bool
 	}{
 		{
@@ -22,23 +22,23 @@ func TestForksEqual(t *testing.T) {
 		{
 			name: "first nil",
 			s:    nil,
-			t:    &ethpb.Fork{Epoch: 1},
+			t:    &silapb.Fork{Epoch: 1},
 			want: false,
 		},
 		{
 			name: "second nil",
-			s:    &ethpb.Fork{Epoch: 1},
+			s:    &silapb.Fork{Epoch: 1},
 			t:    nil,
 			want: false,
 		},
 		{
 			name: "equal forks",
-			s: &ethpb.Fork{
+			s: &silapb.Fork{
 				Epoch:           100,
 				PreviousVersion: []byte{1, 2, 3, 4},
 				CurrentVersion:  []byte{5, 6, 7, 8},
 			},
-			t: &ethpb.Fork{
+			t: &silapb.Fork{
 				Epoch:           100,
 				PreviousVersion: []byte{1, 2, 3, 4},
 				CurrentVersion:  []byte{5, 6, 7, 8},
@@ -47,12 +47,12 @@ func TestForksEqual(t *testing.T) {
 		},
 		{
 			name: "different epoch",
-			s: &ethpb.Fork{
+			s: &silapb.Fork{
 				Epoch:           100,
 				PreviousVersion: []byte{1, 2, 3, 4},
 				CurrentVersion:  []byte{5, 6, 7, 8},
 			},
-			t: &ethpb.Fork{
+			t: &silapb.Fork{
 				Epoch:           200,
 				PreviousVersion: []byte{1, 2, 3, 4},
 				CurrentVersion:  []byte{5, 6, 7, 8},
@@ -61,12 +61,12 @@ func TestForksEqual(t *testing.T) {
 		},
 		{
 			name: "different previous version",
-			s: &ethpb.Fork{
+			s: &silapb.Fork{
 				Epoch:           100,
 				PreviousVersion: []byte{1, 2, 3, 4},
 				CurrentVersion:  []byte{5, 6, 7, 8},
 			},
-			t: &ethpb.Fork{
+			t: &silapb.Fork{
 				Epoch:           100,
 				PreviousVersion: []byte{9, 10, 11, 12},
 				CurrentVersion:  []byte{5, 6, 7, 8},
@@ -75,12 +75,12 @@ func TestForksEqual(t *testing.T) {
 		},
 		{
 			name: "different current version",
-			s: &ethpb.Fork{
+			s: &silapb.Fork{
 				Epoch:           100,
 				PreviousVersion: []byte{1, 2, 3, 4},
 				CurrentVersion:  []byte{5, 6, 7, 8},
 			},
-			t: &ethpb.Fork{
+			t: &silapb.Fork{
 				Epoch:           100,
 				PreviousVersion: []byte{1, 2, 3, 4},
 				CurrentVersion:  []byte{9, 10, 11, 12},
@@ -100,8 +100,8 @@ func TestForksEqual(t *testing.T) {
 func TestBlockHeadersEqual(t *testing.T) {
 	tests := []struct {
 		name string
-		s    *ethpb.BeaconBlockHeader
-		t    *ethpb.BeaconBlockHeader
+		s    *silapb.BeaconBlockHeader
+		t    *silapb.BeaconBlockHeader
 		want bool
 	}{
 		{
@@ -113,25 +113,25 @@ func TestBlockHeadersEqual(t *testing.T) {
 		{
 			name: "first nil",
 			s:    nil,
-			t:    &ethpb.BeaconBlockHeader{Slot: 1},
+			t:    &silapb.BeaconBlockHeader{Slot: 1},
 			want: false,
 		},
 		{
 			name: "second nil",
-			s:    &ethpb.BeaconBlockHeader{Slot: 1},
+			s:    &silapb.BeaconBlockHeader{Slot: 1},
 			t:    nil,
 			want: false,
 		},
 		{
 			name: "equal headers",
-			s: &ethpb.BeaconBlockHeader{
+			s: &silapb.BeaconBlockHeader{
 				Slot:          100,
 				ProposerIndex: 50,
 				ParentRoot:    []byte{1, 2, 3, 4},
 				StateRoot:     []byte{5, 6, 7, 8},
 				BodyRoot:      []byte{9, 10, 11, 12},
 			},
-			t: &ethpb.BeaconBlockHeader{
+			t: &silapb.BeaconBlockHeader{
 				Slot:          100,
 				ProposerIndex: 50,
 				ParentRoot:    []byte{1, 2, 3, 4},
@@ -142,14 +142,14 @@ func TestBlockHeadersEqual(t *testing.T) {
 		},
 		{
 			name: "different slot",
-			s: &ethpb.BeaconBlockHeader{
+			s: &silapb.BeaconBlockHeader{
 				Slot:          100,
 				ProposerIndex: 50,
 				ParentRoot:    []byte{1, 2, 3, 4},
 				StateRoot:     []byte{5, 6, 7, 8},
 				BodyRoot:      []byte{9, 10, 11, 12},
 			},
-			t: &ethpb.BeaconBlockHeader{
+			t: &silapb.BeaconBlockHeader{
 				Slot:          200,
 				ProposerIndex: 50,
 				ParentRoot:    []byte{1, 2, 3, 4},
@@ -160,14 +160,14 @@ func TestBlockHeadersEqual(t *testing.T) {
 		},
 		{
 			name: "different proposer index",
-			s: &ethpb.BeaconBlockHeader{
+			s: &silapb.BeaconBlockHeader{
 				Slot:          100,
 				ProposerIndex: 50,
 				ParentRoot:    []byte{1, 2, 3, 4},
 				StateRoot:     []byte{5, 6, 7, 8},
 				BodyRoot:      []byte{9, 10, 11, 12},
 			},
-			t: &ethpb.BeaconBlockHeader{
+			t: &silapb.BeaconBlockHeader{
 				Slot:          100,
 				ProposerIndex: 75,
 				ParentRoot:    []byte{1, 2, 3, 4},
@@ -178,14 +178,14 @@ func TestBlockHeadersEqual(t *testing.T) {
 		},
 		{
 			name: "different parent root",
-			s: &ethpb.BeaconBlockHeader{
+			s: &silapb.BeaconBlockHeader{
 				Slot:          100,
 				ProposerIndex: 50,
 				ParentRoot:    []byte{1, 2, 3, 4},
 				StateRoot:     []byte{5, 6, 7, 8},
 				BodyRoot:      []byte{9, 10, 11, 12},
 			},
-			t: &ethpb.BeaconBlockHeader{
+			t: &silapb.BeaconBlockHeader{
 				Slot:          100,
 				ProposerIndex: 50,
 				ParentRoot:    []byte{13, 14, 15, 16},
@@ -196,14 +196,14 @@ func TestBlockHeadersEqual(t *testing.T) {
 		},
 		{
 			name: "different state root",
-			s: &ethpb.BeaconBlockHeader{
+			s: &silapb.BeaconBlockHeader{
 				Slot:          100,
 				ProposerIndex: 50,
 				ParentRoot:    []byte{1, 2, 3, 4},
 				StateRoot:     []byte{5, 6, 7, 8},
 				BodyRoot:      []byte{9, 10, 11, 12},
 			},
-			t: &ethpb.BeaconBlockHeader{
+			t: &silapb.BeaconBlockHeader{
 				Slot:          100,
 				ProposerIndex: 50,
 				ParentRoot:    []byte{1, 2, 3, 4},
@@ -214,14 +214,14 @@ func TestBlockHeadersEqual(t *testing.T) {
 		},
 		{
 			name: "different body root",
-			s: &ethpb.BeaconBlockHeader{
+			s: &silapb.BeaconBlockHeader{
 				Slot:          100,
 				ProposerIndex: 50,
 				ParentRoot:    []byte{1, 2, 3, 4},
 				StateRoot:     []byte{5, 6, 7, 8},
 				BodyRoot:      []byte{9, 10, 11, 12},
 			},
-			t: &ethpb.BeaconBlockHeader{
+			t: &silapb.BeaconBlockHeader{
 				Slot:          100,
 				ProposerIndex: 50,
 				ParentRoot:    []byte{1, 2, 3, 4},
@@ -243,8 +243,8 @@ func TestBlockHeadersEqual(t *testing.T) {
 func TestEth1DataEqual(t *testing.T) {
 	tests := []struct {
 		name string
-		s    *ethpb.Eth1Data
-		t    *ethpb.Eth1Data
+		s    *silapb.Eth1Data
+		t    *silapb.Eth1Data
 		want bool
 	}{
 		{
@@ -256,23 +256,23 @@ func TestEth1DataEqual(t *testing.T) {
 		{
 			name: "first nil",
 			s:    nil,
-			t:    &ethpb.Eth1Data{DepositCount: 1},
+			t:    &silapb.Eth1Data{DepositCount: 1},
 			want: false,
 		},
 		{
 			name: "second nil",
-			s:    &ethpb.Eth1Data{DepositCount: 1},
+			s:    &silapb.Eth1Data{DepositCount: 1},
 			t:    nil,
 			want: false,
 		},
 		{
 			name: "equal eth1 data",
-			s: &ethpb.Eth1Data{
+			s: &silapb.Eth1Data{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
 			},
-			t: &ethpb.Eth1Data{
+			t: &silapb.Eth1Data{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
@@ -281,12 +281,12 @@ func TestEth1DataEqual(t *testing.T) {
 		},
 		{
 			name: "different deposit root",
-			s: &ethpb.Eth1Data{
+			s: &silapb.Eth1Data{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
 			},
-			t: &ethpb.Eth1Data{
+			t: &silapb.Eth1Data{
 				DepositRoot:  []byte{9, 10, 11, 12},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
@@ -295,12 +295,12 @@ func TestEth1DataEqual(t *testing.T) {
 		},
 		{
 			name: "different deposit count",
-			s: &ethpb.Eth1Data{
+			s: &silapb.Eth1Data{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
 			},
-			t: &ethpb.Eth1Data{
+			t: &silapb.Eth1Data{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 200,
 				BlockHash:    []byte{5, 6, 7, 8},
@@ -309,12 +309,12 @@ func TestEth1DataEqual(t *testing.T) {
 		},
 		{
 			name: "different block hash",
-			s: &ethpb.Eth1Data{
+			s: &silapb.Eth1Data{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
 			},
-			t: &ethpb.Eth1Data{
+			t: &silapb.Eth1Data{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{9, 10, 11, 12},
@@ -334,8 +334,8 @@ func TestEth1DataEqual(t *testing.T) {
 func TestPendingDepositsEqual(t *testing.T) {
 	tests := []struct {
 		name string
-		s    *ethpb.PendingDeposit
-		t    *ethpb.PendingDeposit
+		s    *silapb.PendingDeposit
+		t    *silapb.PendingDeposit
 		want bool
 	}{
 		{
@@ -347,25 +347,25 @@ func TestPendingDepositsEqual(t *testing.T) {
 		{
 			name: "first nil",
 			s:    nil,
-			t:    &ethpb.PendingDeposit{Amount: 1},
+			t:    &silapb.PendingDeposit{Amount: 1},
 			want: false,
 		},
 		{
 			name: "second nil",
-			s:    &ethpb.PendingDeposit{Amount: 1},
+			s:    &silapb.PendingDeposit{Amount: 1},
 			t:    nil,
 			want: false,
 		},
 		{
 			name: "equal pending deposits",
-			s: &ethpb.PendingDeposit{
+			s: &silapb.PendingDeposit{
 				PublicKey:             []byte{1, 2, 3, 4},
 				WithdrawalCredentials: []byte{5, 6, 7, 8},
 				Amount:                32000000000,
 				Signature:             []byte{9, 10, 11, 12},
 				Slot:                  100,
 			},
-			t: &ethpb.PendingDeposit{
+			t: &silapb.PendingDeposit{
 				PublicKey:             []byte{1, 2, 3, 4},
 				WithdrawalCredentials: []byte{5, 6, 7, 8},
 				Amount:                32000000000,
@@ -376,14 +376,14 @@ func TestPendingDepositsEqual(t *testing.T) {
 		},
 		{
 			name: "different public key",
-			s: &ethpb.PendingDeposit{
+			s: &silapb.PendingDeposit{
 				PublicKey:             []byte{1, 2, 3, 4},
 				WithdrawalCredentials: []byte{5, 6, 7, 8},
 				Amount:                32000000000,
 				Signature:             []byte{9, 10, 11, 12},
 				Slot:                  100,
 			},
-			t: &ethpb.PendingDeposit{
+			t: &silapb.PendingDeposit{
 				PublicKey:             []byte{13, 14, 15, 16},
 				WithdrawalCredentials: []byte{5, 6, 7, 8},
 				Amount:                32000000000,
@@ -394,14 +394,14 @@ func TestPendingDepositsEqual(t *testing.T) {
 		},
 		{
 			name: "different withdrawal credentials",
-			s: &ethpb.PendingDeposit{
+			s: &silapb.PendingDeposit{
 				PublicKey:             []byte{1, 2, 3, 4},
 				WithdrawalCredentials: []byte{5, 6, 7, 8},
 				Amount:                32000000000,
 				Signature:             []byte{9, 10, 11, 12},
 				Slot:                  100,
 			},
-			t: &ethpb.PendingDeposit{
+			t: &silapb.PendingDeposit{
 				PublicKey:             []byte{1, 2, 3, 4},
 				WithdrawalCredentials: []byte{13, 14, 15, 16},
 				Amount:                32000000000,
@@ -412,14 +412,14 @@ func TestPendingDepositsEqual(t *testing.T) {
 		},
 		{
 			name: "different amount",
-			s: &ethpb.PendingDeposit{
+			s: &silapb.PendingDeposit{
 				PublicKey:             []byte{1, 2, 3, 4},
 				WithdrawalCredentials: []byte{5, 6, 7, 8},
 				Amount:                32000000000,
 				Signature:             []byte{9, 10, 11, 12},
 				Slot:                  100,
 			},
-			t: &ethpb.PendingDeposit{
+			t: &silapb.PendingDeposit{
 				PublicKey:             []byte{1, 2, 3, 4},
 				WithdrawalCredentials: []byte{5, 6, 7, 8},
 				Amount:                16000000000,
@@ -430,14 +430,14 @@ func TestPendingDepositsEqual(t *testing.T) {
 		},
 		{
 			name: "different signature",
-			s: &ethpb.PendingDeposit{
+			s: &silapb.PendingDeposit{
 				PublicKey:             []byte{1, 2, 3, 4},
 				WithdrawalCredentials: []byte{5, 6, 7, 8},
 				Amount:                32000000000,
 				Signature:             []byte{9, 10, 11, 12},
 				Slot:                  100,
 			},
-			t: &ethpb.PendingDeposit{
+			t: &silapb.PendingDeposit{
 				PublicKey:             []byte{1, 2, 3, 4},
 				WithdrawalCredentials: []byte{5, 6, 7, 8},
 				Amount:                32000000000,
@@ -448,14 +448,14 @@ func TestPendingDepositsEqual(t *testing.T) {
 		},
 		{
 			name: "different slot",
-			s: &ethpb.PendingDeposit{
+			s: &silapb.PendingDeposit{
 				PublicKey:             []byte{1, 2, 3, 4},
 				WithdrawalCredentials: []byte{5, 6, 7, 8},
 				Amount:                32000000000,
 				Signature:             []byte{9, 10, 11, 12},
 				Slot:                  100,
 			},
-			t: &ethpb.PendingDeposit{
+			t: &silapb.PendingDeposit{
 				PublicKey:             []byte{1, 2, 3, 4},
 				WithdrawalCredentials: []byte{5, 6, 7, 8},
 				Amount:                32000000000,
@@ -477,8 +477,8 @@ func TestPendingDepositsEqual(t *testing.T) {
 func TestPendingPartialWithdrawalsEqual(t *testing.T) {
 	tests := []struct {
 		name string
-		s    *ethpb.PendingPartialWithdrawal
-		t    *ethpb.PendingPartialWithdrawal
+		s    *silapb.PendingPartialWithdrawal
+		t    *silapb.PendingPartialWithdrawal
 		want bool
 	}{
 		{
@@ -490,23 +490,23 @@ func TestPendingPartialWithdrawalsEqual(t *testing.T) {
 		{
 			name: "first nil",
 			s:    nil,
-			t:    &ethpb.PendingPartialWithdrawal{Index: 1},
+			t:    &silapb.PendingPartialWithdrawal{Index: 1},
 			want: false,
 		},
 		{
 			name: "second nil",
-			s:    &ethpb.PendingPartialWithdrawal{Index: 1},
+			s:    &silapb.PendingPartialWithdrawal{Index: 1},
 			t:    nil,
 			want: false,
 		},
 		{
 			name: "equal pending partial withdrawals",
-			s: &ethpb.PendingPartialWithdrawal{
+			s: &silapb.PendingPartialWithdrawal{
 				Index:             50,
 				Amount:            1000000000,
 				WithdrawableEpoch: 200,
 			},
-			t: &ethpb.PendingPartialWithdrawal{
+			t: &silapb.PendingPartialWithdrawal{
 				Index:             50,
 				Amount:            1000000000,
 				WithdrawableEpoch: 200,
@@ -515,12 +515,12 @@ func TestPendingPartialWithdrawalsEqual(t *testing.T) {
 		},
 		{
 			name: "different index",
-			s: &ethpb.PendingPartialWithdrawal{
+			s: &silapb.PendingPartialWithdrawal{
 				Index:             50,
 				Amount:            1000000000,
 				WithdrawableEpoch: 200,
 			},
-			t: &ethpb.PendingPartialWithdrawal{
+			t: &silapb.PendingPartialWithdrawal{
 				Index:             75,
 				Amount:            1000000000,
 				WithdrawableEpoch: 200,
@@ -529,12 +529,12 @@ func TestPendingPartialWithdrawalsEqual(t *testing.T) {
 		},
 		{
 			name: "different amount",
-			s: &ethpb.PendingPartialWithdrawal{
+			s: &silapb.PendingPartialWithdrawal{
 				Index:             50,
 				Amount:            1000000000,
 				WithdrawableEpoch: 200,
 			},
-			t: &ethpb.PendingPartialWithdrawal{
+			t: &silapb.PendingPartialWithdrawal{
 				Index:             50,
 				Amount:            2000000000,
 				WithdrawableEpoch: 200,
@@ -543,12 +543,12 @@ func TestPendingPartialWithdrawalsEqual(t *testing.T) {
 		},
 		{
 			name: "different withdrawable epoch",
-			s: &ethpb.PendingPartialWithdrawal{
+			s: &silapb.PendingPartialWithdrawal{
 				Index:             50,
 				Amount:            1000000000,
 				WithdrawableEpoch: 200,
 			},
-			t: &ethpb.PendingPartialWithdrawal{
+			t: &silapb.PendingPartialWithdrawal{
 				Index:             50,
 				Amount:            1000000000,
 				WithdrawableEpoch: 300,
@@ -568,8 +568,8 @@ func TestPendingPartialWithdrawalsEqual(t *testing.T) {
 func TestPendingConsolidationsEqual(t *testing.T) {
 	tests := []struct {
 		name string
-		s    *ethpb.PendingConsolidation
-		t    *ethpb.PendingConsolidation
+		s    *silapb.PendingConsolidation
+		t    *silapb.PendingConsolidation
 		want bool
 	}{
 		{
@@ -581,22 +581,22 @@ func TestPendingConsolidationsEqual(t *testing.T) {
 		{
 			name: "first nil",
 			s:    nil,
-			t:    &ethpb.PendingConsolidation{SourceIndex: 1},
+			t:    &silapb.PendingConsolidation{SourceIndex: 1},
 			want: false,
 		},
 		{
 			name: "second nil",
-			s:    &ethpb.PendingConsolidation{SourceIndex: 1},
+			s:    &silapb.PendingConsolidation{SourceIndex: 1},
 			t:    nil,
 			want: false,
 		},
 		{
 			name: "equal pending consolidations",
-			s: &ethpb.PendingConsolidation{
+			s: &silapb.PendingConsolidation{
 				SourceIndex: 10,
 				TargetIndex: 20,
 			},
-			t: &ethpb.PendingConsolidation{
+			t: &silapb.PendingConsolidation{
 				SourceIndex: 10,
 				TargetIndex: 20,
 			},
@@ -604,11 +604,11 @@ func TestPendingConsolidationsEqual(t *testing.T) {
 		},
 		{
 			name: "different source index",
-			s: &ethpb.PendingConsolidation{
+			s: &silapb.PendingConsolidation{
 				SourceIndex: 10,
 				TargetIndex: 20,
 			},
-			t: &ethpb.PendingConsolidation{
+			t: &silapb.PendingConsolidation{
 				SourceIndex: 15,
 				TargetIndex: 20,
 			},
@@ -616,11 +616,11 @@ func TestPendingConsolidationsEqual(t *testing.T) {
 		},
 		{
 			name: "different target index",
-			s: &ethpb.PendingConsolidation{
+			s: &silapb.PendingConsolidation{
 				SourceIndex: 10,
 				TargetIndex: 20,
 			},
-			t: &ethpb.PendingConsolidation{
+			t: &silapb.PendingConsolidation{
 				SourceIndex: 10,
 				TargetIndex: 25,
 			},
@@ -639,8 +639,8 @@ func TestPendingConsolidationsEqual(t *testing.T) {
 func TestBuilderPendingWithdrawalsEqual(t *testing.T) {
 	tests := []struct {
 		name string
-		s    *ethpb.BuilderPendingWithdrawal
-		t    *ethpb.BuilderPendingWithdrawal
+		s    *silapb.BuilderPendingWithdrawal
+		t    *silapb.BuilderPendingWithdrawal
 		want bool
 	}{
 		{
@@ -652,23 +652,23 @@ func TestBuilderPendingWithdrawalsEqual(t *testing.T) {
 		{
 			name: "first nil",
 			s:    nil,
-			t:    &ethpb.BuilderPendingWithdrawal{Amount: 1},
+			t:    &silapb.BuilderPendingWithdrawal{Amount: 1},
 			want: false,
 		},
 		{
 			name: "second nil",
-			s:    &ethpb.BuilderPendingWithdrawal{Amount: 1},
+			s:    &silapb.BuilderPendingWithdrawal{Amount: 1},
 			t:    nil,
 			want: false,
 		},
 		{
 			name: "equal",
-			s: &ethpb.BuilderPendingWithdrawal{
+			s: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
 				Amount:       1000,
 				BuilderIndex: 5,
 			},
-			t: &ethpb.BuilderPendingWithdrawal{
+			t: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
 				Amount:       1000,
 				BuilderIndex: 5,
@@ -677,12 +677,12 @@ func TestBuilderPendingWithdrawalsEqual(t *testing.T) {
 		},
 		{
 			name: "different amount",
-			s: &ethpb.BuilderPendingWithdrawal{
+			s: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 				Amount:       1000,
 				BuilderIndex: 5,
 			},
-			t: &ethpb.BuilderPendingWithdrawal{
+			t: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 				Amount:       2000,
 				BuilderIndex: 5,
@@ -691,12 +691,12 @@ func TestBuilderPendingWithdrawalsEqual(t *testing.T) {
 		},
 		{
 			name: "different builder index",
-			s: &ethpb.BuilderPendingWithdrawal{
+			s: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 				Amount:       1000,
 				BuilderIndex: 5,
 			},
-			t: &ethpb.BuilderPendingWithdrawal{
+			t: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 				Amount:       1000,
 				BuilderIndex: 10,
@@ -705,12 +705,12 @@ func TestBuilderPendingWithdrawalsEqual(t *testing.T) {
 		},
 		{
 			name: "different fee recipient",
-			s: &ethpb.BuilderPendingWithdrawal{
+			s: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
 				Amount:       1000,
 				BuilderIndex: 5,
 			},
-			t: &ethpb.BuilderPendingWithdrawal{
+			t: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: []byte{20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1},
 				Amount:       1000,
 				BuilderIndex: 5,

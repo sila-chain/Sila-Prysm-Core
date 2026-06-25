@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -97,10 +97,10 @@ func TestRegistration_Valid(t *testing.T) {
 	decodedSignature3, err := hexutil.Decode(signature3)
 	require.NoError(t, err)
 
-	protoRegistrations := ethpb.SignedValidatorRegistrationsV1{
-		Messages: []*ethpb.SignedValidatorRegistrationV1{
+	protoRegistrations := silapb.SignedValidatorRegistrationsV1{
+		Messages: []*silapb.SignedValidatorRegistrationV1{
 			{
-				Message: &ethpb.ValidatorRegistrationV1{
+				Message: &silapb.ValidatorRegistrationV1{
 					FeeRecipient: decodedFeeRecipient1,
 					GasLimit:     100,
 					Timestamp:    1000,
@@ -109,7 +109,7 @@ func TestRegistration_Valid(t *testing.T) {
 				Signature: decodedSignature1,
 			},
 			{
-				Message: &ethpb.ValidatorRegistrationV1{
+				Message: &silapb.ValidatorRegistrationV1{
 					FeeRecipient: decodedFeeRecipient2,
 					GasLimit:     200,
 					Timestamp:    2000,
@@ -118,7 +118,7 @@ func TestRegistration_Valid(t *testing.T) {
 				Signature: decodedSignature2,
 			},
 			{
-				Message: &ethpb.ValidatorRegistrationV1{
+				Message: &silapb.ValidatorRegistrationV1{
 					FeeRecipient: decodedFeeRecipient3,
 					GasLimit:     300,
 					Timestamp:    3000,
@@ -152,6 +152,6 @@ func TestRegistration_BadRequest(t *testing.T) {
 	).Times(1)
 
 	validatorClient := &beaconApiValidatorClient{handler: handler}
-	_, err := validatorClient.SubmitValidatorRegistrations(t.Context(), &ethpb.SignedValidatorRegistrationsV1{})
+	_, err := validatorClient.SubmitValidatorRegistrations(t.Context(), &silapb.SignedValidatorRegistrationsV1{})
 	assert.ErrorContains(t, "foo error", err)
 }

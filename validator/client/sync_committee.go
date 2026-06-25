@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -68,7 +68,7 @@ func (v *validator) SubmitSyncCommitteeMessage(ctx context.Context, slot primiti
 		return
 	}
 
-	msg := &ethpb.SyncCommitteeMessage{
+	msg := &silapb.SyncCommitteeMessage{
 		Slot:           slot,
 		BlockRoot:      res.Root,
 		ValidatorIndex: duty.ValidatorIndex,
@@ -106,7 +106,7 @@ func (v *validator) SubmitSignedContributionAndProof(ctx context.Context, slot p
 		return
 	}
 
-	indexRes, err := v.validatorClient.SyncSubcommitteeIndex(ctx, &ethpb.SyncSubcommitteeIndexRequest{
+	indexRes, err := v.validatorClient.SyncSubcommitteeIndex(ctx, &silapb.SyncSubcommitteeIndexRequest{
 		PublicKey: pubKey[:],
 		Slot:      slot,
 	})
@@ -148,7 +148,7 @@ func (v *validator) SubmitSignedContributionAndProof(ctx context.Context, slot p
 			// Don't submit a message for the same subnet multiple times
 			continue
 		}
-		contribution, err := v.validatorClient.SyncCommitteeContribution(ctx, &ethpb.SyncCommitteeContributionRequest{
+		contribution, err := v.validatorClient.SyncCommitteeContribution(ctx, &silapb.SyncCommitteeContributionRequest{
 			Slot:      slot,
 			PublicKey: pubKey[:],
 			SubnetId:  subnet,
@@ -166,7 +166,7 @@ func (v *validator) SubmitSignedContributionAndProof(ctx context.Context, slot p
 			continue
 		}
 
-		contributionAndProof := &ethpb.ContributionAndProof{
+		contributionAndProof := &silapb.ContributionAndProof{
 			AggregatorIndex: duty.ValidatorIndex,
 			Contribution:    contribution,
 			SelectionProof:  selectionProofs[i],
@@ -177,7 +177,7 @@ func (v *validator) SubmitSignedContributionAndProof(ctx context.Context, slot p
 			return
 		}
 
-		if _, err := v.validatorClient.SubmitSignedContributionAndProof(ctx, &ethpb.SignedContributionAndProof{
+		if _, err := v.validatorClient.SubmitSignedContributionAndProof(ctx, &silapb.SignedContributionAndProof{
 			Message:   contributionAndProof,
 			Signature: sig,
 		}); err != nil {
@@ -213,7 +213,7 @@ func (v *validator) signSyncSelectionData(ctx context.Context, pubKey [fieldpara
 	if err != nil {
 		return nil, err
 	}
-	data := &ethpb.SyncAggregatorSelectionData{
+	data := &silapb.SyncAggregatorSelectionData{
 		Slot:              slot,
 		SubcommitteeIndex: index,
 	}
@@ -235,7 +235,7 @@ func (v *validator) signSyncSelectionData(ctx context.Context, pubKey [fieldpara
 }
 
 // This returns the signature of validator signing over sync committee contribution and proof object.
-func (v *validator) signContributionAndProof(ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, c *ethpb.ContributionAndProof, slot primitives.Slot) ([]byte, error) {
+func (v *validator) signContributionAndProof(ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, c *silapb.ContributionAndProof, slot primitives.Slot) ([]byte, error) {
 	ctx, span := trace.StartSpan(ctx, "validator.signContributionAndProof")
 	defer span.End()
 

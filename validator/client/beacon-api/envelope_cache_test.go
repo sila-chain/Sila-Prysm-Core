@@ -5,13 +5,13 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
-func envelopeForSlot(slot primitives.Slot) *ethpb.ExecutionPayloadEnvelope {
-	return &ethpb.ExecutionPayloadEnvelope{
+func envelopeForSlot(slot primitives.Slot) *silapb.ExecutionPayloadEnvelope {
+	return &silapb.ExecutionPayloadEnvelope{
 		Payload: &enginev1.ExecutionPayloadGloas{SlotNumber: slot},
 	}
 }
@@ -23,7 +23,7 @@ func TestExecutionPayloadEnvelopeCache_Add(t *testing.T) {
 		cache.Add(11, envelopeForSlot(11), nil, nil)
 
 		got, _, _ := cache.Take(10)
-		assert.Equal(t, (*ethpb.ExecutionPayloadEnvelope)(nil), got)
+		assert.Equal(t, (*silapb.ExecutionPayloadEnvelope)(nil), got)
 		got, _, _ = cache.Take(11)
 		require.NotNil(t, got)
 		assert.Equal(t, primitives.Slot(11), got.Payload.SlotNumber)
@@ -42,7 +42,7 @@ func TestExecutionPayloadEnvelopeCache_Add(t *testing.T) {
 
 	t.Run("nil receiver is a no-op", func(t *testing.T) {
 		var cache *executionPayloadEnvelopeCache
-		cache.Add(1, &ethpb.ExecutionPayloadEnvelope{}, nil, nil)
+		cache.Add(1, &silapb.ExecutionPayloadEnvelope{}, nil, nil)
 	})
 }
 
@@ -61,18 +61,18 @@ func TestExecutionPayloadEnvelopeCache_Take(t *testing.T) {
 		assert.DeepEqual(t, proofs, gotProofs)
 
 		got, _, _ = cache.Take(10)
-		assert.Equal(t, (*ethpb.ExecutionPayloadEnvelope)(nil), got)
+		assert.Equal(t, (*silapb.ExecutionPayloadEnvelope)(nil), got)
 	})
 
 	t.Run("missing slot returns nils", func(t *testing.T) {
 		cache := newExecutionPayloadEnvelopeCache()
 		got, _, _ := cache.Take(42)
-		assert.Equal(t, (*ethpb.ExecutionPayloadEnvelope)(nil), got)
+		assert.Equal(t, (*silapb.ExecutionPayloadEnvelope)(nil), got)
 	})
 
 	t.Run("nil receiver returns nils", func(t *testing.T) {
 		var cache *executionPayloadEnvelopeCache
 		got, _, _ := cache.Take(1)
-		assert.Equal(t, (*ethpb.ExecutionPayloadEnvelope)(nil), got)
+		assert.Equal(t, (*silapb.ExecutionPayloadEnvelope)(nil), got)
 	})
 }

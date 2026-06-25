@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 )
 
@@ -15,7 +15,7 @@ import (
 // PTC members broadcast PayloadAttestationMessages via P2P gossip during slot N.
 // All nodes collect these in a pool. The slot N+1 proposer retrieves and aggregates
 // them into PayloadAttestations for block inclusion.
-func (vs *Server) getPayloadAttestations(ctx context.Context, head state.BeaconState, blockParentRoot [32]byte) []*ethpb.PayloadAttestation {
+func (vs *Server) getPayloadAttestations(ctx context.Context, head state.BeaconState, blockParentRoot [32]byte) []*silapb.PayloadAttestation {
 	_, span := trace.StartSpan(ctx, "ProposerServer.getPayloadAttestations")
 	defer span.End()
 
@@ -23,7 +23,7 @@ func (vs *Server) getPayloadAttestations(ctx context.Context, head state.BeaconS
 		return nil
 	}
 
-	atts := make([]*ethpb.PayloadAttestation, 0)
+	atts := make([]*silapb.PayloadAttestation, 0)
 	if vs.PayloadAttestationPool == nil || head.Slot() == 0 {
 		return atts
 	}

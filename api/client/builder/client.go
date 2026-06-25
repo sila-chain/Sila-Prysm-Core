@@ -22,7 +22,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -30,15 +30,15 @@ import (
 )
 
 const (
-	getExecHeaderPath            = "/eth/v1/builder/header/{{.Slot}}/{{.ParentHash}}/{{.Pubkey}}"
-	getStatus                    = "/eth/v1/builder/status"
-	postBlindedBeaconBlockPath   = "/eth/v1/builder/blinded_blocks"
-	postBlindedBeaconBlockV2Path = "/eth/v2/builder/blinded_blocks"
-	postRegisterValidatorPath    = "/eth/v1/builder/validators"
+	getExecHeaderPath            = "/sila/v1/builder/header/{{.Slot}}/{{.ParentHash}}/{{.Pubkey}}"
+	getStatus                    = "/sila/v1/builder/status"
+	postBlindedBeaconBlockPath   = "/sila/v1/builder/blinded_blocks"
+	postBlindedBeaconBlockV2Path = "/sila/v2/builder/blinded_blocks"
+	postRegisterValidatorPath    = "/sila/v1/builder/validators"
 )
 
 var (
-	vrExample             = &ethpb.SignedValidatorRegistrationV1{}
+	vrExample             = &silapb.SignedValidatorRegistrationV1{}
 	vrSize                = vrExample.SizeSSZ()
 	errMalformedHostname  = errors.New("hostname must include port, separated by one colon, like example.com:3500")
 	errMalformedRequest   = errors.New("required request data are missing")
@@ -101,7 +101,7 @@ var _ observer = &requestLogger{}
 type BuilderClient interface {
 	NodeURL() string
 	GetHeader(ctx context.Context, slot primitives.Slot, parentHash [32]byte, pubkey [48]byte) (SignedBid, error)
-	RegisterValidator(ctx context.Context, svr []*ethpb.SignedValidatorRegistrationV1) error
+	RegisterValidator(ctx context.Context, svr []*silapb.SignedValidatorRegistrationV1) error
 	SubmitBlindedBlock(ctx context.Context, sb interfaces.ReadOnlySignedBeaconBlock) (interfaces.ExecutionData, v1.BlobsBundler, error)
 	SubmitBlindedBlockPostFulu(ctx context.Context, sb interfaces.ReadOnlySignedBeaconBlock) error
 	Status(ctx context.Context) error
@@ -296,7 +296,7 @@ func (c *Client) parseHeaderResponse(data []byte, header http.Header, slot primi
 
 func (c *Client) parseHeaderElectra(data []byte, slot primitives.Slot) (SignedBid, error) {
 	if c.sszEnabled {
-		sb := &ethpb.SignedBuilderBidElectra{}
+		sb := &silapb.SignedBuilderBidElectra{}
 		if err := sb.UnmarshalSSZ(data); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal SignedBuilderBidElectra SSZ")
 		}
@@ -315,7 +315,7 @@ func (c *Client) parseHeaderElectra(data []byte, slot primitives.Slot) (SignedBi
 
 func (c *Client) parseHeaderDeneb(data []byte) (SignedBid, error) {
 	if c.sszEnabled {
-		sb := &ethpb.SignedBuilderBidDeneb{}
+		sb := &silapb.SignedBuilderBidDeneb{}
 		if err := sb.UnmarshalSSZ(data); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal SignedBuilderBidDeneb SSZ")
 		}
@@ -334,7 +334,7 @@ func (c *Client) parseHeaderDeneb(data []byte) (SignedBid, error) {
 
 func (c *Client) parseHeaderCapella(data []byte) (SignedBid, error) {
 	if c.sszEnabled {
-		sb := &ethpb.SignedBuilderBidCapella{}
+		sb := &silapb.SignedBuilderBidCapella{}
 		if err := sb.UnmarshalSSZ(data); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal SignedBuilderBidCapella SSZ")
 		}
@@ -353,7 +353,7 @@ func (c *Client) parseHeaderCapella(data []byte) (SignedBid, error) {
 
 func (c *Client) parseHeaderBellatrix(data []byte) (SignedBid, error) {
 	if c.sszEnabled {
-		sb := &ethpb.SignedBuilderBid{}
+		sb := &silapb.SignedBuilderBid{}
 		if err := sb.UnmarshalSSZ(data); err != nil {
 			return nil, errors.Wrap(err, "could not unmarshal SignedBuilderBid SSZ")
 		}
@@ -372,7 +372,7 @@ func (c *Client) parseHeaderBellatrix(data []byte) (SignedBid, error) {
 
 // RegisterValidator encodes the SignedValidatorRegistrationV1 message to json (including hex-encoding the byte
 // fields with 0x prefixes) and posts to the builder validator registration endpoint.
-func (c *Client) RegisterValidator(ctx context.Context, svr []*ethpb.SignedValidatorRegistrationV1) error {
+func (c *Client) RegisterValidator(ctx context.Context, svr []*silapb.SignedValidatorRegistrationV1) error {
 	ctx, span := trace.StartSpan(ctx, "builder.client.RegisterValidator")
 	defer span.End()
 	span.SetAttributes(trace.Int64Attribute("num_reqs", int64(len(svr))))
@@ -419,7 +419,7 @@ func (c *Client) RegisterValidator(ctx context.Context, svr []*ethpb.SignedValid
 	return nil
 }
 
-func jsonValidatorRegisterRequest(svr []*ethpb.SignedValidatorRegistrationV1) ([]byte, error) {
+func jsonValidatorRegisterRequest(svr []*silapb.SignedValidatorRegistrationV1) ([]byte, error) {
 	vs := make([]*structs.SignedValidatorRegistration, len(svr))
 	for i := range svr {
 		vs[i] = structs.SignedValidatorRegistrationFromConsensus(svr[i])
@@ -431,7 +431,7 @@ func jsonValidatorRegisterRequest(svr []*ethpb.SignedValidatorRegistrationV1) ([
 	return body, nil
 }
 
-func sszValidatorRegisterRequest(svr []*ethpb.SignedValidatorRegistrationV1) ([]byte, error) {
+func sszValidatorRegisterRequest(svr []*silapb.SignedValidatorRegistrationV1) ([]byte, error) {
 	if uint64(len(svr)) > params.BeaconConfig().ValidatorRegistryLimit {
 		return nil, errors.Wrap(errMalformedRequest, "validator registry limit exceeded")
 	}

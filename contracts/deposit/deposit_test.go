@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/contracts/deposit"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -25,7 +25,7 @@ func TestDepositInput_GeneratesPb(t *testing.T) {
 
 	sig, err := bls.SignatureFromBytes(result.Signature)
 	require.NoError(t, err)
-	testData := &ethpb.DepositMessage{
+	testData := &silapb.DepositMessage{
 		PublicKey:             result.PublicKey,
 		WithdrawalCredentials: result.WithdrawalCredentials,
 		Amount:                result.Amount,
@@ -38,7 +38,7 @@ func TestDepositInput_GeneratesPb(t *testing.T) {
 		nil, /*genesisValidatorsRoot*/
 	)
 	require.NoError(t, err)
-	root, err := (&ethpb.SigningData{ObjectRoot: sr[:], Domain: domain}).HashTreeRoot()
+	root, err := (&silapb.SigningData{ObjectRoot: sr[:], Domain: domain}).HashTreeRoot()
 	require.NoError(t, err)
 	assert.Equal(t, true, sig.Verify(k1.PublicKey(), root[:]))
 }

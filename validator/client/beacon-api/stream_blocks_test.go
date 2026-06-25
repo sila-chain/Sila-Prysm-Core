@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	rpctesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/shared/testing"
+	rpctesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/shared/testing"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"

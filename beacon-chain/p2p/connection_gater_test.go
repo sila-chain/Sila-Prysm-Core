@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/peers/scorers"
 	mockp2p "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/testing"
 	leakybucket "github.com/sila-chain/Sila-Consensus-Core/v7/container/leaky-bucket"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/libp2p/go-libp2p"
@@ -158,7 +158,7 @@ func TestService_RejectInboundPeersBeyondLimit(t *testing.T) {
 	inboundLimit += 1
 	// Add in up to inbound peer limit.
 	for i := 0; i < int(inboundLimit); i++ {
-		addPeer(t, s.peers, peerdata.ConnectionState(ethpb.ConnectionState_CONNECTED), false)
+		addPeer(t, s.peers, peerdata.ConnectionState(silapb.ConnectionState_CONNECTED), false)
 	}
 	valid = s.InterceptAccept(&maEndpoints{raddr: multiAddress})
 	if valid {

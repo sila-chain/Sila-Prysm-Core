@@ -2,7 +2,7 @@ package state_native
 
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
 
@@ -33,7 +33,7 @@ func (b *BeaconState) ConsolidationBalanceToConsume() (primitives.Gwei, error) {
 // PendingConsolidations is a non-mutating call to the beacon state which returns a deep copy of the
 // pending consolidations slice. This method requires access to the RLock on the state and only
 // applies in electra or later.
-func (b *BeaconState) PendingConsolidations() ([]*ethpb.PendingConsolidation, error) {
+func (b *BeaconState) PendingConsolidations() ([]*silapb.PendingConsolidation, error) {
 	if b.version < version.Electra {
 		return nil, errNotSupported("PendingConsolidations", b.version)
 	}
@@ -54,10 +54,10 @@ func (b *BeaconState) NumPendingConsolidations() (uint64, error) {
 	return uint64(len(b.pendingConsolidations)), nil
 }
 
-func (b *BeaconState) pendingConsolidationsVal() []*ethpb.PendingConsolidation {
+func (b *BeaconState) pendingConsolidationsVal() []*silapb.PendingConsolidation {
 	if b.pendingConsolidations == nil {
 		return nil
 	}
 
-	return ethpb.CopySlice(b.pendingConsolidations)
+	return silapb.CopySlice(b.pendingConsolidations)
 }

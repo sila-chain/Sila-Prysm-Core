@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -81,7 +81,7 @@ func TestWeakSubjectivity_IsWithinWeakSubjectivityPeriod(t *testing.T) {
 			genWsState: func() state.ReadOnlyBeaconState {
 				beaconState := genState(t, 128, 32)
 				require.NoError(t, beaconState.SetSlot(42*params.BeaconConfig().SlotsPerEpoch))
-				err := beaconState.SetLatestBlockHeader(&ethpb.BeaconBlockHeader{
+				err := beaconState.SetLatestBlockHeader(&silapb.BeaconBlockHeader{
 					Slot:      42 * params.BeaconConfig().SlotsPerEpoch,
 					StateRoot: bytesutil.PadTo([]byte("stateroot1"), 32),
 				})
@@ -101,7 +101,7 @@ func TestWeakSubjectivity_IsWithinWeakSubjectivityPeriod(t *testing.T) {
 			genWsState: func() state.ReadOnlyBeaconState {
 				beaconState := genState(t, 128, 32)
 				require.NoError(t, beaconState.SetSlot(42*params.BeaconConfig().SlotsPerEpoch))
-				err := beaconState.SetLatestBlockHeader(&ethpb.BeaconBlockHeader{
+				err := beaconState.SetLatestBlockHeader(&silapb.BeaconBlockHeader{
 					Slot:      42 * params.BeaconConfig().SlotsPerEpoch,
 					StateRoot: bytesutil.PadTo([]byte("stateroot"), 32),
 				})
@@ -120,7 +120,7 @@ func TestWeakSubjectivity_IsWithinWeakSubjectivityPeriod(t *testing.T) {
 			genWsState: func() state.ReadOnlyBeaconState {
 				beaconState := genState(t, 0, 32)
 				require.NoError(t, beaconState.SetSlot(42*params.BeaconConfig().SlotsPerEpoch))
-				err := beaconState.SetLatestBlockHeader(&ethpb.BeaconBlockHeader{
+				err := beaconState.SetLatestBlockHeader(&silapb.BeaconBlockHeader{
 					Slot:      42 * params.BeaconConfig().SlotsPerEpoch,
 					StateRoot: bytesutil.PadTo([]byte("stateroot"), 32),
 				})
@@ -140,7 +140,7 @@ func TestWeakSubjectivity_IsWithinWeakSubjectivityPeriod(t *testing.T) {
 			genWsState: func() state.ReadOnlyBeaconState {
 				beaconState := genState(t, 128, 32)
 				require.NoError(t, beaconState.SetSlot(42*params.BeaconConfig().SlotsPerEpoch))
-				err := beaconState.SetLatestBlockHeader(&ethpb.BeaconBlockHeader{
+				err := beaconState.SetLatestBlockHeader(&silapb.BeaconBlockHeader{
 					Slot:      42 * params.BeaconConfig().SlotsPerEpoch,
 					StateRoot: bytesutil.PadTo([]byte("stateroot"), 32),
 				})
@@ -160,7 +160,7 @@ func TestWeakSubjectivity_IsWithinWeakSubjectivityPeriod(t *testing.T) {
 			genWsState: func() state.ReadOnlyBeaconState {
 				beaconState := genState(t, 128, 32)
 				require.NoError(t, beaconState.SetSlot(42*params.BeaconConfig().SlotsPerEpoch))
-				err := beaconState.SetLatestBlockHeader(&ethpb.BeaconBlockHeader{
+				err := beaconState.SetLatestBlockHeader(&silapb.BeaconBlockHeader{
 					Slot:      42 * params.BeaconConfig().SlotsPerEpoch,
 					StateRoot: bytesutil.PadTo([]byte("stateroot"), 32),
 				})
@@ -196,7 +196,7 @@ func TestWeakSubjectivity_ParseWeakSubjectivityInputString(t *testing.T) {
 	tests := []struct {
 		name      string
 		input     string
-		checkpt   *ethpb.Checkpoint
+		checkpt   *silapb.Checkpoint
 		wantedErr string
 	}{
 		{
@@ -217,7 +217,7 @@ func TestWeakSubjectivity_ParseWeakSubjectivityInputString(t *testing.T) {
 		{
 			name:  "Correct input",
 			input: "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:123456789",
-			checkpt: &ethpb.Checkpoint{
+			checkpt: &silapb.Checkpoint{
 				Root:  []byte{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255},
 				Epoch: primitives.Epoch(123456789),
 			},
@@ -225,7 +225,7 @@ func TestWeakSubjectivity_ParseWeakSubjectivityInputString(t *testing.T) {
 		{
 			name:  "Correct input without 0x",
 			input: "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:123456789",
-			checkpt: &ethpb.Checkpoint{
+			checkpt: &silapb.Checkpoint{
 				Root:  []byte{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255},
 				Epoch: primitives.Epoch(123456789),
 			},
@@ -233,7 +233,7 @@ func TestWeakSubjectivity_ParseWeakSubjectivityInputString(t *testing.T) {
 		{
 			name:  "Correct input",
 			input: "0xF0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:123456789",
-			checkpt: &ethpb.Checkpoint{
+			checkpt: &silapb.Checkpoint{
 				Root:  []byte{0xf0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255},
 				Epoch: primitives.Epoch(123456789),
 			},
@@ -241,7 +241,7 @@ func TestWeakSubjectivity_ParseWeakSubjectivityInputString(t *testing.T) {
 		{
 			name:  "Correct input without 0x",
 			input: "F0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:123456789",
-			checkpt: &ethpb.Checkpoint{
+			checkpt: &silapb.Checkpoint{
 				Root:  []byte{0xf0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255},
 				Epoch: primitives.Epoch(123456789),
 			},
@@ -268,10 +268,10 @@ func genState(t *testing.T, valCount, avgBalance uint64) state.BeaconState {
 	beaconState, err := util.NewBeaconState()
 	require.NoError(t, err)
 
-	validators := make([]*ethpb.Validator, valCount)
+	validators := make([]*silapb.Validator, valCount)
 	balances := make([]uint64, len(validators))
 	for i := range valCount {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             make([]byte, params.BeaconConfig().BLSPubkeyLength),
 			WithdrawalCredentials: make([]byte, 32),
 			EffectiveBalance:      avgBalance * 1e9,

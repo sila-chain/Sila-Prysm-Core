@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/wrapper"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/metadata"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -64,7 +64,7 @@ func TestService_decodePubsubMessage(t *testing.T) {
 		},
 		{
 			name:  "valid message -- beacon block",
-			topic: fmt.Sprintf(p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedBeaconBlock]()], entry.ForkDigest),
+			topic: fmt.Sprintf(p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedBeaconBlock]()], entry.ForkDigest),
 			input: &pubsub.Message{
 				Message: &pb.Message{
 					Data: func() []byte {
@@ -129,9 +129,9 @@ func TestExtractDataType(t *testing.T) {
 		args            args
 		wantBlock       interfaces.ReadOnlySignedBeaconBlock
 		wantMd          metadata.Metadata
-		wantAtt         ethpb.Att
-		wantAggregate   ethpb.SignedAggregateAttAndProof
-		wantAttSlashing ethpb.AttSlashing
+		wantAtt         silapb.Att
+		wantAggregate   silapb.SignedAggregateAttAndProof
+		wantAttSlashing silapb.AttSlashing
 		wantErr         bool
 	}{
 		{
@@ -154,13 +154,13 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlock{Block: &ethpb.BeaconBlock{Body: &ethpb.BeaconBlockBody{}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlock{Block: &silapb.BeaconBlock{Body: &silapb.BeaconBlockBody{}}})
 				require.NoError(t, err)
 				return wsb
 			}(),
-			wantAtt:         &ethpb.Attestation{},
-			wantAggregate:   &ethpb.SignedAggregateAttestationAndProof{},
-			wantAttSlashing: &ethpb.AttesterSlashing{},
+			wantAtt:         &silapb.Attestation{},
+			wantAggregate:   &silapb.SignedAggregateAttestationAndProof{},
+			wantAttSlashing: &silapb.AttesterSlashing{},
 			wantErr:         false,
 		},
 		{
@@ -170,14 +170,14 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockAltair{Block: &ethpb.BeaconBlockAltair{Body: &ethpb.BeaconBlockBodyAltair{}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockAltair{Block: &silapb.BeaconBlockAltair{Body: &silapb.BeaconBlockBodyAltair{}}})
 				require.NoError(t, err)
 				return wsb
 			}(),
-			wantMd:          wrapper.WrappedMetadataV1(&ethpb.MetaDataV1{}),
-			wantAtt:         &ethpb.Attestation{},
-			wantAggregate:   &ethpb.SignedAggregateAttestationAndProof{},
-			wantAttSlashing: &ethpb.AttesterSlashing{},
+			wantMd:          wrapper.WrappedMetadataV1(&silapb.MetaDataV1{}),
+			wantAtt:         &silapb.Attestation{},
+			wantAggregate:   &silapb.SignedAggregateAttestationAndProof{},
+			wantAttSlashing: &silapb.AttesterSlashing{},
 			wantErr:         false,
 		},
 		{
@@ -187,14 +187,14 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockBellatrix{Block: &ethpb.BeaconBlockBellatrix{Body: &ethpb.BeaconBlockBodyBellatrix{ExecutionPayload: &enginev1.ExecutionPayload{}}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockBellatrix{Block: &silapb.BeaconBlockBellatrix{Body: &silapb.BeaconBlockBodyBellatrix{ExecutionPayload: &enginev1.ExecutionPayload{}}}})
 				require.NoError(t, err)
 				return wsb
 			}(),
-			wantMd:          wrapper.WrappedMetadataV1(&ethpb.MetaDataV1{}),
-			wantAtt:         &ethpb.Attestation{},
-			wantAggregate:   &ethpb.SignedAggregateAttestationAndProof{},
-			wantAttSlashing: &ethpb.AttesterSlashing{},
+			wantMd:          wrapper.WrappedMetadataV1(&silapb.MetaDataV1{}),
+			wantAtt:         &silapb.Attestation{},
+			wantAggregate:   &silapb.SignedAggregateAttestationAndProof{},
+			wantAttSlashing: &silapb.AttesterSlashing{},
 			wantErr:         false,
 		},
 		{
@@ -204,14 +204,14 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockCapella{Block: &ethpb.BeaconBlockCapella{Body: &ethpb.BeaconBlockBodyCapella{ExecutionPayload: &enginev1.ExecutionPayloadCapella{}}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockCapella{Block: &silapb.BeaconBlockCapella{Body: &silapb.BeaconBlockBodyCapella{ExecutionPayload: &enginev1.ExecutionPayloadCapella{}}}})
 				require.NoError(t, err)
 				return wsb
 			}(),
-			wantMd:          wrapper.WrappedMetadataV1(&ethpb.MetaDataV1{}),
-			wantAtt:         &ethpb.Attestation{},
-			wantAggregate:   &ethpb.SignedAggregateAttestationAndProof{},
-			wantAttSlashing: &ethpb.AttesterSlashing{},
+			wantMd:          wrapper.WrappedMetadataV1(&silapb.MetaDataV1{}),
+			wantAtt:         &silapb.Attestation{},
+			wantAggregate:   &silapb.SignedAggregateAttestationAndProof{},
+			wantAttSlashing: &silapb.AttesterSlashing{},
 			wantErr:         false,
 		},
 		{
@@ -221,14 +221,14 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockDeneb{Block: &ethpb.BeaconBlockDeneb{Body: &ethpb.BeaconBlockBodyDeneb{ExecutionPayload: &enginev1.ExecutionPayloadDeneb{}}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockDeneb{Block: &silapb.BeaconBlockDeneb{Body: &silapb.BeaconBlockBodyDeneb{ExecutionPayload: &enginev1.ExecutionPayloadDeneb{}}}})
 				require.NoError(t, err)
 				return wsb
 			}(),
-			wantMd:          wrapper.WrappedMetadataV1(&ethpb.MetaDataV1{}),
-			wantAtt:         &ethpb.Attestation{},
-			wantAggregate:   &ethpb.SignedAggregateAttestationAndProof{},
-			wantAttSlashing: &ethpb.AttesterSlashing{},
+			wantMd:          wrapper.WrappedMetadataV1(&silapb.MetaDataV1{}),
+			wantAtt:         &silapb.Attestation{},
+			wantAggregate:   &silapb.SignedAggregateAttestationAndProof{},
+			wantAttSlashing: &silapb.AttesterSlashing{},
 			wantErr:         false,
 		},
 		{
@@ -238,14 +238,14 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockElectra{Block: &ethpb.BeaconBlockElectra{Body: &ethpb.BeaconBlockBodyElectra{ExecutionPayload: &enginev1.ExecutionPayloadDeneb{}}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockElectra{Block: &silapb.BeaconBlockElectra{Body: &silapb.BeaconBlockBodyElectra{ExecutionPayload: &enginev1.ExecutionPayloadDeneb{}}}})
 				require.NoError(t, err)
 				return wsb
 			}(),
-			wantMd:          wrapper.WrappedMetadataV1(&ethpb.MetaDataV1{}),
-			wantAtt:         &ethpb.SingleAttestation{},
-			wantAggregate:   &ethpb.SignedAggregateAttestationAndProofElectra{},
-			wantAttSlashing: &ethpb.AttesterSlashingElectra{},
+			wantMd:          wrapper.WrappedMetadataV1(&silapb.MetaDataV1{}),
+			wantAtt:         &silapb.SingleAttestation{},
+			wantAggregate:   &silapb.SignedAggregateAttestationAndProofElectra{},
+			wantAttSlashing: &silapb.AttesterSlashingElectra{},
 			wantErr:         false,
 		},
 		{
@@ -255,14 +255,14 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockFulu{Block: &ethpb.BeaconBlockElectra{Body: &ethpb.BeaconBlockBodyElectra{ExecutionPayload: &enginev1.ExecutionPayloadDeneb{}}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockFulu{Block: &silapb.BeaconBlockElectra{Body: &silapb.BeaconBlockBodyElectra{ExecutionPayload: &enginev1.ExecutionPayloadDeneb{}}}})
 				require.NoError(t, err)
 				return wsb
 			}(),
-			wantMd:          wrapper.WrappedMetadataV1(&ethpb.MetaDataV1{}),
-			wantAtt:         &ethpb.SingleAttestation{},
-			wantAggregate:   &ethpb.SignedAggregateAttestationAndProofElectra{},
-			wantAttSlashing: &ethpb.AttesterSlashingElectra{},
+			wantMd:          wrapper.WrappedMetadataV1(&silapb.MetaDataV1{}),
+			wantAtt:         &silapb.SingleAttestation{},
+			wantAggregate:   &silapb.SignedAggregateAttestationAndProofElectra{},
+			wantAttSlashing: &silapb.AttesterSlashingElectra{},
 			wantErr:         false,
 		},
 	}

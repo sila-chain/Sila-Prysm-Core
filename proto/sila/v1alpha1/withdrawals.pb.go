@@ -11,7 +11,7 @@ import (
 	sync "sync"
 
 	github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/ext"
+	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/ext"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )

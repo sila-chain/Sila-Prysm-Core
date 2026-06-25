@@ -21,7 +21,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/math"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -71,13 +71,13 @@ func SlotCommitteeCount(activeValidatorCount uint64) uint64 {
 }
 
 // AttestationCommitteesFromState returns beacon state committees that reflect attestation's committee indices.
-func AttestationCommitteesFromState(ctx context.Context, st state.ReadOnlyBeaconState, att ethpb.Att) ([][]primitives.ValidatorIndex, error) {
+func AttestationCommitteesFromState(ctx context.Context, st state.ReadOnlyBeaconState, att silapb.Att) ([][]primitives.ValidatorIndex, error) {
 	return attestationCommittees(ctx, st, att, BeaconCommitteeFromState)
 }
 
 // AttestationCommitteesFromCache has the same functionality as AttestationCommitteesFromState, but only returns a value
 // when all attestation committees are already cached.
-func AttestationCommitteesFromCache(ctx context.Context, st state.ReadOnlyBeaconState, att ethpb.Att) (bool, [][]primitives.ValidatorIndex, error) {
+func AttestationCommitteesFromCache(ctx context.Context, st state.ReadOnlyBeaconState, att silapb.Att) (bool, [][]primitives.ValidatorIndex, error) {
 	committees, err := attestationCommittees(ctx, st, att, BeaconCommitteeFromCache)
 	if err != nil {
 		return false, nil, err
@@ -96,7 +96,7 @@ func AttestationCommitteesFromCache(ctx context.Context, st state.ReadOnlyBeacon
 func attestationCommittees(
 	ctx context.Context,
 	st state.ReadOnlyBeaconState,
-	att ethpb.Att,
+	att silapb.Att,
 	committeeFunc beaconCommitteeFunc,
 ) ([][]primitives.ValidatorIndex, error) {
 	var committees [][]primitives.ValidatorIndex

@@ -32,7 +32,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -57,20 +57,20 @@ func setupBeaconChain(t *testing.T, beaconDB db.Database) *Service {
 	require.NoError(t, err)
 	mockTrie, err := trie.NewTrie(0)
 	require.NoError(t, err)
-	err = beaconDB.SaveExecutionChainData(ctx, &ethpb.ETH1ChainData{
+	err = beaconDB.SaveExecutionChainData(ctx, &silapb.ETH1ChainData{
 		BeaconState: pbState,
 		Trie:        mockTrie.ToProto(),
-		CurrentEth1Data: &ethpb.LatestETH1Data{
+		CurrentEth1Data: &silapb.LatestETH1Data{
 			BlockHash: make([]byte, 32),
 		},
-		ChainstartData: &ethpb.ChainStartData{
-			Eth1Data: &ethpb.Eth1Data{
+		ChainstartData: &silapb.ChainStartData{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot:  make([]byte, 32),
 				DepositCount: 0,
 				BlockHash:    make([]byte, 32),
 			},
 		},
-		DepositContainers: []*ethpb.DepositContainer{},
+		DepositContainers: []*silapb.DepositContainer{},
 	})
 	require.NoError(t, err)
 
@@ -136,9 +136,9 @@ func TestChainStartStop_Initialized(t *testing.T) {
 	require.NoError(t, beaconDB.SaveState(ctx, s, blkRoot))
 	require.NoError(t, beaconDB.SaveHeadBlockRoot(ctx, blkRoot))
 	require.NoError(t, beaconDB.SaveGenesisBlockRoot(ctx, blkRoot))
-	require.NoError(t, beaconDB.SaveJustifiedCheckpoint(ctx, &ethpb.Checkpoint{Root: blkRoot[:]}))
-	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Root: blkRoot[:]}))
-	ss := &ethpb.StateSummary{
+	require.NoError(t, beaconDB.SaveJustifiedCheckpoint(ctx, &silapb.Checkpoint{Root: blkRoot[:]}))
+	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Root: blkRoot[:]}))
+	ss := &silapb.StateSummary{
 		Slot: 1,
 		Root: blkRoot[:],
 	}
@@ -172,8 +172,8 @@ func TestChainStartStop_GenesisZeroHashes(t *testing.T) {
 	require.NoError(t, beaconDB.SaveState(ctx, s, blkRoot))
 	require.NoError(t, beaconDB.SaveGenesisBlockRoot(ctx, blkRoot))
 	require.NoError(t, beaconDB.SaveBlock(ctx, wsb))
-	require.NoError(t, beaconDB.SaveJustifiedCheckpoint(ctx, &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}))
-	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Root: blkRoot[:]}))
+	require.NoError(t, beaconDB.SaveJustifiedCheckpoint(ctx, &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}))
+	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Root: blkRoot[:]}))
 	chainService.cfg.FinalizedStateAtStartUp = s
 	// Test the start function.
 	chainService.Start()
@@ -203,7 +203,7 @@ func TestChainService_InitializeBeaconChain(t *testing.T) {
 	require.NoError(t, err)
 	genState, err := transition.EmptyGenesisState()
 	require.NoError(t, err)
-	err = genState.SetEth1Data(&ethpb.Eth1Data{
+	err = genState.SetEth1Data(&silapb.Eth1Data{
 		DepositRoot:  hashTreeRoot[:],
 		DepositCount: uint64(len(deposits)),
 		BlockHash:    make([]byte, 32),
@@ -212,7 +212,7 @@ func TestChainService_InitializeBeaconChain(t *testing.T) {
 	genState, err = altair.ProcessPreGenesisDeposits(ctx, genState, deposits)
 	require.NoError(t, err)
 
-	_, err = bc.initializeBeaconChain(ctx, time.Unix(0, 0), genState, &ethpb.Eth1Data{DepositRoot: hashTreeRoot[:], BlockHash: make([]byte, 32)})
+	_, err = bc.initializeBeaconChain(ctx, time.Unix(0, 0), genState, &silapb.Eth1Data{DepositRoot: hashTreeRoot[:], BlockHash: make([]byte, 32)})
 	require.NoError(t, err)
 
 	_, err = bc.HeadState(ctx)
@@ -247,7 +247,7 @@ func TestChainService_CorrectGenesisRoots(t *testing.T) {
 	require.NoError(t, beaconDB.SaveState(ctx, s, blkRoot))
 	require.NoError(t, beaconDB.SaveHeadBlockRoot(ctx, blkRoot))
 	require.NoError(t, beaconDB.SaveGenesisBlockRoot(ctx, blkRoot))
-	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Root: blkRoot[:]}))
+	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Root: blkRoot[:]}))
 	chainService.cfg.FinalizedStateAtStartUp = s
 	// Test the start function.
 	chainService.Start()
@@ -286,7 +286,7 @@ func TestChainService_InitializeChainInfo(t *testing.T) {
 	require.NoError(t, beaconDB.SaveState(ctx, headState, headRoot))
 	require.NoError(t, beaconDB.SaveState(ctx, headState, genesisRoot))
 	util.SaveBlock(t, ctx, beaconDB, headBlock)
-	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
+	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
 	require.NoError(t, stateGen.SaveState(ctx, headRoot, headState))
 
 	require.NoError(t, c.StartFromSavedState(headState))
@@ -331,12 +331,12 @@ func TestChainService_InitializeChainInfo_SetHeadAtGenesis(t *testing.T) {
 	require.NoError(t, beaconDB.SaveState(ctx, headState, genesisRoot))
 	require.NoError(t, beaconDB.SaveState(ctx, headState, headRoot))
 	util.SaveBlock(t, ctx, beaconDB, headBlock)
-	ss := &ethpb.StateSummary{
+	ss := &silapb.StateSummary{
 		Slot: finalizedSlot,
 		Root: headRoot[:],
 	}
 	require.NoError(t, beaconDB.SaveStateSummary(ctx, ss))
-	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Root: headRoot[:], Epoch: slots.ToEpoch(finalizedSlot)}))
+	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Root: headRoot[:], Epoch: slots.ToEpoch(finalizedSlot)}))
 
 	require.NoError(t, c.StartFromSavedState(headState))
 	s, err := c.HeadState(ctx)
@@ -462,11 +462,11 @@ func TestChainService_EverythingOptimistic(t *testing.T) {
 	require.NoError(t, beaconDB.SaveState(ctx, headState, headRoot))
 	require.NoError(t, beaconDB.SaveState(ctx, headState, genesisRoot))
 	util.SaveBlock(t, ctx, beaconDB, headBlock)
-	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
+	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
 
 	require.NoError(t, err)
 	require.NoError(t, stateGen.SaveState(ctx, headRoot, headState))
-	require.NoError(t, beaconDB.SaveLastValidatedCheckpoint(ctx, &ethpb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
+	require.NoError(t, beaconDB.SaveLastValidatedCheckpoint(ctx, &silapb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
 	require.NoError(t, c.StartFromSavedState(headState))
 	require.Equal(t, true, c.cfg.ForkChoiceStore.HasNode(headRoot))
 	op, err := c.cfg.ForkChoiceStore.IsOptimistic(headRoot)
@@ -495,7 +495,7 @@ func TestStartFromSavedState_ValidatorIndexCacheUpdated(t *testing.T) {
 	hexKey2 := "0x42247f2209abcacf57b75a51dafae777f9dd38bc7053d1af526f220a7489a6d3a2753e5f3e8b1cfe39b56f43611df74a"
 	key2, err := hexutil.Decode(hexKey2)
 	require.NoError(t, err)
-	require.NoError(t, headState.SetValidators([]*ethpb.Validator{
+	require.NoError(t, headState.SetValidators([]*silapb.Validator{
 		{
 			PublicKey:             key,
 			WithdrawalCredentials: make([]byte, fieldparams.RootLength),
@@ -518,11 +518,11 @@ func TestStartFromSavedState_ValidatorIndexCacheUpdated(t *testing.T) {
 	require.NoError(t, beaconDB.SaveState(ctx, headState, headRoot))
 	require.NoError(t, beaconDB.SaveState(ctx, headState, genesisRoot))
 	util.SaveBlock(t, ctx, beaconDB, headBlock)
-	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
+	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
 
 	require.NoError(t, err)
 	require.NoError(t, stateGen.SaveState(ctx, headRoot, headState))
-	require.NoError(t, beaconDB.SaveLastValidatedCheckpoint(ctx, &ethpb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
+	require.NoError(t, beaconDB.SaveLastValidatedCheckpoint(ctx, &silapb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
 	require.NoError(t, c.StartFromSavedState(headState))
 
 	index, ok := headState.ValidatorIndexByPubkey(bytesutil.ToBytes48(key))

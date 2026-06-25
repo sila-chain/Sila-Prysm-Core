@@ -1,6 +1,6 @@
 package slashings
 
-import ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+import silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 
 // IsSurround checks if an attestation, a, is surrounding
 // another one, b, based on the Ethereum slashing conditions specified
@@ -10,6 +10,6 @@ import ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 //	t: target
 //
 //	a surrounds b if: s_a < s_b and t_b < t_a
-func IsSurround(a, b ethpb.IndexedAtt) bool {
+func IsSurround(a, b silapb.IndexedAtt) bool {
 	return a.GetData().Source.Epoch < b.GetData().Source.Epoch && b.GetData().Target.Epoch < a.GetData().Target.Epoch
 }

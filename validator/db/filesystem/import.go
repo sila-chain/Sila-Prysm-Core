@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/iface"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/helpers"
@@ -100,7 +100,7 @@ func importBlockProposals(ctx context.Context, pubkey [fieldparams.BLSPubkeyLeng
 }
 
 func importAttestations(ctx context.Context, pubkey [fieldparams.BLSPubkeyLength]byte, item *format.ProtectionData, validatorDB iface.ValidatorDB) error {
-	atts := make([]*ethpb.IndexedAttestation, len(item.SignedAttestations))
+	atts := make([]*silapb.IndexedAttestation, len(item.SignedAttestations))
 	for i := range item.SignedAttestations {
 		// Get signed attestation
 		sa := item.SignedAttestations[i]
@@ -118,12 +118,12 @@ func importAttestations(ctx context.Context, pubkey [fieldparams.BLSPubkeyLength
 		}
 
 		// Create indexed attestation
-		att := &ethpb.IndexedAttestation{
-			Data: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{
+		att := &silapb.IndexedAttestation{
+			Data: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{
 					Epoch: source,
 				},
-				Target: &ethpb.Checkpoint{
+				Target: &silapb.Checkpoint{
 					Epoch: target,
 				},
 			},

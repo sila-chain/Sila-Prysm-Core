@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -62,7 +62,7 @@ func TestGetDuties_OK(t *testing.T) {
 	}
 
 	// Test the first validator in registry.
-	req := &ethpb.DutiesRequest{
+	req := &silapb.DutiesRequest{
 		PublicKeys: [][]byte{deposits[0].Data.PublicKey},
 	}
 	res, err := vs.GetDuties(t.Context(), req)
@@ -74,7 +74,7 @@ func TestGetDuties_OK(t *testing.T) {
 
 	// Test the last validator in registry.
 	lastValidatorIndex := depChainStart - 1
-	req = &ethpb.DutiesRequest{
+	req = &silapb.DutiesRequest{
 		PublicKeys: [][]byte{deposits[lastValidatorIndex].Data.PublicKey},
 	}
 	res, err = vs.GetDuties(t.Context(), req)
@@ -85,7 +85,7 @@ func TestGetDuties_OK(t *testing.T) {
 	}
 
 	// We request for duties for all validators.
-	req = &ethpb.DutiesRequest{
+	req = &silapb.DutiesRequest{
 		PublicKeys: pubKeys,
 		Epoch:      0,
 	}
@@ -109,7 +109,7 @@ func TestGetAltairDuties_SyncCommitteeOK(t *testing.T) {
 	require.NoError(t, err)
 	bs, err := util.GenesisBeaconState(t.Context(), deposits, 0, eth1Data)
 	require.NoError(t, err, "Could not setup genesis bs")
-	h := &ethpb.BeaconBlockHeader{
+	h := &silapb.BeaconBlockHeader{
 		StateRoot:  bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength),
 		ParentRoot: bytesutil.PadTo([]byte{'b'}, fieldparams.RootLength),
 		BodyRoot:   bytesutil.PadTo([]byte{'c'}, fieldparams.RootLength),
@@ -149,7 +149,7 @@ func TestGetAltairDuties_SyncCommitteeOK(t *testing.T) {
 	}
 
 	// Test the first validator in registry.
-	req := &ethpb.DutiesRequest{
+	req := &silapb.DutiesRequest{
 		PublicKeys: [][]byte{deposits[0].Data.PublicKey},
 	}
 	res, err := vs.GetDuties(t.Context(), req)
@@ -161,7 +161,7 @@ func TestGetAltairDuties_SyncCommitteeOK(t *testing.T) {
 
 	// Test the last validator in registry.
 	lastValidatorIndex := params.BeaconConfig().SyncCommitteeSize - 1
-	req = &ethpb.DutiesRequest{
+	req = &silapb.DutiesRequest{
 		PublicKeys: [][]byte{deposits[lastValidatorIndex].Data.PublicKey},
 	}
 	res, err = vs.GetDuties(t.Context(), req)
@@ -172,7 +172,7 @@ func TestGetAltairDuties_SyncCommitteeOK(t *testing.T) {
 	}
 
 	// We request for duties for all validators.
-	req = &ethpb.DutiesRequest{
+	req = &silapb.DutiesRequest{
 		PublicKeys: pubKeys,
 		Epoch:      0,
 	}
@@ -188,7 +188,7 @@ func TestGetAltairDuties_SyncCommitteeOK(t *testing.T) {
 	}
 
 	// Current epoch and next epoch duties should not be equal at the sync period epoch boundary.
-	req = &ethpb.DutiesRequest{
+	req = &silapb.DutiesRequest{
 		PublicKeys: pubKeys,
 		Epoch:      params.BeaconConfig().EpochsPerSyncCommitteePeriod - 1,
 	}
@@ -212,7 +212,7 @@ func TestGetBellatrixDuties_SyncCommitteeOK(t *testing.T) {
 	eth1Data, err := util.DeterministicEth1Data(len(deposits))
 	require.NoError(t, err)
 	bs, err := util.GenesisBeaconState(t.Context(), deposits, 0, eth1Data)
-	h := &ethpb.BeaconBlockHeader{
+	h := &silapb.BeaconBlockHeader{
 		StateRoot:  bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength),
 		ParentRoot: bytesutil.PadTo([]byte{'b'}, fieldparams.RootLength),
 		BodyRoot:   bytesutil.PadTo([]byte{'c'}, fieldparams.RootLength),
@@ -256,7 +256,7 @@ func TestGetBellatrixDuties_SyncCommitteeOK(t *testing.T) {
 	}
 
 	// Test the first validator in registry.
-	req := &ethpb.DutiesRequest{
+	req := &silapb.DutiesRequest{
 		PublicKeys: [][]byte{deposits[0].Data.PublicKey},
 	}
 	res, err := vs.GetDuties(t.Context(), req)
@@ -268,7 +268,7 @@ func TestGetBellatrixDuties_SyncCommitteeOK(t *testing.T) {
 
 	// Test the last validator in registry.
 	lastValidatorIndex := params.BeaconConfig().SyncCommitteeSize - 1
-	req = &ethpb.DutiesRequest{
+	req = &silapb.DutiesRequest{
 		PublicKeys: [][]byte{deposits[lastValidatorIndex].Data.PublicKey},
 	}
 	res, err = vs.GetDuties(t.Context(), req)
@@ -279,7 +279,7 @@ func TestGetBellatrixDuties_SyncCommitteeOK(t *testing.T) {
 	}
 
 	// We request for duties for all validators.
-	req = &ethpb.DutiesRequest{
+	req = &silapb.DutiesRequest{
 		PublicKeys: pubKeys,
 		Epoch:      0,
 	}
@@ -295,7 +295,7 @@ func TestGetBellatrixDuties_SyncCommitteeOK(t *testing.T) {
 	}
 
 	// Current epoch and next epoch duties should not be equal at the sync period epoch boundary.
-	req = &ethpb.DutiesRequest{
+	req = &silapb.DutiesRequest{
 		PublicKeys: pubKeys,
 		Epoch:      params.BeaconConfig().EpochsPerSyncCommitteePeriod - 1,
 	}
@@ -319,7 +319,7 @@ func TestGetAltairDuties_UnknownPubkey(t *testing.T) {
 	require.NoError(t, err)
 	bs, err := util.GenesisBeaconState(t.Context(), deposits, 0, eth1Data)
 	require.NoError(t, err)
-	h := &ethpb.BeaconBlockHeader{
+	h := &silapb.BeaconBlockHeader{
 		StateRoot:  bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength),
 		ParentRoot: bytesutil.PadTo([]byte{'b'}, fieldparams.RootLength),
 		BodyRoot:   bytesutil.PadTo([]byte{'c'}, fieldparams.RootLength),
@@ -350,7 +350,7 @@ func TestGetAltairDuties_UnknownPubkey(t *testing.T) {
 	}
 
 	unknownPubkey := bytesutil.PadTo([]byte{'u'}, 48)
-	req := &ethpb.DutiesRequest{
+	req := &silapb.DutiesRequest{
 		PublicKeys: [][]byte{unknownPubkey},
 	}
 	res, err := vs.GetDuties(t.Context(), req)
@@ -367,7 +367,7 @@ func TestGetDuties_SlotOutOfUpperBound(t *testing.T) {
 		ForkchoiceFetcher: chain,
 		TimeFetcher:       chain,
 	}
-	req := &ethpb.DutiesRequest{
+	req := &silapb.DutiesRequest{
 		Epoch: primitives.Epoch(chain.CurrentSlot()/params.BeaconConfig().SlotsPerEpoch + 2),
 	}
 	_, err := vs.duties(t.Context(), req)
@@ -408,7 +408,7 @@ func TestGetDuties_CurrentEpoch_ShouldNotFail(t *testing.T) {
 	}
 
 	// Test the first validator in registry.
-	req := &ethpb.DutiesRequest{
+	req := &silapb.DutiesRequest{
 		PublicKeys: [][]byte{deposits[0].Data.PublicKey},
 	}
 	res, err := vs.GetDuties(t.Context(), req)
@@ -451,7 +451,7 @@ func TestGetDuties_MultipleKeys_OK(t *testing.T) {
 	pubkey1 := deposits[1].Data.PublicKey
 
 	// Test the first validator in registry.
-	req := &ethpb.DutiesRequest{
+	req := &silapb.DutiesRequest{
 		PublicKeys: [][]byte{pubkey0, pubkey1},
 	}
 	res, err := vs.GetDuties(t.Context(), req)
@@ -465,7 +465,7 @@ func TestGetDuties_SyncNotReady(t *testing.T) {
 	vs := &Server{
 		SyncChecker: &mockSync.Sync{IsSyncing: true},
 	}
-	_, err := vs.GetDuties(t.Context(), &ethpb.DutiesRequest{})
+	_, err := vs.GetDuties(t.Context(), &silapb.DutiesRequest{})
 	assert.ErrorContains(t, "Syncing to latest head", err)
 }
 
@@ -501,7 +501,7 @@ func BenchmarkCommitteeAssignment(b *testing.B) {
 	for i, deposit := range deposits {
 		pks[i] = deposit.Data.PublicKey
 	}
-	req := &ethpb.DutiesRequest{
+	req := &silapb.DutiesRequest{
 		PublicKeys: pks,
 		Epoch:      0,
 	}

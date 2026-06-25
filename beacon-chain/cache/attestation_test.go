@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/blst"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -23,8 +23,8 @@ func TestAdd(t *testing.T) {
 			c := NewAttestationCache()
 			ab := bitfield.NewBitlist(8)
 			ab.SetBitAt(0, true)
-			att := &ethpb.Attestation{
-				Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+			att := &silapb.Attestation{
+				Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 				AggregationBits: ab,
 				Signature:       sig.Marshal(),
 			}
@@ -43,17 +43,17 @@ func TestAdd(t *testing.T) {
 			c := NewAttestationCache()
 			ab := bitfield.NewBitlist(8)
 			ab.SetBitAt(0, true)
-			existingAtt := &ethpb.Attestation{
-				Data:            &ethpb.AttestationData{BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+			existingAtt := &silapb.Attestation{
+				Data:            &silapb.AttestationData{BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 				AggregationBits: ab,
 				Signature:       sig.Marshal(),
 			}
 			existingId, err := attestation.NewId(existingAtt, attestation.Data)
 			require.NoError(t, err)
-			c.atts[existingId] = &attGroup{slot: existingAtt.Data.Slot, atts: []ethpb.Att{existingAtt}}
+			c.atts[existingId] = &attGroup{slot: existingAtt.Data.Slot, atts: []silapb.Att{existingAtt}}
 
-			att := &ethpb.Attestation{
-				Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+			att := &silapb.Attestation{
+				Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 				AggregationBits: ab,
 				Signature:       sig.Marshal(),
 			}
@@ -71,17 +71,17 @@ func TestAdd(t *testing.T) {
 	})
 	t.Run("aggregated", func(t *testing.T) {
 		c := NewAttestationCache()
-		existingAtt := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+		existingAtt := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			AggregationBits: bitfield.NewBitlist(8),
 			Signature:       sig.Marshal(),
 		}
 		id, err := attestation.NewId(existingAtt, attestation.Data)
 		require.NoError(t, err)
-		c.atts[id] = &attGroup{slot: existingAtt.Data.Slot, atts: []ethpb.Att{existingAtt}}
+		c.atts[id] = &attGroup{slot: existingAtt.Data.Slot, atts: []silapb.Att{existingAtt}}
 
-		att := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+		att := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			AggregationBits: bitfield.NewBitlist(8),
 			Signature:       sig.Marshal(),
 		}
@@ -99,18 +99,18 @@ func TestAdd(t *testing.T) {
 	})
 	t.Run("unaggregated - existing bit", func(t *testing.T) {
 		c := NewAttestationCache()
-		existingAtt := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+		existingAtt := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			AggregationBits: bitfield.NewBitlist(8),
 			Signature:       sig.Marshal(),
 		}
 		existingAtt.AggregationBits.SetBitAt(0, true)
 		id, err := attestation.NewId(existingAtt, attestation.Data)
 		require.NoError(t, err)
-		c.atts[id] = &attGroup{slot: existingAtt.Data.Slot, atts: []ethpb.Att{existingAtt}}
+		c.atts[id] = &attGroup{slot: existingAtt.Data.Slot, atts: []silapb.Att{existingAtt}}
 
-		att := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+		att := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			AggregationBits: bitfield.NewBitlist(8),
 			Signature:       sig.Marshal(),
 		}
@@ -126,18 +126,18 @@ func TestAdd(t *testing.T) {
 	})
 	t.Run("unaggregated - new bit", func(t *testing.T) {
 		c := NewAttestationCache()
-		existingAtt := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+		existingAtt := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			AggregationBits: bitfield.NewBitlist(8),
 			Signature:       sig.Marshal(),
 		}
 		existingAtt.AggregationBits.SetBitAt(0, true)
 		id, err := attestation.NewId(existingAtt, attestation.Data)
 		require.NoError(t, err)
-		c.atts[id] = &attGroup{slot: existingAtt.Data.Slot, atts: []ethpb.Att{existingAtt}}
+		c.atts[id] = &attGroup{slot: existingAtt.Data.Slot, atts: []silapb.Att{existingAtt}}
 
-		att := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+		att := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			AggregationBits: bitfield.NewBitlist(8),
 			Signature:       sig.Marshal(),
 		}
@@ -155,16 +155,16 @@ func TestAdd(t *testing.T) {
 
 func TestGetAll(t *testing.T) {
 	c := NewAttestationCache()
-	c.atts[bytesutil.ToBytes32([]byte("id1"))] = &attGroup{atts: []ethpb.Att{&ethpb.Attestation{}, &ethpb.Attestation{}}}
-	c.atts[bytesutil.ToBytes32([]byte("id2"))] = &attGroup{atts: []ethpb.Att{&ethpb.Attestation{}}}
+	c.atts[bytesutil.ToBytes32([]byte("id1"))] = &attGroup{atts: []silapb.Att{&silapb.Attestation{}, &silapb.Attestation{}}}
+	c.atts[bytesutil.ToBytes32([]byte("id2"))] = &attGroup{atts: []silapb.Att{&silapb.Attestation{}}}
 
 	assert.Equal(t, 3, len(c.GetAll()))
 }
 
 func TestCount(t *testing.T) {
 	c := NewAttestationCache()
-	c.atts[bytesutil.ToBytes32([]byte("id1"))] = &attGroup{atts: []ethpb.Att{&ethpb.Attestation{}, &ethpb.Attestation{}}}
-	c.atts[bytesutil.ToBytes32([]byte("id2"))] = &attGroup{atts: []ethpb.Att{&ethpb.Attestation{}}}
+	c.atts[bytesutil.ToBytes32([]byte("id1"))] = &attGroup{atts: []silapb.Att{&silapb.Attestation{}, &silapb.Attestation{}}}
+	c.atts[bytesutil.ToBytes32([]byte("id2"))] = &attGroup{atts: []silapb.Att{&silapb.Attestation{}}}
 
 	assert.Equal(t, 3, c.Count())
 }
@@ -174,23 +174,23 @@ func TestDeleteCovered(t *testing.T) {
 	require.NoError(t, err)
 	sig := k.Sign([]byte{'X'})
 
-	att1 := &ethpb.Attestation{
-		Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+	att1 := &silapb.Attestation{
+		Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 		AggregationBits: bitfield.NewBitlist(8),
 		Signature:       sig.Marshal(),
 	}
 	att1.AggregationBits.SetBitAt(0, true)
 
-	att2 := &ethpb.Attestation{
-		Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+	att2 := &silapb.Attestation{
+		Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 		AggregationBits: bitfield.NewBitlist(8),
 		Signature:       sig.Marshal(),
 	}
 	att2.AggregationBits.SetBitAt(1, true)
 	att2.AggregationBits.SetBitAt(2, true)
 
-	att3 := &ethpb.Attestation{
-		Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+	att3 := &silapb.Attestation{
+		Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 		AggregationBits: bitfield.NewBitlist(8),
 		Signature:       sig.Marshal(),
 	}
@@ -201,11 +201,11 @@ func TestDeleteCovered(t *testing.T) {
 	c := NewAttestationCache()
 	id, err := attestation.NewId(att1, attestation.Data)
 	require.NoError(t, err)
-	c.atts[id] = &attGroup{slot: att1.Data.Slot, atts: []ethpb.Att{att1, att2, att3}}
+	c.atts[id] = &attGroup{slot: att1.Data.Slot, atts: []silapb.Att{att1, att2, att3}}
 
 	t.Run("no matching group", func(t *testing.T) {
-		att := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 456, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+		att := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 456, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			AggregationBits: bitfield.NewBitlist(8),
 			Signature:       sig.Marshal(),
 		}
@@ -219,8 +219,8 @@ func TestDeleteCovered(t *testing.T) {
 		assert.Equal(t, 3, len(c.atts[id].atts))
 	})
 	t.Run("covered atts deleted", func(t *testing.T) {
-		att := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+		att := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			AggregationBits: bitfield.NewBitlist(8),
 			Signature:       sig.Marshal(),
 		}
@@ -235,8 +235,8 @@ func TestDeleteCovered(t *testing.T) {
 		assert.DeepEqual(t, att2, atts[0])
 	})
 	t.Run("last att in group deleted", func(t *testing.T) {
-		att := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+		att := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			AggregationBits: bitfield.NewBitlist(8),
 			Signature:       sig.Marshal(),
 		}
@@ -253,9 +253,9 @@ func TestDeleteCovered(t *testing.T) {
 
 func TestPruneBefore(t *testing.T) {
 	c := NewAttestationCache()
-	c.atts[bytesutil.ToBytes32([]byte("id1"))] = &attGroup{slot: 1, atts: []ethpb.Att{&ethpb.Attestation{}, &ethpb.Attestation{}}}
-	c.atts[bytesutil.ToBytes32([]byte("id2"))] = &attGroup{slot: 3, atts: []ethpb.Att{&ethpb.Attestation{}}}
-	c.atts[bytesutil.ToBytes32([]byte("id3"))] = &attGroup{slot: 2, atts: []ethpb.Att{&ethpb.Attestation{}}}
+	c.atts[bytesutil.ToBytes32([]byte("id1"))] = &attGroup{slot: 1, atts: []silapb.Att{&silapb.Attestation{}, &silapb.Attestation{}}}
+	c.atts[bytesutil.ToBytes32([]byte("id2"))] = &attGroup{slot: 3, atts: []silapb.Att{&silapb.Attestation{}}}
+	c.atts[bytesutil.ToBytes32([]byte("id3"))] = &attGroup{slot: 2, atts: []silapb.Att{&silapb.Attestation{}}}
 
 	count := c.PruneBefore(3)
 
@@ -271,8 +271,8 @@ func TestAggregateIsRedundant(t *testing.T) {
 	sig := k.Sign([]byte{'X'})
 
 	c := NewAttestationCache()
-	existingAtt := &ethpb.Attestation{
-		Data:            &ethpb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+	existingAtt := &silapb.Attestation{
+		Data:            &silapb.AttestationData{Slot: 123, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 		AggregationBits: bitfield.NewBitlist(8),
 		Signature:       sig.Marshal(),
 	}
@@ -280,11 +280,11 @@ func TestAggregateIsRedundant(t *testing.T) {
 	existingAtt.AggregationBits.SetBitAt(1, true)
 	id, err := attestation.NewId(existingAtt, attestation.Data)
 	require.NoError(t, err)
-	c.atts[id] = &attGroup{slot: existingAtt.Data.Slot, atts: []ethpb.Att{existingAtt}}
+	c.atts[id] = &attGroup{slot: existingAtt.Data.Slot, atts: []silapb.Att{existingAtt}}
 
 	t.Run("no matching group", func(t *testing.T) {
-		att := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: 456, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+		att := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: 456, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			AggregationBits: bitfield.NewBitlist(8),
 			Signature:       sig.Marshal(),
 		}
@@ -295,8 +295,8 @@ func TestAggregateIsRedundant(t *testing.T) {
 		assert.Equal(t, false, redundant)
 	})
 	t.Run("redundant", func(t *testing.T) {
-		att := &ethpb.Attestation{
-			Data:            &ethpb.AttestationData{Slot: existingAtt.Data.Slot, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+		att := &silapb.Attestation{
+			Data:            &silapb.AttestationData{Slot: existingAtt.Data.Slot, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 			AggregationBits: bitfield.NewBitlist(8),
 			Signature:       sig.Marshal(),
 		}
@@ -308,8 +308,8 @@ func TestAggregateIsRedundant(t *testing.T) {
 	})
 	t.Run("not redundant", func(t *testing.T) {
 		t.Run("strictly better", func(t *testing.T) {
-			att := &ethpb.Attestation{
-				Data:            &ethpb.AttestationData{Slot: existingAtt.Data.Slot, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+			att := &silapb.Attestation{
+				Data:            &silapb.AttestationData{Slot: existingAtt.Data.Slot, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 				AggregationBits: bitfield.NewBitlist(8),
 				Signature:       sig.Marshal(),
 			}
@@ -322,8 +322,8 @@ func TestAggregateIsRedundant(t *testing.T) {
 			assert.Equal(t, false, redundant)
 		})
 		t.Run("overlapping and new bits", func(t *testing.T) {
-			att := &ethpb.Attestation{
-				Data:            &ethpb.AttestationData{Slot: existingAtt.Data.Slot, BeaconBlockRoot: make([]byte, 32), Source: &ethpb.Checkpoint{Root: make([]byte, 32)}, Target: &ethpb.Checkpoint{Root: make([]byte, 32)}},
+			att := &silapb.Attestation{
+				Data:            &silapb.AttestationData{Slot: existingAtt.Data.Slot, BeaconBlockRoot: make([]byte, 32), Source: &silapb.Checkpoint{Root: make([]byte, 32)}, Target: &silapb.Checkpoint{Root: make([]byte, 32)}},
 				AggregationBits: bitfield.NewBitlist(8),
 				Signature:       sig.Marshal(),
 			}
@@ -339,12 +339,12 @@ func TestAggregateIsRedundant(t *testing.T) {
 
 func TestGetBySlotAndCommitteeIndex(t *testing.T) {
 	c := NewAttestationCache()
-	c.atts[bytesutil.ToBytes32([]byte("id1"))] = &attGroup{slot: 1, atts: []ethpb.Att{&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 1, CommitteeIndex: 1}}, &ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 1, CommitteeIndex: 1}}}}
-	c.atts[bytesutil.ToBytes32([]byte("id2"))] = &attGroup{slot: 2, atts: []ethpb.Att{&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 2, CommitteeIndex: 2}}}}
-	c.atts[bytesutil.ToBytes32([]byte("id3"))] = &attGroup{slot: 1, atts: []ethpb.Att{&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 2, CommitteeIndex: 2}}}}
+	c.atts[bytesutil.ToBytes32([]byte("id1"))] = &attGroup{slot: 1, atts: []silapb.Att{&silapb.Attestation{Data: &silapb.AttestationData{Slot: 1, CommitteeIndex: 1}}, &silapb.Attestation{Data: &silapb.AttestationData{Slot: 1, CommitteeIndex: 1}}}}
+	c.atts[bytesutil.ToBytes32([]byte("id2"))] = &attGroup{slot: 2, atts: []silapb.Att{&silapb.Attestation{Data: &silapb.AttestationData{Slot: 2, CommitteeIndex: 2}}}}
+	c.atts[bytesutil.ToBytes32([]byte("id3"))] = &attGroup{slot: 1, atts: []silapb.Att{&silapb.Attestation{Data: &silapb.AttestationData{Slot: 2, CommitteeIndex: 2}}}}
 
 	// committeeIndex has to be small enough to fit in the bitvector
-	atts := GetBySlotAndCommitteeIndex[*ethpb.Attestation](c, 1, 1)
+	atts := GetBySlotAndCommitteeIndex[*silapb.Attestation](c, 1, 1)
 	require.Equal(t, 2, len(atts))
 	assert.Equal(t, primitives.Slot(1), atts[0].Data.Slot)
 	assert.Equal(t, primitives.Slot(1), atts[1].Data.Slot)

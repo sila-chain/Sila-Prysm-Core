@@ -6,7 +6,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -23,7 +23,7 @@ func TestGetDomainData_ValidDomainData(t *testing.T) {
 	genesisValidatorRootBytes, err := hexutil.Decode(genesisValidatorRoot)
 	require.NoError(t, err)
 
-	expectedForkDataRoot, err := (&ethpb.ForkData{
+	expectedForkDataRoot, err := (&silapb.ForkData{
 		CurrentVersion:        forkVersion,
 		GenesisValidatorsRoot: genesisValidatorRootBytes,
 	}).HashTreeRoot()

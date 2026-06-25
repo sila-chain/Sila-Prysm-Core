@@ -5,11 +5,11 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 func sszToState(b []byte) (state.BeaconState, error) {
-	base := &ethpb.BeaconStateCapella{}
+	base := &silapb.BeaconStateCapella{}
 	if err := base.UnmarshalSSZ(b); err != nil {
 		return nil, err
 	}
@@ -17,15 +17,15 @@ func sszToState(b []byte) (state.BeaconState, error) {
 }
 
 func sszToBlock(b []byte) (interfaces.SignedBeaconBlock, error) {
-	base := &ethpb.BeaconBlockCapella{}
+	base := &silapb.BeaconBlockCapella{}
 	if err := base.UnmarshalSSZ(b); err != nil {
 		return nil, err
 	}
-	return blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockCapella{Block: base})
+	return blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockCapella{Block: base})
 }
 
 func sszToBlockBody(b []byte) (interfaces.ReadOnlyBeaconBlockBody, error) {
-	base := &ethpb.BeaconBlockBodyCapella{}
+	base := &silapb.BeaconBlockBodyCapella{}
 	if err := base.UnmarshalSSZ(b); err != nil {
 		return nil, err
 	}

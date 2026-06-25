@@ -17,7 +17,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	payloadattestation "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/payload-attestation"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -33,12 +33,12 @@ func TestValidatePayloadAttestationMessage_IncorrectTopic(t *testing.T) {
 		payloadAttestationCache: &cache.PayloadAttestationCache{},
 		cfg:                     &config{chain: chainService, p2p: p, initialSync: &mockSync.Sync{}, clock: startup.NewClock(chainService.Genesis, chainService.ValidatorsRoot)}}
 
-	msg := util.HydratePayloadAttestation(&ethpb.PayloadAttestation{}) // Using payload attestation for message should fail.
+	msg := util.HydratePayloadAttestation(&silapb.PayloadAttestation{}) // Using payload attestation for message should fail.
 	buf := new(bytes.Buffer)
 	_, err := p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
 
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.PayloadAttestation]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.PayloadAttestation]()]
 	digest, err := s.currentForkDigest()
 	require.NoError(t, err)
 	topic = s.addDigestToTopic(topic, digest)
@@ -118,7 +118,7 @@ func TestValidatePayloadAttestationMessage_ErrorPathsWithMock(t *testing.T) {
 			_, err = p.Encoding().EncodeGossip(buf, msg)
 			require.NoError(t, err)
 
-			topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.PayloadAttestationMessage]()]
+			topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.PayloadAttestationMessage]()]
 			digest, err := s.currentForkDigest()
 			require.NoError(t, err)
 			topic = s.addDigestToTopic(topic, digest)
@@ -153,7 +153,7 @@ func TestValidatePayloadAttestationMessage_Accept(t *testing.T) {
 	_, err = p.Encoding().EncodeGossip(buf, msg)
 	require.NoError(t, err)
 
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.PayloadAttestationMessage]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.PayloadAttestationMessage]()]
 	digest, err := s.currentForkDigest()
 	require.NoError(t, err)
 	topic = s.addDigestToTopic(topic, digest)
@@ -167,10 +167,10 @@ func TestValidatePayloadAttestationMessage_Accept(t *testing.T) {
 	require.Equal(t, result, pubsub.ValidationAccept)
 }
 
-func newPayloadAttestationMessage() *ethpb.PayloadAttestationMessage {
-	return &ethpb.PayloadAttestationMessage{
+func newPayloadAttestationMessage() *silapb.PayloadAttestationMessage {
+	return &silapb.PayloadAttestationMessage{
 		ValidatorIndex: 0,
-		Data:           util.HydratePayloadAttestationData(&ethpb.PayloadAttestationData{Slot: 1}),
+		Data:           util.HydratePayloadAttestationData(&silapb.PayloadAttestationData{Slot: 1}),
 		Signature:      make([]byte, fieldparams.BLSSignatureLength),
 	}
 }

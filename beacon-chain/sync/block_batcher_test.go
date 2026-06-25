@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -21,7 +21,7 @@ func TestSortedObj_SortBlocksRoots(t *testing.T) {
 	var blks []blocks.ROBlock
 	for range 10 {
 		slot := primitives.Slot(randFunc())
-		newBlk, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlock{Block: &ethpb.BeaconBlock{Slot: slot, Body: &ethpb.BeaconBlockBody{}}})
+		newBlk, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlock{Block: &silapb.BeaconBlock{Slot: slot, Body: &silapb.BeaconBlockBody{}}})
 		require.NoError(t, err)
 		root := bytesutil.ToBytes32(bytesutil.Bytes32(uint64(slot)))
 		b, err := blocks.NewROBlockWithRoot(newBlk, root)
@@ -49,7 +49,7 @@ func TestSortedObj_NoDuplicates(t *testing.T) {
 
 	for range 10 {
 		slot := primitives.Slot(randFunc())
-		newBlk := &ethpb.SignedBeaconBlock{Block: &ethpb.BeaconBlock{Slot: slot, Body: &ethpb.BeaconBlockBody{}}}
+		newBlk := &silapb.SignedBeaconBlock{Block: &silapb.BeaconBlock{Slot: slot, Body: &silapb.BeaconBlockBody{}}}
 		// append twice
 		wsb, err := blocks.NewSignedBeaconBlock(newBlk)
 		require.NoError(t, err)

@@ -2,7 +2,7 @@ package synccommittee
 
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 var _ = Pool(&Store{})
@@ -13,12 +13,12 @@ var _ = Pool(&Store{})
 // sync aggregators.
 type Pool interface {
 	// Methods for Sync Contributions.
-	SaveSyncCommitteeContribution(contr *ethpb.SyncCommitteeContribution) error
-	SyncCommitteeContributions(slot primitives.Slot) ([]*ethpb.SyncCommitteeContribution, error)
+	SaveSyncCommitteeContribution(contr *silapb.SyncCommitteeContribution) error
+	SyncCommitteeContributions(slot primitives.Slot) ([]*silapb.SyncCommitteeContribution, error)
 
 	// Methods for Sync Committee Messages.
-	SaveSyncCommitteeMessage(sig *ethpb.SyncCommitteeMessage) error
-	SyncCommitteeMessages(slot primitives.Slot) ([]*ethpb.SyncCommitteeMessage, error)
+	SaveSyncCommitteeMessage(sig *silapb.SyncCommitteeMessage) error
+	SyncCommitteeMessages(slot primitives.Slot) ([]*silapb.SyncCommitteeMessage, error)
 }
 
 // NewPool returns the sync committee store fulfilling the pool interface.

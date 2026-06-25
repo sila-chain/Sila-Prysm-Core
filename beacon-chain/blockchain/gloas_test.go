@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -34,34 +34,34 @@ func prepareGloasForkchoiceState(
 	justifiedEpoch primitives.Epoch,
 	finalizedEpoch primitives.Epoch,
 ) (state.BeaconState, blocks.ROBlock, error) {
-	blockHeader := &ethpb.BeaconBlockHeader{
+	blockHeader := &silapb.BeaconBlockHeader{
 		ParentRoot: parentRoot[:],
 	}
 
-	justifiedCheckpoint := &ethpb.Checkpoint{
+	justifiedCheckpoint := &silapb.Checkpoint{
 		Epoch: justifiedEpoch,
 	}
 
-	finalizedCheckpoint := &ethpb.Checkpoint{
+	finalizedCheckpoint := &silapb.Checkpoint{
 		Epoch: finalizedEpoch,
 	}
 
-	builderPendingPayments := make([]*ethpb.BuilderPendingPayment, 64)
+	builderPendingPayments := make([]*silapb.BuilderPendingPayment, 64)
 	for i := range builderPendingPayments {
-		builderPendingPayments[i] = &ethpb.BuilderPendingPayment{
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+		builderPendingPayments[i] = &silapb.BuilderPendingPayment{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 			},
 		}
 	}
 
-	base := &ethpb.BeaconStateGloas{
+	base := &silapb.BeaconStateGloas{
 		Slot:                       slot,
 		RandaoMixes:                make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 		CurrentJustifiedCheckpoint: justifiedCheckpoint,
 		FinalizedCheckpoint:        finalizedCheckpoint,
 		LatestBlockHeader:          blockHeader,
-		LatestExecutionPayloadBid: &ethpb.ExecutionPayloadBid{
+		LatestExecutionPayloadBid: &silapb.ExecutionPayloadBid{
 			BlockHash:             blockHash[:],
 			ParentBlockHash:       parentBlockHash[:],
 			ParentBlockRoot:       make([]byte, 32),
@@ -70,7 +70,7 @@ func prepareGloasForkchoiceState(
 			BlobKzgCommitments:    [][]byte{make([]byte, 48)},
 			ExecutionRequestsRoot: make([]byte, 32),
 		},
-		Builders:                     make([]*ethpb.Builder, 0),
+		Builders:                     make([]*silapb.Builder, 0),
 		BuilderPendingPayments:       builderPendingPayments,
 		ExecutionPayloadAvailability: make([]byte, 1024),
 		LatestBlockHash:              make([]byte, 32),
@@ -83,18 +83,18 @@ func prepareGloasForkchoiceState(
 		return nil, blocks.ROBlock{}, err
 	}
 
-	bid := util.HydrateSignedExecutionPayloadBid(&ethpb.SignedExecutionPayloadBid{
-		Message: &ethpb.ExecutionPayloadBid{
+	bid := util.HydrateSignedExecutionPayloadBid(&silapb.SignedExecutionPayloadBid{
+		Message: &silapb.ExecutionPayloadBid{
 			BlockHash:       blockHash[:],
 			ParentBlockHash: parentBlockHash[:],
 		},
 	})
 
-	blk := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-		Block: &ethpb.BeaconBlockGloas{
+	blk := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+		Block: &silapb.BeaconBlockGloas{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body: &ethpb.BeaconBlockBodyGloas{
+			Body: &silapb.BeaconBlockBodyGloas{
 				SignedExecutionPayloadBid: bid,
 			},
 		},
@@ -108,32 +108,32 @@ func prepareGloasForkchoiceState(
 	return st, roblock, err
 }
 
-func testGloasState(t *testing.T, slot primitives.Slot, parentRoot [32]byte, blockHash [32]byte) (*ethpb.BeaconStateGloas, *ethpb.SignedBeaconBlockGloas) {
+func testGloasState(t *testing.T, slot primitives.Slot, parentRoot [32]byte, blockHash [32]byte) (*silapb.BeaconStateGloas, *silapb.SignedBeaconBlockGloas) {
 	t.Helper()
-	builderPendingPayments := make([]*ethpb.BuilderPendingPayment, 64)
+	builderPendingPayments := make([]*silapb.BuilderPendingPayment, 64)
 	for i := range builderPendingPayments {
-		builderPendingPayments[i] = &ethpb.BuilderPendingPayment{
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{FeeRecipient: make([]byte, 20)},
+		builderPendingPayments[i] = &silapb.BuilderPendingPayment{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{FeeRecipient: make([]byte, 20)},
 		}
 	}
-	base := &ethpb.BeaconStateGloas{
+	base := &silapb.BeaconStateGloas{
 		Slot:                       slot,
 		RandaoMixes:                make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 		BlockRoots:                 make([][]byte, params.BeaconConfig().SlotsPerHistoricalRoot),
 		StateRoots:                 make([][]byte, params.BeaconConfig().SlotsPerHistoricalRoot),
 		Slashings:                  make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector),
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, 32)},
-		FinalizedCheckpoint:        &ethpb.Checkpoint{Root: make([]byte, 32)},
-		LatestBlockHeader: &ethpb.BeaconBlockHeader{
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, 32)},
+		FinalizedCheckpoint:        &silapb.Checkpoint{Root: make([]byte, 32)},
+		LatestBlockHeader: &silapb.BeaconBlockHeader{
 			ParentRoot: parentRoot[:],
 			StateRoot:  make([]byte, 32),
 			BodyRoot:   make([]byte, 32),
 		},
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},
-		LatestExecutionPayloadBid: &ethpb.ExecutionPayloadBid{
+		LatestExecutionPayloadBid: &silapb.ExecutionPayloadBid{
 			BlockHash:             blockHash[:],
 			ParentBlockHash:       make([]byte, 32),
 			ParentBlockRoot:       make([]byte, 32),
@@ -142,7 +142,7 @@ func testGloasState(t *testing.T, slot primitives.Slot, parentRoot [32]byte, blo
 			BlobKzgCommitments:    [][]byte{make([]byte, 48)},
 			ExecutionRequestsRoot: make([]byte, 32),
 		},
-		Builders:                     make([]*ethpb.Builder, 0),
+		Builders:                     make([]*silapb.Builder, 0),
 		BuilderPendingPayments:       builderPendingPayments,
 		ExecutionPayloadAvailability: make([]byte, 1024),
 		LatestBlockHash:              make([]byte, 32),
@@ -150,27 +150,27 @@ func testGloasState(t *testing.T, slot primitives.Slot, parentRoot [32]byte, blo
 		ProposerLookahead:            make([]primitives.ValidatorIndex, 64),
 	}
 
-	bid := util.HydrateSignedExecutionPayloadBid(&ethpb.SignedExecutionPayloadBid{
-		Message: &ethpb.ExecutionPayloadBid{
+	bid := util.HydrateSignedExecutionPayloadBid(&silapb.SignedExecutionPayloadBid{
+		Message: &silapb.ExecutionPayloadBid{
 			BlockHash:       blockHash[:],
 			ParentBlockHash: make([]byte, 32),
 		},
 	})
 
-	blk := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-		Block: &ethpb.BeaconBlockGloas{
+	blk := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+		Block: &silapb.BeaconBlockGloas{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body:       &ethpb.BeaconBlockBodyGloas{SignedExecutionPayloadBid: bid},
+			Body:       &silapb.BeaconBlockBodyGloas{SignedExecutionPayloadBid: bid},
 		},
 	})
 	return base, blk
 }
 
-func testSignedEnvelope(t *testing.T, blockRoot [32]byte, slot primitives.Slot, blockHash []byte) *ethpb.SignedExecutionPayloadEnvelope {
+func testSignedEnvelope(t *testing.T, blockRoot [32]byte, slot primitives.Slot, blockHash []byte) *silapb.SignedExecutionPayloadEnvelope {
 	t.Helper()
-	return &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+	return &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload: &enginev1.ExecutionPayloadGloas{
 				ParentHash:    make([]byte, 32),
 				FeeRecipient:  make([]byte, 20),
@@ -200,7 +200,7 @@ func setupGloasService(t *testing.T, engineClient *mockExecution.EngineClient) (
 	)
 }
 
-func insertGloasBlock(t *testing.T, s *Service, base *ethpb.BeaconStateGloas, blk *ethpb.SignedBeaconBlockGloas, blockRoot [32]byte) {
+func insertGloasBlock(t *testing.T, s *Service, base *silapb.BeaconStateGloas, blk *silapb.SignedBeaconBlockGloas, blockRoot [32]byte) {
 	t.Helper()
 	ctx := t.Context()
 	st, err := state_native.InitializeFromProtoUnsafeGloas(base)
@@ -210,7 +210,7 @@ func insertGloasBlock(t *testing.T, s *Service, base *ethpb.BeaconStateGloas, bl
 	roblock, err := blocks.NewROBlockWithRoot(signed, blockRoot)
 	require.NoError(t, err)
 	require.NoError(t, s.cfg.BeaconDB.SaveBlock(ctx, signed))
-	require.NoError(t, s.cfg.BeaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Root: blockRoot[:], Slot: blk.Block.Slot}))
+	require.NoError(t, s.cfg.BeaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Root: blockRoot[:], Slot: blk.Block.Slot}))
 	require.NoError(t, s.cfg.StateGen.SaveState(ctx, blockRoot, st))
 	require.NoError(t, s.InsertNode(ctx, st, roblock))
 }
@@ -219,7 +219,7 @@ func TestGetPayloadEnvelopePrestate_UnknownRoot(t *testing.T) {
 	s, _ := setupGloasService(t, &mockExecution.EngineClient{})
 	ctx := t.Context()
 	unknownRoot := bytesutil.ToBytes32([]byte("unknown"))
-	env := &ethpb.ExecutionPayloadEnvelope{
+	env := &silapb.ExecutionPayloadEnvelope{
 		BeaconBlockRoot:       unknownRoot[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
 		Payload:               &enginev1.ExecutionPayloadGloas{},
@@ -241,7 +241,7 @@ func TestGetPayloadEnvelopePrestate_OK(t *testing.T) {
 	base, blk := testGloasState(t, 1, parentRoot, blockHash)
 	insertGloasBlock(t, s, base, blk, blockRoot)
 
-	env := &ethpb.ExecutionPayloadEnvelope{
+	env := &silapb.ExecutionPayloadEnvelope{
 		BeaconBlockRoot:       blockRoot[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
 		Payload:               &enginev1.ExecutionPayloadGloas{},
@@ -265,7 +265,7 @@ func TestNotifyNewEnvelope_Valid(t *testing.T) {
 	st, err := state_native.InitializeFromProtoUnsafeGloas(base)
 	require.NoError(t, err)
 
-	env := &ethpb.ExecutionPayloadEnvelope{
+	env := &silapb.ExecutionPayloadEnvelope{
 		BeaconBlockRoot:       blockRoot[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
 		Payload:               &enginev1.ExecutionPayloadGloas{BlockHash: blockHash[:]},
@@ -293,7 +293,7 @@ func TestNotifyNewEnvelope_Syncing(t *testing.T) {
 	st, err := state_native.InitializeFromProtoUnsafeGloas(base)
 	require.NoError(t, err)
 
-	env := &ethpb.ExecutionPayloadEnvelope{
+	env := &silapb.ExecutionPayloadEnvelope{
 		BeaconBlockRoot:       blockRoot[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
 		Payload:               &enginev1.ExecutionPayloadGloas{BlockHash: blockHash[:]},
@@ -321,7 +321,7 @@ func TestNotifyNewEnvelope_Invalid(t *testing.T) {
 	st, err := state_native.InitializeFromProtoUnsafeGloas(base)
 	require.NoError(t, err)
 
-	env := &ethpb.ExecutionPayloadEnvelope{
+	env := &silapb.ExecutionPayloadEnvelope{
 		BeaconBlockRoot:       blockRoot[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
 		Payload:               &enginev1.ExecutionPayloadGloas{BlockHash: blockHash[:]},
@@ -467,7 +467,7 @@ func TestValidateExecutionOnEnvelope_Valid(t *testing.T) {
 	st, err := state_native.InitializeFromProtoUnsafeGloas(base)
 	require.NoError(t, err)
 
-	env := &ethpb.ExecutionPayloadEnvelope{
+	env := &silapb.ExecutionPayloadEnvelope{
 		BeaconBlockRoot:       blockRoot[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
 		Payload:               &enginev1.ExecutionPayloadGloas{BlockHash: blockHash[:], ParentHash: make([]byte, 32)},
@@ -493,7 +493,7 @@ func TestPostPayloadTasks_NotHead(t *testing.T) {
 	st, err := state_native.InitializeFromProtoUnsafeGloas(base)
 	require.NoError(t, err)
 
-	env := &ethpb.ExecutionPayloadEnvelope{
+	env := &silapb.ExecutionPayloadEnvelope{
 		BeaconBlockRoot:       root[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
 		Payload:               &enginev1.ExecutionPayloadGloas{BlockHash: blockHash[:]},
@@ -523,7 +523,7 @@ func TestPostPayloadTasks_DoesNotMutateHead(t *testing.T) {
 	s.head = &head{root: root, block: signed, state: st, slot: 1}
 	s.head.state = oldSt
 
-	env := &ethpb.ExecutionPayloadEnvelope{
+	env := &silapb.ExecutionPayloadEnvelope{
 		BeaconBlockRoot:       root[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
 		Payload:               &enginev1.ExecutionPayloadGloas{BlockHash: blockHash[:], ParentHash: make([]byte, 32)},

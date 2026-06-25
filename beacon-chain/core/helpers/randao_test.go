@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -21,7 +21,7 @@ func TestRandaoMix_OK(t *testing.T) {
 		binary.LittleEndian.PutUint64(intInBytes, uint64(i))
 		randaoMixes[i] = intInBytes
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{RandaoMixes: randaoMixes})
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{RandaoMixes: randaoMixes})
 	require.NoError(t, err)
 	tests := []struct {
 		epoch     primitives.Epoch
@@ -57,7 +57,7 @@ func TestRandaoMix_CopyOK(t *testing.T) {
 		binary.LittleEndian.PutUint64(intInBytes, uint64(i))
 		randaoMixes[i] = intInBytes
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{RandaoMixes: randaoMixes})
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{RandaoMixes: randaoMixes})
 	require.NoError(t, err)
 	tests := []struct {
 		epoch     primitives.Epoch
@@ -102,7 +102,7 @@ func TestGenerateSeed_OK(t *testing.T) {
 		randaoMixes[i] = intInBytes
 	}
 	slot := params.BeaconConfig().SlotsPerEpoch.Mul(uint64(params.BeaconConfig().MinSeedLookahead * 10))
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		RandaoMixes: randaoMixes,
 		Slot:        slot,
 	})

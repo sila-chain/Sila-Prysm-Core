@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -84,9 +84,9 @@ func TestProposer_PendingDeposits_Electra(t *testing.T) {
 		},
 	}
 
-	var votes []*ethpb.Eth1Data
+	var votes []*silapb.Eth1Data
 
-	vote := &ethpb.Eth1Data{
+	vote := &silapb.Eth1Data{
 		BlockHash:    bytesutil.PadTo([]byte("0x1"), 32),
 		DepositRoot:  make([]byte, 32),
 		DepositCount: 7,
@@ -96,8 +96,8 @@ func TestProposer_PendingDeposits_Electra(t *testing.T) {
 		votes = append(votes, vote)
 	}
 
-	beaconState, err := state_native.InitializeFromProtoElectra(&ethpb.BeaconStateElectra{
-		Eth1Data: &ethpb.Eth1Data{
+	beaconState, err := state_native.InitializeFromProtoElectra(&silapb.BeaconStateElectra{
+		Eth1Data: &silapb.Eth1Data{
 			BlockHash:    []byte("0x0"),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 5,
@@ -117,12 +117,12 @@ func TestProposer_PendingDeposits_Electra(t *testing.T) {
 	var mockCreds [32]byte
 
 	// Using the merkleTreeIndex as the block number for this test...
-	readyDeposits := []*ethpb.DepositContainer{
+	readyDeposits := []*silapb.DepositContainer{
 		{
 			Index:           0,
 			Eth1BlockHeight: 8,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -131,8 +131,8 @@ func TestProposer_PendingDeposits_Electra(t *testing.T) {
 		{
 			Index:           1,
 			Eth1BlockHeight: 14,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -140,12 +140,12 @@ func TestProposer_PendingDeposits_Electra(t *testing.T) {
 		},
 	}
 
-	recentDeposits := []*ethpb.DepositContainer{
+	recentDeposits := []*silapb.DepositContainer{
 		{
 			Index:           2,
 			Eth1BlockHeight: 5000,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("c"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -154,8 +154,8 @@ func TestProposer_PendingDeposits_Electra(t *testing.T) {
 		{
 			Index:           3,
 			Eth1BlockHeight: 6000,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("d"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -193,7 +193,7 @@ func TestProposer_PendingDeposits_Electra(t *testing.T) {
 		HeadFetcher:            &mock.ChainService{State: beaconState, Root: blkRoot[:]},
 	}
 
-	deposits, err := bs.deposits(ctx, beaconState, &ethpb.Eth1Data{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.Eth1Data{})
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(deposits), "Received unexpected list of deposits")
 

@@ -11,7 +11,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 
-	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/ext"
+	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/ext"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"

@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // BeaconState has read and write access to beacon state methods.
@@ -72,10 +72,10 @@ type ReadOnlyBeaconState interface {
 	GenesisTime() time.Time
 	GenesisValidatorsRoot() []byte
 	Slot() primitives.Slot
-	Fork() *ethpb.Fork
-	LatestBlockHeader() *ethpb.BeaconBlockHeader
+	Fork() *silapb.Fork
+	LatestBlockHeader() *silapb.BeaconBlockHeader
 	HistoricalRoots() [][]byte
-	HistoricalSummaries() ([]*ethpb.HistoricalSummary, error)
+	HistoricalSummaries() ([]*silapb.HistoricalSummary, error)
 	Slashings() []uint64
 	FieldReferencesCount() map[string]uint64
 	RecordStateMetrics()
@@ -107,13 +107,13 @@ type WriteOnlyBeaconState interface {
 	SetGenesisTime(val time.Time) error
 	SetGenesisValidatorsRoot(val []byte) error
 	SetSlot(val primitives.Slot) error
-	SetFork(val *ethpb.Fork) error
-	SetLatestBlockHeader(val *ethpb.BeaconBlockHeader) error
+	SetFork(val *silapb.Fork) error
+	SetLatestBlockHeader(val *silapb.BeaconBlockHeader) error
 	SetHistoricalRoots(val [][]byte) error
 	SetSlashings(val []uint64) error
 	UpdateSlashingsAtIndex(idx, val uint64) error
 	AppendHistoricalRoots(root [32]byte) error
-	AppendHistoricalSummaries(*ethpb.HistoricalSummary) error
+	AppendHistoricalSummaries(*silapb.HistoricalSummary) error
 	SetLatestExecutionPayloadHeader(payload interfaces.ExecutionData) error
 }
 
@@ -126,7 +126,7 @@ type ReadOnlyValidator interface {
 	ExitEpoch() primitives.Epoch
 	PublicKey() [fieldparams.BLSPubkeyLength]byte
 	GetWithdrawalCredentials() []byte
-	Copy() *ethpb.Validator
+	Copy() *silapb.Validator
 	Slashed() bool
 	HasETH1WithdrawalCredentials() bool
 	HasCompoundingWithdrawalCredentials() bool
@@ -135,10 +135,10 @@ type ReadOnlyValidator interface {
 
 // ReadOnlyValidators defines a struct which only has read access to validators methods.
 type ReadOnlyValidators interface {
-	Validators() []*ethpb.Validator
+	Validators() []*silapb.Validator
 	ValidatorsReadOnly() []ReadOnlyValidator
 	ValidatorsReadOnlySeq() iter.Seq2[primitives.ValidatorIndex, ReadOnlyValidator]
-	ValidatorAtIndex(idx primitives.ValidatorIndex) (*ethpb.Validator, error)
+	ValidatorAtIndex(idx primitives.ValidatorIndex) (*silapb.Validator, error)
 	ValidatorAtIndexReadOnly(idx primitives.ValidatorIndex) (ReadOnlyValidator, error)
 	ValidatorIndexByPubkey(key [fieldparams.BLSPubkeyLength]byte) (primitives.ValidatorIndex, bool)
 	PublicKeys() ([][fieldparams.BLSPubkeyLength]byte, error)
@@ -158,11 +158,11 @@ type ReadOnlyBalances interface {
 
 // ReadOnlyCheckpoint defines a struct which only has read access to checkpoint methods.
 type ReadOnlyCheckpoint interface {
-	PreviousJustifiedCheckpoint() *ethpb.Checkpoint
-	CurrentJustifiedCheckpoint() *ethpb.Checkpoint
-	MatchCurrentJustifiedCheckpoint(c *ethpb.Checkpoint) bool
-	MatchPreviousJustifiedCheckpoint(c *ethpb.Checkpoint) bool
-	FinalizedCheckpoint() *ethpb.Checkpoint
+	PreviousJustifiedCheckpoint() *silapb.Checkpoint
+	CurrentJustifiedCheckpoint() *silapb.Checkpoint
+	MatchCurrentJustifiedCheckpoint(c *silapb.Checkpoint) bool
+	MatchPreviousJustifiedCheckpoint(c *silapb.Checkpoint) bool
+	FinalizedCheckpoint() *silapb.Checkpoint
 	FinalizedCheckpointEpoch() primitives.Epoch
 	JustificationBits() bitfield.Bitvector4
 	UnrealizedCheckpointBalances() (uint64, uint64, uint64, error)
@@ -189,8 +189,8 @@ type ReadOnlyRandaoMixes interface {
 
 // ReadOnlyEth1Data defines a struct which only has read access to eth1 data methods.
 type ReadOnlyEth1Data interface {
-	Eth1Data() *ethpb.Eth1Data
-	Eth1DataVotes() []*ethpb.Eth1Data
+	Eth1Data() *silapb.Eth1Data
+	Eth1DataVotes() []*silapb.Eth1Data
 	Eth1DepositIndex() uint64
 }
 
@@ -202,8 +202,8 @@ type ReadOnlyExits interface {
 
 // ReadOnlyAttestations defines a struct which only has read access to attestations methods.
 type ReadOnlyAttestations interface {
-	PreviousEpochAttestations() ([]*ethpb.PendingAttestation, error)
-	CurrentEpochAttestations() ([]*ethpb.PendingAttestation, error)
+	PreviousEpochAttestations() ([]*silapb.PendingAttestation, error)
+	CurrentEpochAttestations() ([]*silapb.PendingAttestation, error)
 }
 
 // ReadOnlyWithdrawals defines a struct which only has read access to withdrawal methods.
@@ -212,7 +212,7 @@ type ReadOnlyWithdrawals interface {
 	NextWithdrawalValidatorIndex() (primitives.ValidatorIndex, error)
 	NextWithdrawalIndex() (uint64, error)
 	PendingBalanceToWithdraw(idx primitives.ValidatorIndex) (uint64, error)
-	PendingPartialWithdrawals() ([]*ethpb.PendingPartialWithdrawal, error)
+	PendingPartialWithdrawals() ([]*silapb.PendingPartialWithdrawal, error)
 	NumPendingPartialWithdrawals() (uint64, error)
 	HasPendingBalanceToWithdraw(idx primitives.ValidatorIndex) (bool, error)
 }
@@ -232,21 +232,21 @@ type ReadOnlyInactivity interface {
 
 // ReadOnlySyncCommittee defines a struct which only has read access to sync committee methods.
 type ReadOnlySyncCommittee interface {
-	CurrentSyncCommittee() (*ethpb.SyncCommittee, error)
-	NextSyncCommittee() (*ethpb.SyncCommittee, error)
+	CurrentSyncCommittee() (*silapb.SyncCommittee, error)
+	NextSyncCommittee() (*silapb.SyncCommittee, error)
 }
 
 type ReadOnlyDeposits interface {
 	DepositBalanceToConsume() (primitives.Gwei, error)
 	DepositRequestsStartIndex() (uint64, error)
-	PendingDeposits() ([]*ethpb.PendingDeposit, error)
+	PendingDeposits() ([]*silapb.PendingDeposit, error)
 	IsPendingValidator(pubkey []byte) (bool, error)
 }
 
 type ReadOnlyConsolidations interface {
 	ConsolidationBalanceToConsume() (primitives.Gwei, error)
 	EarliestConsolidationEpoch() (primitives.Epoch, error)
-	PendingConsolidations() ([]*ethpb.PendingConsolidation, error)
+	PendingConsolidations() ([]*silapb.PendingConsolidation, error)
 	NumPendingConsolidations() (uint64, error)
 }
 
@@ -268,9 +268,9 @@ type WriteOnlyStateRoots interface {
 
 // WriteOnlyEth1Data defines a struct which only has write access to eth1 data methods.
 type WriteOnlyEth1Data interface {
-	SetEth1Data(val *ethpb.Eth1Data) error
-	SetEth1DataVotes(val []*ethpb.Eth1Data) error
-	AppendEth1DataVotes(val *ethpb.Eth1Data) error
+	SetEth1Data(val *silapb.Eth1Data) error
+	SetEth1DataVotes(val []*silapb.Eth1Data) error
+	AppendEth1DataVotes(val *silapb.Eth1Data) error
 	SetEth1DepositIndex(val uint64) error
 	ExitEpochAndUpdateChurn(ctx context.Context, exitBalance primitives.Gwei) (primitives.Epoch, error)
 	ExitEpochAndUpdateChurnForTotalBal(totalActiveBalance primitives.Gwei, exitBalance primitives.Gwei) (primitives.Epoch, error)
@@ -280,10 +280,10 @@ type WriteOnlyEth1Data interface {
 
 // WriteOnlyValidators defines a struct which only has write access to validators methods.
 type WriteOnlyValidators interface {
-	SetValidators(val []*ethpb.Validator) error
-	ApplyToEveryValidator(f func(idx int, val ReadOnlyValidator) (*ethpb.Validator, error)) error
-	UpdateValidatorAtIndex(idx primitives.ValidatorIndex, val *ethpb.Validator) error
-	AppendValidator(val *ethpb.Validator) error
+	SetValidators(val []*silapb.Validator) error
+	ApplyToEveryValidator(f func(idx int, val ReadOnlyValidator) (*silapb.Validator, error)) error
+	UpdateValidatorAtIndex(idx primitives.ValidatorIndex, val *silapb.Validator) error
+	AppendValidator(val *silapb.Validator) error
 }
 
 // WriteOnlyBalances defines a struct which only has write access to balances methods.
@@ -301,18 +301,18 @@ type WriteOnlyRandaoMixes interface {
 
 // WriteOnlyCheckpoint defines a struct which only has write access to check point methods.
 type WriteOnlyCheckpoint interface {
-	SetFinalizedCheckpoint(val *ethpb.Checkpoint) error
-	SetPreviousJustifiedCheckpoint(val *ethpb.Checkpoint) error
-	SetCurrentJustifiedCheckpoint(val *ethpb.Checkpoint) error
+	SetFinalizedCheckpoint(val *silapb.Checkpoint) error
+	SetPreviousJustifiedCheckpoint(val *silapb.Checkpoint) error
+	SetCurrentJustifiedCheckpoint(val *silapb.Checkpoint) error
 	SetJustificationBits(val bitfield.Bitvector4) error
 }
 
 // WriteOnlyAttestations defines a struct which only has write access to attestations methods.
 type WriteOnlyAttestations interface {
-	AppendCurrentEpochAttestations(val *ethpb.PendingAttestation) error
-	AppendPreviousEpochAttestations(val *ethpb.PendingAttestation) error
-	SetPreviousEpochAttestations([]*ethpb.PendingAttestation) error
-	SetCurrentEpochAttestations([]*ethpb.PendingAttestation) error
+	AppendCurrentEpochAttestations(val *silapb.PendingAttestation) error
+	AppendPreviousEpochAttestations(val *silapb.PendingAttestation) error
+	SetPreviousEpochAttestations([]*silapb.PendingAttestation) error
+	SetCurrentEpochAttestations([]*silapb.PendingAttestation) error
 	RotateAttestations() error
 }
 
@@ -334,29 +334,29 @@ type WriteOnlyInactivity interface {
 
 // WriteOnlySyncCommittee defines a struct which only has write access to sync committee methods.
 type WriteOnlySyncCommittee interface {
-	SetCurrentSyncCommittee(val *ethpb.SyncCommittee) error
-	SetNextSyncCommittee(val *ethpb.SyncCommittee) error
+	SetCurrentSyncCommittee(val *silapb.SyncCommittee) error
+	SetNextSyncCommittee(val *silapb.SyncCommittee) error
 }
 
 type WriteOnlyWithdrawals interface {
-	AppendPendingPartialWithdrawal(ppw *ethpb.PendingPartialWithdrawal) error
+	AppendPendingPartialWithdrawal(ppw *silapb.PendingPartialWithdrawal) error
 	DequeuePendingPartialWithdrawals(num uint64) error
 	SetNextWithdrawalIndex(i uint64) error
 	SetNextWithdrawalValidatorIndex(i primitives.ValidatorIndex) error
-	SetPendingPartialWithdrawals(val []*ethpb.PendingPartialWithdrawal) error
+	SetPendingPartialWithdrawals(val []*silapb.PendingPartialWithdrawal) error
 }
 
 type WriteOnlyConsolidations interface {
-	AppendPendingConsolidation(val *ethpb.PendingConsolidation) error
+	AppendPendingConsolidation(val *silapb.PendingConsolidation) error
 	SetConsolidationBalanceToConsume(primitives.Gwei) error
 	SetEarliestConsolidationEpoch(epoch primitives.Epoch) error
-	SetPendingConsolidations(val []*ethpb.PendingConsolidation) error
+	SetPendingConsolidations(val []*silapb.PendingConsolidation) error
 }
 
 type WriteOnlyDeposits interface {
-	AppendPendingDeposit(pd *ethpb.PendingDeposit) error
+	AppendPendingDeposit(pd *silapb.PendingDeposit) error
 	SetDepositRequestsStartIndex(index uint64) error
-	SetPendingDeposits(val []*ethpb.PendingDeposit) error
+	SetPendingDeposits(val []*silapb.PendingDeposit) error
 	SetDepositBalanceToConsume(primitives.Gwei) error
 }
 

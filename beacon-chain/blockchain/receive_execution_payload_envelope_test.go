@@ -15,12 +15,12 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 )
 
-func gloasEnvelopeFixture(t *testing.T, blockRoot [32]byte) (*ethpb.BeaconStateGloas, *ethpb.SignedBeaconBlockGloas, *ethpb.SignedExecutionPayloadEnvelope) {
+func gloasEnvelopeFixture(t *testing.T, blockRoot [32]byte) (*silapb.BeaconStateGloas, *silapb.SignedBeaconBlockGloas, *silapb.SignedExecutionPayloadEnvelope) {
 	t.Helper()
 
 	cfg := params.BeaconConfig()
@@ -34,13 +34,13 @@ func gloasEnvelopeFixture(t *testing.T, blockRoot [32]byte) (*ethpb.BeaconStateG
 
 	// Get base state and patch the state to be consistent with the payload we will build and sign.
 	base, blk := testGloasState(t, slot, bytesutil.ToBytes32(parentBeaconRoot), blockHash)
-	base.Fork = &ethpb.Fork{
+	base.Fork = &silapb.Fork{
 		CurrentVersion:  bytes.Repeat([]byte{0x01}, 4),
 		PreviousVersion: bytes.Repeat([]byte{0x01}, 4),
 		Epoch:           0,
 	}
 	base.GenesisValidatorsRoot = make([]byte, 32)
-	base.Builders = []*ethpb.Builder{{
+	base.Builders = []*silapb.Builder{{
 		Pubkey:           pk,
 		Version:          []byte{0},
 		ExecutionAddress: make([]byte, 20),
@@ -73,7 +73,7 @@ func gloasEnvelopeFixture(t *testing.T, blockRoot [32]byte) (*ethpb.BeaconStateG
 	}
 
 	// Build and sign the envelope.
-	envelope := &ethpb.ExecutionPayloadEnvelope{
+	envelope := &silapb.ExecutionPayloadEnvelope{
 		BuilderIndex:          0,
 		BeaconBlockRoot:       blockRoot[:],
 		ParentBeaconBlockRoot: parentBeaconRoot,
@@ -85,7 +85,7 @@ func gloasEnvelopeFixture(t *testing.T, blockRoot [32]byte) (*ethpb.BeaconStateG
 	require.NoError(t, err)
 	signingRoot, err := signing.ComputeSigningRoot(envelope, domain)
 	require.NoError(t, err)
-	signedProto := &ethpb.SignedExecutionPayloadEnvelope{
+	signedProto := &silapb.SignedExecutionPayloadEnvelope{
 		Message:   envelope,
 		Signature: sk.Sign(signingRoot[:]).Marshal(),
 	}

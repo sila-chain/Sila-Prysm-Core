@@ -363,7 +363,7 @@ func TestKeymanager_Sign(t *testing.T) {
 	config := &SetupConfig{
 		BaseEndpoint:          "http://example.com",
 		GenesisValidatorsRoot: root,
-		PublicKeysURL:         "http://example2.com/api/v1/eth2/publicKeys",
+		PublicKeysURL:         "http://example2.com/api/v1/sila/publicKeys",
 	}
 	km, err := NewKeymanager(ctx, config)
 	require.NoError(t, err)
@@ -525,7 +525,7 @@ func TestKeymanager_FetchValidatingPublicKeys_HappyPath_WithExternalURL(t *testi
 	config := &SetupConfig{
 		BaseEndpoint:          "http://example.com",
 		GenesisValidatorsRoot: root,
-		PublicKeysURL:         srv.URL + "/api/v1/eth2/publicKeys",
+		PublicKeysURL:         srv.URL + "/api/v1/sila/publicKeys",
 	}
 	km, err := NewKeymanager(ctx, config)
 	require.NoError(t, err)
@@ -549,10 +549,10 @@ func TestKeymanager_FetchValidatingPublicKeys_WithExternalURL_ThrowsError(t *tes
 	config := &SetupConfig{
 		BaseEndpoint:          "http://example.com",
 		GenesisValidatorsRoot: root,
-		PublicKeysURL:         srv.URL + "/api/v1/eth2/publicKeys",
+		PublicKeysURL:         srv.URL + "/api/v1/sila/publicKeys",
 	}
 	km, err := NewKeymanager(ctx, config)
-	require.ErrorContains(t, fmt.Sprintf("could not get public keys from remote server URL %s/api/v1/eth2/publicKeys", srv.URL), err)
+	require.ErrorContains(t, fmt.Sprintf("could not get public keys from remote server URL %s/api/v1/sila/publicKeys", srv.URL), err)
 	assert.Nil(t, km)
 }
 

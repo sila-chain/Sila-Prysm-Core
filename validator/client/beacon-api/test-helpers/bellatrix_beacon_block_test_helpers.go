@@ -4,27 +4,27 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
-func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
-	return &ethpb.BeaconBlockBellatrix{
+func GenerateProtoBellatrixBeaconBlock() *silapb.BeaconBlockBellatrix {
+	return &silapb.BeaconBlockBellatrix{
 		Slot:          1,
 		ProposerIndex: 2,
 		ParentRoot:    FillByteSlice(32, 3),
 		StateRoot:     FillByteSlice(32, 4),
-		Body: &ethpb.BeaconBlockBodyBellatrix{
+		Body: &silapb.BeaconBlockBodyBellatrix{
 			RandaoReveal: FillByteSlice(96, 5),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot:  FillByteSlice(32, 6),
 				DepositCount: 7,
 				BlockHash:    FillByteSlice(32, 8),
 			},
 			Graffiti: FillByteSlice(32, 9),
-			ProposerSlashings: []*ethpb.ProposerSlashing{
+			ProposerSlashings: []*silapb.ProposerSlashing{
 				{
-					Header_1: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+					Header_1: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							Slot:          10,
 							ProposerIndex: 11,
 							ParentRoot:    FillByteSlice(32, 12),
@@ -33,8 +33,8 @@ func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
 						},
 						Signature: FillByteSlice(96, 15),
 					},
-					Header_2: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+					Header_2: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							Slot:          16,
 							ProposerIndex: 17,
 							ParentRoot:    FillByteSlice(32, 18),
@@ -45,8 +45,8 @@ func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
 					},
 				},
 				{
-					Header_1: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+					Header_1: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							Slot:          22,
 							ProposerIndex: 23,
 							ParentRoot:    FillByteSlice(32, 24),
@@ -55,8 +55,8 @@ func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
 						},
 						Signature: FillByteSlice(96, 27),
 					},
-					Header_2: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+					Header_2: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							Slot:          28,
 							ProposerIndex: 29,
 							ParentRoot:    FillByteSlice(32, 30),
@@ -67,36 +67,36 @@ func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
 					},
 				},
 			},
-			AttesterSlashings: []*ethpb.AttesterSlashing{
+			AttesterSlashings: []*silapb.AttesterSlashing{
 				{
-					Attestation_1: &ethpb.IndexedAttestation{
+					Attestation_1: &silapb.IndexedAttestation{
 						AttestingIndices: []uint64{34, 35},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							Slot:            36,
 							CommitteeIndex:  37,
 							BeaconBlockRoot: FillByteSlice(32, 38),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Epoch: 39,
 								Root:  FillByteSlice(32, 40),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Epoch: 41,
 								Root:  FillByteSlice(32, 42),
 							},
 						},
 						Signature: FillByteSlice(96, 43),
 					},
-					Attestation_2: &ethpb.IndexedAttestation{
+					Attestation_2: &silapb.IndexedAttestation{
 						AttestingIndices: []uint64{44, 45},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							Slot:            46,
 							CommitteeIndex:  47,
 							BeaconBlockRoot: FillByteSlice(32, 38),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Epoch: 49,
 								Root:  FillByteSlice(32, 50),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Epoch: 51,
 								Root:  FillByteSlice(32, 52),
 							},
@@ -105,34 +105,34 @@ func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
 					},
 				},
 				{
-					Attestation_1: &ethpb.IndexedAttestation{
+					Attestation_1: &silapb.IndexedAttestation{
 						AttestingIndices: []uint64{54, 55},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							Slot:            56,
 							CommitteeIndex:  57,
 							BeaconBlockRoot: FillByteSlice(32, 38),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Epoch: 59,
 								Root:  FillByteSlice(32, 60),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Epoch: 61,
 								Root:  FillByteSlice(32, 62),
 							},
 						},
 						Signature: FillByteSlice(96, 63),
 					},
-					Attestation_2: &ethpb.IndexedAttestation{
+					Attestation_2: &silapb.IndexedAttestation{
 						AttestingIndices: []uint64{64, 65},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							Slot:            66,
 							CommitteeIndex:  67,
 							BeaconBlockRoot: FillByteSlice(32, 38),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Epoch: 69,
 								Root:  FillByteSlice(32, 70),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Epoch: 71,
 								Root:  FillByteSlice(32, 72),
 							},
@@ -141,18 +141,18 @@ func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
 					},
 				},
 			},
-			Attestations: []*ethpb.Attestation{
+			Attestations: []*silapb.Attestation{
 				{
 					AggregationBits: FillByteSlice(4, 74),
-					Data: &ethpb.AttestationData{
+					Data: &silapb.AttestationData{
 						Slot:            75,
 						CommitteeIndex:  76,
 						BeaconBlockRoot: FillByteSlice(32, 38),
-						Source: &ethpb.Checkpoint{
+						Source: &silapb.Checkpoint{
 							Epoch: 78,
 							Root:  FillByteSlice(32, 79),
 						},
-						Target: &ethpb.Checkpoint{
+						Target: &silapb.Checkpoint{
 							Epoch: 80,
 							Root:  FillByteSlice(32, 81),
 						},
@@ -161,15 +161,15 @@ func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
 				},
 				{
 					AggregationBits: FillByteSlice(4, 83),
-					Data: &ethpb.AttestationData{
+					Data: &silapb.AttestationData{
 						Slot:            84,
 						CommitteeIndex:  85,
 						BeaconBlockRoot: FillByteSlice(32, 38),
-						Source: &ethpb.Checkpoint{
+						Source: &silapb.Checkpoint{
 							Epoch: 87,
 							Root:  FillByteSlice(32, 88),
 						},
-						Target: &ethpb.Checkpoint{
+						Target: &silapb.Checkpoint{
 							Epoch: 89,
 							Root:  FillByteSlice(32, 90),
 						},
@@ -177,10 +177,10 @@ func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
 					Signature: FillByteSlice(96, 91),
 				},
 			},
-			Deposits: []*ethpb.Deposit{
+			Deposits: []*silapb.Deposit{
 				{
 					Proof: FillByteArraySlice(33, FillByteSlice(32, 92)),
-					Data: &ethpb.Deposit_Data{
+					Data: &silapb.Deposit_Data{
 						PublicKey:             FillByteSlice(48, 94),
 						WithdrawalCredentials: FillByteSlice(32, 95),
 						Amount:                96,
@@ -189,7 +189,7 @@ func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
 				},
 				{
 					Proof: FillByteArraySlice(33, FillByteSlice(32, 98)),
-					Data: &ethpb.Deposit_Data{
+					Data: &silapb.Deposit_Data{
 						PublicKey:             FillByteSlice(48, 100),
 						WithdrawalCredentials: FillByteSlice(32, 101),
 						Amount:                102,
@@ -197,23 +197,23 @@ func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
 					},
 				},
 			},
-			VoluntaryExits: []*ethpb.SignedVoluntaryExit{
+			VoluntaryExits: []*silapb.SignedVoluntaryExit{
 				{
-					Exit: &ethpb.VoluntaryExit{
+					Exit: &silapb.VoluntaryExit{
 						Epoch:          104,
 						ValidatorIndex: 105,
 					},
 					Signature: FillByteSlice(96, 106),
 				},
 				{
-					Exit: &ethpb.VoluntaryExit{
+					Exit: &silapb.VoluntaryExit{
 						Epoch:          107,
 						ValidatorIndex: 108,
 					},
 					Signature: FillByteSlice(96, 109),
 				},
 			},
-			SyncAggregate: &ethpb.SyncAggregate{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      FillByteSlice(64, 110),
 				SyncCommitteeSignature: FillByteSlice(96, 111),
 			},
@@ -240,24 +240,24 @@ func GenerateProtoBellatrixBeaconBlock() *ethpb.BeaconBlockBellatrix {
 	}
 }
 
-func GenerateProtoBlindedBellatrixBeaconBlock() *ethpb.BlindedBeaconBlockBellatrix {
-	return &ethpb.BlindedBeaconBlockBellatrix{
+func GenerateProtoBlindedBellatrixBeaconBlock() *silapb.BlindedBeaconBlockBellatrix {
+	return &silapb.BlindedBeaconBlockBellatrix{
 		Slot:          1,
 		ProposerIndex: 2,
 		ParentRoot:    FillByteSlice(32, 3),
 		StateRoot:     FillByteSlice(32, 4),
-		Body: &ethpb.BlindedBeaconBlockBodyBellatrix{
+		Body: &silapb.BlindedBeaconBlockBodyBellatrix{
 			RandaoReveal: FillByteSlice(96, 5),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot:  FillByteSlice(32, 6),
 				DepositCount: 7,
 				BlockHash:    FillByteSlice(32, 8),
 			},
 			Graffiti: FillByteSlice(32, 9),
-			ProposerSlashings: []*ethpb.ProposerSlashing{
+			ProposerSlashings: []*silapb.ProposerSlashing{
 				{
-					Header_1: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+					Header_1: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							Slot:          10,
 							ProposerIndex: 11,
 							ParentRoot:    FillByteSlice(32, 12),
@@ -266,8 +266,8 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *ethpb.BlindedBeaconBlockBellatr
 						},
 						Signature: FillByteSlice(96, 15),
 					},
-					Header_2: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+					Header_2: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							Slot:          16,
 							ProposerIndex: 17,
 							ParentRoot:    FillByteSlice(32, 18),
@@ -278,8 +278,8 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *ethpb.BlindedBeaconBlockBellatr
 					},
 				},
 				{
-					Header_1: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+					Header_1: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							Slot:          22,
 							ProposerIndex: 23,
 							ParentRoot:    FillByteSlice(32, 24),
@@ -288,8 +288,8 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *ethpb.BlindedBeaconBlockBellatr
 						},
 						Signature: FillByteSlice(96, 27),
 					},
-					Header_2: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+					Header_2: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							Slot:          28,
 							ProposerIndex: 29,
 							ParentRoot:    FillByteSlice(32, 30),
@@ -300,36 +300,36 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *ethpb.BlindedBeaconBlockBellatr
 					},
 				},
 			},
-			AttesterSlashings: []*ethpb.AttesterSlashing{
+			AttesterSlashings: []*silapb.AttesterSlashing{
 				{
-					Attestation_1: &ethpb.IndexedAttestation{
+					Attestation_1: &silapb.IndexedAttestation{
 						AttestingIndices: []uint64{34, 35},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							Slot:            36,
 							CommitteeIndex:  37,
 							BeaconBlockRoot: FillByteSlice(32, 38),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Epoch: 39,
 								Root:  FillByteSlice(32, 40),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Epoch: 41,
 								Root:  FillByteSlice(32, 42),
 							},
 						},
 						Signature: FillByteSlice(96, 43),
 					},
-					Attestation_2: &ethpb.IndexedAttestation{
+					Attestation_2: &silapb.IndexedAttestation{
 						AttestingIndices: []uint64{44, 45},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							Slot:            46,
 							CommitteeIndex:  47,
 							BeaconBlockRoot: FillByteSlice(32, 38),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Epoch: 49,
 								Root:  FillByteSlice(32, 50),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Epoch: 51,
 								Root:  FillByteSlice(32, 52),
 							},
@@ -338,34 +338,34 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *ethpb.BlindedBeaconBlockBellatr
 					},
 				},
 				{
-					Attestation_1: &ethpb.IndexedAttestation{
+					Attestation_1: &silapb.IndexedAttestation{
 						AttestingIndices: []uint64{54, 55},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							Slot:            56,
 							CommitteeIndex:  57,
 							BeaconBlockRoot: FillByteSlice(32, 38),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Epoch: 59,
 								Root:  FillByteSlice(32, 60),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Epoch: 61,
 								Root:  FillByteSlice(32, 62),
 							},
 						},
 						Signature: FillByteSlice(96, 63),
 					},
-					Attestation_2: &ethpb.IndexedAttestation{
+					Attestation_2: &silapb.IndexedAttestation{
 						AttestingIndices: []uint64{64, 65},
-						Data: &ethpb.AttestationData{
+						Data: &silapb.AttestationData{
 							Slot:            66,
 							CommitteeIndex:  67,
 							BeaconBlockRoot: FillByteSlice(32, 38),
-							Source: &ethpb.Checkpoint{
+							Source: &silapb.Checkpoint{
 								Epoch: 69,
 								Root:  FillByteSlice(32, 70),
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Epoch: 71,
 								Root:  FillByteSlice(32, 72),
 							},
@@ -374,18 +374,18 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *ethpb.BlindedBeaconBlockBellatr
 					},
 				},
 			},
-			Attestations: []*ethpb.Attestation{
+			Attestations: []*silapb.Attestation{
 				{
 					AggregationBits: FillByteSlice(4, 74),
-					Data: &ethpb.AttestationData{
+					Data: &silapb.AttestationData{
 						Slot:            75,
 						CommitteeIndex:  76,
 						BeaconBlockRoot: FillByteSlice(32, 38),
-						Source: &ethpb.Checkpoint{
+						Source: &silapb.Checkpoint{
 							Epoch: 78,
 							Root:  FillByteSlice(32, 79),
 						},
-						Target: &ethpb.Checkpoint{
+						Target: &silapb.Checkpoint{
 							Epoch: 80,
 							Root:  FillByteSlice(32, 81),
 						},
@@ -394,15 +394,15 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *ethpb.BlindedBeaconBlockBellatr
 				},
 				{
 					AggregationBits: FillByteSlice(4, 83),
-					Data: &ethpb.AttestationData{
+					Data: &silapb.AttestationData{
 						Slot:            84,
 						CommitteeIndex:  85,
 						BeaconBlockRoot: FillByteSlice(32, 38),
-						Source: &ethpb.Checkpoint{
+						Source: &silapb.Checkpoint{
 							Epoch: 87,
 							Root:  FillByteSlice(32, 88),
 						},
-						Target: &ethpb.Checkpoint{
+						Target: &silapb.Checkpoint{
 							Epoch: 89,
 							Root:  FillByteSlice(32, 90),
 						},
@@ -410,10 +410,10 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *ethpb.BlindedBeaconBlockBellatr
 					Signature: FillByteSlice(96, 91),
 				},
 			},
-			Deposits: []*ethpb.Deposit{
+			Deposits: []*silapb.Deposit{
 				{
 					Proof: FillByteArraySlice(33, FillByteSlice(32, 92)),
-					Data: &ethpb.Deposit_Data{
+					Data: &silapb.Deposit_Data{
 						PublicKey:             FillByteSlice(48, 94),
 						WithdrawalCredentials: FillByteSlice(32, 95),
 						Amount:                96,
@@ -422,7 +422,7 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *ethpb.BlindedBeaconBlockBellatr
 				},
 				{
 					Proof: FillByteArraySlice(33, FillByteSlice(32, 98)),
-					Data: &ethpb.Deposit_Data{
+					Data: &silapb.Deposit_Data{
 						PublicKey:             FillByteSlice(48, 100),
 						WithdrawalCredentials: FillByteSlice(32, 101),
 						Amount:                102,
@@ -430,23 +430,23 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *ethpb.BlindedBeaconBlockBellatr
 					},
 				},
 			},
-			VoluntaryExits: []*ethpb.SignedVoluntaryExit{
+			VoluntaryExits: []*silapb.SignedVoluntaryExit{
 				{
-					Exit: &ethpb.VoluntaryExit{
+					Exit: &silapb.VoluntaryExit{
 						Epoch:          104,
 						ValidatorIndex: 105,
 					},
 					Signature: FillByteSlice(96, 106),
 				},
 				{
-					Exit: &ethpb.VoluntaryExit{
+					Exit: &silapb.VoluntaryExit{
 						Epoch:          107,
 						ValidatorIndex: 108,
 					},
 					Signature: FillByteSlice(96, 109),
 				},
 			},
-			SyncAggregate: &ethpb.SyncAggregate{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      FillByteSlice(64, 110),
 				SyncCommitteeSignature: FillByteSlice(96, 111),
 			},

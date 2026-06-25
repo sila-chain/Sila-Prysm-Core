@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
@@ -347,7 +347,7 @@ func (s *Service) savePostPayload(ctx context.Context, signed interfaces.ROSigne
 	ctx, span := trace.StartSpan(ctx, "blockChain.savePostPayload")
 	defer span.End()
 
-	protoEnv, ok := signed.Proto().(*ethpb.SignedExecutionPayloadEnvelope)
+	protoEnv, ok := signed.Proto().(*silapb.SignedExecutionPayloadEnvelope)
 	if !ok {
 		return errors.New("could not type assert signed envelope to proto")
 	}

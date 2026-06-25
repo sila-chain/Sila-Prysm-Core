@@ -2,12 +2,12 @@ package state_native
 
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native/types"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
 // SetLatestBlockHeader in the beacon state.
-func (b *BeaconState) SetLatestBlockHeader(val *ethpb.BeaconBlockHeader) error {
+func (b *BeaconState) SetLatestBlockHeader(val *silapb.BeaconBlockHeader) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 

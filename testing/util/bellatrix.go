@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -31,7 +31,7 @@ func GenerateFullBlockBellatrix(
 	privs []bls.SecretKey,
 	conf *BlockGenConfig,
 	slot primitives.Slot,
-) (*ethpb.SignedBeaconBlockBellatrix, error) {
+) (*silapb.SignedBeaconBlockBellatrix, error) {
 	ctx := context.Background()
 	currentSlot := bState.Slot()
 	if currentSlot > slot {
@@ -44,7 +44,7 @@ func GenerateFullBlockBellatrix(
 	}
 
 	var err error
-	var pSlashings []*ethpb.ProposerSlashing
+	var pSlashings []*silapb.ProposerSlashing
 	numToGen := conf.NumProposerSlashings
 	if numToGen > 0 {
 		pSlashings, err = generateProposerSlashings(bState, privs, numToGen)
@@ -54,41 +54,41 @@ func GenerateFullBlockBellatrix(
 	}
 
 	numToGen = conf.NumAttesterSlashings
-	var aSlashings []*ethpb.AttesterSlashing
+	var aSlashings []*silapb.AttesterSlashing
 	if numToGen > 0 {
 		generated, err := generateAttesterSlashings(bState, privs, numToGen)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed generating %d attester slashings:", numToGen)
 		}
-		aSlashings = make([]*ethpb.AttesterSlashing, len(generated))
+		aSlashings = make([]*silapb.AttesterSlashing, len(generated))
 		var ok bool
 		for i, s := range generated {
-			aSlashings[i], ok = s.(*ethpb.AttesterSlashing)
+			aSlashings[i], ok = s.(*silapb.AttesterSlashing)
 			if !ok {
-				return nil, fmt.Errorf("attester slashing has wrong type (expected %T, got %T)", &ethpb.AttesterSlashing{}, s)
+				return nil, fmt.Errorf("attester slashing has wrong type (expected %T, got %T)", &silapb.AttesterSlashing{}, s)
 			}
 		}
 	}
 
 	numToGen = conf.NumAttestations
-	var atts []*ethpb.Attestation
+	var atts []*silapb.Attestation
 	if numToGen > 0 {
 		generatedAtts, err := GenerateAttestations(bState, privs, numToGen, slot, false)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed generating %d attestations:", numToGen)
 		}
-		atts = make([]*ethpb.Attestation, len(generatedAtts))
+		atts = make([]*silapb.Attestation, len(generatedAtts))
 		var ok bool
 		for i, a := range generatedAtts {
-			atts[i], ok = a.(*ethpb.Attestation)
+			atts[i], ok = a.(*silapb.Attestation)
 			if !ok {
-				return nil, fmt.Errorf("attestation has the wrong type (expected %T, got %T)", &ethpb.Attestation{}, a)
+				return nil, fmt.Errorf("attestation has the wrong type (expected %T, got %T)", &silapb.Attestation{}, a)
 			}
 		}
 	}
 
 	numToGen = conf.NumDeposits
-	var newDeposits []*ethpb.Deposit
+	var newDeposits []*silapb.Deposit
 	eth1Data := bState.Eth1Data()
 	if numToGen > 0 {
 		newDeposits, eth1Data, err = generateDepositsAndEth1Data(bState, numToGen)
@@ -98,7 +98,7 @@ func GenerateFullBlockBellatrix(
 	}
 
 	numToGen = conf.NumVoluntaryExits
-	var exits []*ethpb.SignedVoluntaryExit
+	var exits []*silapb.SignedVoluntaryExit
 	if numToGen > 0 {
 		exits, err = generateVoluntaryExits(bState, privs, numToGen)
 		if err != nil {
@@ -147,7 +147,7 @@ func GenerateFullBlockBellatrix(
 		Transactions:  newTransactions,
 	}
 	var syncCommitteeBits []byte
-	currSize := new(ethpb.SyncAggregate).SyncCommitteeBits.Len()
+	currSize := new(silapb.SyncAggregate).SyncCommitteeBits.Len()
 	switch currSize {
 	case 512:
 		syncCommitteeBits = bitfield.NewBitvector512()
@@ -156,7 +156,7 @@ func GenerateFullBlockBellatrix(
 	default:
 		return nil, errors.New("invalid bit vector size")
 	}
-	newSyncAggregate := &ethpb.SyncAggregate{
+	newSyncAggregate := &silapb.SyncAggregate{
 		SyncCommitteeBits:      syncCommitteeBits,
 		SyncCommitteeSignature: append([]byte{0xC0}, make([]byte, 95)...),
 	}
@@ -186,11 +186,11 @@ func GenerateFullBlockBellatrix(
 		return nil, errors.Wrap(err, "could not compute beacon proposer index")
 	}
 
-	block := &ethpb.BeaconBlockBellatrix{
+	block := &silapb.BeaconBlockBellatrix{
 		Slot:          slot,
 		ParentRoot:    parentRoot[:],
 		ProposerIndex: idx,
-		Body: &ethpb.BeaconBlockBodyBellatrix{
+		Body: &silapb.BeaconBlockBodyBellatrix{
 			Eth1Data:          eth1Data,
 			RandaoReveal:      reveal,
 			ProposerSlashings: pSlashings,
@@ -210,7 +210,7 @@ func GenerateFullBlockBellatrix(
 		return nil, errors.Wrap(err, "could not compute block signature")
 	}
 
-	return &ethpb.SignedBeaconBlockBellatrix{Block: block, Signature: signature.Marshal()}, nil
+	return &silapb.SignedBeaconBlockBellatrix{Block: block, Signature: signature.Marshal()}, nil
 }
 
 func indexToHash(i uint64) [32]byte {

@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -22,34 +22,34 @@ func TestAllDeposits_ReturnsAllDeposits(t *testing.T) {
 	dc, err := New()
 	require.NoError(t, err)
 
-	deposits := []*ethpb.DepositContainer{
+	deposits := []*silapb.DepositContainer{
 		{
 			Eth1BlockHeight: 10,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 10,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 10,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 11,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 11,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 12,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 12,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 	}
 	dc.deposits = deposits
@@ -62,34 +62,34 @@ func TestAllDeposits_FiltersDepositUpToAndIncludingBlockNumber(t *testing.T) {
 	dc, err := New()
 	require.NoError(t, err)
 
-	deposits := []*ethpb.DepositContainer{
+	deposits := []*silapb.DepositContainer{
 		{
 			Eth1BlockHeight: 10,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 10,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 10,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 11,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 11,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 12,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 		{
 			Eth1BlockHeight: 12,
-			Deposit:         &ethpb.Deposit{},
+			Deposit:         &silapb.Deposit{},
 		},
 	}
 	dc.deposits = deposits
@@ -103,26 +103,26 @@ func TestDepositsNumberAndRootAtHeight(t *testing.T) {
 	t.Run("requesting_last_item_works", func(t *testing.T) {
 		dc, err := New()
 		require.NoError(t, err)
-		dc.deposits = []*ethpb.DepositContainer{
+		dc.deposits = []*silapb.DepositContainer{
 			{
 				Eth1BlockHeight: 10,
 				Index:           0,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 			},
 			{
 				Eth1BlockHeight: 10,
 				Index:           1,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 			},
 			{
 				Eth1BlockHeight: 11,
 				Index:           2,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 			},
 			{
 				Eth1BlockHeight: 13,
 				Index:           3,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 				DepositRoot:     wantedRoot,
 			},
 		}
@@ -134,11 +134,11 @@ func TestDepositsNumberAndRootAtHeight(t *testing.T) {
 		dc, err := New()
 		require.NoError(t, err)
 
-		dc.deposits = []*ethpb.DepositContainer{
+		dc.deposits = []*silapb.DepositContainer{
 			{
 				Eth1BlockHeight: 10,
 				Index:           0,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 				DepositRoot:     wantedRoot,
 			},
 		}
@@ -150,22 +150,22 @@ func TestDepositsNumberAndRootAtHeight(t *testing.T) {
 		dc, err := New()
 		require.NoError(t, err)
 
-		dc.deposits = []*ethpb.DepositContainer{
+		dc.deposits = []*silapb.DepositContainer{
 			{
 				Eth1BlockHeight: 8,
 				Index:           0,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 			},
 			{
 				Eth1BlockHeight: 9,
 				Index:           1,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 				DepositRoot:     wantedRoot,
 			},
 			{
 				Eth1BlockHeight: 11,
 				Index:           2,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 			},
 		}
 		n, root := dc.DepositsNumberAndRootAtHeight(t.Context(), big.NewInt(10))
@@ -176,11 +176,11 @@ func TestDepositsNumberAndRootAtHeight(t *testing.T) {
 		dc, err := New()
 		require.NoError(t, err)
 
-		dc.deposits = []*ethpb.DepositContainer{
+		dc.deposits = []*silapb.DepositContainer{
 			{
 				Eth1BlockHeight: 8,
 				Index:           0,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 				DepositRoot:     wantedRoot,
 			},
 		}
@@ -192,11 +192,11 @@ func TestDepositsNumberAndRootAtHeight(t *testing.T) {
 		dc, err := New()
 		require.NoError(t, err)
 
-		dc.deposits = []*ethpb.DepositContainer{
+		dc.deposits = []*silapb.DepositContainer{
 			{
 				Eth1BlockHeight: 8,
 				Index:           0,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 				DepositRoot:     wantedRoot,
 			},
 		}
@@ -208,32 +208,32 @@ func TestDepositsNumberAndRootAtHeight(t *testing.T) {
 		dc, err := New()
 		require.NoError(t, err)
 
-		dc.deposits = []*ethpb.DepositContainer{
+		dc.deposits = []*silapb.DepositContainer{
 			{
 				Eth1BlockHeight: 8,
 				Index:           0,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 			},
 			{
 				Eth1BlockHeight: 8,
 				Index:           1,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 			},
 			{
 				Eth1BlockHeight: 9,
 				Index:           2,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 				DepositRoot:     wantedRoot,
 			},
 			{
 				Eth1BlockHeight: 10,
 				Index:           3,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 			},
 			{
 				Eth1BlockHeight: 10,
 				Index:           4,
-				Deposit:         &ethpb.Deposit{},
+				Deposit:         &silapb.Deposit{},
 			},
 		}
 		n, root := dc.DepositsNumberAndRootAtHeight(t.Context(), big.NewInt(9))
@@ -245,11 +245,11 @@ func TestDepositsNumberAndRootAtHeight(t *testing.T) {
 func TestDepositByPubkey_ReturnsFirstMatchingDeposit(t *testing.T) {
 	dc, err := New()
 	require.NoError(t, err)
-	ctrs := []*ethpb.DepositContainer{
+	ctrs := []*silapb.DepositContainer{
 		{
 			Eth1BlockHeight: 9,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("pk0"), 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -258,8 +258,8 @@ func TestDepositByPubkey_ReturnsFirstMatchingDeposit(t *testing.T) {
 		},
 		{
 			Eth1BlockHeight: 10,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("pk1"), 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -268,8 +268,8 @@ func TestDepositByPubkey_ReturnsFirstMatchingDeposit(t *testing.T) {
 		},
 		{
 			Eth1BlockHeight: 11,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("pk1"), 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -278,8 +278,8 @@ func TestDepositByPubkey_ReturnsFirstMatchingDeposit(t *testing.T) {
 		},
 		{
 			Eth1BlockHeight: 12,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("pk2"), 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -303,17 +303,17 @@ func TestInsertDepositContainers_NotNil(t *testing.T) {
 	dc, err := New()
 	require.NoError(t, err)
 	dc.InsertDepositContainers(t.Context(), nil)
-	assert.DeepEqual(t, []*ethpb.DepositContainer{}, dc.deposits)
+	assert.DeepEqual(t, []*silapb.DepositContainer{}, dc.deposits)
 }
 
 func TestFinalizedDeposits_DepositsCachedCorrectly(t *testing.T) {
 	dc, err := New()
 	require.NoError(t, err)
 
-	finalizedDeposits := []*ethpb.DepositContainer{
+	finalizedDeposits := []*silapb.DepositContainer{
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{0}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -322,8 +322,8 @@ func TestFinalizedDeposits_DepositsCachedCorrectly(t *testing.T) {
 			Index: 0,
 		},
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{1}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -332,8 +332,8 @@ func TestFinalizedDeposits_DepositsCachedCorrectly(t *testing.T) {
 			Index: 1,
 		},
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{2}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -342,9 +342,9 @@ func TestFinalizedDeposits_DepositsCachedCorrectly(t *testing.T) {
 			Index: 2,
 		},
 	}
-	dc.deposits = append(finalizedDeposits, &ethpb.DepositContainer{
-		Deposit: &ethpb.Deposit{
-			Data: &ethpb.Deposit_Data{
+	dc.deposits = append(finalizedDeposits, &silapb.DepositContainer{
+		Deposit: &silapb.Deposit{
+			Data: &silapb.Deposit_Data{
 				PublicKey:             bytesutil.PadTo([]byte{3}, 48),
 				WithdrawalCredentials: make([]byte, 32),
 				Signature:             make([]byte, 96),
@@ -385,10 +385,10 @@ func TestFinalizedDeposits_UtilizesPreviouslyCachedDeposits(t *testing.T) {
 	dc, err := New()
 	require.NoError(t, err)
 
-	oldFinalizedDeposits := []*ethpb.DepositContainer{
+	oldFinalizedDeposits := []*silapb.DepositContainer{
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{0}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -397,8 +397,8 @@ func TestFinalizedDeposits_UtilizesPreviouslyCachedDeposits(t *testing.T) {
 			Index: 0,
 		},
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{1}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -407,9 +407,9 @@ func TestFinalizedDeposits_UtilizesPreviouslyCachedDeposits(t *testing.T) {
 			Index: 1,
 		},
 	}
-	newFinalizedDeposit := &ethpb.DepositContainer{
-		Deposit: &ethpb.Deposit{
-			Data: &ethpb.Deposit_Data{
+	newFinalizedDeposit := &silapb.DepositContainer{
+		Deposit: &silapb.Deposit{
+			Data: &silapb.Deposit_Data{
 				PublicKey:             bytesutil.PadTo([]byte{2}, 48),
 				WithdrawalCredentials: make([]byte, 32),
 				Signature:             make([]byte, 96),
@@ -430,7 +430,7 @@ func TestFinalizedDeposits_UtilizesPreviouslyCachedDeposits(t *testing.T) {
 	err = dc.InsertFinalizedDeposits(t.Context(), 2, [32]byte{}, 0)
 	require.NoError(t, err)
 
-	dc.deposits = append(dc.deposits, []*ethpb.DepositContainer{newFinalizedDeposit}...)
+	dc.deposits = append(dc.deposits, []*silapb.DepositContainer{newFinalizedDeposit}...)
 
 	cachedDeposits, err := dc.FinalizedDeposits(t.Context())
 	require.NoError(t, err)
@@ -471,10 +471,10 @@ func TestFinalizedDeposits_HandleSmallerThanExpectedDeposits(t *testing.T) {
 	dc, err := New()
 	require.NoError(t, err)
 
-	finalizedDeposits := []*ethpb.DepositContainer{
+	finalizedDeposits := []*silapb.DepositContainer{
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{0}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -484,8 +484,8 @@ func TestFinalizedDeposits_HandleSmallerThanExpectedDeposits(t *testing.T) {
 			Index:       0,
 		},
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{1}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -495,8 +495,8 @@ func TestFinalizedDeposits_HandleSmallerThanExpectedDeposits(t *testing.T) {
 			Index:       1,
 		},
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{2}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -521,10 +521,10 @@ func TestFinalizedDeposits_HandleLowerEth1DepositIndex(t *testing.T) {
 	dc, err := New()
 	require.NoError(t, err)
 
-	finalizedDeposits := []*ethpb.DepositContainer{
+	finalizedDeposits := []*silapb.DepositContainer{
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{0}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -534,8 +534,8 @@ func TestFinalizedDeposits_HandleLowerEth1DepositIndex(t *testing.T) {
 			DepositRoot: rootCreator('A'),
 		},
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{1}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -545,8 +545,8 @@ func TestFinalizedDeposits_HandleLowerEth1DepositIndex(t *testing.T) {
 			DepositRoot: rootCreator('B'),
 		},
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{2}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -556,8 +556,8 @@ func TestFinalizedDeposits_HandleLowerEth1DepositIndex(t *testing.T) {
 			DepositRoot: rootCreator('C'),
 		},
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{3}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -567,8 +567,8 @@ func TestFinalizedDeposits_HandleLowerEth1DepositIndex(t *testing.T) {
 			DepositRoot: rootCreator('D'),
 		},
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{4}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -578,8 +578,8 @@ func TestFinalizedDeposits_HandleLowerEth1DepositIndex(t *testing.T) {
 			DepositRoot: rootCreator('E'),
 		},
 		{
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{5}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -618,11 +618,11 @@ func TestNonFinalizedDeposits_ReturnsAllNonFinalizedDeposits(t *testing.T) {
 	dc, err := New()
 	require.NoError(t, err)
 
-	finalizedDeposits := []*ethpb.DepositContainer{
+	finalizedDeposits := []*silapb.DepositContainer{
 		{
 			Eth1BlockHeight: 10,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{0}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -633,8 +633,8 @@ func TestNonFinalizedDeposits_ReturnsAllNonFinalizedDeposits(t *testing.T) {
 		},
 		{
 			Eth1BlockHeight: 10,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{1}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -645,10 +645,10 @@ func TestNonFinalizedDeposits_ReturnsAllNonFinalizedDeposits(t *testing.T) {
 		},
 	}
 	dc.deposits = append(finalizedDeposits,
-		&ethpb.DepositContainer{
+		&silapb.DepositContainer{
 			Eth1BlockHeight: 10,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{2}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -657,10 +657,10 @@ func TestNonFinalizedDeposits_ReturnsAllNonFinalizedDeposits(t *testing.T) {
 			Index:       2,
 			DepositRoot: rootCreator('C'),
 		},
-		&ethpb.DepositContainer{
+		&silapb.DepositContainer{
 			Eth1BlockHeight: 11,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{3}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -688,11 +688,11 @@ func TestNonFinalizedDeposits_ReturnsNonFinalizedDepositsUpToBlockNumber(t *test
 	dc, err := New()
 	require.NoError(t, err)
 
-	finalizedDeposits := []*ethpb.DepositContainer{
+	finalizedDeposits := []*silapb.DepositContainer{
 		{
 			Eth1BlockHeight: 10,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{0}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -703,8 +703,8 @@ func TestNonFinalizedDeposits_ReturnsNonFinalizedDepositsUpToBlockNumber(t *test
 		},
 		{
 			Eth1BlockHeight: 10,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{1}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -715,10 +715,10 @@ func TestNonFinalizedDeposits_ReturnsNonFinalizedDepositsUpToBlockNumber(t *test
 		},
 	}
 	dc.deposits = append(finalizedDeposits,
-		&ethpb.DepositContainer{
+		&silapb.DepositContainer{
 			Eth1BlockHeight: 10,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{2}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -727,10 +727,10 @@ func TestNonFinalizedDeposits_ReturnsNonFinalizedDepositsUpToBlockNumber(t *test
 			Index:       2,
 			DepositRoot: rootCreator('C'),
 		},
-		&ethpb.DepositContainer{
+		&silapb.DepositContainer{
 			Eth1BlockHeight: 11,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{3}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -750,9 +750,9 @@ func TestFinalizedDeposits_ReturnsTrieCorrectly(t *testing.T) {
 	dc, err := New()
 	require.NoError(t, err)
 
-	generateCtr := func(height uint64, index int64) *ethpb.DepositContainer {
-		dep := &ethpb.Deposit{
-			Data: &ethpb.Deposit_Data{
+	generateCtr := func(height uint64, index int64) *silapb.DepositContainer {
+		dep := &silapb.Deposit{
+			Data: &silapb.Deposit_Data{
 				PublicKey:             bytesutil.PadTo([]byte{uint8(index)}, 48),
 				WithdrawalCredentials: make([]byte, 32),
 				Signature:             make([]byte, 96),
@@ -760,7 +760,7 @@ func TestFinalizedDeposits_ReturnsTrieCorrectly(t *testing.T) {
 		}
 		dRoot, err := dep.Data.HashTreeRoot()
 		require.NoError(t, err)
-		return &ethpb.DepositContainer{
+		return &silapb.DepositContainer{
 			Eth1BlockHeight: height,
 			Deposit:         dep,
 			Index:           index,
@@ -768,7 +768,7 @@ func TestFinalizedDeposits_ReturnsTrieCorrectly(t *testing.T) {
 		}
 	}
 
-	var ctrs []*ethpb.DepositContainer
+	var ctrs []*silapb.DepositContainer
 	for i := range 2000 {
 		ctrs = append(ctrs, generateCtr(uint64(10+(i/2)), int64(i)))
 	}
@@ -861,11 +861,11 @@ func TestFinalizedDeposits_ReturnsTrieCorrectly(t *testing.T) {
 func TestMin(t *testing.T) {
 	dc, err := New()
 	require.NoError(t, err)
-	generateCtr := func(height uint64, index int64) *ethpb.DepositContainer {
-		return &ethpb.DepositContainer{
+	generateCtr := func(height uint64, index int64) *silapb.DepositContainer {
+		return &silapb.DepositContainer{
 			Eth1BlockHeight: height,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{uint8(index)}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -875,7 +875,7 @@ func TestMin(t *testing.T) {
 		}
 	}
 
-	finalizedDeposits := []*ethpb.DepositContainer{
+	finalizedDeposits := []*silapb.DepositContainer{
 		generateCtr(10, 0),
 		generateCtr(11, 1),
 		generateCtr(12, 2),
@@ -908,17 +908,17 @@ func TestDepositMap_WorksCorrectly(t *testing.T) {
 
 	pk0 := bytesutil.PadTo([]byte("pk0"), 48)
 	dep, _ := dc.DepositByPubkey(t.Context(), pk0)
-	var nilDep *ethpb.Deposit
+	var nilDep *silapb.Deposit
 	assert.DeepEqual(t, nilDep, dep)
 
-	dep = &ethpb.Deposit{Proof: makeDepositProof(), Data: &ethpb.Deposit_Data{PublicKey: pk0, Amount: 1000}}
+	dep = &silapb.Deposit{Proof: makeDepositProof(), Data: &silapb.Deposit_Data{PublicKey: pk0, Amount: 1000}}
 	assert.NoError(t, dc.InsertDeposit(t.Context(), dep, 1000, 0, [32]byte{}))
 
 	dep, _ = dc.DepositByPubkey(t.Context(), pk0)
 	assert.NotEqual(t, nilDep, dep)
 	assert.Equal(t, uint64(1000), dep.Data.Amount)
 
-	dep = &ethpb.Deposit{Proof: makeDepositProof(), Data: &ethpb.Deposit_Data{PublicKey: pk0, Amount: 10000}}
+	dep = &silapb.Deposit{Proof: makeDepositProof(), Data: &silapb.Deposit_Data{PublicKey: pk0, Amount: 10000}}
 	assert.NoError(t, dc.InsertDeposit(t.Context(), dep, 1000, 1, [32]byte{}))
 
 	// Make sure we have the same deposit returned over here.

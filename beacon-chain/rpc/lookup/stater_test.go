@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/dbval"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -29,7 +29,7 @@ func TestGetState(t *testing.T) {
 	ctx := t.Context()
 
 	headSlot := primitives.Slot(123)
-	fillSlot := func(state *ethpb.BeaconState) error {
+	fillSlot := func(state *silapb.BeaconState) error {
 		state.Slot = headSlot
 		return nil
 	}
@@ -63,7 +63,7 @@ func TestGetState(t *testing.T) {
 		r, err := b.Block.HashTreeRoot()
 		require.NoError(t, err)
 
-		bs, err := util.NewBeaconState(func(state *ethpb.BeaconState) error {
+		bs, err := util.NewBeaconState(func(state *silapb.BeaconState) error {
 			state.BlockRoots[0] = r[:]
 			return nil
 		})
@@ -71,7 +71,7 @@ func TestGetState(t *testing.T) {
 		newStateRoot, err := bs.HashTreeRoot(ctx)
 		require.NoError(t, err)
 
-		require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: r[:]}))
+		require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: r[:]}))
 		require.NoError(t, db.SaveGenesisBlockRoot(ctx, r))
 		require.NoError(t, db.SaveState(ctx, bs, r))
 
@@ -101,7 +101,7 @@ func TestGetState(t *testing.T) {
 
 		p := BeaconDbStater{
 			ChainInfoFetcher: &chainMock.ChainService{
-				FinalizedCheckPoint: &ethpb.Checkpoint{
+				FinalizedCheckPoint: &silapb.Checkpoint{
 					Root:  stateRoot[:],
 					Epoch: 10,
 				},
@@ -125,7 +125,7 @@ func TestGetState(t *testing.T) {
 
 		p := BeaconDbStater{
 			ChainInfoFetcher: &chainMock.ChainService{
-				CurrentJustifiedCheckPoint: &ethpb.Checkpoint{
+				CurrentJustifiedCheckPoint: &silapb.Checkpoint{
 					Root:  stateRoot[:],
 					Epoch: 10,
 				},
@@ -218,7 +218,7 @@ func TestGetStateRoot(t *testing.T) {
 	ctx := t.Context()
 
 	headSlot := primitives.Slot(123)
-	fillSlot := func(state *ethpb.BeaconState) error {
+	fillSlot := func(state *silapb.BeaconState) error {
 		state.Slot = headSlot
 		return nil
 	}
@@ -250,13 +250,13 @@ func TestGetStateRoot(t *testing.T) {
 		r, err := b.Block.HashTreeRoot()
 		require.NoError(t, err)
 
-		bs, err := util.NewBeaconState(func(state *ethpb.BeaconState) error {
+		bs, err := util.NewBeaconState(func(state *silapb.BeaconState) error {
 			state.BlockRoots[0] = r[:]
 			return nil
 		})
 		require.NoError(t, err)
 
-		require.NoError(t, db.SaveStateSummary(ctx, &ethpb.StateSummary{Root: r[:]}))
+		require.NoError(t, db.SaveStateSummary(ctx, &silapb.StateSummary{Root: r[:]}))
 		require.NoError(t, db.SaveGenesisBlockRoot(ctx, r))
 		require.NoError(t, db.SaveState(ctx, bs, r))
 
@@ -280,7 +280,7 @@ func TestGetStateRoot(t *testing.T) {
 		blk.Block.Slot = 40
 		root, err := blk.Block.HashTreeRoot()
 		require.NoError(t, err)
-		cp := &ethpb.Checkpoint{
+		cp := &silapb.Checkpoint{
 			Epoch: 5,
 			Root:  root[:],
 		}
@@ -310,7 +310,7 @@ func TestGetStateRoot(t *testing.T) {
 		blk.Block.Slot = 40
 		root, err := blk.Block.HashTreeRoot()
 		require.NoError(t, err)
-		cp := &ethpb.Checkpoint{
+		cp := &silapb.Checkpoint{
 			Epoch: 5,
 			Root:  root[:],
 		}
@@ -434,9 +434,9 @@ func TestStateBySlot_FutureSlot(t *testing.T) {
 }
 
 func TestStateBySlot_AfterHeadSlot(t *testing.T) {
-	headSt, err := statenative.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: 100})
+	headSt, err := statenative.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: 100})
 	require.NoError(t, err)
-	slotSt, err := statenative.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: 101})
+	slotSt, err := statenative.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: 101})
 	require.NoError(t, err)
 	currentSlot := primitives.Slot(102)
 	mock := &chainMock.ChainService{State: headSt, Slot: &currentSlot}
@@ -521,7 +521,7 @@ func TestStateByEpoch(t *testing.T) {
 	t.Run("current epoch uses head state", func(t *testing.T) {
 		// Head is at slot 5 (epoch 0), requesting epoch 0
 		headSlot := primitives.Slot(5)
-		headSt, err := statenative.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: headSlot})
+		headSt, err := statenative.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: headSlot})
 		require.NoError(t, err)
 
 		currentSlot := headSlot
@@ -538,7 +538,7 @@ func TestStateByEpoch(t *testing.T) {
 		// Head is at slot 5 (epoch 0), requesting epoch 1
 		// Current slot is 32 (epoch 1), so epoch 1 is current epoch
 		headSlot := primitives.Slot(5)
-		headSt, err := statenative.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: headSlot})
+		headSt, err := statenative.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: headSlot})
 		require.NoError(t, err)
 
 		currentSlot := slotsPerEpoch // slot 32, epoch 1
@@ -556,10 +556,10 @@ func TestStateByEpoch(t *testing.T) {
 	t.Run("past epoch uses replay", func(t *testing.T) {
 		// Head is at epoch 2, requesting epoch 0 (past)
 		headSlot := slotsPerEpoch * 2 // slot 64, epoch 2
-		headSt, err := statenative.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: headSlot})
+		headSt, err := statenative.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: headSlot})
 		require.NoError(t, err)
 
-		pastEpochSt, err := statenative.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: 0})
+		pastEpochSt, err := statenative.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: 0})
 		require.NoError(t, err)
 
 		currentSlot := headSlot
@@ -577,7 +577,7 @@ func TestStateByEpoch(t *testing.T) {
 		// Head is at slot 30 (epoch 0), requesting epoch 1 (next)
 		// Current slot is 30 (epoch 0), so epoch 1 is next epoch
 		headSlot := primitives.Slot(30)
-		headSt, err := statenative.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: headSlot})
+		headSt, err := statenative.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: headSlot})
 		require.NoError(t, err)
 
 		currentSlot := headSlot
@@ -593,7 +593,7 @@ func TestStateByEpoch(t *testing.T) {
 	t.Run("head state already at target slot returns immediately", func(t *testing.T) {
 		// Head is at slot 32 (epoch 1 start), requesting epoch 1
 		headSlot := slotsPerEpoch // slot 32
-		headSt, err := statenative.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: headSlot})
+		headSt, err := statenative.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: headSlot})
 		require.NoError(t, err)
 
 		currentSlot := headSlot
@@ -608,7 +608,7 @@ func TestStateByEpoch(t *testing.T) {
 	t.Run("head state past target slot returns head state", func(t *testing.T) {
 		// Head is at slot 40, requesting epoch 1 (starts at slot 32)
 		headSlot := primitives.Slot(40)
-		headSt, err := statenative.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: headSlot})
+		headSt, err := statenative.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: headSlot})
 		require.NoError(t, err)
 
 		currentSlot := headSlot

@@ -22,7 +22,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/dustin/go-humanize"
 	log "github.com/sirupsen/logrus"
 	"github.com/status-im/keycard-go/hexutils"
@@ -515,17 +515,17 @@ func sizeAndCountGeneric(genericItems any, err error) (uint64, uint64) {
 	}
 
 	switch items := genericItems.(type) {
-	case []*ethpb.Eth1Data:
+	case []*silapb.Eth1Data:
 		for _, item := range items {
 			size += uint64(item.SizeSSZ())
 		}
 		count = uint64(len(items))
-	case []*ethpb.Validator:
+	case []*silapb.Validator:
 		for _, item := range items {
 			size += uint64(item.SizeSSZ())
 		}
 		count = uint64(len(items))
-	case []*ethpb.PendingAttestation:
+	case []*silapb.PendingAttestation:
 		for _, item := range items {
 			size += uint64(item.SizeSSZ())
 		}

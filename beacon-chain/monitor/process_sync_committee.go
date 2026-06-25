@@ -5,14 +5,14 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sirupsen/logrus"
 )
 
 // processSyncCommitteeContribution logs the event when tracked validators' aggregated sync contribution has been processed.
 // TODO: We do not log if a sync contribution was included in an aggregate (we log them when they are included in blocks)
-func (s *Service) processSyncCommitteeContribution(contribution *ethpb.SignedContributionAndProof) {
+func (s *Service) processSyncCommitteeContribution(contribution *silapb.SignedContributionAndProof) {
 	idx := contribution.Message.AggregatorIndex
 	s.Lock()
 	defer s.Unlock()

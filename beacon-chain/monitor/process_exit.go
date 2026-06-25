@@ -2,7 +2,7 @@ package monitor
 
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,7 +22,7 @@ func (s *Service) processExitsFromBlock(blk interfaces.ReadOnlyBeaconBlock) {
 }
 
 // processExit logs the event when tracked validators' exit was processed
-func (s *Service) processExit(exit *ethpb.SignedVoluntaryExit) {
+func (s *Service) processExit(exit *silapb.SignedVoluntaryExit) {
 	idx := exit.Exit.ValidatorIndex
 	s.RLock()
 	defer s.RUnlock()

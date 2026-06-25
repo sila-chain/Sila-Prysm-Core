@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	ssz "github.com/sila-chain/fastssz"
@@ -239,7 +239,7 @@ func (b *BeaconBlockBody) SetProposerSlashings([]*eth.ProposerSlashing) {
 	panic("implement me")
 }
 
-func (b *BeaconBlockBody) SetAttesterSlashings([]ethpb.AttesterSlashing) {
+func (b *BeaconBlockBody) SetAttesterSlashings([]silapb.AttesterSlashing) {
 	panic("implement me")
 }
 

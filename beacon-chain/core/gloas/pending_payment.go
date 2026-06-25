@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -39,7 +39,7 @@ func ProcessBuilderPendingPayments(ctx context.Context, state state.BeaconState)
 	}
 
 	slotsPerEpoch := uint64(params.BeaconConfig().SlotsPerEpoch)
-	var withdrawals []*ethpb.BuilderPendingWithdrawal
+	var withdrawals []*silapb.BuilderPendingWithdrawal
 	for _, payment := range payments[:slotsPerEpoch] {
 		if quorum > payment.Weight {
 			continue

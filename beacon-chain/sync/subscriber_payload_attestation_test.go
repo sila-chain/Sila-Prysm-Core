@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/payloadattestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -18,7 +18,7 @@ func TestPayloadAttestationSubscriber_WrongMessage(t *testing.T) {
 		payloadAttestationCache: &cache.PayloadAttestationCache{},
 		cfg:                     &config{chain: &mock.ChainService{}},
 	}
-	err := s.payloadAttestationSubscriber(t.Context(), &ethpb.SignedVoluntaryExit{})
+	err := s.payloadAttestationSubscriber(t.Context(), &silapb.SignedVoluntaryExit{})
 	require.ErrorIs(t, err, errWrongMessage)
 }
 
@@ -27,7 +27,7 @@ func TestPayloadAttestationSubscriber_NilData(t *testing.T) {
 		payloadAttestationCache: &cache.PayloadAttestationCache{},
 		cfg:                     &config{chain: &mock.ChainService{}},
 	}
-	err := s.payloadAttestationSubscriber(t.Context(), &ethpb.PayloadAttestationMessage{})
+	err := s.payloadAttestationSubscriber(t.Context(), &silapb.PayloadAttestationMessage{})
 	require.ErrorIs(t, err, errNilMessage)
 }
 
@@ -45,9 +45,9 @@ func TestPayloadAttestationSubscriber_NoPool(t *testing.T) {
 			operationNotifier:      &mock.MockOperationNotifier{},
 		},
 	}
-	msg := &ethpb.PayloadAttestationMessage{
+	msg := &silapb.PayloadAttestationMessage{
 		ValidatorIndex: ptc[0],
-		Data: &ethpb.PayloadAttestationData{
+		Data: &silapb.PayloadAttestationData{
 			BeaconBlockRoot: make([]byte, 32),
 			Slot:            0,
 		},
@@ -68,9 +68,9 @@ func TestPayloadAttestationSubscriber_HeadStateError(t *testing.T) {
 			operationNotifier:      &mock.MockOperationNotifier{},
 		},
 	}
-	msg := &ethpb.PayloadAttestationMessage{
+	msg := &silapb.PayloadAttestationMessage{
 		ValidatorIndex: 0,
-		Data: &ethpb.PayloadAttestationData{
+		Data: &silapb.PayloadAttestationData{
 			BeaconBlockRoot: make([]byte, 32),
 			Slot:            0,
 		},
@@ -94,9 +94,9 @@ func TestPayloadAttestationSubscriber_ValidatorInPTC(t *testing.T) {
 			operationNotifier:      &mock.MockOperationNotifier{},
 		},
 	}
-	msg := &ethpb.PayloadAttestationMessage{
+	msg := &silapb.PayloadAttestationMessage{
 		ValidatorIndex: ptc[0],
-		Data: &ethpb.PayloadAttestationData{
+		Data: &silapb.PayloadAttestationData{
 			BeaconBlockRoot: make([]byte, 32),
 			Slot:            0,
 		},
@@ -131,9 +131,9 @@ func TestPayloadAttestationSubscriber_ValidatorNotInPTC(t *testing.T) {
 			operationNotifier:      &mock.MockOperationNotifier{},
 		},
 	}
-	msg := &ethpb.PayloadAttestationMessage{
+	msg := &silapb.PayloadAttestationMessage{
 		ValidatorIndex: notInPTC,
-		Data: &ethpb.PayloadAttestationData{
+		Data: &silapb.PayloadAttestationData{
 			BeaconBlockRoot: make([]byte, 32),
 			Slot:            0,
 		},

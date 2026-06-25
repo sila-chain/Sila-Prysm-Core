@@ -6,7 +6,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -24,7 +24,7 @@ type readOnlyValidator struct {
 var _ = state.ReadOnlyValidator(readOnlyValidator{})
 
 // NewValidator initializes the read only wrapper for validator from a proto.
-func NewValidator(v *ethpb.Validator) (state.ReadOnlyValidator, error) {
+func NewValidator(v *silapb.Validator) (state.ReadOnlyValidator, error) {
 	if v == nil {
 		return nil, ErrNilWrappedValidator
 	}
@@ -106,6 +106,6 @@ func (v readOnlyValidator) HasExecutionWithdrawalCredentials() bool {
 }
 
 // Copy returns a new validator from the read only validator
-func (v readOnlyValidator) Copy() *ethpb.Validator {
+func (v readOnlyValidator) Copy() *silapb.Validator {
 	return v.validator.ToProto()
 }

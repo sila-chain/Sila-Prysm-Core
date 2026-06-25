@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -24,7 +24,7 @@ func (c *blobsTestCase) defaultOldestSlotByRange(t *testing.T) types.Slot {
 func blobRangeRequestFromSidecars(scs []blocks.ROBlob) any {
 	maxBlobs := params.BeaconConfig().MaxBlobsPerBlock(scs[0].Slot())
 	count := uint64(len(scs) / maxBlobs)
-	return &ethpb.BlobSidecarsByRangeRequest{
+	return &silapb.BlobSidecarsByRangeRequest{
 		StartSlot: scs[0].Slot(),
 		Count:     count,
 	}
@@ -34,7 +34,7 @@ func (c *blobsTestCase) filterExpectedByRange(t *testing.T, scs []blocks.ROBlob,
 	var expect []*expectedBlobChunk
 	blockOffset := 0
 	lastRoot := scs[0].BlockRoot()
-	rreq, ok := req.(*ethpb.BlobSidecarsByRangeRequest)
+	rreq, ok := req.(*silapb.BlobSidecarsByRangeRequest)
 	require.Equal(t, true, ok)
 	var writes uint64
 	for i := range scs {
@@ -101,7 +101,7 @@ func TestBlobByRangeOK(t *testing.T) {
 			name:    "10 slots before window, 10 slots after, count = 20",
 			nblocks: 10,
 			requestFromSidecars: func(scs []blocks.ROBlob) any {
-				return &ethpb.BlobSidecarsByRangeRequest{
+				return &silapb.BlobSidecarsByRangeRequest{
 					StartSlot: scs[0].Slot() - 10,
 					Count:     20,
 				}
@@ -111,7 +111,7 @@ func TestBlobByRangeOK(t *testing.T) {
 			name:    "request before window, empty response",
 			nblocks: 10,
 			requestFromSidecars: func(scs []blocks.ROBlob) any {
-				return &ethpb.BlobSidecarsByRangeRequest{
+				return &silapb.BlobSidecarsByRangeRequest{
 					StartSlot: scs[0].Slot() - 10,
 					Count:     10,
 				}
@@ -122,7 +122,7 @@ func TestBlobByRangeOK(t *testing.T) {
 			name:    "10 blocks * 4 blobs = 40",
 			nblocks: 10,
 			requestFromSidecars: func(scs []blocks.ROBlob) any {
-				return &ethpb.BlobSidecarsByRangeRequest{
+				return &silapb.BlobSidecarsByRangeRequest{
 					StartSlot: scs[0].Slot() - 10,
 					Count:     20,
 				}
@@ -133,7 +133,7 @@ func TestBlobByRangeOK(t *testing.T) {
 			name:    "when request count > MAX_REQUEST_BLOCKS_DENEB, MAX_REQUEST_BLOBS_SIDECARS sidecars in response",
 			nblocks: int(params.BeaconConfig().MaxRequestBlocksDeneb) + 1,
 			requestFromSidecars: func(scs []blocks.ROBlob) any {
-				return &ethpb.BlobSidecarsByRangeRequest{
+				return &silapb.BlobSidecarsByRangeRequest{
 					StartSlot: scs[0].Slot(),
 					Count:     params.BeaconConfig().MaxRequestBlocksDeneb + 1,
 				}
@@ -170,7 +170,7 @@ func TestBlobsByRangeValidation(t *testing.T) {
 	cases := []struct {
 		name    string
 		current types.Slot
-		req     *ethpb.BlobSidecarsByRangeRequest
+		req     *silapb.BlobSidecarsByRangeRequest
 
 		start types.Slot
 		end   types.Slot
@@ -180,7 +180,7 @@ func TestBlobsByRangeValidation(t *testing.T) {
 		{
 			name:    "start at current",
 			current: denebSlot + 100,
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: denebSlot + 100,
 				Count:     10,
 			},
@@ -191,7 +191,7 @@ func TestBlobsByRangeValidation(t *testing.T) {
 		{
 			name:    "start after current",
 			current: denebSlot,
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: denebSlot + 100,
 				Count:     10,
 			},
@@ -202,7 +202,7 @@ func TestBlobsByRangeValidation(t *testing.T) {
 		{
 			name:    "start before current_epoch - MIN_EPOCHS_FOR_BLOB_SIDECARS_REQUESTS",
 			current: defaultCurrent,
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: defaultMinStart - 100,
 				Count:     10,
 			},
@@ -213,7 +213,7 @@ func TestBlobsByRangeValidation(t *testing.T) {
 		{
 			name:    "start before current_epoch - MIN_EPOCHS_FOR_BLOB_SIDECARS_REQUESTS - end still valid",
 			current: defaultCurrent,
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: defaultMinStart - 10,
 				Count:     20,
 			},
@@ -224,7 +224,7 @@ func TestBlobsByRangeValidation(t *testing.T) {
 		{
 			name:    "count > MAX_REQUEST_BLOB_SIDECARS",
 			current: defaultCurrent,
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: defaultMinStart - 10,
 				Count:     1000,
 			},
@@ -236,7 +236,7 @@ func TestBlobsByRangeValidation(t *testing.T) {
 		{
 			name:    "start + count > current",
 			current: defaultCurrent,
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: defaultCurrent + 100,
 				Count:     100,
 			},
@@ -247,7 +247,7 @@ func TestBlobsByRangeValidation(t *testing.T) {
 		{
 			name:    "start before deneb",
 			current: defaultCurrent - minReqSlots + 100,
-			req: &ethpb.BlobSidecarsByRangeRequest{
+			req: &silapb.BlobSidecarsByRangeRequest{
 				StartSlot: denebSlot - 10,
 				Count:     100,
 			},

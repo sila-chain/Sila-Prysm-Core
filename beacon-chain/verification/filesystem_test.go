@@ -6,7 +6,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/spf13/afero"
@@ -119,7 +119,7 @@ func TestVerifiedRODataColumnFromDisk(t *testing.T) {
 			kzgProofs[i] = make([]byte, 48)
 		}
 
-		original := &ethpb.DataColumnSidecarGloas{
+		original := &silapb.DataColumnSidecarGloas{
 			Index:           idx,
 			Slot:            slot,
 			BeaconBlockRoot: blockRoot[:],

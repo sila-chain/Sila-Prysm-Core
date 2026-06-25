@@ -21,7 +21,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/math"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -576,7 +576,7 @@ func TestStore_DeleteFinalizedState(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, finalizedState.SetSlot(100))
 	require.NoError(t, db.SaveState(ctx, finalizedState, finalizedBlockRoot))
-	finalizedCheckpoint := &ethpb.Checkpoint{Root: finalizedBlockRoot[:]}
+	finalizedCheckpoint := &silapb.Checkpoint{Root: finalizedBlockRoot[:]}
 	require.NoError(t, db.SaveFinalizedCheckpoint(ctx, finalizedCheckpoint))
 	wantedErr := "cannot delete finalized block or state"
 	assert.ErrorContains(t, wantedErr, db.DeleteState(ctx, finalizedBlockRoot))
@@ -725,7 +725,7 @@ func TestStore_CleanUpDirtyStates_AboveThreshold(t *testing.T) {
 		require.NoError(t, db.SaveState(t.Context(), st, r))
 	}
 
-	require.NoError(t, db.SaveFinalizedCheckpoint(t.Context(), &ethpb.Checkpoint{
+	require.NoError(t, db.SaveFinalizedCheckpoint(t.Context(), &silapb.Checkpoint{
 		Root:  bRoots[len(bRoots)-1][:],
 		Epoch: primitives.Epoch(slotsPerArchivedPoint / params.BeaconConfig().SlotsPerEpoch),
 	}))
@@ -765,7 +765,7 @@ func TestStore_CleanUpDirtyStates_Finalized(t *testing.T) {
 		require.NoError(t, db.SaveState(t.Context(), st, r))
 	}
 
-	require.NoError(t, db.SaveFinalizedCheckpoint(t.Context(), &ethpb.Checkpoint{Root: genesisRoot[:]}))
+	require.NoError(t, db.SaveFinalizedCheckpoint(t.Context(), &silapb.Checkpoint{Root: genesisRoot[:]}))
 	require.NoError(t, db.CleanUpDirtyStates(t.Context(), params.BeaconConfig().SlotsPerEpoch))
 	require.Equal(t, true, db.HasState(t.Context(), genesisRoot))
 }
@@ -826,7 +826,7 @@ func TestStore_CleanUpDirtyStates_DontDeleteNonFinalized(t *testing.T) {
 		require.NoError(t, db.SaveState(t.Context(), st, r))
 	}
 
-	require.NoError(t, db.SaveFinalizedCheckpoint(t.Context(), &ethpb.Checkpoint{Root: genesisRoot[:]}))
+	require.NoError(t, db.SaveFinalizedCheckpoint(t.Context(), &silapb.Checkpoint{Root: genesisRoot[:]}))
 	require.NoError(t, db.CleanUpDirtyStates(t.Context(), params.BeaconConfig().SlotsPerEpoch))
 
 	for _, rt := range unfinalizedRoots {
@@ -876,12 +876,12 @@ func TestAltairState_CanDelete(t *testing.T) {
 	require.Equal(t, state.ReadOnlyBeaconState(nil), savedS, "Unsaved state should've been nil")
 }
 
-func validators(limit int) []*ethpb.Validator {
-	var vals []*ethpb.Validator
+func validators(limit int) []*silapb.Validator {
+	var vals []*silapb.Validator
 	for i := range limit {
 		pubKey := make([]byte, params.BeaconConfig().BLSPubkeyLength)
 		binary.LittleEndian.PutUint64(pubKey, mathRand.Uint64())
-		val := &ethpb.Validator{
+		val := &silapb.Validator{
 			PublicKey:                  pubKey,
 			WithdrawalCredentials:      bytesutil.ToBytes(mathRand.Uint64(), 32),
 			EffectiveBalance:           mathRand.Uint64(),
@@ -1317,7 +1317,7 @@ func TestStore_CleanUpDirtyStates_NoOriginRoot(t *testing.T) {
 		require.NoError(t, st.SetSlot(i))
 		require.NoError(t, db.SaveState(t.Context(), st, r))
 	}
-	require.NoError(t, db.SaveFinalizedCheckpoint(t.Context(), &ethpb.Checkpoint{
+	require.NoError(t, db.SaveFinalizedCheckpoint(t.Context(), &silapb.Checkpoint{
 		Root:  bRoots[len(bRoots)-1][:],
 		Epoch: primitives.Epoch(slotsPerArchivedPoint / params.BeaconConfig().SlotsPerEpoch),
 	}))
@@ -1363,7 +1363,7 @@ func TestStore_CanSaveRetrieveStateUsingStateDiff(t *testing.T) {
 		require.NoError(t, err)
 
 		r := bytesutil.ToBytes32([]byte{'A'})
-		ss := &ethpb.StateSummary{Slot: 1, Root: r[:]} // slot 1 not in tree
+		ss := &silapb.StateSummary{Slot: 1, Root: r[:]} // slot 1 not in tree
 		err = db.SaveStateSummary(context.Background(), ss)
 		require.NoError(t, err)
 
@@ -1385,7 +1385,7 @@ func TestStore_CanSaveRetrieveStateUsingStateDiff(t *testing.T) {
 		require.NoError(t, err)
 
 		r := bytesutil.ToBytes32([]byte{'A'})
-		ss := &ethpb.StateSummary{Slot: 32, Root: r[:]} // slot 32 is in tree
+		ss := &silapb.StateSummary{Slot: 32, Root: r[:]} // slot 32 is in tree
 		err = db.SaveStateSummary(context.Background(), ss)
 		require.NoError(t, err)
 
@@ -1402,7 +1402,7 @@ func TestStore_CanSaveRetrieveStateUsingStateDiff(t *testing.T) {
 		require.NoError(t, err)
 
 		r := bytesutil.ToBytes32([]byte{'A'})
-		ss := &ethpb.StateSummary{Slot: 9, Root: r[:]}
+		ss := &silapb.StateSummary{Slot: 9, Root: r[:]}
 		err = db.SaveStateSummary(t.Context(), ss)
 		require.NoError(t, err)
 
@@ -1427,7 +1427,7 @@ func TestStore_CanSaveRetrieveStateUsingStateDiff(t *testing.T) {
 		require.NoError(t, err)
 
 		r := bytesutil.ToBytes32([]byte{'M'})
-		ss := &ethpb.StateSummary{Slot: 0, Root: r[:]}
+		ss := &silapb.StateSummary{Slot: 0, Root: r[:]}
 		err = db.SaveStateSummary(t.Context(), ss)
 		require.NoError(t, err)
 
@@ -1483,7 +1483,7 @@ func TestStore_CanSaveRetrieveStateUsingStateDiff(t *testing.T) {
 					require.NoError(t, err)
 
 					r := bytesutil.ToBytes32([]byte{'A'})
-					ss := &ethpb.StateSummary{Slot: 0, Root: r[:]}
+					ss := &silapb.StateSummary{Slot: 0, Root: r[:]}
 					err = db.SaveStateSummary(context.Background(), ss)
 					require.NoError(t, err)
 
@@ -1566,7 +1566,7 @@ func TestStore_CanSaveRetrieveStateUsingStateDiff(t *testing.T) {
 					require.NoError(t, err)
 
 					r := bytesutil.ToBytes32([]byte{'A'})
-					ss := &ethpb.StateSummary{Slot: slot, Root: r[:]}
+					ss := &silapb.StateSummary{Slot: slot, Root: r[:]}
 					err = db.SaveStateSummary(context.Background(), ss)
 					require.NoError(t, err)
 
@@ -1659,7 +1659,7 @@ func TestStore_HasStateUsingStateDiff(t *testing.T) {
 		require.NoError(t, err)
 
 		r := bytesutil.ToBytes32([]byte{'A'})
-		ss := &ethpb.StateSummary{Slot: 1, Root: r[:]} // slot 1 not in tree
+		ss := &silapb.StateSummary{Slot: 1, Root: r[:]} // slot 1 not in tree
 		err = db.SaveStateSummary(context.Background(), ss)
 		require.NoError(t, err)
 
@@ -1676,7 +1676,7 @@ func TestStore_HasStateUsingStateDiff(t *testing.T) {
 		require.NoError(t, err)
 
 		r := bytesutil.ToBytes32([]byte{'B'})
-		ss := &ethpb.StateSummary{Slot: 0, Root: r[:]}
+		ss := &silapb.StateSummary{Slot: 0, Root: r[:]}
 		err = db.SaveStateSummary(t.Context(), ss)
 		require.NoError(t, err)
 
@@ -1723,7 +1723,7 @@ func TestStore_HasStateUsingStateDiff(t *testing.T) {
 		require.NoError(t, setOffsetInDB(db, 0))
 
 		r := bytesutil.ToBytes32([]byte{'A'})
-		ss := &ethpb.StateSummary{Slot: 0, Root: r[:]}
+		ss := &silapb.StateSummary{Slot: 0, Root: r[:]}
 		err := db.SaveStateSummary(context.Background(), ss)
 		require.NoError(t, err)
 
@@ -1747,7 +1747,7 @@ func TestStore_HasStateUsingStateDiff(t *testing.T) {
 		require.NoError(t, setOffsetInDB(db, 0))
 
 		r := bytesutil.ToBytes32([]byte{'A'})
-		ss := &ethpb.StateSummary{Slot: 0, Root: r[:]}
+		ss := &silapb.StateSummary{Slot: 0, Root: r[:]}
 		err := db.SaveStateSummary(context.Background(), ss)
 		require.NoError(t, err)
 

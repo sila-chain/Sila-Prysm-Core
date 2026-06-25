@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	attaggregation "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -62,7 +62,7 @@ func (s *Service) batchForkChoiceAtts(ctx context.Context) error {
 	ctx, span := trace.StartSpan(ctx, "Operations.attestations.batchForkChoiceAtts")
 	defer span.End()
 
-	var atts []ethpb.Att
+	var atts []silapb.Att
 	if features.Get().EnableExperimentalAttestationPool {
 		atts = append(s.cfg.Cache.GetAll(), s.cfg.Cache.ForkchoiceAttestations()...)
 	} else {
@@ -73,7 +73,7 @@ func (s *Service) batchForkChoiceAtts(ctx context.Context) error {
 		atts = append(atts, s.cfg.Pool.ForkchoiceAttestations()...)
 	}
 
-	attsById := make(map[attestation.Id][]ethpb.Att, len(atts))
+	attsById := make(map[attestation.Id][]silapb.Att, len(atts))
 
 	// Consolidate attestations by aggregating them by similar data root.
 	for _, att := range atts {
@@ -111,8 +111,8 @@ func (s *Service) batchForkChoiceAtts(ctx context.Context) error {
 
 // This aggregates a list of attestations using the aggregation algorithm defined in AggregateAttestations
 // and saves the attestations for fork choice.
-func (s *Service) aggregateAndSaveForkChoiceAtts(atts []ethpb.Att) error {
-	clonedAtts := make([]ethpb.Att, len(atts))
+func (s *Service) aggregateAndSaveForkChoiceAtts(atts []silapb.Att) error {
+	clonedAtts := make([]silapb.Att, len(atts))
 	for i, a := range atts {
 		clonedAtts[i] = a.Clone()
 	}
@@ -126,7 +126,7 @@ func (s *Service) aggregateAndSaveForkChoiceAtts(atts []ethpb.Att) error {
 
 // This checks if the attestation has previously been aggregated for fork choice
 // return true if yes, false if no.
-func (s *Service) seen(att ethpb.Att) (bool, error) {
+func (s *Service) seen(att silapb.Att) (bool, error) {
 	id, err := attestation.NewId(att, attestation.Data)
 	if err != nil {
 		return false, errors.Wrap(err, "could not create attestation ID")

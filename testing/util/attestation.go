@@ -16,23 +16,23 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/rand"
-	attv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	attv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	log "github.com/sirupsen/logrus"
 )
 
 // NewAttestation creates a block attestation with minimum marshalable fields.
-func NewAttestation() *ethpb.Attestation {
-	return &ethpb.Attestation{
+func NewAttestation() *silapb.Attestation {
+	return &silapb.Attestation{
 		AggregationBits: bitfield.Bitlist{0b1101},
-		Data: &ethpb.AttestationData{
+		Data: &silapb.AttestationData{
 			BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Root: make([]byte, fieldparams.RootLength),
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Root: make([]byte, fieldparams.RootLength),
 			},
 		},
@@ -41,18 +41,18 @@ func NewAttestation() *ethpb.Attestation {
 }
 
 // NewAttestationElectra creates a block attestation with minimum marshalable fields.
-func NewAttestationElectra() *ethpb.AttestationElectra {
+func NewAttestationElectra() *silapb.AttestationElectra {
 	cb := primitives.NewAttestationCommitteeBits()
 	cb.SetBitAt(0, true)
-	return &ethpb.AttestationElectra{
+	return &silapb.AttestationElectra{
 		AggregationBits: bitfield.Bitlist{0b1101},
 		CommitteeBits:   cb,
-		Data: &ethpb.AttestationData{
+		Data: &silapb.AttestationData{
 			BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Root: make([]byte, fieldparams.RootLength),
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Root: make([]byte, fieldparams.RootLength),
 			},
 		},
@@ -67,8 +67,8 @@ func NewAttestationElectra() *ethpb.AttestationElectra {
 // for the same data with their aggregation bits split uniformly.
 //
 // If you request 4 attestations, but there are 8 committees, you will get 4 fully aggregated attestations.
-func GenerateAttestations(bState state.BeaconState, privs []bls.SecretKey, numToGen uint64, slot primitives.Slot, randomRoot bool) ([]ethpb.Att, error) { // nolint:gocognit
-	var attestations []ethpb.Att
+func GenerateAttestations(bState state.BeaconState, privs []bls.SecretKey, numToGen uint64, slot primitives.Slot, randomRoot bool) ([]silapb.Att, error) { // nolint:gocognit
+	var attestations []silapb.Att
 	generateHeadState := false
 	bState = bState.Copy()
 	if slot > bState.Slot() {
@@ -232,12 +232,12 @@ func GenerateAttestations(bState state.BeaconState, privs []bls.SecretKey, numTo
 			// committee index must be 0 post-Electra
 			ci = 0
 		}
-		attData := &ethpb.AttestationData{
+		attData := &silapb.AttestationData{
 			Slot:            slot,
 			CommitteeIndex:  ci,
 			BeaconBlockRoot: headRoot,
 			Source:          bState.CurrentJustifiedCheckpoint(),
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: currentEpoch,
 				Root:  targetRoot,
 			},
@@ -263,18 +263,18 @@ func GenerateAttestations(bState state.BeaconState, privs []bls.SecretKey, numTo
 				continue
 			}
 
-			var att ethpb.Att
+			var att silapb.Att
 			if bState.Version() >= version.Electra {
 				cb := primitives.NewAttestationCommitteeBits()
 				cb.SetBitAt(uint64(c), true)
-				att = &ethpb.AttestationElectra{
+				att = &silapb.AttestationElectra{
 					Data:            attData,
 					CommitteeBits:   cb,
 					AggregationBits: aggregationBits,
 					Signature:       bls.AggregateSignatures(sigs).Marshal(),
 				}
 			} else {
-				att = &ethpb.Attestation{
+				att = &silapb.Attestation{
 					Data:            attData,
 					AggregationBits: aggregationBits,
 					Signature:       bls.AggregateSignatures(sigs).Marshal(),
@@ -288,7 +288,7 @@ func GenerateAttestations(bState state.BeaconState, privs []bls.SecretKey, numTo
 
 // HydrateAttestation hydrates an attestation object with correct field length sizes
 // to comply with fssz marshalling and unmarshalling rules.
-func HydrateAttestation(a *ethpb.Attestation) *ethpb.Attestation {
+func HydrateAttestation(a *silapb.Attestation) *silapb.Attestation {
 	if a.Signature == nil {
 		a.Signature = make([]byte, 96)
 	}
@@ -296,7 +296,7 @@ func HydrateAttestation(a *ethpb.Attestation) *ethpb.Attestation {
 		a.AggregationBits = make([]byte, 1)
 	}
 	if a.Data == nil {
-		a.Data = &ethpb.AttestationData{}
+		a.Data = &silapb.AttestationData{}
 	}
 	a.Data = HydrateAttestationData(a.Data)
 	return a
@@ -304,7 +304,7 @@ func HydrateAttestation(a *ethpb.Attestation) *ethpb.Attestation {
 
 // HydrateAttestationElectra hydrates an attestation object with correct field length sizes
 // to comply with fssz marshalling and unmarshalling rules.
-func HydrateAttestationElectra(a *ethpb.AttestationElectra) *ethpb.AttestationElectra {
+func HydrateAttestationElectra(a *silapb.AttestationElectra) *silapb.AttestationElectra {
 	if a.Signature == nil {
 		a.Signature = make([]byte, 96)
 	}
@@ -315,18 +315,18 @@ func HydrateAttestationElectra(a *ethpb.AttestationElectra) *ethpb.AttestationEl
 		a.CommitteeBits = primitives.NewAttestationCommitteeBits()
 	}
 	if a.Data == nil {
-		a.Data = &ethpb.AttestationData{}
+		a.Data = &silapb.AttestationData{}
 	}
 	a.Data = HydrateAttestationData(a.Data)
 	return a
 }
 
-func HydrateSingleAttestation(a *ethpb.SingleAttestation) *ethpb.SingleAttestation {
+func HydrateSingleAttestation(a *silapb.SingleAttestation) *silapb.SingleAttestation {
 	if a.Signature == nil {
 		a.Signature = make([]byte, 96)
 	}
 	if a.Data == nil {
-		a.Data = &ethpb.AttestationData{}
+		a.Data = &silapb.AttestationData{}
 	}
 	a.Data = HydrateAttestationData(a.Data)
 	return a
@@ -350,18 +350,18 @@ func HydrateV1Attestation(a *attv1.Attestation) *attv1.Attestation {
 
 // HydrateAttestationData hydrates an attestation data object with correct field length sizes
 // to comply with fssz marshalling and unmarshalling rules.
-func HydrateAttestationData(d *ethpb.AttestationData) *ethpb.AttestationData {
+func HydrateAttestationData(d *silapb.AttestationData) *silapb.AttestationData {
 	if d.BeaconBlockRoot == nil {
 		d.BeaconBlockRoot = make([]byte, fieldparams.RootLength)
 	}
 	if d.Target == nil {
-		d.Target = &ethpb.Checkpoint{}
+		d.Target = &silapb.Checkpoint{}
 	}
 	if d.Target.Root == nil {
 		d.Target.Root = make([]byte, fieldparams.RootLength)
 	}
 	if d.Source == nil {
-		d.Source = &ethpb.Checkpoint{}
+		d.Source = &silapb.Checkpoint{}
 	}
 	if d.Source.Root == nil {
 		d.Source.Root = make([]byte, fieldparams.RootLength)
@@ -392,12 +392,12 @@ func HydrateV1AttestationData(d *attv1.AttestationData) *attv1.AttestationData {
 
 // HydrateIndexedAttestation hydrates an indexed attestation with correct field length sizes
 // to comply with fssz marshalling and unmarshalling rules.
-func HydrateIndexedAttestation(a *ethpb.IndexedAttestation) *ethpb.IndexedAttestation {
+func HydrateIndexedAttestation(a *silapb.IndexedAttestation) *silapb.IndexedAttestation {
 	if a.Signature == nil {
 		a.Signature = make([]byte, 96)
 	}
 	if a.Data == nil {
-		a.Data = &ethpb.AttestationData{}
+		a.Data = &silapb.AttestationData{}
 	}
 	a.Data = HydrateAttestationData(a.Data)
 	return a
@@ -405,12 +405,12 @@ func HydrateIndexedAttestation(a *ethpb.IndexedAttestation) *ethpb.IndexedAttest
 
 // HydrateIndexedAttestationElectra hydrates an indexed attestation with correct field length sizes
 // to comply with fssz marshalling and unmarshalling rules.
-func HydrateIndexedAttestationElectra(a *ethpb.IndexedAttestationElectra) *ethpb.IndexedAttestationElectra {
+func HydrateIndexedAttestationElectra(a *silapb.IndexedAttestationElectra) *silapb.IndexedAttestationElectra {
 	if a.Signature == nil {
 		a.Signature = make([]byte, 96)
 	}
 	if a.Data == nil {
-		a.Data = &ethpb.AttestationData{}
+		a.Data = &silapb.AttestationData{}
 	}
 	a.Data = HydrateAttestationData(a.Data)
 	return a

@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // ProcessEffectiveBalanceUpdates processes effective balance updates during epoch processing.
@@ -38,7 +38,7 @@ func ProcessEffectiveBalanceUpdates(st state.BeaconState) error {
 	bals := st.Balances()
 
 	// Update effective balances with hysteresis.
-	validatorFunc := func(idx int, val state.ReadOnlyValidator) (newVal *ethpb.Validator, err error) {
+	validatorFunc := func(idx int, val state.ReadOnlyValidator) (newVal *silapb.Validator, err error) {
 		if idx >= len(bals) {
 			return nil, fmt.Errorf("validator index exceeds validator length in state %d >= %d", idx, len(st.Balances()))
 		}

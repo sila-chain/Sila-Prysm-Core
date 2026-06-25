@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/slice"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -18,8 +18,8 @@ import (
 // Submission into this pool does not guarantee inclusion into a beacon block.
 func (bs *Server) SubmitProposerSlashing(
 	ctx context.Context,
-	req *ethpb.ProposerSlashing,
-) (*ethpb.SubmitSlashingResponse, error) {
+	req *silapb.ProposerSlashing,
+) (*silapb.SubmitSlashingResponse, error) {
 	beaconState, err := bs.HeadFetcher.HeadStateReadOnly(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Could not retrieve head state: %v", err)
@@ -33,13 +33,13 @@ func (bs *Server) SubmitProposerSlashing(
 		}
 	}
 
-	return &ethpb.SubmitSlashingResponse{
+	return &silapb.SubmitSlashingResponse{
 		SlashedIndices: []primitives.ValidatorIndex{req.Header_1.Header.ProposerIndex},
 	}, nil
 }
 
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
-func (bs *Server) SubmitAttesterSlashing(ctx context.Context, req *ethpb.AttesterSlashing) (*ethpb.SubmitSlashingResponse, error) {
+func (bs *Server) SubmitAttesterSlashing(ctx context.Context, req *silapb.AttesterSlashing) (*silapb.SubmitSlashingResponse, error) {
 	return bs.submitAttesterSlashing(ctx, req)
 }
 
@@ -48,11 +48,11 @@ func (bs *Server) SubmitAttesterSlashing(ctx context.Context, req *ethpb.Atteste
 // SubmitAttesterSlashingElectra receives an attester slashing object via
 // RPC and injects it into the beacon node's operations pool.
 // Submission into this pool does not guarantee inclusion into a beacon block.
-func (bs *Server) SubmitAttesterSlashingElectra(ctx context.Context, req *ethpb.AttesterSlashingElectra) (*ethpb.SubmitSlashingResponse, error) {
+func (bs *Server) SubmitAttesterSlashingElectra(ctx context.Context, req *silapb.AttesterSlashingElectra) (*silapb.SubmitSlashingResponse, error) {
 	return bs.submitAttesterSlashing(ctx, req)
 }
 
-func (bs *Server) submitAttesterSlashing(ctx context.Context, slashing ethpb.AttSlashing) (*ethpb.SubmitSlashingResponse, error) {
+func (bs *Server) submitAttesterSlashing(ctx context.Context, slashing silapb.AttSlashing) (*silapb.SubmitSlashingResponse, error) {
 	beaconState, err := bs.HeadFetcher.HeadStateReadOnly(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Could not retrieve head state: %v", err)
@@ -70,7 +70,7 @@ func (bs *Server) submitAttesterSlashing(ctx context.Context, slashing ethpb.Att
 	for i, index := range indices {
 		slashedIndices[i] = primitives.ValidatorIndex(index)
 	}
-	return &ethpb.SubmitSlashingResponse{
+	return &silapb.SubmitSlashingResponse{
 		SlashedIndices: slashedIndices,
 	}, nil
 }

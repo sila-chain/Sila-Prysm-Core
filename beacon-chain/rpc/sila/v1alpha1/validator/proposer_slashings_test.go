@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/slashings"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -18,7 +18,7 @@ func TestServer_getSlashings(t *testing.T) {
 		SlashingsPool: slashings.NewPool(),
 	}
 
-	proposerSlashings := make([]*ethpb.ProposerSlashing, params.BeaconConfig().MaxProposerSlashings)
+	proposerSlashings := make([]*silapb.ProposerSlashing, params.BeaconConfig().MaxProposerSlashings)
 	for i := primitives.ValidatorIndex(0); uint64(i) < params.BeaconConfig().MaxProposerSlashings; i++ {
 		proposerSlashing, err := util.GenerateProposerSlashingForValidator(beaconState, privKeys[i], i)
 		require.NoError(t, err)
@@ -27,7 +27,7 @@ func TestServer_getSlashings(t *testing.T) {
 		require.NoError(t, err)
 	}
 
-	attSlashings := make([]ethpb.AttSlashing, params.BeaconConfig().MaxAttesterSlashings)
+	attSlashings := make([]silapb.AttSlashing, params.BeaconConfig().MaxAttesterSlashings)
 	for i := uint64(0); i < params.BeaconConfig().MaxAttesterSlashings; i++ {
 		attesterSlashing, err := util.GenerateAttesterSlashingForValidator(
 			beaconState,

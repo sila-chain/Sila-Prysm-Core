@@ -24,7 +24,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/wrapper"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	testpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -54,7 +54,7 @@ func TestService_Broadcast(t *testing.T) {
 		genesisValidatorsRoot: bytesutil.PadTo([]byte{'A'}, 32),
 	}
 
-	msg := &ethpb.Fork{
+	msg := &silapb.Fork{
 		Epoch:           55,
 		CurrentVersion:  []byte("fooo"),
 		PreviousVersion: []byte("barr"),
@@ -62,7 +62,7 @@ func TestService_Broadcast(t *testing.T) {
 
 	topic := "/sila/%x/testing"
 	// Set a test gossip mapping for testpb.TestSimpleMessage.
-	GossipTypeMapping[reflect.TypeFor[*ethpb.Fork]()] = topic
+	GossipTypeMapping[reflect.TypeFor[*silapb.Fork]()] = topic
 	digest, err := p.currentForkDigest()
 	require.NoError(t, err)
 	topic = fmt.Sprintf(topic, digest)
@@ -86,7 +86,7 @@ func TestService_Broadcast(t *testing.T) {
 		incomingMessage, err := sub.Next(ctx)
 		require.NoError(t, err)
 
-		result := &ethpb.Fork{}
+		result := &silapb.Fork{}
 		require.NoError(t, p.Encoding().DecodeGossip(incomingMessage.Data, result))
 		if !proto.Equal(result, msg) {
 			t.Errorf("Did not receive expected message, got %+v, wanted %+v", result, msg)
@@ -109,17 +109,17 @@ func TestService_Broadcast_ReturnsErr_TopicNotMapped(t *testing.T) {
 }
 
 func TestService_Attestation_Subnet(t *testing.T) {
-	if gtm := GossipTypeMapping[reflect.TypeFor[*ethpb.Attestation]()]; gtm != AttestationSubnetTopicFormat {
+	if gtm := GossipTypeMapping[reflect.TypeFor[*silapb.Attestation]()]; gtm != AttestationSubnetTopicFormat {
 		t.Errorf("Constant is out of date. Wanted %s, got %s", AttestationSubnetTopicFormat, gtm)
 	}
 
 	tests := []struct {
-		att   *ethpb.Attestation
+		att   *silapb.Attestation
 		topic string
 	}{
 		{
-			att: &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
+			att: &silapb.Attestation{
+				Data: &silapb.AttestationData{
 					CommitteeIndex: 0,
 					Slot:           2,
 				},
@@ -127,8 +127,8 @@ func TestService_Attestation_Subnet(t *testing.T) {
 			topic: "/sila/00000000/beacon_attestation_2",
 		},
 		{
-			att: &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
+			att: &silapb.Attestation{
+				Data: &silapb.AttestationData{
 					CommitteeIndex: 11,
 					Slot:           10,
 				},
@@ -136,8 +136,8 @@ func TestService_Attestation_Subnet(t *testing.T) {
 			topic: "/sila/00000000/beacon_attestation_21",
 		},
 		{
-			att: &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
+			att: &silapb.Attestation{
+				Data: &silapb.AttestationData{
 					CommitteeIndex: 55,
 					Slot:           529,
 				},
@@ -173,11 +173,11 @@ func TestService_BroadcastAttestation(t *testing.T) {
 		}),
 	}
 
-	msg := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.NewBitlist(7)})
+	msg := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.NewBitlist(7)})
 	subnet := uint64(5)
 
 	topic := AttestationSubnetTopicFormat
-	GossipTypeMapping[reflect.TypeFor[*ethpb.Attestation]()] = topic
+	GossipTypeMapping[reflect.TypeFor[*silapb.Attestation]()] = topic
 	digest, err := p.currentForkDigest()
 	require.NoError(t, err)
 	topic = fmt.Sprintf(topic, digest, subnet)
@@ -201,7 +201,7 @@ func TestService_BroadcastAttestation(t *testing.T) {
 		incomingMessage, err := sub.Next(ctx)
 		require.NoError(t, err)
 
-		result := &ethpb.Attestation{}
+		result := &silapb.Attestation{}
 		require.NoError(t, p.Encoding().DecodeGossip(incomingMessage.Data, result))
 		if !proto.Equal(result, msg) {
 			t.Errorf("Did not receive expected message, got %+v, wanted %+v", result, msg)
@@ -285,7 +285,7 @@ func TestService_BroadcastAttestationWithDiscoveryAttempts(t *testing.T) {
 		// Set for 2nd peer
 		if i == 2 {
 			s.dv5Listener = listener
-			s.metaData = wrapper.WrappedMetadataV0(new(ethpb.MetaDataV0))
+			s.metaData = wrapper.WrappedMetadataV0(new(silapb.MetaDataV0))
 			bitV := bitfield.NewBitvector64()
 			bitV.SetBitAt(subnet, true)
 			err := s.updateSubnetRecordWithMetadata(bitV)
@@ -359,9 +359,9 @@ func TestService_BroadcastAttestationWithDiscoveryAttempts(t *testing.T) {
 	go p.listenForNewNodes()
 	go p2.listenForNewNodes()
 
-	msg := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.NewBitlist(7)})
+	msg := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.NewBitlist(7)})
 	topic := AttestationSubnetTopicFormat
-	GossipTypeMapping[reflect.TypeFor[*ethpb.Attestation]()] = topic
+	GossipTypeMapping[reflect.TypeFor[*silapb.Attestation]()] = topic
 	digest, err := p.currentForkDigest()
 	require.NoError(t, err)
 	topic = fmt.Sprintf(topic, digest, subnet)
@@ -389,7 +389,7 @@ func TestService_BroadcastAttestationWithDiscoveryAttempts(t *testing.T) {
 		incomingMessage, err := sub.Next(ctx)
 		require.NoError(t, err)
 
-		result := &ethpb.Attestation{}
+		result := &silapb.Attestation{}
 		require.NoError(t, p.Encoding().DecodeGossip(incomingMessage.Data, result))
 		if !proto.Equal(result, msg) {
 			t.Errorf("Did not receive expected message, got %+v, wanted %+v", result, msg)
@@ -425,11 +425,11 @@ func TestService_BroadcastSyncCommittee(t *testing.T) {
 		}),
 	}
 
-	msg := util.HydrateSyncCommittee(&ethpb.SyncCommitteeMessage{})
+	msg := util.HydrateSyncCommittee(&silapb.SyncCommitteeMessage{})
 	subnet := uint64(5)
 
 	topic := SyncCommitteeSubnetTopicFormat
-	GossipTypeMapping[reflect.TypeFor[*ethpb.SyncCommitteeMessage]()] = topic
+	GossipTypeMapping[reflect.TypeFor[*silapb.SyncCommitteeMessage]()] = topic
 	digest, err := p.currentForkDigest()
 	require.NoError(t, err)
 	topic = fmt.Sprintf(topic, digest, subnet)
@@ -453,7 +453,7 @@ func TestService_BroadcastSyncCommittee(t *testing.T) {
 		incomingMessage, err := sub.Next(ctx)
 		require.NoError(t, err)
 
-		result := &ethpb.SyncCommitteeMessage{}
+		result := &silapb.SyncCommitteeMessage{}
 		require.NoError(t, p.Encoding().DecodeGossip(incomingMessage.Data, result))
 		if !proto.Equal(result, msg) {
 			t.Errorf("Did not receive expected message, got %+v, wanted %+v", result, msg)
@@ -491,12 +491,12 @@ func TestService_BroadcastBlob(t *testing.T) {
 		}),
 	}
 
-	header := util.HydrateSignedBeaconHeader(&ethpb.SignedBeaconBlockHeader{})
+	header := util.HydrateSignedBeaconHeader(&silapb.SignedBeaconBlockHeader{})
 	commitmentInclusionProof := make([][]byte, 17)
 	for i := range commitmentInclusionProof {
 		commitmentInclusionProof[i] = bytesutil.PadTo([]byte{}, 32)
 	}
-	blobSidecar := &ethpb.BlobSidecar{
+	blobSidecar := &silapb.BlobSidecar{
 		Index:                    1,
 		Blob:                     bytesutil.PadTo([]byte{'C'}, fieldparams.BlobLength),
 		KzgCommitment:            bytesutil.PadTo([]byte{'D'}, fieldparams.BLSPubkeyLength),
@@ -507,7 +507,7 @@ func TestService_BroadcastBlob(t *testing.T) {
 	subnet := uint64(0)
 
 	topic := BlobSubnetTopicFormat
-	GossipTypeMapping[reflect.TypeFor[*ethpb.BlobSidecar]()] = topic
+	GossipTypeMapping[reflect.TypeFor[*silapb.BlobSidecar]()] = topic
 	digest, err := p.currentForkDigest()
 	require.NoError(t, err)
 	topic = fmt.Sprintf(topic, digest, subnet)
@@ -531,7 +531,7 @@ func TestService_BroadcastBlob(t *testing.T) {
 		incomingMessage, err := sub.Next(ctx)
 		require.NoError(t, err)
 
-		result := &ethpb.BlobSidecar{}
+		result := &silapb.BlobSidecar{}
 		require.NoError(t, p.Encoding().DecodeGossip(incomingMessage.Data, result))
 		require.DeepEqual(t, result, blobSidecar)
 	})
@@ -602,7 +602,7 @@ func TestService_BroadcastLightClientOptimisticUpdate(t *testing.T) {
 			t.Errorf("Message received too early, now %v, expected at least %v", time.Now(), slotStartTime.Add(expectedDelay))
 		}
 
-		result := &ethpb.LightClientOptimisticUpdateAltair{}
+		result := &silapb.LightClientOptimisticUpdateAltair{}
 		require.NoError(t, p.Encoding().DecodeGossip(incomingMessage.Data, result))
 		if !proto.Equal(result, msg.Proto()) {
 			t.Errorf("Did not receive expected message, got %+v, wanted %+v", result, msg)
@@ -679,7 +679,7 @@ func TestService_BroadcastLightClientFinalityUpdate(t *testing.T) {
 			t.Errorf("Message received too early, now %v, expected at least %v", time.Now(), slotStartTime.Add(expectedDelay))
 		}
 
-		result := &ethpb.LightClientFinalityUpdateAltair{}
+		result := &silapb.LightClientFinalityUpdateAltair{}
 		require.NoError(t, p.Encoding().DecodeGossip(incomingMessage.Data, result))
 		if !proto.Equal(result, msg.Proto()) {
 			t.Errorf("Did not receive expected message, got %+v, wanted %+v", result, msg)
@@ -786,7 +786,7 @@ func TestService_BroadcastDataColumn(t *testing.T) {
 	msg, err := sub.Next(ctx)
 	require.NoError(t, err)
 
-	var result ethpb.DataColumnSidecar
+	var result silapb.DataColumnSidecar
 	require.NoError(t, service.Encoding().DecodeGossip(msg.Data, &result))
 	require.DeepEqual(t, &result, verifiedRoSidecar.DataColumnSidecar())
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -31,13 +31,13 @@ func VerifyBeaconStatePreviousJustifiedCheckpointNil(t *testing.T, factory getSt
 	require.NoError(t, err)
 
 	checkpoint := s.PreviousJustifiedCheckpoint()
-	require.Equal(t, (*ethpb.Checkpoint)(nil), checkpoint)
+	require.Equal(t, (*silapb.Checkpoint)(nil), checkpoint)
 }
 
-type getStateWithCheckpoint = func(checkpoint *ethpb.Checkpoint) (state.BeaconState, error)
+type getStateWithCheckpoint = func(checkpoint *silapb.Checkpoint) (state.BeaconState, error)
 
 func VerifyBeaconStatePreviousJustifiedCheckpoint(t *testing.T, factory getStateWithCheckpoint) {
-	orgCheckpoint := &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)}
+	orgCheckpoint := &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)}
 	orgCheckpoint.Root[1] = 1
 	orgCheckpoint.Root[2] = 2
 	orgCheckpoint.Root[3] = 3
@@ -55,11 +55,11 @@ func VerifyBeaconStateCurrentJustifiedCheckpointNil(t *testing.T, factory getSta
 	require.NoError(t, err)
 
 	checkpoint := s.CurrentJustifiedCheckpoint()
-	require.Equal(t, (*ethpb.Checkpoint)(nil), checkpoint)
+	require.Equal(t, (*silapb.Checkpoint)(nil), checkpoint)
 }
 
 func VerifyBeaconStateCurrentJustifiedCheckpoint(t *testing.T, factory getStateWithCheckpoint) {
-	orgCheckpoint := &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)}
+	orgCheckpoint := &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)}
 	orgCheckpoint.Root[1] = 1
 	orgCheckpoint.Root[2] = 2
 	orgCheckpoint.Root[3] = 3
@@ -77,13 +77,13 @@ func VerifyBeaconStateFinalizedCheckpointNil(t *testing.T, factory getState) {
 	require.NoError(t, err)
 
 	checkpoint := s.FinalizedCheckpoint()
-	require.Equal(t, (*ethpb.Checkpoint)(nil), checkpoint)
+	require.Equal(t, (*silapb.Checkpoint)(nil), checkpoint)
 	epoch := s.FinalizedCheckpointEpoch()
 	require.Equal(t, primitives.Epoch(0), epoch)
 }
 
 func VerifyBeaconStateFinalizedCheckpoint(t *testing.T, factory getStateWithCheckpoint) {
-	orgCheckpoint := &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)}
+	orgCheckpoint := &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)}
 	orgCheckpoint.Root[1] = 1
 	orgCheckpoint.Root[2] = 2
 	orgCheckpoint.Root[3] = 3

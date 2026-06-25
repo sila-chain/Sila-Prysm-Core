@@ -6,14 +6,14 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native/types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stateutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
 
 // AppendPendingDeposit is a mutating call to the beacon state to create and append a pending
 // balance deposit object on to the state. This method requires access to the Lock on the state and
 // only applies in electra or later.
-func (b *BeaconState) AppendPendingDeposit(pd *ethpb.PendingDeposit) error {
+func (b *BeaconState) AppendPendingDeposit(pd *silapb.PendingDeposit) error {
 	if b.version < version.Electra {
 		return errNotSupported("AppendPendingDeposit", b.version)
 	}
@@ -25,7 +25,7 @@ func (b *BeaconState) AppendPendingDeposit(pd *ethpb.PendingDeposit) error {
 
 	pendingDeposits := b.pendingDeposits
 	if b.sharedFieldReferences[types.PendingDeposits].Refs() > 1 {
-		pendingDeposits = make([]*ethpb.PendingDeposit, 0, len(b.pendingDeposits)+1)
+		pendingDeposits = make([]*silapb.PendingDeposit, 0, len(b.pendingDeposits)+1)
 		pendingDeposits = append(pendingDeposits, b.pendingDeposits...)
 		b.sharedFieldReferences[types.PendingDeposits].MinusRef()
 		b.sharedFieldReferences[types.PendingDeposits] = stateutil.NewRef(1)
@@ -40,7 +40,7 @@ func (b *BeaconState) AppendPendingDeposit(pd *ethpb.PendingDeposit) error {
 // SetPendingDeposits is a mutating call to the beacon state which replaces the pending
 // balance deposit slice with the provided value. This method requires access to the Lock on the
 // state and only applies in electra or later.
-func (b *BeaconState) SetPendingDeposits(val []*ethpb.PendingDeposit) error {
+func (b *BeaconState) SetPendingDeposits(val []*silapb.PendingDeposit) error {
 	if b.version < version.Electra {
 		return errNotSupported("SetPendingDeposits", b.version)
 	}

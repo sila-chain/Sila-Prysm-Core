@@ -11,7 +11,7 @@ import (
 	sync "sync"
 
 	github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/ext"
+	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/ext"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/descriptorpb"
@@ -87,11 +87,11 @@ func (x ValidatorStatus) String() string {
 }
 
 func (ValidatorStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_eth_v1_validator_proto_enumTypes[0].Descriptor()
+	return file_proto_silaapi_v1_validator_proto_enumTypes[0].Descriptor()
 }
 
 func (ValidatorStatus) Type() protoreflect.EnumType {
-	return &file_proto_eth_v1_validator_proto_enumTypes[0]
+	return &file_proto_silaapi_v1_validator_proto_enumTypes[0]
 }
 
 func (x ValidatorStatus) Number() protoreflect.EnumNumber {
@@ -100,7 +100,7 @@ func (x ValidatorStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ValidatorStatus.Descriptor instead.
 func (ValidatorStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_eth_v1_validator_proto_rawDescGZIP(), []int{0}
+	return file_proto_silaapi_v1_validator_proto_rawDescGZIP(), []int{0}
 }
 
 type Validator struct {
@@ -119,7 +119,7 @@ type Validator struct {
 
 func (x *Validator) Reset() {
 	*x = Validator{}
-	mi := &file_proto_eth_v1_validator_proto_msgTypes[0]
+	mi := &file_proto_silaapi_v1_validator_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -131,7 +131,7 @@ func (x *Validator) String() string {
 func (*Validator) ProtoMessage() {}
 
 func (x *Validator) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_validator_proto_msgTypes[0]
+	mi := &file_proto_silaapi_v1_validator_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -144,7 +144,7 @@ func (x *Validator) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Validator.ProtoReflect.Descriptor instead.
 func (*Validator) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_validator_proto_rawDescGZIP(), []int{0}
+	return file_proto_silaapi_v1_validator_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Validator) GetPubkey() []byte {
@@ -214,7 +214,7 @@ type ProduceBlockRequest struct {
 
 func (x *ProduceBlockRequest) Reset() {
 	*x = ProduceBlockRequest{}
-	mi := &file_proto_eth_v1_validator_proto_msgTypes[1]
+	mi := &file_proto_silaapi_v1_validator_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -226,7 +226,7 @@ func (x *ProduceBlockRequest) String() string {
 func (*ProduceBlockRequest) ProtoMessage() {}
 
 func (x *ProduceBlockRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_validator_proto_msgTypes[1]
+	mi := &file_proto_silaapi_v1_validator_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -239,7 +239,7 @@ func (x *ProduceBlockRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProduceBlockRequest.ProtoReflect.Descriptor instead.
 func (*ProduceBlockRequest) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_validator_proto_rawDescGZIP(), []int{1}
+	return file_proto_silaapi_v1_validator_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ProduceBlockRequest) GetSlot() github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives.Slot {
@@ -272,7 +272,7 @@ type ProduceBlockResponse struct {
 
 func (x *ProduceBlockResponse) Reset() {
 	*x = ProduceBlockResponse{}
-	mi := &file_proto_eth_v1_validator_proto_msgTypes[2]
+	mi := &file_proto_silaapi_v1_validator_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -284,7 +284,7 @@ func (x *ProduceBlockResponse) String() string {
 func (*ProduceBlockResponse) ProtoMessage() {}
 
 func (x *ProduceBlockResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_eth_v1_validator_proto_msgTypes[2]
+	mi := &file_proto_silaapi_v1_validator_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -297,7 +297,7 @@ func (x *ProduceBlockResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProduceBlockResponse.ProtoReflect.Descriptor instead.
 func (*ProduceBlockResponse) Descriptor() ([]byte, []int) {
-	return file_proto_eth_v1_validator_proto_rawDescGZIP(), []int{2}
+	return file_proto_silaapi_v1_validator_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ProduceBlockResponse) GetData() *BeaconBlock {
@@ -307,9 +307,9 @@ func (x *ProduceBlockResponse) GetData() *BeaconBlock {
 	return nil
 }
 
-var File_proto_eth_v1_validator_proto protoreflect.FileDescriptor
+var File_proto_silaapi_v1_validator_proto protoreflect.FileDescriptor
 
-var file_proto_eth_v1_validator_proto_rawDesc = []byte{
+var file_proto_silaapi_v1_validator_proto_rawDesc = []byte{
 	0x0a, 0x1c, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x65, 0x74, 0x68, 0x2f, 0x76, 0x31, 0x2f, 0x76,
 	0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x6f, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0f,
 	0x65, 0x74, 0x68, 0x65, 0x72, 0x65, 0x75, 0x6d, 0x2e, 0x65, 0x74, 0x68, 0x2e, 0x76, 0x31, 0x1a,
@@ -407,27 +407,27 @@ var file_proto_eth_v1_validator_proto_rawDesc = []byte{
 }
 
 var (
-	file_proto_eth_v1_validator_proto_rawDescOnce sync.Once
-	file_proto_eth_v1_validator_proto_rawDescData = file_proto_eth_v1_validator_proto_rawDesc
+	file_proto_silaapi_v1_validator_proto_rawDescOnce sync.Once
+	file_proto_silaapi_v1_validator_proto_rawDescData = file_proto_silaapi_v1_validator_proto_rawDesc
 )
 
-func file_proto_eth_v1_validator_proto_rawDescGZIP() []byte {
-	file_proto_eth_v1_validator_proto_rawDescOnce.Do(func() {
-		file_proto_eth_v1_validator_proto_rawDescData = protoimpl.X.CompressGZIP(file_proto_eth_v1_validator_proto_rawDescData)
+func file_proto_silaapi_v1_validator_proto_rawDescGZIP() []byte {
+	file_proto_silaapi_v1_validator_proto_rawDescOnce.Do(func() {
+		file_proto_silaapi_v1_validator_proto_rawDescData = protoimpl.X.CompressGZIP(file_proto_silaapi_v1_validator_proto_rawDescData)
 	})
-	return file_proto_eth_v1_validator_proto_rawDescData
+	return file_proto_silaapi_v1_validator_proto_rawDescData
 }
 
-var file_proto_eth_v1_validator_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_eth_v1_validator_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
-var file_proto_eth_v1_validator_proto_goTypes = []any{
+var file_proto_silaapi_v1_validator_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_proto_silaapi_v1_validator_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_proto_silaapi_v1_validator_proto_goTypes = []any{
 	(ValidatorStatus)(0),         // 0: Sila.Eth.v1.ValidatorStatus
 	(*Validator)(nil),            // 1: Sila.Eth.v1.Validator
 	(*ProduceBlockRequest)(nil),  // 2: Sila.Eth.v1.ProduceBlockRequest
 	(*ProduceBlockResponse)(nil), // 3: Sila.Eth.v1.ProduceBlockResponse
 	(*BeaconBlock)(nil),          // 4: Sila.Eth.v1.BeaconBlock
 }
-var file_proto_eth_v1_validator_proto_depIdxs = []int32{
+var file_proto_silaapi_v1_validator_proto_depIdxs = []int32{
 	4, // 0: Sila.Eth.v1.ProduceBlockResponse.data:type_name -> Sila.Eth.v1.BeaconBlock
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
@@ -436,30 +436,30 @@ var file_proto_eth_v1_validator_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_proto_eth_v1_validator_proto_init() }
-func file_proto_eth_v1_validator_proto_init() {
-	if File_proto_eth_v1_validator_proto != nil {
+func init() { file_proto_silaapi_v1_validator_proto_init() }
+func file_proto_silaapi_v1_validator_proto_init() {
+	if File_proto_silaapi_v1_validator_proto != nil {
 		return
 	}
-	file_proto_eth_v1_beacon_block_proto_init()
-	file_proto_eth_v1_validator_proto_msgTypes[1].OneofWrappers = []any{}
+	file_proto_silaapi_v1_beacon_block_proto_init()
+	file_proto_silaapi_v1_validator_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_proto_eth_v1_validator_proto_rawDesc,
+			RawDescriptor: file_proto_silaapi_v1_validator_proto_rawDesc,
 			NumEnums:      1,
 			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_proto_eth_v1_validator_proto_goTypes,
-		DependencyIndexes: file_proto_eth_v1_validator_proto_depIdxs,
-		EnumInfos:         file_proto_eth_v1_validator_proto_enumTypes,
-		MessageInfos:      file_proto_eth_v1_validator_proto_msgTypes,
+		GoTypes:           file_proto_silaapi_v1_validator_proto_goTypes,
+		DependencyIndexes: file_proto_silaapi_v1_validator_proto_depIdxs,
+		EnumInfos:         file_proto_silaapi_v1_validator_proto_enumTypes,
+		MessageInfos:      file_proto_silaapi_v1_validator_proto_msgTypes,
 	}.Build()
-	File_proto_eth_v1_validator_proto = out.File
-	file_proto_eth_v1_validator_proto_rawDesc = nil
-	file_proto_eth_v1_validator_proto_goTypes = nil
-	file_proto_eth_v1_validator_proto_depIdxs = nil
+	File_proto_silaapi_v1_validator_proto = out.File
+	file_proto_silaapi_v1_validator_proto_rawDesc = nil
+	file_proto_silaapi_v1_validator_proto_goTypes = nil
+	file_proto_silaapi_v1_validator_proto_depIdxs = nil
 }

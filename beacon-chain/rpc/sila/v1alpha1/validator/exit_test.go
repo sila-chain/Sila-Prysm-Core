@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -27,7 +27,7 @@ func TestProposeExit_Notification(t *testing.T) {
 
 	deposits, keys, err := util.DeterministicDepositsAndKeys(params.BeaconConfig().MinGenesisActiveValidatorCount)
 	require.NoError(t, err)
-	beaconState, err := transition.GenesisBeaconState(ctx, deposits, 0, &ethpb.Eth1Data{BlockHash: make([]byte, 32)})
+	beaconState, err := transition.GenesisBeaconState(ctx, deposits, 0, &silapb.Eth1Data{BlockHash: make([]byte, 32)})
 	require.NoError(t, err)
 	epoch := primitives.Epoch(2048)
 	require.NoError(t, beaconState.SetSlot(params.BeaconConfig().SlotsPerEpoch.Mul(uint64(epoch))))
@@ -56,8 +56,8 @@ func TestProposeExit_Notification(t *testing.T) {
 
 	// Send the request, expect a result on the state feed.
 	validatorIndex := primitives.ValidatorIndex(0)
-	req := &ethpb.SignedVoluntaryExit{
-		Exit: &ethpb.VoluntaryExit{
+	req := &silapb.SignedVoluntaryExit{
+		Exit: &silapb.VoluntaryExit{
 			Epoch:          epoch,
 			ValidatorIndex: validatorIndex,
 		},
@@ -94,7 +94,7 @@ func TestProposeExit_NoPanic(t *testing.T) {
 
 	deposits, keys, err := util.DeterministicDepositsAndKeys(params.BeaconConfig().MinGenesisActiveValidatorCount)
 	require.NoError(t, err)
-	beaconState, err := transition.GenesisBeaconState(ctx, deposits, 0, &ethpb.Eth1Data{BlockHash: make([]byte, 32)})
+	beaconState, err := transition.GenesisBeaconState(ctx, deposits, 0, &silapb.Eth1Data{BlockHash: make([]byte, 32)})
 	require.NoError(t, err)
 	epoch := primitives.Epoch(2048)
 	require.NoError(t, beaconState.SetSlot(params.BeaconConfig().SlotsPerEpoch.Mul(uint64(epoch))))
@@ -121,14 +121,14 @@ func TestProposeExit_NoPanic(t *testing.T) {
 	opSub := server.OperationNotifier.OperationFeed().Subscribe(opChannel)
 	defer opSub.Unsubscribe()
 
-	req := &ethpb.SignedVoluntaryExit{}
+	req := &silapb.SignedVoluntaryExit{}
 	_, err = server.ProposeExit(t.Context(), req)
 	require.ErrorContains(t, "voluntary exit does not exist", err, "Expected error for no exit existing")
 
 	// Send the request, expect a result on the state feed.
 	validatorIndex := primitives.ValidatorIndex(0)
-	req = &ethpb.SignedVoluntaryExit{
-		Exit: &ethpb.VoluntaryExit{
+	req = &silapb.SignedVoluntaryExit{
+		Exit: &silapb.VoluntaryExit{
 			Epoch:          epoch,
 			ValidatorIndex: validatorIndex,
 		},

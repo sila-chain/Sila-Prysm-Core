@@ -6,7 +6,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -14,13 +14,13 @@ import (
 func TestROBlobNilChecks(t *testing.T) {
 	cases := []struct {
 		name  string
-		bfunc func(t *testing.T) *ethpb.BlobSidecar
+		bfunc func(t *testing.T) *silapb.BlobSidecar
 		err   error
 		root  []byte
 	}{
 		{
 			name: "nil signed blob",
-			bfunc: func(t *testing.T) *ethpb.BlobSidecar {
+			bfunc: func(t *testing.T) *silapb.BlobSidecar {
 				return nil
 			},
 			err:  errNilBlob,
@@ -28,8 +28,8 @@ func TestROBlobNilChecks(t *testing.T) {
 		},
 		{
 			name: "nil signed block header",
-			bfunc: func(t *testing.T) *ethpb.BlobSidecar {
-				return &ethpb.BlobSidecar{
+			bfunc: func(t *testing.T) *silapb.BlobSidecar {
+				return &silapb.BlobSidecar{
 					SignedBlockHeader: nil,
 				}
 			},
@@ -38,9 +38,9 @@ func TestROBlobNilChecks(t *testing.T) {
 		},
 		{
 			name: "nil inner header",
-			bfunc: func(t *testing.T) *ethpb.BlobSidecar {
-				return &ethpb.BlobSidecar{
-					SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
+			bfunc: func(t *testing.T) *silapb.BlobSidecar {
+				return &silapb.BlobSidecar{
+					SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
 						Header: nil,
 					},
 				}
@@ -50,10 +50,10 @@ func TestROBlobNilChecks(t *testing.T) {
 		},
 		{
 			name: "nil signature",
-			bfunc: func(t *testing.T) *ethpb.BlobSidecar {
-				return &ethpb.BlobSidecar{
-					SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-						Header: &ethpb.BeaconBlockHeader{
+			bfunc: func(t *testing.T) *silapb.BlobSidecar {
+				return &silapb.BlobSidecar{
+					SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+						Header: &silapb.BeaconBlockHeader{
 							ParentRoot: make([]byte, fieldparams.RootLength),
 							StateRoot:  make([]byte, fieldparams.RootLength),
 							BodyRoot:   make([]byte, fieldparams.RootLength),
@@ -106,9 +106,9 @@ func TestBlockRoot(t *testing.T) {
 func TestSlot(t *testing.T) {
 	slot := primitives.Slot(1)
 	blob := &ROBlob{
-		BlobSidecar: &ethpb.BlobSidecar{
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+		BlobSidecar: &silapb.BlobSidecar{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					Slot: slot,
 				},
 			},
@@ -120,9 +120,9 @@ func TestSlot(t *testing.T) {
 func TestParentRoot(t *testing.T) {
 	root := [32]byte{1}
 	blob := &ROBlob{
-		BlobSidecar: &ethpb.BlobSidecar{
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+		BlobSidecar: &silapb.BlobSidecar{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					ParentRoot: root[:],
 				},
 			},
@@ -134,9 +134,9 @@ func TestParentRoot(t *testing.T) {
 func TestBodyRoot(t *testing.T) {
 	root := [32]byte{1}
 	blob := &ROBlob{
-		BlobSidecar: &ethpb.BlobSidecar{
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+		BlobSidecar: &silapb.BlobSidecar{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					BodyRoot: root[:],
 				},
 			},
@@ -148,9 +148,9 @@ func TestBodyRoot(t *testing.T) {
 func TestProposeIndex(t *testing.T) {
 	index := primitives.ValidatorIndex(1)
 	blob := &ROBlob{
-		BlobSidecar: &ethpb.BlobSidecar{
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+		BlobSidecar: &silapb.BlobSidecar{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					ProposerIndex: index,
 				},
 			},

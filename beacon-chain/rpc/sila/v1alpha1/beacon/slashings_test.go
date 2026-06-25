@@ -8,7 +8,7 @@ import (
 	mockp2p "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -70,7 +70,7 @@ func TestServer_SubmitAttesterSlashing(t *testing.T) {
 	// We want the intersection of the slashing attesting indices
 	// to be slashed, so we expect validators 2 and 3 to be in the response
 	// slashed indices.
-	_, err = bs.SubmitAttesterSlashing(ctx, generatedSlashing.(*ethpb.AttesterSlashing))
+	_, err = bs.SubmitAttesterSlashing(ctx, generatedSlashing.(*silapb.AttesterSlashing))
 	require.NoError(t, err)
 	assert.Equal(t, true, mb.BroadcastCalled.Load(), "Expected broadcast to be called when flag is set")
 }
@@ -97,7 +97,7 @@ func TestServer_SubmitProposerSlashing_DontBroadcast(t *testing.T) {
 
 	// We want a proposer slashing for validator with index 2 to
 	// be included in the pool.
-	wanted := &ethpb.SubmitSlashingResponse{
+	wanted := &silapb.SubmitSlashingResponse{
 		SlashedIndices: []primitives.ValidatorIndex{2},
 	}
 	slashing, err := util.GenerateProposerSlashingForValidator(st, privs[2], primitives.ValidatorIndex(2))
@@ -148,10 +148,10 @@ func TestServer_SubmitAttesterSlashing_DontBroadcast(t *testing.T) {
 	// We want the intersection of the slashing attesting indices
 	// to be slashed, so we expect validators 2 and 3 to be in the response
 	// slashed indices.
-	wanted := &ethpb.SubmitSlashingResponse{
+	wanted := &silapb.SubmitSlashingResponse{
 		SlashedIndices: []primitives.ValidatorIndex{2},
 	}
-	res, err := bs.SubmitAttesterSlashing(ctx, generatedSlashing.(*ethpb.AttesterSlashing))
+	res, err := bs.SubmitAttesterSlashing(ctx, generatedSlashing.(*silapb.AttesterSlashing))
 	require.NoError(t, err)
 	if !proto.Equal(wanted, res) {
 		t.Errorf("Wanted %v, received %v", wanted, res)
@@ -162,7 +162,7 @@ func TestServer_SubmitAttesterSlashing_DontBroadcast(t *testing.T) {
 	require.NoError(t, err)
 	// If any of the attesting indices in the slashing object have already
 	// been slashed, we should fail to insert properly into the attester slashing pool.
-	_, err = bs.SubmitAttesterSlashing(ctx, generatedSlashing.(*ethpb.AttesterSlashing))
+	_, err = bs.SubmitAttesterSlashing(ctx, generatedSlashing.(*silapb.AttesterSlashing))
 	assert.NotNil(t, err, "Expected including a attester slashing for an already slashed validator to fail")
 }
 
@@ -186,7 +186,7 @@ func TestServer_SubmitAttesterSlashingElectra(t *testing.T) {
 	generatedSlashing, err := util.GenerateAttesterSlashingForValidator(st, privs[2], primitives.ValidatorIndex(2))
 	require.NoError(t, err)
 
-	_, err = bs.SubmitAttesterSlashingElectra(ctx, generatedSlashing.(*ethpb.AttesterSlashingElectra))
+	_, err = bs.SubmitAttesterSlashingElectra(ctx, generatedSlashing.(*silapb.AttesterSlashingElectra))
 	require.NoError(t, err)
 	assert.Equal(t, true, mb.BroadcastCalled.Load(), "Expected broadcast to be called when flag is set")
 }

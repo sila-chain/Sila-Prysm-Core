@@ -10,13 +10,13 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/apiutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 )
 
-func (c *beaconApiValidatorClient) submitSyncMessage(ctx context.Context, syncMessage *ethpb.SyncCommitteeMessage) error {
+func (c *beaconApiValidatorClient) submitSyncMessage(ctx context.Context, syncMessage *silapb.SyncCommitteeMessage) error {
 	const endpoint = "/sila/v1/beacon/pool/sync_committees"
 
 	jsonSyncCommitteeMessage := &structs.SyncCommitteeMessage{
@@ -34,7 +34,7 @@ func (c *beaconApiValidatorClient) submitSyncMessage(ctx context.Context, syncMe
 	return c.handler.Post(ctx, endpoint, nil, bytes.NewBuffer(marshalledJsonSyncCommitteeMessage), nil)
 }
 
-func (c *beaconApiValidatorClient) syncMessageBlockRoot(ctx context.Context) (*ethpb.SyncMessageBlockRootResponse, error) {
+func (c *beaconApiValidatorClient) syncMessageBlockRoot(ctx context.Context) (*silapb.SyncMessageBlockRootResponse, error) {
 	// Get head beacon block root.
 	var resp structs.BlockRootResponse
 	if err := c.handler.Get(ctx, "/sila/v1/beacon/blocks/head/root", &resp); err != nil {
@@ -60,15 +60,15 @@ func (c *beaconApiValidatorClient) syncMessageBlockRoot(ctx context.Context) (*e
 		return nil, errors.Wrap(err, "failed to decode beacon block root")
 	}
 
-	return &ethpb.SyncMessageBlockRootResponse{
+	return &silapb.SyncMessageBlockRootResponse{
 		Root: blockRoot,
 	}, nil
 }
 
 func (c *beaconApiValidatorClient) syncCommitteeContribution(
 	ctx context.Context,
-	req *ethpb.SyncCommitteeContributionRequest,
-) (*ethpb.SyncCommitteeContribution, error) {
+	req *silapb.SyncCommitteeContributionRequest,
+) (*silapb.SyncCommitteeContribution, error) {
 	blockRootResponse, err := c.syncMessageBlockRoot(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get sync message block root")
@@ -89,8 +89,8 @@ func (c *beaconApiValidatorClient) syncCommitteeContribution(
 	return convertSyncContributionJsonToProto(resp.Data)
 }
 
-func (c *beaconApiValidatorClient) syncSubcommitteeIndex(ctx context.Context, in *ethpb.SyncSubcommitteeIndexRequest) (*ethpb.SyncSubcommitteeIndexResponse, error) {
-	validatorIndexResponse, err := c.validatorIndex(ctx, &ethpb.ValidatorIndexRequest{PublicKey: in.PublicKey})
+func (c *beaconApiValidatorClient) syncSubcommitteeIndex(ctx context.Context, in *silapb.SyncSubcommitteeIndexRequest) (*silapb.SyncSubcommitteeIndexResponse, error) {
+	validatorIndexResponse, err := c.validatorIndex(ctx, &silapb.ValidatorIndexRequest{PublicKey: in.PublicKey})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get validator index")
 	}
@@ -117,10 +117,10 @@ func (c *beaconApiValidatorClient) syncSubcommitteeIndex(ctx context.Context, in
 		indices = append(indices, primitives.CommitteeIndex(syncCommIdx))
 	}
 
-	return &ethpb.SyncSubcommitteeIndexResponse{Indices: indices}, nil
+	return &silapb.SyncSubcommitteeIndexResponse{Indices: indices}, nil
 }
 
-func convertSyncContributionJsonToProto(contribution *structs.SyncCommitteeContribution) (*ethpb.SyncCommitteeContribution, error) {
+func convertSyncContributionJsonToProto(contribution *structs.SyncCommitteeContribution) (*silapb.SyncCommitteeContribution, error) {
 	if contribution == nil {
 		return nil, errors.New("sync committee contribution is nil")
 	}
@@ -150,7 +150,7 @@ func convertSyncContributionJsonToProto(contribution *structs.SyncCommitteeContr
 		return nil, errors.Wrapf(err, "failed to decode contribution signature `%s`", contribution.Signature)
 	}
 
-	return &ethpb.SyncCommitteeContribution{
+	return &silapb.SyncCommitteeContribution{
 		Slot:              primitives.Slot(slot),
 		BlockRoot:         blockRoot,
 		SubcommitteeIndex: subcommitteeIdx,

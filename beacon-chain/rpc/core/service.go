@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"golang.org/x/sync/singleflight"
 )
 
@@ -32,6 +32,6 @@ type Service struct {
 	ReplayerBuilder       stategen.ReplayerBuilder
 	OptimisticModeFetcher blockchain.OptimisticModeFetcher
 
-	payloadAttestationData   atomic.Pointer[ethpb.PayloadAttestationData]
+	payloadAttestationData   atomic.Pointer[silapb.PayloadAttestationData]
 	payloadAttestationFlight singleflight.Group
 }

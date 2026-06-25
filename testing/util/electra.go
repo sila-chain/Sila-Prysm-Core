@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
@@ -148,7 +148,7 @@ func GenerateTestElectraBlockWithSidecar(t *testing.T, parent [32]byte, slot pri
 
 	roSidecars := make([]blocks.ROBlob, 0, g.nblobs)
 	for i := range g.nblobs {
-		pbSidecar := ethpb.BlobSidecar{
+		pbSidecar := silapb.BlobSidecar{
 			Index:                    uint64(i),
 			Blob:                     blobs[i],
 			KzgCommitment:            commitments[i],

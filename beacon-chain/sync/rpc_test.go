@@ -11,7 +11,7 @@ import (
 	silaP2P "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/encoder"
 	p2ptest "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/testing"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -60,7 +60,7 @@ func TestRegisterRPC_ReceivesValidMessage(t *testing.T) {
 	wg.Add(1)
 	topic := "/testing/foobar/1"
 	handler := func(ctx context.Context, msg any, stream libp2pcore.Stream) error {
-		m, ok := msg.(*ethpb.Fork)
+		m, ok := msg.(*silapb.Fork)
 		if !ok {
 			t.Error("Object is not of type *pb.TestSimpleMessage")
 		}
@@ -69,14 +69,14 @@ func TestRegisterRPC_ReceivesValidMessage(t *testing.T) {
 
 		return nil
 	}
-	silaP2P.RPCTopicMappings[topic] = new(ethpb.Fork)
+	silaP2P.RPCTopicMappings[topic] = new(silapb.Fork)
 	// Cleanup Topic mappings
 	defer func() {
 		delete(silaP2P.RPCTopicMappings, topic)
 	}()
 	r.registerRPC(topic, handler)
 
-	p2p.ReceiveRPC(topic, &ethpb.Fork{CurrentVersion: []byte("fooo"), PreviousVersion: []byte("barr")})
+	p2p.ReceiveRPC(topic, &silapb.Fork{CurrentVersion: []byte("fooo"), PreviousVersion: []byte("barr")})
 
 	if util.WaitTimeout(&wg, time.Second) {
 		t.Fatal("Did not receive RPC in 1 second")
@@ -96,7 +96,7 @@ func TestRPC_ReceivesInvalidMessage(t *testing.T) {
 
 	topic := "/testing/foobar/1"
 	handler := func(ctx context.Context, msg any, stream libp2pcore.Stream) error {
-		m, ok := msg.(*ethpb.Fork)
+		m, ok := msg.(*silapb.Fork)
 		if !ok {
 			t.Error("Object is not of type *pb.Fork")
 		}
@@ -105,7 +105,7 @@ func TestRPC_ReceivesInvalidMessage(t *testing.T) {
 		}
 		return nil
 	}
-	silaP2P.RPCTopicMappings[topic] = new(ethpb.Fork)
+	silaP2P.RPCTopicMappings[topic] = new(silapb.Fork)
 	// Cleanup Topic mappings
 	defer func() {
 		delete(silaP2P.RPCTopicMappings, topic)

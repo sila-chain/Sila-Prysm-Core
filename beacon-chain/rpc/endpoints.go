@@ -6,15 +6,15 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/middleware"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/core"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/beacon"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/blob"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/config"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/debug"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/events"
-	lightclient "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/light-client"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/node"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/rewards"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/validator"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/beacon"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/blob"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/config"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/debug"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/events"
+	lightclient "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/light-client"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/node"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/rewards"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/validator"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/lookup"
 	beaconsila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/sila/beacon"
 	nodesila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/sila/node"
@@ -117,7 +117,7 @@ func silaEndpointAliases(endpoints []endpoint) []endpoint {
 	for _, e := range endpoints {
 		if len(e.template) >= len("/sila/") && e.template[:len("/sila/")] == "/sila/" {
 			alias := e
-			alias.template = "/eth/" + e.template[len("/sila/"):]
+			alias.template = "/silaapi/" + e.template[len("/sila/"):]
 			aliases = append(aliases, alias)
 		}
 	}
@@ -183,7 +183,7 @@ func (s *Service) blobEndpoints(blocker lookup.Blocker) []endpoint {
 	const namespace = "blob"
 	return []endpoint{
 		{
-			// Deprecated: /eth/v1/beacon/blob_sidecars/{block_id} in favor of /eth/v1/beacon/blobs/{block_id}
+			// Deprecated: /sila/v1/beacon/blob_sidecars/{block_id} in favor of /sila/v1/beacon/blobs/{block_id}
 			// the endpoint will continue to work post fulu for some time however
 			template: "/sila/v1/beacon/blob_sidecars/{block_id}",
 			name:     namespace + ".Blobs",
@@ -336,7 +336,7 @@ func (s *Service) validatorEndpoints(
 			methods: []string{http.MethodPost},
 		},
 		{
-			template: "/sila/v1/validator/duties/proposer/{epoch}", // Deprecated: use /eth/v2/validator/duties/proposer/{epoch}
+			template: "/sila/v1/validator/duties/proposer/{epoch}", // Deprecated: use /sila/v2/validator/duties/proposer/{epoch}
 			name:     namespace + ".GetProposerDuties",
 			middleware: []middleware.Middleware{
 				middleware.AcceptHeaderHandler([]string{api.JsonMediaType}),

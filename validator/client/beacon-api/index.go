@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 )
@@ -28,7 +28,7 @@ func (e *IndexNotFoundError) Error() string {
 	return e.message
 }
 
-func (c *beaconApiValidatorClient) validatorIndex(ctx context.Context, in *ethpb.ValidatorIndexRequest) (*ethpb.ValidatorIndexResponse, error) {
+func (c *beaconApiValidatorClient) validatorIndex(ctx context.Context, in *silapb.ValidatorIndexRequest) (*silapb.ValidatorIndexResponse, error) {
 	stringPubKey := hexutil.Encode(in.PublicKey)
 
 	stateValidator, err := c.stateValidatorsProvider.StateValidators(ctx, []string{stringPubKey}, nil, nil)
@@ -48,5 +48,5 @@ func (c *beaconApiValidatorClient) validatorIndex(ctx context.Context, in *ethpb
 		return nil, errors.Wrap(err, "failed to parse validator index")
 	}
 
-	return &ethpb.ValidatorIndexResponse{Index: primitives.ValidatorIndex(index)}, nil
+	return &silapb.ValidatorIndexResponse{Index: primitives.ValidatorIndex(index)}, nil
 }

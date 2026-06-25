@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
 	gethTypes "github.com/sila-chain/Sila/core/types"
@@ -30,7 +30,7 @@ type Chain struct {
 	HashesByHeight    map[int][]byte
 	TimesByHeight     map[int]uint64
 	BlockNumberByTime map[uint64]*big.Int
-	Eth1Data          *ethpb.Eth1Data
+	Eth1Data          *silapb.Eth1Data
 	GenesisEth1Block  *big.Int
 	GenesisState      state.BeaconState
 	CurrEndpoint      string
@@ -105,7 +105,7 @@ func (m *Chain) BlockByTimestamp(_ context.Context, time uint64) (*types.HeaderI
 }
 
 // ChainStartEth1Data --
-func (m *Chain) ChainStartEth1Data() *ethpb.Eth1Data {
+func (m *Chain) ChainStartEth1Data() *silapb.Eth1Data {
 	return m.Eth1Data
 }
 

@@ -7,7 +7,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -43,7 +43,7 @@ func TestSubmitSignedAggregateSelectionProof_Valid(t *testing.T) {
 	require.NoError(t, err)
 
 	validatorClient := &beaconApiValidatorClient{handler: handler}
-	resp, err := validatorClient.submitSignedAggregateSelectionProof(ctx, &ethpb.SignedAggregateSubmitRequest{
+	resp, err := validatorClient.submitSignedAggregateSelectionProof(ctx, &silapb.SignedAggregateSubmitRequest{
 		SignedAggregateAndProof: signedAggregateAndProof,
 	})
 	require.NoError(t, err)
@@ -72,7 +72,7 @@ func TestSubmitSignedAggregateSelectionProof_BadRequest(t *testing.T) {
 	).Times(1)
 
 	validatorClient := &beaconApiValidatorClient{handler: handler}
-	_, err = validatorClient.submitSignedAggregateSelectionProof(ctx, &ethpb.SignedAggregateSubmitRequest{
+	_, err = validatorClient.submitSignedAggregateSelectionProof(ctx, &silapb.SignedAggregateSubmitRequest{
 		SignedAggregateAndProof: signedAggregateAndProof,
 	})
 	assert.ErrorContains(t, "bad request", err)
@@ -108,7 +108,7 @@ func TestSubmitSignedAggregateSelectionProofElectra_Valid(t *testing.T) {
 	require.NoError(t, err)
 
 	validatorClient := &beaconApiValidatorClient{handler: handler}
-	resp, err := validatorClient.submitSignedAggregateSelectionProofElectra(ctx, &ethpb.SignedAggregateSubmitElectraRequest{
+	resp, err := validatorClient.submitSignedAggregateSelectionProofElectra(ctx, &silapb.SignedAggregateSubmitElectraRequest{
 		SignedAggregateAndProof: signedAggregateAndProofElectra,
 	})
 	require.NoError(t, err)
@@ -142,7 +142,7 @@ func TestSubmitSignedAggregateSelectionProofElectra_BadRequest(t *testing.T) {
 	).Times(1)
 
 	validatorClient := &beaconApiValidatorClient{handler: handler}
-	_, err = validatorClient.submitSignedAggregateSelectionProofElectra(ctx, &ethpb.SignedAggregateSubmitElectraRequest{
+	_, err = validatorClient.submitSignedAggregateSelectionProofElectra(ctx, &silapb.SignedAggregateSubmitElectraRequest{
 		SignedAggregateAndProof: signedAggregateAndProofElectra,
 	})
 	assert.ErrorContains(t, "bad request", err)
@@ -178,28 +178,28 @@ func TestSubmitSignedAggregateSelectionProofElectra_FuluVersion(t *testing.T) {
 	require.NoError(t, err)
 
 	validatorClient := &beaconApiValidatorClient{handler: handler}
-	resp, err := validatorClient.submitSignedAggregateSelectionProofElectra(ctx, &ethpb.SignedAggregateSubmitElectraRequest{
+	resp, err := validatorClient.submitSignedAggregateSelectionProofElectra(ctx, &silapb.SignedAggregateSubmitElectraRequest{
 		SignedAggregateAndProof: signedAggregateAndProofElectra,
 	})
 	require.NoError(t, err)
 	assert.DeepEqual(t, attestationDataRoot[:], resp.AttestationDataRoot)
 }
 
-func generateSignedAggregateAndProofJson() *ethpb.SignedAggregateAttestationAndProof {
-	return &ethpb.SignedAggregateAttestationAndProof{
-		Message: &ethpb.AggregateAttestationAndProof{
+func generateSignedAggregateAndProofJson() *silapb.SignedAggregateAttestationAndProof {
+	return &silapb.SignedAggregateAttestationAndProof{
+		Message: &silapb.AggregateAttestationAndProof{
 			AggregatorIndex: 72,
-			Aggregate: &ethpb.Attestation{
+			Aggregate: &silapb.Attestation{
 				AggregationBits: testhelpers.FillByteSlice(4, 74),
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					Slot:            75,
 					CommitteeIndex:  76,
 					BeaconBlockRoot: testhelpers.FillByteSlice(32, 38),
-					Source: &ethpb.Checkpoint{
+					Source: &silapb.Checkpoint{
 						Epoch: 78,
 						Root:  testhelpers.FillByteSlice(32, 79),
 					},
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 80,
 						Root:  testhelpers.FillByteSlice(32, 81),
 					},
@@ -212,21 +212,21 @@ func generateSignedAggregateAndProofJson() *ethpb.SignedAggregateAttestationAndP
 	}
 }
 
-func generateSignedAggregateAndProofElectraJson() *ethpb.SignedAggregateAttestationAndProofElectra {
-	return &ethpb.SignedAggregateAttestationAndProofElectra{
-		Message: &ethpb.AggregateAttestationAndProofElectra{
+func generateSignedAggregateAndProofElectraJson() *silapb.SignedAggregateAttestationAndProofElectra {
+	return &silapb.SignedAggregateAttestationAndProofElectra{
+		Message: &silapb.AggregateAttestationAndProofElectra{
 			AggregatorIndex: 72,
-			Aggregate: &ethpb.AttestationElectra{
+			Aggregate: &silapb.AttestationElectra{
 				AggregationBits: testhelpers.FillByteSlice(4, 74),
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					Slot:            75,
 					CommitteeIndex:  76,
 					BeaconBlockRoot: testhelpers.FillByteSlice(32, 38),
-					Source: &ethpb.Checkpoint{
+					Source: &silapb.Checkpoint{
 						Epoch: 78,
 						Root:  testhelpers.FillByteSlice(32, 79),
 					},
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 80,
 						Root:  testhelpers.FillByteSlice(32, 81),
 					},

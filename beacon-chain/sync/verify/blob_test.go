@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
@@ -94,7 +94,7 @@ func TestBlobAlignsWithBlock_OOBIndexReturnsError(t *testing.T) {
 	require.Equal(t, true, oobIndex < uint64(maxBlobs),
 		"precondition: OOB index must be < MaxBlobsPerBlock for this test")
 
-	oobSidecar := &ethpb.BlobSidecar{
+	oobSidecar := &silapb.BlobSidecar{
 		SignedBlockHeader:        blobs[0].SignedBlockHeader,
 		Index:                    oobIndex,
 		Blob:                     make([]byte, fieldparams.BlobSize),
@@ -121,7 +121,7 @@ func TestBlobAlignsWithBlock_MaxIndexEdge(t *testing.T) {
 	require.NoError(t, BlobAlignsWithBlock(blobs[nCommitments-1], roBlock))
 
 	// index = nCommitments (first OOB): must return ErrIncorrectBlobIndex.
-	oobSidecar := &ethpb.BlobSidecar{
+	oobSidecar := &silapb.BlobSidecar{
 		SignedBlockHeader:        blobs[0].SignedBlockHeader,
 		Index:                    uint64(nCommitments),
 		Blob:                     make([]byte, fieldparams.BlobSize),

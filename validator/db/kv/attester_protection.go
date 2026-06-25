@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/slashings"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
 	"github.com/pkg/errors"
@@ -139,7 +139,7 @@ func (s *Store) AttestationHistoryForPubKey(ctx context.Context, pubKey [fieldpa
 // If it is not, it updates the database.
 func (s *Store) SlashableAttestationCheck(
 	ctx context.Context,
-	indexedAtt ethpb.IndexedAtt,
+	indexedAtt silapb.IndexedAtt,
 	pubKey [fieldparams.BLSPubkeyLength]byte,
 	signingRoot32 [32]byte,
 	emitAccountMetrics bool,
@@ -210,7 +210,7 @@ func (s *Store) SlashableAttestationCheck(
 // CheckSlashableAttestation verifies an incoming attestation is
 // not a double vote for a validator public key nor a surround vote.
 func (s *Store) CheckSlashableAttestation(
-	ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoot []byte, att ethpb.IndexedAtt,
+	ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoot []byte, att silapb.IndexedAtt,
 ) (SlashingKind, error) {
 	ctx, span := trace.StartSpan(ctx, "Validator.CheckSlashableAttestation")
 	defer span.End()
@@ -269,7 +269,7 @@ func (s *Store) CheckSlashableAttestation(
 
 // Iterate from the back of the bucket since we are looking for target_epoch > att.target_epoch
 func (*Store) checkSurroundedVote(
-	targetEpochsBucket *bolt.Bucket, att ethpb.IndexedAtt,
+	targetEpochsBucket *bolt.Bucket, att silapb.IndexedAtt,
 ) (SlashingKind, error) {
 	c := targetEpochsBucket.Cursor()
 	for k, v := c.Last(); k != nil; k, v = c.Prev() {
@@ -286,10 +286,10 @@ func (*Store) checkSurroundedVote(
 		}
 
 		for _, existingSourceEpoch := range attestedSourceEpochs {
-			existingAtt := &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: existingSourceEpoch},
-					Target: &ethpb.Checkpoint{Epoch: existingTargetEpoch},
+			existingAtt := &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: existingSourceEpoch},
+					Target: &silapb.Checkpoint{Epoch: existingTargetEpoch},
 				},
 			}
 			surrounded := slashings.IsSurround(existingAtt, att)
@@ -309,7 +309,7 @@ func (*Store) checkSurroundedVote(
 
 // Iterate from the back of the bucket since we are looking for source_epoch > att.source_epoch
 func (*Store) checkSurroundingVote(
-	sourceEpochsBucket *bolt.Bucket, att ethpb.IndexedAtt,
+	sourceEpochsBucket *bolt.Bucket, att silapb.IndexedAtt,
 ) (SlashingKind, error) {
 	c := sourceEpochsBucket.Cursor()
 	for k, v := c.Last(); k != nil; k, v = c.Prev() {
@@ -326,10 +326,10 @@ func (*Store) checkSurroundingVote(
 		}
 
 		for _, existingTargetEpoch := range attestedTargetEpochs {
-			existingAtt := &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: existingSourceEpoch},
-					Target: &ethpb.Checkpoint{Epoch: existingTargetEpoch},
+			existingAtt := &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: existingSourceEpoch},
+					Target: &silapb.Checkpoint{Epoch: existingTargetEpoch},
 				},
 			}
 			surrounding := slashings.IsSurround(att, existingAtt)
@@ -349,7 +349,7 @@ func (*Store) checkSurroundingVote(
 
 // SaveAttestationsForPubKey stores a batch of attestations all at once.
 func (s *Store) SaveAttestationsForPubKey(
-	ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoots [][]byte, atts []*ethpb.IndexedAttestation,
+	ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoots [][]byte, atts []*silapb.IndexedAttestation,
 ) error {
 	ctx, span := trace.StartSpan(ctx, "Validator.SaveAttestationsForPubKey")
 	defer span.End()
@@ -375,7 +375,7 @@ func (s *Store) SaveAttestationsForPubKey(
 // SaveAttestationForPubKey saves an attestation for a validator public
 // key for local validator slashing protection.
 func (s *Store) SaveAttestationForPubKey(
-	ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoot [fieldparams.RootLength]byte, att ethpb.IndexedAtt,
+	ctx context.Context, pubKey [fieldparams.BLSPubkeyLength]byte, signingRoot [fieldparams.RootLength]byte, att silapb.IndexedAtt,
 ) error {
 	ctx, span := trace.StartSpan(ctx, "Validator.SaveAttestationForPubKey")
 	defer span.End()

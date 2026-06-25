@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -47,7 +47,7 @@ func (vs *Server) setExecutionPayloadBid(
 	}
 
 	// Per spec, self-build bids must use G2 point-at-infinity as the signature.
-	signedBid := &ethpb.SignedExecutionPayloadBid{
+	signedBid := &silapb.SignedExecutionPayloadBid{
 		Message:   bid,
 		Signature: common.InfiniteSignature[:],
 	}
@@ -63,7 +63,7 @@ func (vs *Server) winningP2PBid(
 	sBlk interfaces.SignedBeaconBlock,
 	local *consensusblocks.GetPayloadResponse,
 	selfBuildOnly bool,
-) *ethpb.SignedExecutionPayloadBid {
+) *silapb.SignedExecutionPayloadBid {
 	if selfBuildOnly || vs.HighestBidCache == nil {
 		return nil
 	}
@@ -102,7 +102,7 @@ func (vs *Server) winningP2PBid(
 func (vs *Server) createSelfBuildExecutionPayloadBid(
 	local *consensusblocks.GetPayloadResponse,
 	block interfaces.ReadOnlyBeaconBlock,
-) (*ethpb.ExecutionPayloadBid, error) {
+) (*silapb.ExecutionPayloadBid, error) {
 	ed := local.ExecutionData
 	if ed == nil || ed.IsNil() {
 		return nil, errors.New("execution data is nil")
@@ -113,7 +113,7 @@ func (vs *Server) createSelfBuildExecutionPayloadBid(
 	if err != nil {
 		return nil, errors.Wrap(err, "could not compute execution requests root")
 	}
-	return &ethpb.ExecutionPayloadBid{
+	return &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       ed.ParentHash(),
 		ParentBlockRoot:       bytesutil.SafeCopyBytes(parentBlockRoot[:]),
 		BlockHash:             ed.BlockHash(),

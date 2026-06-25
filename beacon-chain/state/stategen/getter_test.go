@@ -14,7 +14,7 @@ import (
 	blt "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -84,7 +84,7 @@ func TestStateByRootIfCachedNoCopy_HotState(t *testing.T) {
 
 	beaconState, _ := util.DeterministicGenesisState(t, 32)
 	r := [32]byte{'A'}
-	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Root: r[:]}))
+	require.NoError(t, service.beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Root: r[:]}))
 	service.hotStateCache.put(r, beaconState)
 
 	loadedState := service.StateByRootIfCachedNoCopy(r)
@@ -530,7 +530,7 @@ func TestLoadStateByRoot(t *testing.T) {
 			}
 			slots := c.slots
 			sumRoot := r.blockRoot(t, slots.stateAt)
-			require.NoError(t, r.srv.beaconDB.SaveStateSummary(r.ctx, &ethpb.StateSummary{Slot: slots.stateAt, Root: sumRoot[:]}))
+			require.NoError(t, r.srv.beaconDB.SaveStateSummary(r.ctx, &silapb.StateSummary{Slot: slots.stateAt, Root: sumRoot[:]}))
 			// Second param controls the highest slot that we save blocks for, save all blocks <= that slot
 			for _, ut := range []primitives.Slot{10, 11} {
 				if ut <= slots.lastblock {

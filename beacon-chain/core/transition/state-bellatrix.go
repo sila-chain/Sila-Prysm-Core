@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -58,7 +58,7 @@ import (
 //	  return state
 //
 // This method differs from the spec so as to process deposits beforehand instead of the end of the function.
-func GenesisBeaconStateBellatrix(ctx context.Context, deposits []*ethpb.Deposit, genesisTime uint64, eth1Data *ethpb.Eth1Data, ep *enginev1.ExecutionPayload) (state.BeaconState, error) {
+func GenesisBeaconStateBellatrix(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, eth1Data *silapb.Eth1Data, ep *enginev1.ExecutionPayload) (state.BeaconState, error) {
 	st, err := EmptyGenesisStateBellatrix()
 	if err != nil {
 		return nil, err
@@ -89,7 +89,7 @@ func GenesisBeaconStateBellatrix(ctx context.Context, deposits []*ethpb.Deposit,
 
 // OptimizedGenesisBeaconStateBellatrix is used to create a state that has already processed deposits. This is to efficiently
 // create a mainnet state at chainstart.
-func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.BeaconState, eth1Data *ethpb.Eth1Data, ep *enginev1.ExecutionPayload) (state.BeaconState, error) {
+func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.BeaconState, eth1Data *silapb.Eth1Data, ep *enginev1.ExecutionPayload) (state.BeaconState, error) {
 	if eth1Data == nil {
 		return nil, errors.New("no eth1data provided for genesis state")
 	}
@@ -144,13 +144,13 @@ func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.Bea
 	if err != nil {
 		return nil, err
 	}
-	st := &ethpb.BeaconStateBellatrix{
+	st := &silapb.BeaconStateBellatrix{
 		// Misc fields.
 		Slot:                  0,
 		GenesisTime:           genesisTime,
 		GenesisValidatorsRoot: genesisValidatorsRoot[:],
 
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().AltairForkVersion,
 			CurrentVersion:  params.BeaconConfig().BellatrixForkVersion,
 			Epoch:           0,
@@ -164,16 +164,16 @@ func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.Bea
 		RandaoMixes: randaoMixes,
 
 		// Finality.
-		PreviousJustifiedCheckpoint: &ethpb.Checkpoint{
+		PreviousJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
-		CurrentJustifiedCheckpoint: &ethpb.Checkpoint{
+		CurrentJustifiedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
 		JustificationBits: []byte{0},
-		FinalizedCheckpoint: &ethpb.Checkpoint{
+		FinalizedCheckpoint: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  params.BeaconConfig().ZeroHash[:],
 		},
@@ -185,20 +185,20 @@ func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.Bea
 
 		// Eth1 data.
 		Eth1Data:                     eth1Data,
-		Eth1DataVotes:                []*ethpb.Eth1Data{},
+		Eth1DataVotes:                []*silapb.Eth1Data{},
 		Eth1DepositIndex:             preState.Eth1DepositIndex(),
 		LatestExecutionPayloadHeader: eph,
 		InactivityScores:             scores,
 	}
 
-	bodyRoot, err := (&ethpb.BeaconBlockBodyBellatrix{
+	bodyRoot, err := (&silapb.BeaconBlockBodyBellatrix{
 		RandaoReveal: make([]byte, 96),
-		Eth1Data: &ethpb.Eth1Data{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},
 		Graffiti: make([]byte, 32),
-		SyncAggregate: &ethpb.SyncAggregate{
+		SyncAggregate: &silapb.SyncAggregate{
 			SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 			SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 		},
@@ -219,7 +219,7 @@ func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.Bea
 		return nil, errors.Wrap(err, "could not hash tree root empty block body")
 	}
 
-	st.LatestBlockHeader = &ethpb.BeaconBlockHeader{
+	st.LatestBlockHeader = &silapb.BeaconBlockHeader{
 		ParentRoot: zeroHash,
 		StateRoot:  zeroHash,
 		BodyRoot:   bodyRoot[:],
@@ -244,24 +244,24 @@ func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.Bea
 
 // EmptyGenesisStateBellatrix returns an empty beacon state object.
 func EmptyGenesisStateBellatrix() (state.BeaconState, error) {
-	st := &ethpb.BeaconStateBellatrix{
+	st := &silapb.BeaconStateBellatrix{
 		// Misc fields.
 		Slot: 0,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: params.BeaconConfig().AltairForkVersion,
 			CurrentVersion:  params.BeaconConfig().BellatrixForkVersion,
 			Epoch:           0,
 		},
 		// Validator registry fields.
-		Validators: []*ethpb.Validator{},
+		Validators: []*silapb.Validator{},
 		Balances:   []uint64{},
 
 		JustificationBits: []byte{0},
 		HistoricalRoots:   [][]byte{},
 
 		// Eth1 data.
-		Eth1Data:         &ethpb.Eth1Data{},
-		Eth1DataVotes:    []*ethpb.Eth1Data{},
+		Eth1Data:         &silapb.Eth1Data{},
+		Eth1DataVotes:    []*silapb.Eth1Data{},
 		Eth1DepositIndex: 0,
 		LatestExecutionPayloadHeader: &enginev1.ExecutionPayloadHeader{
 			ParentHash:       make([]byte, 32),

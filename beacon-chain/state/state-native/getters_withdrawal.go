@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	mathutil "github.com/sila-chain/Sila-Consensus-Core/v7/math"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -241,7 +241,7 @@ func (b *BeaconState) appendValidatorsSweepWithdrawals(withdrawalIndex uint64, w
 	return nil
 }
 
-func (b *BeaconState) PendingPartialWithdrawals() ([]*ethpb.PendingPartialWithdrawal, error) {
+func (b *BeaconState) PendingPartialWithdrawals() ([]*silapb.PendingPartialWithdrawal, error) {
 	if b.version < version.Electra {
 		return nil, errNotSupported("PendingPartialWithdrawals", b.version)
 	}
@@ -250,8 +250,8 @@ func (b *BeaconState) PendingPartialWithdrawals() ([]*ethpb.PendingPartialWithdr
 	return b.pendingPartialWithdrawalsVal(), nil
 }
 
-func (b *BeaconState) pendingPartialWithdrawalsVal() []*ethpb.PendingPartialWithdrawal {
-	return ethpb.CopySlice(b.pendingPartialWithdrawals)
+func (b *BeaconState) pendingPartialWithdrawalsVal() []*silapb.PendingPartialWithdrawal {
+	return silapb.CopySlice(b.pendingPartialWithdrawals)
 }
 
 func (b *BeaconState) NumPendingPartialWithdrawals() (uint64, error) {

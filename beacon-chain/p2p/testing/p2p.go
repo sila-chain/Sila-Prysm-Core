@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/metadata"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/p2p/enode"
@@ -224,19 +224,19 @@ func (p *TestP2P) Broadcast(_ context.Context, _ proto.Message) error {
 }
 
 // BroadcastAttestation broadcasts an attestation.
-func (p *TestP2P) BroadcastAttestation(_ context.Context, _ uint64, _ ethpb.Att) error {
+func (p *TestP2P) BroadcastAttestation(_ context.Context, _ uint64, _ silapb.Att) error {
 	p.BroadcastCalled.Store(true)
 	return nil
 }
 
 // BroadcastSyncCommitteeMessage broadcasts a sync committee message.
-func (p *TestP2P) BroadcastSyncCommitteeMessage(_ context.Context, _ uint64, _ *ethpb.SyncCommitteeMessage) error {
+func (p *TestP2P) BroadcastSyncCommitteeMessage(_ context.Context, _ uint64, _ *silapb.SyncCommitteeMessage) error {
 	p.BroadcastCalled.Store(true)
 	return nil
 }
 
 // BroadcastBlob broadcasts a blob for mock.
-func (p *TestP2P) BroadcastBlob(context.Context, uint64, *ethpb.BlobSidecar) error {
+func (p *TestP2P) BroadcastBlob(context.Context, uint64, *silapb.BlobSidecar) error {
 	p.BroadcastCalled.Store(true)
 	return nil
 }

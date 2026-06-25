@@ -6,14 +6,14 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native/types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stateutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
 
 // AppendPendingConsolidation is a mutating call to the beacon state which appends the provided
 // pending consolidation to the end of the slice on the state. This method requires access to the
 // Lock on the state and only applies in electra or later.
-func (b *BeaconState) AppendPendingConsolidation(val *ethpb.PendingConsolidation) error {
+func (b *BeaconState) AppendPendingConsolidation(val *silapb.PendingConsolidation) error {
 	if b.version < version.Electra {
 		return errNotSupported("AppendPendingConsolidation", b.version)
 	}
@@ -25,7 +25,7 @@ func (b *BeaconState) AppendPendingConsolidation(val *ethpb.PendingConsolidation
 
 	pendingConsolidations := b.pendingConsolidations
 	if b.sharedFieldReferences[types.PendingConsolidations].Refs() > 1 {
-		pendingConsolidations = make([]*ethpb.PendingConsolidation, 0, len(b.pendingConsolidations)+1)
+		pendingConsolidations = make([]*silapb.PendingConsolidation, 0, len(b.pendingConsolidations)+1)
 		pendingConsolidations = append(pendingConsolidations, b.pendingConsolidations...)
 		b.sharedFieldReferences[types.PendingConsolidations].MinusRef()
 		b.sharedFieldReferences[types.PendingConsolidations] = stateutil.NewRef(1)
@@ -40,7 +40,7 @@ func (b *BeaconState) AppendPendingConsolidation(val *ethpb.PendingConsolidation
 // SetPendingConsolidations is a mutating call to the beacon state which replaces the slice on the
 // state with the given value. This method requires access to the Lock on the state and only applies
 // in electra or later.
-func (b *BeaconState) SetPendingConsolidations(val []*ethpb.PendingConsolidation) error {
+func (b *BeaconState) SetPendingConsolidations(val []*silapb.PendingConsolidation) error {
 	if b.version < version.Electra {
 		return errNotSupported("SetPendingConsolidations", b.version)
 	}

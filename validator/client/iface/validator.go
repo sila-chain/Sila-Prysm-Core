@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/proposer"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/keymanager"
 )
@@ -62,7 +62,7 @@ type Validator interface {
 	HandleKeyReload(ctx context.Context, currentKeys [][fieldparams.BLSPubkeyLength]byte) (bool, error)
 	CheckDoppelGanger(ctx context.Context) error
 	PushProposerSettings(ctx context.Context, slot primitives.Slot, forceFullPush bool) error
-	SignValidatorRegistrationRequest(ctx context.Context, signer SigningFunc, newValidatorRegistration *ethpb.ValidatorRegistrationV1) (*ethpb.SignedValidatorRegistrationV1, bool /* isCached */, error)
+	SignValidatorRegistrationRequest(ctx context.Context, signer SigningFunc, newValidatorRegistration *silapb.ValidatorRegistrationV1) (*silapb.SignedValidatorRegistrationV1, bool /* isCached */, error)
 	StartEventStream(ctx context.Context, topics []string)
 	EventStreamIsRunning() bool
 	ProcessEvent(ctx context.Context, event *event.Event)

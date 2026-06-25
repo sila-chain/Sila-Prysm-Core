@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila/core/types"
 	"github.com/pkg/errors"
@@ -34,13 +34,13 @@ type PremineGenesisConfig struct {
 }
 
 type depositEntries struct {
-	dds   []*ethpb.Deposit_Data
+	dds   []*silapb.Deposit_Data
 	roots [][]byte
 }
 
 type PremineGenesisOpt func(*PremineGenesisConfig)
 
-func WithDepositData(dds []*ethpb.Deposit_Data, roots [][]byte) PremineGenesisOpt {
+func WithDepositData(dds []*silapb.Deposit_Data, roots [][]byte) PremineGenesisOpt {
 	return func(cfg *PremineGenesisConfig) {
 		cfg.depositEntries = &depositEntries{
 			dds:   dds,
@@ -104,66 +104,66 @@ func (s *PremineGenesisConfig) empty() (state.BeaconState, error) {
 
 	switch s.Version {
 	case version.Phase0:
-		e, err = state_native.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{
+		e, err = state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{
 			BlockRoots:  bRoots,
 			StateRoots:  sRoots,
 			RandaoMixes: mixes,
 			Balances:    []uint64{},
-			Validators:  []*ethpb.Validator{},
+			Validators:  []*silapb.Validator{},
 		})
 		if err != nil {
 			return nil, err
 		}
 	case version.Altair:
-		e, err = state_native.InitializeFromProtoUnsafeAltair(&ethpb.BeaconStateAltair{
+		e, err = state_native.InitializeFromProtoUnsafeAltair(&silapb.BeaconStateAltair{
 			BlockRoots:       bRoots,
 			StateRoots:       sRoots,
 			RandaoMixes:      mixes,
 			Balances:         []uint64{},
 			InactivityScores: []uint64{},
-			Validators:       []*ethpb.Validator{},
+			Validators:       []*silapb.Validator{},
 		})
 		if err != nil {
 			return nil, err
 		}
 	case version.Bellatrix:
-		e, err = state_native.InitializeFromProtoUnsafeBellatrix(&ethpb.BeaconStateBellatrix{
+		e, err = state_native.InitializeFromProtoUnsafeBellatrix(&silapb.BeaconStateBellatrix{
 			BlockRoots:       bRoots,
 			StateRoots:       sRoots,
 			RandaoMixes:      mixes,
 			Balances:         []uint64{},
 			InactivityScores: []uint64{},
-			Validators:       []*ethpb.Validator{},
+			Validators:       []*silapb.Validator{},
 		})
 		if err != nil {
 			return nil, err
 		}
 	case version.Capella:
-		e, err = state_native.InitializeFromProtoUnsafeCapella(&ethpb.BeaconStateCapella{
+		e, err = state_native.InitializeFromProtoUnsafeCapella(&silapb.BeaconStateCapella{
 			BlockRoots:       bRoots,
 			StateRoots:       sRoots,
 			RandaoMixes:      mixes,
 			Balances:         []uint64{},
 			InactivityScores: []uint64{},
-			Validators:       []*ethpb.Validator{},
+			Validators:       []*silapb.Validator{},
 		})
 		if err != nil {
 			return nil, err
 		}
 	case version.Deneb:
-		e, err = state_native.InitializeFromProtoUnsafeDeneb(&ethpb.BeaconStateDeneb{})
+		e, err = state_native.InitializeFromProtoUnsafeDeneb(&silapb.BeaconStateDeneb{})
 		if err != nil {
 			return nil, err
 		}
 	case version.Electra:
-		e, err = state_native.InitializeFromProtoUnsafeElectra(&ethpb.BeaconStateElectra{
+		e, err = state_native.InitializeFromProtoUnsafeElectra(&silapb.BeaconStateElectra{
 			DepositRequestsStartIndex: params.BeaconConfig().UnsetDepositRequestsStartIndex,
 		})
 		if err != nil {
 			return nil, err
 		}
 	case version.Fulu:
-		e, err = state_native.InitializeFromProtoUnsafeFulu(&ethpb.BeaconStateFulu{
+		e, err = state_native.InitializeFromProtoUnsafeFulu(&silapb.BeaconStateFulu{
 			DepositRequestsStartIndex: params.BeaconConfig().UnsetDepositRequestsStartIndex,
 		})
 		if err != nil {
@@ -181,7 +181,7 @@ func (s *PremineGenesisConfig) empty() (state.BeaconState, error) {
 	if err = e.SetHistoricalRoots([][]byte{}); err != nil {
 		return nil, err
 	}
-	zcp := &ethpb.Checkpoint{
+	zcp := &silapb.Checkpoint{
 		Epoch: 0,
 		Root:  params.BeaconConfig().ZeroHash[:],
 	}
@@ -194,14 +194,14 @@ func (s *PremineGenesisConfig) empty() (state.BeaconState, error) {
 	if err = e.SetFinalizedCheckpoint(zcp); err != nil {
 		return nil, err
 	}
-	if err = e.SetEth1DataVotes([]*ethpb.Eth1Data{}); err != nil {
+	if err = e.SetEth1DataVotes([]*silapb.Eth1Data{}); err != nil {
 		return nil, err
 	}
 	if s.Version == version.Phase0 {
-		if err = e.SetCurrentEpochAttestations([]*ethpb.PendingAttestation{}); err != nil {
+		if err = e.SetCurrentEpochAttestations([]*silapb.PendingAttestation{}); err != nil {
 			return nil, err
 		}
-		if err = e.SetPreviousEpochAttestations([]*ethpb.PendingAttestation{}); err != nil {
+		if err = e.SetPreviousEpochAttestations([]*silapb.PendingAttestation{}); err != nil {
 			return nil, err
 		}
 	}
@@ -228,7 +228,7 @@ func (s *PremineGenesisConfig) processDeposits(ctx context.Context, g state.Beac
 	return nil
 }
 
-func (s *PremineGenesisConfig) deposits() ([]*ethpb.Deposit, error) {
+func (s *PremineGenesisConfig) deposits() ([]*silapb.Deposit, error) {
 	if s.depositEntries == nil {
 		prv, pub, err := s.keys()
 		if err != nil {
@@ -271,7 +271,7 @@ func (s *PremineGenesisConfig) setEth1Data(g state.BeaconState) error {
 	if err != nil {
 		return err
 	}
-	return g.SetEth1Data(&ethpb.Eth1Data{DepositRoot: dr[:], BlockHash: s.GB.Hash().Bytes()})
+	return g.SetEth1Data(&silapb.Eth1Data{DepositRoot: dr[:], BlockHash: s.GB.Hash().Bytes()})
 }
 
 func emptyDepositRoot() ([32]byte, error) {
@@ -358,7 +358,7 @@ func (s *PremineGenesisConfig) setFork(g state.BeaconState) error {
 	default:
 		return errUnsupportedVersion
 	}
-	fork := &ethpb.Fork{
+	fork := &silapb.Fork{
 		PreviousVersion: pv,
 		CurrentVersion:  cv,
 		Epoch:           0,
@@ -442,36 +442,36 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 	var body rooter
 	switch s.Version {
 	case version.Phase0:
-		body = &ethpb.BeaconBlockBody{
+		body = &silapb.BeaconBlockBody{
 			RandaoReveal: make([]byte, 96),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot: make([]byte, 32),
 				BlockHash:   make([]byte, 32),
 			},
 			Graffiti: make([]byte, 32),
 		}
 	case version.Altair:
-		body = &ethpb.BeaconBlockBodyAltair{
+		body = &silapb.BeaconBlockBodyAltair{
 			RandaoReveal: make([]byte, 96),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot: make([]byte, 32),
 				BlockHash:   make([]byte, 32),
 			},
 			Graffiti: make([]byte, 32),
-			SyncAggregate: &ethpb.SyncAggregate{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
 		}
 	case version.Bellatrix:
-		body = &ethpb.BeaconBlockBodyBellatrix{
+		body = &silapb.BeaconBlockBodyBellatrix{
 			RandaoReveal: make([]byte, 96),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot: make([]byte, 32),
 				BlockHash:   make([]byte, 32),
 			},
 			Graffiti: make([]byte, 32),
-			SyncAggregate: &ethpb.SyncAggregate{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
@@ -489,14 +489,14 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 			},
 		}
 	case version.Capella:
-		body = &ethpb.BeaconBlockBodyCapella{
+		body = &silapb.BeaconBlockBodyCapella{
 			RandaoReveal: make([]byte, 96),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot: make([]byte, 32),
 				BlockHash:   make([]byte, 32),
 			},
 			Graffiti: make([]byte, 32),
-			SyncAggregate: &ethpb.SyncAggregate{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
@@ -513,17 +513,17 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				Transactions:  make([][]byte, 0),
 				Withdrawals:   make([]*enginev1.Withdrawal, 0),
 			},
-			BlsToExecutionChanges: make([]*ethpb.SignedBLSToExecutionChange, 0),
+			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 		}
 	case version.Deneb:
-		body = &ethpb.BeaconBlockBodyDeneb{
+		body = &silapb.BeaconBlockBodyDeneb{
 			RandaoReveal: make([]byte, 96),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot: make([]byte, 32),
 				BlockHash:   make([]byte, 32),
 			},
 			Graffiti: make([]byte, 32),
-			SyncAggregate: &ethpb.SyncAggregate{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
@@ -540,18 +540,18 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				Transactions:  make([][]byte, 0),
 				Withdrawals:   make([]*enginev1.Withdrawal, 0),
 			},
-			BlsToExecutionChanges: make([]*ethpb.SignedBLSToExecutionChange, 0),
+			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
 		}
 	case version.Electra:
-		body = &ethpb.BeaconBlockBodyElectra{
+		body = &silapb.BeaconBlockBodyElectra{
 			RandaoReveal: make([]byte, 96),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot: make([]byte, 32),
 				BlockHash:   make([]byte, 32),
 			},
 			Graffiti: make([]byte, 32),
-			SyncAggregate: &ethpb.SyncAggregate{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
@@ -568,7 +568,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				Transactions:  make([][]byte, 0),
 				Withdrawals:   make([]*enginev1.Withdrawal, 0),
 			},
-			BlsToExecutionChanges: make([]*ethpb.SignedBLSToExecutionChange, 0),
+			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
 			ExecutionRequests: &enginev1.ExecutionRequests{
 				Deposits:       make([]*enginev1.DepositRequest, 0),
@@ -577,14 +577,14 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 			},
 		}
 	case version.Fulu:
-		body = &ethpb.BeaconBlockBodyElectra{
+		body = &silapb.BeaconBlockBodyElectra{
 			RandaoReveal: make([]byte, 96),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot: make([]byte, 32),
 				BlockHash:   make([]byte, 32),
 			},
 			Graffiti: make([]byte, 32),
-			SyncAggregate: &ethpb.SyncAggregate{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
@@ -601,7 +601,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				Transactions:  make([][]byte, 0),
 				Withdrawals:   make([]*enginev1.Withdrawal, 0),
 			},
-			BlsToExecutionChanges: make([]*ethpb.SignedBLSToExecutionChange, 0),
+			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
 			ExecutionRequests: &enginev1.ExecutionRequests{
 				Deposits:       make([]*enginev1.DepositRequest, 0),
@@ -617,7 +617,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 	if err != nil {
 		return errors.Wrap(err, "could not hash tree root empty block body")
 	}
-	lbh := &ethpb.BeaconBlockHeader{
+	lbh := &silapb.BeaconBlockHeader{
 		ParentRoot: params.BeaconConfig().ZeroHash[:],
 		StateRoot:  params.BeaconConfig().ZeroHash[:],
 		BodyRoot:   root[:],

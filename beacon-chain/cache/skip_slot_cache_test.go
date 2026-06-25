@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -23,7 +23,7 @@ func TestSkipSlotCache_RoundTrip(t *testing.T) {
 
 	require.NoError(t, c.MarkInProgress(r))
 
-	s, err = state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	s, err = state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot: 10,
 	})
 	require.NoError(t, err)

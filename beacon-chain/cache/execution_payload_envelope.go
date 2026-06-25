@@ -4,14 +4,14 @@ import (
 	"sync"
 
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // ExecutionPayloadContents holds the producer's envelope with precomputed
 // data column sidecars; raw blobs/proofs are derived from the columns at read
 // time so the publish hot path skips the KZG cell extension.
 type ExecutionPayloadContents struct {
-	Envelope    *ethpb.ExecutionPayloadEnvelope
+	Envelope    *silapb.ExecutionPayloadEnvelope
 	DataColumns []consensusblocks.RODataColumn
 }
 

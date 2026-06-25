@@ -8,22 +8,22 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 )
 
 type BeaconBlockConverter interface {
-	ConvertRESTPhase0BlockToProto(block *structs.BeaconBlock) (*ethpb.BeaconBlock, error)
-	ConvertRESTAltairBlockToProto(block *structs.BeaconBlockAltair) (*ethpb.BeaconBlockAltair, error)
-	ConvertRESTBellatrixBlockToProto(block *structs.BeaconBlockBellatrix) (*ethpb.BeaconBlockBellatrix, error)
-	ConvertRESTCapellaBlockToProto(block *structs.BeaconBlockCapella) (*ethpb.BeaconBlockCapella, error)
+	ConvertRESTPhase0BlockToProto(block *structs.BeaconBlock) (*silapb.BeaconBlock, error)
+	ConvertRESTAltairBlockToProto(block *structs.BeaconBlockAltair) (*silapb.BeaconBlockAltair, error)
+	ConvertRESTBellatrixBlockToProto(block *structs.BeaconBlockBellatrix) (*silapb.BeaconBlockBellatrix, error)
+	ConvertRESTCapellaBlockToProto(block *structs.BeaconBlockCapella) (*silapb.BeaconBlockCapella, error)
 }
 
 type beaconApiBeaconBlockConverter struct{}
 
 // ConvertRESTPhase0BlockToProto converts a Phase0 JSON beacon block to its protobuf equivalent
-func (c beaconApiBeaconBlockConverter) ConvertRESTPhase0BlockToProto(block *structs.BeaconBlock) (*ethpb.BeaconBlock, error) {
+func (c beaconApiBeaconBlockConverter) ConvertRESTPhase0BlockToProto(block *structs.BeaconBlock) (*silapb.BeaconBlock, error) {
 	blockSlot, err := strconv.ParseUint(block.Slot, 10, 64)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to parse slot `%s`", block.Slot)
@@ -102,14 +102,14 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTPhase0BlockToProto(block *stru
 		return nil, errors.Wrap(err, "failed to get voluntary exits")
 	}
 
-	return &ethpb.BeaconBlock{
+	return &silapb.BeaconBlock{
 		Slot:          primitives.Slot(blockSlot),
 		ProposerIndex: primitives.ValidatorIndex(blockProposerIndex),
 		ParentRoot:    parentRoot,
 		StateRoot:     stateRoot,
-		Body: &ethpb.BeaconBlockBody{
+		Body: &silapb.BeaconBlockBody{
 			RandaoReveal: randaoReveal,
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot:  depositRoot,
 				DepositCount: depositCount,
 				BlockHash:    blockHash,
@@ -125,7 +125,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTPhase0BlockToProto(block *stru
 }
 
 // ConvertRESTAltairBlockToProto converts an Altair JSON beacon block to its protobuf equivalent
-func (c beaconApiBeaconBlockConverter) ConvertRESTAltairBlockToProto(block *structs.BeaconBlockAltair) (*ethpb.BeaconBlockAltair, error) {
+func (c beaconApiBeaconBlockConverter) ConvertRESTAltairBlockToProto(block *structs.BeaconBlockAltair) (*silapb.BeaconBlockAltair, error) {
 	if block.Body == nil {
 		return nil, errors.New("block body is nil")
 	}
@@ -166,12 +166,12 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTAltairBlockToProto(block *stru
 		return nil, errors.Wrapf(err, "failed to decode sync committee signature `%s`", block.Body.SyncAggregate.SyncCommitteeSignature)
 	}
 
-	return &ethpb.BeaconBlockAltair{
+	return &silapb.BeaconBlockAltair{
 		Slot:          phase0Block.Slot,
 		ProposerIndex: phase0Block.ProposerIndex,
 		ParentRoot:    phase0Block.ParentRoot,
 		StateRoot:     phase0Block.StateRoot,
-		Body: &ethpb.BeaconBlockBodyAltair{
+		Body: &silapb.BeaconBlockBodyAltair{
 			RandaoReveal:      phase0Block.Body.RandaoReveal,
 			Eth1Data:          phase0Block.Body.Eth1Data,
 			Graffiti:          phase0Block.Body.Graffiti,
@@ -180,7 +180,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTAltairBlockToProto(block *stru
 			Attestations:      phase0Block.Body.Attestations,
 			Deposits:          phase0Block.Body.Deposits,
 			VoluntaryExits:    phase0Block.Body.VoluntaryExits,
-			SyncAggregate: &ethpb.SyncAggregate{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      syncCommitteeBits,
 				SyncCommitteeSignature: syncCommitteeSignature,
 			},
@@ -189,7 +189,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTAltairBlockToProto(block *stru
 }
 
 // ConvertRESTBellatrixBlockToProto converts a Bellatrix JSON beacon block to its protobuf equivalent
-func (c beaconApiBeaconBlockConverter) ConvertRESTBellatrixBlockToProto(block *structs.BeaconBlockBellatrix) (*ethpb.BeaconBlockBellatrix, error) {
+func (c beaconApiBeaconBlockConverter) ConvertRESTBellatrixBlockToProto(block *structs.BeaconBlockBellatrix) (*silapb.BeaconBlockBellatrix, error) {
 	if block.Body == nil {
 		return nil, errors.New("block body is nil")
 	}
@@ -291,12 +291,12 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTBellatrixBlockToProto(block *s
 		return nil, errors.Wrap(err, "failed to get execution payload transactions")
 	}
 
-	return &ethpb.BeaconBlockBellatrix{
+	return &silapb.BeaconBlockBellatrix{
 		Slot:          altairBlock.Slot,
 		ProposerIndex: altairBlock.ProposerIndex,
 		ParentRoot:    altairBlock.ParentRoot,
 		StateRoot:     altairBlock.StateRoot,
-		Body: &ethpb.BeaconBlockBodyBellatrix{
+		Body: &silapb.BeaconBlockBodyBellatrix{
 			RandaoReveal:      altairBlock.Body.RandaoReveal,
 			Eth1Data:          altairBlock.Body.Eth1Data,
 			Graffiti:          altairBlock.Body.Graffiti,
@@ -327,7 +327,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTBellatrixBlockToProto(block *s
 }
 
 // ConvertRESTCapellaBlockToProto converts a Capella JSON beacon block to its protobuf equivalent
-func (c beaconApiBeaconBlockConverter) ConvertRESTCapellaBlockToProto(block *structs.BeaconBlockCapella) (*ethpb.BeaconBlockCapella, error) {
+func (c beaconApiBeaconBlockConverter) ConvertRESTCapellaBlockToProto(block *structs.BeaconBlockCapella) (*silapb.BeaconBlockCapella, error) {
 	if block.Body == nil {
 		return nil, errors.New("block body is nil")
 	}
@@ -385,12 +385,12 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTCapellaBlockToProto(block *str
 		return nil, errors.Wrap(err, "failed to get bls to execution changes")
 	}
 
-	return &ethpb.BeaconBlockCapella{
+	return &silapb.BeaconBlockCapella{
 		Slot:          bellatrixBlock.Slot,
 		ProposerIndex: bellatrixBlock.ProposerIndex,
 		ParentRoot:    bellatrixBlock.ParentRoot,
 		StateRoot:     bellatrixBlock.StateRoot,
-		Body: &ethpb.BeaconBlockBodyCapella{
+		Body: &silapb.BeaconBlockBodyCapella{
 			RandaoReveal:      bellatrixBlock.Body.RandaoReveal,
 			Eth1Data:          bellatrixBlock.Body.Eth1Data,
 			Graffiti:          bellatrixBlock.Body.Graffiti,

@@ -8,7 +8,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
@@ -25,18 +25,18 @@ type streamBlocksAltairClient struct {
 	grpc.ClientStream
 	ctx                 context.Context
 	beaconApiClient     *beaconApiValidatorClient
-	streamBlocksRequest *ethpb.StreamBlocksRequest
+	streamBlocksRequest *silapb.StreamBlocksRequest
 	prevBlockSlot       primitives.Slot
 	pingDelay           time.Duration
 }
 
 type headSignedBeaconBlockResult struct {
-	streamBlocksResponse *ethpb.StreamBlocksResponse
+	streamBlocksResponse *silapb.StreamBlocksResponse
 	executionOptimistic  bool
 	slot                 primitives.Slot
 }
 
-func (c *beaconApiValidatorClient) streamBlocks(ctx context.Context, in *ethpb.StreamBlocksRequest, pingDelay time.Duration) ethpb.BeaconNodeValidator_StreamBlocksAltairClient {
+func (c *beaconApiValidatorClient) streamBlocks(ctx context.Context, in *silapb.StreamBlocksRequest, pingDelay time.Duration) silapb.BeaconNodeValidator_StreamBlocksAltairClient {
 	return &streamBlocksAltairClient{
 		ctx:                 ctx,
 		beaconApiClient:     c,
@@ -45,7 +45,7 @@ func (c *beaconApiValidatorClient) streamBlocks(ctx context.Context, in *ethpb.S
 	}
 }
 
-func (c *streamBlocksAltairClient) Recv() (*ethpb.StreamBlocksResponse, error) {
+func (c *streamBlocksAltairClient) Recv() (*silapb.StreamBlocksResponse, error) {
 	result, err := c.beaconApiClient.headSignedBeaconBlock(c.ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get latest signed block")
@@ -79,7 +79,7 @@ func (c *beaconApiValidatorClient) headSignedBeaconBlock(ctx context.Context) (*
 	// Once we know what the consensus version is, we can go ahead and unmarshal into the specific structs unique to each version
 	decoder := json.NewDecoder(bytes.NewReader(signedBlockResponseJson.Data))
 
-	response := &ethpb.StreamBlocksResponse{}
+	response := &silapb.StreamBlocksResponse{}
 	var slot primitives.Slot
 
 	switch signedBlockResponseJson.Version {
@@ -99,8 +99,8 @@ func (c *beaconApiValidatorClient) headSignedBeaconBlock(ctx context.Context) (*
 			return nil, errors.Wrapf(err, "failed to decode phase0 block signature `%s`", jsonPhase0Block.Signature)
 		}
 
-		response.Block = &ethpb.StreamBlocksResponse_Phase0Block{
-			Phase0Block: &ethpb.SignedBeaconBlock{
+		response.Block = &silapb.StreamBlocksResponse_Phase0Block{
+			Phase0Block: &silapb.SignedBeaconBlock{
 				Signature: decodedSignature,
 				Block:     phase0Block,
 			},
@@ -124,8 +124,8 @@ func (c *beaconApiValidatorClient) headSignedBeaconBlock(ctx context.Context) (*
 			return nil, errors.Wrapf(err, "failed to decode altair block signature `%s`", jsonAltairBlock.Signature)
 		}
 
-		response.Block = &ethpb.StreamBlocksResponse_AltairBlock{
-			AltairBlock: &ethpb.SignedBeaconBlockAltair{
+		response.Block = &silapb.StreamBlocksResponse_AltairBlock{
+			AltairBlock: &silapb.SignedBeaconBlockAltair{
 				Signature: decodedSignature,
 				Block:     altairBlock,
 			},
@@ -149,8 +149,8 @@ func (c *beaconApiValidatorClient) headSignedBeaconBlock(ctx context.Context) (*
 			return nil, errors.Wrapf(err, "failed to decode bellatrix block signature `%s`", jsonBellatrixBlock.Signature)
 		}
 
-		response.Block = &ethpb.StreamBlocksResponse_BellatrixBlock{
-			BellatrixBlock: &ethpb.SignedBeaconBlockBellatrix{
+		response.Block = &silapb.StreamBlocksResponse_BellatrixBlock{
+			BellatrixBlock: &silapb.SignedBeaconBlockBellatrix{
 				Signature: decodedSignature,
 				Block:     bellatrixBlock,
 			},
@@ -174,8 +174,8 @@ func (c *beaconApiValidatorClient) headSignedBeaconBlock(ctx context.Context) (*
 			return nil, errors.Wrapf(err, "failed to decode capella block signature `%s`", jsonCapellaBlock.Signature)
 		}
 
-		response.Block = &ethpb.StreamBlocksResponse_CapellaBlock{
-			CapellaBlock: &ethpb.SignedBeaconBlockCapella{
+		response.Block = &silapb.StreamBlocksResponse_CapellaBlock{
+			CapellaBlock: &silapb.SignedBeaconBlockCapella{
 				Signature: decodedSignature,
 				Block:     capellaBlock,
 			},
@@ -193,8 +193,8 @@ func (c *beaconApiValidatorClient) headSignedBeaconBlock(ctx context.Context) (*
 			return nil, errors.Wrap(err, "failed to get signed deneb block")
 		}
 
-		response.Block = &ethpb.StreamBlocksResponse_DenebBlock{
-			DenebBlock: &ethpb.SignedBeaconBlockDeneb{
+		response.Block = &silapb.StreamBlocksResponse_DenebBlock{
+			DenebBlock: &silapb.SignedBeaconBlockDeneb{
 				Signature: denebBlock.Signature,
 				Block:     denebBlock.Block,
 			},

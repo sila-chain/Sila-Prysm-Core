@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/slice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/slashings"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -40,7 +40,7 @@ import (
 func ProcessAttesterSlashings(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	slashings []ethpb.AttSlashing,
+	slashings []silapb.AttSlashing,
 	exitInfo *validators.ExitInfo,
 ) (state.BeaconState, error) {
 	ctx, span := trace.StartSpan(ctx, "blocks.ProcessAttesterSlashings")
@@ -67,7 +67,7 @@ func ProcessAttesterSlashings(
 func ProcessAttesterSlashingsNoVerify(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	slashings []ethpb.AttSlashing,
+	slashings []silapb.AttSlashing,
 	exitInfo *validators.ExitInfo,
 ) (state.BeaconState, error) {
 	if exitInfo == nil && len(slashings) > 0 {
@@ -87,7 +87,7 @@ func ProcessAttesterSlashingsNoVerify(
 func ProcessAttesterSlashing(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	slashing ethpb.AttSlashing,
+	slashing silapb.AttSlashing,
 	exitInfo *validators.ExitInfo,
 ) (state.BeaconState, error) {
 	if exitInfo == nil {
@@ -105,7 +105,7 @@ func ProcessAttesterSlashing(
 func ProcessAttesterSlashingNoVerify(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	slashing ethpb.AttSlashing,
+	slashing silapb.AttSlashing,
 	exitInfo *validators.ExitInfo,
 ) (state.BeaconState, error) {
 	if exitInfo == nil {
@@ -117,7 +117,7 @@ func ProcessAttesterSlashingNoVerify(
 func processAttesterSlashing(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	slashing ethpb.AttSlashing,
+	slashing silapb.AttSlashing,
 	exitInfo *validators.ExitInfo,
 ) (state.BeaconState, error) {
 	slashableIndices := SlashableAttesterIndices(slashing)
@@ -148,7 +148,7 @@ func processAttesterSlashing(
 }
 
 // VerifyAttesterSlashing validates the attestation data in both attestations in the slashing object.
-func VerifyAttesterSlashing(ctx context.Context, beaconState state.ReadOnlyBeaconState, slashing ethpb.AttSlashing) error {
+func VerifyAttesterSlashing(ctx context.Context, beaconState state.ReadOnlyBeaconState, slashing silapb.AttSlashing) error {
 	if slashing == nil {
 		return errors.New("nil slashing")
 	}
@@ -188,20 +188,20 @@ func VerifyAttesterSlashing(ctx context.Context, beaconState state.ReadOnlyBeaco
 //	     # Surround vote
 //	     (data_1.source.epoch < data_2.source.epoch and data_2.target.epoch < data_1.target.epoch)
 //	 )
-func IsSlashableAttestationData(data1, data2 *ethpb.AttestationData) bool {
+func IsSlashableAttestationData(data1, data2 *silapb.AttestationData) bool {
 	if data1 == nil || data2 == nil || data1.Target == nil || data2.Target == nil || data1.Source == nil || data2.Source == nil {
 		return false
 	}
 	isDoubleVote := !attestation.AttDataIsEqual(data1, data2) && data1.Target.Epoch == data2.Target.Epoch
-	att1 := &ethpb.IndexedAttestation{Data: data1}
-	att2 := &ethpb.IndexedAttestation{Data: data2}
+	att1 := &silapb.IndexedAttestation{Data: data1}
+	att2 := &silapb.IndexedAttestation{Data: data2}
 	// Check if att1 is surrounding att2.
 	isSurroundVote := slashings.IsSurround(att1, att2)
 	return isDoubleVote || isSurroundVote
 }
 
 // SlashableAttesterIndices returns the intersection of attester indices from both attestations in this slashing.
-func SlashableAttesterIndices(slashing ethpb.AttSlashing) []uint64 {
+func SlashableAttesterIndices(slashing silapb.AttSlashing) []uint64 {
 	if slashing == nil || slashing.FirstAttestation() == nil || slashing.SecondAttestation() == nil {
 		return nil
 	}

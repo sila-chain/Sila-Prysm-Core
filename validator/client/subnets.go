@@ -6,20 +6,20 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
 // subscribeToSubnets iterates through each validator duty, signs each slot, and asks beacon node
 // to eagerly subscribe to subnets so that the aggregator has attestations to aggregate.
-func (v *validator) subscribeToSubnets(ctx context.Context, duties *ethpb.ValidatorDutiesContainer) error {
+func (v *validator) subscribeToSubnets(ctx context.Context, duties *silapb.ValidatorDutiesContainer) error {
 	ctx, span := trace.StartSpan(ctx, "validator.subscribeToSubnets")
 	defer span.End()
 
 	subscribeSlots := make([]primitives.Slot, 0, len(duties.CurrentEpochDuties)+len(duties.NextEpochDuties))
 	subscribeCommitteeIndices := make([]primitives.CommitteeIndex, 0, len(duties.CurrentEpochDuties)+len(duties.NextEpochDuties))
 	subscribeIsAggregator := make([]bool, 0, len(duties.CurrentEpochDuties)+len(duties.NextEpochDuties))
-	activeDuties := make([]*ethpb.ValidatorDuty, 0, len(duties.CurrentEpochDuties)+len(duties.NextEpochDuties))
+	activeDuties := make([]*silapb.ValidatorDuty, 0, len(duties.CurrentEpochDuties)+len(duties.NextEpochDuties))
 	alreadySubscribed := make(map[[64]byte]bool)
 
 	if err := v.aggSelector.RefreshSelectionProofs(ctx); err != nil {
@@ -28,7 +28,7 @@ func (v *validator) subscribeToSubnets(ctx context.Context, duties *ethpb.Valida
 
 	for _, duty := range duties.CurrentEpochDuties {
 		pk := bytesutil.ToBytes48(duty.PublicKey)
-		if duty.Status == ethpb.ValidatorStatus_ACTIVE || duty.Status == ethpb.ValidatorStatus_EXITING {
+		if duty.Status == silapb.ValidatorStatus_ACTIVE || duty.Status == silapb.ValidatorStatus_EXITING {
 			attesterSlot := duty.AttesterSlot
 			committeeIndex := duty.CommitteeIndex
 			alreadySubscribedKey := validatorSubnetSubscriptionKey(attesterSlot, committeeIndex)
@@ -52,7 +52,7 @@ func (v *validator) subscribeToSubnets(ctx context.Context, duties *ethpb.Valida
 	}
 
 	for _, duty := range duties.NextEpochDuties {
-		if duty.Status == ethpb.ValidatorStatus_ACTIVE || duty.Status == ethpb.ValidatorStatus_EXITING {
+		if duty.Status == silapb.ValidatorStatus_ACTIVE || duty.Status == silapb.ValidatorStatus_EXITING {
 			attesterSlot := duty.AttesterSlot
 			committeeIndex := duty.CommitteeIndex
 			alreadySubscribedKey := validatorSubnetSubscriptionKey(attesterSlot, committeeIndex)
@@ -76,7 +76,7 @@ func (v *validator) subscribeToSubnets(ctx context.Context, duties *ethpb.Valida
 	}
 
 	_, err := v.validatorClient.SubscribeCommitteeSubnets(ctx,
-		&ethpb.CommitteeSubnetsSubscribeRequest{
+		&silapb.CommitteeSubnetsSubscribeRequest{
 			Slots:        subscribeSlots,
 			CommitteeIds: subscribeCommitteeIndices,
 			IsAggregator: subscribeIsAggregator,

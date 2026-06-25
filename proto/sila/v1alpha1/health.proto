@@ -20,7 +20,7 @@ service Health {
   rpc StreamBeaconLogs(google.protobuf.Empty) returns (stream LogsResponse) {
     option deprecated = true;
     option (google.api.http) = {
-      get : "/eth/v1alpha1/health/logs/stream"
+      get : "/sila/v1alpha1/health/logs/stream"
     };
   }
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -33,7 +33,7 @@ func TestStore_IsFinalizedBlock(t *testing.T) {
 	root, err := blks[slotsPerEpoch].Block().HashTreeRoot()
 	require.NoError(t, err)
 
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: 1,
 		Root:  root[:],
 	}
@@ -102,7 +102,7 @@ func TestStore_IsFinalized_ForkEdgeCase(t *testing.T) {
 	require.NoError(t, db.SaveBlocks(ctx, blocks2))
 
 	// First checkpoint
-	checkpoint1 := &ethpb.Checkpoint{
+	checkpoint1 := &silapb.Checkpoint{
 		Root:  sszRootOrDie(t, blocks1[0]),
 		Epoch: 1,
 	}
@@ -119,7 +119,7 @@ func TestStore_IsFinalized_ForkEdgeCase(t *testing.T) {
 	}
 
 	// Second checkpoint
-	checkpoint2 := &ethpb.Checkpoint{
+	checkpoint2 := &silapb.Checkpoint{
 		Root:  sszRootOrDie(t, blocks2[0]),
 		Epoch: 2,
 	}
@@ -149,7 +149,7 @@ func TestStore_IsFinalizedChildBlock(t *testing.T) {
 		root, err := blks[slotsPerEpoch].Block().HashTreeRoot()
 		require.NoError(t, err)
 
-		cp := &ethpb.Checkpoint{
+		cp := &silapb.Checkpoint{
 			Epoch: 1,
 			Root:  root[:],
 		}
@@ -202,7 +202,7 @@ func sszRootOrDie(t *testing.T, block interfaces.ReadOnlySignedBeaconBlock) []by
 }
 
 func makeBlocks(t *testing.T, i, n uint64, previousRoot [32]byte) []interfaces.ReadOnlySignedBeaconBlock {
-	blocks := make([]*ethpb.SignedBeaconBlock, n)
+	blocks := make([]*silapb.SignedBeaconBlock, n)
 	ifaceBlocks := make([]interfaces.ReadOnlySignedBeaconBlock, n)
 	for j := i; j < n+i; j++ {
 		parentRoot := make([]byte, fieldparams.RootLength)
@@ -220,7 +220,7 @@ func makeBlocks(t *testing.T, i, n uint64, previousRoot [32]byte) []interfaces.R
 }
 
 func makeBlocksAltair(t *testing.T, startIdx, num uint64, previousRoot [32]byte) []interfaces.ReadOnlySignedBeaconBlock {
-	blocks := make([]*ethpb.SignedBeaconBlockAltair, num)
+	blocks := make([]*silapb.SignedBeaconBlockAltair, num)
 	ifaceBlocks := make([]interfaces.ReadOnlySignedBeaconBlock, num)
 	for j := startIdx; j < num+startIdx; j++ {
 		parentRoot := make([]byte, fieldparams.RootLength)
@@ -253,7 +253,7 @@ func TestStore_BackfillFinalizedIndexSingle(t *testing.T) {
 	// set up existing finalized block
 	ebpr := existing.Block().ParentRoot()
 	ebr := existing.Root()
-	ebf := &ethpb.FinalizedBlockRootContainer{
+	ebf := &silapb.FinalizedBlockRootContainer{
 		ParentRoot: ebpr[:],
 		ChildRoot:  make([]byte, 32), // we're bypassing validation to seed the db, so we don't need a valid child.
 	}
@@ -292,7 +292,7 @@ func TestStore_BackfillFinalizedIndex(t *testing.T) {
 	ebpr := blks[64].Block().ParentRoot()
 	ebr := blks[64].Root()
 	chldr := blks[65].Root()
-	ebf := &ethpb.FinalizedBlockRootContainer{
+	ebf := &silapb.FinalizedBlockRootContainer{
 		ParentRoot: ebpr[:],
 		ChildRoot:  chldr[:],
 	}
@@ -322,7 +322,7 @@ func TestStore_BackfillFinalizedIndex(t *testing.T) {
 			bkt := tx.Bucket(finalizedBlockRootsIndexBucket)
 			encfr := bkt.Get(blks[i].RootSlice())
 			require.Equal(t, true, len(encfr) > 0)
-			fr := &ethpb.FinalizedBlockRootContainer{}
+			fr := &silapb.FinalizedBlockRootContainer{}
 			require.NoError(t, decode(ctx, encfr, fr))
 			require.Equal(t, 32, len(fr.ParentRoot))
 			require.Equal(t, 32, len(fr.ChildRoot))

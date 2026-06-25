@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	logTest "github.com/sirupsen/logrus/hooks/test"
@@ -78,13 +78,13 @@ func Test_processQueuedBlocks_DetectsDoubleProposals(t *testing.T) {
 
 			// Initialize validators in the state.
 			numVals := params.BeaconConfig().MinGenesisActiveValidatorCount
-			validators := make([]*ethpb.Validator, numVals)
+			validators := make([]*silapb.Validator, numVals)
 			privKeys := make([]bls.SecretKey, numVals)
 			for i := range validators {
 				privKey, err := bls.RandKey()
 				require.NoError(t, err)
 				privKeys[i] = privKey
-				validators[i] = &ethpb.Validator{
+				validators[i] = &silapb.Validator{
 					PublicKey:             privKey.PublicKey().Marshal(),
 					WithdrawalCredentials: make([]byte, 32),
 				}
@@ -132,7 +132,7 @@ func Test_processQueuedBlocks_DetectsDoubleProposals(t *testing.T) {
 					headerHtr, err := proposalWrapper.SignedBeaconBlockHeader.Header.HashTreeRoot()
 					require.NoError(t, err)
 
-					container := &ethpb.SigningData{
+					container := &silapb.SigningData{
 						ObjectRoot: headerHtr[:],
 						Domain:     domain,
 					}
@@ -197,7 +197,7 @@ func Test_processQueuedBlocks_NotSlashable(t *testing.T) {
 }
 
 func createProposalWrapper(t *testing.T, slot primitives.Slot, proposerIndex primitives.ValidatorIndex, signingRoot []byte) *slashertypes.SignedBlockHeaderWrapper {
-	header := &ethpb.BeaconBlockHeader{
+	header := &silapb.BeaconBlockHeader{
 		Slot:          slot,
 		ProposerIndex: proposerIndex,
 		ParentRoot:    params.BeaconConfig().ZeroHash[:],
@@ -209,7 +209,7 @@ func createProposalWrapper(t *testing.T, slot primitives.Slot, proposerIndex pri
 	fakeSig := make([]byte, 96)
 	copy(fakeSig, "hello")
 	return &slashertypes.SignedBlockHeaderWrapper{
-		SignedBeaconBlockHeader: &ethpb.SignedBeaconBlockHeader{
+		SignedBeaconBlockHeader: &silapb.SignedBeaconBlockHeader{
 			Header:    header,
 			Signature: fakeSig,
 		},

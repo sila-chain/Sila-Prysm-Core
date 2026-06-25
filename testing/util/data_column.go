@@ -7,7 +7,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 type (
@@ -61,13 +61,13 @@ func CreateTestVerifiedRoDataColumnSidecars(t *testing.T, params []DataColumnPar
 			copy(kzgCommitmentsInclusionProof[i], proof)
 		}
 
-		dataColumnSidecar := &ethpb.DataColumnSidecar{
+		dataColumnSidecar := &silapb.DataColumnSidecar{
 			Index:          param.Index,
 			Column:         column,
 			KzgCommitments: param.KzgCommitments,
 			KzgProofs:      param.KzgProofs,
-			SignedBlockHeader: &ethpb.SignedBeaconBlockHeader{
-				Header: &ethpb.BeaconBlockHeader{
+			SignedBlockHeader: &silapb.SignedBeaconBlockHeader{
+				Header: &silapb.BeaconBlockHeader{
 					Slot:          param.Slot,
 					ProposerIndex: param.ProposerIndex,
 					ParentRoot:    parentRoot[:],

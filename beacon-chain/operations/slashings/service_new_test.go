@@ -8,7 +8,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -22,15 +22,15 @@ func TestConvertToElectraWithTimer(t *testing.T) {
 	params.SetupTestConfigCleanup(t)
 
 	indices := []uint64{0, 1}
-	data := &ethpb.AttestationData{
+	data := &silapb.AttestationData{
 		Slot:            1,
 		CommitteeIndex:  1,
 		BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-		Source: &ethpb.Checkpoint{
+		Source: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, fieldparams.RootLength),
 		},
-		Target: &ethpb.Checkpoint{
+		Target: &silapb.Checkpoint{
 			Epoch: 0,
 			Root:  make([]byte, fieldparams.RootLength),
 		},
@@ -38,13 +38,13 @@ func TestConvertToElectraWithTimer(t *testing.T) {
 	sig := make([]byte, fieldparams.BLSSignatureLength)
 
 	phase0Slashing := &PendingAttesterSlashing{
-		attesterSlashing: &ethpb.AttesterSlashing{
-			Attestation_1: &ethpb.IndexedAttestation{
+		attesterSlashing: &silapb.AttesterSlashing{
+			Attestation_1: &silapb.IndexedAttestation{
 				AttestingIndices: indices,
 				Data:             data,
 				Signature:        sig,
 			},
-			Attestation_2: &ethpb.IndexedAttestation{
+			Attestation_2: &silapb.IndexedAttestation{
 				AttestingIndices: indices,
 				Data:             data,
 				Signature:        sig,
@@ -69,7 +69,7 @@ func TestConvertToElectraWithTimer(t *testing.T) {
 
 	s.run()
 
-	electraSlashing, ok := p.pendingAttesterSlashing[0].attesterSlashing.(*ethpb.AttesterSlashingElectra)
+	electraSlashing, ok := p.pendingAttesterSlashing[0].attesterSlashing.(*silapb.AttesterSlashingElectra)
 	require.Equal(t, true, ok, "Slashing was not converted to Electra")
 	assert.DeepEqual(t, phase0Slashing.attesterSlashing.FirstAttestation().GetAttestingIndices(), electraSlashing.FirstAttestation().GetAttestingIndices())
 	assert.DeepEqual(t, phase0Slashing.attesterSlashing.FirstAttestation().GetData(), electraSlashing.FirstAttestation().GetData())

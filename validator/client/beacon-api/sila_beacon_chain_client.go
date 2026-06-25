@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/rest"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	validator2 "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/validator"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
 	"github.com/pkg/errors"
 )
@@ -78,7 +78,7 @@ func (c silaChainClient) ValidatorCount(ctx context.Context, stateID string, sta
 	return resp, nil
 }
 
-func (c silaChainClient) ValidatorPerformance(ctx context.Context, in *ethpb.ValidatorPerformanceRequest) (*ethpb.ValidatorPerformanceResponse, error) {
+func (c silaChainClient) ValidatorPerformance(ctx context.Context, in *silapb.ValidatorPerformanceRequest) (*silapb.ValidatorPerformanceResponse, error) {
 	// Check node version for sila beacon node as it is a custom endpoint for sila beacon node.
 	nodeVersion, err := c.nodeClient.Version(ctx, nil)
 	if err != nil {
@@ -101,7 +101,7 @@ func (c silaChainClient) ValidatorPerformance(ctx context.Context, in *ethpb.Val
 		return nil, err
 	}
 
-	return &ethpb.ValidatorPerformanceResponse{
+	return &silapb.ValidatorPerformanceResponse{
 		CurrentEffectiveBalances:      resp.CurrentEffectiveBalances,
 		CorrectlyVotedSource:          resp.CorrectlyVotedSource,
 		CorrectlyVotedTarget:          resp.CorrectlyVotedTarget,

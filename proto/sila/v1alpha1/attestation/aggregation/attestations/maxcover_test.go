@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
@@ -13,7 +13,7 @@ import (
 
 func TestAggregateAttestations_MaxCover_NewMaxCover(t *testing.T) {
 	type args struct {
-		atts []*ethpb.Attestation
+		atts []*silapb.Attestation
 	}
 	tests := []struct {
 		name string
@@ -30,14 +30,14 @@ func TestAggregateAttestations_MaxCover_NewMaxCover(t *testing.T) {
 		{
 			name: "no attestations",
 			args: args{
-				atts: []*ethpb.Attestation{},
+				atts: []*silapb.Attestation{},
 			},
 			want: &aggregation.MaxCoverProblem{Candidates: []*aggregation.MaxCoverCandidate{}},
 		},
 		{
 			name: "single attestation",
 			args: args{
-				atts: []*ethpb.Attestation{
+				atts: []*silapb.Attestation{
 					{AggregationBits: bitfield.Bitlist{0b00001010, 0b1}},
 				},
 			},
@@ -50,7 +50,7 @@ func TestAggregateAttestations_MaxCover_NewMaxCover(t *testing.T) {
 		{
 			name: "multiple attestations",
 			args: args{
-				atts: []*ethpb.Attestation{
+				atts: []*silapb.Attestation{
 					{AggregationBits: bitfield.Bitlist{0b00001010, 0b1}},
 					{AggregationBits: bitfield.Bitlist{0b00101010, 0b1}},
 					{AggregationBits: bitfield.Bitlist{0b11111010, 0b1}},
@@ -94,39 +94,39 @@ func TestAggregateAttestations_MaxCover_AttList_validate(t *testing.T) {
 		},
 		{
 			name:      "first bitlist is nil",
-			atts:      attestations.AttList{&ethpb.Attestation{}},
+			atts:      attestations.AttList{&silapb.Attestation{}},
 			wantedErr: "bitlist cannot be nil or empty",
 		},
 		{
 			name: "non first bitlist is nil",
 			atts: attestations.AttList{
-				&ethpb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
-				&ethpb.Attestation{},
+				&silapb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
+				&silapb.Attestation{},
 			},
 			wantedErr: "bitlist cannot be nil or empty",
 		},
 		{
 			name: "first bitlist is empty",
 			atts: attestations.AttList{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{}},
 			},
 			wantedErr: "bitlist cannot be nil or empty",
 		},
 		{
 			name: "non first bitlist is empty",
 			atts: attestations.AttList{
-				&ethpb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{}},
+				&silapb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{}},
 			},
 			wantedErr: "bitlist cannot be nil or empty",
 		},
 		{
 			name: "valid bitlists",
 			atts: attestations.AttList{
-				&ethpb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
-				&ethpb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
-				&ethpb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
-				&ethpb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
+				&silapb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
+				&silapb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
+				&silapb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
+				&silapb.Attestation{AggregationBits: bitfield.NewBitlist(64)},
 			},
 		},
 	}
@@ -145,138 +145,138 @@ func TestAggregateAttestations_MaxCover_AttList_validate(t *testing.T) {
 func TestAggregateAttestations_rearrangeProcessedAttestations(t *testing.T) {
 	tests := []struct {
 		name     string
-		atts     []ethpb.Att
+		atts     []silapb.Att
 		keys     []int
-		wantAtts []ethpb.Att
+		wantAtts []silapb.Att
 	}{
 		{
 			name: "nil attestations",
 		},
 		{
 			name: "single attestation no processed keys",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{},
+			atts: []silapb.Att{
+				&silapb.Attestation{},
 			},
-			wantAtts: []ethpb.Att{
-				&ethpb.Attestation{},
+			wantAtts: []silapb.Att{
+				&silapb.Attestation{},
 			},
 		},
 		{
 			name: "single attestation processed",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{},
+			atts: []silapb.Att{
+				&silapb.Attestation{},
 			},
 			keys: []int{0},
-			wantAtts: []ethpb.Att{
+			wantAtts: []silapb.Att{
 				nil,
 			},
 		},
 		{
 			name: "multiple processed, last attestation marked",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
+			atts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
 			},
 			keys: []int{1, 4}, // Only attestation at index 1, should be moved, att at 4 is already at the end.
-			wantAtts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
+			wantAtts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
 				nil, nil,
 			},
 		},
 		{
 			name: "all processed",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
+			atts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
 			},
 			keys: []int{0, 1, 2, 3, 4},
-			wantAtts: []ethpb.Att{
+			wantAtts: []silapb.Att{
 				nil, nil, nil, nil, nil,
 			},
 		},
 		{
 			name: "operate on slice, single attestation marked",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
+			atts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
 				// Assuming some attestations have been already marked as nil, during previous rounds:
 				nil, nil, nil,
 			},
 			keys: []int{2},
-			wantAtts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+			wantAtts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
 				nil, nil, nil, nil,
 			},
 		},
 		{
 			name: "operate on slice, non-last attestation marked",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x05}},
+			atts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x05}},
 				// Assuming some attestations have been already marked as nil, during previous rounds:
 				nil, nil, nil,
 			},
 			keys: []int{2, 3},
-			wantAtts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x05}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
+			wantAtts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x05}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
 				nil, nil, nil, nil, nil,
 			},
 		},
 		{
 			name: "operate on slice, last attestation marked",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
+			atts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
 				// Assuming some attestations have been already marked as nil, during previous rounds:
 				nil, nil, nil,
 			},
 			keys: []int{2, 4},
-			wantAtts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+			wantAtts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
 				nil, nil, nil, nil, nil,
 			},
 		},
 		{
 			name: "many items, many selected, keys unsorted",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x05}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x06}},
+			atts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x04}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x05}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x06}},
 			},
 			keys: []int{4, 1, 2, 5, 6},
-			wantAtts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+			wantAtts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
 				nil, nil, nil, nil, nil,
 			},
 		},
@@ -303,8 +303,8 @@ func TestAggregateAttestations_aggregateAttestations(t *testing.T) {
 	sign := bls.NewAggregateSignature().Marshal()
 	tests := []struct {
 		name          string
-		atts          []ethpb.Att
-		wantAtts      []ethpb.Att
+		atts          []silapb.Att
+		wantAtts      []silapb.Att
 		keys          []int
 		coverage      *bitfield.Bitlist64
 		wantTargetIdx int
@@ -318,8 +318,8 @@ func TestAggregateAttestations_aggregateAttestations(t *testing.T) {
 		},
 		{
 			name: "single attestation",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{},
+			atts: []silapb.Att{
+				&silapb.Attestation{},
 			},
 			wantTargetIdx: 0,
 			wantErr:       attestations.ErrInvalidAttestationCount.Error(),
@@ -332,9 +332,9 @@ func TestAggregateAttestations_aggregateAttestations(t *testing.T) {
 		},
 		{
 			name: "two attestations, none selected",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
+			atts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
 			},
 			wantTargetIdx: 0,
 			wantErr:       attestations.ErrInvalidAttestationCount.Error(),
@@ -342,9 +342,9 @@ func TestAggregateAttestations_aggregateAttestations(t *testing.T) {
 		},
 		{
 			name: "two attestations, one selected",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
+			atts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x00}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x01}},
 			},
 			wantTargetIdx: 0,
 			wantErr:       attestations.ErrInvalidAttestationCount.Error(),
@@ -352,13 +352,13 @@ func TestAggregateAttestations_aggregateAttestations(t *testing.T) {
 		},
 		{
 			name: "two attestations, both selected, empty coverage",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b00000001, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b00000110, 0b1}, Signature: sign},
+			atts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b00000001, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b00000110, 0b1}, Signature: sign},
 			},
-			wantAtts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b00000111, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b00000110, 0b1}, Signature: sign},
+			wantAtts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b00000111, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b00000110, 0b1}, Signature: sign},
 			},
 			wantTargetIdx: 0,
 			wantErr:       "invalid or empty coverage",
@@ -366,13 +366,13 @@ func TestAggregateAttestations_aggregateAttestations(t *testing.T) {
 		},
 		{
 			name: "two attestations, both selected",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000001, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000010, 0b1}, Signature: sign},
+			atts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000001, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000010, 0b1}, Signature: sign},
 			},
-			wantAtts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000011, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000010, 0b1}, Signature: sign},
+			wantAtts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000011, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000010, 0b1}, Signature: sign},
 			},
 			wantTargetIdx: 0,
 			keys:          []int{0, 1},
@@ -386,21 +386,21 @@ func TestAggregateAttestations_aggregateAttestations(t *testing.T) {
 		},
 		{
 			name: "many attestations, several selected",
-			atts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000001, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000010, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000100, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00001000, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00010000, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00100000, 0b1}, Signature: sign},
+			atts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000001, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000010, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000100, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00001000, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00010000, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00100000, 0b1}, Signature: sign},
 			},
-			wantAtts: []ethpb.Att{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000001, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00010110, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000100, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00001000, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00010000, 0b1}, Signature: sign},
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00100000, 0b1}, Signature: sign},
+			wantAtts: []silapb.Att{
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000001, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00010110, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00000100, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00001000, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00010000, 0b1}, Signature: sign},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0b00100000, 0b1}, Signature: sign},
 			},
 			wantTargetIdx: 1,
 			keys:          []int{1, 2, 4},
@@ -423,7 +423,7 @@ func TestAggregateAttestations_aggregateAttestations(t *testing.T) {
 				assert.NoError(t, err)
 			}
 			assert.Equal(t, tt.wantTargetIdx, gotTargetIdx)
-			extractBitlists := func(atts []ethpb.Att) []bitfield.Bitlist {
+			extractBitlists := func(atts []silapb.Att) []bitfield.Bitlist {
 				bl := make([]bitfield.Bitlist, len(atts))
 				for i, att := range atts {
 					bl[i] = att.GetAggregationBits()

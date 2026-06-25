@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -49,7 +49,7 @@ func (s *Service) validateAggregateAndProof(ctx context.Context, pid peer.ID, ms
 		tracing.AnnotateError(span, err)
 		return pubsub.ValidationReject, err
 	}
-	m, ok := raw.(ethpb.SignedAggregateAttAndProof)
+	m, ok := raw.(silapb.SignedAggregateAttAndProof)
 	if !ok {
 		return pubsub.ValidationReject, errors.Errorf("invalid message type: %T", raw)
 	}
@@ -148,7 +148,7 @@ func (s *Service) validateAggregateAndProof(ctx context.Context, pid peer.ID, ms
 	return pubsub.ValidationAccept, nil
 }
 
-func (s *Service) validateAggregatedAtt(ctx context.Context, signed ethpb.SignedAggregateAttAndProof) (pubsub.ValidationResult, error) {
+func (s *Service) validateAggregatedAtt(ctx context.Context, signed silapb.SignedAggregateAttAndProof) (pubsub.ValidationResult, error) {
 	ctx, span := trace.StartSpan(ctx, "sync.validateAggregatedAtt")
 	defer span.End()
 
@@ -230,7 +230,7 @@ func (s *Service) validateAggregatedAtt(ctx context.Context, signed ethpb.Signed
 		tracing.AnnotateError(span, wrappedErr)
 		return pubsub.ValidationIgnore, wrappedErr
 	}
-	attSigSet, err := blocks.AttestationSignatureBatch(ctx, bs, []ethpb.Att{aggregate})
+	attSigSet, err := blocks.AttestationSignatureBatch(ctx, bs, []silapb.Att{aggregate})
 	if err != nil {
 		wrappedErr := errors.Wrapf(err, "could not verify aggregator signature %d", aggregatorIndex)
 		tracing.AnnotateError(span, wrappedErr)
@@ -244,7 +244,7 @@ func (s *Service) validateAggregatedAtt(ctx context.Context, signed ethpb.Signed
 
 // validateBlocksInAttestation checks if the block being voted on is in the beaconDB.
 // If not, it store this attestation in the map of pending attestations.
-func (s *Service) validateBlockInAttestation(ctx context.Context, satt ethpb.SignedAggregateAttAndProof) bool {
+func (s *Service) validateBlockInAttestation(ctx context.Context, satt silapb.SignedAggregateAttAndProof) bool {
 	// Verify the block being voted and the processed state is in beaconDB. The block should have passed validation if it's in the beaconDB.
 	blockRoot := bytesutil.ToBytes32(satt.AggregateAttestationAndProof().AggregateVal().GetData().BeaconBlockRoot)
 	if !s.hasBlockAndState(ctx, blockRoot) {
@@ -290,7 +290,7 @@ func (s *Service) setAggregatorIndexEpochSeen(epoch primitives.Epoch, aggregator
 //   - [REJECT] The aggregate attestation has participants -- that is, len(get_attesting_indices(state, aggregate.data, aggregate.aggregation_bits)) >= 1.
 //   - [REJECT] The aggregator's validator index is within the committee --
 //     i.e. `aggregate_and_proof.aggregator_index in get_beacon_committee(state, aggregate.data.slot, aggregate.data.index)`.
-func (s *Service) validateIndexInCommittee(ctx context.Context, a ethpb.Att, validatorIndex primitives.ValidatorIndex, committee []primitives.ValidatorIndex) (pubsub.ValidationResult, error) {
+func (s *Service) validateIndexInCommittee(ctx context.Context, a silapb.Att, validatorIndex primitives.ValidatorIndex, committee []primitives.ValidatorIndex) (pubsub.ValidationResult, error) {
 	_, span := trace.StartSpan(ctx, "sync.validateIndexInCommittee")
 	defer span.End()
 
@@ -361,7 +361,7 @@ func validateSelectionIndex(
 }
 
 // This returns aggregator signature set which can be used to batch verify.
-func aggSigSet(s state.ReadOnlyBeaconState, a ethpb.SignedAggregateAttAndProof) (*bls.SignatureBatch, error) {
+func aggSigSet(s state.ReadOnlyBeaconState, a silapb.SignedAggregateAttAndProof) (*bls.SignatureBatch, error) {
 	aggregateAndProof := a.AggregateAttestationAndProof()
 
 	v, err := s.ValidatorAtIndexReadOnly(aggregateAndProof.GetAggregatorIndex())

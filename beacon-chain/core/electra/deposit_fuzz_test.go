@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/electra"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/fuzz"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	gofuzz "github.com/google/gofuzz"
@@ -13,8 +13,8 @@ import (
 
 func TestFuzzProcessDeposits_10000(t *testing.T) {
 	fuzzer := gofuzz.NewWithSeed(0)
-	state := &ethpb.BeaconStateElectra{}
-	deposits := make([]*ethpb.Deposit, 100)
+	state := &silapb.BeaconStateElectra{}
+	deposits := make([]*silapb.Deposit, 100)
 	ctx := t.Context()
 	for i := range 10000 {
 		fuzzer.Fuzz(state)
@@ -33,8 +33,8 @@ func TestFuzzProcessDeposits_10000(t *testing.T) {
 
 func TestFuzzProcessDeposit_10000(t *testing.T) {
 	fuzzer := gofuzz.NewWithSeed(0)
-	state := &ethpb.BeaconStateElectra{}
-	deposit := &ethpb.Deposit{}
+	state := &silapb.BeaconStateElectra{}
+	deposit := &silapb.Deposit{}
 
 	for i := range 10000 {
 		fuzzer.Fuzz(state)

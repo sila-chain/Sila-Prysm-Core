@@ -7,7 +7,7 @@ import (
 	testtmpl "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -16,10 +16,10 @@ func TestBeaconState_LatestBlockHeader_Phase0(t *testing.T) {
 	testtmpl.VerifyBeaconStateLatestBlockHeader(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoPhase0(&ethpb.BeaconState{})
+			return InitializeFromProtoPhase0(&silapb.BeaconState{})
 		},
-		func(BH *ethpb.BeaconBlockHeader) (state.BeaconState, error) {
-			return InitializeFromProtoPhase0(&ethpb.BeaconState{LatestBlockHeader: BH})
+		func(BH *silapb.BeaconBlockHeader) (state.BeaconState, error) {
+			return InitializeFromProtoPhase0(&silapb.BeaconState{LatestBlockHeader: BH})
 		},
 	)
 }
@@ -28,10 +28,10 @@ func TestBeaconState_LatestBlockHeader_Altair(t *testing.T) {
 	testtmpl.VerifyBeaconStateLatestBlockHeader(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoAltair(&ethpb.BeaconStateAltair{})
+			return InitializeFromProtoAltair(&silapb.BeaconStateAltair{})
 		},
-		func(BH *ethpb.BeaconBlockHeader) (state.BeaconState, error) {
-			return InitializeFromProtoAltair(&ethpb.BeaconStateAltair{LatestBlockHeader: BH})
+		func(BH *silapb.BeaconBlockHeader) (state.BeaconState, error) {
+			return InitializeFromProtoAltair(&silapb.BeaconStateAltair{LatestBlockHeader: BH})
 		},
 	)
 }
@@ -40,10 +40,10 @@ func TestBeaconState_LatestBlockHeader_Bellatrix(t *testing.T) {
 	testtmpl.VerifyBeaconStateLatestBlockHeader(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoBellatrix(&ethpb.BeaconStateBellatrix{})
+			return InitializeFromProtoBellatrix(&silapb.BeaconStateBellatrix{})
 		},
-		func(BH *ethpb.BeaconBlockHeader) (state.BeaconState, error) {
-			return InitializeFromProtoBellatrix(&ethpb.BeaconStateBellatrix{LatestBlockHeader: BH})
+		func(BH *silapb.BeaconBlockHeader) (state.BeaconState, error) {
+			return InitializeFromProtoBellatrix(&silapb.BeaconStateBellatrix{LatestBlockHeader: BH})
 		},
 	)
 }
@@ -52,10 +52,10 @@ func TestBeaconState_LatestBlockHeader_Capella(t *testing.T) {
 	testtmpl.VerifyBeaconStateLatestBlockHeader(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoCapella(&ethpb.BeaconStateCapella{})
+			return InitializeFromProtoCapella(&silapb.BeaconStateCapella{})
 		},
-		func(BH *ethpb.BeaconBlockHeader) (state.BeaconState, error) {
-			return InitializeFromProtoCapella(&ethpb.BeaconStateCapella{LatestBlockHeader: BH})
+		func(BH *silapb.BeaconBlockHeader) (state.BeaconState, error) {
+			return InitializeFromProtoCapella(&silapb.BeaconStateCapella{LatestBlockHeader: BH})
 		},
 	)
 }
@@ -64,10 +64,10 @@ func TestBeaconState_LatestBlockHeader_Deneb(t *testing.T) {
 	testtmpl.VerifyBeaconStateLatestBlockHeader(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoDeneb(&ethpb.BeaconStateDeneb{})
+			return InitializeFromProtoDeneb(&silapb.BeaconStateDeneb{})
 		},
-		func(BH *ethpb.BeaconBlockHeader) (state.BeaconState, error) {
-			return InitializeFromProtoDeneb(&ethpb.BeaconStateDeneb{LatestBlockHeader: BH})
+		func(BH *silapb.BeaconBlockHeader) (state.BeaconState, error) {
+			return InitializeFromProtoDeneb(&silapb.BeaconStateDeneb{LatestBlockHeader: BH})
 		},
 	)
 }
@@ -76,10 +76,10 @@ func TestBeaconState_BlockRoots_Phase0(t *testing.T) {
 	testtmpl.VerifyBeaconStateBlockRootsNative(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoPhase0(&ethpb.BeaconState{})
+			return InitializeFromProtoPhase0(&silapb.BeaconState{})
 		},
 		func(BR [][]byte) (state.BeaconState, error) {
-			return InitializeFromProtoPhase0(&ethpb.BeaconState{BlockRoots: BR})
+			return InitializeFromProtoPhase0(&silapb.BeaconState{BlockRoots: BR})
 		},
 	)
 }
@@ -88,10 +88,10 @@ func TestBeaconState_BlockRoots_Altair(t *testing.T) {
 	testtmpl.VerifyBeaconStateBlockRootsNative(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoAltair(&ethpb.BeaconStateAltair{})
+			return InitializeFromProtoAltair(&silapb.BeaconStateAltair{})
 		},
 		func(BR [][]byte) (state.BeaconState, error) {
-			return InitializeFromProtoAltair(&ethpb.BeaconStateAltair{BlockRoots: BR})
+			return InitializeFromProtoAltair(&silapb.BeaconStateAltair{BlockRoots: BR})
 		},
 	)
 }
@@ -100,10 +100,10 @@ func TestBeaconState_BlockRoots_Bellatrix(t *testing.T) {
 	testtmpl.VerifyBeaconStateBlockRootsNative(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoBellatrix(&ethpb.BeaconStateBellatrix{})
+			return InitializeFromProtoBellatrix(&silapb.BeaconStateBellatrix{})
 		},
 		func(BR [][]byte) (state.BeaconState, error) {
-			return InitializeFromProtoBellatrix(&ethpb.BeaconStateBellatrix{BlockRoots: BR})
+			return InitializeFromProtoBellatrix(&silapb.BeaconStateBellatrix{BlockRoots: BR})
 		},
 	)
 }
@@ -112,10 +112,10 @@ func TestBeaconState_BlockRoots_Capella(t *testing.T) {
 	testtmpl.VerifyBeaconStateBlockRootsNative(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoCapella(&ethpb.BeaconStateCapella{})
+			return InitializeFromProtoCapella(&silapb.BeaconStateCapella{})
 		},
 		func(BR [][]byte) (state.BeaconState, error) {
-			return InitializeFromProtoCapella(&ethpb.BeaconStateCapella{BlockRoots: BR})
+			return InitializeFromProtoCapella(&silapb.BeaconStateCapella{BlockRoots: BR})
 		},
 	)
 }
@@ -124,10 +124,10 @@ func TestBeaconState_BlockRoots_Deneb(t *testing.T) {
 	testtmpl.VerifyBeaconStateBlockRootsNative(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoDeneb(&ethpb.BeaconStateDeneb{})
+			return InitializeFromProtoDeneb(&silapb.BeaconStateDeneb{})
 		},
 		func(BR [][]byte) (state.BeaconState, error) {
-			return InitializeFromProtoDeneb(&ethpb.BeaconStateDeneb{BlockRoots: BR})
+			return InitializeFromProtoDeneb(&silapb.BeaconStateDeneb{BlockRoots: BR})
 		},
 	)
 }
@@ -136,10 +136,10 @@ func TestBeaconState_BlockRootAtIndex_Phase0(t *testing.T) {
 	testtmpl.VerifyBeaconStateBlockRootAtIndexNative(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoPhase0(&ethpb.BeaconState{})
+			return InitializeFromProtoPhase0(&silapb.BeaconState{})
 		},
 		func(BR [][]byte) (state.BeaconState, error) {
-			return InitializeFromProtoPhase0(&ethpb.BeaconState{BlockRoots: BR})
+			return InitializeFromProtoPhase0(&silapb.BeaconState{BlockRoots: BR})
 		},
 	)
 }
@@ -148,10 +148,10 @@ func TestBeaconState_BlockRootAtIndex_Altair(t *testing.T) {
 	testtmpl.VerifyBeaconStateBlockRootAtIndexNative(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoAltair(&ethpb.BeaconStateAltair{})
+			return InitializeFromProtoAltair(&silapb.BeaconStateAltair{})
 		},
 		func(BR [][]byte) (state.BeaconState, error) {
-			return InitializeFromProtoAltair(&ethpb.BeaconStateAltair{BlockRoots: BR})
+			return InitializeFromProtoAltair(&silapb.BeaconStateAltair{BlockRoots: BR})
 		},
 	)
 }
@@ -160,10 +160,10 @@ func TestBeaconState_BlockRootAtIndex_Bellatrix(t *testing.T) {
 	testtmpl.VerifyBeaconStateBlockRootAtIndexNative(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoBellatrix(&ethpb.BeaconStateBellatrix{})
+			return InitializeFromProtoBellatrix(&silapb.BeaconStateBellatrix{})
 		},
 		func(BR [][]byte) (state.BeaconState, error) {
-			return InitializeFromProtoBellatrix(&ethpb.BeaconStateBellatrix{BlockRoots: BR})
+			return InitializeFromProtoBellatrix(&silapb.BeaconStateBellatrix{BlockRoots: BR})
 		},
 	)
 }
@@ -172,10 +172,10 @@ func TestBeaconState_BlockRootAtIndex_Capella(t *testing.T) {
 	testtmpl.VerifyBeaconStateBlockRootAtIndexNative(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoCapella(&ethpb.BeaconStateCapella{})
+			return InitializeFromProtoCapella(&silapb.BeaconStateCapella{})
 		},
 		func(BR [][]byte) (state.BeaconState, error) {
-			return InitializeFromProtoCapella(&ethpb.BeaconStateCapella{BlockRoots: BR})
+			return InitializeFromProtoCapella(&silapb.BeaconStateCapella{BlockRoots: BR})
 		},
 	)
 }
@@ -184,10 +184,10 @@ func TestBeaconState_BlockRootAtIndex_Deneb(t *testing.T) {
 	testtmpl.VerifyBeaconStateBlockRootAtIndexNative(
 		t,
 		func() (state.BeaconState, error) {
-			return InitializeFromProtoDeneb(&ethpb.BeaconStateDeneb{})
+			return InitializeFromProtoDeneb(&silapb.BeaconStateDeneb{})
 		},
 		func(BR [][]byte) (state.BeaconState, error) {
-			return InitializeFromProtoDeneb(&ethpb.BeaconStateDeneb{BlockRoots: BR})
+			return InitializeFromProtoDeneb(&silapb.BeaconStateDeneb{BlockRoots: BR})
 		},
 	)
 }
@@ -196,7 +196,7 @@ func TestBeaconState_ProposerDependentRoot(t *testing.T) {
 	slotsPerEpoch := uint64(params.BeaconConfig().SlotsPerEpoch)
 
 	t.Run("epoch < 2 returns sentinel", func(t *testing.T) {
-		s, err := InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: 1})
+		s, err := InitializeFromProtoPhase0(&silapb.BeaconState{Slot: 1})
 		require.NoError(t, err)
 		_, err = s.ProposerDependentRoot(primitives.Slot(slotsPerEpoch - 1))
 		require.ErrorIs(t, err, ErrProposerDependentRootUnderflow)
@@ -209,7 +209,7 @@ func TestBeaconState_ProposerDependentRoot(t *testing.T) {
 		}
 		// slot in epoch 2 → boundary = epoch_start(1) = SlotsPerEpoch → expect block_roots[SlotsPerEpoch-1].
 		proposalSlot := primitives.Slot(2 * slotsPerEpoch)
-		s, err := InitializeFromProtoPhase0(&ethpb.BeaconState{
+		s, err := InitializeFromProtoPhase0(&silapb.BeaconState{
 			BlockRoots: blockRoots,
 			Slot:       primitives.Slot(3 * slotsPerEpoch),
 		})

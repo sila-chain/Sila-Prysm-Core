@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/slice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -27,19 +27,19 @@ func TestComputeCommittee_WithoutCache(t *testing.T) {
 	// Create 10 committees
 	committeeCount := uint64(10)
 	validatorCount := committeeCount * params.BeaconConfig().TargetCommitteeSize
-	validators := make([]*ethpb.Validator, validatorCount)
+	validators := make([]*silapb.Validator, validatorCount)
 
 	for i := range validators {
 		k := make([]byte, 48)
 		copy(k, strconv.Itoa(i))
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             k,
 			WithdrawalCredentials: make([]byte, 32),
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
 		}
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		Slot:        200,
 		BlockRoots:  make([][]byte, params.BeaconConfig().SlotsPerHistoricalRoot),
@@ -107,7 +107,7 @@ func TestCommitteeAssignments_CannotRetrieveFutureEpoch(t *testing.T) {
 	helpers.ClearCache()
 
 	epoch := primitives.Epoch(1)
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot: 0, // Epoch 0.
 	})
 	require.NoError(t, err)
@@ -121,18 +121,18 @@ func TestCommitteeAssignments_CannotRetrieveFutureEpoch(t *testing.T) {
 func TestCommitteeAssignments_NoProposerForSlot0(t *testing.T) {
 	helpers.ClearCache()
 
-	validators := make([]*ethpb.Validator, 4*params.BeaconConfig().SlotsPerEpoch)
+	validators := make([]*silapb.Validator, 4*params.BeaconConfig().SlotsPerEpoch)
 	for i := range validators {
 		var activationEpoch primitives.Epoch
 		if i >= len(validators)/2 {
 			activationEpoch = 3
 		}
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ActivationEpoch: activationEpoch,
 			ExitEpoch:       params.BeaconConfig().FarFutureEpoch,
 		}
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		Slot:        2 * params.BeaconConfig().SlotsPerEpoch, // epoch 2
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -149,7 +149,7 @@ func TestCommitteeAssignments_NoProposerForSlot0(t *testing.T) {
 
 func TestCommitteeAssignments_CanRetrieve(t *testing.T) {
 	// Initialize test with 256 validators, each slot and each index gets 4 validators.
-	validators := make([]*ethpb.Validator, 4*params.BeaconConfig().SlotsPerEpoch)
+	validators := make([]*silapb.Validator, 4*params.BeaconConfig().SlotsPerEpoch)
 	validatorIndices := make([]primitives.ValidatorIndex, len(validators))
 	for i := range validators {
 		// First 2 epochs only half validators are activated.
@@ -157,14 +157,14 @@ func TestCommitteeAssignments_CanRetrieve(t *testing.T) {
 		if i >= len(validators)/2 {
 			activationEpoch = 3
 		}
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ActivationEpoch: activationEpoch,
 			ExitEpoch:       params.BeaconConfig().FarFutureEpoch,
 		}
 		validatorIndices[i] = primitives.ValidatorIndex(i)
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		Slot:        2 * params.BeaconConfig().SlotsPerEpoch, // epoch 2
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -233,20 +233,20 @@ func TestCommitteeAssignments_CannotRetrieveFuture(t *testing.T) {
 	helpers.ClearCache()
 
 	// Initialize test with 256 validators, each slot and each index gets 4 validators.
-	validators := make([]*ethpb.Validator, 4*params.BeaconConfig().SlotsPerEpoch)
+	validators := make([]*silapb.Validator, 4*params.BeaconConfig().SlotsPerEpoch)
 	for i := range validators {
 		// First 2 epochs only half validators are activated.
 		var activationEpoch primitives.Epoch
 		if i >= len(validators)/2 {
 			activationEpoch = 3
 		}
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ActivationEpoch: activationEpoch,
 			ExitEpoch:       params.BeaconConfig().FarFutureEpoch,
 		}
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		Slot:        2 * params.BeaconConfig().SlotsPerEpoch, // epoch 2
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -265,14 +265,14 @@ func TestCommitteeAssignments_CannotRetrieveOlderThanSlotsPerHistoricalRoot(t *t
 	helpers.ClearCache()
 
 	// Initialize test with 256 validators, each slot and each index gets 4 validators.
-	validators := make([]*ethpb.Validator, 4*params.BeaconConfig().SlotsPerEpoch)
+	validators := make([]*silapb.Validator, 4*params.BeaconConfig().SlotsPerEpoch)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		Slot:        params.BeaconConfig().SlotsPerHistoricalRoot + 1,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -286,14 +286,14 @@ func TestCommitteeAssignments_EverySlotHasMin1Proposer(t *testing.T) {
 	helpers.ClearCache()
 
 	// Initialize test with 256 validators, each slot and each index gets 4 validators.
-	validators := make([]*ethpb.Validator, 4*params.BeaconConfig().SlotsPerEpoch)
+	validators := make([]*silapb.Validator, 4*params.BeaconConfig().SlotsPerEpoch)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ActivationEpoch: 0,
 			ExitEpoch:       params.BeaconConfig().FarFutureEpoch,
 		}
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		Slot:        2 * params.BeaconConfig().SlotsPerEpoch, // epoch 2
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -321,83 +321,83 @@ func TestCommitteeAssignments_EverySlotHasMin1Proposer(t *testing.T) {
 }
 
 func TestVerifyAttestationBitfieldLengths_OK(t *testing.T) {
-	validators := make([]*ethpb.Validator, 2*params.BeaconConfig().SlotsPerEpoch)
+	validators := make([]*silapb.Validator, 2*params.BeaconConfig().SlotsPerEpoch)
 	activeRoots := make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: activeRoots,
 	})
 	require.NoError(t, err)
 
 	tests := []struct {
-		attestation         *ethpb.Attestation
+		attestation         *silapb.Attestation
 		stateSlot           primitives.Slot
 		verificationFailure bool
 	}{
 		{
-			attestation: &ethpb.Attestation{
+			attestation: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0x05},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					CommitteeIndex: 5,
-					Target:         &ethpb.Checkpoint{Root: make([]byte, 32)},
+					Target:         &silapb.Checkpoint{Root: make([]byte, 32)},
 				},
 			},
 			stateSlot: 5,
 		},
 		{
 
-			attestation: &ethpb.Attestation{
+			attestation: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0x06},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					CommitteeIndex: 10,
-					Target:         &ethpb.Checkpoint{Root: make([]byte, 32)},
+					Target:         &silapb.Checkpoint{Root: make([]byte, 32)},
 				},
 			},
 			stateSlot: 10,
 		},
 		{
-			attestation: &ethpb.Attestation{
+			attestation: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0x06},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					CommitteeIndex: 20,
-					Target:         &ethpb.Checkpoint{Root: make([]byte, 32)},
+					Target:         &silapb.Checkpoint{Root: make([]byte, 32)},
 				},
 			},
 			stateSlot: 20,
 		},
 		{
-			attestation: &ethpb.Attestation{
+			attestation: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0x06},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					CommitteeIndex: 20,
-					Target:         &ethpb.Checkpoint{Root: make([]byte, 32)},
+					Target:         &silapb.Checkpoint{Root: make([]byte, 32)},
 				},
 			},
 			stateSlot: 20,
 		},
 		{
-			attestation: &ethpb.Attestation{
+			attestation: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0xFF, 0xC0, 0x01},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					CommitteeIndex: 5,
-					Target:         &ethpb.Checkpoint{Root: make([]byte, 32)},
+					Target:         &silapb.Checkpoint{Root: make([]byte, 32)},
 				},
 			},
 			stateSlot:           5,
 			verificationFailure: true,
 		},
 		{
-			attestation: &ethpb.Attestation{
+			attestation: &silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0xFF, 0x01},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					CommitteeIndex: 20,
-					Target:         &ethpb.Checkpoint{Root: make([]byte, 32)},
+					Target:         &silapb.Checkpoint{Root: make([]byte, 32)},
 				},
 			},
 			stateSlot:           20,
@@ -427,16 +427,16 @@ func TestUpdateCommitteeCache_CanUpdate(t *testing.T) {
 	helpers.ClearCache()
 
 	validatorCount := params.BeaconConfig().MinGenesisActiveValidatorCount
-	validators := make([]*ethpb.Validator, validatorCount)
+	validators := make([]*silapb.Validator, validatorCount)
 	indices := make([]primitives.ValidatorIndex, validatorCount)
 	for i := primitives.ValidatorIndex(0); uint64(i) < validatorCount; i++ {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 			EffectiveBalance: 1,
 		}
 		indices[i] = i
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
@@ -457,16 +457,16 @@ func TestUpdateCommitteeCache_CanUpdateAcrossEpochs(t *testing.T) {
 	helpers.ClearCache()
 
 	validatorCount := params.BeaconConfig().MinGenesisActiveValidatorCount
-	validators := make([]*ethpb.Validator, validatorCount)
+	validators := make([]*silapb.Validator, validatorCount)
 	indices := make([]primitives.ValidatorIndex, validatorCount)
 	for i := primitives.ValidatorIndex(0); uint64(i) < validatorCount; i++ {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 			EffectiveBalance: 1,
 		}
 		indices[i] = i
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
@@ -488,13 +488,13 @@ func TestUpdateCommitteeCache_CanUpdateAcrossEpochs(t *testing.T) {
 }
 
 func BenchmarkComputeCommittee300000_WithPreCache(b *testing.B) {
-	validators := make([]*ethpb.Validator, 300000)
+	validators := make([]*silapb.Validator, 300000)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
@@ -521,13 +521,13 @@ func BenchmarkComputeCommittee300000_WithPreCache(b *testing.B) {
 }
 
 func BenchmarkComputeCommittee3000000_WithPreCache(b *testing.B) {
-	validators := make([]*ethpb.Validator, 3000000)
+	validators := make([]*silapb.Validator, 3000000)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
@@ -554,13 +554,13 @@ func BenchmarkComputeCommittee3000000_WithPreCache(b *testing.B) {
 }
 
 func BenchmarkComputeCommittee128000_WithOutPreCache(b *testing.B) {
-	validators := make([]*ethpb.Validator, 128000)
+	validators := make([]*silapb.Validator, 128000)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
@@ -589,13 +589,13 @@ func BenchmarkComputeCommittee128000_WithOutPreCache(b *testing.B) {
 }
 
 func BenchmarkComputeCommittee1000000_WithOutCache(b *testing.B) {
-	validators := make([]*ethpb.Validator, 1000000)
+	validators := make([]*silapb.Validator, 1000000)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
@@ -624,13 +624,13 @@ func BenchmarkComputeCommittee1000000_WithOutCache(b *testing.B) {
 }
 
 func BenchmarkComputeCommittee4000000_WithOutCache(b *testing.B) {
-	validators := make([]*ethpb.Validator, 4000000)
+	validators := make([]*silapb.Validator, 4000000)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
@@ -660,14 +660,14 @@ func BenchmarkComputeCommittee4000000_WithOutCache(b *testing.B) {
 
 func TestBeaconCommitteeFromState_UpdateCacheForPreviousEpoch(t *testing.T) {
 	committeeSize := uint64(16)
-	validators := make([]*ethpb.Validator, params.BeaconConfig().SlotsPerEpoch.Mul(committeeSize))
+	validators := make([]*silapb.Validator, params.BeaconConfig().SlotsPerEpoch.Mul(committeeSize))
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot:        params.BeaconConfig().SlotsPerEpoch,
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -685,14 +685,14 @@ func TestBeaconCommitteeFromState_UpdateCacheForPreviousEpoch(t *testing.T) {
 }
 
 func TestPrecomputeProposerIndices_Ok(t *testing.T) {
-	validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
+	validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
@@ -729,21 +729,21 @@ func TestCommitteeIndices(t *testing.T) {
 func TestAttestationCommitteesFromState(t *testing.T) {
 	ctx := t.Context()
 
-	validators := make([]*ethpb.Validator, params.BeaconConfig().SlotsPerEpoch.Mul(params.BeaconConfig().TargetCommitteeSize))
+	validators := make([]*silapb.Validator, params.BeaconConfig().SlotsPerEpoch.Mul(params.BeaconConfig().TargetCommitteeSize))
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
 	require.NoError(t, err)
 
 	t.Run("pre-Electra", func(t *testing.T) {
-		att := &ethpb.Attestation{Data: &ethpb.AttestationData{CommitteeIndex: 0}}
+		att := &silapb.Attestation{Data: &silapb.AttestationData{CommitteeIndex: 0}}
 		committees, err := helpers.AttestationCommitteesFromState(ctx, state, att)
 		require.NoError(t, err)
 		require.Equal(t, 1, len(committees))
@@ -753,7 +753,7 @@ func TestAttestationCommitteesFromState(t *testing.T) {
 		bits := primitives.NewAttestationCommitteeBits()
 		bits.SetBitAt(0, true)
 		bits.SetBitAt(1, true)
-		att := &ethpb.AttestationElectra{CommitteeBits: bits, Data: &ethpb.AttestationData{}}
+		att := &silapb.AttestationElectra{CommitteeBits: bits, Data: &silapb.AttestationData{}}
 		committees, err := helpers.AttestationCommitteesFromState(ctx, state, att)
 		require.NoError(t, err)
 		require.Equal(t, 2, len(committees))
@@ -765,14 +765,14 @@ func TestAttestationCommitteesFromState(t *testing.T) {
 func TestAttestationCommitteesFromCache(t *testing.T) {
 	ctx := t.Context()
 
-	validators := make([]*ethpb.Validator, params.BeaconConfig().SlotsPerEpoch.Mul(params.BeaconConfig().TargetCommitteeSize))
+	validators := make([]*silapb.Validator, params.BeaconConfig().SlotsPerEpoch.Mul(params.BeaconConfig().TargetCommitteeSize))
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch: params.BeaconConfig().FarFutureEpoch,
 		}
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})
@@ -780,7 +780,7 @@ func TestAttestationCommitteesFromCache(t *testing.T) {
 
 	t.Run("pre-Electra", func(t *testing.T) {
 		helpers.ClearCache()
-		att := &ethpb.Attestation{Data: &ethpb.AttestationData{CommitteeIndex: 0}}
+		att := &silapb.Attestation{Data: &silapb.AttestationData{CommitteeIndex: 0}}
 		ok, _, err := helpers.AttestationCommitteesFromCache(ctx, state, att)
 		require.NoError(t, err)
 		require.Equal(t, false, ok)
@@ -796,7 +796,7 @@ func TestAttestationCommitteesFromCache(t *testing.T) {
 		bits := primitives.NewAttestationCommitteeBits()
 		bits.SetBitAt(0, true)
 		bits.SetBitAt(1, true)
-		att := &ethpb.AttestationElectra{CommitteeBits: bits, Data: &ethpb.AttestationData{}}
+		att := &silapb.AttestationElectra{CommitteeBits: bits, Data: &silapb.AttestationData{}}
 		ok, _, err := helpers.AttestationCommitteesFromCache(ctx, state, att)
 		require.NoError(t, err)
 		require.Equal(t, false, ok)

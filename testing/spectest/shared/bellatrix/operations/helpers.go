@@ -5,11 +5,11 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 func sszToState(b []byte) (state.BeaconState, error) {
-	base := &ethpb.BeaconStateBellatrix{}
+	base := &silapb.BeaconStateBellatrix{}
 	if err := base.UnmarshalSSZ(b); err != nil {
 		return nil, err
 	}
@@ -17,15 +17,15 @@ func sszToState(b []byte) (state.BeaconState, error) {
 }
 
 func sszToBlock(b []byte) (interfaces.SignedBeaconBlock, error) {
-	base := &ethpb.BeaconBlockBellatrix{}
+	base := &silapb.BeaconBlockBellatrix{}
 	if err := base.UnmarshalSSZ(b); err != nil {
 		return nil, err
 	}
-	return blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockBellatrix{Block: base})
+	return blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockBellatrix{Block: base})
 }
 
 func sszToBlockBody(b []byte) (interfaces.ReadOnlyBeaconBlockBody, error) {
-	base := &ethpb.BeaconBlockBodyBellatrix{}
+	base := &silapb.BeaconBlockBodyBellatrix{}
 	if err := base.UnmarshalSSZ(b); err != nil {
 		return nil, err
 	}

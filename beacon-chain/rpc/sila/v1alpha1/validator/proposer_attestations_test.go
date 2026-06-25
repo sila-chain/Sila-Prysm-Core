@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/blst"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -32,8 +32,8 @@ func TestProposer_ProposerAtts_committeeAwareSort(t *testing.T) {
 	getAtts := func(data []testData) proposerAtts {
 		var atts proposerAtts
 		for _, att := range data {
-			atts = append(atts, util.HydrateAttestation(&ethpb.Attestation{
-				Data: &ethpb.AttestationData{Slot: att.slot}, AggregationBits: att.bits}))
+			atts = append(atts, util.HydrateAttestation(&silapb.Attestation{
+				Data: &silapb.AttestationData{Slot: att.slot}, AggregationBits: att.bits}))
 		}
 		return atts
 	}
@@ -169,8 +169,8 @@ func TestProposer_ProposerAtts_committeeAwareSort(t *testing.T) {
 
 func TestProposer_sort_DifferentCommittees(t *testing.T) {
 	t.Run("one att per committee", func(t *testing.T) {
-		c1_a1 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b11111000, 0b1}, Data: &ethpb.AttestationData{CommitteeIndex: 1}})
-		c2_a1 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b11100000, 0b1}, Data: &ethpb.AttestationData{CommitteeIndex: 2}})
+		c1_a1 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b11111000, 0b1}, Data: &silapb.AttestationData{CommitteeIndex: 1}})
+		c2_a1 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b11100000, 0b1}, Data: &silapb.AttestationData{CommitteeIndex: 2}})
 		atts := proposerAtts{c1_a1, c2_a1}
 		atts, err := atts.sort()
 		require.NoError(t, err)
@@ -178,10 +178,10 @@ func TestProposer_sort_DifferentCommittees(t *testing.T) {
 		assert.DeepEqual(t, want, atts)
 	})
 	t.Run("multiple atts per committee", func(t *testing.T) {
-		c1_a1 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b11111100, 0b1}, Data: &ethpb.AttestationData{CommitteeIndex: 1}})
-		c1_a2 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b10000010, 0b1}, Data: &ethpb.AttestationData{CommitteeIndex: 1}})
-		c2_a1 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b11110000, 0b1}, Data: &ethpb.AttestationData{CommitteeIndex: 2}})
-		c2_a2 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b11100000, 0b1}, Data: &ethpb.AttestationData{CommitteeIndex: 2}})
+		c1_a1 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b11111100, 0b1}, Data: &silapb.AttestationData{CommitteeIndex: 1}})
+		c1_a2 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b10000010, 0b1}, Data: &silapb.AttestationData{CommitteeIndex: 1}})
+		c2_a1 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b11110000, 0b1}, Data: &silapb.AttestationData{CommitteeIndex: 2}})
+		c2_a2 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b11100000, 0b1}, Data: &silapb.AttestationData{CommitteeIndex: 2}})
 		atts := proposerAtts{c1_a1, c1_a2, c2_a1, c2_a2}
 		atts, err := atts.sort()
 		require.NoError(t, err)
@@ -190,14 +190,14 @@ func TestProposer_sort_DifferentCommittees(t *testing.T) {
 		assert.DeepEqual(t, want, atts)
 	})
 	t.Run("multiple atts per committee, multiple slots", func(t *testing.T) {
-		s2_c1_a1 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b11111100, 0b1}, Data: &ethpb.AttestationData{Slot: 2, CommitteeIndex: 1}})
-		s2_c1_a2 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b10000010, 0b1}, Data: &ethpb.AttestationData{Slot: 2, CommitteeIndex: 1}})
-		s2_c2_a1 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b11110000, 0b1}, Data: &ethpb.AttestationData{Slot: 2, CommitteeIndex: 2}})
-		s2_c2_a2 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b11000000, 0b1}, Data: &ethpb.AttestationData{Slot: 2, CommitteeIndex: 2}})
-		s1_c1_a1 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b11111100, 0b1}, Data: &ethpb.AttestationData{Slot: 1, CommitteeIndex: 1}})
-		s1_c1_a2 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b10000010, 0b1}, Data: &ethpb.AttestationData{Slot: 1, CommitteeIndex: 1}})
-		s1_c2_a1 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b11110000, 0b1}, Data: &ethpb.AttestationData{Slot: 1, CommitteeIndex: 2}})
-		s1_c2_a2 := util.HydrateAttestation(&ethpb.Attestation{AggregationBits: bitfield.Bitlist{0b11000000, 0b1}, Data: &ethpb.AttestationData{Slot: 1, CommitteeIndex: 2}})
+		s2_c1_a1 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b11111100, 0b1}, Data: &silapb.AttestationData{Slot: 2, CommitteeIndex: 1}})
+		s2_c1_a2 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b10000010, 0b1}, Data: &silapb.AttestationData{Slot: 2, CommitteeIndex: 1}})
+		s2_c2_a1 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b11110000, 0b1}, Data: &silapb.AttestationData{Slot: 2, CommitteeIndex: 2}})
+		s2_c2_a2 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b11000000, 0b1}, Data: &silapb.AttestationData{Slot: 2, CommitteeIndex: 2}})
+		s1_c1_a1 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b11111100, 0b1}, Data: &silapb.AttestationData{Slot: 1, CommitteeIndex: 1}})
+		s1_c1_a2 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b10000010, 0b1}, Data: &silapb.AttestationData{Slot: 1, CommitteeIndex: 1}})
+		s1_c2_a1 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b11110000, 0b1}, Data: &silapb.AttestationData{Slot: 1, CommitteeIndex: 2}})
+		s1_c2_a2 := util.HydrateAttestation(&silapb.Attestation{AggregationBits: bitfield.Bitlist{0b11000000, 0b1}, Data: &silapb.AttestationData{Slot: 1, CommitteeIndex: 2}})
 
 		// Arrange in some random order
 		atts := proposerAtts{s1_c1_a1, s2_c1_a2, s1_c2_a2, s2_c2_a2, s1_c2_a1, s2_c2_a1, s1_c1_a2, s2_c1_a1}
@@ -211,10 +211,10 @@ func TestProposer_sort_DifferentCommittees(t *testing.T) {
 }
 
 func TestProposer_ProposerAtts_dedup(t *testing.T) {
-	data1 := util.HydrateAttestationData(&ethpb.AttestationData{
+	data1 := util.HydrateAttestationData(&silapb.AttestationData{
 		Slot: 4,
 	})
-	data2 := util.HydrateAttestationData(&ethpb.AttestationData{
+	data2 := util.HydrateAttestationData(&silapb.AttestationData{
 		Slot: 5,
 	})
 	tests := []struct {
@@ -235,194 +235,194 @@ func TestProposer_ProposerAtts_dedup(t *testing.T) {
 		{
 			name: "single item",
 			atts: proposerAtts{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{AggregationBits: bitfield.Bitlist{}},
+				&silapb.Attestation{AggregationBits: bitfield.Bitlist{}},
 			},
 		},
 		{
 			name: "two items no duplicates",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10111110, 0x01}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01111111, 0x01}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10111110, 0x01}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01111111, 0x01}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01111111, 0x01}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10111110, 0x01}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01111111, 0x01}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10111110, 0x01}},
 			},
 		},
 		{
 			name: "two items with duplicates",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0xba, 0x01}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0xba, 0x01}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0xba, 0x01}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0xba, 0x01}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0xba, 0x01}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0xba, 0x01}},
 			},
 		},
 		{
 			name: "sorted no duplicates",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00101011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100000, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00010000, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00101011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100000, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00010000, 0b1}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00101011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100000, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00010000, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00101011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100000, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00010000, 0b1}},
 			},
 		},
 		{
 			name: "sorted with duplicates",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
 			},
 		},
 		{
 			name: "all equal",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
 			},
 		},
 		{
 			name: "unsorted no duplicates",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00100010, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00010000, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00100010, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00010000, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00100010, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00010000, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00100010, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00010000, 0b1}},
 			},
 		},
 		{
 			name: "unsorted with duplicates",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10100101, 0b1}},
 			},
 		},
 		{
 			name: "no proper subset (same root)",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10000001, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00011001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10000001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00011001, 0b1}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00011001, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10000001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00011001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b10000001, 0b1}},
 			},
 		},
 		{
 			name: "proper subset (same root)",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
 			},
 		},
 		{
 			name: "no proper subset (different root)",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000101, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b10000001, 0b1}},
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00011001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000101, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b10000001, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00011001, 0b1}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00011001, 0b1}},
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b10000001, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000101, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00011001, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b10000001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000101, 0b1}},
 			},
 		},
 		{
 			name: "proper subset (different root 1)",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00000011, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00000001, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b01101101, 0b1}},
 			},
 		},
 		{
 			name: "proper subset (different root 2)",
 			atts: proposerAtts{
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b00001111, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
 			},
 			want: proposerAtts{
-				&ethpb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
-				&ethpb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data2, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
+				&silapb.Attestation{Data: data1, AggregationBits: bitfield.Bitlist{0b11001111, 0b1}},
 			},
 		},
 	}
@@ -448,15 +448,15 @@ func TestProposer_ProposerAtts_dedup(t *testing.T) {
 
 func Test_packAttestations(t *testing.T) {
 	ctx := t.Context()
-	phase0Att := &ethpb.Attestation{
+	phase0Att := &silapb.Attestation{
 		AggregationBits: bitfield.Bitlist{0b11111},
-		Data: &ethpb.AttestationData{
+		Data: &silapb.AttestationData{
 			BeaconBlockRoot: make([]byte, 32),
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: 0,
 				Root:  make([]byte, 32),
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 0,
 				Root:  make([]byte, 32),
 			},
@@ -468,16 +468,16 @@ func Test_packAttestations(t *testing.T) {
 	key, err := blst.RandKey()
 	require.NoError(t, err)
 	sig := key.Sign([]byte{'X'})
-	electraAtt := &ethpb.AttestationElectra{
+	electraAtt := &silapb.AttestationElectra{
 		AggregationBits: bitfield.Bitlist{0b11111},
 		CommitteeBits:   cb,
-		Data: &ethpb.AttestationData{
+		Data: &silapb.AttestationData{
 			BeaconBlockRoot: make([]byte, 32),
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: 0,
 				Root:  make([]byte, 32),
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 0,
 				Root:  make([]byte, 32),
 			},
@@ -485,7 +485,7 @@ func Test_packAttestations(t *testing.T) {
 		Signature: sig.Marshal(),
 	}
 	pool := attestations.NewPool()
-	require.NoError(t, pool.SaveAggregatedAttestations([]ethpb.Att{phase0Att, electraAtt}))
+	require.NoError(t, pool.SaveAggregatedAttestations([]silapb.Att{phase0Att, electraAtt}))
 	slot := primitives.Slot(1)
 	s := &Server{AttPool: pool, HeadFetcher: &chainMock.ChainService{}, TimeFetcher: &chainMock.ChainService{Slot: &slot}}
 
@@ -545,15 +545,15 @@ func TestPackAttestations_ElectraOnChainAggregates(t *testing.T) {
 	cb1 := primitives.NewAttestationCommitteeBits()
 	cb1.SetBitAt(1, true)
 
-	data0 := util.HydrateAttestationData(&ethpb.AttestationData{
+	data0 := util.HydrateAttestationData(&silapb.AttestationData{
 		BeaconBlockRoot: bytesutil.PadTo([]byte{'0'}, 32),
 	})
-	data1 := util.HydrateAttestationData(&ethpb.AttestationData{
+	data1 := util.HydrateAttestationData(&silapb.AttestationData{
 		BeaconBlockRoot: bytesutil.PadTo([]byte{'1'}, 32),
 	})
 
-	att := func(bits byte, cb []byte, data *ethpb.AttestationData) *ethpb.AttestationElectra {
-		return &ethpb.AttestationElectra{
+	att := func(bits byte, cb []byte, data *silapb.AttestationData) *silapb.AttestationElectra {
+		return &silapb.AttestationElectra{
 			AggregationBits: bitfield.Bitlist{bits},
 			CommitteeBits:   cb,
 			Data:            util.HydrateAttestationData(data),
@@ -565,7 +565,7 @@ func TestPackAttestations_ElectraOnChainAggregates(t *testing.T) {
 	// - Single Aggregate: one committee bit set, becomes an On-Chain Aggregate
 	// - On-Chain Aggregate: final packed aggregate in block
 
-	aggregates := []*ethpb.AttestationElectra{
+	aggregates := []*silapb.AttestationElectra{
 		att(0b1000011, cb0, data0), // d0_c0_a1
 		att(0b1100101, cb0, data0), // d0_c0_a2
 		att(0b1111000, cb0, data0), // d0_c0_a3
@@ -616,11 +616,11 @@ func TestPackAttestations_ElectraOnChainAggregates(t *testing.T) {
 	})
 
 	t.Run("reward takes precedence", func(t *testing.T) {
-		moreRecent := att(0b1100000, cb1, &ethpb.AttestationData{
+		moreRecent := att(0b1100000, cb1, &silapb.AttestationData{
 			Slot:            1,
 			BeaconBlockRoot: bytesutil.PadTo([]byte{'0'}, 32),
 		})
-		require.NoError(t, pool.SaveUnaggregatedAttestations([]ethpb.Att{moreRecent}))
+		require.NoError(t, pool.SaveUnaggregatedAttestations([]silapb.Att{moreRecent}))
 
 		atts, err := s.packAttestations(ctx, st, params.BeaconConfig().SlotsPerEpoch)
 		require.NoError(t, err)
@@ -636,15 +636,15 @@ func TestPackAttestations_ElectraOnChainAggregates(t *testing.T) {
 	})
 
 	t.Run("use latest state", func(t *testing.T) {
-		moreRecent := att(0b1100000, cb1, &ethpb.AttestationData{
+		moreRecent := att(0b1100000, cb1, &silapb.AttestationData{
 			Slot:            1,
 			BeaconBlockRoot: bytesutil.PadTo([]byte{'0'}, 32),
 		})
-		require.NoError(t, pool.SaveUnaggregatedAttestations([]ethpb.Att{moreRecent}))
+		require.NoError(t, pool.SaveUnaggregatedAttestations([]silapb.Att{moreRecent}))
 
 		copiedState := st.Copy()
 		// Setting head state validator set to empty, but it shouldn't matter as pack attestation should be using latest state.
-		require.NoError(t, copiedState.SetValidators([]*ethpb.Validator{}))
+		require.NoError(t, copiedState.SetValidators([]*silapb.Validator{}))
 		s := &Server{
 			AttPool:     pool,
 			HeadFetcher: &chainMock.ChainService{State: copiedState, MockHeadSlot: &headSlot},
@@ -674,8 +674,8 @@ func TestPackAttestations_ElectraOnChainAggregates(t *testing.T) {
 	})
 }
 
-func sliceCast(atts []*ethpb.AttestationElectra) []ethpb.Att {
-	res := make([]ethpb.Att, len(atts))
+func sliceCast(atts []*silapb.AttestationElectra) []silapb.Att {
+	res := make([]silapb.Att, len(atts))
 	for i, att := range atts {
 		res[i] = att
 	}
@@ -702,18 +702,18 @@ func Benchmark_packAttestations_Electra(b *testing.B) {
 
 	r := rand.New(rand.NewSource(123))
 
-	var atts []ethpb.Att
+	var atts []silapb.Att
 	for c := range committeeCount {
 		for a := uint64(0); a < params.BeaconConfig().TargetAggregatorsPerCommittee; a++ {
 			cb := primitives.NewAttestationCommitteeBits()
 			cb.SetBitAt(c, true)
 
-			var att *ethpb.AttestationElectra
+			var att *silapb.AttestationElectra
 			// Last two aggregators send aggregates for some random block root with only a few bits set.
 			if a >= params.BeaconConfig().TargetAggregatorsPerCommittee-2 {
 				root := bytesutil.PadTo([]byte("root_"+strconv.Itoa(r.Intn(100))), 32)
-				att = &ethpb.AttestationElectra{
-					Data:            util.HydrateAttestationData(&ethpb.AttestationData{Slot: params.BeaconConfig().SlotsPerEpoch - 1, BeaconBlockRoot: root}),
+				att = &silapb.AttestationElectra{
+					Data:            util.HydrateAttestationData(&silapb.AttestationData{Slot: params.BeaconConfig().SlotsPerEpoch - 1, BeaconBlockRoot: root}),
 					AggregationBits: bitfield.NewBitlist(valsPerCommittee),
 					CommitteeBits:   cb,
 					Signature:       sig.Marshal(),
@@ -722,8 +722,8 @@ func Benchmark_packAttestations_Electra(b *testing.B) {
 					att.AggregationBits.SetBitAt(bit, r.Intn(100) < 2) // 2% that the bit is set
 				}
 			} else {
-				att = &ethpb.AttestationElectra{
-					Data:            util.HydrateAttestationData(&ethpb.AttestationData{Slot: params.BeaconConfig().SlotsPerEpoch - 1, BeaconBlockRoot: bytesutil.PadTo([]byte("root"), 32)}),
+				att = &silapb.AttestationElectra{
+					Data:            util.HydrateAttestationData(&silapb.AttestationData{Slot: params.BeaconConfig().SlotsPerEpoch - 1, BeaconBlockRoot: bytesutil.PadTo([]byte("root"), 32)}),
 					AggregationBits: bitfield.NewBitlist(valsPerCommittee),
 					CommitteeBits:   cb,
 					Signature:       sig.Marshal(),
@@ -753,9 +753,9 @@ func Benchmark_packAttestations_Electra(b *testing.B) {
 
 func Test_limitToMaxAttestations(t *testing.T) {
 	t.Run("Phase 0", func(t *testing.T) {
-		atts := make([]ethpb.Att, params.BeaconConfig().MaxAttestations+1)
+		atts := make([]silapb.Att, params.BeaconConfig().MaxAttestations+1)
 		for i := range atts {
-			atts[i] = &ethpb.Attestation{}
+			atts[i] = &silapb.Attestation{}
 		}
 
 		// 1 less than limit
@@ -771,9 +771,9 @@ func Test_limitToMaxAttestations(t *testing.T) {
 		assert.Equal(t, len(pAtts)-1, len(pAtts.limitToMaxAttestations()))
 	})
 	t.Run("Electra", func(t *testing.T) {
-		atts := make([]ethpb.Att, params.BeaconConfig().MaxAttestationsElectra+1)
+		atts := make([]silapb.Att, params.BeaconConfig().MaxAttestationsElectra+1)
 		for i := range atts {
-			atts[i] = &ethpb.AttestationElectra{}
+			atts[i] = &silapb.AttestationElectra{}
 		}
 
 		// 1 less than limit
@@ -808,8 +808,8 @@ func Test_isAttestationFromCurrentEpoch(t *testing.T) {
 	slot := primitives.Slot(1)
 	epoch := slots.ToEpoch(slot)
 	s := &Server{}
-	a := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{Target: &ethpb.Checkpoint{}},
+	a := &silapb.Attestation{
+		Data: &silapb.AttestationData{Target: &silapb.Checkpoint{}},
 	}
 	require.Equal(t, true, s.isAttestationFromCurrentEpoch(a, epoch))
 
@@ -821,8 +821,8 @@ func Test_isAttestationFromPreviousEpoch(t *testing.T) {
 	slot := params.BeaconConfig().SlotsPerEpoch
 	epoch := slots.ToEpoch(slot)
 	s := &Server{}
-	a := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{Target: &ethpb.Checkpoint{}},
+	a := &silapb.Attestation{
+		Data: &silapb.AttestationData{Target: &silapb.Checkpoint{}},
 	}
 	require.Equal(t, true, s.isAttestationFromPreviousEpoch(a, epoch))
 
@@ -835,10 +835,10 @@ func Test_filterCurrentEpochAttestationByTarget(t *testing.T) {
 	epoch := slots.ToEpoch(slot)
 	s := &Server{}
 	targetRoot := [32]byte{'a'}
-	a := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
+	a := &silapb.Attestation{
+		Data: &silapb.AttestationData{
 			Slot: 1,
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 1,
 				Root:  targetRoot[:],
 			},
@@ -867,36 +867,36 @@ func Test_filterPreviousEpochAttestationByTarget(t *testing.T) {
 	epoch := slots.ToEpoch(slot)
 	s := &Server{}
 	targetRoot := [32]byte{'a'}
-	a := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
+	a := &silapb.Attestation{
+		Data: &silapb.AttestationData{
 			Slot: 1,
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 1,
 				Root:  targetRoot[:],
 			},
 		},
 	}
-	got, err := s.filterPreviousEpochAttestationByTarget(a, &ethpb.Checkpoint{
+	got, err := s.filterPreviousEpochAttestationByTarget(a, &silapb.Checkpoint{
 		Epoch: 1,
 		Root:  targetRoot[:],
 	}, epoch)
 	require.NoError(t, err)
 	require.Equal(t, true, got)
 
-	got, err = s.filterPreviousEpochAttestationByTarget(a, &ethpb.Checkpoint{
+	got, err = s.filterPreviousEpochAttestationByTarget(a, &silapb.Checkpoint{
 		Epoch: 1,
 	}, epoch)
 	require.NoError(t, err)
 	require.Equal(t, false, got)
 
-	got, err = s.filterPreviousEpochAttestationByTarget(a, &ethpb.Checkpoint{
+	got, err = s.filterPreviousEpochAttestationByTarget(a, &silapb.Checkpoint{
 		Epoch: 2,
 		Root:  targetRoot[:],
 	}, epoch)
 	require.NoError(t, err)
 	require.Equal(t, false, got)
 
-	got, err = s.filterPreviousEpochAttestationByTarget(a, &ethpb.Checkpoint{
+	got, err = s.filterPreviousEpochAttestationByTarget(a, &silapb.Checkpoint{
 		Epoch: 3,
 		Root:  targetRoot[:],
 	}, epoch)
@@ -909,11 +909,11 @@ func Test_filterCurrentEpochAttestationByForkchoice(t *testing.T) {
 	epoch := slots.ToEpoch(slot)
 	s := &Server{}
 	targetRoot := [32]byte{'a'}
-	a := &ethpb.Attestation{
-		Data: &ethpb.AttestationData{
+	a := &silapb.Attestation{
+		Data: &silapb.AttestationData{
 			BeaconBlockRoot: make([]byte, 32),
 			Slot:            params.BeaconConfig().SlotsPerEpoch,
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 1,
 				Root:  targetRoot[:],
 			},

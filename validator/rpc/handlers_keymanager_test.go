@@ -59,7 +59,7 @@ func TestServer_ListKeystores(t *testing.T) {
 		s := Server{
 			validatorService: vs,
 		}
-		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/keystores"), nil)
+		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/keystores"), nil)
 		w := httptest.NewRecorder()
 		w.Body = &bytes.Buffer{}
 		s.ListKeystores(w, req)
@@ -103,7 +103,7 @@ func TestServer_ListKeystores(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("returns proper data with existing keystores", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/keystores"), nil)
+		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/keystores"), nil)
 		wr := httptest.NewRecorder()
 		wr.Body = &bytes.Buffer{}
 		s.ListKeystores(wr, req)
@@ -121,7 +121,7 @@ func TestServer_ListKeystores(t *testing.T) {
 		}
 	})
 	t.Run("calling list remote while using a local wallet returns empty", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/remotekeys"), nil)
+		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/remotekeys"), nil)
 		wr := httptest.NewRecorder()
 		wr.Body = &bytes.Buffer{}
 		s.ListRemoteKeys(wr, req)
@@ -171,7 +171,7 @@ func TestServer_ImportKeystores(t *testing.T) {
 		err = json.NewEncoder(&buf).Encode(request)
 		require.NoError(t, err)
 
-		req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/keystores"), &buf)
+		req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/keystores"), &buf)
 		wr := httptest.NewRecorder()
 		wr.Body = &bytes.Buffer{}
 		s.ImportKeystores(wr, req)
@@ -191,7 +191,7 @@ func TestServer_ImportKeystores(t *testing.T) {
 		err = json.NewEncoder(&buf).Encode(request)
 		require.NoError(t, err)
 
-		req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/keystores"), &buf)
+		req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/keystores"), &buf)
 		wr := httptest.NewRecorder()
 		wr.Body = &bytes.Buffer{}
 		s.ImportKeystores(wr, req)
@@ -211,7 +211,7 @@ func TestServer_ImportKeystores(t *testing.T) {
 		err = json.NewEncoder(&buf).Encode(request)
 		require.NoError(t, err)
 
-		req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/keystores"), &buf)
+		req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/keystores"), &buf)
 		wr := httptest.NewRecorder()
 		wr.Body = &bytes.Buffer{}
 		s.ImportKeystores(wr, req)
@@ -231,7 +231,7 @@ func TestServer_ImportKeystores(t *testing.T) {
 		err = json.NewEncoder(&buf).Encode(request)
 		require.NoError(t, err)
 
-		req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/keystores"), &buf)
+		req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/keystores"), &buf)
 		wr := httptest.NewRecorder()
 		wr.Body = &bytes.Buffer{}
 		s.ImportKeystores(wr, req)
@@ -263,7 +263,7 @@ func TestServer_ImportKeystores(t *testing.T) {
 		err = json.NewEncoder(&buf).Encode(request)
 		require.NoError(t, err)
 
-		req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/keystores"), &buf)
+		req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/keystores"), &buf)
 		wr := httptest.NewRecorder()
 		wr.Body = &bytes.Buffer{}
 		s.ImportKeystores(wr, req)
@@ -339,7 +339,7 @@ func TestServer_ImportKeystores(t *testing.T) {
 			err = json.NewEncoder(&buf).Encode(request)
 			require.NoError(t, err)
 
-			req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/keystores"), &buf)
+			req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/keystores"), &buf)
 			wr := httptest.NewRecorder()
 			wr.Body = &bytes.Buffer{}
 			s.ImportKeystores(wr, req)
@@ -393,7 +393,7 @@ func TestServer_ImportKeystores_WrongKeymanagerKind(t *testing.T) {
 	err = json.NewEncoder(&buf).Encode(request)
 	require.NoError(t, err)
 
-	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/keystores"), &buf)
+	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/keystores"), &buf)
 	wr := httptest.NewRecorder()
 	wr.Body = &bytes.Buffer{}
 	s.ImportKeystores(wr, req)
@@ -471,7 +471,7 @@ func TestServer_DeleteKeystores(t *testing.T) {
 			var buf bytes.Buffer
 			err = json.NewEncoder(&buf).Encode(request)
 			require.NoError(t, err)
-			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/eth/v1/keystores"), &buf)
+			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/sila/v1/keystores"), &buf)
 			wr := httptest.NewRecorder()
 			wr.Body = &bytes.Buffer{}
 			srv.DeleteKeystores(wr, req)
@@ -542,7 +542,7 @@ func TestServer_DeleteKeystores(t *testing.T) {
 			var buf bytes.Buffer
 			err = json.NewEncoder(&buf).Encode(request)
 			require.NoError(t, err)
-			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/eth/v1/keystores"), &buf)
+			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/sila/v1/keystores"), &buf)
 			wr := httptest.NewRecorder()
 			wr.Body = &bytes.Buffer{}
 			srv.DeleteKeystores(wr, req)
@@ -622,7 +622,7 @@ func TestServer_DeleteKeystores_FailedSlashingProtectionExport(t *testing.T) {
 			var buf bytes.Buffer
 			err = json.NewEncoder(&buf).Encode(request)
 			require.NoError(t, err)
-			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/eth/v1/keystores"), &buf)
+			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/sila/v1/keystores"), &buf)
 			wr := httptest.NewRecorder()
 			wr.Body = &bytes.Buffer{}
 			srv.DeleteKeystores(wr, req)
@@ -674,7 +674,7 @@ func TestServer_DeleteKeystores_WrongKeymanagerKind(t *testing.T) {
 	var buf bytes.Buffer
 	err = json.NewEncoder(&buf).Encode(request)
 	require.NoError(t, err)
-	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/eth/v1/keystores"), &buf)
+	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/sila/v1/keystores"), &buf)
 	wr := httptest.NewRecorder()
 	wr.Body = &bytes.Buffer{}
 	s.DeleteKeystores(wr, req)
@@ -853,7 +853,7 @@ func TestServer_SetVoluntaryExit(t *testing.T) {
 			if tt.mockSetup != nil {
 				require.NoError(t, tt.mockSetup(s))
 			}
-			req := httptest.NewRequest("POST", fmt.Sprintf("/eth/v1/validator/{pubkey}/voluntary_exit?epoch=%s", tt.epoch), nil)
+			req := httptest.NewRequest("POST", fmt.Sprintf("/sila/v1/validator/{pubkey}/voluntary_exit?epoch=%s", tt.epoch), nil)
 			req.SetPathValue("pubkey", tt.pubkey)
 			w := httptest.NewRecorder()
 			w.Body = &bytes.Buffer{}
@@ -873,7 +873,7 @@ func TestServer_SetVoluntaryExit(t *testing.T) {
 				require.NoError(t, err)
 				tt.w.epoch, err = client.CurrentEpoch(genesisResponse.GenesisTime)
 				require.NoError(t, err)
-				req2 := httptest.NewRequest("POST", fmt.Sprintf("/eth/v1/validator/{pubkey}/voluntary_exit?epoch=%s", tt.epoch), nil)
+				req2 := httptest.NewRequest("POST", fmt.Sprintf("/sila/v1/validator/{pubkey}/voluntary_exit?epoch=%s", tt.epoch), nil)
 				req2.SetPathValue("pubkey", hexutil.Encode(pubKeys[0][:]))
 				w2 := httptest.NewRecorder()
 				w2.Body = &bytes.Buffer{}
@@ -967,7 +967,7 @@ func TestServer_GetGasLimit(t *testing.T) {
 			s := &Server{
 				validatorService: vs,
 			}
-			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/validator/{pubkey}/gas_limit"), nil)
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/validator/{pubkey}/gas_limit"), nil)
 			req.SetPathValue("pubkey", hexutil.Encode(tt.pubkey[:]))
 			w := httptest.NewRecorder()
 			w.Body = &bytes.Buffer{}
@@ -1146,7 +1146,7 @@ func TestServer_SetGasLimit(t *testing.T) {
 				err = json.NewEncoder(&buf).Encode(request)
 				require.NoError(t, err)
 
-				req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/validator/{pubkey}/gas_limit"), &buf)
+				req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/validator/{pubkey}/gas_limit"), &buf)
 				req.SetPathValue("pubkey", hexutil.Encode(tt.pubkey))
 				w := httptest.NewRecorder()
 				w.Body = &bytes.Buffer{}
@@ -1169,7 +1169,7 @@ func TestServer_SetGasLimit(t *testing.T) {
 
 func TestServer_SetGasLimit_ValidatorServiceNil(t *testing.T) {
 	s := &Server{}
-	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/validator/{pubkey}/gas_limit"), nil)
+	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/validator/{pubkey}/gas_limit"), nil)
 	w := httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}
 
@@ -1182,7 +1182,7 @@ func TestServer_SetGasLimit_InvalidPubKey(t *testing.T) {
 	s := &Server{
 		validatorService: &client.ValidatorService{},
 	}
-	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/validator/{pubkey}/gas_limit"), nil)
+	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/validator/{pubkey}/gas_limit"), nil)
 	req.SetPathValue("pubkey", "0x00")
 	w := httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}
@@ -1321,7 +1321,7 @@ func TestServer_DeleteGasLimit(t *testing.T) {
 				// Set up global default value for builder gas limit.
 				params.BeaconConfig().DefaultBuilderGasLimit = uint64(globalDefaultGasLimit)
 
-				req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/eth/v1/validator/{pubkey}/gas_limit"), nil)
+				req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/sila/v1/validator/{pubkey}/gas_limit"), nil)
 				req.SetPathValue("pubkey", hexutil.Encode(tt.pubkey))
 				w := httptest.NewRecorder()
 				w.Body = &bytes.Buffer{}
@@ -1375,7 +1375,7 @@ func TestServer_ListRemoteKeys(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("returns proper data with existing pub keystores", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/eth/v1/remotekeys", nil)
+		req := httptest.NewRequest(http.MethodGet, "/sila/v1/remotekeys", nil)
 		w := httptest.NewRecorder()
 		w.Body = &bytes.Buffer{}
 		s.ListRemoteKeys(w, req)
@@ -1387,7 +1387,7 @@ func TestServer_ListRemoteKeys(t *testing.T) {
 		}
 	})
 	t.Run("calling list keystores while using a remote wallet returns empty", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/keystores"), nil)
+		req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/keystores"), nil)
 		wr := httptest.NewRecorder()
 		wr.Body = &bytes.Buffer{}
 		s.ListKeystores(wr, req)
@@ -1440,7 +1440,7 @@ func TestServer_ImportRemoteKeys(t *testing.T) {
 		b, err := json.Marshal(&ImportRemoteKeysRequest{RemoteKeys: remoteKeys})
 		require.NoError(t, err)
 		body.Write(b)
-		req := httptest.NewRequest("GET", "/eth/v1/remotekeys", &body)
+		req := httptest.NewRequest("GET", "/sila/v1/remotekeys", &body)
 		w := httptest.NewRecorder()
 		w.Body = &bytes.Buffer{}
 		s.ImportRemoteKeys(w, req)
@@ -1499,7 +1499,7 @@ func TestServer_DeleteRemoteKeys(t *testing.T) {
 		})
 		require.NoError(t, err)
 		body.Write(b)
-		req := httptest.NewRequest("DELETE", "/eth/v1/remotekeys", &body)
+		req := httptest.NewRequest("DELETE", "/sila/v1/remotekeys", &body)
 		w := httptest.NewRecorder()
 		w.Body = &bytes.Buffer{}
 		s.DeleteRemoteKeys(w, req)
@@ -1588,7 +1588,7 @@ func TestServer_ListFeeRecipientByPubkey(t *testing.T) {
 			s := &Server{
 				validatorService: vs,
 			}
-			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/validator/{pubkey}/feerecipient"), nil)
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/validator/{pubkey}/feerecipient"), nil)
 			req.SetPathValue("pubkey", pubkey)
 			w := httptest.NewRecorder()
 			w.Body = &bytes.Buffer{}
@@ -1613,7 +1613,7 @@ func TestServer_ListFeeRecipientByPubKey_NoFeeRecipientSet(t *testing.T) {
 	s := &Server{
 		validatorService: vs,
 	}
-	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/validator/{pubkey}/feerecipient"), nil)
+	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/validator/{pubkey}/feerecipient"), nil)
 	req.SetPathValue("pubkey", "0xaf2e7ba294e03438ea819bd4033c6c1bf6b04320ee2075b77273c08d02f8a61bcc303c2c06bd3713cb442072ae591493")
 	w := httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}
@@ -1624,7 +1624,7 @@ func TestServer_ListFeeRecipientByPubKey_NoFeeRecipientSet(t *testing.T) {
 
 func TestServer_ListFeeRecipientByPubkey_ValidatorServiceNil(t *testing.T) {
 	s := &Server{}
-	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/validator/{pubkey}/feerecipient"), nil)
+	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/validator/{pubkey}/feerecipient"), nil)
 	req.SetPathValue("pubkey", "0x00")
 	w := httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}
@@ -1638,7 +1638,7 @@ func TestServer_ListFeeRecipientByPubkey_InvalidPubKey(t *testing.T) {
 		validatorService: &client.ValidatorService{},
 	}
 
-	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/validator/{pubkey}/feerecipient"), nil)
+	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/validator/{pubkey}/feerecipient"), nil)
 	req.SetPathValue("pubkey", "0x00")
 	w := httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}
@@ -1813,7 +1813,7 @@ func TestServer_FeeRecipientByPubkey(t *testing.T) {
 				err = json.NewEncoder(&buf).Encode(request)
 				require.NoError(t, err)
 
-				req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/validator/{pubkey}/feerecipient"), &buf)
+				req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/validator/{pubkey}/feerecipient"), &buf)
 				req.SetPathValue("pubkey", pubkey)
 				w := httptest.NewRecorder()
 				w.Body = &bytes.Buffer{}
@@ -1830,7 +1830,7 @@ func TestServer_SetFeeRecipientByPubkey_InvalidPubKey(t *testing.T) {
 	s := &Server{
 		validatorService: &client.ValidatorService{},
 	}
-	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/validator/{pubkey}/feerecipient"), nil)
+	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/validator/{pubkey}/feerecipient"), nil)
 	req.SetPathValue("pubkey", "0x00")
 	w := httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}
@@ -1852,7 +1852,7 @@ func TestServer_SetFeeRecipientByPubkey_InvalidFeeRecipient(t *testing.T) {
 	var buf bytes.Buffer
 	err := json.NewEncoder(&buf).Encode(request)
 	require.NoError(t, err)
-	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/validator/{pubkey}/feerecipient"), &buf)
+	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/validator/{pubkey}/feerecipient"), &buf)
 	req.SetPathValue("pubkey", pubkey)
 	w := httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}
@@ -1915,7 +1915,7 @@ func TestServer_DeleteFeeRecipientByPubkey(t *testing.T) {
 					validatorService: vs,
 					db:               validatorDB,
 				}
-				req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/eth/v1/validator/{pubkey}/feerecipient"), nil)
+				req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/sila/v1/validator/{pubkey}/feerecipient"), nil)
 				req.SetPathValue("pubkey", pubkey)
 				w := httptest.NewRecorder()
 				w.Body = &bytes.Buffer{}
@@ -1929,7 +1929,7 @@ func TestServer_DeleteFeeRecipientByPubkey(t *testing.T) {
 
 func TestServer_DeleteFeeRecipientByPubkey_ValidatorServiceNil(t *testing.T) {
 	s := &Server{}
-	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/eth/v1/validator/{pubkey}/feerecipient"), nil)
+	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/sila/v1/validator/{pubkey}/feerecipient"), nil)
 	req.SetPathValue("pubkey", "0x1234567878903438ea819bd4033c6c1bf6b04320ee2075b77273c08d02f8a61bcc303c2c06bd3713cb442072ae591493")
 	w := httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}
@@ -1943,7 +1943,7 @@ func TestServer_DeleteFeeRecipientByPubkey_InvalidPubKey(t *testing.T) {
 		validatorService: &client.ValidatorService{},
 	}
 
-	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/eth/v1/validator/{pubkey}/feerecipient"), nil)
+	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/sila/v1/validator/{pubkey}/feerecipient"), nil)
 	req.SetPathValue("pubkey", "0x123")
 	w := httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}
@@ -1973,14 +1973,14 @@ func TestServer_Graffiti(t *testing.T) {
 	var buf bytes.Buffer
 	err = json.NewEncoder(&buf).Encode(request)
 	require.NoError(t, err)
-	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/eth/v1/validator/{pubkey}/graffiti"), &buf)
+	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/sila/v1/validator/{pubkey}/graffiti"), &buf)
 	req.SetPathValue("pubkey", pubkey)
 	w := httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}
 	s.SetGraffiti(w, req)
 	require.Equal(t, http.StatusOK, w.Code)
 
-	req = httptest.NewRequest(http.MethodGet, fmt.Sprintf("/eth/v1/validator/{pubkey}/graffiti"), nil)
+	req = httptest.NewRequest(http.MethodGet, fmt.Sprintf("/sila/v1/validator/{pubkey}/graffiti"), nil)
 	req.SetPathValue("pubkey", pubkey)
 	w = httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}
@@ -1991,7 +1991,7 @@ func TestServer_Graffiti(t *testing.T) {
 	assert.Equal(t, resp.Data.Graffiti, request.Graffiti)
 	assert.Equal(t, resp.Data.Pubkey, pubkey)
 
-	req = httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/eth/v1/validator/{pubkey}/graffiti"), nil)
+	req = httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/sila/v1/validator/{pubkey}/graffiti"), nil)
 	req.SetPathValue("pubkey", pubkey)
 	w = httptest.NewRecorder()
 	w.Body = &bytes.Buffer{}

@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -40,7 +40,7 @@ func (s *Service) validateVoluntaryExit(ctx context.Context, pid peer.ID, msg *p
 		return pubsub.ValidationReject, err
 	}
 
-	exit, ok := m.(*ethpb.SignedVoluntaryExit)
+	exit, ok := m.(*silapb.SignedVoluntaryExit)
 	if !ok {
 		return pubsub.ValidationReject, errWrongMessage
 	}

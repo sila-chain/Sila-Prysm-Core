@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/utils"
@@ -61,32 +61,32 @@ func runLightClientSingleMerkleProofTestBeaconState(t *testing.T, testFolderPath
 	var beaconState state.BeaconState
 	switch v {
 	case version.Altair:
-		beaconStateBase := &ethpb.BeaconStateAltair{}
+		beaconStateBase := &silapb.BeaconStateAltair{}
 		require.NoError(t, beaconStateBase.UnmarshalSSZ(beaconStateSSZ), "Failed to unmarshal")
 		beaconState, err = state_native.InitializeFromProtoUnsafeAltair(beaconStateBase)
 		require.NoError(t, err)
 	case version.Bellatrix:
-		beaconStateBase := &ethpb.BeaconStateBellatrix{}
+		beaconStateBase := &silapb.BeaconStateBellatrix{}
 		require.NoError(t, beaconStateBase.UnmarshalSSZ(beaconStateSSZ), "Failed to unmarshal")
 		beaconState, err = state_native.InitializeFromProtoUnsafeBellatrix(beaconStateBase)
 		require.NoError(t, err)
 	case version.Capella:
-		beaconStateBase := &ethpb.BeaconStateCapella{}
+		beaconStateBase := &silapb.BeaconStateCapella{}
 		require.NoError(t, beaconStateBase.UnmarshalSSZ(beaconStateSSZ), "Failed to unmarshal")
 		beaconState, err = state_native.InitializeFromProtoUnsafeCapella(beaconStateBase)
 		require.NoError(t, err)
 	case version.Deneb:
-		beaconStateBase := &ethpb.BeaconStateDeneb{}
+		beaconStateBase := &silapb.BeaconStateDeneb{}
 		require.NoError(t, beaconStateBase.UnmarshalSSZ(beaconStateSSZ), "Failed to unmarshal")
 		beaconState, err = state_native.InitializeFromProtoUnsafeDeneb(beaconStateBase)
 		require.NoError(t, err)
 	case version.Electra:
-		beaconStateBase := &ethpb.BeaconStateElectra{}
+		beaconStateBase := &silapb.BeaconStateElectra{}
 		require.NoError(t, beaconStateBase.UnmarshalSSZ(beaconStateSSZ), "Failed to unmarshal")
 		beaconState, err = state_native.InitializeFromProtoUnsafeElectra(beaconStateBase)
 		require.NoError(t, err)
 	case version.Fulu:
-		beaconStateBase := &ethpb.BeaconStateFulu{}
+		beaconStateBase := &silapb.BeaconStateFulu{}
 		require.NoError(t, beaconStateBase.UnmarshalSSZ(beaconStateSSZ), "Failed to unmarshal")
 		beaconState, err = state_native.InitializeFromProtoUnsafeFulu(beaconStateBase)
 		require.NoError(t, err)
@@ -149,21 +149,21 @@ func runLightClientSingleMerkleProofTestBeaconBlockBody(t *testing.T, testFolder
 	var executionPayloadRoot [32]byte
 	switch v {
 	case version.Capella:
-		beaconBlockBody := &ethpb.BeaconBlockBodyCapella{}
+		beaconBlockBody := &silapb.BeaconBlockBodyCapella{}
 		require.NoError(t, beaconBlockBody.UnmarshalSSZ(beaconBlockBodySSZ), "Failed to unmarshal")
 		beaconBlockBodyRoot, err = beaconBlockBody.HashTreeRoot()
 		require.NoError(t, err)
 		executionPayloadRoot, err = beaconBlockBody.ExecutionPayload.HashTreeRoot()
 		require.NoError(t, err)
 	case version.Deneb:
-		beaconBlockBody := &ethpb.BeaconBlockBodyDeneb{}
+		beaconBlockBody := &silapb.BeaconBlockBodyDeneb{}
 		require.NoError(t, beaconBlockBody.UnmarshalSSZ(beaconBlockBodySSZ), "Failed to unmarshal")
 		beaconBlockBodyRoot, err = beaconBlockBody.HashTreeRoot()
 		require.NoError(t, err)
 		executionPayloadRoot, err = beaconBlockBody.ExecutionPayload.HashTreeRoot()
 		require.NoError(t, err)
 	case version.Electra, version.Fulu:
-		beaconBlockBody := &ethpb.BeaconBlockBodyElectra{}
+		beaconBlockBody := &silapb.BeaconBlockBodyElectra{}
 		require.NoError(t, beaconBlockBody.UnmarshalSSZ(beaconBlockBodySSZ), "Failed to unmarshal")
 		beaconBlockBodyRoot, err = beaconBlockBody.HashTreeRoot()
 		require.NoError(t, err)

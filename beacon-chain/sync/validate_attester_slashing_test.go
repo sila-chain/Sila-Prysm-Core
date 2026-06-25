@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/slice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -27,7 +27,7 @@ import (
 	pubsubpb "github.com/libp2p/go-libp2p-pubsub/pb"
 )
 
-func setupValidAttesterSlashing(t *testing.T) (*ethpb.AttesterSlashing, state.BeaconState) {
+func setupValidAttesterSlashing(t *testing.T) (*silapb.AttesterSlashing, state.BeaconState) {
 	s, privKeys := util.DeterministicGenesisState(t, 5)
 	vals := s.Validators()
 	for _, vv := range vals {
@@ -35,9 +35,9 @@ func setupValidAttesterSlashing(t *testing.T) (*ethpb.AttesterSlashing, state.Be
 	}
 	require.NoError(t, s.SetValidators(vals))
 
-	att1 := util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: 1},
+	att1 := util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: 1},
 		},
 		AttestingIndices: []uint64{0, 1},
 	})
@@ -50,7 +50,7 @@ func setupValidAttesterSlashing(t *testing.T) (*ethpb.AttesterSlashing, state.Be
 	aggregateSig := bls.AggregateSignatures([]bls.Signature{sig0, sig1})
 	att1.Signature = aggregateSig.Marshal()
 
-	att2 := util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+	att2 := util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 		AttestingIndices: []uint64{0, 1},
 	})
 	hashTreeRoot, err = signing.ComputeSigningRoot(att2.Data, domain)
@@ -60,7 +60,7 @@ func setupValidAttesterSlashing(t *testing.T) (*ethpb.AttesterSlashing, state.Be
 	aggregateSig = bls.AggregateSignatures([]bls.Signature{sig0, sig1})
 	att2.Signature = aggregateSig.Marshal()
 
-	slashing := &ethpb.AttesterSlashing{
+	slashing := &silapb.AttesterSlashing{
 		Attestation_1: att1,
 		Attestation_2: att2,
 	}
@@ -98,7 +98,7 @@ func TestValidateAttesterSlashing_ValidSlashing(t *testing.T) {
 	_, err := p.Encoding().EncodeGossip(buf, slashing)
 	require.NoError(t, err)
 
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.AttesterSlashing]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.AttesterSlashing]()]
 	d, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, d)
@@ -143,7 +143,7 @@ func TestValidateAttesterSlashing_ValidOldSlashing(t *testing.T) {
 	_, err := p.Encoding().EncodeGossip(buf, slashing)
 	require.NoError(t, err)
 
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.AttesterSlashing]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.AttesterSlashing]()]
 	d, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, d)
@@ -188,7 +188,7 @@ func TestValidateAttesterSlashing_InvalidSlashing_WithdrawableEpoch(t *testing.T
 	_, err := p.Encoding().EncodeGossip(buf, slashing)
 	require.NoError(t, err)
 
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.AttesterSlashing]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.AttesterSlashing]()]
 	d, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, d)
@@ -237,16 +237,16 @@ func TestValidateAttesterSlashing_CanFilter(t *testing.T) {
 	r.setAttesterSlashingIndicesSeen([]uint64{1, 2, 3, 4}, []uint64{3, 4, 5, 6})
 
 	// The below attestations should be filtered hence bad signature is ok.
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.AttesterSlashing]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.AttesterSlashing]()]
 	d, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, d)
 	buf := new(bytes.Buffer)
-	_, err = p.Encoding().EncodeGossip(buf, &ethpb.AttesterSlashing{
-		Attestation_1: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+	_, err = p.Encoding().EncodeGossip(buf, &silapb.AttesterSlashing{
+		Attestation_1: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 			AttestingIndices: []uint64{3},
 		}),
-		Attestation_2: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+		Attestation_2: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 			AttestingIndices: []uint64{3},
 		}),
 	})
@@ -263,11 +263,11 @@ func TestValidateAttesterSlashing_CanFilter(t *testing.T) {
 	assert.Equal(t, true, ignored)
 
 	buf = new(bytes.Buffer)
-	_, err = p.Encoding().EncodeGossip(buf, &ethpb.AttesterSlashing{
-		Attestation_1: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+	_, err = p.Encoding().EncodeGossip(buf, &silapb.AttesterSlashing{
+		Attestation_1: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 			AttestingIndices: []uint64{4, 3},
 		}),
-		Attestation_2: util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+		Attestation_2: util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 			AttestingIndices: []uint64{3, 4},
 		}),
 	})
@@ -308,7 +308,7 @@ func TestValidateAttesterSlashing_ContextTimeout(t *testing.T) {
 	_, err := p.Encoding().EncodeGossip(buf, slashing)
 	require.NoError(t, err)
 
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.AttesterSlashing]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.AttesterSlashing]()]
 	msg := &pubsub.Message{
 		Message: &pubsubpb.Message{
 			Data:  buf.Bytes(),
@@ -339,7 +339,7 @@ func TestValidateAttesterSlashing_Syncing(t *testing.T) {
 	_, err := p.Encoding().EncodeGossip(buf, slashing)
 	require.NoError(t, err)
 
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.AttesterSlashing]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.AttesterSlashing]()]
 	msg := &pubsub.Message{
 		Message: &pubsubpb.Message{
 			Data:  buf.Bytes(),

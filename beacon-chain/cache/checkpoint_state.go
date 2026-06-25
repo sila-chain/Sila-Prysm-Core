@@ -5,7 +5,7 @@ import (
 	lruwrpr "github.com/sila-chain/Sila-Consensus-Core/v7/cache/lru"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	lru "github.com/hashicorp/golang-lru"
 	"github.com/prometheus/client_golang/prometheus"
@@ -51,7 +51,7 @@ func NewCheckpointStateCache() *CheckpointStateCache {
 
 // StateByCheckpoint fetches state by checkpoint. Returns true with a
 // reference to the CheckpointState info, if exists. Otherwise returns false, nil.
-func (c *CheckpointStateCache) StateByCheckpoint(cp *ethpb.Checkpoint) (state.BeaconState, error) {
+func (c *CheckpointStateCache) StateByCheckpoint(cp *silapb.Checkpoint) (state.BeaconState, error) {
 	h, err := hash.Proto(cp)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (c *CheckpointStateCache) StateByCheckpoint(cp *ethpb.Checkpoint) (state.Be
 
 // AddCheckpointState adds CheckpointState object to the cache. This method also trims the least
 // recently added CheckpointState object if the cache size has ready the max cache size limit.
-func (c *CheckpointStateCache) AddCheckpointState(cp *ethpb.Checkpoint, s state.ReadOnlyBeaconState) error {
+func (c *CheckpointStateCache) AddCheckpointState(cp *silapb.Checkpoint, s state.ReadOnlyBeaconState) error {
 	h, err := hash.Proto(cp)
 	if err != nil {
 		return err

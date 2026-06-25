@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -37,9 +37,9 @@ func TestSendExecutionPayloadEnvelopesByRootRequest(t *testing.T) {
 	clock := startup.NewClock(time.Now(), [fieldparams.RootLength]byte{})
 
 	// Helper: create a SignedExecutionPayloadEnvelope with the given beacon block root and slot.
-	makeEnvelope := func(root [32]byte, slot primitives.Slot) *ethpb.SignedExecutionPayloadEnvelope {
-		return &ethpb.SignedExecutionPayloadEnvelope{
-			Message: &ethpb.ExecutionPayloadEnvelope{
+	makeEnvelope := func(root [32]byte, slot primitives.Slot) *silapb.SignedExecutionPayloadEnvelope {
+		return &silapb.SignedExecutionPayloadEnvelope{
+			Message: &silapb.ExecutionPayloadEnvelope{
 				Payload: &enginev1.ExecutionPayloadGloas{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, 20),

@@ -24,7 +24,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
 	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -53,7 +53,7 @@ func TestServer_setExecutionData(t *testing.T) {
 	b2rCapella, err := b2pbCapella.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, b2pbCapella)
-	require.NoError(t, capellaTransitionState.SetFinalizedCheckpoint(&ethpb.Checkpoint{
+	require.NoError(t, capellaTransitionState.SetFinalizedCheckpoint(&silapb.Checkpoint{
 		Root: b2rCapella[:],
 	}))
 	require.NoError(t, beaconDB.SaveFeeRecipientsByValidatorIDs(t.Context(), []primitives.ValidatorIndex{0}, []common.Address{{}}))
@@ -66,7 +66,7 @@ func TestServer_setExecutionData(t *testing.T) {
 	b2rDeneb, err := b2pbDeneb.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, b2pbDeneb)
-	require.NoError(t, denebTransitionState.SetFinalizedCheckpoint(&ethpb.Checkpoint{
+	require.NoError(t, denebTransitionState.SetFinalizedCheckpoint(&silapb.Checkpoint{
 		Root: b2rDeneb[:],
 	}))
 
@@ -114,7 +114,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		blk, err := blocks.NewSignedBeaconBlock(util.NewBeaconBlockCapella())
 		require.NoError(t, err)
 		require.NoError(t, vs.BeaconDB.SaveRegistrationsByValidatorIDs(ctx, []primitives.ValidatorIndex{blk.Block().ProposerIndex()},
-			[]*ethpb.ValidatorRegistrationV1{{
+			[]*silapb.ValidatorRegistrationV1{{
 				FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
 				Timestamp:    uint64(time.Now().Unix()),
 				GasLimit:     gasLimit,
@@ -123,7 +123,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		sk, err := bls.RandKey()
 		require.NoError(t, err)
-		bid := &ethpb.BuilderBidCapella{
+		bid := &silapb.BuilderBidCapella{
 			Header: &v1.ExecutionPayloadHeaderCapella{
 				ParentHash:       params.BeaconConfig().ZeroHash[:],
 				FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
@@ -148,7 +148,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		sr, err := signing.ComputeSigningRoot(bid, domain)
 		require.NoError(t, err)
-		sBid := &ethpb.SignedBuilderBidCapella{
+		sBid := &silapb.SignedBuilderBidCapella{
 			Message:   bid,
 			Signature: sk.Sign(sr[:]).Marshal(),
 		}
@@ -183,7 +183,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		blk, err := blocks.NewSignedBeaconBlock(util.NewBlindedBeaconBlockCapella())
 		require.NoError(t, err)
 		require.NoError(t, vs.BeaconDB.SaveRegistrationsByValidatorIDs(ctx, []primitives.ValidatorIndex{blk.Block().ProposerIndex()},
-			[]*ethpb.ValidatorRegistrationV1{{
+			[]*silapb.ValidatorRegistrationV1{{
 				FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
 				Timestamp:    uint64(time.Now().Unix()),
 				GasLimit:     gasLimit,
@@ -195,7 +195,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		wr, err := ssz.WithdrawalSliceRoot(withdrawals, fieldparams.MaxWithdrawalsPerPayload)
 		require.NoError(t, err)
 		builderValue := bytesutil.ReverseByteOrder(big.NewInt(1e9).Bytes())
-		bid := &ethpb.BuilderBidCapella{
+		bid := &silapb.BuilderBidCapella{
 			Header: &v1.ExecutionPayloadHeaderCapella{
 				ParentHash:       params.BeaconConfig().ZeroHash[:],
 				FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
@@ -220,7 +220,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		sr, err := signing.ComputeSigningRoot(bid, domain)
 		require.NoError(t, err)
-		sBid := &ethpb.SignedBuilderBidCapella{
+		sBid := &silapb.SignedBuilderBidCapella{
 			Message:   bid,
 			Signature: sk.Sign(sr[:]).Marshal(),
 		}
@@ -255,7 +255,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		blk, err := blocks.NewSignedBeaconBlock(util.NewBlindedBeaconBlockCapella())
 		require.NoError(t, err)
 		require.NoError(t, vs.BeaconDB.SaveRegistrationsByValidatorIDs(ctx, []primitives.ValidatorIndex{blk.Block().ProposerIndex()},
-			[]*ethpb.ValidatorRegistrationV1{{
+			[]*silapb.ValidatorRegistrationV1{{
 				FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
 				Timestamp:    uint64(time.Now().Unix()),
 				GasLimit:     gasLimit,
@@ -267,7 +267,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		wr, err := ssz.WithdrawalSliceRoot(withdrawals, fieldparams.MaxWithdrawalsPerPayload)
 		require.NoError(t, err)
 		builderValue := bytesutil.ReverseByteOrder(big.NewInt(1e9).Bytes())
-		bid := &ethpb.BuilderBidCapella{
+		bid := &silapb.BuilderBidCapella{
 			Header: &v1.ExecutionPayloadHeaderCapella{
 				FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 				StateRoot:        make([]byte, fieldparams.RootLength),
@@ -291,7 +291,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		sr, err := signing.ComputeSigningRoot(bid, domain)
 		require.NoError(t, err)
-		sBid := &ethpb.SignedBuilderBidCapella{
+		sBid := &silapb.SignedBuilderBidCapella{
 			Message:   bid,
 			Signature: sk.Sign(sr[:]).Marshal(),
 		}
@@ -326,7 +326,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		blk, err := blocks.NewSignedBeaconBlock(util.NewBlindedBeaconBlockCapella())
 		require.NoError(t, err)
 		require.NoError(t, vs.BeaconDB.SaveRegistrationsByValidatorIDs(ctx, []primitives.ValidatorIndex{blk.Block().ProposerIndex()},
-			[]*ethpb.ValidatorRegistrationV1{{
+			[]*silapb.ValidatorRegistrationV1{{
 				FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
 				Timestamp:    uint64(time.Now().Unix()),
 				GasLimit:     gasLimit,
@@ -338,7 +338,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		wr, err := ssz.WithdrawalSliceRoot(withdrawals, fieldparams.MaxWithdrawalsPerPayload)
 		require.NoError(t, err)
 		builderValue := bytesutil.ReverseByteOrder(big.NewInt(1e9).Bytes())
-		bid := &ethpb.BuilderBidCapella{
+		bid := &silapb.BuilderBidCapella{
 			Header: &v1.ExecutionPayloadHeaderCapella{
 				FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 				StateRoot:        make([]byte, fieldparams.RootLength),
@@ -362,7 +362,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		sr, err := signing.ComputeSigningRoot(bid, domain)
 		require.NoError(t, err)
-		sBid := &ethpb.SignedBuilderBidCapella{
+		sBid := &silapb.SignedBuilderBidCapella{
 			Message:   bid,
 			Signature: sk.Sign(sr[:]).Marshal(),
 		}
@@ -546,7 +546,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		builderValue := bytesutil.ReverseByteOrder(big.NewInt(1e9).Bytes())
 
-		bid := &ethpb.BuilderBidDeneb{
+		bid := &silapb.BuilderBidDeneb{
 			Header: &v1.ExecutionPayloadHeaderDeneb{
 				FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 				StateRoot:        make([]byte, fieldparams.RootLength),
@@ -574,7 +574,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		sr, err := signing.ComputeSigningRoot(bid, domain)
 		require.NoError(t, err)
-		sBid := &ethpb.SignedBuilderBidDeneb{
+		sBid := &silapb.SignedBuilderBidDeneb{
 			Message:   bid,
 			Signature: sk.Sign(sr[:]).Marshal(),
 		}
@@ -584,7 +584,7 @@ func TestServer_setExecutionData(t *testing.T) {
 			Cfg:           &builderTest.Config{BeaconDB: beaconDB},
 		}
 		require.NoError(t, beaconDB.SaveRegistrationsByValidatorIDs(ctx, []primitives.ValidatorIndex{blk.Block().ProposerIndex()},
-			[]*ethpb.ValidatorRegistrationV1{{
+			[]*silapb.ValidatorRegistrationV1{{
 				FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
 				Timestamp:    uint64(time.Now().Unix()),
 				GasLimit:     gasLimit,
@@ -670,7 +670,7 @@ func TestServer_setExecutionData(t *testing.T) {
 			},
 		}
 
-		bid := &ethpb.BuilderBidElectra{
+		bid := &silapb.BuilderBidElectra{
 			Header: &v1.ExecutionPayloadHeaderDeneb{
 				FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 				StateRoot:        make([]byte, fieldparams.RootLength),
@@ -699,7 +699,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		sr, err := signing.ComputeSigningRoot(bid, domain)
 		require.NoError(t, err)
-		sBid := &ethpb.SignedBuilderBidElectra{
+		sBid := &silapb.SignedBuilderBidElectra{
 			Message:   bid,
 			Signature: sk.Sign(sr[:]).Marshal(),
 		}
@@ -709,7 +709,7 @@ func TestServer_setExecutionData(t *testing.T) {
 			Cfg:           &builderTest.Config{BeaconDB: beaconDB},
 		}
 		require.NoError(t, beaconDB.SaveRegistrationsByValidatorIDs(ctx, []primitives.ValidatorIndex{blk.Block().ProposerIndex()},
-			[]*ethpb.ValidatorRegistrationV1{{
+			[]*silapb.ValidatorRegistrationV1{{
 				FeeRecipient: make([]byte, fieldparams.FeeRecipientLength),
 				Timestamp:    uint64(time.Now().Unix()),
 				GasLimit:     gasLimit,
@@ -780,7 +780,7 @@ func TestServer_getPayloadHeader(t *testing.T) {
 	require.NoError(t, err)
 
 	gasLimit := uint64(30000000)
-	bid := &ethpb.BuilderBid{
+	bid := &silapb.BuilderBid{
 		Header: &v1.ExecutionPayloadHeader{
 			FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 			StateRoot:        make([]byte, fieldparams.RootLength),
@@ -802,7 +802,7 @@ func TestServer_getPayloadHeader(t *testing.T) {
 	require.NoError(t, err)
 	sr, err := signing.ComputeSigningRoot(bid, domain)
 	require.NoError(t, err)
-	sBid := &ethpb.SignedBuilderBid{
+	sBid := &silapb.SignedBuilderBid{
 		Message:   bid,
 		Signature: sk.Sign(sr[:]).Marshal(),
 	}
@@ -817,7 +817,7 @@ func TestServer_getPayloadHeader(t *testing.T) {
 
 	tiCapella, err := slots.StartTime(genesis, primitives.Slot(fakeCapellaEpoch)*params.BeaconConfig().SlotsPerEpoch)
 	require.NoError(t, err)
-	bidCapella := &ethpb.BuilderBidCapella{
+	bidCapella := &silapb.BuilderBidCapella{
 		Header: &v1.ExecutionPayloadHeaderCapella{
 			FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 			StateRoot:        make([]byte, fieldparams.RootLength),
@@ -837,12 +837,12 @@ func TestServer_getPayloadHeader(t *testing.T) {
 	}
 	srCapella, err := signing.ComputeSigningRoot(bidCapella, domain)
 	require.NoError(t, err)
-	sBidCapella := &ethpb.SignedBuilderBidCapella{
+	sBidCapella := &silapb.SignedBuilderBidCapella{
 		Message:   bidCapella,
 		Signature: sk.Sign(srCapella[:]).Marshal(),
 	}
 
-	incorrectGasLimitBid := &ethpb.BuilderBid{
+	incorrectGasLimitBid := &silapb.BuilderBid{
 		Header: &v1.ExecutionPayloadHeader{
 			FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 			StateRoot:        make([]byte, fieldparams.RootLength),
@@ -860,7 +860,7 @@ func TestServer_getPayloadHeader(t *testing.T) {
 		Value:  bytesutil.PadTo([]byte{1, 2, 3}, 32),
 	}
 	signedIncorrectGasLimitBid :=
-		&ethpb.SignedBuilderBid{
+		&silapb.SignedBuilderBid{
 			Message:   incorrectGasLimitBid,
 			Signature: sk.Sign(srCapella[:]).Marshal(),
 		}
@@ -906,8 +906,8 @@ func TestServer_getPayloadHeader(t *testing.T) {
 		{
 			name: "0 bid",
 			mock: &builderTest.MockBuilderService{
-				Bid: &ethpb.SignedBuilderBid{
-					Message: &ethpb.BuilderBid{
+				Bid: &silapb.SignedBuilderBid{
+					Message: &silapb.BuilderBid{
 						Header: &v1.ExecutionPayloadHeader{
 							BlockNumber: 123,
 						},
@@ -927,8 +927,8 @@ func TestServer_getPayloadHeader(t *testing.T) {
 		{
 			name: "invalid tx root",
 			mock: &builderTest.MockBuilderService{
-				Bid: &ethpb.SignedBuilderBid{
-					Message: &ethpb.BuilderBid{
+				Bid: &silapb.SignedBuilderBid{
+					Message: &silapb.BuilderBid{
 						Value: []byte{1},
 						Header: &v1.ExecutionPayloadHeader{
 							BlockNumber:      123,
@@ -1037,7 +1037,7 @@ func TestServer_getPayloadHeader(t *testing.T) {
 					},
 				}
 
-				electraBid := &ethpb.BuilderBidElectra{
+				electraBid := &silapb.BuilderBidElectra{
 					Header: &v1.ExecutionPayloadHeaderDeneb{
 						FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 						StateRoot:        make([]byte, fieldparams.RootLength),
@@ -1067,7 +1067,7 @@ func TestServer_getPayloadHeader(t *testing.T) {
 				sr, err := signing.ComputeSigningRoot(electraBid, domain)
 				require.NoError(t, err)
 
-				sBidElectra := &ethpb.SignedBuilderBidElectra{
+				sBidElectra := &silapb.SignedBuilderBidElectra{
 					Message:   electraBid,
 					Signature: sk.Sign(sr[:]).Marshal(),
 				}
@@ -1105,7 +1105,7 @@ func TestServer_getPayloadHeader(t *testing.T) {
 				Genesis: genesis,
 			}}
 			regCache := cache.NewRegistrationCache()
-			regCache.UpdateIndexToRegisteredMap(t.Context(), map[primitives.ValidatorIndex]*ethpb.ValidatorRegistrationV1{
+			regCache.UpdateIndexToRegisteredMap(t.Context(), map[primitives.ValidatorIndex]*silapb.ValidatorRegistrationV1{
 				0: {
 					GasLimit:     gasLimit,
 					FeeRecipient: make([]byte, 20),
@@ -1140,7 +1140,7 @@ func TestServer_getPayloadHeader(t *testing.T) {
 func TestServer_validateBuilderSignature(t *testing.T) {
 	sk, err := bls.RandKey()
 	require.NoError(t, err)
-	bid := &ethpb.BuilderBid{
+	bid := &silapb.BuilderBid{
 		Header: &v1.ExecutionPayloadHeader{
 			ParentHash:       make([]byte, fieldparams.RootLength),
 			FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
@@ -1161,7 +1161,7 @@ func TestServer_validateBuilderSignature(t *testing.T) {
 	require.NoError(t, err)
 	sr, err := signing.ComputeSigningRoot(bid, domain)
 	require.NoError(t, err)
-	pbBid := &ethpb.SignedBuilderBid{
+	pbBid := &silapb.SignedBuilderBid{
 		Message:   bid,
 		Signature: sk.Sign(sr[:]).Marshal(),
 	}

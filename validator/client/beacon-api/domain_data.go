@@ -8,11 +8,11 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
-func (c *beaconApiValidatorClient) domainData(ctx context.Context, epoch primitives.Epoch, domainType [4]byte) (*ethpb.DomainResponse, error) {
+func (c *beaconApiValidatorClient) domainData(ctx context.Context, epoch primitives.Epoch, domainType [4]byte) (*silapb.DomainResponse, error) {
 	// Get the fork version from the given epoch
 	fork, err := params.Fork(epoch)
 	if err != nil {
@@ -35,5 +35,5 @@ func (c *beaconApiValidatorClient) domainData(ctx context.Context, epoch primiti
 		return nil, errors.Wrap(err, "failed to compute signature domain")
 	}
 
-	return &ethpb.DomainResponse{SignatureDomain: signatureDomain}, nil
+	return &silapb.DomainResponse{SignatureDomain: signatureDomain}, nil
 }

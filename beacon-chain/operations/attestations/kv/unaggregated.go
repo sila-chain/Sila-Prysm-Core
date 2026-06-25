@@ -5,14 +5,14 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
 
 // SaveUnaggregatedAttestation saves an unaggregated attestation in cache.
-func (c *AttCaches) SaveUnaggregatedAttestation(att ethpb.Att) error {
+func (c *AttCaches) SaveUnaggregatedAttestation(att silapb.Att) error {
 	if att == nil || att.IsNil() {
 		return nil
 	}
@@ -41,7 +41,7 @@ func (c *AttCaches) SaveUnaggregatedAttestation(att ethpb.Att) error {
 }
 
 // SaveUnaggregatedAttestations saves a list of unaggregated attestations in cache.
-func (c *AttCaches) SaveUnaggregatedAttestations(atts []ethpb.Att) error {
+func (c *AttCaches) SaveUnaggregatedAttestations(atts []silapb.Att) error {
 	for _, att := range atts {
 		if err := c.SaveUnaggregatedAttestation(att); err != nil {
 			return err
@@ -52,11 +52,11 @@ func (c *AttCaches) SaveUnaggregatedAttestations(atts []ethpb.Att) error {
 }
 
 // UnaggregatedAttestations returns all the unaggregated attestations in cache.
-func (c *AttCaches) UnaggregatedAttestations() []ethpb.Att {
+func (c *AttCaches) UnaggregatedAttestations() []silapb.Att {
 	c.unAggregateAttLock.RLock()
 	defer c.unAggregateAttLock.RUnlock()
 	unAggregatedAtts := c.unAggregatedAtt
-	atts := make([]ethpb.Att, 0, len(unAggregatedAtts))
+	atts := make([]silapb.Att, 0, len(unAggregatedAtts))
 	for _, att := range unAggregatedAtts {
 		seen, err := c.hasSeenBit(att)
 		if err != nil {
@@ -76,11 +76,11 @@ func (c *AttCaches) UnaggregatedAttestationsBySlotIndex(
 	ctx context.Context,
 	slot primitives.Slot,
 	committeeIndex primitives.CommitteeIndex,
-) []*ethpb.Attestation {
+) []*silapb.Attestation {
 	_, span := trace.StartSpan(ctx, "operations.attestations.kv.UnaggregatedAttestationsBySlotIndex")
 	defer span.End()
 
-	atts := make([]*ethpb.Attestation, 0)
+	atts := make([]*silapb.Attestation, 0)
 
 	c.unAggregateAttLock.RLock()
 	defer c.unAggregateAttLock.RUnlock()
@@ -88,7 +88,7 @@ func (c *AttCaches) UnaggregatedAttestationsBySlotIndex(
 	unAggregatedAtts := c.unAggregatedAtt
 	for _, a := range unAggregatedAtts {
 		if a.Version() == version.Phase0 && slot == a.GetData().Slot && committeeIndex == a.GetData().CommitteeIndex {
-			att, ok := a.(*ethpb.Attestation)
+			att, ok := a.(*silapb.Attestation)
 			// This will never fail in practice because we asserted the version
 			if ok {
 				atts = append(atts, att)
@@ -105,11 +105,11 @@ func (c *AttCaches) UnaggregatedAttestationsBySlotIndexElectra(
 	ctx context.Context,
 	slot primitives.Slot,
 	committeeIndex primitives.CommitteeIndex,
-) []*ethpb.AttestationElectra {
+) []*silapb.AttestationElectra {
 	_, span := trace.StartSpan(ctx, "operations.attestations.kv.UnaggregatedAttestationsBySlotIndexElectra")
 	defer span.End()
 
-	atts := make([]*ethpb.AttestationElectra, 0)
+	atts := make([]*silapb.AttestationElectra, 0)
 
 	c.unAggregateAttLock.RLock()
 	defer c.unAggregateAttLock.RUnlock()
@@ -117,7 +117,7 @@ func (c *AttCaches) UnaggregatedAttestationsBySlotIndexElectra(
 	unAggregatedAtts := c.unAggregatedAtt
 	for _, a := range unAggregatedAtts {
 		if a.Version() >= version.Electra && slot == a.GetData().Slot && a.CommitteeBitsVal().BitAt(uint64(committeeIndex)) {
-			att, ok := a.(*ethpb.AttestationElectra)
+			att, ok := a.(*silapb.AttestationElectra)
 			// This will never fail in practice because we asserted the version
 			if ok {
 				atts = append(atts, att)
@@ -129,7 +129,7 @@ func (c *AttCaches) UnaggregatedAttestationsBySlotIndexElectra(
 }
 
 // DeleteUnaggregatedAttestation deletes the unaggregated attestations in cache.
-func (c *AttCaches) DeleteUnaggregatedAttestation(att ethpb.Att) error {
+func (c *AttCaches) DeleteUnaggregatedAttestation(att silapb.Att) error {
 	if att == nil || att.IsNil() {
 		return nil
 	}

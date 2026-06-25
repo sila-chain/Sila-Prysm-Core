@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -663,7 +663,7 @@ func saveInitialFinalizedCheckpointData(t *testing.T, ctx context.Context, beaco
 	require.NoError(t, err)
 	finalizedBlockRoot, err := signedFinalizedBlock.Block().HashTreeRoot()
 	require.NoError(t, err)
-	cp := ethpb.Checkpoint{
+	cp := silapb.Checkpoint{
 		Epoch: 1,
 		Root:  finalizedBlockRoot[:],
 	}

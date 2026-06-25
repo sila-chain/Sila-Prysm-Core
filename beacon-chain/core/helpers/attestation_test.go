@@ -9,7 +9,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -52,19 +52,19 @@ func TestAttestation_ComputeSubnetForAttestation(t *testing.T) {
 	// Create 10 committees
 	committeeCount := uint64(10)
 	validatorCount := committeeCount * params.BeaconConfig().TargetCommitteeSize
-	validators := make([]*ethpb.Validator, validatorCount)
+	validators := make([]*silapb.Validator, validatorCount)
 
 	for i := range validators {
 		k := make([]byte, 48)
 		copy(k, strconv.Itoa(i))
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             k,
 			WithdrawalCredentials: make([]byte, 32),
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
 		}
 	}
 
-	state, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	state, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators:  validators,
 		Slot:        200,
 		BlockRoots:  make([][]byte, params.BeaconConfig().SlotsPerHistoricalRoot),
@@ -76,9 +76,9 @@ func TestAttestation_ComputeSubnetForAttestation(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Phase 0", func(t *testing.T) {
-		att := &ethpb.Attestation{
+		att := &silapb.Attestation{
 			AggregationBits: []byte{'A'},
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				Slot:            34,
 				CommitteeIndex:  4,
 				BeaconBlockRoot: []byte{'C'},
@@ -91,10 +91,10 @@ func TestAttestation_ComputeSubnetForAttestation(t *testing.T) {
 	t.Run("Electra", func(t *testing.T) {
 		cb := primitives.NewAttestationCommitteeBits()
 		cb.SetBitAt(4, true)
-		att := &ethpb.AttestationElectra{
+		att := &silapb.AttestationElectra{
 			AggregationBits: []byte{'A'},
 			CommitteeBits:   cb,
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				Slot:            34,
 				BeaconBlockRoot: []byte{'C'},
 			},
@@ -244,16 +244,16 @@ func TestVerifyCheckpointEpoch_Ok(t *testing.T) {
 	// Genesis was 6 epochs ago exactly.
 	offset := params.BeaconConfig().SlotsPerEpoch.Mul(params.BeaconConfig().SecondsPerSlot * 6)
 	genesis := time.Now().Add(-1 * time.Second * time.Duration(offset))
-	assert.Equal(t, true, helpers.VerifyCheckpointEpoch(&ethpb.Checkpoint{Epoch: 6}, genesis))
-	assert.Equal(t, true, helpers.VerifyCheckpointEpoch(&ethpb.Checkpoint{Epoch: 5}, genesis))
-	assert.Equal(t, false, helpers.VerifyCheckpointEpoch(&ethpb.Checkpoint{Epoch: 4}, genesis))
-	assert.Equal(t, false, helpers.VerifyCheckpointEpoch(&ethpb.Checkpoint{Epoch: 2}, genesis))
+	assert.Equal(t, true, helpers.VerifyCheckpointEpoch(&silapb.Checkpoint{Epoch: 6}, genesis))
+	assert.Equal(t, true, helpers.VerifyCheckpointEpoch(&silapb.Checkpoint{Epoch: 5}, genesis))
+	assert.Equal(t, false, helpers.VerifyCheckpointEpoch(&silapb.Checkpoint{Epoch: 4}, genesis))
+	assert.Equal(t, false, helpers.VerifyCheckpointEpoch(&silapb.Checkpoint{Epoch: 2}, genesis))
 }
 
 func TestValidateNilAttestation(t *testing.T) {
 	tests := []struct {
 		name        string
-		attestation ethpb.Att
+		attestation silapb.Att
 		errString   string
 	}{
 		{
@@ -263,45 +263,45 @@ func TestValidateNilAttestation(t *testing.T) {
 		},
 		{
 			name:        "nil attestation data",
-			attestation: &ethpb.Attestation{},
+			attestation: &silapb.Attestation{},
 			errString:   "attestation is nil",
 		},
 		{
 			name: "nil attestation source",
-			attestation: &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
+			attestation: &silapb.Attestation{
+				Data: &silapb.AttestationData{
 					Source: nil,
-					Target: &ethpb.Checkpoint{},
+					Target: &silapb.Checkpoint{},
 				},
 			},
 			errString: "attestation's source can't be nil",
 		},
 		{
 			name: "nil attestation target",
-			attestation: &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
+			attestation: &silapb.Attestation{
+				Data: &silapb.AttestationData{
 					Target: nil,
-					Source: &ethpb.Checkpoint{},
+					Source: &silapb.Checkpoint{},
 				},
 			},
 			errString: "attestation's target can't be nil",
 		},
 		{
 			name: "nil attestation bitfield",
-			attestation: &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
-					Target: &ethpb.Checkpoint{},
-					Source: &ethpb.Checkpoint{},
+			attestation: &silapb.Attestation{
+				Data: &silapb.AttestationData{
+					Target: &silapb.Checkpoint{},
+					Source: &silapb.Checkpoint{},
 				},
 			},
 			errString: "attestation's bitfield can't be nil",
 		},
 		{
 			name: "good attestation",
-			attestation: &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
-					Target: &ethpb.Checkpoint{},
-					Source: &ethpb.Checkpoint{},
+			attestation: &silapb.Attestation{
+				Data: &silapb.AttestationData{
+					Target: &silapb.Checkpoint{},
+					Source: &silapb.Checkpoint{},
 				},
 				AggregationBits: []byte{},
 			},
@@ -309,10 +309,10 @@ func TestValidateNilAttestation(t *testing.T) {
 		},
 		{
 			name: "single attestation",
-			attestation: &ethpb.SingleAttestation{
-				Data: &ethpb.AttestationData{
-					Target: &ethpb.Checkpoint{},
-					Source: &ethpb.Checkpoint{},
+			attestation: &silapb.SingleAttestation{
+				Data: &silapb.AttestationData{
+					Target: &silapb.Checkpoint{},
+					Source: &silapb.Checkpoint{},
 				},
 			},
 			errString: "",
@@ -334,15 +334,15 @@ func TestValidateNilAttestation(t *testing.T) {
 func TestValidateSlotTargetEpoch(t *testing.T) {
 	tests := []struct {
 		name        string
-		attestation *ethpb.Attestation
+		attestation *silapb.Attestation
 		errString   string
 	}{
 		{
 			name: "incorrect slot",
-			attestation: &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
-					Target: &ethpb.Checkpoint{Epoch: 1},
-					Source: &ethpb.Checkpoint{},
+			attestation: &silapb.Attestation{
+				Data: &silapb.AttestationData{
+					Target: &silapb.Checkpoint{Epoch: 1},
+					Source: &silapb.Checkpoint{},
 				},
 				AggregationBits: []byte{},
 			},
@@ -350,11 +350,11 @@ func TestValidateSlotTargetEpoch(t *testing.T) {
 		},
 		{
 			name: "good attestation",
-			attestation: &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
+			attestation: &silapb.Attestation{
+				Data: &silapb.AttestationData{
 					Slot:   2 * params.BeaconConfig().SlotsPerEpoch,
-					Target: &ethpb.Checkpoint{Epoch: 2},
-					Source: &ethpb.Checkpoint{},
+					Target: &silapb.Checkpoint{Epoch: 2},
+					Source: &silapb.Checkpoint{},
 				},
 				AggregationBits: []byte{},
 			},

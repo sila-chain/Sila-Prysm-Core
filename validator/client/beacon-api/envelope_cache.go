@@ -4,14 +4,14 @@ import (
 	"sync"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // envelopeContents bundles the cached execution payload envelope with the raw
 // blobs and KZG proofs returned from /sila/v4/validator/blocks?include_payload=true,
 // so the stateless publish path can submit them together to the beacon node.
 type envelopeContents struct {
-	envelope  *ethpb.ExecutionPayloadEnvelope
+	envelope  *silapb.ExecutionPayloadEnvelope
 	blobs     [][]byte
 	kzgProofs [][]byte
 }
@@ -37,7 +37,7 @@ func newExecutionPayloadEnvelopeCache() *executionPayloadEnvelopeCache {
 // entry belongs to an aborted proposal and will never be consumed. No-op on a
 // nil receiver so callers that construct the client without initializing the
 // cache (e.g. tests exercising unrelated paths) do not panic.
-func (c *executionPayloadEnvelopeCache) Add(slot primitives.Slot, envelope *ethpb.ExecutionPayloadEnvelope, blobs, kzgProofs [][]byte) {
+func (c *executionPayloadEnvelopeCache) Add(slot primitives.Slot, envelope *silapb.ExecutionPayloadEnvelope, blobs, kzgProofs [][]byte) {
 	if c == nil {
 		return
 	}
@@ -54,7 +54,7 @@ func (c *executionPayloadEnvelopeCache) Add(slot primitives.Slot, envelope *ethp
 // peek returns the cached envelope and blob data for the slot without removing
 // the entry. Used by the envelope-fetch path so the entry stays available for
 // the subsequent publish call.
-func (c *executionPayloadEnvelopeCache) peek(slot primitives.Slot) (*ethpb.ExecutionPayloadEnvelope, [][]byte, [][]byte) {
+func (c *executionPayloadEnvelopeCache) peek(slot primitives.Slot) (*silapb.ExecutionPayloadEnvelope, [][]byte, [][]byte) {
 	if c == nil {
 		return nil, nil, nil
 	}
@@ -71,7 +71,7 @@ func (c *executionPayloadEnvelopeCache) peek(slot primitives.Slot) (*ethpb.Execu
 // Take returns the cached envelope and blob data for the given slot and removes
 // the entry from the cache. Returns nils if no entry is present or the receiver
 // is nil.
-func (c *executionPayloadEnvelopeCache) Take(slot primitives.Slot) (*ethpb.ExecutionPayloadEnvelope, [][]byte, [][]byte) {
+func (c *executionPayloadEnvelopeCache) Take(slot primitives.Slot) (*silapb.ExecutionPayloadEnvelope, [][]byte, [][]byte) {
 	if c == nil {
 		return nil, nil, nil
 	}

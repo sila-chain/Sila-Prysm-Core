@@ -7,14 +7,14 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/utils"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/golang/snappy"
 )
 
-type ProcessDeposits func(ctx context.Context, beaconState state.BeaconState, deposits []*ethpb.Deposit) (state.BeaconState, error)
+type ProcessDeposits func(ctx context.Context, beaconState state.BeaconState, deposits []*silapb.Deposit) (state.BeaconState, error)
 
 func RunDepositTest(t *testing.T, config string, fork string, blockWithDeposit blockWithSSZObject, process ProcessDeposits, sszToState SSZToState) {
 	require.NoError(t, utils.SetConfig(t, config))

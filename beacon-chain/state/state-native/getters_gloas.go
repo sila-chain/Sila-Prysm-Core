@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -35,7 +35,7 @@ func (b *BeaconState) LatestBlockHash() ([32]byte, error) {
 }
 
 // PTCWindow returns a copy of the cached PTC window.
-func (b *BeaconState) PTCWindow() ([]*ethpb.PTCs, error) {
+func (b *BeaconState) PTCWindow() ([]*silapb.PTCs, error) {
 	if b.version < version.Gloas {
 		return nil, errNotSupported("PTCWindow", b.version)
 	}
@@ -174,7 +174,7 @@ func (b *BeaconState) CanBuilderCoverBid(builderIndex primitives.BuilderIndex, b
 }
 
 // builderAtIndex intentionally returns the underlying pointer without copying.
-func (b *BeaconState) builderAtIndex(builderIndex primitives.BuilderIndex) (*ethpb.Builder, error) {
+func (b *BeaconState) builderAtIndex(builderIndex primitives.BuilderIndex) (*silapb.Builder, error) {
 	idx := uint64(builderIndex)
 	if idx >= uint64(len(b.builders)) {
 		return nil, fmt.Errorf("builder index %d out of range (len=%d)", builderIndex, len(b.builders))
@@ -232,7 +232,7 @@ func (b *BeaconState) BuilderPendingBalanceToWithdraw(builderIndex primitives.Bu
 }
 
 // BuilderPendingPayments returns a copy of the builder pending payments.
-func (b *BeaconState) BuilderPendingPayments() ([]*ethpb.BuilderPendingPayment, error) {
+func (b *BeaconState) BuilderPendingPayments() ([]*silapb.BuilderPendingPayment, error) {
 	if b.version < version.Gloas {
 		return nil, errNotSupported("BuilderPendingPayments", b.version)
 	}
@@ -244,7 +244,7 @@ func (b *BeaconState) BuilderPendingPayments() ([]*ethpb.BuilderPendingPayment, 
 }
 
 // BuilderPendingPayment returns the builder pending payment for the given index.
-func (b *BeaconState) BuilderPendingPayment(index uint64) (*ethpb.BuilderPendingPayment, error) {
+func (b *BeaconState) BuilderPendingPayment(index uint64) (*silapb.BuilderPendingPayment, error) {
 	if b.version < version.Gloas {
 		return nil, errNotSupported("BuilderPendingPayment", b.version)
 	}
@@ -255,7 +255,7 @@ func (b *BeaconState) BuilderPendingPayment(index uint64) (*ethpb.BuilderPending
 	if index >= uint64(len(b.builderPendingPayments)) {
 		return nil, fmt.Errorf("builder pending payment index %d out of range (len=%d)", index, len(b.builderPendingPayments))
 	}
-	return ethpb.CopyBuilderPendingPayment(b.builderPendingPayments[index]), nil
+	return silapb.CopyBuilderPendingPayment(b.builderPendingPayments[index]), nil
 }
 
 // LatestExecutionPayloadBid returns the cached latest execution payload bid for Gloas.
@@ -344,7 +344,7 @@ func (b *BeaconState) ExecutionPayloadAvailability(slot primitives.Slot) (uint64
 }
 
 // Builder returns the builder at the given index.
-func (b *BeaconState) Builder(index primitives.BuilderIndex) (*ethpb.Builder, error) {
+func (b *BeaconState) Builder(index primitives.BuilderIndex) (*silapb.Builder, error) {
 	b.lock.RLock()
 	defer b.lock.RUnlock()
 
@@ -355,7 +355,7 @@ func (b *BeaconState) Builder(index primitives.BuilderIndex) (*ethpb.Builder, er
 		return nil, nil
 	}
 
-	return ethpb.CopyBuilder(b.builders[index]), nil
+	return silapb.CopyBuilder(b.builders[index]), nil
 }
 
 // BuilderIndexByPubkey returns the builder index for the given pubkey, if present.
@@ -605,7 +605,7 @@ func (b *BeaconState) appendBuildersSweepWithdrawals(withdrawalIndex uint64, wit
 }
 
 // Builders returns a copy of the builders registry.
-func (b *BeaconState) Builders() ([]*ethpb.Builder, error) {
+func (b *BeaconState) Builders() ([]*silapb.Builder, error) {
 	if b.version < version.Gloas {
 		return nil, errNotSupported("Builders", b.version)
 	}
@@ -629,7 +629,7 @@ func (b *BeaconState) ExecutionPayloadAvailabilityVector() ([]byte, error) {
 }
 
 // BuilderPendingWithdrawals returns a copy of the builder pending withdrawals.
-func (b *BeaconState) BuilderPendingWithdrawals() ([]*ethpb.BuilderPendingWithdrawal, error) {
+func (b *BeaconState) BuilderPendingWithdrawals() ([]*silapb.BuilderPendingWithdrawal, error) {
 	if b.version < version.Gloas {
 		return nil, errNotSupported("BuilderPendingWithdrawals", b.version)
 	}

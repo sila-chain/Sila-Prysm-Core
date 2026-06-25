@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
@@ -29,7 +29,7 @@ func MapForkInfo(slot primitives.Slot, genesisValidatorsRoot []byte) (*ForkInfo,
 }
 
 // MapAggregateAndProof maps the eth2.AggregateAndProof proto to the Web3Signer spec.
-func MapAggregateAndProof(from *ethpb.AggregateAttestationAndProof) (*AggregateAndProof, error) {
+func MapAggregateAndProof(from *silapb.AggregateAttestationAndProof) (*AggregateAndProof, error) {
 	if from == nil {
 		return nil, fmt.Errorf("AggregateAttestationAndProof is nil")
 	}
@@ -45,7 +45,7 @@ func MapAggregateAndProof(from *ethpb.AggregateAttestationAndProof) (*AggregateA
 }
 
 // MapAggregateAndProofElectra maps the eth2.AggregateAndProofElectra proto to the Web3Signer spec.
-func MapAggregateAndProofElectra(from *ethpb.AggregateAttestationAndProofElectra) (*AggregateAndProofElectra, error) {
+func MapAggregateAndProofElectra(from *silapb.AggregateAttestationAndProofElectra) (*AggregateAndProofElectra, error) {
 	if from == nil {
 		return nil, fmt.Errorf("AggregateAttestationAndProof is nil")
 	}
@@ -61,7 +61,7 @@ func MapAggregateAndProofElectra(from *ethpb.AggregateAttestationAndProofElectra
 }
 
 // MapAttestation maps the eth2.Attestation proto to the Web3Signer spec.
-func MapAttestation(attestation *ethpb.Attestation) (*Attestation, error) {
+func MapAttestation(attestation *silapb.Attestation) (*Attestation, error) {
 	if attestation == nil {
 		return nil, fmt.Errorf("attestation is nil")
 	}
@@ -80,7 +80,7 @@ func MapAttestation(attestation *ethpb.Attestation) (*Attestation, error) {
 }
 
 // MapAttestationElectra maps the eth2.Attestation proto to the Web3Signer spec.
-func MapAttestationElectra(attestation *ethpb.AttestationElectra) (*AttestationElectra, error) {
+func MapAttestationElectra(attestation *silapb.AttestationElectra) (*AttestationElectra, error) {
 	if attestation == nil {
 		return nil, fmt.Errorf("attestation is nil")
 	}
@@ -103,7 +103,7 @@ func MapAttestationElectra(attestation *ethpb.AttestationElectra) (*AttestationE
 }
 
 // MapAttestationData maps the eth2.AttestationData proto to the Web3Signer spec.
-func MapAttestationData(data *ethpb.AttestationData) (*AttestationData, error) {
+func MapAttestationData(data *silapb.AttestationData) (*AttestationData, error) {
 	if data == nil {
 		return nil, fmt.Errorf("attestation data is nil")
 	}
@@ -125,7 +125,7 @@ func MapAttestationData(data *ethpb.AttestationData) (*AttestationData, error) {
 }
 
 // MapCheckPoint maps the eth2.Checkpoint proto to the Web3Signer spec.
-func MapCheckPoint(checkpoint *ethpb.Checkpoint) (*Checkpoint, error) {
+func MapCheckPoint(checkpoint *silapb.Checkpoint) (*Checkpoint, error) {
 	if checkpoint == nil {
 		return nil, fmt.Errorf("checkpoint is nil")
 	}
@@ -136,7 +136,7 @@ func MapCheckPoint(checkpoint *ethpb.Checkpoint) (*Checkpoint, error) {
 }
 
 // MapBeaconBlockBody maps the eth2.BeaconBlockBody proto to the Web3Signer spec.
-func MapBeaconBlockBody(body *ethpb.BeaconBlockBody) (*BeaconBlockBody, error) {
+func MapBeaconBlockBody(body *silapb.BeaconBlockBody) (*BeaconBlockBody, error) {
 	if body == nil {
 		return nil, fmt.Errorf("beacon block body is nil")
 	}
@@ -196,7 +196,7 @@ func MapBeaconBlockBody(body *ethpb.BeaconBlockBody) (*BeaconBlockBody, error) {
 }
 
 // MapProposerSlashing maps the eth2.ProposerSlashing proto to the Web3Signer spec.
-func MapProposerSlashing(slashing *ethpb.ProposerSlashing) (*ProposerSlashing, error) {
+func MapProposerSlashing(slashing *silapb.ProposerSlashing) (*ProposerSlashing, error) {
 	if slashing == nil {
 		return nil, fmt.Errorf("proposer slashing is nil")
 	}
@@ -215,7 +215,7 @@ func MapProposerSlashing(slashing *ethpb.ProposerSlashing) (*ProposerSlashing, e
 }
 
 // MapSignedBeaconBlockHeader maps the eth2.AttesterSlashing proto to the Web3Signer spec.
-func MapSignedBeaconBlockHeader(signedHeader *ethpb.SignedBeaconBlockHeader) (*SignedBeaconBlockHeader, error) {
+func MapSignedBeaconBlockHeader(signedHeader *silapb.SignedBeaconBlockHeader) (*SignedBeaconBlockHeader, error) {
 	if signedHeader == nil {
 		return nil, fmt.Errorf("signed beacon block header is nil")
 	}
@@ -235,7 +235,7 @@ func MapSignedBeaconBlockHeader(signedHeader *ethpb.SignedBeaconBlockHeader) (*S
 }
 
 // MapAttesterSlashing maps the eth2.AttesterSlashing proto to the Web3Signer spec.
-func MapAttesterSlashing(slashing *ethpb.AttesterSlashing) (*AttesterSlashing, error) {
+func MapAttesterSlashing(slashing *silapb.AttesterSlashing) (*AttesterSlashing, error) {
 	if slashing == nil {
 		return nil, fmt.Errorf("attester slashing is nil")
 	}
@@ -254,7 +254,7 @@ func MapAttesterSlashing(slashing *ethpb.AttesterSlashing) (*AttesterSlashing, e
 }
 
 // MapIndexedAttestation maps the eth2.IndexedAttestation proto to the Web3Signer spec.
-func MapIndexedAttestation(attestation *ethpb.IndexedAttestation) (*IndexedAttestation, error) {
+func MapIndexedAttestation(attestation *silapb.IndexedAttestation) (*IndexedAttestation, error) {
 	if attestation == nil {
 		return nil, fmt.Errorf("indexed attestation is nil")
 	}
@@ -274,7 +274,7 @@ func MapIndexedAttestation(attestation *ethpb.IndexedAttestation) (*IndexedAttes
 }
 
 // MapDeposit maps the eth2.Deposit proto to the Web3Signer spec.
-func MapDeposit(deposit *ethpb.Deposit) (*Deposit, error) {
+func MapDeposit(deposit *silapb.Deposit) (*Deposit, error) {
 	if deposit == nil {
 		return nil, fmt.Errorf("deposit is nil")
 	}
@@ -294,7 +294,7 @@ func MapDeposit(deposit *ethpb.Deposit) (*Deposit, error) {
 }
 
 // MapSignedVoluntaryExit maps the eth2.SignedVoluntaryExit proto to the Web3Signer spec.
-func MapSignedVoluntaryExit(signedVoluntaryExit *ethpb.SignedVoluntaryExit) (*SignedVoluntaryExit, error) {
+func MapSignedVoluntaryExit(signedVoluntaryExit *silapb.SignedVoluntaryExit) (*SignedVoluntaryExit, error) {
 	if signedVoluntaryExit == nil {
 		return nil, fmt.Errorf("signed voluntary exit is nil")
 	}
@@ -311,7 +311,7 @@ func MapSignedVoluntaryExit(signedVoluntaryExit *ethpb.SignedVoluntaryExit) (*Si
 }
 
 // MapBeaconBlockAltair maps the eth2.BeaconBlockAltair proto to the Web3Signer spec.
-func MapBeaconBlockAltair(block *ethpb.BeaconBlockAltair) (*BeaconBlockAltair, error) {
+func MapBeaconBlockAltair(block *silapb.BeaconBlockAltair) (*BeaconBlockAltair, error) {
 	if block == nil {
 		return nil, fmt.Errorf("beacon block altair is nil")
 	}
@@ -329,7 +329,7 @@ func MapBeaconBlockAltair(block *ethpb.BeaconBlockAltair) (*BeaconBlockAltair, e
 }
 
 // MapBeaconBlockBodyAltair maps the eth2.BeaconBlockBodyAltair proto to the Web3Signer spec.
-func MapBeaconBlockBodyAltair(body *ethpb.BeaconBlockBodyAltair) (*BeaconBlockBodyAltair, error) {
+func MapBeaconBlockBodyAltair(body *silapb.BeaconBlockBodyAltair) (*BeaconBlockBodyAltair, error) {
 	if body == nil {
 		return nil, fmt.Errorf("beacon block body altair is nil")
 	}
@@ -397,7 +397,7 @@ func MapBeaconBlockBodyAltair(body *ethpb.BeaconBlockBodyAltair) (*BeaconBlockBo
 }
 
 // MapSyncAggregatorSelectionData maps the eth2.SyncAggregatorSelectionData proto to the Web3Signer spec.
-func MapSyncAggregatorSelectionData(data *ethpb.SyncAggregatorSelectionData) (*SyncAggregatorSelectionData, error) {
+func MapSyncAggregatorSelectionData(data *silapb.SyncAggregatorSelectionData) (*SyncAggregatorSelectionData, error) {
 	if data == nil {
 		return nil, fmt.Errorf("sync aggregator selection data is nil")
 	}
@@ -408,7 +408,7 @@ func MapSyncAggregatorSelectionData(data *ethpb.SyncAggregatorSelectionData) (*S
 }
 
 // MapContributionAndProof maps the eth2.ContributionAndProof proto to the Web3Signer spec.
-func MapContributionAndProof(contribution *ethpb.ContributionAndProof) (*ContributionAndProof, error) {
+func MapContributionAndProof(contribution *silapb.ContributionAndProof) (*ContributionAndProof, error) {
 	if contribution == nil {
 		return nil, fmt.Errorf("contribution and proof is nil")
 	}

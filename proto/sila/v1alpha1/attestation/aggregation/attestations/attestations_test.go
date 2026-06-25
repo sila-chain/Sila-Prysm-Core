@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz/equality"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/attestations"
 	aggtesting "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/testing"
@@ -26,24 +26,24 @@ func TestMain(m *testing.M) {
 
 func TestAggregateAttestations_AggregatePair(t *testing.T) {
 	tests := []struct {
-		a1   *ethpb.Attestation
-		a2   *ethpb.Attestation
-		want *ethpb.Attestation
+		a1   *silapb.Attestation
+		a2   *silapb.Attestation
+		want *silapb.Attestation
 	}{
 		{
-			a1:   &ethpb.Attestation{AggregationBits: []byte{}},
-			a2:   &ethpb.Attestation{AggregationBits: []byte{}},
-			want: &ethpb.Attestation{AggregationBits: []byte{}},
+			a1:   &silapb.Attestation{AggregationBits: []byte{}},
+			a2:   &silapb.Attestation{AggregationBits: []byte{}},
+			want: &silapb.Attestation{AggregationBits: []byte{}},
 		},
 		{
-			a1:   &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
-			a2:   &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
-			want: &ethpb.Attestation{AggregationBits: []byte{0x03}},
+			a1:   &silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+			a2:   &silapb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
+			want: &silapb.Attestation{AggregationBits: []byte{0x03}},
 		},
 		{
-			a1:   &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
-			a2:   &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
-			want: &ethpb.Attestation{AggregationBits: []byte{0x03}},
+			a1:   &silapb.Attestation{AggregationBits: bitfield.Bitlist{0x02}},
+			a2:   &silapb.Attestation{AggregationBits: bitfield.Bitlist{0x03}},
+			want: &silapb.Attestation{AggregationBits: []byte{0x03}},
 		},
 	}
 	for _, tt := range tests {
@@ -55,16 +55,16 @@ func TestAggregateAttestations_AggregatePair(t *testing.T) {
 
 func TestAggregateAttestations_AggregatePair_OverlapFails(t *testing.T) {
 	tests := []struct {
-		a1 *ethpb.Attestation
-		a2 *ethpb.Attestation
+		a1 *silapb.Attestation
+		a2 *silapb.Attestation
 	}{
 		{
-			a1: &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x1F}},
-			a2: &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x11}},
+			a1: &silapb.Attestation{AggregationBits: bitfield.Bitlist{0x1F}},
+			a2: &silapb.Attestation{AggregationBits: bitfield.Bitlist{0x11}},
 		},
 		{
-			a1: &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0xFF, 0x85}},
-			a2: &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x13, 0x8F}},
+			a1: &silapb.Attestation{AggregationBits: bitfield.Bitlist{0xFF, 0x85}},
+			a2: &silapb.Attestation{AggregationBits: bitfield.Bitlist{0x13, 0x8F}},
 		},
 	}
 	for _, tt := range tests {
@@ -75,12 +75,12 @@ func TestAggregateAttestations_AggregatePair_OverlapFails(t *testing.T) {
 
 func TestAggregateAttestations_AggregatePair_DiffLengthFails(t *testing.T) {
 	tests := []struct {
-		a1 *ethpb.Attestation
-		a2 *ethpb.Attestation
+		a1 *silapb.Attestation
+		a2 *silapb.Attestation
 	}{
 		{
-			a1: &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x0F}},
-			a2: &ethpb.Attestation{AggregationBits: bitfield.Bitlist{0x11}},
+			a1: &silapb.Attestation{AggregationBits: bitfield.Bitlist{0x0F}},
+			a2: &silapb.Attestation{AggregationBits: bitfield.Bitlist{0x11}},
 		},
 	}
 	for _, tt := range tests {

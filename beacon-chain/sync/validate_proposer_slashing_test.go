@@ -22,17 +22,17 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	pubsubpb "github.com/libp2p/go-libp2p-pubsub/pb"
 )
 
-func setupValidProposerSlashing(t *testing.T) (*ethpb.ProposerSlashing, state.BeaconState) {
-	validators := make([]*ethpb.Validator, 100)
+func setupValidProposerSlashing(t *testing.T) (*silapb.ProposerSlashing, state.BeaconState) {
+	validators := make([]*silapb.Validator, 100)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance,
 			Slashed:           false,
 			ExitEpoch:         params.BeaconConfig().FarFutureEpoch,
@@ -46,11 +46,11 @@ func setupValidProposerSlashing(t *testing.T) (*ethpb.ProposerSlashing, state.Be
 	}
 
 	currentSlot := primitives.Slot(0)
-	st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Validators: validators,
 		Slot:       currentSlot,
 		Balances:   validatorBalances,
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			Epoch:           0,
@@ -60,7 +60,7 @@ func setupValidProposerSlashing(t *testing.T) (*ethpb.ProposerSlashing, state.Be
 
 		StateRoots:        make([][]byte, params.BeaconConfig().SlotsPerHistoricalRoot),
 		BlockRoots:        make([][]byte, params.BeaconConfig().SlotsPerHistoricalRoot),
-		LatestBlockHeader: &ethpb.BeaconBlockHeader{},
+		LatestBlockHeader: &silapb.BeaconBlockHeader{},
 	})
 	require.NoError(t, err)
 
@@ -68,8 +68,8 @@ func setupValidProposerSlashing(t *testing.T) (*ethpb.ProposerSlashing, state.Be
 	require.NoError(t, err)
 	someRoot := [32]byte{1, 2, 3}
 	someRoot2 := [32]byte{4, 5, 6}
-	header1 := &ethpb.SignedBeaconBlockHeader{
-		Header: &ethpb.BeaconBlockHeader{
+	header1 := &silapb.SignedBeaconBlockHeader{
+		Header: &silapb.BeaconBlockHeader{
 			ProposerIndex: 1,
 			Slot:          0,
 			ParentRoot:    someRoot[:],
@@ -80,8 +80,8 @@ func setupValidProposerSlashing(t *testing.T) (*ethpb.ProposerSlashing, state.Be
 	header1.Signature, err = signing.ComputeDomainAndSign(st, coreTime.CurrentEpoch(st), header1.Header, params.BeaconConfig().DomainBeaconProposer, privKey)
 	require.NoError(t, err)
 
-	header2 := &ethpb.SignedBeaconBlockHeader{
-		Header: &ethpb.BeaconBlockHeader{
+	header2 := &silapb.SignedBeaconBlockHeader{
+		Header: &silapb.BeaconBlockHeader{
 			ProposerIndex: 1,
 			Slot:          0,
 			ParentRoot:    someRoot2[:],
@@ -92,7 +92,7 @@ func setupValidProposerSlashing(t *testing.T) (*ethpb.ProposerSlashing, state.Be
 	header2.Signature, err = signing.ComputeDomainAndSign(st, coreTime.CurrentEpoch(st), header2.Header, params.BeaconConfig().DomainBeaconProposer, privKey)
 	require.NoError(t, err)
 
-	slashing := &ethpb.ProposerSlashing{
+	slashing := &silapb.ProposerSlashing{
 		Header_1: header1,
 		Header_2: header2,
 	}
@@ -129,7 +129,7 @@ func TestValidateProposerSlashing_ValidSlashing(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err := p.Encoding().EncodeGossip(buf, slashing)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.ProposerSlashing]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.ProposerSlashing]()]
 	d, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, d)
@@ -172,7 +172,7 @@ func TestValidateProposerSlashing_ValidOldSlashing(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, slashing)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.ProposerSlashing]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.ProposerSlashing]()]
 	d, err := r.currentForkDigest()
 	assert.NoError(t, err)
 	topic = r.addDigestToTopic(topic, d)
@@ -196,7 +196,7 @@ func TestValidateProposerSlashing_ContextTimeout(t *testing.T) {
 	slashing.Header_1.Header.Slot = 100000000
 	err := st.SetJustificationBits(bitfield.Bitvector4{0x0F}) // 0b1111
 	require.NoError(t, err)
-	err = st.SetPreviousJustifiedCheckpoint(&ethpb.Checkpoint{Epoch: 0, Root: []byte{}})
+	err = st.SetPreviousJustifiedCheckpoint(&silapb.Checkpoint{Epoch: 0, Root: []byte{}})
 	require.NoError(t, err)
 	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 	defer cancel()
@@ -213,7 +213,7 @@ func TestValidateProposerSlashing_ContextTimeout(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err = p.Encoding().EncodeGossip(buf, slashing)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.ProposerSlashing]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.ProposerSlashing]()]
 	m := &pubsub.Message{
 		Message: &pubsubpb.Message{
 			Data:  buf.Bytes(),
@@ -243,7 +243,7 @@ func TestValidateProposerSlashing_Syncing(t *testing.T) {
 	buf := new(bytes.Buffer)
 	_, err := p.Encoding().EncodeGossip(buf, slashing)
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.ProposerSlashing]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.ProposerSlashing]()]
 	m := &pubsub.Message{
 		Message: &pubsubpb.Message{
 			Data:  buf.Bytes(),

@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	params2 "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/policies"
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
@@ -143,56 +143,56 @@ func postEvaluation(nodeIdx int, requests map[string]endpoint, epoch primitives.
 	blockData := requests["/beacon/blocks/{param1}"]
 	blindedBlockData := requests["/beacon/blinded_blocks/{param1}"]
 	if epoch < params.BeaconConfig().AltairForkEpoch {
-		b := &ethpb.SignedBeaconBlock{}
+		b := &silapb.SignedBeaconBlock{}
 		if err := b.UnmarshalSSZ(blockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}
-		bb := &ethpb.SignedBeaconBlock{}
+		bb := &silapb.SignedBeaconBlock{}
 		if err := bb.UnmarshalSSZ(blindedBlockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}
 	} else if epoch < params.BeaconConfig().BellatrixForkEpoch {
-		b := &ethpb.SignedBeaconBlockAltair{}
+		b := &silapb.SignedBeaconBlockAltair{}
 		if err := b.UnmarshalSSZ(blockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}
-		bb := &ethpb.SignedBeaconBlockAltair{}
+		bb := &silapb.SignedBeaconBlockAltair{}
 		if err := bb.UnmarshalSSZ(blindedBlockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}
 	} else if epoch < params.BeaconConfig().CapellaForkEpoch {
-		b := &ethpb.SignedBeaconBlockBellatrix{}
+		b := &silapb.SignedBeaconBlockBellatrix{}
 		if err := b.UnmarshalSSZ(blockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}
-		bb := &ethpb.SignedBlindedBeaconBlockBellatrix{}
+		bb := &silapb.SignedBlindedBeaconBlockBellatrix{}
 		if err := bb.UnmarshalSSZ(blindedBlockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}
 	} else if epoch < params.BeaconConfig().DenebForkEpoch {
-		b := &ethpb.SignedBeaconBlockCapella{}
+		b := &silapb.SignedBeaconBlockCapella{}
 		if err := b.UnmarshalSSZ(blockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}
-		bb := &ethpb.SignedBlindedBeaconBlockCapella{}
+		bb := &silapb.SignedBlindedBeaconBlockCapella{}
 		if err := bb.UnmarshalSSZ(blindedBlockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}
 	} else if epoch < params.BeaconConfig().ElectraForkEpoch {
-		b := &ethpb.SignedBeaconBlockDeneb{}
+		b := &silapb.SignedBeaconBlockDeneb{}
 		if err := b.UnmarshalSSZ(blockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}
-		bb := &ethpb.SignedBlindedBeaconBlockDeneb{}
+		bb := &silapb.SignedBlindedBeaconBlockDeneb{}
 		if err := bb.UnmarshalSSZ(blindedBlockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}
 	} else {
-		b := &ethpb.SignedBeaconBlockElectra{}
+		b := &silapb.SignedBeaconBlockElectra{}
 		if err := b.UnmarshalSSZ(blockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}
-		bb := &ethpb.SignedBlindedBeaconBlockElectra{}
+		bb := &silapb.SignedBlindedBeaconBlockElectra{}
 		if err := bb.UnmarshalSSZ(blindedBlockData.getSszResp()); err != nil {
 			return errors.Wrap(err, msgSSZUnmarshalFailed)
 		}

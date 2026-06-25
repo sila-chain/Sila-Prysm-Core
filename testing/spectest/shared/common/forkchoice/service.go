@@ -27,7 +27,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -47,7 +47,7 @@ func startChainService(t testing.TB,
 	require.NoError(t, err)
 	require.NoError(t, db.SaveGenesisBlockRoot(ctx, r))
 
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: coreTime.CurrentEpoch(st),
 		Root:  r[:],
 	}
@@ -95,7 +95,7 @@ func startChainService(t testing.TB,
 }
 
 type engineMock struct {
-	powBlocks       map[[32]byte]*ethpb.PowBlock
+	powBlocks       map[[32]byte]*silapb.PowBlock
 	latestValidHash []byte
 	payloadStatus   error
 }

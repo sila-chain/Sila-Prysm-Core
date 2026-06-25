@@ -22,7 +22,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila"
@@ -148,7 +148,7 @@ type Reconstructor interface {
 	) (map[[32]byte]*pb.ExecutionPayloadGloas, error)
 	ReconstructBlobSidecars(ctx context.Context, block interfaces.ReadOnlySignedBeaconBlock, blockRoot [fieldparams.RootLength]byte, hi func(uint64) bool) ([]blocks.VerifiedROBlob, error)
 	ConstructDataColumnSidecars(ctx context.Context, populator peerdas.ConstructionPopulator) ([]blocks.VerifiedRODataColumn, error)
-	ReconstructExecutionPayloadEnvelope(ctx context.Context, envelope *ethpb.SignedBlindedExecutionPayloadEnvelope) (*ethpb.SignedExecutionPayloadEnvelope, error)
+	ReconstructExecutionPayloadEnvelope(ctx context.Context, envelope *silapb.SignedBlindedExecutionPayloadEnvelope) (*silapb.SignedExecutionPayloadEnvelope, error)
 }
 
 // EngineCaller defines a client that can interact with a Sila
@@ -669,8 +669,8 @@ func (s *Service) ReconstructFullBellatrixBlockBatch(
 
 // ReconstructExecutionPayloadEnvelope reconstructs a full Gloas envelope from a blinded envelope.
 func (s *Service) ReconstructExecutionPayloadEnvelope(
-	ctx context.Context, envelope *ethpb.SignedBlindedExecutionPayloadEnvelope,
-) (*ethpb.SignedExecutionPayloadEnvelope, error) {
+	ctx context.Context, envelope *silapb.SignedBlindedExecutionPayloadEnvelope,
+) (*silapb.SignedExecutionPayloadEnvelope, error) {
 	if envelope == nil || envelope.Message == nil {
 		return nil, errors.New("nil blinded execution payload envelope")
 	}
@@ -683,8 +683,8 @@ func (s *Service) ReconstructExecutionPayloadEnvelope(
 	if !ok || payload == nil {
 		return nil, errors.New("execution payload not found")
 	}
-	return &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+	return &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload:               payload,
 			ExecutionRequests:     envelope.Message.ExecutionRequests,
 			BuilderIndex:          envelope.Message.BuilderIndex,
@@ -877,7 +877,7 @@ func (s *Service) ReconstructBlobSidecars(ctx context.Context, block interfaces.
 			log.WithError(err).WithField("index", blobIndex).Error("Failed to get Merkle proof for KZG commitment")
 			continue
 		}
-		sidecar := &ethpb.BlobSidecar{
+		sidecar := &silapb.BlobSidecar{
 			Index:                    uint64(blobIndex),
 			Blob:                     blob.Blob,
 			KzgCommitment:            kzgCommitments[blobIndex],

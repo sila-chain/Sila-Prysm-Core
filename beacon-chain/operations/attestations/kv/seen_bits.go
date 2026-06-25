@@ -2,13 +2,13 @@ package kv
 
 import (
 	"github.com/sila-chain/go-bitfield"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/patrickmn/go-cache"
 	"github.com/pkg/errors"
 )
 
-func (c *AttCaches) insertSeenBit(att ethpb.Att) error {
+func (c *AttCaches) insertSeenBit(att silapb.Att) error {
 	id, err := attestation.NewId(att, attestation.Data)
 	if err != nil {
 		return errors.Wrap(err, "could not create attestation ID")
@@ -40,7 +40,7 @@ func (c *AttCaches) insertSeenBit(att ethpb.Att) error {
 	return nil
 }
 
-func (c *AttCaches) hasSeenBit(att ethpb.Att) (bool, error) {
+func (c *AttCaches) hasSeenBit(att silapb.Att) (bool, error) {
 	id, err := attestation.NewId(att, attestation.Data)
 	if err != nil {
 		return false, errors.Wrap(err, "could not create attestation ID")

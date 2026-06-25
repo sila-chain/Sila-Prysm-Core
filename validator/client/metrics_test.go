@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	logTest "github.com/sirupsen/logrus/hooks/test"
@@ -33,7 +33,7 @@ func TestUpdateLogAggregateStats(t *testing.T) {
 	v.startBalances[pubKeyBytes[1]] = uint64(32200000000)
 	v.startBalances[pubKeyBytes[2]] = uint64(33000000000)
 
-	responses := []*ethpb.ValidatorPerformanceResponse{
+	responses := []*silapb.ValidatorPerformanceResponse{
 		{
 			PublicKeys: [][]byte{
 				bytesutil.FromBytes48(pubKeyBytes[0]),
@@ -108,7 +108,7 @@ func TestUpdateLogAltairAggregateStats(t *testing.T) {
 	v.startBalances[pubKeyBytes[2]] = uint64(33000000000)
 
 	// 7 attestations included
-	responses := []*ethpb.ValidatorPerformanceResponse{
+	responses := []*silapb.ValidatorPerformanceResponse{
 		{
 			PublicKeys: [][]byte{
 				bytesutil.FromBytes48(pubKeyBytes[0]),

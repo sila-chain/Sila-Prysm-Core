@@ -13,7 +13,7 @@ import (
 	types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/libp2p/go-libp2p/core/network"
@@ -29,7 +29,7 @@ func blobRootRequestFromSidecars(scs []blocks.ROBlob) any {
 	req := make(p2pTypes.BlobSidecarsByRootReq, 0)
 	for i := range scs {
 		sc := scs[i]
-		req = append(req, &ethpb.BlobIdentifier{BlockRoot: sc.BlockRootSlice(), Index: sc.Index})
+		req = append(req, &silapb.BlobIdentifier{BlockRoot: sc.BlockRootSlice(), Index: sc.Index})
 	}
 	return &req
 }
@@ -202,7 +202,7 @@ func TestBlobsByRootValidation(t *testing.T) {
 	dmc := defaultMockChain(t, ce)
 	capellaSlot := util.SlotAtEpoch(t, params.BeaconConfig().CapellaForkEpoch)
 	dmc.Slot = &capellaSlot
-	dmc.FinalizedCheckPoint = &ethpb.Checkpoint{Epoch: params.BeaconConfig().CapellaForkEpoch}
+	dmc.FinalizedCheckPoint = &silapb.Checkpoint{Epoch: params.BeaconConfig().CapellaForkEpoch}
 	maxBlobs := params.BeaconConfig().MaxBlobsPerBlockAtEpoch(params.BeaconConfig().DenebForkEpoch)
 	cases := []*blobsTestCase{
 		{
@@ -277,9 +277,9 @@ func TestValidateBlobByRootRequest(t *testing.T) {
 
 	// Helper function to create blob identifiers
 	createBlobIdents := func(count int) p2pTypes.BlobSidecarsByRootReq {
-		idents := make([]*ethpb.BlobIdentifier, count)
+		idents := make([]*silapb.BlobIdentifier, count)
 		for i := range count {
-			idents[i] = &ethpb.BlobIdentifier{
+			idents[i] = &silapb.BlobIdentifier{
 				BlockRoot: make([]byte, 32),
 				Index:     uint64(i),
 			}

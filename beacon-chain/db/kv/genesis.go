@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz/detect"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -38,7 +38,7 @@ func (s *Store) SaveGenesisData(ctx context.Context, genesisState state.BeaconSt
 		}
 	}
 
-	if err := s.SaveStateSummary(ctx, &ethpb.StateSummary{
+	if err := s.SaveStateSummary(ctx, &silapb.StateSummary{
 		Slot: 0,
 		Root: genesisBlkRoot[:],
 	}); err != nil {

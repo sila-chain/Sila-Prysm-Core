@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -49,7 +49,7 @@ func TestValidatorStatus_DepositedEth1(t *testing.T) {
 			0: uint64(height),
 		},
 	}
-	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{})
+	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{})
 	require.NoError(t, err)
 	vs := &Server{
 		DepositFetcher: depositCache,
@@ -59,12 +59,12 @@ func TestValidatorStatus_DepositedEth1(t *testing.T) {
 		},
 		Eth1InfoFetcher: p,
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pubKey1,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
-	assert.Equal(t, ethpb.ValidatorStatus_DEPOSITED, resp.Status)
+	assert.Equal(t, silapb.ValidatorStatus_DEPOSITED, resp.Status)
 }
 
 func TestValidatorStatus_Deposited(t *testing.T) {
@@ -74,7 +74,7 @@ func TestValidatorStatus_Deposited(t *testing.T) {
 	require.NoError(t, err)
 	pubKey1 := keys[0].PublicKey().Marshal()
 	depData := deps[0].Data
-	deposit := &ethpb.Deposit{
+	deposit := &silapb.Deposit{
 		Data: depData,
 	}
 	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
@@ -91,7 +91,7 @@ func TestValidatorStatus_Deposited(t *testing.T) {
 			0: uint64(height),
 		},
 	}
-	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{})
+	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{})
 	require.NoError(t, err)
 	vs := &Server{
 		DepositFetcher: depositCache,
@@ -101,25 +101,25 @@ func TestValidatorStatus_Deposited(t *testing.T) {
 		},
 		Eth1InfoFetcher: p,
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pubKey1,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
-	assert.Equal(t, ethpb.ValidatorStatus_DEPOSITED, resp.Status)
+	assert.Equal(t, silapb.ValidatorStatus_DEPOSITED, resp.Status)
 }
 
 func TestValidatorStatus_PartiallyDeposited(t *testing.T) {
 	ctx := t.Context()
 
 	pubKey1 := pubKey(1)
-	depData := &ethpb.Deposit_Data{
+	depData := &silapb.Deposit_Data{
 		Amount:                params.BeaconConfig().MinDepositAmount,
 		PublicKey:             pubKey1,
 		Signature:             []byte("hi"),
 		WithdrawalCredentials: []byte("hey"),
 	}
-	deposit := &ethpb.Deposit{
+	deposit := &silapb.Deposit{
 		Data: depData,
 	}
 	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
@@ -136,8 +136,8 @@ func TestValidatorStatus_PartiallyDeposited(t *testing.T) {
 			0: uint64(height),
 		},
 	}
-	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{
-		Validators: []*ethpb.Validator{
+	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{
+		Validators: []*silapb.Validator{
 			{
 				PublicKey:                  pubKey1,
 				ActivationEligibilityEpoch: 1,
@@ -154,25 +154,25 @@ func TestValidatorStatus_PartiallyDeposited(t *testing.T) {
 		},
 		Eth1InfoFetcher: p,
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pubKey1,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
-	assert.Equal(t, ethpb.ValidatorStatus_PARTIALLY_DEPOSITED, resp.Status)
+	assert.Equal(t, silapb.ValidatorStatus_PARTIALLY_DEPOSITED, resp.Status)
 }
 
 func TestValidatorStatus_Pending_MultipleDeposits(t *testing.T) {
 	ctx := t.Context()
 
 	pubKey1 := pubKey(1)
-	depData := &ethpb.Deposit_Data{
+	depData := &silapb.Deposit_Data{
 		Amount:                16 * params.BeaconConfig().MinDepositAmount,
 		PublicKey:             pubKey1,
 		Signature:             []byte("hi"),
 		WithdrawalCredentials: []byte("hey"),
 	}
-	deposit := &ethpb.Deposit{
+	deposit := &silapb.Deposit{
 		Data: depData,
 	}
 	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
@@ -191,8 +191,8 @@ func TestValidatorStatus_Pending_MultipleDeposits(t *testing.T) {
 			0: uint64(height),
 		},
 	}
-	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{
-		Validators: []*ethpb.Validator{
+	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{
+		Validators: []*silapb.Validator{
 			{
 				PublicKey:                  pubKey1,
 				ActivationEligibilityEpoch: 1,
@@ -213,12 +213,12 @@ func TestValidatorStatus_Pending_MultipleDeposits(t *testing.T) {
 		},
 		Eth1InfoFetcher: p,
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pubKey1,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
-	assert.Equal(t, ethpb.ValidatorStatus_PENDING, resp.Status)
+	assert.Equal(t, silapb.ValidatorStatus_PENDING, resp.Status)
 }
 
 func TestValidatorStatus_Pending(t *testing.T) {
@@ -232,7 +232,7 @@ func TestValidatorStatus_Pending(t *testing.T) {
 	st, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, st.SetSlot(5000))
-	err = st.SetValidators([]*ethpb.Validator{
+	err = st.SetValidators([]*silapb.Validator{
 		{
 			ActivationEpoch:       params.BeaconConfig().FarFutureEpoch,
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
@@ -243,13 +243,13 @@ func TestValidatorStatus_Pending(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	depData := &ethpb.Deposit_Data{
+	depData := &silapb.Deposit_Data{
 		PublicKey:             pubKey,
 		Signature:             bytesutil.PadTo([]byte("hi"), 96),
 		WithdrawalCredentials: bytesutil.PadTo([]byte("hey"), 32),
 	}
 
-	deposit := &ethpb.Deposit{
+	deposit := &silapb.Deposit{
 		Data: depData,
 	}
 	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
@@ -274,12 +274,12 @@ func TestValidatorStatus_Pending(t *testing.T) {
 		DepositFetcher:    depositCache,
 		HeadFetcher:       &mockChain.ChainService{State: st, Root: genesisRoot[:]},
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pubKey,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
-	assert.Equal(t, ethpb.ValidatorStatus_PENDING, resp.Status)
+	assert.Equal(t, silapb.ValidatorStatus_PENDING, resp.Status)
 }
 
 func TestValidatorStatus_Exiting(t *testing.T) {
@@ -296,9 +296,9 @@ func TestValidatorStatus_Exiting(t *testing.T) {
 	genesisRoot, err := block.Block.HashTreeRoot()
 	require.NoError(t, err, "Could not get signing root")
 
-	st := &ethpb.BeaconState{
+	st := &silapb.BeaconState{
 		Slot: slot,
-		Validators: []*ethpb.Validator{{
+		Validators: []*silapb.Validator{{
 			PublicKey:         pubKey,
 			ActivationEpoch:   0,
 			ExitEpoch:         exitEpoch,
@@ -306,13 +306,13 @@ func TestValidatorStatus_Exiting(t *testing.T) {
 		}}
 	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(st)
 	require.NoError(t, err)
-	depData := &ethpb.Deposit_Data{
+	depData := &silapb.Deposit_Data{
 		PublicKey:             pubKey,
 		Signature:             bytesutil.PadTo([]byte("hi"), 96),
 		WithdrawalCredentials: bytesutil.PadTo([]byte("hey"), 32),
 	}
 
-	deposit := &ethpb.Deposit{
+	deposit := &silapb.Deposit{
 		Data: depData,
 	}
 	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
@@ -336,12 +336,12 @@ func TestValidatorStatus_Exiting(t *testing.T) {
 		DepositFetcher:    depositCache,
 		HeadFetcher:       &mockChain.ChainService{State: stateObj, Root: genesisRoot[:]},
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pubKey,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
-	assert.Equal(t, ethpb.ValidatorStatus_EXITING, resp.Status)
+	assert.Equal(t, silapb.ValidatorStatus_EXITING, resp.Status)
 }
 
 func TestValidatorStatus_Slashing(t *testing.T) {
@@ -356,22 +356,22 @@ func TestValidatorStatus_Slashing(t *testing.T) {
 	genesisRoot, err := block.Block.HashTreeRoot()
 	require.NoError(t, err, "Could not get signing root")
 
-	st := &ethpb.BeaconState{
+	st := &silapb.BeaconState{
 		Slot: slot,
-		Validators: []*ethpb.Validator{{
+		Validators: []*silapb.Validator{{
 			Slashed:           true,
 			PublicKey:         pubKey,
 			WithdrawableEpoch: epoch + 1},
 		}}
 	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(st)
 	require.NoError(t, err)
-	depData := &ethpb.Deposit_Data{
+	depData := &silapb.Deposit_Data{
 		PublicKey:             pubKey,
 		Signature:             bytesutil.PadTo([]byte("hi"), 96),
 		WithdrawalCredentials: bytesutil.PadTo([]byte("hey"), 32),
 	}
 
-	deposit := &ethpb.Deposit{
+	deposit := &silapb.Deposit{
 		Data: depData,
 	}
 	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
@@ -395,12 +395,12 @@ func TestValidatorStatus_Slashing(t *testing.T) {
 		BlockFetcher:      p,
 		HeadFetcher:       &mockChain.ChainService{State: stateObj, Root: genesisRoot[:]},
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pubKey,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
-	assert.Equal(t, ethpb.ValidatorStatus_EXITED, resp.Status)
+	assert.Equal(t, silapb.ValidatorStatus_EXITED, resp.Status)
 }
 
 func TestValidatorStatus_Exited(t *testing.T) {
@@ -417,19 +417,19 @@ func TestValidatorStatus_Exited(t *testing.T) {
 	st, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, st.SetSlot(slot))
-	err = st.SetValidators([]*ethpb.Validator{{
+	err = st.SetValidators([]*silapb.Validator{{
 		PublicKey:             pubKey,
 		WithdrawableEpoch:     epoch + 1,
 		WithdrawalCredentials: make([]byte, 32)},
 	})
 	require.NoError(t, err)
-	depData := &ethpb.Deposit_Data{
+	depData := &silapb.Deposit_Data{
 		PublicKey:             pubKey,
 		Signature:             bytesutil.PadTo([]byte("hi"), 96),
 		WithdrawalCredentials: bytesutil.PadTo([]byte("hey"), 32),
 	}
 
-	deposit := &ethpb.Deposit{
+	deposit := &silapb.Deposit{
 		Data: depData,
 	}
 	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
@@ -453,12 +453,12 @@ func TestValidatorStatus_Exited(t *testing.T) {
 		DepositFetcher:    depositCache,
 		HeadFetcher:       &mockChain.ChainService{State: st, Root: genesisRoot[:]},
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pubKey,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
-	assert.Equal(t, ethpb.ValidatorStatus_EXITED, resp.Status)
+	assert.Equal(t, silapb.ValidatorStatus_EXITED, resp.Status)
 }
 
 func TestValidatorStatus_UnknownStatus(t *testing.T) {
@@ -466,7 +466,7 @@ func TestValidatorStatus_UnknownStatus(t *testing.T) {
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
 
-	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{
+	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{
 		Slot: 0,
 	})
 	require.NoError(t, err)
@@ -477,12 +477,12 @@ func TestValidatorStatus_UnknownStatus(t *testing.T) {
 			State: stateObj,
 		},
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pubKey,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
-	assert.Equal(t, ethpb.ValidatorStatus_UNKNOWN_STATUS, resp.Status)
+	assert.Equal(t, silapb.ValidatorStatus_UNKNOWN_STATUS, resp.Status)
 }
 
 func TestActivationStatus_OK(t *testing.T) {
@@ -491,9 +491,9 @@ func TestActivationStatus_OK(t *testing.T) {
 	deposits, _, err := util.DeterministicDepositsAndKeys(4)
 	require.NoError(t, err)
 	pubKeys := [][]byte{deposits[0].Data.PublicKey, deposits[1].Data.PublicKey, deposits[2].Data.PublicKey, deposits[3].Data.PublicKey}
-	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{
+	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{
 		Slot: 4000,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{
 				ActivationEpoch: 0,
 				ExitEpoch:       params.BeaconConfig().FarFutureEpoch,
@@ -543,7 +543,7 @@ func TestActivationStatus_OK(t *testing.T) {
 	activeExists, response, err := vs.activationStatus(t.Context(), pubKeys)
 	require.NoError(t, err)
 	require.Equal(t, true, activeExists, "No activated validator exists when there was supposed to be 2")
-	if response[0].Status.Status != ethpb.ValidatorStatus_ACTIVE {
+	if response[0].Status.Status != silapb.ValidatorStatus_ACTIVE {
 		t.Errorf("Validator with pubkey %#x is not activated and instead has this status: %s",
 			response[0].PublicKey, response[0].Status.Status.String())
 	}
@@ -551,7 +551,7 @@ func TestActivationStatus_OK(t *testing.T) {
 		t.Errorf("Validator with pubkey %#x is expected to have index %d, received %d", response[0].PublicKey, 0, response[0].Index)
 	}
 
-	if response[1].Status.Status != ethpb.ValidatorStatus_ACTIVE {
+	if response[1].Status.Status != silapb.ValidatorStatus_ACTIVE {
 		t.Errorf("Validator with pubkey %#x was activated when not supposed to",
 			response[1].PublicKey)
 	}
@@ -559,7 +559,7 @@ func TestActivationStatus_OK(t *testing.T) {
 		t.Errorf("Validator with pubkey %#x is expected to have index %d, received %d", response[1].PublicKey, 1, response[1].Index)
 	}
 
-	if response[2].Status.Status != ethpb.ValidatorStatus_DEPOSITED {
+	if response[2].Status.Status != silapb.ValidatorStatus_DEPOSITED {
 		t.Errorf("Validator with pubkey %#x is not unknown and instead has this status: %s",
 			response[2].PublicKey, response[2].Status.Status.String())
 	}
@@ -567,7 +567,7 @@ func TestActivationStatus_OK(t *testing.T) {
 		t.Errorf("Validator with pubkey %#x is expected to have index %d, received %d", response[2].PublicKey, params.BeaconConfig().FarFutureEpoch, response[2].Index)
 	}
 
-	if response[3].Status.Status != ethpb.ValidatorStatus_DEPOSITED {
+	if response[3].Status.Status != silapb.ValidatorStatus_DEPOSITED {
 		t.Errorf("Validator with pubkey %#x was not deposited and has this status: %s",
 			response[3].PublicKey, response[3].Status.Status.String())
 	}
@@ -607,7 +607,7 @@ func TestValidatorStatus_CorrectActivationQueue(t *testing.T) {
 	require.NoError(t, err, "Could not get signing root")
 	currentSlot := primitives.Slot(5000)
 	// Pending active because activation epoch is still defaulted at far future slot.
-	validators := []*ethpb.Validator{
+	validators := []*silapb.Validator{
 		{
 			ActivationEpoch:       0,
 			PublicKey:             pubKey(0),
@@ -662,13 +662,13 @@ func TestValidatorStatus_CorrectActivationQueue(t *testing.T) {
 	require.NoError(t, err)
 
 	for i := range 6 {
-		depData := &ethpb.Deposit_Data{
+		depData := &silapb.Deposit_Data{
 			PublicKey:             pubKey(uint64(i)),
 			Signature:             bytesutil.PadTo([]byte("hi"), 96),
 			WithdrawalCredentials: bytesutil.PadTo([]byte("hey"), 32),
 		}
 
-		deposit := &ethpb.Deposit{
+		deposit := &silapb.Deposit{
 			Data: depData,
 		}
 		root, err := depositTrie.HashTreeRoot()
@@ -690,12 +690,12 @@ func TestValidatorStatus_CorrectActivationQueue(t *testing.T) {
 		DepositFetcher:    depositCache,
 		HeadFetcher:       &mockChain.ChainService{State: st, Root: genesisRoot[:]},
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pbKey,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
-	assert.Equal(t, ethpb.ValidatorStatus_PENDING, resp.Status)
+	assert.Equal(t, silapb.ValidatorStatus_PENDING, resp.Status)
 	assert.Equal(t, uint64(2), resp.PositionInActivationQueue, "Unexpected position in activation queue")
 }
 
@@ -712,9 +712,9 @@ func TestMultipleValidatorStatus_Pubkeys(t *testing.T) {
 		deposits[4].Data.PublicKey,
 		deposits[5].Data.PublicKey,
 	}
-	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{
+	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{
 		Slot: 4000,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{
 				ActivationEpoch: 0,
 				ExitEpoch:       params.BeaconConfig().FarFutureEpoch,
@@ -773,29 +773,29 @@ func TestMultipleValidatorStatus_Pubkeys(t *testing.T) {
 		SyncChecker:       &mockSync.Sync{IsSyncing: false},
 	}
 
-	want := []*ethpb.ValidatorStatusResponse{
+	want := []*silapb.ValidatorStatusResponse{
 		{
-			Status: ethpb.ValidatorStatus_ACTIVE,
+			Status: silapb.ValidatorStatus_ACTIVE,
 		},
 		{
-			Status: ethpb.ValidatorStatus_ACTIVE,
+			Status: silapb.ValidatorStatus_ACTIVE,
 		},
 		{
-			Status:          ethpb.ValidatorStatus_DEPOSITED,
+			Status:          silapb.ValidatorStatus_DEPOSITED,
 			ActivationEpoch: 18446744073709551615,
 		},
 		{
-			Status: ethpb.ValidatorStatus_DEPOSITED,
+			Status: silapb.ValidatorStatus_DEPOSITED,
 		},
 		{
-			Status: ethpb.ValidatorStatus_PARTIALLY_DEPOSITED,
+			Status: silapb.ValidatorStatus_PARTIALLY_DEPOSITED,
 		},
 		{
-			Status: ethpb.ValidatorStatus_PENDING,
+			Status: silapb.ValidatorStatus_PENDING,
 		},
 	}
 
-	req := &ethpb.MultipleValidatorStatusRequest{PublicKeys: pubKeys}
+	req := &silapb.MultipleValidatorStatusRequest{PublicKeys: pubKeys}
 	response, err := vs.MultipleValidatorStatus(t.Context(), req)
 	require.NoError(t, err)
 
@@ -815,9 +815,9 @@ func TestMultipleValidatorStatus_Indices(t *testing.T) {
 	slot := primitives.Slot(10000)
 	epoch := slots.ToEpoch(slot)
 	pubKeys := [][]byte{pubKey(1), pubKey(2), pubKey(3), pubKey(4), pubKey(5), pubKey(6), pubKey(7)}
-	beaconState := &ethpb.BeaconState{
+	beaconState := &silapb.BeaconState{
 		Slot: 4000,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{
 				ActivationEpoch: 0,
 				ExitEpoch:       params.BeaconConfig().FarFutureEpoch,
@@ -867,29 +867,29 @@ func TestMultipleValidatorStatus_Indices(t *testing.T) {
 		SyncChecker:       &mockSync.Sync{IsSyncing: false},
 	}
 
-	want := []*ethpb.ValidatorStatusResponse{
+	want := []*silapb.ValidatorStatusResponse{
 		{
-			Status: ethpb.ValidatorStatus_ACTIVE,
+			Status: silapb.ValidatorStatus_ACTIVE,
 		},
 		{
-			Status: ethpb.ValidatorStatus_ACTIVE,
+			Status: silapb.ValidatorStatus_ACTIVE,
 		},
 		{
-			Status: ethpb.ValidatorStatus_DEPOSITED,
+			Status: silapb.ValidatorStatus_DEPOSITED,
 		},
 		{
-			Status: ethpb.ValidatorStatus_SLASHING,
+			Status: silapb.ValidatorStatus_SLASHING,
 		},
 		{
-			Status: ethpb.ValidatorStatus_PARTIALLY_DEPOSITED,
+			Status: silapb.ValidatorStatus_PARTIALLY_DEPOSITED,
 		},
 		{
-			Status: ethpb.ValidatorStatus_PENDING,
+			Status: silapb.ValidatorStatus_PENDING,
 		},
 	}
 
 	// Note: Index 6 should be skipped.
-	req := &ethpb.MultipleValidatorStatusRequest{Indices: []int64{0, 1, 2, 3, 4, 5, 6}}
+	req := &silapb.MultipleValidatorStatusRequest{Indices: []int64{0, 1, 2, 3, 4, 5, 6}}
 	response, err := vs.MultipleValidatorStatus(t.Context(), req)
 	require.NoError(t, err)
 
@@ -927,7 +927,7 @@ func TestValidatorStatus_Invalid(t *testing.T) {
 			0: uint64(height),
 		},
 	}
-	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&ethpb.BeaconState{})
+	stateObj, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{})
 	require.NoError(t, err)
 	vs := &Server{
 		DepositFetcher: depositCache,
@@ -937,30 +937,30 @@ func TestValidatorStatus_Invalid(t *testing.T) {
 		},
 		Eth1InfoFetcher: p,
 	}
-	req := &ethpb.ValidatorStatusRequest{
+	req := &silapb.ValidatorStatusRequest{
 		PublicKey: pubKey1,
 	}
 	resp, err := vs.ValidatorStatus(t.Context(), req)
 	require.NoError(t, err, "Could not get validator status")
-	assert.Equal(t, ethpb.ValidatorStatus_INVALID, resp.Status)
+	assert.Equal(t, silapb.ValidatorStatus_INVALID, resp.Status)
 }
 
 func Test_DepositStatus(t *testing.T) {
-	assert.Equal(t, depositStatus(0), ethpb.ValidatorStatus_PENDING)
-	assert.Equal(t, depositStatus(params.BeaconConfig().MinDepositAmount), ethpb.ValidatorStatus_PARTIALLY_DEPOSITED)
-	assert.Equal(t, depositStatus(params.BeaconConfig().MaxEffectiveBalance), ethpb.ValidatorStatus_DEPOSITED)
+	assert.Equal(t, depositStatus(0), silapb.ValidatorStatus_PENDING)
+	assert.Equal(t, depositStatus(params.BeaconConfig().MinDepositAmount), silapb.ValidatorStatus_PARTIALLY_DEPOSITED)
+	assert.Equal(t, depositStatus(params.BeaconConfig().MaxEffectiveBalance), silapb.ValidatorStatus_DEPOSITED)
 }
 
 func TestServer_CheckDoppelGanger(t *testing.T) {
 	tests := []struct {
 		name    string
 		wantErr bool
-		svSetup func(t *testing.T) (*Server, *ethpb.DoppelGangerRequest, *ethpb.DoppelGangerResponse)
+		svSetup func(t *testing.T) (*Server, *silapb.DoppelGangerRequest, *silapb.DoppelGangerResponse)
 	}{
 		{
 			name:    "normal doppelganger request",
 			wantErr: false,
-			svSetup: func(t *testing.T) (*Server, *ethpb.DoppelGangerRequest, *ethpb.DoppelGangerResponse) {
+			svSetup: func(t *testing.T) (*Server, *silapb.DoppelGangerRequest, *silapb.DoppelGangerResponse) {
 				hs, ps, keys := createStateSetupAltair(t, 3)
 				rb := mockstategen.NewReplayerBuilder()
 				rb.SetMockStateForSlot(ps, 23)
@@ -971,17 +971,17 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 					SyncChecker:     &mockSync.Sync{IsSyncing: false},
 					ReplayerBuilder: rb,
 				}
-				request := &ethpb.DoppelGangerRequest{
-					ValidatorRequests: make([]*ethpb.DoppelGangerRequest_ValidatorRequest, 0),
+				request := &silapb.DoppelGangerRequest{
+					ValidatorRequests: make([]*silapb.DoppelGangerRequest_ValidatorRequest, 0),
 				}
-				response := &ethpb.DoppelGangerResponse{Responses: make([]*ethpb.DoppelGangerResponse_ValidatorResponse, 0)}
+				response := &silapb.DoppelGangerResponse{Responses: make([]*silapb.DoppelGangerResponse_ValidatorResponse, 0)}
 				for i := range 3 {
-					request.ValidatorRequests = append(request.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{
+					request.ValidatorRequests = append(request.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{
 						PublicKey:  keys[i].PublicKey().Marshal(),
 						Epoch:      1,
 						SignedRoot: []byte{'A'},
 					})
-					response.Responses = append(response.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{
+					response.Responses = append(response.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{
 						PublicKey:       keys[i].PublicKey().Marshal(),
 						DuplicateExists: false,
 					})
@@ -992,7 +992,7 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 		{
 			name:    "doppelganger exists current epoch",
 			wantErr: false,
-			svSetup: func(t *testing.T) (*Server, *ethpb.DoppelGangerRequest, *ethpb.DoppelGangerResponse) {
+			svSetup: func(t *testing.T) (*Server, *silapb.DoppelGangerRequest, *silapb.DoppelGangerResponse) {
 				hs, ps, keys := createStateSetupAltair(t, 3)
 				rb := mockstategen.NewReplayerBuilder()
 				rb.SetMockStateForSlot(ps, 23)
@@ -1007,29 +1007,29 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 					SyncChecker:     &mockSync.Sync{IsSyncing: false},
 					ReplayerBuilder: rb,
 				}
-				request := &ethpb.DoppelGangerRequest{
-					ValidatorRequests: make([]*ethpb.DoppelGangerRequest_ValidatorRequest, 0),
+				request := &silapb.DoppelGangerRequest{
+					ValidatorRequests: make([]*silapb.DoppelGangerRequest_ValidatorRequest, 0),
 				}
-				response := &ethpb.DoppelGangerResponse{Responses: make([]*ethpb.DoppelGangerResponse_ValidatorResponse, 0)}
+				response := &silapb.DoppelGangerResponse{Responses: make([]*silapb.DoppelGangerResponse_ValidatorResponse, 0)}
 				for i := range 2 {
-					request.ValidatorRequests = append(request.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{
+					request.ValidatorRequests = append(request.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{
 						PublicKey:  keys[i].PublicKey().Marshal(),
 						Epoch:      1,
 						SignedRoot: []byte{'A'},
 					})
-					response.Responses = append(response.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{
+					response.Responses = append(response.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{
 						PublicKey:       keys[i].PublicKey().Marshal(),
 						DuplicateExists: false,
 					})
 				}
 
 				// Add in for duplicate validator
-				request.ValidatorRequests = append(request.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{
+				request.ValidatorRequests = append(request.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{
 					PublicKey:  keys[2].PublicKey().Marshal(),
 					Epoch:      0,
 					SignedRoot: []byte{'A'},
 				})
-				response.Responses = append(response.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{
+				response.Responses = append(response.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{
 					PublicKey:       keys[2].PublicKey().Marshal(),
 					DuplicateExists: true,
 				})
@@ -1039,7 +1039,7 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 		{
 			name:    "doppelganger exists previous epoch",
 			wantErr: false,
-			svSetup: func(t *testing.T) (*Server, *ethpb.DoppelGangerRequest, *ethpb.DoppelGangerResponse) {
+			svSetup: func(t *testing.T) (*Server, *silapb.DoppelGangerRequest, *silapb.DoppelGangerResponse) {
 				hs, ps, keys := createStateSetupAltair(t, 3)
 				prevIndices := make([]byte, 64)
 				prevIndices[2] = 1
@@ -1054,29 +1054,29 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 					SyncChecker:     &mockSync.Sync{IsSyncing: false},
 					ReplayerBuilder: rb,
 				}
-				request := &ethpb.DoppelGangerRequest{
-					ValidatorRequests: make([]*ethpb.DoppelGangerRequest_ValidatorRequest, 0),
+				request := &silapb.DoppelGangerRequest{
+					ValidatorRequests: make([]*silapb.DoppelGangerRequest_ValidatorRequest, 0),
 				}
-				response := &ethpb.DoppelGangerResponse{Responses: make([]*ethpb.DoppelGangerResponse_ValidatorResponse, 0)}
+				response := &silapb.DoppelGangerResponse{Responses: make([]*silapb.DoppelGangerResponse_ValidatorResponse, 0)}
 				for i := range 2 {
-					request.ValidatorRequests = append(request.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{
+					request.ValidatorRequests = append(request.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{
 						PublicKey:  keys[i].PublicKey().Marshal(),
 						Epoch:      1,
 						SignedRoot: []byte{'A'},
 					})
-					response.Responses = append(response.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{
+					response.Responses = append(response.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{
 						PublicKey:       keys[i].PublicKey().Marshal(),
 						DuplicateExists: false,
 					})
 				}
 
 				// Add in for duplicate validator
-				request.ValidatorRequests = append(request.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{
+				request.ValidatorRequests = append(request.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{
 					PublicKey:  keys[2].PublicKey().Marshal(),
 					Epoch:      0,
 					SignedRoot: []byte{'A'},
 				})
-				response.Responses = append(response.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{
+				response.Responses = append(response.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{
 					PublicKey:       keys[2].PublicKey().Marshal(),
 					DuplicateExists: true,
 				})
@@ -1086,7 +1086,7 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 		{
 			name:    "multiple doppelganger exists",
 			wantErr: false,
-			svSetup: func(t *testing.T) (*Server, *ethpb.DoppelGangerRequest, *ethpb.DoppelGangerResponse) {
+			svSetup: func(t *testing.T) (*Server, *silapb.DoppelGangerRequest, *silapb.DoppelGangerResponse) {
 				hs, ps, keys := createStateSetupAltair(t, 3)
 				currentIndices := make([]byte, 64)
 				currentIndices[10] = 1
@@ -1108,29 +1108,29 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 					SyncChecker:     &mockSync.Sync{IsSyncing: false},
 					ReplayerBuilder: rb,
 				}
-				request := &ethpb.DoppelGangerRequest{
-					ValidatorRequests: make([]*ethpb.DoppelGangerRequest_ValidatorRequest, 0),
+				request := &silapb.DoppelGangerRequest{
+					ValidatorRequests: make([]*silapb.DoppelGangerRequest_ValidatorRequest, 0),
 				}
-				response := &ethpb.DoppelGangerResponse{Responses: make([]*ethpb.DoppelGangerResponse_ValidatorResponse, 0)}
+				response := &silapb.DoppelGangerResponse{Responses: make([]*silapb.DoppelGangerResponse_ValidatorResponse, 0)}
 				for i := 10; i < 15; i++ {
 					// Add in for duplicate validator
-					request.ValidatorRequests = append(request.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{
+					request.ValidatorRequests = append(request.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{
 						PublicKey:  keys[i].PublicKey().Marshal(),
 						Epoch:      0,
 						SignedRoot: []byte{'A'},
 					})
-					response.Responses = append(response.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{
+					response.Responses = append(response.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{
 						PublicKey:       keys[i].PublicKey().Marshal(),
 						DuplicateExists: true,
 					})
 				}
 				for i := 15; i < 20; i++ {
-					request.ValidatorRequests = append(request.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{
+					request.ValidatorRequests = append(request.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{
 						PublicKey:  keys[i].PublicKey().Marshal(),
 						Epoch:      3,
 						SignedRoot: []byte{'A'},
 					})
-					response.Responses = append(response.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{
+					response.Responses = append(response.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{
 						PublicKey:       keys[i].PublicKey().Marshal(),
 						DuplicateExists: false,
 					})
@@ -1142,7 +1142,7 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 		{
 			name:    "attesters are too recent",
 			wantErr: false,
-			svSetup: func(t *testing.T) (*Server, *ethpb.DoppelGangerRequest, *ethpb.DoppelGangerResponse) {
+			svSetup: func(t *testing.T) (*Server, *silapb.DoppelGangerRequest, *silapb.DoppelGangerResponse) {
 				hs, ps, keys := createStateSetupAltair(t, 3)
 				rb := mockstategen.NewReplayerBuilder()
 				rb.SetMockStateForSlot(ps, 23)
@@ -1157,17 +1157,17 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 					SyncChecker:     &mockSync.Sync{IsSyncing: false},
 					ReplayerBuilder: rb,
 				}
-				request := &ethpb.DoppelGangerRequest{
-					ValidatorRequests: make([]*ethpb.DoppelGangerRequest_ValidatorRequest, 0),
+				request := &silapb.DoppelGangerRequest{
+					ValidatorRequests: make([]*silapb.DoppelGangerRequest_ValidatorRequest, 0),
 				}
-				response := &ethpb.DoppelGangerResponse{Responses: make([]*ethpb.DoppelGangerResponse_ValidatorResponse, 0)}
+				response := &silapb.DoppelGangerResponse{Responses: make([]*silapb.DoppelGangerResponse_ValidatorResponse, 0)}
 				for i := range 15 {
-					request.ValidatorRequests = append(request.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{
+					request.ValidatorRequests = append(request.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{
 						PublicKey:  keys[i].PublicKey().Marshal(),
 						Epoch:      2,
 						SignedRoot: []byte{'A'},
 					})
-					response.Responses = append(response.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{
+					response.Responses = append(response.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{
 						PublicKey:       keys[i].PublicKey().Marshal(),
 						DuplicateExists: false,
 					})
@@ -1179,7 +1179,7 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 		{
 			name:    "attesters are too recent(previous state)",
 			wantErr: false,
-			svSetup: func(t *testing.T) (*Server, *ethpb.DoppelGangerRequest, *ethpb.DoppelGangerResponse) {
+			svSetup: func(t *testing.T) (*Server, *silapb.DoppelGangerRequest, *silapb.DoppelGangerResponse) {
 				hs, ps, keys := createStateSetupAltair(t, 3)
 				rb := mockstategen.NewReplayerBuilder()
 				rb.SetMockStateForSlot(ps, 23)
@@ -1194,17 +1194,17 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 					SyncChecker:     &mockSync.Sync{IsSyncing: false},
 					ReplayerBuilder: rb,
 				}
-				request := &ethpb.DoppelGangerRequest{
-					ValidatorRequests: make([]*ethpb.DoppelGangerRequest_ValidatorRequest, 0),
+				request := &silapb.DoppelGangerRequest{
+					ValidatorRequests: make([]*silapb.DoppelGangerRequest_ValidatorRequest, 0),
 				}
-				response := &ethpb.DoppelGangerResponse{Responses: make([]*ethpb.DoppelGangerResponse_ValidatorResponse, 0)}
+				response := &silapb.DoppelGangerResponse{Responses: make([]*silapb.DoppelGangerResponse_ValidatorResponse, 0)}
 				for i := range 15 {
-					request.ValidatorRequests = append(request.ValidatorRequests, &ethpb.DoppelGangerRequest_ValidatorRequest{
+					request.ValidatorRequests = append(request.ValidatorRequests, &silapb.DoppelGangerRequest_ValidatorRequest{
 						PublicKey:  keys[i].PublicKey().Marshal(),
 						Epoch:      1,
 						SignedRoot: []byte{'A'},
 					})
-					response.Responses = append(response.Responses, &ethpb.DoppelGangerResponse_ValidatorResponse{
+					response.Responses = append(response.Responses, &silapb.DoppelGangerResponse_ValidatorResponse{
 						PublicKey:       keys[i].PublicKey().Marshal(),
 						DuplicateExists: false,
 					})
@@ -1216,7 +1216,7 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 		{
 			name:    "exit early for Phase 0",
 			wantErr: false,
-			svSetup: func(t *testing.T) (*Server, *ethpb.DoppelGangerRequest, *ethpb.DoppelGangerResponse) {
+			svSetup: func(t *testing.T) (*Server, *silapb.DoppelGangerRequest, *silapb.DoppelGangerResponse) {
 				hs, _, keys := createStateSetupPhase0(t, 3)
 
 				vs := &Server{
@@ -1225,8 +1225,8 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 					},
 					SyncChecker: &mockSync.Sync{IsSyncing: false},
 				}
-				request := &ethpb.DoppelGangerRequest{
-					ValidatorRequests: []*ethpb.DoppelGangerRequest_ValidatorRequest{
+				request := &silapb.DoppelGangerRequest{
+					ValidatorRequests: []*silapb.DoppelGangerRequest_ValidatorRequest{
 						{
 							PublicKey:  keys[0].PublicKey().Marshal(),
 							Epoch:      1,
@@ -1234,8 +1234,8 @@ func TestServer_CheckDoppelGanger(t *testing.T) {
 						},
 					},
 				}
-				response := &ethpb.DoppelGangerResponse{
-					Responses: []*ethpb.DoppelGangerResponse_ValidatorResponse{
+				response := &silapb.DoppelGangerResponse{
+					Responses: []*silapb.DoppelGangerResponse_ValidatorResponse{
 						{
 							PublicKey:       keys[0].PublicKey().Marshal(),
 							DuplicateExists: false,

@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -31,7 +31,7 @@ func Test_getEmptyBlock(t *testing.T) {
 			name: "altair",
 			slot: primitives.Slot(params.BeaconConfig().AltairForkEpoch) * params.BeaconConfig().SlotsPerEpoch,
 			want: func() interfaces.ReadOnlySignedBeaconBlock {
-				b, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockAltair{Block: &ethpb.BeaconBlockAltair{Body: &ethpb.BeaconBlockBodyAltair{}}})
+				b, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockAltair{Block: &silapb.BeaconBlockAltair{Body: &silapb.BeaconBlockBodyAltair{}}})
 				require.NoError(t, err)
 				return b
 			},
@@ -40,7 +40,7 @@ func Test_getEmptyBlock(t *testing.T) {
 			name: "bellatrix",
 			slot: primitives.Slot(params.BeaconConfig().BellatrixForkEpoch) * params.BeaconConfig().SlotsPerEpoch,
 			want: func() interfaces.ReadOnlySignedBeaconBlock {
-				b, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockBellatrix{Block: &ethpb.BeaconBlockBellatrix{Body: &ethpb.BeaconBlockBodyBellatrix{}}})
+				b, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockBellatrix{Block: &silapb.BeaconBlockBellatrix{Body: &silapb.BeaconBlockBodyBellatrix{}}})
 				require.NoError(t, err)
 				return b
 			},
@@ -49,7 +49,7 @@ func Test_getEmptyBlock(t *testing.T) {
 			name: "capella",
 			slot: primitives.Slot(params.BeaconConfig().CapellaForkEpoch) * params.BeaconConfig().SlotsPerEpoch,
 			want: func() interfaces.ReadOnlySignedBeaconBlock {
-				b, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockCapella{Block: &ethpb.BeaconBlockCapella{Body: &ethpb.BeaconBlockBodyCapella{}}})
+				b, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockCapella{Block: &silapb.BeaconBlockCapella{Body: &silapb.BeaconBlockBodyCapella{}}})
 				require.NoError(t, err)
 				return b
 			},
@@ -58,7 +58,7 @@ func Test_getEmptyBlock(t *testing.T) {
 			name: "deneb",
 			slot: primitives.Slot(params.BeaconConfig().DenebForkEpoch) * params.BeaconConfig().SlotsPerEpoch,
 			want: func() interfaces.ReadOnlySignedBeaconBlock {
-				b, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockDeneb{Block: &ethpb.BeaconBlockDeneb{Body: &ethpb.BeaconBlockBodyDeneb{}}})
+				b, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockDeneb{Block: &silapb.BeaconBlockDeneb{Body: &silapb.BeaconBlockBodyDeneb{}}})
 				require.NoError(t, err)
 				return b
 			},
@@ -67,7 +67,7 @@ func Test_getEmptyBlock(t *testing.T) {
 			name: "electra",
 			slot: primitives.Slot(params.BeaconConfig().ElectraForkEpoch) * params.BeaconConfig().SlotsPerEpoch,
 			want: func() interfaces.ReadOnlySignedBeaconBlock {
-				b, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockElectra{Block: &ethpb.BeaconBlockElectra{Body: &ethpb.BeaconBlockBodyElectra{}}})
+				b, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockElectra{Block: &silapb.BeaconBlockElectra{Body: &silapb.BeaconBlockBodyElectra{}}})
 				require.NoError(t, err)
 				return b
 			},
@@ -76,7 +76,7 @@ func Test_getEmptyBlock(t *testing.T) {
 			name: "fulu",
 			slot: primitives.Slot(params.BeaconConfig().FuluForkEpoch) * params.BeaconConfig().SlotsPerEpoch,
 			want: func() interfaces.ReadOnlySignedBeaconBlock {
-				b, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockFulu{Block: &ethpb.BeaconBlockElectra{Body: &ethpb.BeaconBlockBodyElectra{}}})
+				b, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockFulu{Block: &silapb.BeaconBlockElectra{Body: &silapb.BeaconBlockBodyElectra{}}})
 				require.NoError(t, err)
 				return b
 			},

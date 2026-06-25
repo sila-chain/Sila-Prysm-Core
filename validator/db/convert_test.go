@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/proposer"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/file"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/filesystem"
@@ -131,23 +131,23 @@ func TestDB_ConvertDatabase(t *testing.T) {
 				}
 
 				// Save some attestations.
-				completeAttestations := []*ethpb.IndexedAttestation{
+				completeAttestations := []*silapb.IndexedAttestation{
 					{
-						Data: &ethpb.AttestationData{
-							Source: &ethpb.Checkpoint{
+						Data: &silapb.AttestationData{
+							Source: &silapb.Checkpoint{
 								Epoch: 1,
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Epoch: 2,
 							},
 						},
 					},
 					{
-						Data: &ethpb.AttestationData{
-							Source: &ethpb.Checkpoint{
+						Data: &silapb.AttestationData{
+							Source: &silapb.Checkpoint{
 								Epoch: 2,
 							},
-							Target: &ethpb.Checkpoint{
+							Target: &silapb.Checkpoint{
 								Epoch: 3,
 							},
 						},

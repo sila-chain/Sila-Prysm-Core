@@ -6,14 +6,14 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations/attmap"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/pkg/errors"
 )
 
 type attGroup struct {
 	slot primitives.Slot
-	atts []ethpb.Att
+	atts []silapb.Att
 }
 
 // AttestationCache holds a map of attGroup items that group together all attestations for a single slot.
@@ -53,7 +53,7 @@ func NewAttestationCache() *AttestationCache {
 //   - For unaggregated attestations, it adds the attestation bit to attestation bits of the running aggregate,
 //     which is the first aggregate for the slot.
 //   - For aggregated attestations, it appends the attestation to the existing list of attestations for the slot.
-func (c *AttestationCache) Add(att ethpb.Att) error {
+func (c *AttestationCache) Add(att silapb.Att) error {
 	if att.IsNil() {
 		log.Debug("Attempted to add a nil attestation to the attestation cache")
 		return nil
@@ -75,7 +75,7 @@ func (c *AttestationCache) Add(att ethpb.Att) error {
 	if group == nil {
 		group = &attGroup{
 			slot: att.GetData().Slot,
-			atts: []ethpb.Att{att},
+			atts: []silapb.Att{att},
 		}
 		c.atts[id] = group
 		return nil
@@ -111,11 +111,11 @@ func (c *AttestationCache) Add(att ethpb.Att) error {
 }
 
 // GetAll returns all attestations in the cache, excluding forkchoice attestations.
-func (c *AttestationCache) GetAll() []ethpb.Att {
+func (c *AttestationCache) GetAll() []silapb.Att {
 	c.RLock()
 	defer c.RUnlock()
 
-	var result []ethpb.Att
+	var result []silapb.Att
 	for _, group := range c.atts {
 		result = append(result, group.atts...)
 	}
@@ -135,7 +135,7 @@ func (c *AttestationCache) Count() int {
 }
 
 // DeleteCovered removes all attestations whose attestation bits are a proper subset of the passed-in attestation.
-func (c *AttestationCache) DeleteCovered(att ethpb.Att) error {
+func (c *AttestationCache) DeleteCovered(att silapb.Att) error {
 	if att.IsNil() {
 		return nil
 	}
@@ -188,7 +188,7 @@ func (c *AttestationCache) PruneBefore(slot primitives.Slot) uint64 {
 
 // AggregateIsRedundant checks whether all attestation bits of the passed-in aggregate
 // are already included by any aggregate in the cache.
-func (c *AttestationCache) AggregateIsRedundant(att ethpb.Att) (bool, error) {
+func (c *AttestationCache) AggregateIsRedundant(att silapb.Att) (bool, error) {
 	if att.IsNil() {
 		return true, nil
 	}
@@ -218,17 +218,17 @@ func (c *AttestationCache) AggregateIsRedundant(att ethpb.Att) (bool, error) {
 }
 
 // SaveForkchoiceAttestations saves forkchoice attestations.
-func (c *AttestationCache) SaveForkchoiceAttestations(att []ethpb.Att) error {
+func (c *AttestationCache) SaveForkchoiceAttestations(att []silapb.Att) error {
 	return c.forkchoiceAtts.SaveMany(att)
 }
 
 // ForkchoiceAttestations returns all forkchoice attestations.
-func (c *AttestationCache) ForkchoiceAttestations() []ethpb.Att {
+func (c *AttestationCache) ForkchoiceAttestations() []silapb.Att {
 	return c.forkchoiceAtts.GetAll()
 }
 
 // DeleteForkchoiceAttestation deletes a forkchoice attestation.
-func (c *AttestationCache) DeleteForkchoiceAttestation(att ethpb.Att) error {
+func (c *AttestationCache) DeleteForkchoiceAttestation(att silapb.Att) error {
 	return c.forkchoiceAtts.Delete(att)
 }
 
@@ -236,7 +236,7 @@ func (c *AttestationCache) DeleteForkchoiceAttestation(att ethpb.Att) error {
 // and committee index. Forkchoice attestations are not returned.
 //
 // NOTE: This function cannot be declared as a method on the AttestationCache because it is a generic function.
-func GetBySlotAndCommitteeIndex[T ethpb.Att](c *AttestationCache, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) []T {
+func GetBySlotAndCommitteeIndex[T silapb.Att](c *AttestationCache, slot primitives.Slot, committeeIndex primitives.CommitteeIndex) []T {
 	c.RLock()
 	defer c.RUnlock()
 
@@ -261,7 +261,7 @@ func GetBySlotAndCommitteeIndex[T ethpb.Att](c *AttestationCache, slot primitive
 	return result
 }
 
-func aggregateSig(agg ethpb.Att, att ethpb.Att) ([]byte, error) {
+func aggregateSig(agg silapb.Att, att silapb.Att) ([]byte, error) {
 	aggSig, err := bls.SignatureFromBytesNoValidation(agg.GetSignature())
 	if err != nil {
 		return nil, err

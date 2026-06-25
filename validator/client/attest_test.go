@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -53,7 +53,7 @@ func TestAttestToBlockHead_SubmitAttestation_EmptyCommittee(t *testing.T) {
 			defer finish()
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:      validatorKey.PublicKey().Marshal(),
 				CommitteeIndex: 0,
 				ValidatorIndex: 0,
@@ -71,7 +71,7 @@ func TestAttestToBlockHead_SubmitAttestation_RequestFailure(t *testing.T) {
 
 			validator, m, validatorKey, finish := setup(t, isSlashingProtectionMinimal)
 			defer finish()
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeIndex:  5,
 				CommitteeLength: 111,
@@ -79,19 +79,19 @@ func TestAttestToBlockHead_SubmitAttestation_RequestFailure(t *testing.T) {
 			})
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-			).Return(&ethpb.AttestationData{
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+			).Return(&silapb.AttestationData{
 				BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-				Target:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-				Source:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+				Target:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+				Source:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 			}, nil)
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch2
-			).Times(2).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Times(2).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 			m.validatorClient.EXPECT().ProposeAttestation(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.Attestation{}),
+				gomock.AssignableToTypeOf(&silapb.Attestation{}),
 			).Return(nil, errors.New("something went wrong"))
 
 			var pubKey [fieldparams.BLSPubkeyLength]byte
@@ -143,41 +143,41 @@ func TestSubmitAttestation_ElectraCommitteeIndex(t *testing.T) {
 				committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
 				var pubKey [fieldparams.BLSPubkeyLength]byte
 				copy(pubKey[:], validatorKey.PublicKey().Marshal())
-				validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+				validator.duties = testDutyStore(&silapb.ValidatorDuty{
 					PublicKey:       validatorKey.PublicKey().Marshal(),
 					CommitteeIndex:  tt.assignedCommitteeIndex,
 					CommitteeLength: uint64(len(committee)),
 					ValidatorIndex:  validatorIndex,
 				})
 
-				var capturedRequest *ethpb.AttestationDataRequest
+				var capturedRequest *silapb.AttestationDataRequest
 				// Capture the actual request to verify committee index
 				m.validatorClient.EXPECT().AttestationData(
 					gomock.Any(), // ctx
-					gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-				).Do(func(_ context.Context, req *ethpb.AttestationDataRequest) {
+					gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+				).Do(func(_ context.Context, req *silapb.AttestationDataRequest) {
 					capturedRequest = req
-				}).Return(&ethpb.AttestationData{
+				}).Return(&silapb.AttestationData{
 					BeaconBlockRoot: make([]byte, fieldparams.RootLength),
-					Target:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-					Source:          &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Target:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+					Source:          &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 				}, nil)
 
 				m.validatorClient.EXPECT().DomainData(
 					gomock.Any(), // ctx
 					gomock.Any(), // epoch
-				).Times(2).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
+				).Times(2).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
 
 				if tt.isPostElectra {
 					m.validatorClient.EXPECT().ProposeAttestationElectra(
 						gomock.Any(), // ctx
-						gomock.AssignableToTypeOf(&ethpb.SingleAttestation{}),
-					).Return(&ethpb.AttestResponse{}, nil)
+						gomock.AssignableToTypeOf(&silapb.SingleAttestation{}),
+					).Return(&silapb.AttestResponse{}, nil)
 				} else {
 					m.validatorClient.EXPECT().ProposeAttestation(
 						gomock.Any(), // ctx
-						gomock.AssignableToTypeOf(&ethpb.Attestation{}),
-					).Return(&ethpb.AttestResponse{}, nil)
+						gomock.AssignableToTypeOf(&silapb.Attestation{}),
+					).Return(&silapb.AttestResponse{}, nil)
 				}
 
 				validator.SubmitAttestation(t.Context(), tt.attestationSlot, pubKey)
@@ -203,7 +203,7 @@ func TestAttestToBlockHead_AttestsCorrectly(t *testing.T) {
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:               validatorKey.PublicKey().Marshal(),
 				CommitteeIndex:          5,
 				CommitteeLength:         uint64(len(committee)),
@@ -216,35 +216,35 @@ func TestAttestToBlockHead_AttestsCorrectly(t *testing.T) {
 			sourceRoot := bytesutil.ToBytes32([]byte("C"))
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-			).Return(&ethpb.AttestationData{
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+			).Return(&silapb.AttestationData{
 				BeaconBlockRoot: beaconBlockRoot[:],
-				Target:          &ethpb.Checkpoint{Root: targetRoot[:]},
-				Source:          &ethpb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
+				Target:          &silapb.Checkpoint{Root: targetRoot[:]},
+				Source:          &silapb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
 			}, nil)
 
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Times(2).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Times(2).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
-			var generatedAttestation *ethpb.Attestation
+			var generatedAttestation *silapb.Attestation
 			m.validatorClient.EXPECT().ProposeAttestation(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.Attestation{}),
-			).Do(func(_ context.Context, att *ethpb.Attestation) {
+				gomock.AssignableToTypeOf(&silapb.Attestation{}),
+			).Do(func(_ context.Context, att *silapb.Attestation) {
 				generatedAttestation = att
-			}).Return(&ethpb.AttestResponse{}, nil /* error */)
+			}).Return(&silapb.AttestResponse{}, nil /* error */)
 
 			validator.SubmitAttestation(t.Context(), 30, pubKey)
 
 			aggregationBitfield := bitfield.NewBitlist(uint64(len(committee)))
 			aggregationBitfield.SetBitAt(4, true)
-			expectedAttestation := &ethpb.Attestation{
-				Data: &ethpb.AttestationData{
+			expectedAttestation := &silapb.Attestation{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: beaconBlockRoot[:],
-					Target:          &ethpb.Checkpoint{Root: targetRoot[:]},
-					Source:          &ethpb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
+					Target:          &silapb.Checkpoint{Root: targetRoot[:]},
+					Source:          &silapb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
 				},
 				AggregationBits: aggregationBitfield,
 				Signature:       make([]byte, 96),
@@ -282,7 +282,7 @@ func TestAttestToBlockHead_AttestsCorrectly(t *testing.T) {
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeIndex:  5,
 				CommitteeLength: uint64(len(committee)),
@@ -294,25 +294,25 @@ func TestAttestToBlockHead_AttestsCorrectly(t *testing.T) {
 			sourceRoot := bytesutil.ToBytes32([]byte("C"))
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-			).Return(&ethpb.AttestationData{
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+			).Return(&silapb.AttestationData{
 				BeaconBlockRoot: beaconBlockRoot[:],
-				Target:          &ethpb.Checkpoint{Root: targetRoot[:]},
-				Source:          &ethpb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
+				Target:          &silapb.Checkpoint{Root: targetRoot[:]},
+				Source:          &silapb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
 			}, nil)
 
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Times(2).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Times(2).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
-			var generatedAttestation *ethpb.SingleAttestation
+			var generatedAttestation *silapb.SingleAttestation
 			m.validatorClient.EXPECT().ProposeAttestationElectra(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.SingleAttestation{}),
-			).Do(func(_ context.Context, att *ethpb.SingleAttestation) {
+				gomock.AssignableToTypeOf(&silapb.SingleAttestation{}),
+			).Do(func(_ context.Context, att *silapb.SingleAttestation) {
 				generatedAttestation = att
-			}).Return(&ethpb.AttestResponse{}, nil /* error */)
+			}).Return(&silapb.AttestResponse{}, nil /* error */)
 
 			validator.SubmitAttestation(t.Context(), params.BeaconConfig().SlotsPerEpoch.Mul(electraForkEpoch), pubKey)
 
@@ -320,11 +320,11 @@ func TestAttestToBlockHead_AttestsCorrectly(t *testing.T) {
 			aggregationBitfield.SetBitAt(4, true)
 			committeeBits := primitives.NewAttestationCommitteeBits()
 			committeeBits.SetBitAt(5, true)
-			expectedAttestation := &ethpb.SingleAttestation{
-				Data: &ethpb.AttestationData{
+			expectedAttestation := &silapb.SingleAttestation{
+				Data: &silapb.AttestationData{
 					BeaconBlockRoot: beaconBlockRoot[:],
-					Target:          &ethpb.Checkpoint{Root: targetRoot[:]},
-					Source:          &ethpb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
+					Target:          &silapb.Checkpoint{Root: targetRoot[:]},
+					Source:          &silapb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
 				},
 				AttesterIndex: validatorIndex,
 				CommitteeId:   5,
@@ -360,7 +360,7 @@ func TestAttestToBlockHead_BlocksDoubleAtt(t *testing.T) {
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeIndex:  5,
 				CommitteeLength: uint64(len(committee)),
@@ -373,29 +373,29 @@ func TestAttestToBlockHead_BlocksDoubleAtt(t *testing.T) {
 
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-			).Return(&ethpb.AttestationData{
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+			).Return(&silapb.AttestationData{
 				BeaconBlockRoot: beaconBlockRoot[:],
-				Target:          &ethpb.Checkpoint{Root: targetRoot[:], Epoch: 4},
-				Source:          &ethpb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
+				Target:          &silapb.Checkpoint{Root: targetRoot[:], Epoch: 4},
+				Source:          &silapb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
 			}, nil)
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-			).Return(&ethpb.AttestationData{
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+			).Return(&silapb.AttestationData{
 				BeaconBlockRoot: beaconBlockRoot2[:],
-				Target:          &ethpb.Checkpoint{Root: targetRoot[:], Epoch: 4},
-				Source:          &ethpb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
+				Target:          &silapb.Checkpoint{Root: targetRoot[:], Epoch: 4},
+				Source:          &silapb.Checkpoint{Root: sourceRoot[:], Epoch: 3},
 			}, nil)
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Times(4).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Times(4).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().ProposeAttestation(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.Attestation{}),
-			).Return(&ethpb.AttestResponse{AttestationDataRoot: make([]byte, 32)}, nil /* error */)
+				gomock.AssignableToTypeOf(&silapb.Attestation{}),
+			).Return(&silapb.AttestResponse{AttestationDataRoot: make([]byte, 32)}, nil /* error */)
 
 			validator.SubmitAttestation(t.Context(), 30, pubKey)
 			validator.SubmitAttestation(t.Context(), 30, pubKey)
@@ -414,7 +414,7 @@ func TestAttestToBlockHead_BlocksSurroundAtt(t *testing.T) {
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeIndex:  5,
 				CommitteeLength: uint64(len(committee)),
@@ -426,30 +426,30 @@ func TestAttestToBlockHead_BlocksSurroundAtt(t *testing.T) {
 
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-			).Return(&ethpb.AttestationData{
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+			).Return(&silapb.AttestationData{
 				BeaconBlockRoot: beaconBlockRoot[:],
-				Target:          &ethpb.Checkpoint{Root: targetRoot[:], Epoch: 2},
-				Source:          &ethpb.Checkpoint{Root: sourceRoot[:], Epoch: 1},
+				Target:          &silapb.Checkpoint{Root: targetRoot[:], Epoch: 2},
+				Source:          &silapb.Checkpoint{Root: sourceRoot[:], Epoch: 1},
 			}, nil)
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-			).Return(&ethpb.AttestationData{
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+			).Return(&silapb.AttestationData{
 				BeaconBlockRoot: beaconBlockRoot[:],
-				Target:          &ethpb.Checkpoint{Root: targetRoot[:], Epoch: 3},
-				Source:          &ethpb.Checkpoint{Root: sourceRoot[:], Epoch: 0},
+				Target:          &silapb.Checkpoint{Root: targetRoot[:], Epoch: 3},
+				Source:          &silapb.Checkpoint{Root: sourceRoot[:], Epoch: 0},
 			}, nil)
 
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Times(4).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Times(4).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().ProposeAttestation(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.Attestation{}),
-			).Return(&ethpb.AttestResponse{}, nil /* error */)
+				gomock.AssignableToTypeOf(&silapb.Attestation{}),
+			).Return(&silapb.AttestResponse{}, nil /* error */)
 
 			validator.SubmitAttestation(t.Context(), 30, pubKey)
 			validator.SubmitAttestation(t.Context(), 30, pubKey)
@@ -468,7 +468,7 @@ func TestAttestToBlockHead_BlocksSurroundedAtt(t *testing.T) {
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeIndex:  5,
 				CommitteeLength: uint64(len(committee)),
@@ -480,33 +480,33 @@ func TestAttestToBlockHead_BlocksSurroundedAtt(t *testing.T) {
 
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-			).Return(&ethpb.AttestationData{
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+			).Return(&silapb.AttestationData{
 				BeaconBlockRoot: beaconBlockRoot[:],
-				Target:          &ethpb.Checkpoint{Root: targetRoot[:], Epoch: 3},
-				Source:          &ethpb.Checkpoint{Root: sourceRoot[:], Epoch: 0},
+				Target:          &silapb.Checkpoint{Root: targetRoot[:], Epoch: 3},
+				Source:          &silapb.Checkpoint{Root: sourceRoot[:], Epoch: 0},
 			}, nil)
 
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Times(4).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Times(4).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().ProposeAttestation(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.Attestation{}),
-			).Return(&ethpb.AttestResponse{}, nil /* error */)
+				gomock.AssignableToTypeOf(&silapb.Attestation{}),
+			).Return(&silapb.AttestResponse{}, nil /* error */)
 
 			validator.SubmitAttestation(t.Context(), 30, pubKey)
 			require.LogsDoNotContain(t, hook, failedAttLocalProtectionErr)
 
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-			).Return(&ethpb.AttestationData{
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+			).Return(&silapb.AttestationData{
 				BeaconBlockRoot: bytesutil.PadTo([]byte("A"), 32),
-				Target:          &ethpb.Checkpoint{Root: bytesutil.PadTo([]byte("B"), 32), Epoch: 2},
-				Source:          &ethpb.Checkpoint{Root: bytesutil.PadTo([]byte("C"), 32), Epoch: 1},
+				Target:          &silapb.Checkpoint{Root: bytesutil.PadTo([]byte("B"), 32), Epoch: 2},
+				Source:          &silapb.Checkpoint{Root: bytesutil.PadTo([]byte("C"), 32), Epoch: 1},
 			}, nil)
 
 			validator.SubmitAttestation(t.Context(), 30, pubKey)
@@ -526,18 +526,18 @@ func TestAttestToBlockHead_DoesNotAttestBeforeDelay(t *testing.T) {
 			validator.genesisTime = time.Now()
 			m.validatorClient.EXPECT().Duties(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.DutiesRequest{}),
+				gomock.AssignableToTypeOf(&silapb.DutiesRequest{}),
 			).Times(0)
 
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
 			).Times(0)
 
 			m.validatorClient.EXPECT().ProposeAttestation(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.Attestation{}),
-			).Return(&ethpb.AttestResponse{}, nil /* error */).Times(0)
+				gomock.AssignableToTypeOf(&silapb.Attestation{}),
+			).Return(&silapb.AttestResponse{}, nil /* error */).Times(0)
 
 			timer := time.NewTimer(1 * time.Second)
 			go validator.SubmitAttestation(t.Context(), 0, pubKey)
@@ -561,7 +561,7 @@ func TestAttestToBlockHead_DoesAttestAfterDelay(t *testing.T) {
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeIndex:  5,
 				CommitteeLength: uint64(len(committee)),
@@ -570,11 +570,11 @@ func TestAttestToBlockHead_DoesAttestAfterDelay(t *testing.T) {
 
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-			).Return(&ethpb.AttestationData{
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+			).Return(&silapb.AttestationData{
 				BeaconBlockRoot: bytesutil.PadTo([]byte("A"), 32),
-				Target:          &ethpb.Checkpoint{Root: bytesutil.PadTo([]byte("B"), 32)},
-				Source:          &ethpb.Checkpoint{Root: bytesutil.PadTo([]byte("C"), 32), Epoch: 3},
+				Target:          &silapb.Checkpoint{Root: bytesutil.PadTo([]byte("B"), 32)},
+				Source:          &silapb.Checkpoint{Root: bytesutil.PadTo([]byte("C"), 32), Epoch: 3},
 			}, nil).Do(func(arg0, arg1 any) {
 				wg.Done()
 			})
@@ -582,12 +582,12 @@ func TestAttestToBlockHead_DoesAttestAfterDelay(t *testing.T) {
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Times(2).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Times(2).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
 			m.validatorClient.EXPECT().ProposeAttestation(
 				gomock.Any(), // ctx
 				gomock.Any(),
-			).Return(&ethpb.AttestResponse{}, nil).Times(1)
+			).Return(&silapb.AttestResponse{}, nil).Times(1)
 
 			validator.SubmitAttestation(t.Context(), 0, pubKey)
 		})
@@ -603,7 +603,7 @@ func TestAttestToBlockHead_CorrectBitfieldLength(t *testing.T) {
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeIndex:  5,
 				CommitteeLength: uint64(len(committee)),
@@ -611,25 +611,25 @@ func TestAttestToBlockHead_CorrectBitfieldLength(t *testing.T) {
 			})
 			m.validatorClient.EXPECT().AttestationData(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.AttestationDataRequest{}),
-			).Return(&ethpb.AttestationData{
-				Target:          &ethpb.Checkpoint{Root: bytesutil.PadTo([]byte("B"), 32)},
-				Source:          &ethpb.Checkpoint{Root: bytesutil.PadTo([]byte("C"), 32), Epoch: 3},
+				gomock.AssignableToTypeOf(&silapb.AttestationDataRequest{}),
+			).Return(&silapb.AttestationData{
+				Target:          &silapb.Checkpoint{Root: bytesutil.PadTo([]byte("B"), 32)},
+				Source:          &silapb.Checkpoint{Root: bytesutil.PadTo([]byte("C"), 32), Epoch: 3},
 				BeaconBlockRoot: make([]byte, fieldparams.RootLength),
 			}, nil)
 
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
 				gomock.Any(), // epoch
-			).Times(2).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+			).Times(2).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 
-			var generatedAttestation *ethpb.Attestation
+			var generatedAttestation *silapb.Attestation
 			m.validatorClient.EXPECT().ProposeAttestation(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.Attestation{}),
-			).Do(func(_ context.Context, att *ethpb.Attestation) {
+				gomock.AssignableToTypeOf(&silapb.Attestation{}),
+			).Do(func(_ context.Context, att *silapb.Attestation) {
 				generatedAttestation = att
-			}).Return(&ethpb.AttestResponse{}, nil /* error */)
+			}).Return(&silapb.AttestResponse{}, nil /* error */)
 
 			validator.SubmitAttestation(t.Context(), 30, pubKey)
 
@@ -644,7 +644,7 @@ func TestSignAttestation(t *testing.T) {
 			validator, m, _, finish := setup(t, isSlashingProtectionMinimal)
 			defer finish()
 
-			wantedFork := &ethpb.Fork{
+			wantedFork := &silapb.Fork{
 				PreviousVersion: []byte{'a', 'b', 'c', 'd'},
 				CurrentVersion:  []byte{'d', 'e', 'f', 'f'},
 				Epoch:           0,
@@ -654,7 +654,7 @@ func TestSignAttestation(t *testing.T) {
 			require.NoError(t, err)
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), gomock.Any()).
-				Return(&ethpb.DomainResponse{SignatureDomain: attesterDomain}, nil)
+				Return(&silapb.DomainResponse{SignatureDomain: attesterDomain}, nil)
 			ctx := t.Context()
 			att := util.NewAttestation()
 			att.Data.Source.Epoch = 100
@@ -748,17 +748,17 @@ func Test_slashableAttestationCheck(t *testing.T) {
 			defer finish()
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			att := &ethpb.IndexedAttestation{
+			att := &silapb.IndexedAttestation{
 				AttestingIndices: []uint64{1, 2},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					Slot:            5,
 					CommitteeIndex:  2,
 					BeaconBlockRoot: bytesutil.PadTo([]byte("great block"), 32),
-					Source: &ethpb.Checkpoint{
+					Source: &silapb.Checkpoint{
 						Epoch: 4,
 						Root:  bytesutil.PadTo([]byte("good source"), 32),
 					},
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 10,
 						Root:  bytesutil.PadTo([]byte("good target"), 32),
 					},
@@ -779,17 +779,17 @@ func Test_slashableAttestationCheck_UpdatesLowestSignedEpochs(t *testing.T) {
 			ctx := t.Context()
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
-			att := &ethpb.IndexedAttestation{
+			att := &silapb.IndexedAttestation{
 				AttestingIndices: []uint64{1, 2},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					Slot:            5,
 					CommitteeIndex:  2,
 					BeaconBlockRoot: bytesutil.PadTo([]byte("great block"), 32),
-					Source: &ethpb.Checkpoint{
+					Source: &silapb.Checkpoint{
 						Epoch: 4,
 						Root:  bytesutil.PadTo([]byte("good source"), 32),
 					},
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 10,
 						Root:  bytesutil.PadTo([]byte("good target"), 32),
 					},
@@ -798,8 +798,8 @@ func Test_slashableAttestationCheck_UpdatesLowestSignedEpochs(t *testing.T) {
 
 			m.validatorClient.EXPECT().DomainData(
 				gomock.Any(), // ctx
-				&ethpb.DomainRequest{Epoch: 10, Domain: []byte{1, 0, 0, 0}},
-			).Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
+				&silapb.DomainRequest{Epoch: 10, Domain: []byte{1, 0, 0, 0}},
+			).Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil /*err*/)
 			_, sr, err := validator.domainAndSigningRoot(ctx, att.Data)
 			require.NoError(t, err)
 
@@ -828,17 +828,17 @@ func Test_slashableAttestationCheck_OK(t *testing.T) {
 			ctx := t.Context()
 			validator, _, _, finish := setup(t, isSlashingProtectionMinimal)
 			defer finish()
-			att := &ethpb.IndexedAttestation{
+			att := &silapb.IndexedAttestation{
 				AttestingIndices: []uint64{1, 2},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					Slot:            5,
 					CommitteeIndex:  2,
 					BeaconBlockRoot: []byte("great block"),
-					Source: &ethpb.Checkpoint{
+					Source: &silapb.Checkpoint{
 						Epoch: 4,
 						Root:  []byte("good source"),
 					},
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 10,
 						Root:  []byte("good target"),
 					},
@@ -859,17 +859,17 @@ func Test_slashableAttestationCheck_GenesisEpoch(t *testing.T) {
 			ctx := t.Context()
 			validator, _, _, finish := setup(t, isSlashingProtectionMinimal)
 			defer finish()
-			att := &ethpb.IndexedAttestation{
+			att := &silapb.IndexedAttestation{
 				AttestingIndices: []uint64{1, 2},
-				Data: &ethpb.AttestationData{
+				Data: &silapb.AttestationData{
 					Slot:            5,
 					CommitteeIndex:  2,
 					BeaconBlockRoot: bytesutil.PadTo([]byte("great block root"), 32),
-					Source: &ethpb.Checkpoint{
+					Source: &silapb.Checkpoint{
 						Epoch: 0,
 						Root:  bytesutil.PadTo([]byte("great root"), 32),
 					},
-					Target: &ethpb.Checkpoint{
+					Target: &silapb.Checkpoint{
 						Epoch: 0,
 						Root:  bytesutil.PadTo([]byte("great root"), 32),
 					},

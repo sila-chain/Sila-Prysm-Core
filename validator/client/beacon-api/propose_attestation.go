@@ -6,17 +6,17 @@ import (
 	"encoding/json"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
 
-func (c *beaconApiValidatorClient) proposeAttestation(ctx context.Context, attestation *ethpb.Attestation) (*ethpb.AttestResponse, error) {
+func (c *beaconApiValidatorClient) proposeAttestation(ctx context.Context, attestation *silapb.Attestation) (*silapb.AttestResponse, error) {
 	if err := helpers.ValidateNilAttestation(attestation); err != nil {
 		return nil, err
 	}
-	marshalledAttestation, err := json.Marshal(jsonifyAttestations([]*ethpb.Attestation{attestation}))
+	marshalledAttestation, err := json.Marshal(jsonifyAttestations([]*silapb.Attestation{attestation}))
 	if err != nil {
 		return nil, err
 	}
@@ -38,14 +38,14 @@ func (c *beaconApiValidatorClient) proposeAttestation(ctx context.Context, attes
 		return nil, errors.Wrap(err, "failed to compute attestation data root")
 	}
 
-	return &ethpb.AttestResponse{AttestationDataRoot: attestationDataRoot[:]}, nil
+	return &silapb.AttestResponse{AttestationDataRoot: attestationDataRoot[:]}, nil
 }
 
-func (c *beaconApiValidatorClient) proposeAttestationElectra(ctx context.Context, attestation *ethpb.SingleAttestation) (*ethpb.AttestResponse, error) {
+func (c *beaconApiValidatorClient) proposeAttestationElectra(ctx context.Context, attestation *silapb.SingleAttestation) (*silapb.AttestResponse, error) {
 	if err := helpers.ValidateNilAttestation(attestation); err != nil {
 		return nil, err
 	}
-	marshalledAttestation, err := json.Marshal(jsonifySingleAttestations([]*ethpb.SingleAttestation{attestation}))
+	marshalledAttestation, err := json.Marshal(jsonifySingleAttestations([]*silapb.SingleAttestation{attestation}))
 	if err != nil {
 		return nil, err
 	}
@@ -66,5 +66,5 @@ func (c *beaconApiValidatorClient) proposeAttestationElectra(ctx context.Context
 		return nil, errors.Wrap(err, "failed to compute attestation data root")
 	}
 
-	return &ethpb.AttestResponse{AttestationDataRoot: attestationDataRoot[:]}, nil
+	return &silapb.AttestResponse{AttestationDataRoot: attestationDataRoot[:]}, nil
 }

@@ -6,7 +6,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // UpgradeToDeneb updates inputs a generic state to return the version Deneb state.
@@ -58,11 +58,11 @@ func UpgradeToDeneb(state state.BeaconState) (state.BeaconState, error) {
 		return nil, err
 	}
 
-	s := &ethpb.BeaconStateDeneb{
+	s := &silapb.BeaconStateDeneb{
 		GenesisTime:           uint64(state.GenesisTime().Unix()),
 		GenesisValidatorsRoot: state.GenesisValidatorsRoot(),
 		Slot:                  state.Slot(),
-		Fork: &ethpb.Fork{
+		Fork: &silapb.Fork{
 			PreviousVersion: state.Fork().CurrentVersion,
 			CurrentVersion:  params.BeaconConfig().DenebForkVersion,
 			Epoch:           epoch,

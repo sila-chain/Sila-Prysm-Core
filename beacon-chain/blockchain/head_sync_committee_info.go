@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -105,7 +105,7 @@ func (s *Service) HeadSyncCommitteePubKeys(ctx context.Context, slot primitives.
 	nextSlotEpoch := slots.ToEpoch(headState.Slot() + 1)
 	currEpoch := slots.ToEpoch(headState.Slot())
 
-	var syncCommittee *ethpb.SyncCommittee
+	var syncCommittee *silapb.SyncCommittee
 	if currEpoch == nextSlotEpoch || slots.SyncCommitteePeriod(currEpoch) == slots.SyncCommitteePeriod(nextSlotEpoch) {
 		syncCommittee, err = headState.CurrentSyncCommittee()
 		if err != nil {

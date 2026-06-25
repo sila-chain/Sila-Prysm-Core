@@ -43,7 +43,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	leakybucket "github.com/sila-chain/Sila-Consensus-Core/v7/container/leaky-bucket"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/rand"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -206,7 +206,7 @@ type Service struct {
 	digestActions                        perDigestSet
 	subscriptionSpawner                  func(func()) // see Service.spawn for details
 	newExecutionPayloadEnvelopeVerifier  verification.NewExecutionPayloadEnvelopeVerifier
-	pendingPayloadEnvelopes              map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope
+	pendingPayloadEnvelopes              map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope
 	pendingEnvelopeLock                  sync.RWMutex
 	selfBuildSigFailures                 int
 }
@@ -227,7 +227,7 @@ func NewService(ctx context.Context, opts ...Option) *Service {
 		reconstructionRandGen:    rand.NewGenerator(),
 		payloadAttestationCache:  &cache.PayloadAttestationCache{},
 		proposerPreferencesCache: cache.NewProposerPreferencesCache(),
-		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*ethpb.SignedExecutionPayloadEnvelope),
+		pendingPayloadEnvelopes:  make(map[[32]byte]map[uint64]*silapb.SignedExecutionPayloadEnvelope),
 	}
 
 	for _, opt := range opts {
@@ -286,7 +286,7 @@ func newPayloadAttestationMessageFromInitializer(ini *verification.Initializer) 
 }
 
 func newSignedProposerPreferencesVerifierFromInitializer(ini *verification.Initializer) verification.NewSignedProposerPreferencesVerifier {
-	return func(p *ethpb.SignedProposerPreferences, reqs []verification.Requirement) verification.SignedProposerPreferencesVerifier {
+	return func(p *silapb.SignedProposerPreferences, reqs []verification.Requirement) verification.SignedProposerPreferencesVerifier {
 		return ini.NewSignedProposerPreferencesVerifier(p, reqs)
 	}
 }

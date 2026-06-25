@@ -242,12 +242,12 @@ func TestWeb3SignerConfig(t *testing.T) {
 			name: "happy path with external url",
 			args: &args{
 				baseURL:          "http://localhost:8545",
-				publicKeysOrURLs: []string{"http://localhost:8545/api/v1/eth2/publicKeys"},
+				publicKeysOrURLs: []string{"http://localhost:8545/api/v1/sila/publicKeys"},
 			},
 			want: &remoteweb3signer.SetupConfig{
 				BaseEndpoint:          "http://localhost:8545",
 				GenesisValidatorsRoot: nil,
-				PublicKeysURL:         "http://localhost:8545/api/v1/eth2/publicKeys",
+				PublicKeysURL:         "http://localhost:8545/api/v1/sila/publicKeys",
 				ProvidedPublicKeys:    nil,
 			},
 		},

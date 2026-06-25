@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	slashersimulator "github.com/sila-chain/Sila-Consensus-Core/v7/testing/slasher/simulator"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -71,13 +71,13 @@ func TestEndToEnd_SlasherSimulator(t *testing.T) {
 
 	// We setup validators in the beacon state along with their
 	// private keys used to generate valid signatures in generated objects.
-	validators := make([]*ethpb.Validator, simulatorParams.NumValidators)
+	validators := make([]*silapb.Validator, simulatorParams.NumValidators)
 	privKeys := make(map[primitives.ValidatorIndex]bls.SecretKey)
 	for valIdx := range validators {
 		privKey, err := bls.RandKey()
 		require.NoError(t, err)
 		privKeys[primitives.ValidatorIndex(valIdx)] = privKey
-		validators[valIdx] = &ethpb.Validator{
+		validators[valIdx] = &silapb.Validator{
 			PublicKey:             privKey.PublicKey().Marshal(),
 			WithdrawalCredentials: make([]byte, 32),
 		}

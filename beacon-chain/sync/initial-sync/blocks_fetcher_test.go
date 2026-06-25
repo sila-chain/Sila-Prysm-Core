@@ -26,7 +26,7 @@ import (
 	leakybucket "github.com/sila-chain/Sila-Consensus-Core/v7/container/leaky-bucket"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/slice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -287,7 +287,7 @@ func TestBlocksFetcher_RoundRobin(t *testing.T) {
 				State: st,
 				Root:  genesisRoot[:],
 				DB:    beaconDB,
-				FinalizedCheckPoint: &ethpb.Checkpoint{
+				FinalizedCheckPoint: &silapb.Checkpoint{
 					Epoch: 0,
 				},
 				Genesis:        time.Now(),
@@ -521,7 +521,7 @@ func TestBlocksFetcher_requestBeaconBlocksByRange(t *testing.T) {
 	if len(peerIDs) > params.BeaconConfig().MaxPeersToSync {
 		peerIDs = peerIDs[:params.BeaconConfig().MaxPeersToSync]
 	}
-	req := &ethpb.BeaconBlocksByRangeRequest{
+	req := &silapb.BeaconBlocksByRangeRequest{
 		StartSlot: 1,
 		Step:      1,
 		Count:     uint64(blockBatchLimit),
@@ -544,7 +544,7 @@ func TestBlocksFetcher_RequestBlocksRateLimitingLocks(t *testing.T) {
 	p1.Connect(p2)
 	p1.Connect(p3)
 	require.Equal(t, 2, len(p1.BHost.Network().Peers()), "Expected peers to be connected")
-	req := &ethpb.BeaconBlocksByRangeRequest{
+	req := &silapb.BeaconBlocksByRangeRequest{
 		StartSlot: 100,
 		Step:      1,
 		Count:     64,
@@ -613,7 +613,7 @@ func TestBlocksFetcher_WaitForBandwidth(t *testing.T) {
 	p2 := p2ptest.NewTestP2P(t)
 	p1.Connect(p2)
 	require.Equal(t, 1, len(p1.BHost.Network().Peers()), "Expected peers to be connected")
-	req := &ethpb.BeaconBlocksByRangeRequest{
+	req := &silapb.BeaconBlocksByRangeRequest{
 		Count: 64,
 	}
 
@@ -648,19 +648,19 @@ func TestBlocksFetcher_requestBlocksFromPeerReturningInvalidBlocks(t *testing.T)
 	p1 := p2ptest.NewTestP2P(t)
 	tests := []struct {
 		name         string
-		req          *ethpb.BeaconBlocksByRangeRequest
-		handlerGenFn func(req *ethpb.BeaconBlocksByRangeRequest) func(stream network.Stream)
+		req          *silapb.BeaconBlocksByRangeRequest
+		handlerGenFn func(req *silapb.BeaconBlocksByRangeRequest) func(stream network.Stream)
 		wantedErr    string
-		validate     func(req *ethpb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock)
+		validate     func(req *silapb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock)
 	}{
 		{
 			name: "no error",
-			req: &ethpb.BeaconBlocksByRangeRequest{
+			req: &silapb.BeaconBlocksByRangeRequest{
 				StartSlot: 100,
 				Step:      4,
 				Count:     64,
 			},
-			handlerGenFn: func(req *ethpb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
+			handlerGenFn: func(req *silapb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
 				return func(stream network.Stream) {
 					for i := req.StartSlot; i < req.StartSlot.Add(req.Count*req.Step); i += primitives.Slot(req.Step) {
 						blk := util.NewBeaconBlock()
@@ -673,18 +673,18 @@ func TestBlocksFetcher_requestBlocksFromPeerReturningInvalidBlocks(t *testing.T)
 					assert.NoError(t, stream.Close())
 				}
 			},
-			validate: func(req *ethpb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
+			validate: func(req *silapb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
 				assert.Equal(t, req.Count, uint64(len(blocks)))
 			},
 		},
 		{
 			name: "too many blocks",
-			req: &ethpb.BeaconBlocksByRangeRequest{
+			req: &silapb.BeaconBlocksByRangeRequest{
 				StartSlot: 100,
 				Step:      1,
 				Count:     64,
 			},
-			handlerGenFn: func(req *ethpb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
+			handlerGenFn: func(req *silapb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
 				return func(stream network.Stream) {
 					for i := req.StartSlot; i < req.StartSlot.Add(req.Count*req.Step+1); i += primitives.Slot(req.Step) {
 						blk := util.NewBeaconBlock()
@@ -697,19 +697,19 @@ func TestBlocksFetcher_requestBlocksFromPeerReturningInvalidBlocks(t *testing.T)
 					assert.NoError(t, stream.Close())
 				}
 			},
-			validate: func(req *ethpb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
+			validate: func(req *silapb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
 				assert.Equal(t, 0, len(blocks))
 			},
 			wantedErr: beaconsync.ErrInvalidFetchedData.Error(),
 		},
 		{
 			name: "not in a consecutive order",
-			req: &ethpb.BeaconBlocksByRangeRequest{
+			req: &silapb.BeaconBlocksByRangeRequest{
 				StartSlot: 100,
 				Step:      1,
 				Count:     64,
 			},
-			handlerGenFn: func(req *ethpb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
+			handlerGenFn: func(req *silapb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
 				return func(stream network.Stream) {
 					blk := util.NewBeaconBlock()
 					blk.Block.Slot = 163
@@ -726,19 +726,19 @@ func TestBlocksFetcher_requestBlocksFromPeerReturningInvalidBlocks(t *testing.T)
 					assert.NoError(t, stream.Close())
 				}
 			},
-			validate: func(req *ethpb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
+			validate: func(req *silapb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
 				assert.Equal(t, 0, len(blocks))
 			},
 			wantedErr: beaconsync.ErrInvalidFetchedData.Error(),
 		},
 		{
 			name: "same slot number",
-			req: &ethpb.BeaconBlocksByRangeRequest{
+			req: &silapb.BeaconBlocksByRangeRequest{
 				StartSlot: 100,
 				Step:      1,
 				Count:     64,
 			},
-			handlerGenFn: func(req *ethpb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
+			handlerGenFn: func(req *silapb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
 				return func(stream network.Stream) {
 					blk := util.NewBeaconBlock()
 					blk.Block.Slot = 160
@@ -756,19 +756,19 @@ func TestBlocksFetcher_requestBlocksFromPeerReturningInvalidBlocks(t *testing.T)
 					assert.NoError(t, stream.Close())
 				}
 			},
-			validate: func(req *ethpb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
+			validate: func(req *silapb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
 				assert.Equal(t, 0, len(blocks))
 			},
 			wantedErr: beaconsync.ErrInvalidFetchedData.Error(),
 		},
 		{
 			name: "slot is too low",
-			req: &ethpb.BeaconBlocksByRangeRequest{
+			req: &silapb.BeaconBlocksByRangeRequest{
 				StartSlot: 100,
 				Step:      1,
 				Count:     64,
 			},
-			handlerGenFn: func(req *ethpb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
+			handlerGenFn: func(req *silapb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
 				return func(stream network.Stream) {
 					defer func() {
 						assert.NoError(t, stream.Close())
@@ -792,18 +792,18 @@ func TestBlocksFetcher_requestBlocksFromPeerReturningInvalidBlocks(t *testing.T)
 				}
 			},
 			wantedErr: beaconsync.ErrInvalidFetchedData.Error(),
-			validate: func(req *ethpb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
+			validate: func(req *silapb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
 				assert.Equal(t, 0, len(blocks))
 			},
 		},
 		{
 			name: "slot is too high",
-			req: &ethpb.BeaconBlocksByRangeRequest{
+			req: &silapb.BeaconBlocksByRangeRequest{
 				StartSlot: 100,
 				Step:      1,
 				Count:     64,
 			},
-			handlerGenFn: func(req *ethpb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
+			handlerGenFn: func(req *silapb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
 				return func(stream network.Stream) {
 					defer func() {
 						assert.NoError(t, stream.Close())
@@ -827,18 +827,18 @@ func TestBlocksFetcher_requestBlocksFromPeerReturningInvalidBlocks(t *testing.T)
 				}
 			},
 			wantedErr: beaconsync.ErrInvalidFetchedData.Error(),
-			validate: func(req *ethpb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
+			validate: func(req *silapb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
 				assert.Equal(t, 0, len(blocks))
 			},
 		},
 		{
 			name: "valid step increment",
-			req: &ethpb.BeaconBlocksByRangeRequest{
+			req: &silapb.BeaconBlocksByRangeRequest{
 				StartSlot: 100,
 				Step:      5,
 				Count:     64,
 			},
-			handlerGenFn: func(req *ethpb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
+			handlerGenFn: func(req *silapb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
 				return func(stream network.Stream) {
 					blk := util.NewBeaconBlock()
 					blk.Block.Slot = 100
@@ -855,18 +855,18 @@ func TestBlocksFetcher_requestBlocksFromPeerReturningInvalidBlocks(t *testing.T)
 					assert.NoError(t, stream.Close())
 				}
 			},
-			validate: func(req *ethpb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
+			validate: func(req *silapb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
 				assert.Equal(t, 2, len(blocks))
 			},
 		},
 		{
 			name: "invalid step increment",
-			req: &ethpb.BeaconBlocksByRangeRequest{
+			req: &silapb.BeaconBlocksByRangeRequest{
 				StartSlot: 100,
 				Step:      5,
 				Count:     64,
 			},
-			handlerGenFn: func(req *ethpb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
+			handlerGenFn: func(req *silapb.BeaconBlocksByRangeRequest) func(stream network.Stream) {
 				return func(stream network.Stream) {
 					blk := util.NewBeaconBlock()
 					blk.Block.Slot = 100
@@ -883,7 +883,7 @@ func TestBlocksFetcher_requestBlocksFromPeerReturningInvalidBlocks(t *testing.T)
 					assert.NoError(t, stream.Close())
 				}
 			},
-			validate: func(req *ethpb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
+			validate: func(req *silapb.BeaconBlocksByRangeRequest, blocks []interfaces.ReadOnlySignedBeaconBlock) {
 				assert.Equal(t, 0, len(blocks))
 			},
 			wantedErr: beaconsync.ErrInvalidFetchedData.Error(),
@@ -1048,7 +1048,7 @@ func TestBlobRangeForBlocks(t *testing.T) {
 }
 
 func TestBlobRequest(t *testing.T) {
-	var nilReq *ethpb.BlobSidecarsByRangeRequest
+	var nilReq *silapb.BlobSidecarsByRangeRequest
 	// no blocks
 	req := countCommitments([]blocks.BlockWithROSidecars{}, 0).blobRange(nil).Request()
 	require.Equal(t, nilReq, req)
@@ -1119,7 +1119,7 @@ func TestCommitmentCountList(t *testing.T) {
 		cc       commitmentCountList
 		bss      func(*testing.T) filesystem.BlobStorageSummarizer
 		expected *blobRange
-		request  *ethpb.BlobSidecarsByRangeRequest
+		request  *silapb.BlobSidecarsByRangeRequest
 	}{
 		{
 			name:     "nil commitmentCount is safe",
@@ -1133,7 +1133,7 @@ func TestCommitmentCountList(t *testing.T) {
 				{slot: denebRel(11235), count: 1},
 			},
 			expected: &blobRange{low: denebRel(11235), high: denebRel(11235)},
-			request:  &ethpb.BlobSidecarsByRangeRequest{StartSlot: denebRel(11235), Count: 1},
+			request:  &silapb.BlobSidecarsByRangeRequest{StartSlot: denebRel(11235), Count: 1},
 		},
 		{
 			name: "nil bss, sparse slots",
@@ -1143,7 +1143,7 @@ func TestCommitmentCountList(t *testing.T) {
 				{slot: denebRel(11250), count: 3},
 			},
 			expected: &blobRange{low: denebRel(11235), high: denebRel(11250)},
-			request:  &ethpb.BlobSidecarsByRangeRequest{StartSlot: denebRel(11235), Count: 16},
+			request:  &silapb.BlobSidecarsByRangeRequest{StartSlot: denebRel(11235), Count: 16},
 		},
 		{
 			name: "AllAvailable in middle, some avail low, none high",
@@ -1160,7 +1160,7 @@ func TestCommitmentCountList(t *testing.T) {
 				{slot: denebRel(15), count: 3},
 			},
 			expected: &blobRange{low: denebRel(0), high: denebRel(15)},
-			request:  &ethpb.BlobSidecarsByRangeRequest{StartSlot: denebRel(0), Count: 16},
+			request:  &silapb.BlobSidecarsByRangeRequest{StartSlot: denebRel(0), Count: 16},
 		},
 		{
 			name: "AllAvailable at high and low",
@@ -1177,7 +1177,7 @@ func TestCommitmentCountList(t *testing.T) {
 				{slot: denebRel(15), count: maxBlobs, root: bytesutil.ToBytes32([]byte("2"))},
 			},
 			expected: &blobRange{low: denebRel(5), high: denebRel(5)},
-			request:  &ethpb.BlobSidecarsByRangeRequest{StartSlot: denebRel(5), Count: 1},
+			request:  &silapb.BlobSidecarsByRangeRequest{StartSlot: denebRel(5), Count: 1},
 		},
 		{
 			name: "AllAvailable at high and low, adjacent range in middle",
@@ -1195,7 +1195,7 @@ func TestCommitmentCountList(t *testing.T) {
 				{slot: denebRel(15), count: maxBlobs, root: bytesutil.ToBytes32([]byte("2"))},
 			},
 			expected: &blobRange{low: denebRel(5), high: denebRel(6)},
-			request:  &ethpb.BlobSidecarsByRangeRequest{StartSlot: denebRel(5), Count: 2},
+			request:  &silapb.BlobSidecarsByRangeRequest{StartSlot: denebRel(5), Count: 2},
 		},
 		{
 			name: "AllAvailable at high and low, range in middle",
@@ -1214,7 +1214,7 @@ func TestCommitmentCountList(t *testing.T) {
 				{slot: denebRel(15), count: maxBlobs, root: bytesutil.ToBytes32([]byte("2"))},
 			},
 			expected: &blobRange{low: denebRel(5), high: denebRel(10)},
-			request:  &ethpb.BlobSidecarsByRangeRequest{StartSlot: denebRel(5), Count: 6},
+			request:  &silapb.BlobSidecarsByRangeRequest{StartSlot: denebRel(5), Count: 6},
 		},
 	}
 	for _, c := range cases {
@@ -1247,8 +1247,8 @@ func testSequenceBlockWithBlob(t *testing.T, nblocks int) ([]blocks.BlockWithROS
 	return bwb, blobs
 }
 
-func testReqFromResp(bwb []blocks.BlockWithROSidecars) *ethpb.BlobSidecarsByRangeRequest {
-	return &ethpb.BlobSidecarsByRangeRequest{
+func testReqFromResp(bwb []blocks.BlockWithROSidecars) *silapb.BlobSidecarsByRangeRequest {
+	return &silapb.BlobSidecarsByRangeRequest{
 		StartSlot: bwb[0].Block.Block().Slot(),
 		Count:     uint64(bwb[len(bwb)-1].Block.Block().Slot()-bwb[0].Block.Block().Slot()) + 1,
 	}

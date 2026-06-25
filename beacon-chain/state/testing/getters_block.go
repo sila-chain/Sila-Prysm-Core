@@ -6,11 +6,11 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
-type getStateWithLatestBlockHeader func(*ethpb.BeaconBlockHeader) (state.BeaconState, error)
+type getStateWithLatestBlockHeader func(*silapb.BeaconBlockHeader) (state.BeaconState, error)
 
 func VerifyBeaconStateLatestBlockHeader(
 	t *testing.T,
@@ -20,9 +20,9 @@ func VerifyBeaconStateLatestBlockHeader(
 	s, err := factory()
 	require.NoError(t, err)
 	got := s.LatestBlockHeader()
-	require.DeepEqual(t, (*ethpb.BeaconBlockHeader)(nil), got)
+	require.DeepEqual(t, (*silapb.BeaconBlockHeader)(nil), got)
 
-	want := &ethpb.BeaconBlockHeader{Slot: 100}
+	want := &silapb.BeaconBlockHeader{Slot: 100}
 	s, err = factoryLBH(want)
 	require.NoError(t, err)
 	got = s.LatestBlockHeader()

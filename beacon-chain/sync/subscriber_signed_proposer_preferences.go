@@ -5,12 +5,12 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed"
 	opfeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/operation"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"google.golang.org/protobuf/proto"
 )
 
 func (s *Service) signedProposerPreferencesSubscriber(_ context.Context, msg proto.Message) error {
-	signedPreferences, ok := msg.(*ethpb.SignedProposerPreferences)
+	signedPreferences, ok := msg.(*silapb.SignedProposerPreferences)
 	if !ok {
 		return errWrongMessage
 	}

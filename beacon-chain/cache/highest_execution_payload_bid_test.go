@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -86,9 +86,9 @@ func testSignedExecutionPayloadBid(
 	parentHash [32]byte,
 	parentRoot [32]byte,
 	value uint64,
-) *ethpb.SignedExecutionPayloadBid {
-	return &ethpb.SignedExecutionPayloadBid{
-		Message: &ethpb.ExecutionPayloadBid{
+) *silapb.SignedExecutionPayloadBid {
+	return &silapb.SignedExecutionPayloadBid{
+		Message: &silapb.ExecutionPayloadBid{
 			Slot:                  slot,
 			ParentBlockHash:       bytes.Clone(parentHash[:]),
 			ParentBlockRoot:       bytes.Clone(parentRoot[:]),

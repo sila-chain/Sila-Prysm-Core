@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // PoolInserter is capable of inserting new slashing objects into the operations pool.
@@ -15,12 +15,12 @@ type PoolInserter interface {
 	InsertAttesterSlashing(
 		ctx context.Context,
 		state state.ReadOnlyBeaconState,
-		slashing ethpb.AttSlashing,
+		slashing silapb.AttSlashing,
 	) error
 	InsertProposerSlashing(
 		ctx context.Context,
 		state state.ReadOnlyBeaconState,
-		slashing *ethpb.ProposerSlashing,
+		slashing *silapb.ProposerSlashing,
 	) error
 }
 
@@ -28,10 +28,10 @@ type PoolInserter interface {
 // This pool is used by proposers to insert data into new blocks.
 type PoolManager interface {
 	PoolInserter
-	PendingAttesterSlashings(ctx context.Context, state state.ReadOnlyBeaconState, noLimit bool) []ethpb.AttSlashing
-	PendingProposerSlashings(ctx context.Context, state state.ReadOnlyBeaconState, noLimit bool) []*ethpb.ProposerSlashing
-	MarkIncludedAttesterSlashing(as ethpb.AttSlashing)
-	MarkIncludedProposerSlashing(ps *ethpb.ProposerSlashing)
+	PendingAttesterSlashings(ctx context.Context, state state.ReadOnlyBeaconState, noLimit bool) []silapb.AttSlashing
+	PendingProposerSlashings(ctx context.Context, state state.ReadOnlyBeaconState, noLimit bool) []*silapb.ProposerSlashing
+	MarkIncludedAttesterSlashing(as silapb.AttSlashing)
+	MarkIncludedProposerSlashing(ps *silapb.ProposerSlashing)
 	ConvertToElectra()
 }
 
@@ -52,7 +52,7 @@ type PoolService struct {
 // Pool is a concrete implementation of PoolManager.
 type Pool struct {
 	lock                    sync.RWMutex
-	pendingProposerSlashing []*ethpb.ProposerSlashing
+	pendingProposerSlashing []*silapb.ProposerSlashing
 	pendingAttesterSlashing []*PendingAttesterSlashing
 	included                map[primitives.ValidatorIndex]bool
 }
@@ -60,6 +60,6 @@ type Pool struct {
 // PendingAttesterSlashing represents an attester slashing in the operation pool.
 // Allows for easy binary searching of included validator indexes.
 type PendingAttesterSlashing struct {
-	attesterSlashing ethpb.AttSlashing
+	attesterSlashing silapb.AttSlashing
 	validatorToSlash primitives.ValidatorIndex
 }

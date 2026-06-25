@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -58,24 +58,24 @@ func TestBidVerifier_VerifyBuilderActive(t *testing.T) {
 	wrapped, err := blocks.WrappedROSignedExecutionPayloadBid(signed)
 	require.NoError(t, err)
 
-	activeState := newBidState(t, 1, func(s *ethpb.BeaconStateGloas) {
-		s.Builders = []*ethpb.Builder{{
+	activeState := newBidState(t, 1, func(s *silapb.BeaconStateGloas) {
+		s.Builders = []*silapb.Builder{{
 			Balance:           primitives.Gwei(params.BeaconConfig().MinDepositAmount + 100),
 			DepositEpoch:      0,
 			WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
 		}}
-		s.FinalizedCheckpoint = &ethpb.Checkpoint{Epoch: 1}
+		s.FinalizedCheckpoint = &silapb.Checkpoint{Epoch: 1}
 	})
 	verifier := &BidVerifier{results: newResults(RequireBidBuilderActive), b: wrapped}
 	require.NoError(t, verifier.VerifyBuilderActive(activeState))
 
-	inactiveState := newBidState(t, 1, func(s *ethpb.BeaconStateGloas) {
-		s.Builders = []*ethpb.Builder{{
+	inactiveState := newBidState(t, 1, func(s *silapb.BeaconStateGloas) {
+		s.Builders = []*silapb.Builder{{
 			Balance:           primitives.Gwei(params.BeaconConfig().MinDepositAmount + 100),
 			DepositEpoch:      0,
 			WithdrawableEpoch: 2,
 		}}
-		s.FinalizedCheckpoint = &ethpb.Checkpoint{Epoch: 3}
+		s.FinalizedCheckpoint = &silapb.Checkpoint{Epoch: 3}
 	})
 	verifier = &BidVerifier{results: newResults(RequireBidBuilderActive), b: wrapped}
 	require.ErrorIs(t, verifier.VerifyBuilderActive(inactiveState), ErrBidBuilderNotActive)
@@ -175,24 +175,24 @@ func TestBidVerifier_VerifyBuilderCanCoverBid(t *testing.T) {
 	wrapped, err := blocks.WrappedROSignedExecutionPayloadBid(signed)
 	require.NoError(t, err)
 
-	coverState := newBidState(t, 1, func(s *ethpb.BeaconStateGloas) {
-		s.Builders = []*ethpb.Builder{{
+	coverState := newBidState(t, 1, func(s *silapb.BeaconStateGloas) {
+		s.Builders = []*silapb.Builder{{
 			Balance:           primitives.Gwei(params.BeaconConfig().MinDepositAmount + uint64(signed.Message.Value) + 100),
 			DepositEpoch:      0,
 			WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
 		}}
-		s.FinalizedCheckpoint = &ethpb.Checkpoint{Epoch: 1}
+		s.FinalizedCheckpoint = &silapb.Checkpoint{Epoch: 1}
 	})
 	verifier := &BidVerifier{results: newResults(RequireBidBuilderCanCover), b: wrapped}
 	require.NoError(t, verifier.VerifyBuilderCanCoverBid(coverState))
 
-	insufficientState := newBidState(t, 1, func(s *ethpb.BeaconStateGloas) {
-		s.Builders = []*ethpb.Builder{{
+	insufficientState := newBidState(t, 1, func(s *silapb.BeaconStateGloas) {
+		s.Builders = []*silapb.Builder{{
 			Balance:           primitives.Gwei(params.BeaconConfig().MinDepositAmount + uint64(signed.Message.Value) - 1),
 			DepositEpoch:      0,
 			WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
 		}}
-		s.FinalizedCheckpoint = &ethpb.Checkpoint{Epoch: 1}
+		s.FinalizedCheckpoint = &silapb.Checkpoint{Epoch: 1}
 	})
 	verifier = &BidVerifier{results: newResults(RequireBidBuilderCanCover), b: wrapped}
 	require.ErrorIs(t, verifier.VerifyBuilderCanCoverBid(insufficientState), ErrBidBuilderCannotCover)
@@ -204,14 +204,14 @@ func TestBidVerifier_VerifySignature(t *testing.T) {
 	builderPubkey := sk.PublicKey().Marshal()
 	signed := testSignedExecutionPayloadBid(t, 4)
 	signed.Message.BuilderIndex = 0
-	st := newBidState(t, 4, func(s *ethpb.BeaconStateGloas) {
-		s.Builders = []*ethpb.Builder{{
+	st := newBidState(t, 4, func(s *silapb.BeaconStateGloas) {
+		s.Builders = []*silapb.Builder{{
 			Pubkey:            builderPubkey,
 			Balance:           primitives.Gwei(params.BeaconConfig().MinDepositAmount + 100),
 			DepositEpoch:      0,
 			WithdrawableEpoch: params.BeaconConfig().FarFutureEpoch,
 		}}
-		s.FinalizedCheckpoint = &ethpb.Checkpoint{Epoch: 1}
+		s.FinalizedCheckpoint = &silapb.Checkpoint{Epoch: 1}
 	})
 
 	sig := signBidForState(t, sk, signed.Message, st)
@@ -232,11 +232,11 @@ func TestBidVerifier_VerifySignature(t *testing.T) {
 	require.ErrorIs(t, verifier.VerifySignature(st), signing.ErrSigFailedToVerify)
 }
 
-func testSignedExecutionPayloadBid(t *testing.T, slot primitives.Slot) *ethpb.SignedExecutionPayloadBid {
+func testSignedExecutionPayloadBid(t *testing.T, slot primitives.Slot) *silapb.SignedExecutionPayloadBid {
 	t.Helper()
 
-	return &ethpb.SignedExecutionPayloadBid{
-		Message: &ethpb.ExecutionPayloadBid{
+	return &silapb.SignedExecutionPayloadBid{
+		Message: &silapb.ExecutionPayloadBid{
 			Slot:                  slot,
 			BuilderIndex:          0,
 			ParentBlockHash:       bytes.Repeat([]byte{0x01}, 32),
@@ -253,11 +253,11 @@ func testSignedExecutionPayloadBid(t *testing.T, slot primitives.Slot) *ethpb.Si
 	}
 }
 
-func newBidState(t *testing.T, slot primitives.Slot, mutate func(*ethpb.BeaconStateGloas)) state.BeaconState {
+func newBidState(t *testing.T, slot primitives.Slot, mutate func(*silapb.BeaconStateGloas)) state.BeaconState {
 	t.Helper()
 
 	genesisRoot := bytes.Repeat([]byte{0x11}, 32)
-	st, err := util.NewBeaconStateGloas(func(s *ethpb.BeaconStateGloas) error {
+	st, err := util.NewBeaconStateGloas(func(s *silapb.BeaconStateGloas) error {
 		s.Slot = slot
 		s.GenesisValidatorsRoot = genesisRoot
 		if mutate != nil {
@@ -269,7 +269,7 @@ func newBidState(t *testing.T, slot primitives.Slot, mutate func(*ethpb.BeaconSt
 	return st
 }
 
-func signBidForState(t *testing.T, sk bls.SecretKey, bid *ethpb.ExecutionPayloadBid, st state.ReadOnlyBeaconState) [96]byte {
+func signBidForState(t *testing.T, sk bls.SecretKey, bid *silapb.ExecutionPayloadBid, st state.ReadOnlyBeaconState) [96]byte {
 	t.Helper()
 
 	epoch := slots.ToEpoch(bid.Slot)

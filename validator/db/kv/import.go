@@ -10,7 +10,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/slashings"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/iface"
@@ -405,7 +405,7 @@ func saveAttestations(ctx context.Context, attestingHistoryByPubKey map[[fieldpa
 			log.WithError(err).Debug("Could not increase progress bar")
 		}
 
-		indexedAtts := make([]*ethpb.IndexedAttestation, len(attestations))
+		indexedAtts := make([]*silapb.IndexedAttestation, len(attestations))
 		signingRoots := make([][]byte, len(attestations))
 
 		for i, att := range attestations {
@@ -422,13 +422,13 @@ func saveAttestations(ctx context.Context, attestingHistoryByPubKey map[[fieldpa
 	return nil
 }
 
-func createAttestation(source, target primitives.Epoch) *ethpb.IndexedAttestation {
-	return &ethpb.IndexedAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{
+func createAttestation(source, target primitives.Epoch) *silapb.IndexedAttestation {
+	return &silapb.IndexedAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{
 				Epoch: source,
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: target,
 			},
 		},

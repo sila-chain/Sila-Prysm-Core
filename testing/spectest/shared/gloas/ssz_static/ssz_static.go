@@ -8,7 +8,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	// enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	common "github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/common/ssz_static"
 	fssz "github.com/sila-chain/fastssz"
@@ -20,13 +20,13 @@ func RunSSZStaticTests(t *testing.T, config string) {
 }
 
 func customHtr(t *testing.T, htrs []common.HTR, object any) []common.HTR {
-	_, ok := object.(*ethpb.BeaconStateGloas)
+	_, ok := object.(*silapb.BeaconStateGloas)
 	if !ok {
 		return htrs
 	}
 
 	htrs = append(htrs, func(s any) ([32]byte, error) {
-		beaconState, err := state_native.InitializeFromProtoUnsafeGloas(s.(*ethpb.BeaconStateGloas))
+		beaconState, err := state_native.InitializeFromProtoUnsafeGloas(s.(*silapb.BeaconStateGloas))
 		require.NoError(t, err)
 
 		return beaconState.HashTreeRoot(context.Background())
@@ -42,37 +42,37 @@ func unmarshalledSSZ(t *testing.T, serializedBytes []byte, folderName string) (a
 	switch folderName {
 	// Gloas specific types
 	case "ExecutionPayloadBid":
-		obj = &ethpb.ExecutionPayloadBid{}
+		obj = &silapb.ExecutionPayloadBid{}
 	case "SignedExecutionPayloadBid":
-		obj = &ethpb.SignedExecutionPayloadBid{}
+		obj = &silapb.SignedExecutionPayloadBid{}
 	case "PayloadAttestationData":
-		obj = &ethpb.PayloadAttestationData{}
+		obj = &silapb.PayloadAttestationData{}
 	case "PayloadAttestation":
-		obj = &ethpb.PayloadAttestation{}
+		obj = &silapb.PayloadAttestation{}
 	case "PayloadAttestationMessage":
-		obj = &ethpb.PayloadAttestationMessage{}
+		obj = &silapb.PayloadAttestationMessage{}
 	case "BeaconBlock":
-		obj = &ethpb.BeaconBlockGloas{}
+		obj = &silapb.BeaconBlockGloas{}
 	case "BeaconBlockBody":
-		obj = &ethpb.BeaconBlockBodyGloas{}
+		obj = &silapb.BeaconBlockBodyGloas{}
 	case "BeaconState":
-		obj = &ethpb.BeaconStateGloas{}
+		obj = &silapb.BeaconStateGloas{}
 	case "Builder":
-		obj = &ethpb.Builder{}
+		obj = &silapb.Builder{}
 	case "BuilderPendingPayment":
-		obj = &ethpb.BuilderPendingPayment{}
+		obj = &silapb.BuilderPendingPayment{}
 	case "BuilderPendingWithdrawal":
-		obj = &ethpb.BuilderPendingWithdrawal{}
+		obj = &silapb.BuilderPendingWithdrawal{}
 	case "ExecutionPayloadEnvelope":
-		obj = &ethpb.ExecutionPayloadEnvelope{}
+		obj = &silapb.ExecutionPayloadEnvelope{}
 	case "SignedExecutionPayloadEnvelope":
-		obj = &ethpb.SignedExecutionPayloadEnvelope{}
+		obj = &silapb.SignedExecutionPayloadEnvelope{}
 	case "ForkChoiceNode":
 		t.Skip("Not a consensus type")
 	case "IndexedPayloadAttestation":
 		t.Skip("Not a consensus type")
 	case "DataColumnSidecar":
-		obj = &ethpb.DataColumnSidecarGloas{}
+		obj = &silapb.DataColumnSidecarGloas{}
 	case "SignedProposerPreferences", "ProposerPreferences":
 		t.Skip("p2p-only type; not part of the consensus state transition")
 
@@ -82,91 +82,91 @@ func unmarshalledSSZ(t *testing.T, serializedBytes []byte, folderName string) (a
 	case "ExecutionPayloadHeader":
 		obj = &enginev1.ExecutionPayloadHeaderDeneb{}
 	case "Attestation":
-		obj = &ethpb.AttestationElectra{}
+		obj = &silapb.AttestationElectra{}
 	case "AttestationData":
-		obj = &ethpb.AttestationData{}
+		obj = &silapb.AttestationData{}
 	case "AttesterSlashing":
-		obj = &ethpb.AttesterSlashingElectra{}
+		obj = &silapb.AttesterSlashingElectra{}
 	case "AggregateAndProof":
-		obj = &ethpb.AggregateAttestationAndProofElectra{}
+		obj = &silapb.AggregateAttestationAndProofElectra{}
 	case "BeaconBlockHeader":
-		obj = &ethpb.BeaconBlockHeader{}
+		obj = &silapb.BeaconBlockHeader{}
 	case "Checkpoint":
-		obj = &ethpb.Checkpoint{}
+		obj = &silapb.Checkpoint{}
 	case "Deposit":
-		obj = &ethpb.Deposit{}
+		obj = &silapb.Deposit{}
 	case "DepositMessage":
-		obj = &ethpb.DepositMessage{}
+		obj = &silapb.DepositMessage{}
 	case "DepositData":
-		obj = &ethpb.Deposit_Data{}
+		obj = &silapb.Deposit_Data{}
 	case "Eth1Data":
-		obj = &ethpb.Eth1Data{}
+		obj = &silapb.Eth1Data{}
 	case "Eth1Block":
 		t.Skip("Unused type")
 	case "Fork":
-		obj = &ethpb.Fork{}
+		obj = &silapb.Fork{}
 	case "ForkData":
-		obj = &ethpb.ForkData{}
+		obj = &silapb.ForkData{}
 	case "HistoricalBatch":
-		obj = &ethpb.HistoricalBatch{}
+		obj = &silapb.HistoricalBatch{}
 	case "IndexedAttestation":
-		obj = &ethpb.IndexedAttestationElectra{}
+		obj = &silapb.IndexedAttestationElectra{}
 	case "PendingAttestation":
-		obj = &ethpb.PendingAttestation{}
+		obj = &silapb.PendingAttestation{}
 	case "ProposerSlashing":
-		obj = &ethpb.ProposerSlashing{}
+		obj = &silapb.ProposerSlashing{}
 	case "SignedAggregateAndProof":
-		obj = &ethpb.SignedAggregateAttestationAndProofElectra{}
+		obj = &silapb.SignedAggregateAttestationAndProofElectra{}
 	case "SignedBeaconBlock":
-		obj = &ethpb.SignedBeaconBlockGloas{}
+		obj = &silapb.SignedBeaconBlockGloas{}
 	case "SignedBeaconBlockHeader":
-		obj = &ethpb.SignedBeaconBlockHeader{}
+		obj = &silapb.SignedBeaconBlockHeader{}
 	case "SignedVoluntaryExit":
-		obj = &ethpb.SignedVoluntaryExit{}
+		obj = &silapb.SignedVoluntaryExit{}
 	case "SigningData":
-		obj = &ethpb.SigningData{}
+		obj = &silapb.SigningData{}
 	case "Validator":
-		obj = &ethpb.Validator{}
+		obj = &silapb.Validator{}
 	case "VoluntaryExit":
-		obj = &ethpb.VoluntaryExit{}
+		obj = &silapb.VoluntaryExit{}
 	case "SyncCommitteeMessage":
-		obj = &ethpb.SyncCommitteeMessage{}
+		obj = &silapb.SyncCommitteeMessage{}
 	case "SyncCommitteeContribution":
-		obj = &ethpb.SyncCommitteeContribution{}
+		obj = &silapb.SyncCommitteeContribution{}
 	case "ContributionAndProof":
-		obj = &ethpb.ContributionAndProof{}
+		obj = &silapb.ContributionAndProof{}
 	case "SignedContributionAndProof":
-		obj = &ethpb.SignedContributionAndProof{}
+		obj = &silapb.SignedContributionAndProof{}
 	case "SingleAttestation":
-		obj = &ethpb.SingleAttestation{}
+		obj = &silapb.SingleAttestation{}
 	case "SyncAggregate":
-		obj = &ethpb.SyncAggregate{}
+		obj = &silapb.SyncAggregate{}
 	case "SyncAggregatorSelectionData":
-		obj = &ethpb.SyncAggregatorSelectionData{}
+		obj = &silapb.SyncAggregatorSelectionData{}
 	case "SyncCommittee":
-		obj = &ethpb.SyncCommittee{}
+		obj = &silapb.SyncCommittee{}
 	case "LightClientOptimisticUpdate", "LightClientFinalityUpdate", "LightClientBootstrap", "LightClientUpdate", "LightClientHeader":
 		t.Skip("Gloas light client types not yet implemented")
 	case "BlobIdentifier":
-		obj = &ethpb.BlobIdentifier{}
+		obj = &silapb.BlobIdentifier{}
 	case "BlobSidecar":
 		t.Skip("Unused type")
 	case "PowBlock":
-		obj = &ethpb.PowBlock{}
+		obj = &silapb.PowBlock{}
 	case "Withdrawal":
 		obj = &enginev1.Withdrawal{}
 	case "HistoricalSummary":
-		obj = &ethpb.HistoricalSummary{}
+		obj = &silapb.HistoricalSummary{}
 	case "BLSToExecutionChange":
-		obj = &ethpb.BLSToExecutionChange{}
+		obj = &silapb.BLSToExecutionChange{}
 	case "SignedBLSToExecutionChange":
-		obj = &ethpb.SignedBLSToExecutionChange{}
+		obj = &silapb.SignedBLSToExecutionChange{}
 	case "PendingDeposit":
-		obj = &ethpb.PendingDeposit{}
+		obj = &silapb.PendingDeposit{}
 	case "PendingPartialWithdrawal":
-		obj = &ethpb.PendingPartialWithdrawal{}
+		obj = &silapb.PendingPartialWithdrawal{}
 	case "PendingConsolidation":
-		obj = &ethpb.PendingConsolidation{}
+		obj = &silapb.PendingConsolidation{}
 	case "WithdrawalRequest":
 		obj = &enginev1.WithdrawalRequest{}
 	case "DepositRequest":
@@ -176,7 +176,7 @@ func unmarshalledSSZ(t *testing.T, serializedBytes []byte, folderName string) (a
 	case "ExecutionRequests":
 		obj = &enginev1.ExecutionRequests{}
 	case "DataColumnsByRootIdentifier":
-		obj = &ethpb.DataColumnsByRootIdentifier{}
+		obj = &silapb.DataColumnsByRootIdentifier{}
 	case "MatrixEntry":
 		t.Skip("Unused type")
 	case "PartialDataColumnHeader", "PartialDataColumnPartsMetadata", "PartialDataColumnSidecar", "PartialDataColumnGroupID":

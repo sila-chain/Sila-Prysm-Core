@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/golang/snappy"
 	"github.com/pkg/errors"
 	bolt "go.etcd.io/bbolt"
@@ -18,7 +18,7 @@ import (
 // silaEngine_getPayloadBodiesByHash.
 // A secondary index from BlockHash → BeaconBlockRoot is maintained so that
 // envelopes can be looked up by execution block hash.
-func (s *Store) SaveExecutionPayloadEnvelope(ctx context.Context, env *ethpb.SignedExecutionPayloadEnvelope) error {
+func (s *Store) SaveExecutionPayloadEnvelope(ctx context.Context, env *silapb.SignedExecutionPayloadEnvelope) error {
 	_, span := trace.StartSpan(ctx, "BeaconDB.SaveExecutionPayloadEnvelope")
 	defer span.End()
 
@@ -44,7 +44,7 @@ func (s *Store) SaveExecutionPayloadEnvelope(ctx context.Context, env *ethpb.Sig
 }
 
 // ExecutionPayloadEnvelope retrieves the blinded signed execution payload envelope by beacon block root.
-func (s *Store) ExecutionPayloadEnvelope(ctx context.Context, blockRoot [32]byte) (*ethpb.SignedBlindedExecutionPayloadEnvelope, error) {
+func (s *Store) ExecutionPayloadEnvelope(ctx context.Context, blockRoot [32]byte) (*silapb.SignedBlindedExecutionPayloadEnvelope, error) {
 	_, span := trace.StartSpan(ctx, "BeaconDB.ExecutionPayloadEnvelope")
 	defer span.End()
 
@@ -65,7 +65,7 @@ func (s *Store) ExecutionPayloadEnvelope(ctx context.Context, blockRoot [32]byte
 // ExecutionPayloadEnvelopeByBlockHash retrieves the blinded signed execution payload envelope
 // by execution block hash. It uses the secondary BlockHash → BeaconBlockRoot index and then
 // fetches the envelope from the primary bucket.
-func (s *Store) ExecutionPayloadEnvelopeByBlockHash(ctx context.Context, blockHash [32]byte) (*ethpb.SignedBlindedExecutionPayloadEnvelope, error) {
+func (s *Store) ExecutionPayloadEnvelopeByBlockHash(ctx context.Context, blockHash [32]byte) (*silapb.SignedBlindedExecutionPayloadEnvelope, error) {
 	_, span := trace.StartSpan(ctx, "BeaconDB.ExecutionPayloadEnvelopeByBlockHash")
 	defer span.End()
 
@@ -128,9 +128,9 @@ func (s *Store) DeleteExecutionPayloadEnvelope(ctx context.Context, blockRoot [3
 // blindEnvelope converts a full signed envelope to its blinded form by replacing
 // the execution payload with its block hash. This avoids computing the expensive
 // payload hash tree root on the critical path.
-func blindEnvelope(env *ethpb.SignedExecutionPayloadEnvelope) *ethpb.SignedBlindedExecutionPayloadEnvelope {
-	return &ethpb.SignedBlindedExecutionPayloadEnvelope{
-		Message: &ethpb.BlindedExecutionPayloadEnvelope{
+func blindEnvelope(env *silapb.SignedExecutionPayloadEnvelope) *silapb.SignedBlindedExecutionPayloadEnvelope {
+	return &silapb.SignedBlindedExecutionPayloadEnvelope{
+		Message: &silapb.BlindedExecutionPayloadEnvelope{
 			BlockHash:             env.Message.Payload.BlockHash,
 			ExecutionRequests:     env.Message.ExecutionRequests,
 			BuilderIndex:          env.Message.BuilderIndex,
@@ -144,7 +144,7 @@ func blindEnvelope(env *ethpb.SignedExecutionPayloadEnvelope) *ethpb.SignedBlind
 }
 
 // encodeBlindedEnvelope SSZ-encodes and snappy-compresses a blinded envelope for storage.
-func encodeBlindedEnvelope(env *ethpb.SignedBlindedExecutionPayloadEnvelope) ([]byte, error) {
+func encodeBlindedEnvelope(env *silapb.SignedBlindedExecutionPayloadEnvelope) ([]byte, error) {
 	sszBytes, err := env.MarshalSSZ()
 	if err != nil {
 		return nil, errors.Wrap(err, "could not marshal blinded envelope")
@@ -153,12 +153,12 @@ func encodeBlindedEnvelope(env *ethpb.SignedBlindedExecutionPayloadEnvelope) ([]
 }
 
 // decodeBlindedEnvelope snappy-decompresses and SSZ-decodes a blinded envelope from storage.
-func decodeBlindedEnvelope(enc []byte) (*ethpb.SignedBlindedExecutionPayloadEnvelope, error) {
+func decodeBlindedEnvelope(enc []byte) (*silapb.SignedBlindedExecutionPayloadEnvelope, error) {
 	dec, err := snappy.Decode(nil, enc)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not snappy decode envelope")
 	}
-	blinded := &ethpb.SignedBlindedExecutionPayloadEnvelope{}
+	blinded := &silapb.SignedBlindedExecutionPayloadEnvelope{}
 	if err := blinded.UnmarshalSSZ(dec); err != nil {
 		return nil, errors.Wrap(err, "could not unmarshal blinded envelope")
 	}

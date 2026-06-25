@@ -41,7 +41,7 @@ go_library(
         "//encoding/bytesutil:go_default_library",
         "//math:go_default_library",
         "//proto/engine/v1:go_default_library",
-        "//proto/eth/v1:go_default_library",
+        "//proto/silaapi/v1:go_default_library",
         "//proto/sila/v1alpha1:go_default_library",
         "//runtime/version:go_default_library",
         "@com_github_sila_chain_sila//common:go_default_library",

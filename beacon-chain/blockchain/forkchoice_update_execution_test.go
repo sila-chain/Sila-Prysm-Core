@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	logTest "github.com/sirupsen/logrus/hooks/test"
@@ -43,7 +43,7 @@ func TestService_getHeadStateAndBlock(t *testing.T) {
 	_, _, err := service.getStateAndBlock(t.Context(), [32]byte{})
 	require.ErrorContains(t, "block does not exist", err)
 
-	blk, err := blocks.NewSignedBeaconBlock(util.HydrateSignedBeaconBlock(&ethpb.SignedBeaconBlock{Signature: []byte{1}}))
+	blk, err := blocks.NewSignedBeaconBlock(util.HydrateSignedBeaconBlock(&silapb.SignedBeaconBlock{Signature: []byte{1}}))
 	require.NoError(t, err)
 	require.NoError(t, service.cfg.BeaconDB.SaveBlock(t.Context(), blk))
 
@@ -124,8 +124,8 @@ func TestService_forkchoiceUpdateWithExecution_SameHeadRootNewProposer(t *testin
 		state: st,
 	}
 
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	state, blkRoot, err := prepareForkchoiceState(ctx, 0, [32]byte{}, [32]byte{}, params.BeaconConfig().ZeroHash, ojc, ofc)
 	require.NoError(t, err)
 	require.NoError(t, fcs.InsertNode(ctx, state, blkRoot))
@@ -139,7 +139,7 @@ func TestService_forkchoiceUpdateWithExecution_SameHeadRootNewProposer(t *testin
 	service.cfg.ExecutionEngineCaller = &mockExecution.EngineClient{}
 	require.NoError(t, beaconDB.SaveState(ctx, st, bellatrixBlkRoot))
 	require.NoError(t, beaconDB.SaveGenesisBlockRoot(ctx, bellatrixBlkRoot))
-	sb, err := blocks.NewSignedBeaconBlock(util.HydrateSignedBeaconBlockBellatrix(&ethpb.SignedBeaconBlockBellatrix{}))
+	sb, err := blocks.NewSignedBeaconBlock(util.HydrateSignedBeaconBlockBellatrix(&silapb.SignedBeaconBlockBellatrix{}))
 	require.NoError(t, err)
 	require.NoError(t, beaconDB.SaveBlock(ctx, sb))
 	r, err := sb.Block().HashTreeRoot()
@@ -168,7 +168,7 @@ func TestShouldOverrideFCU(t *testing.T) {
 	fcs.SetGenesisTime(time.Now().Add(-time.Duration(2*params.BeaconConfig().SecondsPerSlot) * time.Second))
 	headRoot := [32]byte{'b'}
 	parentRoot := [32]byte{'a'}
-	ojc := &ethpb.Checkpoint{}
+	ojc := &silapb.Checkpoint{}
 	st, root, err := prepareForkchoiceState(ctx, 1, parentRoot, [32]byte{}, [32]byte{}, ojc, ojc)
 	require.NoError(t, err)
 	require.NoError(t, fcs.InsertNode(ctx, st, root))

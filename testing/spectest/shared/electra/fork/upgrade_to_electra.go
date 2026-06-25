@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/electra"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/utils"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -32,7 +32,7 @@ func RunUpgradeToElectra(t *testing.T, config string) {
 			require.NoError(t, err)
 			preStateSSZ, err := snappy.Decode(nil /* dst */, preStateFile)
 			require.NoError(t, err, "Failed to decompress")
-			preStateBase := &ethpb.BeaconStateDeneb{}
+			preStateBase := &silapb.BeaconStateDeneb{}
 			if err := preStateBase.UnmarshalSSZ(preStateSSZ); err != nil {
 				t.Fatalf("Failed to unmarshal: %v", err)
 			}
@@ -47,7 +47,7 @@ func RunUpgradeToElectra(t *testing.T, config string) {
 			require.NoError(t, err)
 			postStateSSZ, err := snappy.Decode(nil /* dst */, postStateFile)
 			require.NoError(t, err, "Failed to decompress")
-			postStateFromFile := &ethpb.BeaconStateElectra{}
+			postStateFromFile := &silapb.BeaconStateElectra{}
 			if err := postStateFromFile.UnmarshalSSZ(postStateSSZ); err != nil {
 				t.Fatalf("Failed to unmarshal: %v", err)
 			}

@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/metadata"
 	"github.com/sila-chain/Sila/p2p/enode"
 	"github.com/sila-chain/Sila/p2p/enr"
@@ -48,9 +48,9 @@ type (
 	Broadcaster interface {
 		Broadcast(context.Context, proto.Message) error
 		BroadcastForEpoch(context.Context, proto.Message, primitives.Epoch) error
-		BroadcastAttestation(ctx context.Context, subnet uint64, att ethpb.Att) error
-		BroadcastSyncCommitteeMessage(ctx context.Context, subnet uint64, sMsg *ethpb.SyncCommitteeMessage) error
-		BroadcastBlob(ctx context.Context, subnet uint64, blob *ethpb.BlobSidecar) error
+		BroadcastAttestation(ctx context.Context, subnet uint64, att silapb.Att) error
+		BroadcastSyncCommitteeMessage(ctx context.Context, subnet uint64, sMsg *silapb.SyncCommitteeMessage) error
+		BroadcastBlob(ctx context.Context, subnet uint64, blob *silapb.BlobSidecar) error
 		BroadcastLightClientOptimisticUpdate(ctx context.Context, update interfaces.LightClientOptimisticUpdate) error
 		BroadcastLightClientFinalityUpdate(ctx context.Context, update interfaces.LightClientFinalityUpdate) error
 		BroadcastDataColumnSidecars(ctx context.Context, sidecars []blocks.VerifiedRODataColumn) error

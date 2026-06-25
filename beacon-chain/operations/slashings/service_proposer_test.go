@@ -6,19 +6,19 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
 
-func proposerSlashingForValIdx(valIdx primitives.ValidatorIndex) *ethpb.ProposerSlashing {
-	return &ethpb.ProposerSlashing{
-		Header_1: &ethpb.SignedBeaconBlockHeader{
-			Header: &ethpb.BeaconBlockHeader{ProposerIndex: valIdx},
+func proposerSlashingForValIdx(valIdx primitives.ValidatorIndex) *silapb.ProposerSlashing {
+	return &silapb.ProposerSlashing{
+		Header_1: &silapb.SignedBeaconBlockHeader{
+			Header: &silapb.BeaconBlockHeader{ProposerIndex: valIdx},
 		},
-		Header_2: &ethpb.SignedBeaconBlockHeader{
-			Header: &ethpb.BeaconBlockHeader{ProposerIndex: valIdx},
+		Header_2: &silapb.SignedBeaconBlockHeader{
+			Header: &silapb.BeaconBlockHeader{ProposerIndex: valIdx},
 		},
 	}
 }
@@ -26,15 +26,15 @@ func proposerSlashingForValIdx(valIdx primitives.ValidatorIndex) *ethpb.Proposer
 func TestPool_InsertProposerSlashing(t *testing.T) {
 	type fields struct {
 		wantedErr string
-		pending   []*ethpb.ProposerSlashing
+		pending   []*silapb.ProposerSlashing
 		included  map[primitives.ValidatorIndex]bool
 	}
 	type args struct {
-		slashings []*ethpb.ProposerSlashing
+		slashings []*silapb.ProposerSlashing
 	}
 
 	beaconState, privKeys := util.DeterministicGenesisState(t, 64)
-	slashings := make([]*ethpb.ProposerSlashing, 20)
+	slashings := make([]*silapb.ProposerSlashing, 20)
 	for i := range slashings {
 		sl, err := util.GenerateProposerSlashingForValidator(beaconState, privKeys[i], primitives.ValidatorIndex(i))
 		require.NoError(t, err)
@@ -61,12 +61,12 @@ func TestPool_InsertProposerSlashing(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   []*ethpb.ProposerSlashing
+		want   []*silapb.ProposerSlashing
 	}{
 		{
 			name: "Empty list",
 			fields: fields{
-				pending:  make([]*ethpb.ProposerSlashing, 0),
+				pending:  make([]*silapb.ProposerSlashing, 0),
 				included: make(map[primitives.ValidatorIndex]bool),
 			},
 			args: args{
@@ -89,19 +89,19 @@ func TestPool_InsertProposerSlashing(t *testing.T) {
 		{
 			name: "Slashing for exited validator",
 			fields: fields{
-				pending:   []*ethpb.ProposerSlashing{},
+				pending:   []*silapb.ProposerSlashing{},
 				included:  make(map[primitives.ValidatorIndex]bool),
 				wantedErr: "is not slashable",
 			},
 			args: args{
 				slashings: slashings[2:3],
 			},
-			want: []*ethpb.ProposerSlashing{},
+			want: []*silapb.ProposerSlashing{},
 		},
 		{
 			name: "Slashing for exiting validator",
 			fields: fields{
-				pending:  []*ethpb.ProposerSlashing{},
+				pending:  []*silapb.ProposerSlashing{},
 				included: make(map[primitives.ValidatorIndex]bool),
 			},
 			args: args{
@@ -112,19 +112,19 @@ func TestPool_InsertProposerSlashing(t *testing.T) {
 		{
 			name: "Slashing for slashed validator",
 			fields: fields{
-				pending:   []*ethpb.ProposerSlashing{},
+				pending:   []*silapb.ProposerSlashing{},
 				included:  make(map[primitives.ValidatorIndex]bool),
 				wantedErr: "not slashable",
 			},
 			args: args{
 				slashings: slashings[5:6],
 			},
-			want: []*ethpb.ProposerSlashing{},
+			want: []*silapb.ProposerSlashing{},
 		},
 		{
 			name: "Already included",
 			fields: fields{
-				pending: []*ethpb.ProposerSlashing{},
+				pending: []*silapb.ProposerSlashing{},
 				included: map[primitives.ValidatorIndex]bool{
 					1: true,
 				},
@@ -133,12 +133,12 @@ func TestPool_InsertProposerSlashing(t *testing.T) {
 			args: args{
 				slashings: slashings[1:2],
 			},
-			want: []*ethpb.ProposerSlashing{},
+			want: []*silapb.ProposerSlashing{},
 		},
 		{
 			name: "Maintains sorted order",
 			fields: fields{
-				pending: []*ethpb.ProposerSlashing{
+				pending: []*silapb.ProposerSlashing{
 					slashings[0],
 					slashings[2],
 				},
@@ -147,7 +147,7 @@ func TestPool_InsertProposerSlashing(t *testing.T) {
 			args: args{
 				slashings: slashings[1:2],
 			},
-			want: []*ethpb.ProposerSlashing{
+			want: []*silapb.ProposerSlashing{
 				slashings[0],
 				slashings[1],
 				slashings[2],
@@ -184,7 +184,7 @@ func TestPool_InsertProposerSlashing_SigFailsVerify_ClearPool(t *testing.T) {
 	conf.MaxAttesterSlashings = 2
 	params.OverrideBeaconConfig(conf)
 	beaconState, privKeys := util.DeterministicGenesisState(t, 64)
-	slashings := make([]*ethpb.ProposerSlashing, 2)
+	slashings := make([]*silapb.ProposerSlashing, 2)
 	for i := range 2 {
 		sl, err := util.GenerateProposerSlashingForValidator(beaconState, privKeys[i], primitives.ValidatorIndex(i))
 		require.NoError(t, err)
@@ -195,7 +195,7 @@ func TestPool_InsertProposerSlashing_SigFailsVerify_ClearPool(t *testing.T) {
 	copy(badSig, "muahaha")
 	slashings[1].Header_1.Signature = badSig
 	p := &Pool{
-		pendingProposerSlashing: make([]*ethpb.ProposerSlashing, 0),
+		pendingProposerSlashing: make([]*silapb.ProposerSlashing, 0),
 	}
 	// We only want a single slashing to remain.
 	require.NoError(t, p.InsertProposerSlashing(t.Context(), beaconState, slashings[0]))
@@ -206,11 +206,11 @@ func TestPool_InsertProposerSlashing_SigFailsVerify_ClearPool(t *testing.T) {
 
 func TestPool_MarkIncludedProposerSlashing(t *testing.T) {
 	type fields struct {
-		pending  []*ethpb.ProposerSlashing
+		pending  []*silapb.ProposerSlashing
 		included map[primitives.ValidatorIndex]bool
 	}
 	type args struct {
-		slashing *ethpb.ProposerSlashing
+		slashing *silapb.ProposerSlashing
 	}
 	tests := []struct {
 		name   string
@@ -221,7 +221,7 @@ func TestPool_MarkIncludedProposerSlashing(t *testing.T) {
 		{
 			name: "Included, does not exist in pending",
 			fields: fields{
-				pending: []*ethpb.ProposerSlashing{
+				pending: []*silapb.ProposerSlashing{
 					proposerSlashingForValIdx(1),
 				},
 				included: make(map[primitives.ValidatorIndex]bool),
@@ -230,7 +230,7 @@ func TestPool_MarkIncludedProposerSlashing(t *testing.T) {
 				slashing: proposerSlashingForValIdx(3),
 			},
 			want: fields{
-				pending: []*ethpb.ProposerSlashing{
+				pending: []*silapb.ProposerSlashing{
 					proposerSlashingForValIdx(1),
 				},
 				included: map[primitives.ValidatorIndex]bool{
@@ -241,7 +241,7 @@ func TestPool_MarkIncludedProposerSlashing(t *testing.T) {
 		{
 			name: "Removes from pending list",
 			fields: fields{
-				pending: []*ethpb.ProposerSlashing{
+				pending: []*silapb.ProposerSlashing{
 					proposerSlashingForValIdx(1),
 					proposerSlashingForValIdx(2),
 					proposerSlashingForValIdx(3),
@@ -254,7 +254,7 @@ func TestPool_MarkIncludedProposerSlashing(t *testing.T) {
 				slashing: proposerSlashingForValIdx(2),
 			},
 			want: fields{
-				pending: []*ethpb.ProposerSlashing{
+				pending: []*silapb.ProposerSlashing{
 					proposerSlashingForValIdx(1),
 					proposerSlashingForValIdx(3),
 				},
@@ -267,7 +267,7 @@ func TestPool_MarkIncludedProposerSlashing(t *testing.T) {
 		{
 			name: "Removes from pending long list",
 			fields: fields{
-				pending: []*ethpb.ProposerSlashing{
+				pending: []*silapb.ProposerSlashing{
 					proposerSlashingForValIdx(1),
 					proposerSlashingForValIdx(2),
 					proposerSlashingForValIdx(3),
@@ -287,7 +287,7 @@ func TestPool_MarkIncludedProposerSlashing(t *testing.T) {
 				slashing: proposerSlashingForValIdx(7),
 			},
 			want: fields{
-				pending: []*ethpb.ProposerSlashing{
+				pending: []*silapb.ProposerSlashing{
 					proposerSlashingForValIdx(1),
 					proposerSlashingForValIdx(2),
 					proposerSlashingForValIdx(3),
@@ -323,11 +323,11 @@ func TestPool_MarkIncludedProposerSlashing(t *testing.T) {
 
 func TestPool_PendingProposerSlashings(t *testing.T) {
 	type fields struct {
-		pending []*ethpb.ProposerSlashing
+		pending []*silapb.ProposerSlashing
 		noLimit bool
 	}
 	beaconState, privKeys := util.DeterministicGenesisState(t, 64)
-	slashings := make([]*ethpb.ProposerSlashing, 20)
+	slashings := make([]*silapb.ProposerSlashing, 20)
 	for i := range slashings {
 		sl, err := util.GenerateProposerSlashingForValidator(beaconState, privKeys[i], primitives.ValidatorIndex(i))
 		require.NoError(t, err)
@@ -336,14 +336,14 @@ func TestPool_PendingProposerSlashings(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   []*ethpb.ProposerSlashing
+		want   []*silapb.ProposerSlashing
 	}{
 		{
 			name: "Empty list",
 			fields: fields{
-				pending: []*ethpb.ProposerSlashing{},
+				pending: []*silapb.ProposerSlashing{},
 			},
-			want: []*ethpb.ProposerSlashing{},
+			want: []*silapb.ProposerSlashing{},
 		},
 		{
 			name: "All",
@@ -381,7 +381,7 @@ func TestPool_PendingProposerSlashings(t *testing.T) {
 func TestPool_PendingProposerSlashings_Slashed(t *testing.T) {
 	type fields struct {
 		all     bool
-		pending []*ethpb.ProposerSlashing
+		pending []*silapb.ProposerSlashing
 	}
 	beaconState, privKeys := util.DeterministicGenesisState(t, 64)
 	val, err := beaconState.ValidatorAtIndex(0)
@@ -392,9 +392,9 @@ func TestPool_PendingProposerSlashings_Slashed(t *testing.T) {
 	require.NoError(t, err)
 	val.Slashed = true
 	require.NoError(t, beaconState.UpdateValidatorAtIndex(5, val))
-	slashings := make([]*ethpb.ProposerSlashing, 32)
-	slashings2 := make([]*ethpb.ProposerSlashing, 32)
-	result := make([]*ethpb.ProposerSlashing, 32)
+	slashings := make([]*silapb.ProposerSlashing, 32)
+	slashings2 := make([]*silapb.ProposerSlashing, 32)
+	result := make([]*silapb.ProposerSlashing, 32)
 	for i := range slashings {
 		sl, err := util.GenerateProposerSlashingForValidator(beaconState, privKeys[i], primitives.ValidatorIndex(i))
 		require.NoError(t, err)
@@ -406,7 +406,7 @@ func TestPool_PendingProposerSlashings_Slashed(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   []*ethpb.ProposerSlashing
+		want   []*silapb.ProposerSlashing
 	}{
 		{
 			name: "removes slashed",

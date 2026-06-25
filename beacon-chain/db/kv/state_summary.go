@@ -6,20 +6,20 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	bolt "go.etcd.io/bbolt"
 )
 
 // SaveStateSummary saves a state summary object to the DB.
-func (s *Store) SaveStateSummary(ctx context.Context, summary *ethpb.StateSummary) error {
+func (s *Store) SaveStateSummary(ctx context.Context, summary *silapb.StateSummary) error {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.SaveStateSummary")
 	defer span.End()
 
-	return s.SaveStateSummaries(ctx, []*ethpb.StateSummary{summary})
+	return s.SaveStateSummaries(ctx, []*silapb.StateSummary{summary})
 }
 
 // SaveStateSummaries saves state summary objects to the DB.
-func (s *Store) SaveStateSummaries(ctx context.Context, summaries []*ethpb.StateSummary) error {
+func (s *Store) SaveStateSummaries(ctx context.Context, summaries []*silapb.StateSummary) error {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.SaveStateSummaries")
 	defer span.End()
 
@@ -39,7 +39,7 @@ func (s *Store) SaveStateSummaries(ctx context.Context, summaries []*ethpb.State
 }
 
 // StateSummary returns the state summary object from the db using input block root.
-func (s *Store) StateSummary(ctx context.Context, blockRoot [32]byte) (*ethpb.StateSummary, error) {
+func (s *Store) StateSummary(ctx context.Context, blockRoot [32]byte) (*silapb.StateSummary, error) {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.StateSummary")
 	defer span.End()
 
@@ -60,7 +60,7 @@ func (s *Store) StateSummary(ctx context.Context, blockRoot [32]byte) (*ethpb.St
 	if len(enc) == 0 {
 		return nil, nil
 	}
-	summary := &ethpb.StateSummary{}
+	summary := &silapb.StateSummary{}
 	if err := decode(ctx, enc, summary); err != nil {
 		return nil, err
 	}

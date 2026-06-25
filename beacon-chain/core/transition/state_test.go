@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -40,7 +40,7 @@ func TestGenesisBeaconState_OK(t *testing.T) {
 
 	// Misc fields checks.
 	assert.Equal(t, primitives.Slot(0), newState.Slot(), "Slot was not correctly initialized")
-	if !proto.Equal(newState.Fork(), &ethpb.Fork{
+	if !proto.Equal(newState.Fork(), &silapb.Fork{
 		PreviousVersion: genesisForkVersion,
 		CurrentVersion:  genesisForkVersion,
 		Epoch:           genesisEpoch,
@@ -74,10 +74,10 @@ func TestGenesisBeaconState_OK(t *testing.T) {
 	assert.DeepEqual(t, make([]uint64, params.BeaconConfig().EpochsPerSlashingsVector), newState.Slashings(), "Slashings was not correctly initialized")
 	currAtt, err := newState.CurrentEpochAttestations()
 	require.NoError(t, err)
-	assert.DeepSSZEqual(t, []*ethpb.PendingAttestation{}, currAtt, "CurrentEpochAttestations was not correctly initialized")
+	assert.DeepSSZEqual(t, []*silapb.PendingAttestation{}, currAtt, "CurrentEpochAttestations was not correctly initialized")
 	prevAtt, err := newState.CurrentEpochAttestations()
 	require.NoError(t, err)
-	assert.DeepSSZEqual(t, []*ethpb.PendingAttestation{}, prevAtt, "PreviousEpochAttestations was not correctly initialized")
+	assert.DeepSSZEqual(t, []*silapb.PendingAttestation{}, prevAtt, "PreviousEpochAttestations was not correctly initialized")
 
 	zeroHash := params.BeaconConfig().ZeroHash[:]
 	// History root checks.
@@ -86,15 +86,15 @@ func TestGenesisBeaconState_OK(t *testing.T) {
 
 	// Deposit root checks.
 	assert.DeepEqual(t, eth1Data.DepositRoot, newState.Eth1Data().DepositRoot, "Eth1Data DepositRoot was not correctly initialized")
-	assert.DeepSSZEqual(t, []*ethpb.Eth1Data{}, newState.Eth1DataVotes(), "Eth1DataVotes was not correctly initialized")
+	assert.DeepSSZEqual(t, []*silapb.Eth1Data{}, newState.Eth1DataVotes(), "Eth1DataVotes was not correctly initialized")
 }
 
 func TestGenesisState_HashEquality(t *testing.T) {
 	deposits, _, err := util.DeterministicDepositsAndKeys(100)
 	require.NoError(t, err)
-	state1, err := transition.GenesisBeaconState(t.Context(), deposits, 0, &ethpb.Eth1Data{BlockHash: make([]byte, 32)})
+	state1, err := transition.GenesisBeaconState(t.Context(), deposits, 0, &silapb.Eth1Data{BlockHash: make([]byte, 32)})
 	require.NoError(t, err)
-	state, err := transition.GenesisBeaconState(t.Context(), deposits, 0, &ethpb.Eth1Data{BlockHash: make([]byte, 32)})
+	state, err := transition.GenesisBeaconState(t.Context(), deposits, 0, &silapb.Eth1Data{BlockHash: make([]byte, 32)})
 	require.NoError(t, err)
 
 	pbState1, err := state_native.ProtobufBeaconStatePhase0(state1.ToProto())
@@ -112,7 +112,7 @@ func TestGenesisState_HashEquality(t *testing.T) {
 }
 
 func TestGenesisState_InitializesLatestBlockHashes(t *testing.T) {
-	s, err := transition.GenesisBeaconState(t.Context(), nil, 0, &ethpb.Eth1Data{})
+	s, err := transition.GenesisBeaconState(t.Context(), nil, 0, &silapb.Eth1Data{})
 	require.NoError(t, err)
 	got, want := uint64(len(s.BlockRoots())), uint64(params.BeaconConfig().SlotsPerHistoricalRoot)
 	assert.Equal(t, want, got, "Wrong number of recent block hashes")

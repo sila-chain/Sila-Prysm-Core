@@ -12,19 +12,19 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // PayloadAttestationReceiver interface defines the methods of chain service for receiving
 // validated payload attestation messages.
 type PayloadAttestationReceiver interface {
-	ReceivePayloadAttestationMessage(context.Context, *ethpb.PayloadAttestationMessage) error
+	ReceivePayloadAttestationMessage(context.Context, *silapb.PayloadAttestationMessage) error
 	PtcLookupState(ctx context.Context, blockRoot [32]byte, blockSlot primitives.Slot) (state.ReadOnlyBeaconState, error)
 }
 
 // ReceivePayloadAttestationMessage accepts a payload attestation message and updates the
 // forkchoice PTC vote bitvectors for the referenced beacon block.
-func (s *Service) ReceivePayloadAttestationMessage(ctx context.Context, a *ethpb.PayloadAttestationMessage) error {
+func (s *Service) ReceivePayloadAttestationMessage(ctx context.Context, a *silapb.PayloadAttestationMessage) error {
 	if a == nil || a.Data == nil {
 		return errors.New("nil payload attestation message")
 	}

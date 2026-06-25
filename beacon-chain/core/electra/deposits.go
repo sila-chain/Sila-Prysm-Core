@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/contracts/deposit"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -29,7 +29,7 @@ import (
 func ProcessDeposits(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	deposits []*ethpb.Deposit,
+	deposits []*silapb.Deposit,
 ) (state.BeaconState, error) {
 	ctx, span := trace.StartSpan(ctx, "electra.ProcessDeposits")
 	defer span.End()
@@ -79,7 +79,7 @@ func ProcessDeposits(
 //	  amount=deposit.data.amount,
 //	  signature=deposit.data.signature,
 //	 )
-func ProcessDeposit(beaconState state.BeaconState, deposit *ethpb.Deposit, allSignaturesVerified bool) (state.BeaconState, error) {
+func ProcessDeposit(beaconState state.BeaconState, deposit *silapb.Deposit, allSignaturesVerified bool) (state.BeaconState, error) {
 	if err := helpers.VerifyDeposit(beaconState, deposit); err != nil {
 		if deposit == nil || deposit.Data == nil {
 			return nil, err
@@ -124,7 +124,7 @@ func ProcessDeposit(beaconState state.BeaconState, deposit *ethpb.Deposit, allSi
 //	        signature=signature,
 //	        slot=GENESIS_SLOT  # Use GENESIS_SLOT to distinguish from a pending deposit request
 //	    ))
-func ApplyDeposit(beaconState state.BeaconState, data *ethpb.Deposit_Data, allSignaturesVerified bool) (state.BeaconState, error) {
+func ApplyDeposit(beaconState state.BeaconState, data *silapb.Deposit_Data, allSignaturesVerified bool) (state.BeaconState, error) {
 	pubKey := data.PublicKey
 	amount := data.Amount
 	withdrawalCredentials := data.WithdrawalCredentials
@@ -146,7 +146,7 @@ func ApplyDeposit(beaconState state.BeaconState, data *ethpb.Deposit_Data, allSi
 		}
 	}
 	// no validation on top-ups (phase0 feature). no validation before state change
-	if err := beaconState.AppendPendingDeposit(&ethpb.PendingDeposit{
+	if err := beaconState.AppendPendingDeposit(&silapb.PendingDeposit{
 		PublicKey:             pubKey,
 		WithdrawalCredentials: withdrawalCredentials,
 		Amount:                amount,
@@ -165,7 +165,7 @@ func ApplyDeposit(beaconState state.BeaconState, data *ethpb.Deposit_Data, allSi
 //	domain = compute_domain(DOMAIN_DEPOSIT)  # Fork-agnostic domain since deposits are valid across forks
 //	signing_root = compute_signing_root(deposit_message, domain)
 //	return bls.Verify(pubkey, signing_root, signature)
-func IsValidDepositSignature(data *ethpb.Deposit_Data) (bool, error) {
+func IsValidDepositSignature(data *silapb.Deposit_Data) (bool, error) {
 	domain, err := signing.ComputeDomain(params.BeaconConfig().DomainDeposit, nil, nil)
 	if err != nil {
 		return false, err
@@ -178,7 +178,7 @@ func IsValidDepositSignature(data *ethpb.Deposit_Data) (bool, error) {
 	return true, nil
 }
 
-func verifyDepositDataSigningRoot(obj *ethpb.Deposit_Data, domain []byte) error {
+func verifyDepositDataSigningRoot(obj *silapb.Deposit_Data, domain []byte) error {
 	return deposit.VerifyDepositSignature(obj, domain)
 }
 
@@ -268,8 +268,8 @@ func ProcessPendingDeposits(ctx context.Context, st state.BeaconState, activeBal
 	nextDepositIndex := uint64(0)
 	isChurnLimitReached := false
 
-	var pendingDepositsToBatchVerify []*ethpb.PendingDeposit
-	var pendingDepositsToPostpone []*ethpb.PendingDeposit
+	var pendingDepositsToBatchVerify []*silapb.PendingDeposit
+	var pendingDepositsToPostpone []*silapb.PendingDeposit
 
 	depBalToConsume, err := st.DepositBalanceToConsume()
 	if err != nil {
@@ -370,7 +370,7 @@ func ProcessPendingDeposits(ctx context.Context, st state.BeaconState, activeBal
 }
 
 // batchProcessNewPendingDeposits should only be used to process new deposits that require validator registration
-func batchProcessNewPendingDeposits(ctx context.Context, state state.BeaconState, pendingDeposits []*ethpb.PendingDeposit) error {
+func batchProcessNewPendingDeposits(ctx context.Context, state state.BeaconState, pendingDeposits []*silapb.PendingDeposit) error {
 	if len(pendingDeposits) == 0 {
 		return nil
 	}
@@ -384,7 +384,7 @@ func batchProcessNewPendingDeposits(ctx context.Context, state state.BeaconState
 		validSig := allSignaturesVerified
 
 		if !allSignaturesVerified {
-			validSig, err = helpers.IsValidDepositSignature(&ethpb.Deposit_Data{
+			validSig, err = helpers.IsValidDepositSignature(&silapb.Deposit_Data{
 				PublicKey:             bytesutil.SafeCopyBytes(pd.PublicKey),
 				WithdrawalCredentials: bytesutil.SafeCopyBytes(pd.WithdrawalCredentials),
 				Amount:                pd.Amount,
@@ -434,12 +434,12 @@ func batchProcessNewPendingDeposits(ctx context.Context, state state.BeaconState
 //	    validator_index = ValidatorIndex(validator_pubkeys.index(deposit.pubkey))
 //	    # Increase balance
 //	    increase_balance(state, validator_index, deposit.amount)
-func ApplyPendingDeposit(ctx context.Context, st state.BeaconState, deposit *ethpb.PendingDeposit) error {
+func ApplyPendingDeposit(ctx context.Context, st state.BeaconState, deposit *silapb.PendingDeposit) error {
 	_, span := trace.StartSpan(ctx, "electra.ApplyPendingDeposit")
 	defer span.End()
 	index, ok := st.ValidatorIndexByPubkey(bytesutil.ToBytes48(deposit.PublicKey))
 	if !ok {
-		verified, err := helpers.IsValidDepositSignature(&ethpb.Deposit_Data{
+		verified, err := helpers.IsValidDepositSignature(&silapb.Deposit_Data{
 			PublicKey:             bytesutil.SafeCopyBytes(deposit.PublicKey),
 			WithdrawalCredentials: bytesutil.SafeCopyBytes(deposit.WithdrawalCredentials),
 			Amount:                deposit.Amount,
@@ -516,8 +516,8 @@ func AddValidatorToRegistry(beaconState state.BeaconState, pubKey []byte, withdr
 //	validator.effective_balance = min(amount - amount % EFFECTIVE_BALANCE_INCREMENT, max_effective_balance)
 //
 //	return validator
-func GetValidatorFromDeposit(pubKey []byte, withdrawalCredentials []byte, amount uint64) (*ethpb.Validator, error) {
-	validator := &ethpb.Validator{
+func GetValidatorFromDeposit(pubKey []byte, withdrawalCredentials []byte, amount uint64) (*silapb.Validator, error) {
+	validator := &silapb.Validator{
 		PublicKey:                  pubKey,
 		WithdrawalCredentials:      withdrawalCredentials,
 		EffectiveBalance:           0,

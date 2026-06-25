@@ -5,7 +5,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -16,7 +16,7 @@ import (
 var ErrProposerDependentRootUnderflow = errors.New("proposer dependent root: epoch < 2")
 
 // LatestBlockHeader stored within the beacon state.
-func (b *BeaconState) LatestBlockHeader() *ethpb.BeaconBlockHeader {
+func (b *BeaconState) LatestBlockHeader() *silapb.BeaconBlockHeader {
 	if b.latestBlockHeader == nil {
 		return nil
 	}
@@ -29,12 +29,12 @@ func (b *BeaconState) LatestBlockHeader() *ethpb.BeaconBlockHeader {
 
 // latestBlockHeaderVal stored within the beacon state.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) latestBlockHeaderVal() *ethpb.BeaconBlockHeader {
+func (b *BeaconState) latestBlockHeaderVal() *silapb.BeaconBlockHeader {
 	if b.latestBlockHeader == nil {
 		return nil
 	}
 
-	hdr := &ethpb.BeaconBlockHeader{
+	hdr := &silapb.BeaconBlockHeader{
 		Slot:          b.latestBlockHeader.Slot,
 		ProposerIndex: b.latestBlockHeader.ProposerIndex,
 	}

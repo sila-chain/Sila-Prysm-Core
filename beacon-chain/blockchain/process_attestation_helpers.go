@@ -13,14 +13,14 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
 // The caller of this function must have a lock on forkchoice.
-func (s *Service) getRecentPreState(ctx context.Context, c *ethpb.Checkpoint) state.ReadOnlyBeaconState {
+func (s *Service) getRecentPreState(ctx context.Context, c *silapb.Checkpoint) state.ReadOnlyBeaconState {
 	headEpoch := slots.ToEpoch(s.HeadSlot())
 	if c.Epoch+1 < headEpoch || c.Epoch == 0 {
 		return nil
@@ -91,7 +91,7 @@ func (s *Service) getRecentPreState(ctx context.Context, c *ethpb.Checkpoint) st
 
 // getAttPreState retrieves the att pre state by either from the cache or the DB.
 // The caller of this function must have a lock on forkchoice.
-func (s *Service) getAttPreState(ctx context.Context, c *ethpb.Checkpoint) (state.ReadOnlyBeaconState, error) {
+func (s *Service) getAttPreState(ctx context.Context, c *silapb.Checkpoint) (state.ReadOnlyBeaconState, error) {
 	// If the attestation is recent and canonical we can use the head state to compute the shuffling.
 	if st := s.getRecentPreState(ctx, c); st != nil {
 		return st, nil
@@ -165,7 +165,7 @@ func (s *Service) getAttPreState(ctx context.Context, c *ethpb.Checkpoint) (stat
 }
 
 // verifyAttTargetEpoch validates attestation is from the current or previous epoch.
-func verifyAttTargetEpoch(_ context.Context, genesis, now time.Time, c *ethpb.Checkpoint) error {
+func verifyAttTargetEpoch(_ context.Context, genesis, now time.Time, c *silapb.Checkpoint) error {
 	currentSlot := slots.At(genesis, now)
 	currentEpoch := slots.ToEpoch(currentSlot)
 	var prevEpoch primitives.Epoch
@@ -180,7 +180,7 @@ func verifyAttTargetEpoch(_ context.Context, genesis, now time.Time, c *ethpb.Ch
 }
 
 // verifyBeaconBlock verifies beacon head block is known and not from the future.
-func (s *Service) verifyBeaconBlock(ctx context.Context, data *ethpb.AttestationData) error {
+func (s *Service) verifyBeaconBlock(ctx context.Context, data *silapb.AttestationData) error {
 	r := bytesutil.ToBytes32(data.BeaconBlockRoot)
 	b, err := s.getBlock(ctx, r)
 	if err != nil {

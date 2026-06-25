@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash/htr"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
 	pmath "github.com/sila-chain/Sila-Consensus-Core/v7/math"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -235,9 +235,9 @@ func convertRoots(indices []uint64, elements any) ([][32]byte, error) {
 }
 
 func convertEth1DataVotes(indices []uint64, elements any) ([][32]byte, error) {
-	val, ok := elements.([]*ethpb.Eth1Data)
+	val, ok := elements.([]*silapb.Eth1Data)
 	if !ok {
-		return nil, errors.Errorf("Wanted type of %T but got %T", []*ethpb.Eth1Data{}, elements)
+		return nil, errors.Errorf("Wanted type of %T but got %T", []*silapb.Eth1Data{}, elements)
 	}
 	return handleEth1DataSlice(val, indices)
 }
@@ -254,9 +254,9 @@ func convertValidators(indices []uint64, elements any) ([][32]byte, error) {
 }
 
 func convertAttestations(indices []uint64, elements any) ([][32]byte, error) {
-	val, ok := elements.([]*ethpb.PendingAttestation)
+	val, ok := elements.([]*silapb.PendingAttestation)
 	if !ok {
-		return nil, errors.Errorf("Wanted type of %T but got %T", []*ethpb.PendingAttestation{}, elements)
+		return nil, errors.Errorf("Wanted type of %T but got %T", []*silapb.PendingAttestation{}, elements)
 	}
 	return handlePendingAttestationSlice(val, indices)
 }
@@ -335,7 +335,7 @@ func handleValidatorMVSlice(mv multi_value_slice.MultiValueSliceComposite[stateu
 }
 
 // handleEth1DataSlice processes a list of eth1data and indices into the appropriate roots.
-func handleEth1DataSlice(val []*ethpb.Eth1Data, indices []uint64) ([][32]byte, error) {
+func handleEth1DataSlice(val []*silapb.Eth1Data, indices []uint64) ([][32]byte, error) {
 	if len(indices) == 0 {
 		roots := make([][32]byte, 0, len(val))
 		for _, v := range val {
@@ -362,7 +362,7 @@ func handleEth1DataSlice(val []*ethpb.Eth1Data, indices []uint64) ([][32]byte, e
 }
 
 // handlePendingAttestationSlice returns the root of a slice of pending attestations.
-func handlePendingAttestationSlice(val []*ethpb.PendingAttestation, indices []uint64) ([][32]byte, error) {
+func handlePendingAttestationSlice(val []*silapb.PendingAttestation, indices []uint64) ([][32]byte, error) {
 	if len(indices) == 0 {
 		roots := make([][32]byte, 0, len(val))
 		for _, v := range val {

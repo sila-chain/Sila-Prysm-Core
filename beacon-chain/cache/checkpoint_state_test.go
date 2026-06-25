@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"google.golang.org/protobuf/proto"
@@ -18,8 +18,8 @@ import (
 func TestCheckpointStateCache_StateByCheckpoint(t *testing.T) {
 	cache := cache.NewCheckpointStateCache()
 
-	cp1 := &ethpb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'A'}, 32)}
-	st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	cp1 := &silapb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'A'}, 32)}
+	st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		GenesisValidatorsRoot: params.BeaconConfig().ZeroHash[:],
 		Slot:                  64,
 	})
@@ -42,8 +42,8 @@ func TestCheckpointStateCache_StateByCheckpoint(t *testing.T) {
 		t.Error("incorrectly cached state")
 	}
 
-	cp2 := &ethpb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte{'B'}, 32)}
-	st2, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	cp2 := &silapb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte{'B'}, 32)}
+	st2, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot: 128,
 	})
 	require.NoError(t, err)
@@ -60,14 +60,14 @@ func TestCheckpointStateCache_StateByCheckpoint(t *testing.T) {
 
 func TestCheckpointStateCache_MaxSize(t *testing.T) {
 	c := cache.NewCheckpointStateCache()
-	st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot: 0,
 	})
 	require.NoError(t, err)
 
 	for i := uint64(0); i < uint64(cache.MaxCheckpointStateSize()+100); i++ {
 		require.NoError(t, st.SetSlot(primitives.Slot(i)))
-		require.NoError(t, c.AddCheckpointState(&ethpb.Checkpoint{Epoch: primitives.Epoch(i), Root: make([]byte, 32)}, st))
+		require.NoError(t, c.AddCheckpointState(&silapb.Checkpoint{Epoch: primitives.Epoch(i), Root: make([]byte, 32)}, st))
 	}
 
 	assert.Equal(t, cache.MaxCheckpointStateSize(), len(c.Cache().Keys()))
@@ -76,8 +76,8 @@ func TestCheckpointStateCache_MaxSize(t *testing.T) {
 func TestCheckpointStateCache_EvictFinalized_FinalizedEntry(t *testing.T) {
 	c := cache.NewCheckpointStateCache()
 
-	cp := &ethpb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'A'}, 32)}
-	st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: 32})
+	cp := &silapb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'A'}, 32)}
+	st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: 32})
 	require.NoError(t, err)
 	require.NoError(t, c.AddCheckpointState(cp, st))
 
@@ -92,8 +92,8 @@ func TestCheckpointStateCache_EvictFinalized_FinalizedEntry(t *testing.T) {
 func TestCheckpointStateCache_EvictFinalized_NotFinalizedEntry(t *testing.T) {
 	c := cache.NewCheckpointStateCache()
 
-	cp := &ethpb.Checkpoint{Epoch: 5, Root: bytesutil.PadTo([]byte{'A'}, 32)}
-	st, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: 160})
+	cp := &silapb.Checkpoint{Epoch: 5, Root: bytesutil.PadTo([]byte{'A'}, 32)}
+	st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: 160})
 	require.NoError(t, err)
 	require.NoError(t, c.AddCheckpointState(cp, st))
 
@@ -108,16 +108,16 @@ func TestCheckpointStateCache_EvictFinalized_NotFinalizedEntry(t *testing.T) {
 func TestCheckpointStateCache_EvictFinalized_Mixed(t *testing.T) {
 	c := cache.NewCheckpointStateCache()
 
-	cp1 := &ethpb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'A'}, 32)}
-	st1, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: 32})
+	cp1 := &silapb.Checkpoint{Epoch: 1, Root: bytesutil.PadTo([]byte{'A'}, 32)}
+	st1, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: 32})
 	require.NoError(t, err)
 
-	cp2 := &ethpb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte{'B'}, 32)}
-	st2, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: 64})
+	cp2 := &silapb.Checkpoint{Epoch: 2, Root: bytesutil.PadTo([]byte{'B'}, 32)}
+	st2, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: 64})
 	require.NoError(t, err)
 
-	cp5 := &ethpb.Checkpoint{Epoch: 5, Root: bytesutil.PadTo([]byte{'C'}, 32)}
-	st5, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: 160})
+	cp5 := &silapb.Checkpoint{Epoch: 5, Root: bytesutil.PadTo([]byte{'C'}, 32)}
+	st5, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: 160})
 	require.NoError(t, err)
 
 	require.NoError(t, c.AddCheckpointState(cp1, st1))

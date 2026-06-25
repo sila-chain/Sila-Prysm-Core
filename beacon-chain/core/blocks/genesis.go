@@ -12,20 +12,20 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
 // NewGenesisBlock returns the canonical, genesis block for the beacon chain protocol.
-func NewGenesisBlock(stateRoot []byte) *ethpb.SignedBeaconBlock {
+func NewGenesisBlock(stateRoot []byte) *silapb.SignedBeaconBlock {
 	zeroHash := params.BeaconConfig().ZeroHash[:]
-	block := &ethpb.SignedBeaconBlock{
-		Block: &ethpb.BeaconBlock{
+	block := &silapb.SignedBeaconBlock{
+		Block: &silapb.BeaconBlock{
 			ParentRoot: zeroHash,
 			StateRoot:  bytesutil.PadTo(stateRoot, 32),
-			Body: &ethpb.BeaconBlockBody{
+			Body: &silapb.BeaconBlockBody{
 				RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
-				Eth1Data: &ethpb.Eth1Data{
+				Eth1Data: &silapb.Eth1Data{
 					DepositRoot: make([]byte, 32),
 					BlockHash:   make([]byte, 32),
 				},
@@ -46,14 +46,14 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 	}
 	ps := st.ToProto()
 	switch ps.(type) {
-	case *ethpb.BeaconState:
-		return blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlock{
-			Block: &ethpb.BeaconBlock{
+	case *silapb.BeaconState:
+		return blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlock{
+			Block: &silapb.BeaconBlock{
 				ParentRoot: params.BeaconConfig().ZeroHash[:],
 				StateRoot:  root[:],
-				Body: &ethpb.BeaconBlockBody{
+				Body: &silapb.BeaconBlockBody{
 					RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
-					Eth1Data: &ethpb.Eth1Data{
+					Eth1Data: &silapb.Eth1Data{
 						DepositRoot: make([]byte, 32),
 						BlockHash:   make([]byte, 32),
 					},
@@ -62,19 +62,19 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 			},
 			Signature: params.BeaconConfig().EmptySignature[:],
 		})
-	case *ethpb.BeaconStateAltair:
-		return blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockAltair{
-			Block: &ethpb.BeaconBlockAltair{
+	case *silapb.BeaconStateAltair:
+		return blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockAltair{
+			Block: &silapb.BeaconBlockAltair{
 				ParentRoot: params.BeaconConfig().ZeroHash[:],
 				StateRoot:  root[:],
-				Body: &ethpb.BeaconBlockBodyAltair{
+				Body: &silapb.BeaconBlockBodyAltair{
 					RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
-					Eth1Data: &ethpb.Eth1Data{
+					Eth1Data: &silapb.Eth1Data{
 						DepositRoot: make([]byte, 32),
 						BlockHash:   make([]byte, 32),
 					},
 					Graffiti: make([]byte, 32),
-					SyncAggregate: &ethpb.SyncAggregate{
+					SyncAggregate: &silapb.SyncAggregate{
 						SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 						SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 					},
@@ -82,19 +82,19 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 			},
 			Signature: params.BeaconConfig().EmptySignature[:],
 		})
-	case *ethpb.BeaconStateBellatrix:
-		return blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockBellatrix{
-			Block: &ethpb.BeaconBlockBellatrix{
+	case *silapb.BeaconStateBellatrix:
+		return blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockBellatrix{
+			Block: &silapb.BeaconBlockBellatrix{
 				ParentRoot: params.BeaconConfig().ZeroHash[:],
 				StateRoot:  root[:],
-				Body: &ethpb.BeaconBlockBodyBellatrix{
+				Body: &silapb.BeaconBlockBodyBellatrix{
 					RandaoReveal: make([]byte, 96),
-					Eth1Data: &ethpb.Eth1Data{
+					Eth1Data: &silapb.Eth1Data{
 						DepositRoot: make([]byte, 32),
 						BlockHash:   make([]byte, 32),
 					},
 					Graffiti: make([]byte, 32),
-					SyncAggregate: &ethpb.SyncAggregate{
+					SyncAggregate: &silapb.SyncAggregate{
 						SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 						SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 					},
@@ -114,19 +114,19 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 			},
 			Signature: params.BeaconConfig().EmptySignature[:],
 		})
-	case *ethpb.BeaconStateCapella:
-		return blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockCapella{
-			Block: &ethpb.BeaconBlockCapella{
+	case *silapb.BeaconStateCapella:
+		return blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockCapella{
+			Block: &silapb.BeaconBlockCapella{
 				ParentRoot: params.BeaconConfig().ZeroHash[:],
 				StateRoot:  root[:],
-				Body: &ethpb.BeaconBlockBodyCapella{
+				Body: &silapb.BeaconBlockBodyCapella{
 					RandaoReveal: make([]byte, 96),
-					Eth1Data: &ethpb.Eth1Data{
+					Eth1Data: &silapb.Eth1Data{
 						DepositRoot: make([]byte, 32),
 						BlockHash:   make([]byte, 32),
 					},
 					Graffiti: make([]byte, 32),
-					SyncAggregate: &ethpb.SyncAggregate{
+					SyncAggregate: &silapb.SyncAggregate{
 						SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 						SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 					},
@@ -147,19 +147,19 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 			},
 			Signature: params.BeaconConfig().EmptySignature[:],
 		})
-	case *ethpb.BeaconStateDeneb:
-		return blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockDeneb{
-			Block: &ethpb.BeaconBlockDeneb{
+	case *silapb.BeaconStateDeneb:
+		return blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockDeneb{
+			Block: &silapb.BeaconBlockDeneb{
 				ParentRoot: params.BeaconConfig().ZeroHash[:],
 				StateRoot:  root[:],
-				Body: &ethpb.BeaconBlockBodyDeneb{
+				Body: &silapb.BeaconBlockBodyDeneb{
 					RandaoReveal: make([]byte, 96),
-					Eth1Data: &ethpb.Eth1Data{
+					Eth1Data: &silapb.Eth1Data{
 						DepositRoot: make([]byte, 32),
 						BlockHash:   make([]byte, 32),
 					},
 					Graffiti: make([]byte, 32),
-					SyncAggregate: &ethpb.SyncAggregate{
+					SyncAggregate: &silapb.SyncAggregate{
 						SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 						SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 					},
@@ -176,25 +176,25 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 						Transactions:  make([][]byte, 0),
 						Withdrawals:   make([]*enginev1.Withdrawal, 0),
 					},
-					BlsToExecutionChanges: make([]*ethpb.SignedBLSToExecutionChange, 0),
+					BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 					BlobKzgCommitments:    make([][]byte, 0),
 				},
 			},
 			Signature: params.BeaconConfig().EmptySignature[:],
 		})
-	case *ethpb.BeaconStateElectra:
-		return blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockElectra{
+	case *silapb.BeaconStateElectra:
+		return blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockElectra{
 			Block:     electraGenesisBlock(root),
 			Signature: params.BeaconConfig().EmptySignature[:],
 		})
-	case *ethpb.BeaconStateFulu:
-		return blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockFulu{
+	case *silapb.BeaconStateFulu:
+		return blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockFulu{
 			Block:     electraGenesisBlock(root),
 			Signature: params.BeaconConfig().EmptySignature[:],
 		})
-	case *ethpb.BeaconStateGloas:
-		gs := ps.(*ethpb.BeaconStateGloas)
-		return blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlockGloas{
+	case *silapb.BeaconStateGloas:
+		gs := ps.(*silapb.BeaconStateGloas)
+		return blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockGloas{
 			Block:     gloasGenesisBlock(root, gs.LatestExecutionPayloadBid),
 			Signature: params.BeaconConfig().EmptySignature[:],
 		})
@@ -203,7 +203,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 	}
 }
 
-func gloasGenesisBlock(root [fieldparams.RootLength]byte, latestBid *ethpb.ExecutionPayloadBid) *ethpb.BeaconBlockGloas {
+func gloasGenesisBlock(root [fieldparams.RootLength]byte, latestBid *silapb.ExecutionPayloadBid) *silapb.BeaconBlockGloas {
 	// The genesis block body's signed_execution_payload_bid mirrors the state's
 	// latest_execution_payload_bid so the reconstructed block's body_root matches
 	// state.latest_block_header.body_root (which the genesis distribution tool
@@ -211,7 +211,7 @@ func gloasGenesisBlock(root [fieldparams.RootLength]byte, latestBid *ethpb.Execu
 	// initialize a Gloas state without populating latest_execution_payload_bid.
 	bidMessage := latestBid.Copy()
 	if bidMessage == nil {
-		bidMessage = &ethpb.ExecutionPayloadBid{
+		bidMessage = &silapb.ExecutionPayloadBid{
 			ParentBlockHash:       make([]byte, 32),
 			ParentBlockRoot:       make([]byte, 32),
 			BlockHash:             make([]byte, 32),
@@ -221,25 +221,25 @@ func gloasGenesisBlock(root [fieldparams.RootLength]byte, latestBid *ethpb.Execu
 			ExecutionRequestsRoot: make([]byte, 32),
 		}
 	}
-	return &ethpb.BeaconBlockGloas{
+	return &silapb.BeaconBlockGloas{
 		ParentRoot: params.BeaconConfig().ZeroHash[:],
 		StateRoot:  root[:],
-		Body: &ethpb.BeaconBlockBodyGloas{
+		Body: &silapb.BeaconBlockBodyGloas{
 			RandaoReveal: make([]byte, 96),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot: make([]byte, 32),
 				BlockHash:   make([]byte, 32),
 			},
 			Graffiti: make([]byte, 32),
-			SyncAggregate: &ethpb.SyncAggregate{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
-			SignedExecutionPayloadBid: &ethpb.SignedExecutionPayloadBid{
+			SignedExecutionPayloadBid: &silapb.SignedExecutionPayloadBid{
 				Message:   bidMessage,
 				Signature: make([]byte, fieldparams.BLSSignatureLength),
 			},
-			PayloadAttestations: make([]*ethpb.PayloadAttestation, 0),
+			PayloadAttestations: make([]*silapb.PayloadAttestation, 0),
 			ParentExecutionRequests: &enginev1.ExecutionRequests{
 				Withdrawals:    make([]*enginev1.WithdrawalRequest, 0),
 				Deposits:       make([]*enginev1.DepositRequest, 0),
@@ -249,18 +249,18 @@ func gloasGenesisBlock(root [fieldparams.RootLength]byte, latestBid *ethpb.Execu
 	}
 }
 
-func electraGenesisBlock(root [fieldparams.RootLength]byte) *ethpb.BeaconBlockElectra {
-	return &ethpb.BeaconBlockElectra{
+func electraGenesisBlock(root [fieldparams.RootLength]byte) *silapb.BeaconBlockElectra {
+	return &silapb.BeaconBlockElectra{
 		ParentRoot: params.BeaconConfig().ZeroHash[:],
 		StateRoot:  root[:],
-		Body: &ethpb.BeaconBlockBodyElectra{
+		Body: &silapb.BeaconBlockBodyElectra{
 			RandaoReveal: make([]byte, 96),
-			Eth1Data: &ethpb.Eth1Data{
+			Eth1Data: &silapb.Eth1Data{
 				DepositRoot: make([]byte, 32),
 				BlockHash:   make([]byte, 32),
 			},
 			Graffiti: make([]byte, 32),
-			SyncAggregate: &ethpb.SyncAggregate{
+			SyncAggregate: &silapb.SyncAggregate{
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
@@ -277,7 +277,7 @@ func electraGenesisBlock(root [fieldparams.RootLength]byte) *ethpb.BeaconBlockEl
 				Transactions:  make([][]byte, 0),
 				Withdrawals:   make([]*enginev1.Withdrawal, 0),
 			},
-			BlsToExecutionChanges: make([]*ethpb.SignedBLSToExecutionChange, 0),
+			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
 			ExecutionRequests: &enginev1.ExecutionRequests{
 				Withdrawals:    make([]*enginev1.WithdrawalRequest, 0),

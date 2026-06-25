@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // MockClient is a mock implementation of BuilderClient.
@@ -32,7 +32,7 @@ func (MockClient) GetHeader(_ context.Context, _ primitives.Slot, _ [32]byte, _ 
 }
 
 // RegisterValidator --
-func (m MockClient) RegisterValidator(_ context.Context, svr []*ethpb.SignedValidatorRegistrationV1) error {
+func (m MockClient) RegisterValidator(_ context.Context, svr []*silapb.SignedValidatorRegistrationV1) error {
 	for _, r := range svr {
 		b := bytesutil.ToBytes48(r.Message.Pubkey)
 		m.RegisteredVals[b] = true

@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/pkg/errors"
 	logTest "github.com/sirupsen/logrus/hooks/test"
@@ -85,14 +85,14 @@ func TestSubmitPayloadAttestation_ValidatorDutiesRequestFailure(t *testing.T) {
 			validator.duties = &dutyStore{}
 			{
 				var data dutyStoreData
-				data.setFromContainer(&ethpb.ValidatorDutiesContainer{CurrentEpochDuties: []*ethpb.ValidatorDuty{}})
+				data.setFromContainer(&silapb.ValidatorDutiesContainer{CurrentEpochDuties: []*silapb.ValidatorDuty{}})
 				validator.duties.write(data)
 			}
 			defer finish()
 
 			m.validatorClient.EXPECT().
 				PayloadAttestationData(gomock.Any(), gomock.Any()).
-				Return(&ethpb.PayloadAttestationData{
+				Return(&silapb.PayloadAttestationData{
 					BeaconBlockRoot: bytesutil.PadTo([]byte{'a'}, 32),
 					Slot:            1,
 					PayloadPresent:  true,
@@ -100,7 +100,7 @@ func TestSubmitPayloadAttestation_ValidatorDutiesRequestFailure(t *testing.T) {
 
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), gomock.Any()).
-				Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
+				Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
 
 			var pubKey [fieldparams.BLSPubkeyLength]byte
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
@@ -125,7 +125,7 @@ func TestSubmitPayloadAttestation_BadDomainData(t *testing.T) {
 			validator.duties = &dutyStore{}
 			{
 				var data dutyStoreData
-				data.setFromContainer(&ethpb.ValidatorDutiesContainer{CurrentEpochDuties: []*ethpb.ValidatorDuty{
+				data.setFromContainer(&silapb.ValidatorDutiesContainer{CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      validatorKey.PublicKey().Marshal(),
 						ValidatorIndex: validatorIndex,
@@ -136,7 +136,7 @@ func TestSubmitPayloadAttestation_BadDomainData(t *testing.T) {
 
 			m.validatorClient.EXPECT().
 				PayloadAttestationData(gomock.Any(), gomock.Any()).
-				Return(&ethpb.PayloadAttestationData{
+				Return(&silapb.PayloadAttestationData{
 					BeaconBlockRoot: bytesutil.PadTo([]byte{'a'}, 32),
 					Slot:            1,
 					PayloadPresent:  true,
@@ -169,7 +169,7 @@ func TestSubmitPayloadAttestation_CouldNotSubmit(t *testing.T) {
 			validator.duties = &dutyStore{}
 			{
 				var data dutyStoreData
-				data.setFromContainer(&ethpb.ValidatorDutiesContainer{CurrentEpochDuties: []*ethpb.ValidatorDuty{
+				data.setFromContainer(&silapb.ValidatorDutiesContainer{CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      validatorKey.PublicKey().Marshal(),
 						ValidatorIndex: validatorIndex,
@@ -180,7 +180,7 @@ func TestSubmitPayloadAttestation_CouldNotSubmit(t *testing.T) {
 
 			m.validatorClient.EXPECT().
 				PayloadAttestationData(gomock.Any(), gomock.Any()).
-				Return(&ethpb.PayloadAttestationData{
+				Return(&silapb.PayloadAttestationData{
 					BeaconBlockRoot: bytesutil.PadTo([]byte{'a'}, 32),
 					Slot:            1,
 					PayloadPresent:  true,
@@ -188,10 +188,10 @@ func TestSubmitPayloadAttestation_CouldNotSubmit(t *testing.T) {
 
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), gomock.Any()).
-				Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
+				Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
 
 			m.validatorClient.EXPECT().
-				SubmitPayloadAttestation(gomock.Any(), gomock.AssignableToTypeOf(&ethpb.PayloadAttestationMessage{})).
+				SubmitPayloadAttestation(gomock.Any(), gomock.AssignableToTypeOf(&silapb.PayloadAttestationMessage{})).
 				Return(&emptypb.Empty{}, errors.New("submit failed"))
 
 			var pubKey [fieldparams.BLSPubkeyLength]byte
@@ -217,7 +217,7 @@ func TestSubmitPayloadAttestation_OK(t *testing.T) {
 			validator.duties = &dutyStore{}
 			{
 				var data dutyStoreData
-				data.setFromContainer(&ethpb.ValidatorDutiesContainer{CurrentEpochDuties: []*ethpb.ValidatorDuty{
+				data.setFromContainer(&silapb.ValidatorDutiesContainer{CurrentEpochDuties: []*silapb.ValidatorDuty{
 					{
 						PublicKey:      validatorKey.PublicKey().Marshal(),
 						ValidatorIndex: validatorIndex,
@@ -229,7 +229,7 @@ func TestSubmitPayloadAttestation_OK(t *testing.T) {
 			blockRoot := bytesutil.PadTo([]byte{'b'}, 32)
 			m.validatorClient.EXPECT().
 				PayloadAttestationData(gomock.Any(), gomock.Any()).
-				Return(&ethpb.PayloadAttestationData{
+				Return(&silapb.PayloadAttestationData{
 					BeaconBlockRoot: blockRoot,
 					Slot:            1,
 					PayloadPresent:  true,
@@ -237,12 +237,12 @@ func TestSubmitPayloadAttestation_OK(t *testing.T) {
 
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), gomock.Any()).
-				Return(&ethpb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
+				Return(&silapb.DomainResponse{SignatureDomain: make([]byte, 32)}, nil)
 
-			var generatedMsg *ethpb.PayloadAttestationMessage
+			var generatedMsg *silapb.PayloadAttestationMessage
 			m.validatorClient.EXPECT().
-				SubmitPayloadAttestation(gomock.Any(), gomock.AssignableToTypeOf(&ethpb.PayloadAttestationMessage{})).
-				Do(func(_ context.Context, msg *ethpb.PayloadAttestationMessage) {
+				SubmitPayloadAttestation(gomock.Any(), gomock.AssignableToTypeOf(&silapb.PayloadAttestationMessage{})).
+				Do(func(_ context.Context, msg *silapb.PayloadAttestationMessage) {
 					generatedMsg = msg
 				}).
 				Return(&emptypb.Empty{}, nil)

@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
@@ -52,7 +52,7 @@ func ProcessAttestationsNoVerifySignature(
 func VerifyAttestationNoVerifySignature(
 	ctx context.Context,
 	beaconState state.ReadOnlyBeaconState,
-	att ethpb.Att,
+	att silapb.Att,
 ) error {
 	ctx, span := trace.StartSpan(ctx, "core.VerifyAttestationNoVerifySignature")
 	defer span.End()
@@ -114,7 +114,7 @@ func VerifyAttestationNoVerifySignature(
 	}
 	committeeCount := helpers.SlotCommitteeCount(activeValidatorCount)
 
-	var indexedAtt ethpb.IndexedAtt
+	var indexedAtt silapb.IndexedAtt
 
 	if att.Version() >= version.Electra {
 		ci := att.GetData().CommitteeIndex
@@ -203,7 +203,7 @@ func VerifyAttestationNoVerifySignature(
 func ProcessAttestationNoVerifySignature(
 	ctx context.Context,
 	beaconState state.BeaconState,
-	att ethpb.Att,
+	att silapb.Att,
 ) (state.BeaconState, error) {
 	ctx, span := trace.StartSpan(ctx, "core.ProcessAttestationNoVerifySignature")
 	defer span.End()
@@ -219,7 +219,7 @@ func ProcessAttestationNoVerifySignature(
 	if err != nil {
 		return nil, err
 	}
-	pendingAtt := &ethpb.PendingAttestation{
+	pendingAtt := &silapb.PendingAttestation{
 		Data:            data,
 		AggregationBits: att.GetAggregationBits(),
 		InclusionDelay:  beaconState.Slot() - s,
@@ -256,7 +256,7 @@ func ProcessAttestationNoVerifySignature(
 //	  domain = get_domain(state, DOMAIN_BEACON_ATTESTER, indexed_attestation.data.target.epoch)
 //	  signing_root = compute_signing_root(indexed_attestation.data, domain)
 //	  return bls.FastAggregateVerify(pubkeys, signing_root, indexed_attestation.signature)
-func VerifyIndexedAttestation(ctx context.Context, beaconState state.ReadOnlyBeaconState, indexedAtt ethpb.IndexedAtt) error {
+func VerifyIndexedAttestation(ctx context.Context, beaconState state.ReadOnlyBeaconState, indexedAtt silapb.IndexedAtt) error {
 	ctx, span := trace.StartSpan(ctx, "core.VerifyIndexedAttestation")
 	defer span.End()
 

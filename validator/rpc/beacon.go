@@ -3,7 +3,7 @@ package rpc
 import (
 	grpcutil "github.com/sila-chain/Sila-Consensus-Core/v7/api/grpc"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/rest"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client"
 	beaconChainClientFactory "github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-chain-client-factory"
 	nodeClientFactory "github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/node-client-factory"
@@ -52,7 +52,7 @@ func (s *Server) registerBeaconClient() error {
 		log.Info("Established secure gRPC connection")
 	}
 	if grpcConn := conn.GetGrpcClientConn(); grpcConn != nil {
-		s.healthClient = ethpb.NewHealthClient(grpcConn)
+		s.healthClient = silapb.NewHealthClient(grpcConn)
 	}
 
 	s.chainClient = beaconChainClientFactory.NewChainClient(conn)

@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/rand"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -90,27 +90,27 @@ func (s *Service) processAttestations(ctx context.Context, attestations []any) {
 	firstAttestation := attestations[0]
 	var blockRoot []byte
 	switch v := firstAttestation.(type) {
-	case ethpb.Att:
+	case silapb.Att:
 		blockRoot = v.GetData().BeaconBlockRoot
-	case ethpb.SignedAggregateAttAndProof:
+	case silapb.SignedAggregateAttAndProof:
 		blockRoot = v.AggregateAttestationAndProof().AggregateVal().GetData().BeaconBlockRoot
 	default:
 		log.Warnf("Unexpected attestation type %T, skipping processing", v)
 		return
 	}
 
-	validAggregates := make([]ethpb.SignedAggregateAttAndProof, 0, len(attestations))
+	validAggregates := make([]silapb.SignedAggregateAttAndProof, 0, len(attestations))
 	startAggregate := time.Now()
-	atts := make([]ethpb.Att, 0, len(attestations))
+	atts := make([]silapb.Att, 0, len(attestations))
 	aggregateAttAndProofCount := 0
 	for _, att := range attestations {
 		switch v := att.(type) {
-		case ethpb.Att:
+		case silapb.Att:
 			atts = append(atts, v)
-		case ethpb.SignedAggregateAttAndProof:
+		case silapb.SignedAggregateAttAndProof:
 			aggregateAttAndProofCount++
 			// Avoid processing multiple aggregates only differing by aggregator index.
-			if slices.ContainsFunc(validAggregates, func(other ethpb.SignedAggregateAttAndProof) bool {
+			if slices.ContainsFunc(validAggregates, func(other silapb.SignedAggregateAttAndProof) bool {
 				return pendingAggregatesAreEqual(v, other, ignoreAggregatorIndex)
 			}) {
 				continue
@@ -150,8 +150,8 @@ func (s *Service) processAttestations(ctx context.Context, attestations []any) {
 // attestationBucket groups attestations with the same AttestationData for batch processing.
 type attestationBucket struct {
 	dataHash     [32]byte
-	data         *ethpb.AttestationData
-	attestations []ethpb.Att
+	data         *silapb.AttestationData
+	attestations []silapb.Att
 }
 
 // processAttestationBucket processes a bucket of attestations with shared AttestationData.
@@ -181,8 +181,8 @@ func (s *Service) processAttestationBucket(ctx context.Context, bucket *attestat
 
 	// Collect valid attestations for both single and electra formats.
 	// Broadcast takes single format but attestation pool and batch signature verification take electra format.
-	forBroadcast := make([]ethpb.Att, 0, len(bucket.attestations))
-	forPool := make([]ethpb.Att, 0, len(bucket.attestations))
+	forBroadcast := make([]silapb.Att, 0, len(bucket.attestations))
+	forPool := make([]silapb.Att, 0, len(bucket.attestations))
 
 	for _, att := range bucket.attestations {
 		committee, err := helpers.BeaconCommitteeFromState(ctx, preState, data.Slot, att.GetCommitteeIndex())
@@ -201,11 +201,11 @@ func (s *Service) processAttestationBucket(ctx context.Context, bucket *attestat
 			continue
 		}
 
-		var conv ethpb.Att
+		var conv silapb.Att
 		if att.Version() >= version.Electra {
-			single, ok := att.(*ethpb.SingleAttestation)
+			single, ok := att.(*silapb.SingleAttestation)
 			if !ok {
-				log.Debugf("Wrong type: expected %T, got %T", &ethpb.SingleAttestation{}, att)
+				log.Debugf("Wrong type: expected %T, got %T", &silapb.SingleAttestation{}, att)
 				continue
 			}
 			conv = single.ToAttestationElectra(committee)
@@ -222,7 +222,7 @@ func (s *Service) processAttestationBucket(ctx context.Context, bucket *attestat
 	}
 
 	verified := s.batchVerifyAttestationSignatures(ctx, forPool, preState)
-	verifiedSet := make(map[ethpb.Att]struct{}, len(verified))
+	verifiedSet := make(map[silapb.Att]struct{}, len(verified))
 	for _, att := range verified {
 		verifiedSet[att] = struct{}{}
 	}
@@ -237,9 +237,9 @@ func (s *Service) processAttestationBucket(ctx context.Context, bucket *attestat
 // batchVerifyAttestationSignatures attempts batch verification, with individual fallback on failure.
 func (s *Service) batchVerifyAttestationSignatures(
 	ctx context.Context,
-	attestations []ethpb.Att,
+	attestations []silapb.Att,
 	preState state.ReadOnlyBeaconState,
-) []ethpb.Att {
+) []silapb.Att {
 	const fallbackMsg = "batch verification failed, using individual checks"
 
 	set, err := blocks.AttestationSignatureBatch(ctx, preState, attestations)
@@ -264,10 +264,10 @@ func (s *Service) batchVerifyAttestationSignatures(
 // fallbackToIndividualVerification verifies each attestation individually if batch verification fails.
 func (s *Service) fallbackToIndividualVerification(
 	ctx context.Context,
-	attestations []ethpb.Att,
+	attestations []silapb.Att,
 	preState state.ReadOnlyBeaconState,
-) []ethpb.Att {
-	verified := make([]ethpb.Att, 0, len(attestations))
+) []silapb.Att {
+	verified := make([]silapb.Att, 0, len(attestations))
 
 	for _, att := range attestations {
 		res, err := s.validateUnaggregatedAttWithState(ctx, att, preState)
@@ -284,7 +284,7 @@ func (s *Service) fallbackToIndividualVerification(
 }
 
 // saveAttestation saves an attestation to the appropriate pool.
-func (s *Service) saveAttestation(att ethpb.Att) error {
+func (s *Service) saveAttestation(att silapb.Att) error {
 	if features.Get().EnableExperimentalAttestationPool {
 		return s.cfg.attestationCache.Add(att)
 	}
@@ -297,8 +297,8 @@ func (s *Service) saveAttestation(att ethpb.Att) error {
 // processVerifiedAttestation handles a signature-verified attestation.
 func (s *Service) processVerifiedAttestation(
 	ctx context.Context,
-	broadcastAtt ethpb.Att,
-	poolAtt ethpb.Att,
+	broadcastAtt silapb.Att,
+	poolAtt silapb.Att,
 	preState state.ReadOnlyBeaconState,
 ) {
 	data := broadcastAtt.GetData()
@@ -331,7 +331,7 @@ func (s *Service) processVerifiedAttestation(
 
 	switch {
 	case broadcastAtt.Version() >= version.Electra:
-		if sa, ok := broadcastAtt.(*ethpb.SingleAttestation); ok {
+		if sa, ok := broadcastAtt.(*silapb.SingleAttestation); ok {
 			eventType = operation.SingleAttReceived
 			eventData = &operation.SingleAttReceivedData{Attestation: sa}
 			break
@@ -349,7 +349,7 @@ func (s *Service) processVerifiedAttestation(
 	})
 }
 
-func (s *Service) processAggregate(ctx context.Context, aggregate ethpb.SignedAggregateAttAndProof) error {
+func (s *Service) processAggregate(ctx context.Context, aggregate silapb.SignedAggregateAttAndProof) error {
 	res, err := s.validateAggregatedAtt(ctx, aggregate)
 	if err != nil {
 		log.WithError(err).Debug("Pending aggregated attestation failed validation")
@@ -378,11 +378,11 @@ func (s *Service) processAggregate(ctx context.Context, aggregate ethpb.SignedAg
 // root of the missing block. The value is the list of pending attestations/aggregates
 // that voted for that block root. The caller of this function is responsible
 // for not sending repeated aggregates to the pending queue.
-func (s *Service) savePendingAggregate(agg ethpb.SignedAggregateAttAndProof) {
+func (s *Service) savePendingAggregate(agg silapb.SignedAggregateAttAndProof) {
 	root := bytesutil.ToBytes32(agg.AggregateAttestationAndProof().AggregateVal().GetData().BeaconBlockRoot)
 
 	s.savePending(root, agg, func(other any) bool {
-		a, ok := other.(ethpb.SignedAggregateAttAndProof)
+		a, ok := other.(silapb.SignedAggregateAttAndProof)
 		return ok && pendingAggregatesAreEqual(agg, a, includeAggregatorIndex)
 	})
 }
@@ -391,7 +391,7 @@ func (s *Service) savePendingAggregate(agg ethpb.SignedAggregateAttAndProof) {
 // root of the missing block. The value is the list of pending attestations/aggregates
 // that voted for that block root. The caller of this function is responsible
 // for not sending repeated attestations to the pending queue.
-func (s *Service) savePendingAtt(att ethpb.Att) {
+func (s *Service) savePendingAtt(att silapb.Att) {
 	if att.Version() >= version.Electra && !att.IsSingle() {
 		log.Debug("Non-single attestation sent to pending attestation pool. Attestation will be ignored")
 		return
@@ -400,7 +400,7 @@ func (s *Service) savePendingAtt(att ethpb.Att) {
 	root := bytesutil.ToBytes32(att.GetData().BeaconBlockRoot)
 
 	s.savePending(root, att, func(other any) bool {
-		a, ok := other.(ethpb.Att)
+		a, ok := other.(silapb.Att)
 		return ok && pendingAttsAreEqual(att, a)
 	})
 }
@@ -440,7 +440,7 @@ func (s *Service) savePending(root [32]byte, pending any, isEqual func(other any
 
 // pendingAggregatesAreEqual checks if two pending aggregate attestations are equal.
 // The filter parameter controls whether aggregator index is considered in the equality check.
-func pendingAggregatesAreEqual(a, b ethpb.SignedAggregateAttAndProof, filter aggregatorIndexFilter) bool {
+func pendingAggregatesAreEqual(a, b silapb.SignedAggregateAttAndProof, filter aggregatorIndexFilter) bool {
 	if a.Version() != b.Version() {
 		return false
 	}
@@ -462,7 +462,7 @@ func pendingAggregatesAreEqual(a, b ethpb.SignedAggregateAttAndProof, filter agg
 	return bytes.Equal(aAtt.GetAggregationBits(), bAtt.GetAggregationBits())
 }
 
-func pendingAttsAreEqual(a, b ethpb.Att) bool {
+func pendingAttsAreEqual(a, b silapb.Att) bool {
 	if a.Version() != b.Version() {
 		return false
 	}
@@ -493,9 +493,9 @@ func (s *Service) validatePendingAtts(ctx context.Context, slot primitives.Slot)
 		for i := len(atts) - 1; i >= 0; i-- {
 			var attSlot primitives.Slot
 			switch t := atts[i].(type) {
-			case ethpb.Att:
+			case silapb.Att:
 				attSlot = t.GetData().Slot
-			case ethpb.SignedAggregateAttAndProof:
+			case silapb.SignedAggregateAttAndProof:
 				attSlot = t.AggregateAttestationAndProof().AggregateVal().GetData().Slot
 			default:
 				log.Debugf("Unexpected item of type %T in pending attestation queue. Item will be removed", t)
@@ -521,7 +521,7 @@ func (s *Service) validatePendingAtts(ctx context.Context, slot primitives.Slot)
 }
 
 // bucketAttestationsByData groups attestations by their AttestationData hash.
-func bucketAttestationsByData(attestations []ethpb.Att) map[[32]byte]*attestationBucket {
+func bucketAttestationsByData(attestations []silapb.Att) map[[32]byte]*attestationBucket {
 	bucketMap := make(map[[32]byte]*attestationBucket)
 
 	for _, att := range attestations {
@@ -538,7 +538,7 @@ func bucketAttestationsByData(attestations []ethpb.Att) map[[32]byte]*attestatio
 			bucketMap[dataHash] = &attestationBucket{
 				dataHash:     dataHash,
 				data:         data,
-				attestations: []ethpb.Att{att},
+				attestations: []silapb.Att{att},
 			}
 		}
 	}

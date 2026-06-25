@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -127,9 +127,9 @@ func ProcessExecutionPayloadBid(st state.BeaconState, block interfaces.ReadOnlyB
 
 	if amount > 0 {
 		feeRecipient := bid.FeeRecipient()
-		pendingPayment := &ethpb.BuilderPendingPayment{
+		pendingPayment := &silapb.BuilderPendingPayment{
 			Weight: 0,
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: feeRecipient[:],
 				Amount:       amount,
 				BuilderIndex: builderIndex,

@@ -13,7 +13,7 @@ import (
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -26,9 +26,9 @@ func init() {
 }
 
 func TestProcessBlockHeader_ImproperBlockSlot(t *testing.T) {
-	validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
+	validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             make([]byte, 32),
 			WithdrawalCredentials: make([]byte, 32),
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
@@ -40,7 +40,7 @@ func TestProcessBlockHeader_ImproperBlockSlot(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, state.SetSlot(10))
 	require.NoError(t, state.SetValidators(validators))
-	require.NoError(t, state.SetLatestBlockHeader(util.HydrateBeaconHeader(&ethpb.BeaconBlockHeader{
+	require.NoError(t, state.SetLatestBlockHeader(util.HydrateBeaconHeader(&silapb.BeaconBlockHeader{
 		Slot: 10, // Must be less than block.Slot
 	})))
 
@@ -76,7 +76,7 @@ func TestProcessBlockHeader_ImproperBlockSlot(t *testing.T) {
 func TestProcessBlockHeader_WrongProposerSig(t *testing.T) {
 
 	beaconState, privKeys := util.DeterministicGenesisState(t, 100)
-	require.NoError(t, beaconState.SetLatestBlockHeader(util.HydrateBeaconHeader(&ethpb.BeaconBlockHeader{
+	require.NoError(t, beaconState.SetLatestBlockHeader(util.HydrateBeaconHeader(&silapb.BeaconBlockHeader{
 		Slot: 9,
 	})))
 	require.NoError(t, beaconState.SetSlot(10))
@@ -103,9 +103,9 @@ func TestProcessBlockHeader_WrongProposerSig(t *testing.T) {
 }
 
 func TestProcessBlockHeader_DifferentSlots(t *testing.T) {
-	validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
+	validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             make([]byte, 32),
 			WithdrawalCredentials: make([]byte, 32),
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
@@ -117,7 +117,7 @@ func TestProcessBlockHeader_DifferentSlots(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, state.SetValidators(validators))
 	require.NoError(t, state.SetSlot(10))
-	require.NoError(t, state.SetLatestBlockHeader(util.HydrateBeaconHeader(&ethpb.BeaconBlockHeader{
+	require.NoError(t, state.SetLatestBlockHeader(util.HydrateBeaconHeader(&silapb.BeaconBlockHeader{
 		Slot: 9,
 	})))
 
@@ -131,8 +131,8 @@ func TestProcessBlockHeader_DifferentSlots(t *testing.T) {
 	blockSig, err := signing.ComputeDomainAndSign(state, currentEpoch, &sszBytes, params.BeaconConfig().DomainBeaconProposer, priv)
 	require.NoError(t, err)
 	validators[5896].PublicKey = priv.PublicKey().Marshal()
-	block := util.HydrateSignedBeaconBlock(&ethpb.SignedBeaconBlock{
-		Block: &ethpb.BeaconBlock{
+	block := util.HydrateSignedBeaconBlock(&silapb.SignedBeaconBlock{
+		Block: &silapb.BeaconBlock{
 			Slot:       1,
 			ParentRoot: lbhsr[:],
 		},
@@ -147,9 +147,9 @@ func TestProcessBlockHeader_DifferentSlots(t *testing.T) {
 }
 
 func TestProcessBlockHeader_PreviousBlockRootNotSignedRoot(t *testing.T) {
-	validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
+	validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             make([]byte, 48),
 			WithdrawalCredentials: make([]byte, 32),
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
@@ -188,9 +188,9 @@ func TestProcessBlockHeader_PreviousBlockRootNotSignedRoot(t *testing.T) {
 }
 
 func TestProcessBlockHeader_SlashedProposer(t *testing.T) {
-	validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
+	validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             make([]byte, 48),
 			WithdrawalCredentials: make([]byte, 32),
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
@@ -232,9 +232,9 @@ func TestProcessBlockHeader_SlashedProposer(t *testing.T) {
 }
 
 func TestProcessBlockHeader_OK(t *testing.T) {
-	validators := make([]*ethpb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
+	validators := make([]*silapb.Validator, params.BeaconConfig().MinGenesisActiveValidatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			PublicKey:             make([]byte, 32),
 			WithdrawalCredentials: make([]byte, 32),
 			ExitEpoch:             params.BeaconConfig().FarFutureEpoch,
@@ -246,7 +246,7 @@ func TestProcessBlockHeader_OK(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, state.SetValidators(validators))
 	require.NoError(t, state.SetSlot(10))
-	require.NoError(t, state.SetLatestBlockHeader(util.HydrateBeaconHeader(&ethpb.BeaconBlockHeader{
+	require.NoError(t, state.SetLatestBlockHeader(util.HydrateBeaconHeader(&silapb.BeaconBlockHeader{
 		Slot: 9,
 	})))
 
@@ -281,7 +281,7 @@ func TestProcessBlockHeader_OK(t *testing.T) {
 	require.NoError(t, err, "Failed to process block header got")
 	var zeroHash [32]byte
 	nsh := newState.LatestBlockHeader()
-	expected := &ethpb.BeaconBlockHeader{
+	expected := &silapb.BeaconBlockHeader{
 		ProposerIndex: pID,
 		Slot:          block.Block.Slot,
 		ParentRoot:    latestBlockSignedRoot[:],

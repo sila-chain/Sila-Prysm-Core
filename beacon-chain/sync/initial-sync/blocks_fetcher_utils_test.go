@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	leakybucket "github.com/sila-chain/Sila-Consensus-Core/v7/container/leaky-bucket"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -131,7 +131,7 @@ func TestBlocksFetcher_nonSkippedSlotAfter(t *testing.T) {
 				p2p:   p2p,
 			},
 		)
-		mc.FinalizedCheckPoint = &ethpb.Checkpoint{
+		mc.FinalizedCheckPoint = &silapb.Checkpoint{
 			Epoch: 10,
 		}
 		require.NoError(t, mc.State.SetSlot(12*params.BeaconConfig().SlotsPerEpoch))
@@ -160,7 +160,7 @@ func TestBlocksFetcher_findFork(t *testing.T) {
 	p2p := p2pt.NewTestP2P(t)
 
 	// Chain contains blocks from 8 epochs (from 0 to 7, 256 is the start slot of epoch8).
-	chain1 := extendBlockSequence(t, []*ethpb.SignedBeaconBlock{}, 250)
+	chain1 := extendBlockSequence(t, []*silapb.SignedBeaconBlock{}, 250)
 	finalizedSlot := primitives.Slot(63)
 	finalizedEpoch := slots.ToEpoch(finalizedSlot)
 
@@ -175,7 +175,7 @@ func TestBlocksFetcher_findFork(t *testing.T) {
 		State: st,
 		Root:  genesisRoot[:],
 		DB:    beaconDB,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: finalizedEpoch,
 			Root:  fmt.Appendf(nil, "finalized_root %d", finalizedEpoch),
 		},
@@ -206,7 +206,7 @@ func TestBlocksFetcher_findFork(t *testing.T) {
 	blockBatchLimit := uint64(flags.Get().BlockBatchLimit) * 2
 	pidInd := 0
 	for i := uint64(1); i < uint64(len(chain1)); i += blockBatchLimit {
-		req := &ethpb.BeaconBlocksByRangeRequest{
+		req := &silapb.BeaconBlocksByRangeRequest{
 			StartSlot: primitives.Slot(i),
 			Step:      1,
 			Count:     blockBatchLimit,
@@ -229,7 +229,7 @@ func TestBlocksFetcher_findFork(t *testing.T) {
 	assert.Equal(t, primitives.Slot(250), mc.HeadSlot())
 
 	// Assert no blocks on further requests, disallowing to progress.
-	req := &ethpb.BeaconBlocksByRangeRequest{
+	req := &silapb.BeaconBlocksByRangeRequest{
 		StartSlot: 251,
 		Step:      1,
 		Count:     blockBatchLimit,
@@ -245,7 +245,7 @@ func TestBlocksFetcher_findFork(t *testing.T) {
 
 	// Add peer that has blocks after 250, but those blocks are orphaned i.e. they do not have common
 	// ancestor with what we already have. So, error is expected.
-	chain1a := extendBlockSequence(t, []*ethpb.SignedBeaconBlock{}, 265)
+	chain1a := extendBlockSequence(t, []*silapb.SignedBeaconBlock{}, 265)
 	connectPeerHavingBlocks(t, p2p, chain1a, finalizedSlot, p2p.Peers())
 	fork, err = fetcher.findFork(ctx, 251)
 	require.ErrorContains(t, errNoPeersWithAltBlocks.Error(), err)
@@ -335,7 +335,7 @@ func TestBlocksFetcher_findForkWithPeer(t *testing.T) {
 	beaconDB := dbtest.SetupDB(t)
 	p1 := p2pt.NewTestP2P(t)
 
-	knownBlocks := extendBlockSequence(t, []*ethpb.SignedBeaconBlock{}, 128)
+	knownBlocks := extendBlockSequence(t, []*silapb.SignedBeaconBlock{}, 128)
 	genesisBlock := knownBlocks[0]
 	util.SaveBlock(t, t.Context(), beaconDB, genesisBlock)
 	genesisRoot, err := genesisBlock.Block.HashTreeRoot()
@@ -387,7 +387,7 @@ func TestBlocksFetcher_findForkWithPeer(t *testing.T) {
 		defer func() {
 			assert.NoError(t, p1.Disconnect(p2.PeerID()))
 		}()
-		p1.Peers().SetChainState(p2.PeerID(), &ethpb.StatusV2{
+		p1.Peers().SetChainState(p2.PeerID(), &silapb.StatusV2{
 			HeadRoot: nil,
 			HeadSlot: 0,
 		})
@@ -420,7 +420,7 @@ func TestBlocksFetcher_findForkWithPeer(t *testing.T) {
 	})
 
 	t.Run("first block is diverging - no common ancestor", func(t *testing.T) {
-		altBlocks := extendBlockSequence(t, []*ethpb.SignedBeaconBlock{}, 128)
+		altBlocks := extendBlockSequence(t, []*silapb.SignedBeaconBlock{}, 128)
 		p2 := connectPeerHavingBlocks(t, p1, altBlocks, 128, p1.Peers())
 		time.Sleep(100 * time.Millisecond)
 		defer func() {
@@ -470,7 +470,7 @@ func TestBlocksFetcher_findAncestor(t *testing.T) {
 	beaconDB := dbtest.SetupDB(t)
 	p2p := p2pt.NewTestP2P(t)
 
-	knownBlocks := extendBlockSequence(t, []*ethpb.SignedBeaconBlock{}, 128)
+	knownBlocks := extendBlockSequence(t, []*silapb.SignedBeaconBlock{}, 128)
 	finalizedSlot := primitives.Slot(63)
 	finalizedEpoch := slots.ToEpoch(finalizedSlot)
 
@@ -485,7 +485,7 @@ func TestBlocksFetcher_findAncestor(t *testing.T) {
 		State: st,
 		Root:  genesisRoot[:],
 		DB:    beaconDB,
-		FinalizedCheckPoint: &ethpb.Checkpoint{
+		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: finalizedEpoch,
 			Root:  fmt.Appendf(nil, "finalized_root %d", finalizedEpoch),
 		},
@@ -621,7 +621,7 @@ func TestBlocksFetcher_currentHeadAndTargetEpochs(t *testing.T) {
 					p2p:   p2p,
 				},
 			)
-			mc.FinalizedCheckPoint = &ethpb.Checkpoint{
+			mc.FinalizedCheckPoint = &silapb.Checkpoint{
 				Epoch: tt.ourFinalizedEpoch,
 			}
 			require.NoError(t, mc.State.SetSlot(tt.ourHeadSlot))

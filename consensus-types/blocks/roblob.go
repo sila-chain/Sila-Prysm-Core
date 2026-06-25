@@ -3,16 +3,16 @@ package blocks
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // ROBlob represents a read-only blob sidecar with its block root.
 type ROBlob struct {
-	*ethpb.BlobSidecar
+	*silapb.BlobSidecar
 	root [32]byte
 }
 
-func roblobNilCheck(b *ethpb.BlobSidecar) error {
+func roblobNilCheck(b *silapb.BlobSidecar) error {
 	if b == nil {
 		return errNilBlob
 	}
@@ -26,7 +26,7 @@ func roblobNilCheck(b *ethpb.BlobSidecar) error {
 }
 
 // NewROBlobWithRoot creates a new ROBlob with a given root.
-func NewROBlobWithRoot(b *ethpb.BlobSidecar, root [32]byte) (ROBlob, error) {
+func NewROBlobWithRoot(b *silapb.BlobSidecar, root [32]byte) (ROBlob, error) {
 	if err := roblobNilCheck(b); err != nil {
 		return ROBlob{}, err
 	}
@@ -34,7 +34,7 @@ func NewROBlobWithRoot(b *ethpb.BlobSidecar, root [32]byte) (ROBlob, error) {
 }
 
 // NewROBlob creates a new ROBlob by computing the HashTreeRoot of the header.
-func NewROBlob(b *ethpb.BlobSidecar) (ROBlob, error) {
+func NewROBlob(b *silapb.BlobSidecar) (ROBlob, error) {
 	if err := roblobNilCheck(b); err != nil {
 		return ROBlob{}, err
 	}
@@ -84,9 +84,9 @@ func (b *ROBlob) BlockRootSlice() []byte {
 // ROBlobSlice is a custom type for a []ROBlob, allowing methods to be defined that act on a slice of ROBlob.
 type ROBlobSlice []ROBlob
 
-// Protos is a helper to make a more concise conversion from []ROBlob->[]*ethpb.BlobSidecar.
-func (s ROBlobSlice) Protos() []*ethpb.BlobSidecar {
-	pb := make([]*ethpb.BlobSidecar, len(s))
+// Protos is a helper to make a more concise conversion from []ROBlob->[]*silapb.BlobSidecar.
+func (s ROBlobSlice) Protos() []*silapb.BlobSidecar {
+	pb := make([]*silapb.BlobSidecar, len(s))
 	for i := range s {
 		pb[i] = s[i].BlobSidecar
 	}

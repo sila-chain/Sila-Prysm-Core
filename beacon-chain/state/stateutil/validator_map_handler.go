@@ -6,7 +6,7 @@ import (
 	coreutils "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/transition/stateutils"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 // ValidatorMapHandler is a container to hold the map and a reference tracker for how many
@@ -18,7 +18,7 @@ type ValidatorMapHandler struct {
 }
 
 // NewValMapHandler returns a new validator map handler.
-func NewValMapHandler(vals []*ethpb.Validator) *ValidatorMapHandler {
+func NewValMapHandler(vals []*silapb.Validator) *ValidatorMapHandler {
 	return &ValidatorMapHandler{
 		valIdxMap: coreutils.ValidatorIndexMap(vals),
 		mapRef:    &Reference{refs: 1},

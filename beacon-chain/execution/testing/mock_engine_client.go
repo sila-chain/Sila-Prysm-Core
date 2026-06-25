@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/holiman/uint256"
@@ -168,8 +168,8 @@ func (e *EngineClient) ConstructDataColumnSidecars(context.Context, peerdas.Cons
 
 // ReconstructExecutionPayloadEnvelope --
 func (e *EngineClient) ReconstructExecutionPayloadEnvelope(
-	_ context.Context, envelope *ethpb.SignedBlindedExecutionPayloadEnvelope,
-) (*ethpb.SignedExecutionPayloadEnvelope, error) {
+	_ context.Context, envelope *silapb.SignedBlindedExecutionPayloadEnvelope,
+) (*silapb.SignedExecutionPayloadEnvelope, error) {
 	if e.Err != nil {
 		return nil, e.Err
 	}
@@ -179,8 +179,8 @@ func (e *EngineClient) ReconstructExecutionPayloadEnvelope(
 	}
 	p := payloadToPayloadGloas(payload)
 	p.SlotNumber = envelope.Message.Slot
-	return &ethpb.SignedExecutionPayloadEnvelope{
-		Message: &ethpb.ExecutionPayloadEnvelope{
+	return &silapb.SignedExecutionPayloadEnvelope{
+		Message: &silapb.ExecutionPayloadEnvelope{
 			Payload:           p,
 			ExecutionRequests: envelope.Message.ExecutionRequests,
 			BuilderIndex:      envelope.Message.BuilderIndex,

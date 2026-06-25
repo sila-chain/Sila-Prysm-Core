@@ -6,15 +6,15 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	bolt "go.etcd.io/bbolt"
 )
 
 // LastValidatedCheckpoint returns the latest fully validated checkpoint in beacon chain.
-func (s *Store) LastValidatedCheckpoint(ctx context.Context) (*ethpb.Checkpoint, error) {
+func (s *Store) LastValidatedCheckpoint(ctx context.Context) (*silapb.Checkpoint, error) {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.LastValidatedCheckpoint")
 	defer span.End()
-	var checkpoint *ethpb.Checkpoint
+	var checkpoint *silapb.Checkpoint
 	err := s.db.View(func(tx *bolt.Tx) error {
 		bkt := tx.Bucket(checkpointBucket)
 		enc := bkt.Get(lastValidatedCheckpointKey)
@@ -33,14 +33,14 @@ func (s *Store) LastValidatedCheckpoint(ctx context.Context) (*ethpb.Checkpoint,
 			}
 			return nil
 		}
-		checkpoint = &ethpb.Checkpoint{}
+		checkpoint = &silapb.Checkpoint{}
 		return decode(ctx, enc, checkpoint)
 	})
 	return checkpoint, err
 }
 
 // SaveLastValidatedCheckpoint saves the last validated checkpoint in beacon chain.
-func (s *Store) SaveLastValidatedCheckpoint(ctx context.Context, checkpoint *ethpb.Checkpoint) error {
+func (s *Store) SaveLastValidatedCheckpoint(ctx context.Context, checkpoint *silapb.Checkpoint) error {
 	ctx, span := trace.StartSpan(ctx, "BeaconDB.SaveLastValidatedCheckpoint")
 	defer span.End()
 

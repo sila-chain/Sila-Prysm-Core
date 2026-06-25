@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -28,7 +28,7 @@ func (c *beaconApiValidatorClient) getExecutionPayloadEnvelope(
 	ctx context.Context,
 	slot primitives.Slot,
 	beaconBlockRoot [32]byte,
-) (*ethpb.ExecutionPayloadEnvelope, *ethpb.WireBlindedExecutionPayloadEnvelope, error) {
+) (*silapb.ExecutionPayloadEnvelope, *silapb.WireBlindedExecutionPayloadEnvelope, error) {
 	if envelope, _, _ := c.envelopeCache.peek(slot); envelope != nil {
 		return envelope, nil, nil
 	}
@@ -39,7 +39,7 @@ func (c *beaconApiValidatorClient) getExecutionPayloadEnvelope(
 		return nil, nil, errors.Wrap(err, "could not get blinded execution payload envelope")
 	}
 	if strings.Contains(header.Get("Content-Type"), api.OctetStreamMediaType) {
-		blinded := &ethpb.WireBlindedExecutionPayloadEnvelope{}
+		blinded := &silapb.WireBlindedExecutionPayloadEnvelope{}
 		if err := blinded.UnmarshalSSZ(body); err != nil {
 			return nil, nil, errors.Wrap(err, "could not unmarshal blinded envelope SSZ")
 		}
@@ -64,7 +64,7 @@ func (c *beaconApiValidatorClient) getExecutionPayloadEnvelope(
 // publishBlindedExecutionPayloadEnvelope instead.
 func (c *beaconApiValidatorClient) publishExecutionPayloadEnvelope(
 	ctx context.Context,
-	envelope *ethpb.SignedExecutionPayloadEnvelope,
+	envelope *silapb.SignedExecutionPayloadEnvelope,
 ) (*empty.Empty, error) {
 	const endpoint = "/sila/v1/beacon/execution_payload_envelopes"
 	if envelope == nil || envelope.Message == nil || envelope.Message.Payload == nil {
@@ -76,7 +76,7 @@ func (c *beaconApiValidatorClient) publishExecutionPayloadEnvelope(
 	if cachedEnv == nil {
 		return nil, errors.Errorf("stateless publish: envelope cache miss for slot %d", slot)
 	}
-	contents := &ethpb.SignedExecutionPayloadEnvelopeContents{
+	contents := &silapb.SignedExecutionPayloadEnvelopeContents{
 		SignedExecutionPayloadEnvelope: envelope,
 		KzgProofs:                      kzgProofs,
 		Blobs:                          blobs,
@@ -102,7 +102,7 @@ func (c *beaconApiValidatorClient) publishExecutionPayloadEnvelope(
 // BN reconstructs the full envelope from its cache. Signature is valid by HTR equivalence.
 func (c *beaconApiValidatorClient) publishBlindedExecutionPayloadEnvelope(
 	ctx context.Context,
-	signed *ethpb.SignedWireBlindedExecutionPayloadEnvelope,
+	signed *silapb.SignedWireBlindedExecutionPayloadEnvelope,
 ) (*empty.Empty, error) {
 	const endpoint = "/sila/v1/beacon/execution_payload_envelopes"
 	if signed == nil || signed.Message == nil {

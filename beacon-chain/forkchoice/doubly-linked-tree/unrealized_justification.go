@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -59,7 +59,7 @@ func (f *ForkChoice) updateUnrealizedCheckpoints(ctx context.Context) error {
 	return nil
 }
 
-func (s *Store) pullTips(state state.BeaconState, node *Node, jc, fc *ethpb.Checkpoint) (*ethpb.Checkpoint, *ethpb.Checkpoint) {
+func (s *Store) pullTips(state state.BeaconState, node *Node, jc, fc *silapb.Checkpoint) (*silapb.Checkpoint, *silapb.Checkpoint) {
 	if node.parent == nil { // Nothing to do if the parent is nil.
 		return jc, fc
 	}

@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/metadata"
 	"github.com/sila-chain/Sila/p2p/enode"
 	"github.com/sila-chain/Sila/p2p/enr"
@@ -149,17 +149,17 @@ func (*FakeP2P) Broadcast(_ context.Context, _ proto.Message) error {
 }
 
 // BroadcastAttestation -- fake.
-func (*FakeP2P) BroadcastAttestation(_ context.Context, _ uint64, _ ethpb.Att) error {
+func (*FakeP2P) BroadcastAttestation(_ context.Context, _ uint64, _ silapb.Att) error {
 	return nil
 }
 
 // BroadcastSyncCommitteeMessage -- fake.
-func (*FakeP2P) BroadcastSyncCommitteeMessage(_ context.Context, _ uint64, _ *ethpb.SyncCommitteeMessage) error {
+func (*FakeP2P) BroadcastSyncCommitteeMessage(_ context.Context, _ uint64, _ *silapb.SyncCommitteeMessage) error {
 	return nil
 }
 
 // BroadcastBlob -- fake.
-func (*FakeP2P) BroadcastBlob(_ context.Context, _ uint64, _ *ethpb.BlobSidecar) error {
+func (*FakeP2P) BroadcastBlob(_ context.Context, _ uint64, _ *silapb.BlobSidecar) error {
 	return nil
 }
 

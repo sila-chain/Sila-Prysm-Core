@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time"
 )
 
@@ -77,12 +77,12 @@ func Bitlists64WithMultipleBitSet(t testing.TB, n, length, count uint64) []*bitf
 }
 
 // MakeAttestationsFromBitlists creates list of attestations from list of bitlist.
-func MakeAttestationsFromBitlists(bl []bitfield.Bitlist) []ethpb.Att {
-	atts := make([]ethpb.Att, len(bl))
+func MakeAttestationsFromBitlists(bl []bitfield.Bitlist) []silapb.Att {
+	atts := make([]silapb.Att, len(bl))
 	for i, b := range bl {
-		atts[i] = &ethpb.Attestation{
+		atts[i] = &silapb.Attestation{
 			AggregationBits: b,
-			Data: &ethpb.AttestationData{
+			Data: &silapb.AttestationData{
 				Slot:           42,
 				CommitteeIndex: 1,
 			},
@@ -93,10 +93,10 @@ func MakeAttestationsFromBitlists(bl []bitfield.Bitlist) []ethpb.Att {
 }
 
 // MakeSyncContributionsFromBitVector creates list of sync contributions from list of bitvector.
-func MakeSyncContributionsFromBitVector(bl []bitfield.Bitvector128) []*ethpb.SyncCommitteeContribution {
-	c := make([]*ethpb.SyncCommitteeContribution, len(bl))
+func MakeSyncContributionsFromBitVector(bl []bitfield.Bitvector128) []*silapb.SyncCommitteeContribution {
+	c := make([]*silapb.SyncCommitteeContribution, len(bl))
 	for i, b := range bl {
-		c[i] = &ethpb.SyncCommitteeContribution{
+		c[i] = &silapb.SyncCommitteeContribution{
 			Slot:              primitives.Slot(1),
 			SubcommitteeIndex: 2,
 			AggregationBits:   b,

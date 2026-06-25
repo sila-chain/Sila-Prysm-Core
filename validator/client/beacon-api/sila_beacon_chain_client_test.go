@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/validator"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
@@ -194,7 +194,7 @@ func Test_beaconApiBeaconChainClient_GetValidatorPerformance(t *testing.T) {
 	)
 
 	wantResponse := &structs.GetValidatorPerformanceResponse{}
-	want := &ethpb.ValidatorPerformanceResponse{}
+	want := &silapb.ValidatorPerformanceResponse{}
 
 	handler.EXPECT().Post(
 		gomock.Any(),
@@ -211,7 +211,7 @@ func Test_beaconApiBeaconChainClient_GetValidatorPerformance(t *testing.T) {
 		handler:    handler,
 	}
 
-	got, err := client.ValidatorPerformance(ctx, &ethpb.ValidatorPerformanceRequest{
+	got, err := client.ValidatorPerformance(ctx, &silapb.ValidatorPerformanceRequest{
 		PublicKeys: [][]byte{publicKeys[0][:], publicKeys[2][:], publicKeys[1][:]},
 	})
 	require.NoError(t, err)

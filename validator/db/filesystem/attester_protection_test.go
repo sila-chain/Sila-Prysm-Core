@@ -7,7 +7,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
 )
@@ -50,10 +50,10 @@ func TestStore_LowestSignedTargetEpoch(t *testing.T) {
 	require.Equal(t, false, exists, "lowest signed target epoch should not exist")
 
 	// Create an attestation with both source and target epoch
-	attestation := &ethpb.IndexedAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: primitives.Epoch(savedSourceEpoch)},
-			Target: &ethpb.Checkpoint{Epoch: primitives.Epoch(savedTargetEpoch)},
+	attestation := &silapb.IndexedAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: primitives.Epoch(savedSourceEpoch)},
+			Target: &silapb.Checkpoint{Epoch: primitives.Epoch(savedTargetEpoch)},
 		},
 	}
 
@@ -84,10 +84,10 @@ func TestStore_LowestSignedSourceEpoch(t *testing.T) {
 
 	// Create an attestation.
 	savedSourceEpoch, savedTargetEpoch := 42, 43
-	attestation := &ethpb.IndexedAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: primitives.Epoch(savedSourceEpoch)},
-			Target: &ethpb.Checkpoint{Epoch: primitives.Epoch(savedTargetEpoch)},
+	attestation := &silapb.IndexedAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: primitives.Epoch(savedSourceEpoch)},
+			Target: &silapb.Checkpoint{Epoch: primitives.Epoch(savedTargetEpoch)},
 		},
 	}
 
@@ -117,10 +117,10 @@ func TestStore_AttestedPublicKeys(t *testing.T) {
 	// Attest for some pubkeys.
 	attestedPubkeys := pubkeys[1:3]
 	for _, pubkey := range attestedPubkeys {
-		err = s.SaveAttestationForPubKey(t.Context(), pubkey, [32]byte{}, &ethpb.IndexedAttestation{
-			Data: &ethpb.AttestationData{
-				Source: &ethpb.Checkpoint{Epoch: 42},
-				Target: &ethpb.Checkpoint{Epoch: 43},
+		err = s.SaveAttestationForPubKey(t.Context(), pubkey, [32]byte{}, &silapb.IndexedAttestation{
+			Data: &silapb.AttestationData{
+				Source: &silapb.Checkpoint{Epoch: 42},
+				Target: &silapb.Checkpoint{Epoch: 43},
 			},
 		})
 		require.NoError(t, err, "SaveAttestationForPubKey should not return an error")
@@ -151,8 +151,8 @@ func TestStore_SaveAttestationForPubKey(t *testing.T) {
 
 	for _, tt := range []struct {
 		name            string
-		existingAttInDB *ethpb.IndexedAttestation
-		incomingAtt     *ethpb.IndexedAttestation
+		existingAttInDB *silapb.IndexedAttestation
+		incomingAtt     *silapb.IndexedAttestation
 		expectedErr     string
 	}{
 		{
@@ -164,16 +164,16 @@ func TestStore_SaveAttestationForPubKey(t *testing.T) {
 		{
 			name:            "att.Data is nil",
 			existingAttInDB: nil,
-			incomingAtt:     &ethpb.IndexedAttestation{Data: nil},
+			incomingAtt:     &silapb.IndexedAttestation{Data: nil},
 			expectedErr:     "incoming attestation does not contain source and/or target epoch",
 		},
 		{
 			name:            "att.Data.Source is nil",
 			existingAttInDB: nil,
-			incomingAtt: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
+			incomingAtt: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
 					Source: nil,
-					Target: &ethpb.Checkpoint{Epoch: 43},
+					Target: &silapb.Checkpoint{Epoch: 43},
 				},
 			},
 			expectedErr: "incoming attestation does not contain source and/or target epoch",
@@ -181,9 +181,9 @@ func TestStore_SaveAttestationForPubKey(t *testing.T) {
 		{
 			name:            "att.Data.Target is nil",
 			existingAttInDB: nil,
-			incomingAtt: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: 42},
+			incomingAtt: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: 42},
 					Target: nil,
 				},
 			},
@@ -192,74 +192,74 @@ func TestStore_SaveAttestationForPubKey(t *testing.T) {
 		{
 			name:            "no pre-existing slashing protection",
 			existingAttInDB: nil,
-			incomingAtt: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: 42},
-					Target: &ethpb.Checkpoint{Epoch: 43},
+			incomingAtt: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: 42},
+					Target: &silapb.Checkpoint{Epoch: 43},
 				},
 			},
 			expectedErr: "",
 		},
 		{
 			name: "incoming source epoch lower than saved source epoch",
-			existingAttInDB: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: 42},
-					Target: &ethpb.Checkpoint{Epoch: 43},
+			existingAttInDB: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: 42},
+					Target: &silapb.Checkpoint{Epoch: 43},
 				},
 			},
-			incomingAtt: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: 41},
-					Target: &ethpb.Checkpoint{Epoch: 45},
+			incomingAtt: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: 41},
+					Target: &silapb.Checkpoint{Epoch: 45},
 				},
 			},
 			expectedErr: "could not sign attestation with source lower than recorded source epoch",
 		},
 		{
 			name: "incoming target epoch lower than saved target epoch",
-			existingAttInDB: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: 42},
-					Target: &ethpb.Checkpoint{Epoch: 43},
+			existingAttInDB: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: 42},
+					Target: &silapb.Checkpoint{Epoch: 43},
 				},
 			},
-			incomingAtt: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: 42},
-					Target: &ethpb.Checkpoint{Epoch: 42},
+			incomingAtt: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: 42},
+					Target: &silapb.Checkpoint{Epoch: 42},
 				},
 			},
 			expectedErr: "could not sign attestation with target lower than or equal to recorded target epoch",
 		},
 		{
 			name: "incoming target epoch equal to saved target epoch",
-			existingAttInDB: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: 42},
-					Target: &ethpb.Checkpoint{Epoch: 43},
+			existingAttInDB: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: 42},
+					Target: &silapb.Checkpoint{Epoch: 43},
 				},
 			},
-			incomingAtt: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: 42},
-					Target: &ethpb.Checkpoint{Epoch: 43},
+			incomingAtt: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: 42},
+					Target: &silapb.Checkpoint{Epoch: 43},
 				},
 			},
 			expectedErr: "could not sign attestation with target lower than or equal to recorded target epoch",
 		},
 		{
 			name: "nominal",
-			existingAttInDB: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: 42},
-					Target: &ethpb.Checkpoint{Epoch: 43},
+			existingAttInDB: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: 42},
+					Target: &silapb.Checkpoint{Epoch: 43},
 				},
 			},
-			incomingAtt: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: 43},
-					Target: &ethpb.Checkpoint{Epoch: 44},
+			incomingAtt: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: 43},
+					Target: &silapb.Checkpoint{Epoch: 44},
 				},
 			},
 			expectedErr: "",
@@ -305,8 +305,8 @@ func TestStore_SaveAttestationsForPubKey2(t *testing.T) {
 
 	for _, tt := range []struct {
 		name                            string
-		existingAttInDB                 *ethpb.IndexedAttestation
-		incomingAtts                    []*ethpb.IndexedAttestation
+		existingAttInDB                 *silapb.IndexedAttestation
+		incomingAtts                    []*silapb.IndexedAttestation
 		expectedSavedSlashingProtection *ValidatorSlashingProtection
 	}{
 		{
@@ -320,17 +320,17 @@ func TestStore_SaveAttestationsForPubKey2(t *testing.T) {
 			//      30 ==========> 40
 			name:            "no pre-existing slashing protection",
 			existingAttInDB: nil,
-			incomingAtts: []*ethpb.IndexedAttestation{
+			incomingAtts: []*silapb.IndexedAttestation{
 				{
-					Data: &ethpb.AttestationData{
-						Source: &ethpb.Checkpoint{Epoch: primitives.Epoch(40)},
-						Target: &ethpb.Checkpoint{Epoch: primitives.Epoch(45)},
+					Data: &silapb.AttestationData{
+						Source: &silapb.Checkpoint{Epoch: primitives.Epoch(40)},
+						Target: &silapb.Checkpoint{Epoch: primitives.Epoch(45)},
 					},
 				},
 				{
-					Data: &ethpb.AttestationData{
-						Source: &ethpb.Checkpoint{Epoch: primitives.Epoch(30)},
-						Target: &ethpb.Checkpoint{Epoch: primitives.Epoch(40)},
+					Data: &silapb.AttestationData{
+						Source: &silapb.Checkpoint{Epoch: primitives.Epoch(30)},
+						Target: &silapb.Checkpoint{Epoch: primitives.Epoch(40)},
 					},
 				},
 			},
@@ -345,17 +345,17 @@ func TestStore_SaveAttestationsForPubKey2(t *testing.T) {
 			//                   42 => 43        <----- Incoming attestation
 			// ------------------------------------------------------------------------------------------------
 			//                   42 ======> 45   <----- Will be recorded into DB (max source and target epochs)
-			existingAttInDB: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: primitives.Epoch(40)},
-					Target: &ethpb.Checkpoint{Epoch: primitives.Epoch(45)},
+			existingAttInDB: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: primitives.Epoch(40)},
+					Target: &silapb.Checkpoint{Epoch: primitives.Epoch(45)},
 				},
 			},
-			incomingAtts: []*ethpb.IndexedAttestation{
+			incomingAtts: []*silapb.IndexedAttestation{
 				{
-					Data: &ethpb.AttestationData{
-						Source: &ethpb.Checkpoint{Epoch: primitives.Epoch(42)},
-						Target: &ethpb.Checkpoint{Epoch: primitives.Epoch(43)},
+					Data: &silapb.AttestationData{
+						Source: &silapb.Checkpoint{Epoch: primitives.Epoch(42)},
+						Target: &silapb.Checkpoint{Epoch: primitives.Epoch(43)},
 					},
 				},
 			},
@@ -371,17 +371,17 @@ func TestStore_SaveAttestationsForPubKey2(t *testing.T) {
 			//              40 ==================> 50   <----- Incoming attestation
 			// ------------------------------------------------------------------------------------------------------
 			//                   42 =============> 50   <----- Will be recorded into DB (max source and target epochs)
-			existingAttInDB: &ethpb.IndexedAttestation{
-				Data: &ethpb.AttestationData{
-					Source: &ethpb.Checkpoint{Epoch: primitives.Epoch(42)},
-					Target: &ethpb.Checkpoint{Epoch: primitives.Epoch(45)},
+			existingAttInDB: &silapb.IndexedAttestation{
+				Data: &silapb.AttestationData{
+					Source: &silapb.Checkpoint{Epoch: primitives.Epoch(42)},
+					Target: &silapb.Checkpoint{Epoch: primitives.Epoch(45)},
 				},
 			},
-			incomingAtts: []*ethpb.IndexedAttestation{
+			incomingAtts: []*silapb.IndexedAttestation{
 				{
-					Data: &ethpb.AttestationData{
-						Source: &ethpb.Checkpoint{Epoch: primitives.Epoch(40)},
-						Target: &ethpb.Checkpoint{Epoch: primitives.Epoch(50)},
+					Data: &silapb.AttestationData{
+						Source: &silapb.Checkpoint{Epoch: primitives.Epoch(40)},
+						Target: &silapb.Checkpoint{Epoch: primitives.Epoch(50)},
 					},
 				},
 			},
@@ -435,10 +435,10 @@ func TestStore_AttestationHistoryForPubKey(t *testing.T) {
 
 	// Create an attestation.
 	savedSourceEpoch, savedTargetEpoch := 42, 43
-	attestation := &ethpb.IndexedAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{Epoch: primitives.Epoch(savedSourceEpoch)},
-			Target: &ethpb.Checkpoint{Epoch: primitives.Epoch(savedTargetEpoch)},
+	attestation := &silapb.IndexedAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{Epoch: primitives.Epoch(savedSourceEpoch)},
+			Target: &silapb.Checkpoint{Epoch: primitives.Epoch(savedTargetEpoch)},
 		},
 	}
 
@@ -474,12 +474,12 @@ func BenchmarkStore_SaveAttestationForPubKey(b *testing.B) {
 	}
 
 	signingRoot := [32]byte{1}
-	attestation := &ethpb.IndexedAttestation{
-		Data: &ethpb.AttestationData{
-			Source: &ethpb.Checkpoint{
+	attestation := &silapb.IndexedAttestation{
+		Data: &silapb.AttestationData{
+			Source: &silapb.Checkpoint{
 				Epoch: 42,
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 43,
 			},
 		},

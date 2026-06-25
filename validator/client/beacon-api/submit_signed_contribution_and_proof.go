@@ -7,12 +7,12 @@ import (
 	"strconv"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
 )
 
-func (c *beaconApiValidatorClient) submitSignedContributionAndProof(ctx context.Context, in *ethpb.SignedContributionAndProof) error {
+func (c *beaconApiValidatorClient) submitSignedContributionAndProof(ctx context.Context, in *silapb.SignedContributionAndProof) error {
 	if in == nil {
 		return errors.New("signed contribution and proof is nil")
 	}

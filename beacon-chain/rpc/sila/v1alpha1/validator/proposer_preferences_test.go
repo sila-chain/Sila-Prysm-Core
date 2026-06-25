@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -34,10 +34,10 @@ func TestSubmitSignedProposerPreferences_OK(t *testing.T) {
 		ProposerPreferencesCache: cache,
 	}
 
-	req := &ethpb.SubmitSignedProposerPreferencesRequest{
-		SignedProposerPreferences: []*ethpb.SignedProposerPreferences{
+	req := &silapb.SubmitSignedProposerPreferencesRequest{
+		SignedProposerPreferences: []*silapb.SignedProposerPreferences{
 			{
-				Message: &ethpb.ProposerPreferences{
+				Message: &silapb.ProposerPreferences{
 					DependentRoot:  bytesutil.PadTo([]byte{0xcc}, 32),
 					ProposalSlot:   proposalSlot,
 					ValidatorIndex: 2,
@@ -76,10 +76,10 @@ func TestSubmitSignedProposerPreferences_Multiple(t *testing.T) {
 		ProposerPreferencesCache: c,
 	}
 
-	req := &ethpb.SubmitSignedProposerPreferencesRequest{
-		SignedProposerPreferences: []*ethpb.SignedProposerPreferences{
+	req := &silapb.SubmitSignedProposerPreferencesRequest{
+		SignedProposerPreferences: []*silapb.SignedProposerPreferences{
 			{
-				Message: &ethpb.ProposerPreferences{
+				Message: &silapb.ProposerPreferences{
 					DependentRoot:  bytesutil.PadTo([]byte{0xaa}, 32),
 					ProposalSlot:   currentSlot + 1,
 					ValidatorIndex: 2,
@@ -89,7 +89,7 @@ func TestSubmitSignedProposerPreferences_Multiple(t *testing.T) {
 				Signature: make([]byte, 96),
 			},
 			{
-				Message: &ethpb.ProposerPreferences{
+				Message: &silapb.ProposerPreferences{
 					DependentRoot:  bytesutil.PadTo([]byte{0xbb}, 32),
 					ProposalSlot:   currentSlot + 2,
 					ValidatorIndex: 5,
@@ -136,10 +136,10 @@ func TestSubmitSignedProposerPreferences_DuplicateSlot(t *testing.T) {
 		ProposerPreferencesCache: c,
 	}
 
-	req := &ethpb.SubmitSignedProposerPreferencesRequest{
-		SignedProposerPreferences: []*ethpb.SignedProposerPreferences{
+	req := &silapb.SubmitSignedProposerPreferencesRequest{
+		SignedProposerPreferences: []*silapb.SignedProposerPreferences{
 			{
-				Message: &ethpb.ProposerPreferences{
+				Message: &silapb.ProposerPreferences{
 					DependentRoot:  bytesutil.PadTo([]byte{0xcc}, 32),
 					ProposalSlot:   proposalSlot,
 					ValidatorIndex: 2,
@@ -173,10 +173,10 @@ func TestSubmitSignedProposerPreferences_InvalidEpoch(t *testing.T) {
 	}
 
 	// Current slot (already passed) should fail.
-	req := &ethpb.SubmitSignedProposerPreferencesRequest{
-		SignedProposerPreferences: []*ethpb.SignedProposerPreferences{
+	req := &silapb.SubmitSignedProposerPreferencesRequest{
+		SignedProposerPreferences: []*silapb.SignedProposerPreferences{
 			{
-				Message: &ethpb.ProposerPreferences{
+				Message: &silapb.ProposerPreferences{
 					DependentRoot:  bytesutil.PadTo([]byte{0xcc}, 32),
 					ProposalSlot:   currentSlot,
 					ValidatorIndex: 2,
@@ -214,10 +214,10 @@ func TestSubmitSignedProposerPreferences_CurrentEpochFutureSlot(t *testing.T) {
 		ProposerPreferencesCache: cache,
 	}
 
-	req := &ethpb.SubmitSignedProposerPreferencesRequest{
-		SignedProposerPreferences: []*ethpb.SignedProposerPreferences{
+	req := &silapb.SubmitSignedProposerPreferencesRequest{
+		SignedProposerPreferences: []*silapb.SignedProposerPreferences{
 			{
-				Message: &ethpb.ProposerPreferences{
+				Message: &silapb.ProposerPreferences{
 					DependentRoot:  bytesutil.PadTo([]byte{0xcc}, 32),
 					ProposalSlot:   proposalSlot,
 					ValidatorIndex: 2,
@@ -250,10 +250,10 @@ func TestSubmitSignedProposerPreferences_Syncing(t *testing.T) {
 		ProposerPreferencesCache: cache.NewProposerPreferencesCache(),
 	}
 
-	req := &ethpb.SubmitSignedProposerPreferencesRequest{
-		SignedProposerPreferences: []*ethpb.SignedProposerPreferences{
+	req := &silapb.SubmitSignedProposerPreferencesRequest{
+		SignedProposerPreferences: []*silapb.SignedProposerPreferences{
 			{
-				Message: &ethpb.ProposerPreferences{
+				Message: &silapb.ProposerPreferences{
 					DependentRoot:  bytesutil.PadTo([]byte{0xcc}, 32),
 					ProposalSlot:   currentSlot + 1,
 					ValidatorIndex: 2,
@@ -288,10 +288,10 @@ func TestSubmitSignedProposerPreferences_BroadcastsForProposalEpoch(t *testing.T
 		ProposerPreferencesCache: cache.NewProposerPreferencesCache(),
 	}
 
-	req := &ethpb.SubmitSignedProposerPreferencesRequest{
-		SignedProposerPreferences: []*ethpb.SignedProposerPreferences{
+	req := &silapb.SubmitSignedProposerPreferencesRequest{
+		SignedProposerPreferences: []*silapb.SignedProposerPreferences{
 			{
-				Message: &ethpb.ProposerPreferences{
+				Message: &silapb.ProposerPreferences{
 					DependentRoot:  bytesutil.PadTo([]byte{0xcc}, 32),
 					ProposalSlot:   proposalSlot,
 					ValidatorIndex: 2,

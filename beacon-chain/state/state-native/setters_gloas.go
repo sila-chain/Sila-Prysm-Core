@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	pkgerrors "github.com/pkg/errors"
@@ -43,13 +43,13 @@ func (b *BeaconState) RotateBuilderPendingPayments() error {
 }
 
 // emptyBuilderPendingPayment is a shared zero-value payment used to clear entries.
-var emptyBuilderPendingPayment = &ethpb.BuilderPendingPayment{
-	Withdrawal: &ethpb.BuilderPendingWithdrawal{
+var emptyBuilderPendingPayment = &silapb.BuilderPendingPayment{
+	Withdrawal: &silapb.BuilderPendingWithdrawal{
 		FeeRecipient: make([]byte, 20),
 	},
 }
 
-func newBuilderIdxMap(builders []*ethpb.Builder) map[[fieldparams.BLSPubkeyLength]byte]primitives.BuilderIndex {
+func newBuilderIdxMap(builders []*silapb.Builder) map[[fieldparams.BLSPubkeyLength]byte]primitives.BuilderIndex {
 	m := make(map[[fieldparams.BLSPubkeyLength]byte]primitives.BuilderIndex, len(builders))
 	for i, builder := range builders {
 		if builder == nil {
@@ -62,7 +62,7 @@ func newBuilderIdxMap(builders []*ethpb.Builder) map[[fieldparams.BLSPubkeyLengt
 
 // AppendBuilderPendingWithdrawals appends builder pending withdrawals to the beacon state.
 // If the withdrawals slice is shared, it copies the slice first to preserve references.
-func (b *BeaconState) AppendBuilderPendingWithdrawals(withdrawals []*ethpb.BuilderPendingWithdrawal) error {
+func (b *BeaconState) AppendBuilderPendingWithdrawals(withdrawals []*silapb.BuilderPendingWithdrawal) error {
 	if b.version < version.Gloas {
 		return errNotSupported("AppendBuilderPendingWithdrawals", b.version)
 	}
@@ -76,7 +76,7 @@ func (b *BeaconState) AppendBuilderPendingWithdrawals(withdrawals []*ethpb.Build
 
 	pendingWithdrawals := b.builderPendingWithdrawals
 	if b.sharedFieldReferences[types.BuilderPendingWithdrawals].Refs() > 1 {
-		pendingWithdrawals = make([]*ethpb.BuilderPendingWithdrawal, 0, len(b.builderPendingWithdrawals)+len(withdrawals))
+		pendingWithdrawals = make([]*silapb.BuilderPendingWithdrawal, 0, len(b.builderPendingWithdrawals)+len(withdrawals))
 		pendingWithdrawals = append(pendingWithdrawals, b.builderPendingWithdrawals...)
 		b.sharedFieldReferences[types.BuilderPendingWithdrawals].MinusRef()
 		b.sharedFieldReferences[types.BuilderPendingWithdrawals] = stateutil.NewRef(1)
@@ -103,7 +103,7 @@ func (b *BeaconState) SetExecutionPayloadBid(h interfaces.ROExecutionPayloadBid)
 	blobKzgCommitments := h.BlobKzgCommitments()
 	feeRecipient := h.FeeRecipient()
 	executionRequestsRoot := h.ExecutionRequestsRoot()
-	b.latestExecutionPayloadBid = &ethpb.ExecutionPayloadBid{
+	b.latestExecutionPayloadBid = &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       parentBlockHash[:],
 		ParentBlockRoot:       parentBlockRoot[:],
 		BlockHash:             blockHash[:],
@@ -159,7 +159,7 @@ func (b *BeaconState) QueueBuilderPaymentForSlot(parentSlot primitives.Slot) err
 	if bid == nil || bid.Value == 0 {
 		return nil
 	}
-	return b.AppendBuilderPendingWithdrawals([]*ethpb.BuilderPendingWithdrawal{{
+	return b.AppendBuilderPendingWithdrawals([]*silapb.BuilderPendingWithdrawal{{
 		FeeRecipient: bytesutil.SafeCopyBytes(bid.FeeRecipient),
 		Amount:       bid.Value,
 		BuilderIndex: bid.BuilderIndex,
@@ -176,7 +176,7 @@ func (b *BeaconState) queueBuilderPaymentAtIndex(paymentIndex primitives.Slot) e
 
 	payment := b.builderPendingPayments[paymentIndex]
 	if payment != nil && payment.Withdrawal != nil && payment.Withdrawal.Amount > 0 {
-		b.builderPendingWithdrawals = append(b.builderPendingWithdrawals, ethpb.CopyBuilderPendingWithdrawal(payment.Withdrawal))
+		b.builderPendingWithdrawals = append(b.builderPendingWithdrawals, silapb.CopyBuilderPendingWithdrawal(payment.Withdrawal))
 		b.markFieldAsDirty(types.BuilderPendingWithdrawals)
 	}
 
@@ -186,7 +186,7 @@ func (b *BeaconState) queueBuilderPaymentAtIndex(paymentIndex primitives.Slot) e
 }
 
 // SetBuilderPendingPayment sets a builder pending payment at the specified index.
-func (b *BeaconState) SetBuilderPendingPayment(index primitives.Slot, payment *ethpb.BuilderPendingPayment) error {
+func (b *BeaconState) SetBuilderPendingPayment(index primitives.Slot, payment *silapb.BuilderPendingPayment) error {
 	if b.version < version.Gloas {
 		return errNotSupported("SetBuilderPendingPayment", b.version)
 	}
@@ -198,7 +198,7 @@ func (b *BeaconState) SetBuilderPendingPayment(index primitives.Slot, payment *e
 		return fmt.Errorf("builder pending payments index %d out of range (len=%d)", index, len(b.builderPendingPayments))
 	}
 
-	b.builderPendingPayments[index] = ethpb.CopyBuilderPendingPayment(payment)
+	b.builderPendingPayments[index] = silapb.CopyBuilderPendingPayment(payment)
 
 	b.markFieldAsDirty(types.BuilderPendingPayments)
 	return nil
@@ -284,7 +284,7 @@ func (b *BeaconState) SetExecutionPayloadAvailability(index primitives.Slot, ava
 }
 
 // UpdateBuilderAtIndex updates the builder at the given index.
-func (b *BeaconState) UpdateBuilderAtIndex(index primitives.BuilderIndex, builder *ethpb.Builder) error {
+func (b *BeaconState) UpdateBuilderAtIndex(index primitives.BuilderIndex, builder *silapb.Builder) error {
 	if b.version < version.Gloas {
 		return errNotSupported("UpdateBuilderAtIndex", b.version)
 	}
@@ -299,7 +299,7 @@ func (b *BeaconState) UpdateBuilderAtIndex(index primitives.BuilderIndex, builde
 
 	builders := b.builders
 	if b.sharedFieldReferences[types.Builders].Refs() > 1 {
-		builders = make([]*ethpb.Builder, len(b.builders))
+		builders = make([]*silapb.Builder, len(b.builders))
 		copy(builders, b.builders)
 		b.sharedFieldReferences[types.Builders].MinusRef()
 		b.sharedFieldReferences[types.Builders] = stateutil.NewRef(1)
@@ -308,7 +308,7 @@ func (b *BeaconState) UpdateBuilderAtIndex(index primitives.BuilderIndex, builde
 	if old := builders[idx]; old != nil {
 		delete(b.builderIdxMap, bytesutil.ToBytes48(old.Pubkey))
 	}
-	builders[idx] = ethpb.CopyBuilder(builder)
+	builders[idx] = silapb.CopyBuilder(builder)
 	b.builderIdxMap[bytesutil.ToBytes48(builder.Pubkey)] = index
 	b.builders = builders
 
@@ -338,13 +338,13 @@ func (b *BeaconState) increaseBuilderBalance(index primitives.BuilderIndex, amou
 
 	builders := b.builders
 	if b.sharedFieldReferences[types.Builders].Refs() > 1 {
-		builders = make([]*ethpb.Builder, len(b.builders))
+		builders = make([]*silapb.Builder, len(b.builders))
 		copy(builders, b.builders)
 		b.sharedFieldReferences[types.Builders].MinusRef()
 		b.sharedFieldReferences[types.Builders] = stateutil.NewRef(1)
 	}
 
-	builder := ethpb.CopyBuilder(builders[index])
+	builder := silapb.CopyBuilder(builders[index])
 	builder.Balance += primitives.Gwei(amount)
 	builders[index] = builder
 	b.builders = builders
@@ -373,7 +373,7 @@ func (b *BeaconState) addBuilderFromDepositAtEpoch(pubkey [fieldparams.BLSPubkey
 	currentEpoch := slots.ToEpoch(b.slot)
 	index := b.builderInsertionIndex(currentEpoch)
 
-	builder := &ethpb.Builder{
+	builder := &silapb.Builder{
 		Pubkey:            bytesutil.SafeCopyBytes(pubkey[:]),
 		Version:           []byte{withdrawalCredentials[0]},
 		ExecutionAddress:  bytesutil.SafeCopyBytes(withdrawalCredentials[12:]),
@@ -384,7 +384,7 @@ func (b *BeaconState) addBuilderFromDepositAtEpoch(pubkey [fieldparams.BLSPubkey
 
 	builders := b.builders
 	if b.sharedFieldReferences[types.Builders].Refs() > 1 {
-		builders = make([]*ethpb.Builder, len(b.builders))
+		builders = make([]*silapb.Builder, len(b.builders))
 		copy(builders, b.builders)
 		b.sharedFieldReferences[types.Builders].MinusRef()
 		b.sharedFieldReferences[types.Builders] = stateutil.NewRef(1)
@@ -397,7 +397,7 @@ func (b *BeaconState) addBuilderFromDepositAtEpoch(pubkey [fieldparams.BLSPubkey
 		builders[index] = builder
 	} else {
 		gap := index - primitives.BuilderIndex(len(builders)) + 1
-		builders = append(builders, make([]*ethpb.Builder, gap)...)
+		builders = append(builders, make([]*silapb.Builder, gap)...)
 		builders[index] = builder
 	}
 	b.builderIdxMap[pubkey] = index
@@ -450,10 +450,10 @@ func (b *BeaconState) builderInsertionIndex(currentEpoch primitives.Epoch) primi
 //	    state.builder_pending_payments[SLOTS_PER_EPOCH + data.slot % SLOTS_PER_EPOCH] = payment
 //	else:
 //	    state.builder_pending_payments[data.slot % SLOTS_PER_EPOCH] = payment
-func (b *BeaconState) UpdatePendingPaymentWeight(att ethpb.Att, indices []uint64, participatedFlags map[uint8]bool) error {
+func (b *BeaconState) UpdatePendingPaymentWeight(att silapb.Att, indices []uint64, participatedFlags map[uint8]bool) error {
 	var (
 		paymentSlot    primitives.Slot
-		currentPayment *ethpb.BuilderPendingPayment
+		currentPayment *silapb.BuilderPendingPayment
 		weight         primitives.Gwei
 	)
 
@@ -528,7 +528,7 @@ func (b *BeaconState) UpdatePendingPaymentWeight(att ethpb.Att, indices []uint64
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	newPayment := ethpb.CopyBuilderPendingPayment(currentPayment)
+	newPayment := silapb.CopyBuilderPendingPayment(currentPayment)
 	newPayment.Weight += weight
 	b.builderPendingPayments[paymentSlot] = newPayment
 	b.markFieldAsDirty(types.BuilderPendingPayments)
@@ -554,7 +554,7 @@ func (b *BeaconState) DequeueBuilderPendingWithdrawals(n uint64) error {
 	}
 
 	if b.sharedFieldReferences[types.BuilderPendingWithdrawals].Refs() > 1 {
-		withdrawals := make([]*ethpb.BuilderPendingWithdrawal, len(b.builderPendingWithdrawals))
+		withdrawals := make([]*silapb.BuilderPendingWithdrawal, len(b.builderPendingWithdrawals))
 		copy(withdrawals, b.builderPendingWithdrawals)
 		b.builderPendingWithdrawals = withdrawals
 		b.sharedFieldReferences[types.BuilderPendingWithdrawals].MinusRef()
@@ -648,13 +648,13 @@ func (b *BeaconState) decreaseBuilderBalanceLockFree(builderIndex primitives.Bui
 
 	builders := b.builders
 	if b.sharedFieldReferences[types.Builders].Refs() > 1 {
-		builders = make([]*ethpb.Builder, len(b.builders))
+		builders = make([]*silapb.Builder, len(b.builders))
 		copy(builders, b.builders)
 		b.sharedFieldReferences[types.Builders].MinusRef()
 		b.sharedFieldReferences[types.Builders] = stateutil.NewRef(1)
 	}
 
-	builder := ethpb.CopyBuilder(builders[idx])
+	builder := silapb.CopyBuilder(builders[idx])
 	builder.Balance = decreaseBalanceWithVal(builder.Balance, primitives.Gwei(amount))
 	builders[idx] = builder
 	b.builders = builders
@@ -723,7 +723,7 @@ func (b *BeaconState) OnboardBuildersFromPendingDeposits() error {
 	defer b.lock.Unlock()
 
 	pendingDeposits := b.pendingDeposits
-	newPendingDeposits := make([]*ethpb.PendingDeposit, 0, len(pendingDeposits))
+	newPendingDeposits := make([]*silapb.PendingDeposit, 0, len(pendingDeposits))
 
 	for _, deposit := range pendingDeposits {
 		pubkey := bytesutil.ToBytes48(deposit.PublicKey)
@@ -789,8 +789,8 @@ func (b *BeaconState) OnboardBuildersFromPendingDeposits() error {
 //	    state.builders[builder_index].balance += amount
 //
 // </spec>
-func (b *BeaconState) applyDepositForNewBuilder(deposit *ethpb.PendingDeposit) error {
-	valid, err := helpers.IsValidDepositSignature(&ethpb.Deposit_Data{
+func (b *BeaconState) applyDepositForNewBuilder(deposit *silapb.PendingDeposit) error {
+	valid, err := helpers.IsValidDepositSignature(&silapb.Deposit_Data{
 		PublicKey:             deposit.PublicKey,
 		WithdrawalCredentials: deposit.WithdrawalCredentials,
 		Amount:                deposit.Amount,
@@ -813,7 +813,7 @@ func (b *BeaconState) applyDepositForNewBuilder(deposit *ethpb.PendingDeposit) e
 }
 
 // SetBuilders replaces the entire builders registry.
-func (b *BeaconState) SetBuilders(val []*ethpb.Builder) error {
+func (b *BeaconState) SetBuilders(val []*silapb.Builder) error {
 	if b.version < version.Gloas {
 		return errNotSupported("SetBuilders", b.version)
 	}
@@ -831,7 +831,7 @@ func (b *BeaconState) SetBuilders(val []*ethpb.Builder) error {
 }
 
 // SetBuilderPendingPayments replaces the entire builder pending payments vector.
-func (b *BeaconState) SetBuilderPendingPayments(val []*ethpb.BuilderPendingPayment) error {
+func (b *BeaconState) SetBuilderPendingPayments(val []*silapb.BuilderPendingPayment) error {
 	if b.version < version.Gloas {
 		return errNotSupported("SetBuilderPendingPayments", b.version)
 	}
@@ -846,7 +846,7 @@ func (b *BeaconState) SetBuilderPendingPayments(val []*ethpb.BuilderPendingPayme
 }
 
 // SetBuilderPendingWithdrawals replaces the entire builder pending withdrawals list.
-func (b *BeaconState) SetBuilderPendingWithdrawals(val []*ethpb.BuilderPendingWithdrawal) error {
+func (b *BeaconState) SetBuilderPendingWithdrawals(val []*silapb.BuilderPendingWithdrawal) error {
 	if b.version < version.Gloas {
 		return errNotSupported("SetBuilderPendingWithdrawals", b.version)
 	}
@@ -877,7 +877,7 @@ func (b *BeaconState) SetExecutionPayloadAvailabilityVector(val []byte) error {
 }
 
 // SetPTCWindow is a mutating call to the beacon state which sets the cached PTC window.
-func (b *BeaconState) SetPTCWindow(window []*ethpb.PTCs) error {
+func (b *BeaconState) SetPTCWindow(window []*silapb.PTCs) error {
 	if b.version < version.Gloas {
 		return errNotSupported("SetPTCWindow", b.version)
 	}
@@ -892,14 +892,14 @@ func (b *BeaconState) SetPTCWindow(window []*ethpb.PTCs) error {
 
 	b.sharedFieldReferences[types.PTCWindow].MinusRef()
 	b.sharedFieldReferences[types.PTCWindow] = stateutil.NewRef(1)
-	b.ptcWindow = ethpb.CopyPTCWindow(window)
+	b.ptcWindow = silapb.CopyPTCWindow(window)
 	b.markFieldAsDirty(types.PTCWindow)
 	return nil
 }
 
 // RotatePTCWindow shifts the PTC window left by one epoch and fills the last epoch
 // with the provided new slots. This performs the rotation in-place under lock.
-func (b *BeaconState) RotatePTCWindow(newEpochSlots []*ethpb.PTCs) error {
+func (b *BeaconState) RotatePTCWindow(newEpochSlots []*silapb.PTCs) error {
 	if b.version < version.Gloas {
 		return errNotSupported("RotatePTCWindow", b.version)
 	}
@@ -920,14 +920,14 @@ func (b *BeaconState) RotatePTCWindow(newEpochSlots []*ethpb.PTCs) error {
 	b.sharedFieldReferences[types.PTCWindow].MinusRef()
 	b.sharedFieldReferences[types.PTCWindow] = stateutil.NewRef(1)
 
-	newWindow := make([]*ethpb.PTCs, expected)
+	newWindow := make([]*silapb.PTCs, expected)
 
 	// Shift left by one epoch.
 	lastEpochStart := expected - slotsPerEpoch
 	copy(newWindow[:lastEpochStart], b.ptcWindow[slotsPerEpoch:])
 
 	// Fill the last epoch with copied new slots.
-	copy(newWindow[lastEpochStart:], ethpb.CopyPTCWindow(newEpochSlots))
+	copy(newWindow[lastEpochStart:], silapb.CopyPTCWindow(newEpochSlots))
 
 	b.ptcWindow = newWindow
 

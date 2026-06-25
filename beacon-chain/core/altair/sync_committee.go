@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -31,7 +31,7 @@ var (
 // -the message within contribution and proof
 // -the contribution within contribution and proof
 // -the aggregation bits within contribution
-func ValidateNilSyncContribution(s *ethpb.SignedContributionAndProof) error {
+func ValidateNilSyncContribution(s *silapb.SignedContributionAndProof) error {
 	if s == nil {
 		return errors.New("signed message can't be nil")
 	}
@@ -59,7 +59,7 @@ func ValidateNilSyncContribution(s *ethpb.SignedContributionAndProof) error {
 //	pubkeys = [state.validators[index].pubkey for index in indices]
 //	aggregate_pubkey = bls.AggregatePKs(pubkeys)
 //	return SyncCommittee(pubkeys=pubkeys, aggregate_pubkey=aggregate_pubkey)
-func NextSyncCommittee(ctx context.Context, s state.BeaconState) (*ethpb.SyncCommittee, error) {
+func NextSyncCommittee(ctx context.Context, s state.BeaconState) (*silapb.SyncCommittee, error) {
 	indices, err := NextSyncCommitteeIndices(ctx, s)
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func NextSyncCommittee(ctx context.Context, s state.BeaconState) (*ethpb.SyncCom
 	if err != nil {
 		return nil, err
 	}
-	return &ethpb.SyncCommittee{
+	return &silapb.SyncCommittee{
 		Pubkeys:         pubkeys,
 		AggregatePubkey: aggregated.Marshal(),
 	}, nil
@@ -183,7 +183,7 @@ func NextSyncCommitteeIndices(ctx context.Context, s state.BeaconState) ([]primi
 //	sync_subcommittee_size = SYNC_COMMITTEE_SIZE // SYNC_COMMITTEE_SUBNET_COUNT
 //	i = subcommittee_index * sync_subcommittee_size
 //	return sync_committee.pubkeys[i:i + sync_subcommittee_size]
-func SyncSubCommitteePubkeys(syncCommittee *ethpb.SyncCommittee, subComIdx primitives.CommitteeIndex) ([][]byte, error) {
+func SyncSubCommitteePubkeys(syncCommittee *silapb.SyncCommittee, subComIdx primitives.CommitteeIndex) ([][]byte, error) {
 	cfg := params.BeaconConfig()
 	subCommSize := cfg.SyncCommitteeSize / cfg.SyncCommitteeSubnetCount
 	i := uint64(subComIdx) * subCommSize

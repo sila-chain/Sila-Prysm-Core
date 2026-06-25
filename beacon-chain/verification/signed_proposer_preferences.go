@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -34,7 +34,7 @@ var _ SignedProposerPreferencesVerifier = &ProposerPreferencesVerifier{}
 type ProposerPreferencesVerifier struct {
 	*sharedResources
 	results *results
-	p       *ethpb.SignedProposerPreferences
+	p       *silapb.SignedProposerPreferences
 }
 
 // VerifyDependentRootSeen checks that the block referenced by
@@ -129,7 +129,7 @@ func (v *ProposerPreferencesVerifier) SatisfyRequirement(req Requirement) {
 	v.record(req, nil)
 }
 
-func (v *ProposerPreferencesVerifier) message() *ethpb.ProposerPreferences {
+func (v *ProposerPreferencesVerifier) message() *silapb.ProposerPreferences {
 	return v.p.GetMessage()
 }
 

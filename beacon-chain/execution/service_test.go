@@ -25,7 +25,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/clientstats"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -270,8 +270,8 @@ func TestStatus(t *testing.T) {
 	testCases := map[*Service]string{
 		// "status is ok" cases
 		{}: "",
-		{isRunning: true, latestEth1Data: &ethpb.LatestETH1Data{BlockTime: afterFiveMinutesAgo}}:   "",
-		{isRunning: false, latestEth1Data: &ethpb.LatestETH1Data{BlockTime: beforeFiveMinutesAgo}}: "",
+		{isRunning: true, latestEth1Data: &silapb.LatestETH1Data{BlockTime: afterFiveMinutesAgo}}:   "",
+		{isRunning: false, latestEth1Data: &silapb.LatestETH1Data{BlockTime: beforeFiveMinutesAgo}}: "",
 		{isRunning: false, runError: errors.New("test runError")}:                                  "",
 		// "status is error" cases
 		{isRunning: true, runError: errors.New("test runError")}: "test runError",
@@ -347,7 +347,7 @@ func TestLogTillGenesis_OK(t *testing.T) {
 	for range 30 {
 		testAcc.Backend.Commit()
 	}
-	web3Service.latestEth1Data = &ethpb.LatestETH1Data{LastRequestedBlock: 0}
+	web3Service.latestEth1Data = &silapb.LatestETH1Data{LastRequestedBlock: 0}
 	// Spin off to a separate routine
 	go web3Service.run(web3Service.ctx.Done())
 	// Wait for 2 seconds so that the
@@ -358,15 +358,15 @@ func TestLogTillGenesis_OK(t *testing.T) {
 }
 
 func TestInitDepositCache_OK(t *testing.T) {
-	ctrs := []*ethpb.DepositContainer{
-		{Index: 0, Eth1BlockHeight: 2, Deposit: &ethpb.Deposit{Proof: [][]byte{[]byte("A")}, Data: &ethpb.Deposit_Data{PublicKey: []byte{}}}},
-		{Index: 1, Eth1BlockHeight: 4, Deposit: &ethpb.Deposit{Proof: [][]byte{[]byte("B")}, Data: &ethpb.Deposit_Data{PublicKey: []byte{}}}},
-		{Index: 2, Eth1BlockHeight: 6, Deposit: &ethpb.Deposit{Proof: [][]byte{[]byte("c")}, Data: &ethpb.Deposit_Data{PublicKey: []byte{}}}},
+	ctrs := []*silapb.DepositContainer{
+		{Index: 0, Eth1BlockHeight: 2, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("A")}, Data: &silapb.Deposit_Data{PublicKey: []byte{}}}},
+		{Index: 1, Eth1BlockHeight: 4, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("B")}, Data: &silapb.Deposit_Data{PublicKey: []byte{}}}},
+		{Index: 2, Eth1BlockHeight: 6, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("c")}, Data: &silapb.Deposit_Data{PublicKey: []byte{}}}},
 	}
 	gs, _ := util.DeterministicGenesisState(t, 1)
 	beaconDB := dbutil.SetupDB(t)
 	s := &Service{
-		chainStartData:  &ethpb.ChainStartData{Chainstarted: false},
+		chainStartData:  &silapb.ChainStartData{Chainstarted: false},
 		preGenesisState: gs,
 		cfg:             &config{beaconDB: beaconDB},
 	}
@@ -390,12 +390,12 @@ func TestInitDepositCache_OK(t *testing.T) {
 }
 
 func TestInitDepositCacheWithFinalization_OK(t *testing.T) {
-	ctrs := []*ethpb.DepositContainer{
+	ctrs := []*silapb.DepositContainer{
 		{
 			Index:           0,
 			Eth1BlockHeight: 2,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{0}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -405,8 +405,8 @@ func TestInitDepositCacheWithFinalization_OK(t *testing.T) {
 		{
 			Index:           1,
 			Eth1BlockHeight: 4,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{1}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -416,8 +416,8 @@ func TestInitDepositCacheWithFinalization_OK(t *testing.T) {
 		{
 			Index:           2,
 			Eth1BlockHeight: 6,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{2}, 48),
 					WithdrawalCredentials: make([]byte, 32),
 					Signature:             make([]byte, 96),
@@ -428,7 +428,7 @@ func TestInitDepositCacheWithFinalization_OK(t *testing.T) {
 	gs, _ := util.DeterministicGenesisState(t, 1)
 	beaconDB := dbutil.SetupDB(t)
 	s := &Service{
-		chainStartData:  &ethpb.ChainStartData{Chainstarted: false},
+		chainStartData:  &silapb.ChainStartData{Chainstarted: false},
 		preGenesisState: gs,
 		cfg:             &config{beaconDB: beaconDB},
 	}
@@ -454,7 +454,7 @@ func TestInitDepositCacheWithFinalization_OK(t *testing.T) {
 	require.NoError(t, emptyState.SetEth1DepositIndex(3))
 
 	ctx := t.Context()
-	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Epoch: slots.ToEpoch(0), Root: headRoot[:]}))
+	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Epoch: slots.ToEpoch(0), Root: headRoot[:]}))
 	s.cfg.finalizedStateAtStartup = emptyState
 
 	s.chainStartData.Chainstarted = true
@@ -663,9 +663,9 @@ func TestService_EnsureValidPowchainData(t *testing.T) {
 	genesis.StoreStateDuringTest(t, genState)
 	require.NoError(t, s1.cfg.beaconDB.SaveGenesisData(t.Context(), genState))
 
-	err = s1.cfg.beaconDB.SaveExecutionChainData(t.Context(), &ethpb.ETH1ChainData{
-		ChainstartData:    &ethpb.ChainStartData{Chainstarted: true},
-		DepositContainers: []*ethpb.DepositContainer{{Index: 1}},
+	err = s1.cfg.beaconDB.SaveExecutionChainData(t.Context(), &silapb.ETH1ChainData{
+		ChainstartData:    &silapb.ChainStartData{Chainstarted: true},
+		DepositContainers: []*silapb.DepositContainer{{Index: 1}},
 	})
 	require.NoError(t, err)
 	_, err = s1.validPowchainData(t.Context())
@@ -681,22 +681,22 @@ func TestService_EnsureValidPowchainData(t *testing.T) {
 func TestService_ValidateDepositContainers(t *testing.T) {
 	var tt = []struct {
 		name        string
-		ctrsFunc    func() []*ethpb.DepositContainer
+		ctrsFunc    func() []*silapb.DepositContainer
 		expectedRes bool
 	}{
 		{
 			name: "zero containers",
-			ctrsFunc: func() []*ethpb.DepositContainer {
-				return make([]*ethpb.DepositContainer, 0)
+			ctrsFunc: func() []*silapb.DepositContainer {
+				return make([]*silapb.DepositContainer, 0)
 			},
 			expectedRes: true,
 		},
 		{
 			name: "ordered containers",
-			ctrsFunc: func() []*ethpb.DepositContainer {
-				ctrs := make([]*ethpb.DepositContainer, 0)
+			ctrsFunc: func() []*silapb.DepositContainer {
+				ctrs := make([]*silapb.DepositContainer, 0)
 				for i := range 10 {
-					ctrs = append(ctrs, &ethpb.DepositContainer{Index: int64(i), Eth1BlockHeight: uint64(i + 10)})
+					ctrs = append(ctrs, &silapb.DepositContainer{Index: int64(i), Eth1BlockHeight: uint64(i + 10)})
 				}
 				return ctrs
 			},
@@ -704,10 +704,10 @@ func TestService_ValidateDepositContainers(t *testing.T) {
 		},
 		{
 			name: "0th container missing",
-			ctrsFunc: func() []*ethpb.DepositContainer {
-				ctrs := make([]*ethpb.DepositContainer, 0)
+			ctrsFunc: func() []*silapb.DepositContainer {
+				ctrs := make([]*silapb.DepositContainer, 0)
 				for i := 1; i < 10; i++ {
-					ctrs = append(ctrs, &ethpb.DepositContainer{Index: int64(i), Eth1BlockHeight: uint64(i + 10)})
+					ctrs = append(ctrs, &silapb.DepositContainer{Index: int64(i), Eth1BlockHeight: uint64(i + 10)})
 				}
 				return ctrs
 			},
@@ -715,13 +715,13 @@ func TestService_ValidateDepositContainers(t *testing.T) {
 		},
 		{
 			name: "skipped containers",
-			ctrsFunc: func() []*ethpb.DepositContainer {
-				ctrs := make([]*ethpb.DepositContainer, 0)
+			ctrsFunc: func() []*silapb.DepositContainer {
+				ctrs := make([]*silapb.DepositContainer, 0)
 				for i := range 10 {
 					if i == 5 || i == 7 {
 						continue
 					}
-					ctrs = append(ctrs, &ethpb.DepositContainer{Index: int64(i), Eth1BlockHeight: uint64(i + 10)})
+					ctrs = append(ctrs, &silapb.DepositContainer{Index: int64(i), Eth1BlockHeight: uint64(i + 10)})
 				}
 				return ctrs
 			},
@@ -800,7 +800,7 @@ func TestService_FollowBlock(t *testing.T) {
 		cfg:            &config{eth1HeaderReqLimit: 1000},
 		rpcClient:      &mockExecution.RPCClient{BlockNumMap: bMap},
 		headerCache:    newHeaderCache(),
-		latestEth1Data: &ethpb.LatestETH1Data{BlockTime: (3000 * 40) + followTime, BlockHeight: 3000},
+		latestEth1Data: &silapb.LatestETH1Data{BlockTime: (3000 * 40) + followTime, BlockHeight: 3000},
 	}
 	h, err := s.followedBlockHeight(t.Context())
 	assert.NoError(t, err)
@@ -853,13 +853,13 @@ func TestService_migrateOldDepositTree(t *testing.T) {
 		WithDepositCache(cache),
 	)
 	require.NoError(t, err)
-	eth1Data := &ethpb.ETH1ChainData{
-		BeaconState: &ethpb.BeaconState{
-			Eth1Data: &ethpb.Eth1Data{
+	eth1Data := &silapb.ETH1ChainData{
+		BeaconState: &silapb.BeaconState{
+			Eth1Data: &silapb.Eth1Data{
 				DepositCount: 800,
 			},
 		},
-		CurrentEth1Data: &ethpb.LatestETH1Data{
+		CurrentEth1Data: &silapb.LatestETH1Data{
 			BlockHeight: 100,
 		},
 	}

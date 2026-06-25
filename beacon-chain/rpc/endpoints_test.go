@@ -203,7 +203,7 @@ func ethRouteAliases(routes map[string][]string) map[string][]string {
 	aliases := make(map[string][]string)
 	for route, methods := range routes {
 		if len(route) >= len("/sila/") && route[:len("/sila/")] == "/sila/" {
-			aliases["/eth/"+route[len("/sila/"):]] = methods
+			aliases["/silaapi/"+route[len("/sila/"):]] = methods
 		}
 	}
 	return aliases

@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -31,8 +31,8 @@ func TestUpgradeToGloas_Basic(t *testing.T) {
 	}
 	require.NoError(t, st.SetProposerLookahead(lookahead))
 
-	require.NoError(t, st.SetPendingPartialWithdrawals([]*ethpb.PendingPartialWithdrawal{{Index: 1, Amount: 2}}))
-	require.NoError(t, st.SetPendingConsolidations([]*ethpb.PendingConsolidation{{SourceIndex: 3, TargetIndex: 4}}))
+	require.NoError(t, st.SetPendingPartialWithdrawals([]*silapb.PendingPartialWithdrawal{{Index: 1, Amount: 2}}))
+	require.NoError(t, st.SetPendingConsolidations([]*silapb.PendingConsolidation{{SourceIndex: 3, TargetIndex: 4}}))
 
 	blockHash := bytes.Repeat([]byte{0xAB}, 32)
 	header := &enginev1.ExecutionPayloadHeaderDeneb{BlockHash: blockHash}
@@ -48,7 +48,7 @@ func TestUpgradeToGloas_Basic(t *testing.T) {
 	require.DeepSSZEqual(t, preForkState.GenesisValidatorsRoot(), mSt.GenesisValidatorsRoot())
 	require.Equal(t, preForkState.Slot(), mSt.Slot())
 
-	require.DeepSSZEqual(t, &ethpb.Fork{
+	require.DeepSSZEqual(t, &silapb.Fork{
 		PreviousVersion: st.Fork().CurrentVersion,
 		CurrentVersion:  params.BeaconConfig().GloasForkVersion,
 		Epoch:           time.CurrentEpoch(st),
@@ -68,7 +68,7 @@ func TestUpgradeToGloas_Basic(t *testing.T) {
 	require.NoError(t, err)
 	require.DeepSSZEqual(t, blockHash, latestBlockHash[:])
 
-	pbState, ok := mSt.ToProtoUnsafe().(*ethpb.BeaconStateGloas)
+	pbState, ok := mSt.ToProtoUnsafe().(*silapb.BeaconStateGloas)
 	require.Equal(t, true, ok)
 
 	expectedAvailLen := int((params.BeaconConfig().SlotsPerHistoricalRoot + 7) / 8)
@@ -112,12 +112,12 @@ func TestUpgradeToGloas_OnboardsBuilderDeposit(t *testing.T) {
 	depSlot := primitives.Slot(params.BeaconConfig().SlotsPerEpoch*2 + 3)
 	deposit := newPendingDeposit(t, sk, builderCreds, amount, depSlot, true)
 
-	require.NoError(t, st.SetPendingDeposits([]*ethpb.PendingDeposit{deposit}))
+	require.NoError(t, st.SetPendingDeposits([]*silapb.PendingDeposit{deposit}))
 
 	mSt, err := gloas.UpgradeToGloas(st)
 	require.NoError(t, err)
 
-	pbState, ok := mSt.ToProtoUnsafe().(*ethpb.BeaconStateGloas)
+	pbState, ok := mSt.ToProtoUnsafe().(*silapb.BeaconStateGloas)
 	require.Equal(t, true, ok)
 
 	require.Equal(t, 0, len(pbState.PendingDeposits))
@@ -146,13 +146,13 @@ func newPendingDeposit(
 	amount uint64,
 	slot primitives.Slot,
 	valid bool,
-) *ethpb.PendingDeposit {
+) *silapb.PendingDeposit {
 	t.Helper()
 	signature := make([]byte, fieldparams.BLSSignatureLength)
 	if valid {
 		signature = signDeposit(t, sk, withdrawalCredentials, amount)
 	}
-	return &ethpb.PendingDeposit{
+	return &silapb.PendingDeposit{
 		PublicKey:             sk.PublicKey().Marshal(),
 		WithdrawalCredentials: withdrawalCredentials,
 		Amount:                amount,
@@ -165,7 +165,7 @@ func signDeposit(t *testing.T, sk bls.SecretKey, withdrawalCredentials []byte, a
 	t.Helper()
 	domain, err := signing.ComputeDomain(params.BeaconConfig().DomainDeposit, nil, nil)
 	require.NoError(t, err)
-	msg := &ethpb.DepositMessage{
+	msg := &silapb.DepositMessage{
 		PublicKey:             sk.PublicKey().Marshal(),
 		WithdrawalCredentials: withdrawalCredentials,
 		Amount:                amount,

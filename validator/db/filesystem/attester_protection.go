@@ -7,7 +7,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
@@ -99,7 +99,7 @@ func (s *Store) AttestedPublicKeys(_ context.Context) ([][fieldparams.BLSPubkeyL
 // If it is not, it updates the database.
 func (s *Store) SlashableAttestationCheck(
 	ctx context.Context,
-	indexedAtt ethpb.IndexedAtt,
+	indexedAtt silapb.IndexedAtt,
 	pubKey [fieldparams.BLSPubkeyLength]byte,
 	signingRoot32 [32]byte,
 	_ bool,
@@ -128,7 +128,7 @@ func (s *Store) SaveAttestationForPubKey(
 	_ context.Context,
 	pubkey [fieldparams.BLSPubkeyLength]byte,
 	_ [32]byte,
-	att ethpb.IndexedAtt,
+	att silapb.IndexedAtt,
 ) error {
 	// If there is no attestation, return on error.
 	if att == nil || att.IsNil() || att.GetData().Source == nil || att.GetData().Target == nil {
@@ -201,7 +201,7 @@ func (s *Store) SaveAttestationsForPubKey(
 	_ context.Context,
 	pubkey [fieldparams.BLSPubkeyLength]byte,
 	_ [][]byte,
-	atts []*ethpb.IndexedAttestation,
+	atts []*silapb.IndexedAttestation,
 ) error {
 	// If there is no attestation, return early.
 	if len(atts) == 0 {
@@ -293,7 +293,7 @@ func (s *Store) AttestationHistoryForPubKey(
 }
 
 // maxSourceTargetEpoch gets the maximum source and target epoch from atts.
-func maxSourceTargetEpoch(atts []*ethpb.IndexedAttestation) (primitives.Epoch, primitives.Epoch, error) {
+func maxSourceTargetEpoch(atts []*silapb.IndexedAttestation) (primitives.Epoch, primitives.Epoch, error) {
 	maxSourceEpoch := primitives.Epoch(0)
 	maxTargetEpoch := primitives.Epoch(0)
 

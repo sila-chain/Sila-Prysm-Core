@@ -15,7 +15,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -23,9 +23,9 @@ import (
 )
 
 func TestProcessSlashings_NotSlashed(t *testing.T) {
-	base := &ethpb.BeaconState{
+	base := &silapb.BeaconState{
 		Slot:       0,
-		Validators: []*ethpb.Validator{{Slashed: true}},
+		Validators: []*silapb.Validator{{Slashed: true}},
 		Balances:   []uint64{params.BeaconConfig().MaxEffectiveBalance},
 		Slashings:  []uint64{0, 1e9},
 	}
@@ -38,12 +38,12 @@ func TestProcessSlashings_NotSlashed(t *testing.T) {
 
 func TestProcessSlashings_SlashedLess(t *testing.T) {
 	tests := []struct {
-		state *ethpb.BeaconState
+		state *silapb.BeaconState
 		want  uint64
 	}{
 		{
-			state: &ethpb.BeaconState{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconState{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance},
@@ -56,8 +56,8 @@ func TestProcessSlashings_SlashedLess(t *testing.T) {
 			want: uint64(31000000000), // 32 * 1e9 - 1000000000
 		},
 		{
-			state: &ethpb.BeaconState{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconState{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance},
@@ -72,8 +72,8 @@ func TestProcessSlashings_SlashedLess(t *testing.T) {
 			want: uint64(32000000000), // 32 * 1e9 - 500000000
 		},
 		{
-			state: &ethpb.BeaconState{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconState{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance},
@@ -88,8 +88,8 @@ func TestProcessSlashings_SlashedLess(t *testing.T) {
 			want: uint64(31000000000), // 32 * 1e9 - 1000000000
 		},
 		{
-			state: &ethpb.BeaconState{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconState{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance - params.BeaconConfig().EffectiveBalanceIncrement},
@@ -119,7 +119,7 @@ func TestProcessFinalUpdates_CanProcess(t *testing.T) {
 	s := buildState(t, params.BeaconConfig().SlotsPerHistoricalRoot-1, uint64(params.BeaconConfig().SlotsPerEpoch))
 	ce := time.CurrentEpoch(s)
 	ne := ce + 1
-	require.NoError(t, s.SetEth1DataVotes([]*ethpb.Eth1Data{}))
+	require.NoError(t, s.SetEth1DataVotes([]*silapb.Eth1Data{}))
 	balances := s.Balances()
 	balances[0] = 31.75 * 1e9
 	balances[1] = 31.74 * 1e9
@@ -155,9 +155,9 @@ func TestProcessFinalUpdates_CanProcess(t *testing.T) {
 }
 
 func TestProcessRegistryUpdates_NoRotation(t *testing.T) {
-	base := &ethpb.BeaconState{
+	base := &silapb.BeaconState{
 		Slot: 5 * params.BeaconConfig().SlotsPerEpoch,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{ExitEpoch: params.BeaconConfig().MaxSeedLookahead},
 			{ExitEpoch: params.BeaconConfig().MaxSeedLookahead},
 		},
@@ -165,7 +165,7 @@ func TestProcessRegistryUpdates_NoRotation(t *testing.T) {
 			params.BeaconConfig().MaxEffectiveBalance,
 			params.BeaconConfig().MaxEffectiveBalance,
 		},
-		FinalizedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 	}
 	beaconState, err := state_native.InitializeFromProtoPhase0(base)
 	require.NoError(t, err)
@@ -178,13 +178,13 @@ func TestProcessRegistryUpdates_NoRotation(t *testing.T) {
 
 func TestProcessRegistryUpdates_EligibleToActivate(t *testing.T) {
 	finalizedEpoch := primitives.Epoch(4)
-	base := &ethpb.BeaconState{
+	base := &silapb.BeaconState{
 		Slot:                5 * params.BeaconConfig().SlotsPerEpoch,
-		FinalizedCheckpoint: &ethpb.Checkpoint{Epoch: finalizedEpoch, Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint: &silapb.Checkpoint{Epoch: finalizedEpoch, Root: make([]byte, fieldparams.RootLength)},
 	}
 	limit := helpers.ValidatorActivationChurnLimit(0)
 	for i := uint64(0); i < limit+10; i++ {
-		base.Validators = append(base.Validators, &ethpb.Validator{
+		base.Validators = append(base.Validators, &silapb.Validator{
 			ActivationEligibilityEpoch: finalizedEpoch,
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,
 			ActivationEpoch:            params.BeaconConfig().FarFutureEpoch,
@@ -209,9 +209,9 @@ func TestProcessRegistryUpdates_EligibleToActivate(t *testing.T) {
 
 func TestProcessRegistryUpdates_EligibleToActivate_Cancun(t *testing.T) {
 	finalizedEpoch := primitives.Epoch(4)
-	base := &ethpb.BeaconStateDeneb{
+	base := &silapb.BeaconStateDeneb{
 		Slot:                5 * params.BeaconConfig().SlotsPerEpoch,
-		FinalizedCheckpoint: &ethpb.Checkpoint{Epoch: finalizedEpoch, Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint: &silapb.Checkpoint{Epoch: finalizedEpoch, Root: make([]byte, fieldparams.RootLength)},
 	}
 	cfg := params.BeaconConfig()
 	cfg.MinPerEpochChurnLimit = 10
@@ -219,7 +219,7 @@ func TestProcessRegistryUpdates_EligibleToActivate_Cancun(t *testing.T) {
 	params.OverrideBeaconConfig(cfg)
 
 	for range uint64(10) {
-		base.Validators = append(base.Validators, &ethpb.Validator{
+		base.Validators = append(base.Validators, &silapb.Validator{
 			ActivationEligibilityEpoch: finalizedEpoch,
 			EffectiveBalance:           params.BeaconConfig().MaxEffectiveBalance,
 			ActivationEpoch:            params.BeaconConfig().FarFutureEpoch,
@@ -244,15 +244,15 @@ func TestProcessRegistryUpdates_EligibleToActivate_Cancun(t *testing.T) {
 }
 
 func TestProcessRegistryUpdates_ActivationCompletes(t *testing.T) {
-	base := &ethpb.BeaconState{
+	base := &silapb.BeaconState{
 		Slot: 5 * params.BeaconConfig().SlotsPerEpoch,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{ExitEpoch: params.BeaconConfig().MaxSeedLookahead,
 				ActivationEpoch: 5 + params.BeaconConfig().MaxSeedLookahead + 1},
 			{ExitEpoch: params.BeaconConfig().MaxSeedLookahead,
 				ActivationEpoch: 5 + params.BeaconConfig().MaxSeedLookahead + 1},
 		},
-		FinalizedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 	}
 	beaconState, err := state_native.InitializeFromProtoPhase0(base)
 	require.NoError(t, err)
@@ -264,9 +264,9 @@ func TestProcessRegistryUpdates_ActivationCompletes(t *testing.T) {
 }
 
 func TestProcessRegistryUpdates_ValidatorsEjected(t *testing.T) {
-	base := &ethpb.BeaconState{
+	base := &silapb.BeaconState{
 		Slot: 0,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{
 				ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 				EffectiveBalance: params.BeaconConfig().EjectionBalance - 1,
@@ -276,7 +276,7 @@ func TestProcessRegistryUpdates_ValidatorsEjected(t *testing.T) {
 				EffectiveBalance: params.BeaconConfig().EjectionBalance - 1,
 			},
 		},
-		FinalizedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 	}
 	beaconState, err := state_native.InitializeFromProtoPhase0(base)
 	require.NoError(t, err)
@@ -291,9 +291,9 @@ func TestProcessRegistryUpdates_CanExits(t *testing.T) {
 	e := primitives.Epoch(5)
 	exitEpoch := helpers.ActivationExitEpoch(e)
 	minWithdrawalDelay := params.BeaconConfig().MinValidatorWithdrawabilityDelay
-	base := &ethpb.BeaconState{
+	base := &silapb.BeaconState{
 		Slot: params.BeaconConfig().SlotsPerEpoch.Mul(uint64(e)),
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{
 				ExitEpoch:         exitEpoch,
 				WithdrawableEpoch: exitEpoch + minWithdrawalDelay},
@@ -301,7 +301,7 @@ func TestProcessRegistryUpdates_CanExits(t *testing.T) {
 				ExitEpoch:         exitEpoch,
 				WithdrawableEpoch: exitEpoch + minWithdrawalDelay},
 		},
-		FinalizedCheckpoint: &ethpb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
+		FinalizedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
 	}
 	beaconState, err := state_native.InitializeFromProtoPhase0(base)
 	require.NoError(t, err)
@@ -313,9 +313,9 @@ func TestProcessRegistryUpdates_CanExits(t *testing.T) {
 }
 
 func buildState(t testing.TB, slot primitives.Slot, validatorCount uint64) state.BeaconState {
-	validators := make([]*ethpb.Validator, validatorCount)
+	validators := make([]*silapb.Validator, validatorCount)
 	for i := range validators {
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 			EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance,
 		}
@@ -353,9 +353,9 @@ func buildState(t testing.TB, slot primitives.Slot, validatorCount uint64) state
 }
 
 func TestProcessSlashings_BadValue(t *testing.T) {
-	base := &ethpb.BeaconState{
+	base := &silapb.BeaconState{
 		Slot:       0,
-		Validators: []*ethpb.Validator{{Slashed: true}},
+		Validators: []*silapb.Validator{{Slashed: true}},
 		Balances:   []uint64{params.BeaconConfig().MaxEffectiveBalance},
 		Slashings:  []uint64{math.MaxUint64, 1e9},
 	}
@@ -393,7 +393,7 @@ func TestProcessHistoricalDataUpdate(t *testing.T) {
 				roots := st.HistoricalRoots()
 				require.Equal(t, 1, len(roots))
 
-				b := &ethpb.HistoricalBatch{
+				b := &silapb.HistoricalBatch{
 					BlockRoots: st.BlockRoots(),
 					StateRoots: st.StateRoots(),
 				}
@@ -422,7 +422,7 @@ func TestProcessHistoricalDataUpdate(t *testing.T) {
 				require.NoError(t, err)
 				sr, err := stateutil.ArraysRoot(st.StateRoots(), fieldparams.StateRootsLength)
 				require.NoError(t, err)
-				b := &ethpb.HistoricalSummary{
+				b := &silapb.HistoricalSummary{
 					BlockSummaryRoot: br[:],
 					StateSummaryRoot: sr[:],
 				}
@@ -443,12 +443,12 @@ func TestProcessHistoricalDataUpdate(t *testing.T) {
 
 func TestProcessSlashings_SlashedElectra(t *testing.T) {
 	tests := []struct {
-		state *ethpb.BeaconStateElectra
+		state *silapb.BeaconStateElectra
 		want  uint64
 	}{
 		{
-			state: &ethpb.BeaconStateElectra{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconStateElectra{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance},
@@ -459,8 +459,8 @@ func TestProcessSlashings_SlashedElectra(t *testing.T) {
 			want: uint64(29000000000),
 		},
 		{
-			state: &ethpb.BeaconStateElectra{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconStateElectra{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalance},
@@ -473,8 +473,8 @@ func TestProcessSlashings_SlashedElectra(t *testing.T) {
 			want: uint64(30500000000),
 		},
 		{
-			state: &ethpb.BeaconStateElectra{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconStateElectra{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalanceElectra},
@@ -487,8 +487,8 @@ func TestProcessSlashings_SlashedElectra(t *testing.T) {
 			want: uint64(317000001536),
 		},
 		{
-			state: &ethpb.BeaconStateElectra{
-				Validators: []*ethpb.Validator{
+			state: &silapb.BeaconStateElectra{
+				Validators: []*silapb.Validator{
 					{Slashed: true,
 						WithdrawableEpoch: params.BeaconConfig().EpochsPerSlashingsVector / 2,
 						EffectiveBalance:  params.BeaconConfig().MaxEffectiveBalanceElectra - params.BeaconConfig().EffectiveBalanceIncrement},

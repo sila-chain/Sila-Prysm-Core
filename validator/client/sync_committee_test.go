@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/pkg/errors"
@@ -31,7 +31,7 @@ func TestSubmitSyncCommitteeMessage_ValidatorDutiesRequestFailure(t *testing.T) 
 			m.validatorClient.EXPECT().SyncMessageBlockRoot(
 				gomock.Any(), // ctx
 				&emptypb.Empty{},
-			).Return(&ethpb.SyncMessageBlockRootResponse{
+			).Return(&silapb.SyncMessageBlockRootResponse{
 				Root: bytesutil.PadTo([]byte{}, 32),
 			}, nil)
 
@@ -51,7 +51,7 @@ func TestSubmitSyncCommitteeMessage_BadDomainData(t *testing.T) {
 			hook := logTest.NewGlobal()
 			validatorIndex := primitives.ValidatorIndex(7)
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeLength: uint64(len(committee)),
 				ValidatorIndex:  validatorIndex,
@@ -61,7 +61,7 @@ func TestSubmitSyncCommitteeMessage_BadDomainData(t *testing.T) {
 			m.validatorClient.EXPECT().SyncMessageBlockRoot(
 				gomock.Any(), // ctx
 				&emptypb.Empty{},
-			).Return(&ethpb.SyncMessageBlockRootResponse{
+			).Return(&silapb.SyncMessageBlockRootResponse{
 				Root: bytesutil.PadTo(r, 32),
 			}, nil)
 
@@ -85,7 +85,7 @@ func TestSubmitSyncCommitteeMessage_CouldNotSubmit(t *testing.T) {
 			hook := logTest.NewGlobal()
 			validatorIndex := primitives.ValidatorIndex(7)
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeLength: uint64(len(committee)),
 				ValidatorIndex:  validatorIndex,
@@ -95,20 +95,20 @@ func TestSubmitSyncCommitteeMessage_CouldNotSubmit(t *testing.T) {
 			m.validatorClient.EXPECT().SyncMessageBlockRoot(
 				gomock.Any(), // ctx
 				&emptypb.Empty{},
-			).Return(&ethpb.SyncMessageBlockRootResponse{
+			).Return(&silapb.SyncMessageBlockRootResponse{
 				Root: bytesutil.PadTo(r, 32),
 			}, nil)
 
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), // ctx
 					gomock.Any()). // epoch
-				Return(&ethpb.DomainResponse{
+				Return(&silapb.DomainResponse{
 					SignatureDomain: make([]byte, 32),
 				}, nil)
 
 			m.validatorClient.EXPECT().SubmitSyncMessage(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.SyncCommitteeMessage{}),
+				gomock.AssignableToTypeOf(&silapb.SyncCommitteeMessage{}),
 			).Return(&emptypb.Empty{}, errors.New("uh oh") /* error */)
 
 			var pubKey [fieldparams.BLSPubkeyLength]byte
@@ -128,7 +128,7 @@ func TestSubmitSyncCommitteeMessage_OK(t *testing.T) {
 			hook := logTest.NewGlobal()
 			validatorIndex := primitives.ValidatorIndex(7)
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeLength: uint64(len(committee)),
 				ValidatorIndex:  validatorIndex,
@@ -138,22 +138,22 @@ func TestSubmitSyncCommitteeMessage_OK(t *testing.T) {
 			m.validatorClient.EXPECT().SyncMessageBlockRoot(
 				gomock.Any(), // ctx
 				&emptypb.Empty{},
-			).Return(&ethpb.SyncMessageBlockRootResponse{
+			).Return(&silapb.SyncMessageBlockRootResponse{
 				Root: bytesutil.PadTo(r, 32),
 			}, nil)
 
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), // ctx
 					gomock.Any()). // epoch
-				Return(&ethpb.DomainResponse{
+				Return(&silapb.DomainResponse{
 					SignatureDomain: make([]byte, 32),
 				}, nil)
 
-			var generatedMsg *ethpb.SyncCommitteeMessage
+			var generatedMsg *silapb.SyncCommitteeMessage
 			m.validatorClient.EXPECT().SubmitSyncMessage(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.SyncCommitteeMessage{}),
-			).Do(func(_ context.Context, msg *ethpb.SyncCommitteeMessage) {
+				gomock.AssignableToTypeOf(&silapb.SyncCommitteeMessage{}),
+			).Do(func(_ context.Context, msg *silapb.SyncCommitteeMessage) {
 				generatedMsg = msg
 			}).Return(&emptypb.Empty{}, nil /* error */)
 
@@ -192,7 +192,7 @@ func TestSubmitSignedContributionAndProof_SyncSubcommitteeIndexFailure(t *testin
 			validator, m, validatorKey, finish := setup(t, isSlashingProtectionMinimal)
 			validatorIndex := primitives.ValidatorIndex(7)
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeLength: uint64(len(committee)),
 				ValidatorIndex:  validatorIndex,
@@ -203,11 +203,11 @@ func TestSubmitSignedContributionAndProof_SyncSubcommitteeIndexFailure(t *testin
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
 			m.validatorClient.EXPECT().SyncSubcommitteeIndex(
 				gomock.Any(), // ctx
-				&ethpb.SyncSubcommitteeIndexRequest{
+				&silapb.SyncSubcommitteeIndexRequest{
 					Slot:      1,
 					PublicKey: pubKey[:],
 				},
-			).Return(&ethpb.SyncSubcommitteeIndexResponse{}, errors.New("Bad index"))
+			).Return(&silapb.SyncSubcommitteeIndexResponse{}, errors.New("Bad index"))
 
 			validator.SubmitSignedContributionAndProof(t.Context(), 1, pubKey)
 			require.LogsContain(t, hook, "Could not get sync subcommittee index")
@@ -222,7 +222,7 @@ func TestSubmitSignedContributionAndProof_NothingToDo(t *testing.T) {
 			validator, m, validatorKey, finish := setup(t, isSlashingProtectionMinimal)
 			validatorIndex := primitives.ValidatorIndex(7)
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeLength: uint64(len(committee)),
 				ValidatorIndex:  validatorIndex,
@@ -233,11 +233,11 @@ func TestSubmitSignedContributionAndProof_NothingToDo(t *testing.T) {
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
 			m.validatorClient.EXPECT().SyncSubcommitteeIndex(
 				gomock.Any(), // ctx
-				&ethpb.SyncSubcommitteeIndexRequest{
+				&silapb.SyncSubcommitteeIndexRequest{
 					Slot:      1,
 					PublicKey: pubKey[:],
 				},
-			).Return(&ethpb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{}}, nil)
+			).Return(&silapb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{}}, nil)
 
 			validator.SubmitSignedContributionAndProof(t.Context(), 1, pubKey)
 			require.LogsContain(t, hook, "Empty subcommittee index list, do nothing")
@@ -252,7 +252,7 @@ func TestSubmitSignedContributionAndProof_BadDomain(t *testing.T) {
 			validator, m, validatorKey, finish := setup(t, isSlashingProtectionMinimal)
 			validatorIndex := primitives.ValidatorIndex(7)
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeLength: uint64(len(committee)),
 				ValidatorIndex:  validatorIndex,
@@ -263,16 +263,16 @@ func TestSubmitSignedContributionAndProof_BadDomain(t *testing.T) {
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
 			m.validatorClient.EXPECT().SyncSubcommitteeIndex(
 				gomock.Any(), // ctx
-				&ethpb.SyncSubcommitteeIndexRequest{
+				&silapb.SyncSubcommitteeIndexRequest{
 					Slot:      1,
 					PublicKey: pubKey[:],
 				},
-			).Return(&ethpb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{1}}, nil)
+			).Return(&silapb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{1}}, nil)
 
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), // ctx
 					gomock.Any()). // epoch
-				Return(&ethpb.DomainResponse{
+				Return(&silapb.DomainResponse{
 					SignatureDomain: make([]byte, 32),
 				}, errors.New("bad domain response"))
 
@@ -296,7 +296,7 @@ func TestSubmitSignedContributionAndProof_CouldNotGetContribution(t *testing.T) 
 			validator, m, validatorKey, finish := setupWithKey(t, validatorKey, isSlashingProtectionMinimal)
 			validatorIndex := primitives.ValidatorIndex(7)
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeLength: uint64(len(committee)),
 				ValidatorIndex:  validatorIndex,
@@ -307,22 +307,22 @@ func TestSubmitSignedContributionAndProof_CouldNotGetContribution(t *testing.T) 
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
 			m.validatorClient.EXPECT().SyncSubcommitteeIndex(
 				gomock.Any(), // ctx
-				&ethpb.SyncSubcommitteeIndexRequest{
+				&silapb.SyncSubcommitteeIndexRequest{
 					Slot:      1,
 					PublicKey: pubKey[:],
 				},
-			).Return(&ethpb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{1}}, nil)
+			).Return(&silapb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{1}}, nil)
 
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), // ctx
 					gomock.Any()). // epoch
-				Return(&ethpb.DomainResponse{
+				Return(&silapb.DomainResponse{
 					SignatureDomain: make([]byte, 32),
 				}, nil)
 
 			m.validatorClient.EXPECT().SyncCommitteeContribution(
 				gomock.Any(), // ctx
-				&ethpb.SyncCommitteeContributionRequest{
+				&silapb.SyncCommitteeContributionRequest{
 					Slot:      1,
 					PublicKey: pubKey[:],
 					SubnetId:  0,
@@ -348,7 +348,7 @@ func TestSubmitSignedContributionAndProof_CouldNotSubmitContribution(t *testing.
 			validator, m, validatorKey, finish := setupWithKey(t, validatorKey, isSlashingProtectionMinimal)
 			validatorIndex := primitives.ValidatorIndex(7)
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeLength: uint64(len(committee)),
 				ValidatorIndex:  validatorIndex,
@@ -359,16 +359,16 @@ func TestSubmitSignedContributionAndProof_CouldNotSubmitContribution(t *testing.
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
 			m.validatorClient.EXPECT().SyncSubcommitteeIndex(
 				gomock.Any(), // ctx
-				&ethpb.SyncSubcommitteeIndexRequest{
+				&silapb.SyncSubcommitteeIndexRequest{
 					Slot:      1,
 					PublicKey: pubKey[:],
 				},
-			).Return(&ethpb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{1}}, nil)
+			).Return(&silapb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{1}}, nil)
 
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), // ctx
 					gomock.Any()). // epoch
-				Return(&ethpb.DomainResponse{
+				Return(&silapb.DomainResponse{
 					SignatureDomain: make([]byte, 32),
 				}, nil)
 
@@ -376,12 +376,12 @@ func TestSubmitSignedContributionAndProof_CouldNotSubmitContribution(t *testing.
 			aggBits.SetBitAt(0, true)
 			m.validatorClient.EXPECT().SyncCommitteeContribution(
 				gomock.Any(), // ctx
-				&ethpb.SyncCommitteeContributionRequest{
+				&silapb.SyncCommitteeContributionRequest{
 					Slot:      1,
 					PublicKey: pubKey[:],
 					SubnetId:  0,
 				},
-			).Return(&ethpb.SyncCommitteeContribution{
+			).Return(&silapb.SyncCommitteeContribution{
 				BlockRoot:       make([]byte, fieldparams.RootLength),
 				Signature:       make([]byte, 96),
 				AggregationBits: aggBits,
@@ -390,16 +390,16 @@ func TestSubmitSignedContributionAndProof_CouldNotSubmitContribution(t *testing.
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), // ctx
 					gomock.Any()). // epoch
-				Return(&ethpb.DomainResponse{
+				Return(&silapb.DomainResponse{
 					SignatureDomain: make([]byte, 32),
 				}, nil)
 
 			m.validatorClient.EXPECT().SubmitSignedContributionAndProof(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.SignedContributionAndProof{
-					Message: &ethpb.ContributionAndProof{
+				gomock.AssignableToTypeOf(&silapb.SignedContributionAndProof{
+					Message: &silapb.ContributionAndProof{
 						AggregatorIndex: 7,
-						Contribution: &ethpb.SyncCommitteeContribution{
+						Contribution: &silapb.SyncCommitteeContribution{
 							BlockRoot:         make([]byte, fieldparams.RootLength),
 							Signature:         make([]byte, 96),
 							AggregationBits:   bitfield.NewBitvector128(),
@@ -428,7 +428,7 @@ func TestSubmitSignedContributionAndProof_Ok(t *testing.T) {
 			validator, m, validatorKey, finish := setupWithKey(t, validatorKey, isSlashingProtectionMinimal)
 			validatorIndex := primitives.ValidatorIndex(7)
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeLength: uint64(len(committee)),
 				ValidatorIndex:  validatorIndex,
@@ -439,16 +439,16 @@ func TestSubmitSignedContributionAndProof_Ok(t *testing.T) {
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
 			m.validatorClient.EXPECT().SyncSubcommitteeIndex(
 				gomock.Any(), // ctx
-				&ethpb.SyncSubcommitteeIndexRequest{
+				&silapb.SyncSubcommitteeIndexRequest{
 					Slot:      1,
 					PublicKey: pubKey[:],
 				},
-			).Return(&ethpb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{1}}, nil)
+			).Return(&silapb.SyncSubcommitteeIndexResponse{Indices: []primitives.CommitteeIndex{1}}, nil)
 
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), // ctx
 					gomock.Any()). // epoch
-				Return(&ethpb.DomainResponse{
+				Return(&silapb.DomainResponse{
 					SignatureDomain: make([]byte, 32),
 				}, nil)
 
@@ -456,12 +456,12 @@ func TestSubmitSignedContributionAndProof_Ok(t *testing.T) {
 			aggBits.SetBitAt(0, true)
 			m.validatorClient.EXPECT().SyncCommitteeContribution(
 				gomock.Any(), // ctx
-				&ethpb.SyncCommitteeContributionRequest{
+				&silapb.SyncCommitteeContributionRequest{
 					Slot:      1,
 					PublicKey: pubKey[:],
 					SubnetId:  0,
 				},
-			).Return(&ethpb.SyncCommitteeContribution{
+			).Return(&silapb.SyncCommitteeContribution{
 				BlockRoot:       make([]byte, fieldparams.RootLength),
 				Signature:       make([]byte, 96),
 				AggregationBits: aggBits,
@@ -470,16 +470,16 @@ func TestSubmitSignedContributionAndProof_Ok(t *testing.T) {
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), // ctx
 					gomock.Any()). // epoch
-				Return(&ethpb.DomainResponse{
+				Return(&silapb.DomainResponse{
 					SignatureDomain: make([]byte, 32),
 				}, nil)
 
 			m.validatorClient.EXPECT().SubmitSignedContributionAndProof(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.SignedContributionAndProof{
-					Message: &ethpb.ContributionAndProof{
+				gomock.AssignableToTypeOf(&silapb.SignedContributionAndProof{
+					Message: &silapb.ContributionAndProof{
 						AggregatorIndex: 7,
-						Contribution: &ethpb.SyncCommitteeContribution{
+						Contribution: &silapb.SyncCommitteeContribution{
 							BlockRoot:         make([]byte, 32),
 							Signature:         make([]byte, 96),
 							AggregationBits:   bitfield.NewBitvector128(),
@@ -507,7 +507,7 @@ func TestSubmitSignedContributionAndProof_OncePerPubkeyAndSubcommittee(t *testin
 			validator, m, validatorKey, finish := setupWithKey(t, validatorKey, isSlashingProtectionMinimal)
 			validatorIndex := primitives.ValidatorIndex(7)
 			committee := []primitives.ValidatorIndex{0, 3, 4, 2, validatorIndex, 6, 8, 9, 10}
-			validator.duties = testDutyStore(&ethpb.ValidatorDuty{
+			validator.duties = testDutyStore(&silapb.ValidatorDuty{
 				PublicKey:       validatorKey.PublicKey().Marshal(),
 				CommitteeLength: uint64(len(committee)),
 				ValidatorIndex:  validatorIndex,
@@ -520,17 +520,17 @@ func TestSubmitSignedContributionAndProof_OncePerPubkeyAndSubcommittee(t *testin
 			copy(pubKey[:], validatorKey.PublicKey().Marshal())
 			m.validatorClient.EXPECT().SyncSubcommitteeIndex(
 				gomock.Any(), // ctx
-				&ethpb.SyncSubcommitteeIndexRequest{
+				&silapb.SyncSubcommitteeIndexRequest{
 					Slot:      1,
 					PublicKey: pubKey[:],
 				},
-			).Return(&ethpb.SyncSubcommitteeIndexResponse{Indices: aggregatorCommitteeIndices}, nil)
+			).Return(&silapb.SyncSubcommitteeIndexResponse{Indices: aggregatorCommitteeIndices}, nil)
 
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), // ctx
 					gomock.Any()). // epoch
 				Times(2).
-				Return(&ethpb.DomainResponse{
+				Return(&silapb.DomainResponse{
 					SignatureDomain: make([]byte, 32),
 				}, nil)
 
@@ -538,12 +538,12 @@ func TestSubmitSignedContributionAndProof_OncePerPubkeyAndSubcommittee(t *testin
 			aggBits.SetBitAt(0, true)
 			m.validatorClient.EXPECT().SyncCommitteeContribution(
 				gomock.Any(), // ctx
-				&ethpb.SyncCommitteeContributionRequest{
+				&silapb.SyncCommitteeContributionRequest{
 					Slot:      1,
 					PublicKey: pubKey[:],
 					SubnetId:  0,
 				},
-			).Return(&ethpb.SyncCommitteeContribution{
+			).Return(&silapb.SyncCommitteeContribution{
 				BlockRoot:       make([]byte, fieldparams.RootLength),
 				Signature:       make([]byte, 96),
 				AggregationBits: aggBits,
@@ -552,16 +552,16 @@ func TestSubmitSignedContributionAndProof_OncePerPubkeyAndSubcommittee(t *testin
 			m.validatorClient.EXPECT().
 				DomainData(gomock.Any(), // ctx
 					gomock.Any()). // epoch
-				Return(&ethpb.DomainResponse{
+				Return(&silapb.DomainResponse{
 					SignatureDomain: make([]byte, 32),
 				}, nil)
 
 			m.validatorClient.EXPECT().SubmitSignedContributionAndProof(
 				gomock.Any(), // ctx
-				gomock.AssignableToTypeOf(&ethpb.SignedContributionAndProof{
-					Message: &ethpb.ContributionAndProof{
+				gomock.AssignableToTypeOf(&silapb.SignedContributionAndProof{
+					Message: &silapb.ContributionAndProof{
 						AggregatorIndex: 7,
-						Contribution: &ethpb.SyncCommitteeContribution{
+						Contribution: &silapb.SyncCommitteeContribution{
 							BlockRoot:         make([]byte, 32),
 							Signature:         make([]byte, 96),
 							AggregationBits:   bitfield.NewBitvector128(),

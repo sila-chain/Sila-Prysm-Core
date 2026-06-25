@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -110,6 +110,6 @@ func TestInitializeDataMaps_Gloas(t *testing.T) {
 	require.Equal(t, true, ok)
 	att, err := attFunc()
 	require.NoError(t, err)
-	_, ok = att.(*ethpb.SingleAttestation)
+	_, ok = att.(*silapb.SingleAttestation)
 	assert.Equal(t, true, ok)
 }

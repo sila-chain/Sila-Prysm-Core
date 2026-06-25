@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/db/common"
 )
@@ -45,17 +45,17 @@ func TestStore_NestedBackup(t *testing.T) {
 	db := setupDB(t, keys)
 	ctx := t.Context()
 	root := [32]byte{1}
-	idxAtt := &ethpb.IndexedAttestation{
+	idxAtt := &silapb.IndexedAttestation{
 		AttestingIndices: nil,
-		Data: &ethpb.AttestationData{
+		Data: &silapb.AttestationData{
 			Slot:            0,
 			CommitteeIndex:  0,
 			BeaconBlockRoot: root[:],
-			Source: &ethpb.Checkpoint{
+			Source: &silapb.Checkpoint{
 				Epoch: 10,
 				Root:  root[:],
 			},
-			Target: &ethpb.Checkpoint{
+			Target: &silapb.Checkpoint{
 				Epoch: 0,
 				Root:  root[:],
 			},

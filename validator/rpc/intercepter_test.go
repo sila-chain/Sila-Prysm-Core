@@ -157,7 +157,7 @@ func TestServer_AuthTokenHandler_ProtectsRoutes(t *testing.T) {
 	}{
 		{
 			name:          "rejects missing token on keymanager endpoint",
-			path:          "/eth/v1/keystores",
+			path:          "/sila/v1/keystores",
 			wantCode:      http.StatusUnauthorized,
 			wantErrSubstr: "Unauthorized",
 		},
@@ -169,7 +169,7 @@ func TestServer_AuthTokenHandler_ProtectsRoutes(t *testing.T) {
 		},
 		{
 			name:       "accepts matching token on keymanager endpoint",
-			path:       "/eth/v1/keystores",
+			path:       "/sila/v1/keystores",
 			authHeader: "Bearer " + token,
 			wantCode:   http.StatusOK,
 		},
@@ -266,7 +266,7 @@ func TestServer_AuthTokenHandler_ValidatesAuthorizationHeader(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rr := httptest.NewRecorder()
-			req := newAuthTestRequest(t, "/eth/v1/keystores")
+			req := newAuthTestRequest(t, "/sila/v1/keystores")
 			req.Header.Set("Authorization", tt.authHeader)
 
 			handler.ServeHTTP(rr, req)
@@ -285,7 +285,7 @@ func BenchmarkServer_AuthTokenHandler(b *testing.B) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	req, err := http.NewRequest(http.MethodGet, "/eth/v1/keystores", http.NoBody)
+	req, err := http.NewRequest(http.MethodGet, "/sila/v1/keystores", http.NoBody)
 	require.NoError(b, err)
 	req.Header.Set("Authorization", "Bearer "+token)
 

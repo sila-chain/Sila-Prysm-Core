@@ -8,20 +8,20 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
-var beaconAPITogRPCValidatorStatus = map[string]ethpb.ValidatorStatus{
-	"pending_initialized": ethpb.ValidatorStatus_DEPOSITED,
-	"pending_queued":      ethpb.ValidatorStatus_PENDING,
-	"active_ongoing":      ethpb.ValidatorStatus_ACTIVE,
-	"active_exiting":      ethpb.ValidatorStatus_EXITING,
-	"active_slashed":      ethpb.ValidatorStatus_SLASHING,
-	"exited_unslashed":    ethpb.ValidatorStatus_EXITED,
-	"exited_slashed":      ethpb.ValidatorStatus_EXITED,
-	"withdrawal_possible": ethpb.ValidatorStatus_EXITED,
-	"withdrawal_done":     ethpb.ValidatorStatus_EXITED,
+var beaconAPITogRPCValidatorStatus = map[string]silapb.ValidatorStatus{
+	"pending_initialized": silapb.ValidatorStatus_DEPOSITED,
+	"pending_queued":      silapb.ValidatorStatus_PENDING,
+	"active_ongoing":      silapb.ValidatorStatus_ACTIVE,
+	"active_exiting":      silapb.ValidatorStatus_EXITING,
+	"active_slashed":      silapb.ValidatorStatus_SLASHING,
+	"exited_unslashed":    silapb.ValidatorStatus_EXITED,
+	"exited_slashed":      silapb.ValidatorStatus_EXITED,
+	"withdrawal_possible": silapb.ValidatorStatus_EXITED,
+	"withdrawal_done":     silapb.ValidatorStatus_EXITED,
 }
 
 func (c *beaconApiValidatorClient) fork(ctx context.Context) (*structs.GetStateForkResponse, error) {

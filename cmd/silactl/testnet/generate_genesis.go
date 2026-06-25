@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/file"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/interop"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila/core"
@@ -357,7 +357,7 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "could not get hash tree root")
 		}
-		e1d := &ethpb.Eth1Data{
+		e1d := &silapb.Eth1Data{
 			DepositRoot:  depositRoot[:],
 			DepositCount: 0,
 			BlockHash:    header.Hash().Bytes(),
@@ -373,12 +373,12 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 	return genesisState, err
 }
 
-func depositEntriesFromJSON(enc []byte) ([][]byte, []*ethpb.Deposit_Data, error) {
+func depositEntriesFromJSON(enc []byte) ([][]byte, []*silapb.Deposit_Data, error) {
 	var depositJSON []*depositDataJSON
 	if err := json.Unmarshal(enc, &depositJSON); err != nil {
 		return nil, nil, err
 	}
-	dds := make([]*ethpb.Deposit_Data, len(depositJSON))
+	dds := make([]*silapb.Deposit_Data, len(depositJSON))
 	roots := make([][]byte, len(depositJSON))
 	for i, val := range depositJSON {
 		root, data, err := depositJSONToDepositData(val)
@@ -391,7 +391,7 @@ func depositEntriesFromJSON(enc []byte) ([][]byte, []*ethpb.Deposit_Data, error)
 	return roots, dds, nil
 }
 
-func depositJSONToDepositData(input *depositDataJSON) ([]byte, *ethpb.Deposit_Data, error) {
+func depositJSONToDepositData(input *depositDataJSON) ([]byte, *silapb.Deposit_Data, error) {
 	root, err := hex.DecodeString(strings.TrimPrefix(input.DepositDataRoot, "0x"))
 	if err != nil {
 		return nil, nil, err
@@ -408,7 +408,7 @@ func depositJSONToDepositData(input *depositDataJSON) ([]byte, *ethpb.Deposit_Da
 	if err != nil {
 		return nil, nil, err
 	}
-	return root, &ethpb.Deposit_Data{
+	return root, &silapb.Deposit_Data{
 		PublicKey:             pk,
 		WithdrawalCredentials: creds,
 		Amount:                input.Amount,

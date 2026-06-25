@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/shared"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/shared"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/validator/flags"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"

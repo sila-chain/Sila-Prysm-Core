@@ -8,16 +8,16 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
 
-func generateSyncAggregate(st state.BeaconState, privs []bls.SecretKey, parentRoot [32]byte) (*ethpb.SyncAggregate, error) {
+func generateSyncAggregate(st state.BeaconState, privs []bls.SecretKey, parentRoot [32]byte) (*silapb.SyncAggregate, error) {
 	nextSlotEpoch := slots.ToEpoch(st.Slot() + 1)
 	currEpoch := slots.ToEpoch(st.Slot())
 
-	var syncCommittee *ethpb.SyncCommittee
+	var syncCommittee *silapb.SyncCommittee
 	var err error
 	if slots.SyncCommitteePeriod(currEpoch) == slots.SyncCommitteePeriod(nextSlotEpoch) {
 		syncCommittee, err = st.CurrentSyncCommittee()
@@ -32,7 +32,7 @@ func generateSyncAggregate(st state.BeaconState, privs []bls.SecretKey, parentRo
 	}
 	sigs := make([]bls.Signature, 0, len(syncCommittee.Pubkeys))
 	var bVector []byte
-	currSize := new(ethpb.SyncAggregate).SyncCommitteeBits.Len()
+	currSize := new(silapb.SyncAggregate).SyncCommitteeBits.Len()
 	switch currSize {
 	case 512:
 		bVector = bitfield.NewBitvector512()
@@ -66,8 +66,8 @@ func generateSyncAggregate(st state.BeaconState, privs []bls.SecretKey, parentRo
 	}
 	if len(sigs) == 0 {
 		fakeSig := [96]byte{0xC0}
-		return &ethpb.SyncAggregate{SyncCommitteeSignature: fakeSig[:], SyncCommitteeBits: bVector}, nil
+		return &silapb.SyncAggregate{SyncCommitteeSignature: fakeSig[:], SyncCommitteeBits: bVector}, nil
 	}
 	aggSig := bls.AggregateSignatures(sigs)
-	return &ethpb.SyncAggregate{SyncCommitteeSignature: aggSig.Marshal(), SyncCommitteeBits: bVector}, nil
+	return &silapb.SyncAggregate{SyncCommitteeSignature: aggSig.Marshal(), SyncCommitteeBits: bVector}, nil
 }

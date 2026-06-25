@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/pkg/errors"
@@ -91,7 +91,7 @@ func (s *Service) BroadcastForEpoch(ctx context.Context, msg proto.Message, epoc
 
 // BroadcastAttestation broadcasts an attestation to the p2p network, the message is assumed to be
 // broadcasted to the current fork.
-func (s *Service) BroadcastAttestation(ctx context.Context, subnet uint64, att ethpb.Att) error {
+func (s *Service) BroadcastAttestation(ctx context.Context, subnet uint64, att silapb.Att) error {
 	if att == nil {
 		return errors.New("attempted to broadcast nil attestation")
 	}
@@ -112,7 +112,7 @@ func (s *Service) BroadcastAttestation(ctx context.Context, subnet uint64, att e
 
 // BroadcastSyncCommitteeMessage broadcasts a sync committee message to the p2p network, the message is assumed to be
 // broadcasted to the current fork.
-func (s *Service) BroadcastSyncCommitteeMessage(ctx context.Context, subnet uint64, sMsg *ethpb.SyncCommitteeMessage) error {
+func (s *Service) BroadcastSyncCommitteeMessage(ctx context.Context, subnet uint64, sMsg *silapb.SyncCommitteeMessage) error {
 	if sMsg == nil {
 		return errors.New("attempted to broadcast nil sync committee message")
 	}
@@ -131,7 +131,7 @@ func (s *Service) BroadcastSyncCommitteeMessage(ctx context.Context, subnet uint
 	return nil
 }
 
-func (s *Service) internalBroadcastAttestation(ctx context.Context, subnet uint64, att ethpb.Att, forkDigest [fieldparams.VersionLength]byte) {
+func (s *Service) internalBroadcastAttestation(ctx context.Context, subnet uint64, att silapb.Att, forkDigest [fieldparams.VersionLength]byte) {
 	_, span := trace.StartSpan(ctx, "p2p.internalBroadcastAttestation")
 	defer span.End()
 	ctx = trace.NewContext(context.Background(), span) // clear parent context / deadline.
@@ -185,7 +185,7 @@ func (s *Service) internalBroadcastAttestation(ctx context.Context, subnet uint6
 	}
 }
 
-func (s *Service) broadcastSyncCommittee(ctx context.Context, subnet uint64, sMsg *ethpb.SyncCommitteeMessage, forkDigest [fieldparams.VersionLength]byte) {
+func (s *Service) broadcastSyncCommittee(ctx context.Context, subnet uint64, sMsg *silapb.SyncCommitteeMessage, forkDigest [fieldparams.VersionLength]byte) {
 	_, span := trace.StartSpan(ctx, "p2p.broadcastSyncCommittee")
 	defer span.End()
 	ctx = trace.NewContext(context.Background(), span) // clear parent context / deadline.
@@ -239,7 +239,7 @@ func (s *Service) broadcastSyncCommittee(ctx context.Context, subnet uint64, sMs
 
 // BroadcastBlob broadcasts a blob to the p2p network, the message is assumed to be
 // broadcasted to the current fork and to the input subnet.
-func (s *Service) BroadcastBlob(ctx context.Context, subnet uint64, blob *ethpb.BlobSidecar) error {
+func (s *Service) BroadcastBlob(ctx context.Context, subnet uint64, blob *silapb.BlobSidecar) error {
 	ctx, span := trace.StartSpan(ctx, "p2p.BroadcastBlob")
 	defer span.End()
 	if blob == nil {
@@ -258,7 +258,7 @@ func (s *Service) BroadcastBlob(ctx context.Context, subnet uint64, blob *ethpb.
 	return nil
 }
 
-func (s *Service) internalBroadcastBlob(ctx context.Context, subnet uint64, blobSidecar *ethpb.BlobSidecar, forkDigest [fieldparams.VersionLength]byte) {
+func (s *Service) internalBroadcastBlob(ctx context.Context, subnet uint64, blobSidecar *silapb.BlobSidecar, forkDigest [fieldparams.VersionLength]byte) {
 	_, span := trace.StartSpan(ctx, "p2p.internalBroadcastBlob")
 	defer span.End()
 	ctx = trace.NewContext(context.Background(), span) // clear parent context / deadline.

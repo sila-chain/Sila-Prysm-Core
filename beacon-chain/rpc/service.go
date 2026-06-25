@@ -28,7 +28,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/voluntaryexits"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/core"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/rewards"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/rewards"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/lookup"
 	beaconv1alpha1 "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/sila/v1alpha1/beacon"
 	debugv1alpha1 "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/sila/v1alpha1/debug"
@@ -41,7 +41,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/logs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
-	ethpbv1alpha1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapbv1alpha1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcopentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
@@ -64,7 +64,7 @@ type Service struct {
 	cancel               context.CancelFunc
 	listener             net.Listener
 	grpcServer           *grpc.Server
-	incomingAttestation  chan *ethpbv1alpha1.Attestation
+	incomingAttestation  chan *silapbv1alpha1.Attestation
 	credentialError      error
 	connectedRPCClients  map[net.Addr]bool
 	clientConnectionLock sync.Mutex
@@ -143,7 +143,7 @@ func NewService(ctx context.Context, cfg *Config) *Service {
 		cfg:                 cfg,
 		ctx:                 ctx,
 		cancel:              cancel,
-		incomingAttestation: make(chan *ethpbv1alpha1.Attestation, params.BeaconConfig().DefaultBufferSize),
+		incomingAttestation: make(chan *silapbv1alpha1.Attestation, params.BeaconConfig().DefaultBufferSize),
 		connectedRPCClients: make(map[net.Addr]bool),
 	}
 
@@ -310,8 +310,8 @@ func NewService(ctx context.Context, cfg *Config) *Service {
 		Broadcaster:                 s.cfg.Broadcaster,
 		StateGen:                    s.cfg.StateGen,
 		SyncChecker:                 s.cfg.SyncService,
-		ReceivedAttestationsBuffer:  make(chan *ethpbv1alpha1.Attestation, attestationBufferSize),
-		CollectedAttestationsBuffer: make(chan []*ethpbv1alpha1.Attestation, attestationBufferSize),
+		ReceivedAttestationsBuffer:  make(chan *silapbv1alpha1.Attestation, attestationBufferSize),
+		CollectedAttestationsBuffer: make(chan []*silapbv1alpha1.Attestation, attestationBufferSize),
 		ReplayerBuilder:             ch,
 		CoreService:                 coreService,
 	}
@@ -326,9 +326,9 @@ func NewService(ctx context.Context, cfg *Config) *Service {
 		}
 	}
 
-	ethpbv1alpha1.RegisterNodeServer(s.grpcServer, nodeServer)
-	ethpbv1alpha1.RegisterHealthServer(s.grpcServer, nodeServer)
-	ethpbv1alpha1.RegisterBeaconChainServer(s.grpcServer, beaconChainServer)
+	silapbv1alpha1.RegisterNodeServer(s.grpcServer, nodeServer)
+	silapbv1alpha1.RegisterHealthServer(s.grpcServer, nodeServer)
+	silapbv1alpha1.RegisterBeaconChainServer(s.grpcServer, beaconChainServer)
 	if s.cfg.EnableDebugRPCEndpoints {
 		debugServer := &debugv1alpha1.Server{
 			GenesisTimeFetcher: s.cfg.GenesisTimeFetcher,
@@ -339,9 +339,9 @@ func NewService(ctx context.Context, cfg *Config) *Service {
 			PeersFetcher:       s.cfg.PeersFetcher,
 			ReplayerBuilder:    ch,
 		}
-		ethpbv1alpha1.RegisterDebugServer(s.grpcServer, debugServer)
+		silapbv1alpha1.RegisterDebugServer(s.grpcServer, debugServer)
 	}
-	ethpbv1alpha1.RegisterBeaconNodeValidatorServer(s.grpcServer, validatorServer)
+	silapbv1alpha1.RegisterBeaconNodeValidatorServer(s.grpcServer, validatorServer)
 	// Register reflection service on gRPC server.
 	reflection.Register(s.grpcServer)
 

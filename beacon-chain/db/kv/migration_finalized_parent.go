@@ -7,7 +7,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 	bolt "go.etcd.io/bbolt"
 )
@@ -39,7 +39,7 @@ func migrateFinalizedParent(ctx context.Context, db *bolt.DB) error {
 				return ctx.Err()
 			}
 
-			idxEntry := &ethpb.FinalizedBlockRootContainer{}
+			idxEntry := &silapb.FinalizedBlockRootContainer{}
 			if err := decode(ctx, v, idxEntry); err != nil {
 				return errors.Wrapf(err, "unable to decode finalized block root container for root=%#x", k)
 			}

@@ -21,7 +21,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
@@ -201,7 +201,7 @@ func TestValidateSignedProposerPreferencesGossip_HappyPath(t *testing.T) {
 	require.Equal(t, true, ok)
 	require.DeepEqual(t, signedPreferences.Message.FeeRecipient, got.FeeRecipient[:])
 	require.Equal(t, signedPreferences.Message.TargetGasLimit, got.TargetGasLimit)
-	validatorData, ok := msg.ValidatorData.(*ethpb.SignedProposerPreferences)
+	validatorData, ok := msg.ValidatorData.(*silapb.SignedProposerPreferences)
 	require.Equal(t, true, ok)
 	require.DeepEqual(t, signedPreferences, validatorData)
 }
@@ -241,7 +241,7 @@ func (m *mockSignedProposerPreferencesVerifier) VerifySignature(st state.ReadOnl
 func (*mockSignedProposerPreferencesVerifier) SatisfyRequirement(verification.Requirement) {}
 
 func testNewSignedProposerPreferencesVerifier(m mockSignedProposerPreferencesVerifier) verification.NewSignedProposerPreferencesVerifier {
-	return func(*ethpb.SignedProposerPreferences, []verification.Requirement) verification.SignedProposerPreferencesVerifier {
+	return func(*silapb.SignedProposerPreferences, []verification.Requirement) verification.SignedProposerPreferencesVerifier {
 		clone := m
 		return &clone
 	}
@@ -251,7 +251,7 @@ func testNewSignedProposerPreferencesVerifier(m mockSignedProposerPreferencesVer
 // stategen, a saved block whose HashTreeRoot is used as the checkpoint root,
 // and a saved post-state for that block — so the gossip validator can resolve
 // the checkpoint state.
-func setupSignedProposerPreferencesService(t *testing.T) (*Service, *pubsub.Message, *ethpb.SignedProposerPreferences) {
+func setupSignedProposerPreferencesService(t *testing.T) (*Service, *pubsub.Message, *silapb.SignedProposerPreferences) {
 	t.Helper()
 
 	ctx := context.Background()
@@ -296,8 +296,8 @@ func setupSignedProposerPreferencesService(t *testing.T) (*Service, *pubsub.Mess
 	// (epoch(slot)-1) is 0, with boundary at slot 0. With genesis "now" the
 	// wall-clock current slot is 0, so the proposal is in the next epoch and
 	// has not yet passed.
-	signedPreferences := &ethpb.SignedProposerPreferences{
-		Message: &ethpb.ProposerPreferences{
+	signedPreferences := &silapb.SignedProposerPreferences{
+		Message: &silapb.ProposerPreferences{
 			DependentRoot:  dependentRoot[:],
 			ProposalSlot:   33,
 			ValidatorIndex: 0,
@@ -310,7 +310,7 @@ func setupSignedProposerPreferencesService(t *testing.T) (*Service, *pubsub.Mess
 	return s, msg, signedPreferences
 }
 
-func signedProposerPreferencesToPubsub(t *testing.T, s *Service, p p2p.P2P, preferences *ethpb.SignedProposerPreferences) *pubsub.Message {
+func signedProposerPreferencesToPubsub(t *testing.T, s *Service, p p2p.P2P, preferences *silapb.SignedProposerPreferences) *pubsub.Message {
 	t.Helper()
 
 	buf := new(bytes.Buffer)
@@ -318,7 +318,7 @@ func signedProposerPreferencesToPubsub(t *testing.T, s *Service, p p2p.P2P, pref
 	require.NoError(t, err)
 	digest, err := s.currentForkDigest()
 	require.NoError(t, err)
-	topic := p2p.GossipTypeMapping[reflect.TypeFor[*ethpb.SignedProposerPreferences]()]
+	topic := p2p.GossipTypeMapping[reflect.TypeFor[*silapb.SignedProposerPreferences]()]
 	topic = s.addDigestToTopic(topic, digest)
 	return &pubsub.Message{
 		Message: &pb.Message{

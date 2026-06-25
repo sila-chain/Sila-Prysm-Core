@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -29,7 +29,7 @@ type WeakSubjectivityVerifier struct {
 }
 
 // NewWeakSubjectivityVerifier validates a checkpoint, and if valid, uses it to initialize a weak subjectivity verifier.
-func NewWeakSubjectivityVerifier(wsc *ethpb.Checkpoint, db weakSubjectivityDB) (*WeakSubjectivityVerifier, error) {
+func NewWeakSubjectivityVerifier(wsc *silapb.Checkpoint, db weakSubjectivityDB) (*WeakSubjectivityVerifier, error) {
 	if wsc == nil || len(wsc.Root) == 0 || wsc.Epoch == 0 {
 		log.Debug("--weak-subjectivity-checkpoint not provided")
 		return &WeakSubjectivityVerifier{

@@ -7,7 +7,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/rest"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -25,7 +25,7 @@ type beaconApiNodeClient struct {
 	genesisProvider GenesisProvider
 }
 
-func (c *beaconApiNodeClient) SyncStatus(ctx context.Context, _ *empty.Empty) (*ethpb.SyncStatus, error) {
+func (c *beaconApiNodeClient) SyncStatus(ctx context.Context, _ *empty.Empty) (*silapb.SyncStatus, error) {
 	syncingResponse := structs.SyncStatusResponse{}
 	if err := c.handler.Get(ctx, "/sila/v1/node/syncing", &syncingResponse); err != nil {
 		return nil, err
@@ -35,12 +35,12 @@ func (c *beaconApiNodeClient) SyncStatus(ctx context.Context, _ *empty.Empty) (*
 		return nil, errors.New("syncing data is nil")
 	}
 
-	return &ethpb.SyncStatus{
+	return &silapb.SyncStatus{
 		Syncing: syncingResponse.Data.IsSyncing,
 	}, nil
 }
 
-func (c *beaconApiNodeClient) Genesis(ctx context.Context, _ *empty.Empty) (*ethpb.Genesis, error) {
+func (c *beaconApiNodeClient) Genesis(ctx context.Context, _ *empty.Empty) (*silapb.Genesis, error) {
 	genesisJson, err := c.genesisProvider.Genesis(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get genesis")
@@ -70,7 +70,7 @@ func (c *beaconApiNodeClient) Genesis(ctx context.Context, _ *empty.Empty) (*eth
 		return nil, errors.Wrapf(err, "failed to decode deposit contract address `%s`", depositContractJson.Data.Address)
 	}
 
-	return &ethpb.Genesis{
+	return &silapb.Genesis{
 		GenesisTime: &timestamppb.Timestamp{
 			Seconds: genesisTime,
 		},
@@ -79,7 +79,7 @@ func (c *beaconApiNodeClient) Genesis(ctx context.Context, _ *empty.Empty) (*eth
 	}, nil
 }
 
-func (c *beaconApiNodeClient) Version(ctx context.Context, _ *empty.Empty) (*ethpb.Version, error) {
+func (c *beaconApiNodeClient) Version(ctx context.Context, _ *empty.Empty) (*silapb.Version, error) {
 	var versionResponse structs.GetVersionResponse
 	if err := c.handler.Get(ctx, "/sila/v1/node/version", &versionResponse); err != nil {
 		return nil, err
@@ -89,12 +89,12 @@ func (c *beaconApiNodeClient) Version(ctx context.Context, _ *empty.Empty) (*eth
 		return nil, errors.New("empty version response")
 	}
 
-	return &ethpb.Version{
+	return &silapb.Version{
 		Version: versionResponse.Data.Version,
 	}, nil
 }
 
-func (c *beaconApiNodeClient) Peers(ctx context.Context, in *empty.Empty) (*ethpb.Peers, error) {
+func (c *beaconApiNodeClient) Peers(ctx context.Context, in *empty.Empty) (*silapb.Peers, error) {
 	if c.fallbackClient != nil {
 		return c.fallbackClient.Peers(ctx, in)
 	}

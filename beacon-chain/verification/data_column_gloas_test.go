@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/peerdas"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"google.golang.org/protobuf/proto"
@@ -44,7 +44,7 @@ func testGloasDataColumnFixture(t *testing.T) (blocks.RODataColumn, interfaces.S
 	header, err := signedBlock.Header()
 	require.NoError(t, err)
 
-	sidecar := proto.Clone(base.DataColumnSidecar()).(*ethpb.DataColumnSidecar)
+	sidecar := proto.Clone(base.DataColumnSidecar()).(*silapb.DataColumnSidecar)
 	sidecar.SignedBlockHeader = header
 	baseComms, err := base.KzgCommitments()
 	require.NoError(t, err)
@@ -103,7 +103,7 @@ func TestVerifyDataColumnSidecarSlotMatchesBlockGloas(t *testing.T) {
 
 	require.NoError(t, verifier.VerifyDataColumnSidecarSlotMatchesBlockGloas())
 
-	sidecar := proto.Clone(roDataColumn.DataColumnSidecar()).(*ethpb.DataColumnSidecar)
+	sidecar := proto.Clone(roDataColumn.DataColumnSidecar()).(*silapb.DataColumnSidecar)
 	sidecar.SignedBlockHeader.Header.Slot++
 	wrongSlot, err := blocks.NewRODataColumn(sidecar)
 	require.NoError(t, err)
@@ -120,12 +120,12 @@ func TestVerifyDataColumnSidecarGloas(t *testing.T) {
 	require.NoError(t, verifier.VerifyDataColumnSidecarGloas())
 	require.NoError(t, verifier.VerifyDataColumnSidecarKzgProofsGloas())
 
-	sidecar := proto.Clone(roDataColumn.DataColumnSidecar()).(*ethpb.DataColumnSidecar)
+	sidecar := proto.Clone(roDataColumn.DataColumnSidecar()).(*silapb.DataColumnSidecar)
 	sidecar.KzgProofs = nil
 	noProofs, err := blocks.NewRODataColumn(sidecar)
 	require.NoError(t, err)
 
-	sidecar = proto.Clone(roDataColumn.DataColumnSidecar()).(*ethpb.DataColumnSidecar)
+	sidecar = proto.Clone(roDataColumn.DataColumnSidecar()).(*silapb.DataColumnSidecar)
 	sidecar.Column = nil
 	emptyColumn, err := blocks.NewRODataColumn(sidecar)
 	require.NoError(t, err)

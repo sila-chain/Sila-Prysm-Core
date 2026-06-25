@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 )
 
@@ -20,7 +20,7 @@ var (
 // ValidateNilAttestation checks if any composite field of input attestation is nil.
 // Access to these nil fields will result in run time panic,
 // it is recommended to run these checks as first line of defense.
-func ValidateNilAttestation(attestation ethpb.Att) error {
+func ValidateNilAttestation(attestation silapb.Att) error {
 	if attestation == nil || attestation.IsNil() {
 		return errors.New("attestation is nil")
 	}
@@ -41,7 +41,7 @@ func ValidateNilAttestation(attestation ethpb.Att) error {
 
 // ValidateSlotTargetEpoch checks if attestation data's epoch matches target checkpoint's epoch.
 // It is recommended to run `ValidateNilAttestation` first to ensure `data.Target` can't be nil.
-func ValidateSlotTargetEpoch(data *ethpb.AttestationData) error {
+func ValidateSlotTargetEpoch(data *silapb.AttestationData) error {
 	if slots.ToEpoch(data.Slot) != data.Target.Epoch {
 		return fmt.Errorf("slot %d does not match target epoch %d", data.Slot, data.Target.Epoch)
 	}
@@ -83,7 +83,7 @@ func IsAggregator(committeeCount uint64, slotSig []byte) (bool, error) {
 //	committees_since_epoch_start = committees_per_slot * slots_since_epoch_start
 //
 //	return uint64((committees_since_epoch_start + committee_index) % ATTESTATION_SUBNET_COUNT)
-func ComputeSubnetForAttestation(activeValCount uint64, att ethpb.Att) uint64 {
+func ComputeSubnetForAttestation(activeValCount uint64, att silapb.Att) uint64 {
 	return ComputeSubnetFromCommitteeAndSlot(activeValCount, att.GetCommitteeIndex(), att.GetData().Slot)
 }
 
@@ -185,7 +185,7 @@ func ValidateAttestationTime(attSlot primitives.Slot, genesis time.Time, clockDi
 
 // VerifyCheckpointEpoch is within current epoch and previous epoch
 // with respect to current time. Returns true if it's within, false if it's not.
-func VerifyCheckpointEpoch(c *ethpb.Checkpoint, genesis time.Time) bool {
+func VerifyCheckpointEpoch(c *silapb.Checkpoint, genesis time.Time) bool {
 	currentSlot := slots.CurrentSlot(genesis)
 	currentEpoch := slots.ToEpoch(currentSlot)
 

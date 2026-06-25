@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations"
 	lruwrpr "github.com/sila-chain/Sila-Consensus-Core/v7/cache/lru"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -23,9 +23,9 @@ func TestBeaconAggregateProofSubscriber_CanSaveAggregatedAttestation(t *testing.
 		seenUnAggregatedAttestationCache: lruwrpr.New(10),
 	}
 
-	a := &ethpb.SignedAggregateAttestationAndProof{
-		Message: &ethpb.AggregateAttestationAndProof{
-			Aggregate: util.HydrateAttestation(&ethpb.Attestation{
+	a := &silapb.SignedAggregateAttestationAndProof{
+		Message: &silapb.AggregateAttestationAndProof{
+			Aggregate: util.HydrateAttestation(&silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0x07},
 			}),
 			AggregatorIndex: 100,
@@ -33,7 +33,7 @@ func TestBeaconAggregateProofSubscriber_CanSaveAggregatedAttestation(t *testing.
 		Signature: make([]byte, fieldparams.BLSSignatureLength),
 	}
 	require.NoError(t, r.beaconAggregateProofSubscriber(t.Context(), a))
-	assert.DeepSSZEqual(t, []ethpb.Att{a.Message.Aggregate}, r.cfg.attPool.AggregatedAttestations(), "Did not save aggregated attestation")
+	assert.DeepSSZEqual(t, []silapb.Att{a.Message.Aggregate}, r.cfg.attPool.AggregatedAttestations(), "Did not save aggregated attestation")
 }
 
 func TestBeaconAggregateProofSubscriber_CanSaveUnaggregatedAttestation(t *testing.T) {
@@ -45,9 +45,9 @@ func TestBeaconAggregateProofSubscriber_CanSaveUnaggregatedAttestation(t *testin
 		seenUnAggregatedAttestationCache: lruwrpr.New(10),
 	}
 
-	a := &ethpb.SignedAggregateAttestationAndProof{
-		Message: &ethpb.AggregateAttestationAndProof{
-			Aggregate: util.HydrateAttestation(&ethpb.Attestation{
+	a := &silapb.SignedAggregateAttestationAndProof{
+		Message: &silapb.AggregateAttestationAndProof{
+			Aggregate: util.HydrateAttestation(&silapb.Attestation{
 				AggregationBits: bitfield.Bitlist{0x03},
 				Signature:       make([]byte, fieldparams.BLSSignatureLength),
 			}),
@@ -57,5 +57,5 @@ func TestBeaconAggregateProofSubscriber_CanSaveUnaggregatedAttestation(t *testin
 	require.NoError(t, r.beaconAggregateProofSubscriber(t.Context(), a))
 
 	atts := r.cfg.attPool.UnaggregatedAttestations()
-	assert.DeepEqual(t, []ethpb.Att{a.Message.Aggregate}, atts, "Did not save unaggregated attestation")
+	assert.DeepEqual(t, []silapb.Att{a.Message.Aggregate}, atts, "Did not save unaggregated attestation")
 }

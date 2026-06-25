@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	logTest "github.com/sirupsen/logrus/hooks/test"
@@ -29,8 +29,8 @@ func TestService_processAttesterSlashings(t *testing.T) {
 
 	privKey, err := bls.RandKey()
 	require.NoError(t, err)
-	validators := make([]*ethpb.Validator, 1)
-	validators[0] = &ethpb.Validator{
+	validators := make([]*silapb.Validator, 1)
+	validators[0] = &silapb.Validator{
 		PublicKey:             privKey.PublicKey().Marshal(),
 		WithdrawalCredentials: make([]byte, 32),
 		EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
@@ -51,10 +51,10 @@ func TestService_processAttesterSlashings(t *testing.T) {
 		},
 	}
 
-	firstAtt := util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+	firstAtt := util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 		AttestingIndices: []uint64{0},
 	})
-	secondAtt := util.HydrateIndexedAttestation(&ethpb.IndexedAttestation{
+	secondAtt := util.HydrateIndexedAttestation(&silapb.IndexedAttestation{
 		AttestingIndices: []uint64{0},
 	})
 
@@ -75,7 +75,7 @@ func TestService_processAttesterSlashings(t *testing.T) {
 		firstAtt.Signature = signature.Marshal()
 		secondAtt.Signature = make([]byte, 96)
 
-		slashing := &ethpb.AttesterSlashing{
+		slashing := &silapb.AttesterSlashing{
 			Attestation_1: firstAtt,
 			Attestation_2: secondAtt,
 		}
@@ -83,7 +83,7 @@ func TestService_processAttesterSlashings(t *testing.T) {
 		root, err := slashing.HashTreeRoot()
 		require.NoError(tt, err, "failed to hash tree root")
 
-		slashings := map[[fieldparams.RootLength]byte]ethpb.AttSlashing{
+		slashings := map[[fieldparams.RootLength]byte]silapb.AttSlashing{
 			root: slashing,
 		}
 
@@ -99,7 +99,7 @@ func TestService_processAttesterSlashings(t *testing.T) {
 		firstAtt.Signature = make([]byte, 96)
 		secondAtt.Signature = signature.Marshal()
 
-		slashing := &ethpb.AttesterSlashing{
+		slashing := &silapb.AttesterSlashing{
 			Attestation_1: firstAtt,
 			Attestation_2: secondAtt,
 		}
@@ -107,7 +107,7 @@ func TestService_processAttesterSlashings(t *testing.T) {
 		root, err := slashing.HashTreeRoot()
 		require.NoError(tt, err, "failed to hash tree root")
 
-		slashings := map[[fieldparams.RootLength]byte]ethpb.AttSlashing{
+		slashings := map[[fieldparams.RootLength]byte]silapb.AttSlashing{
 			root: slashing,
 		}
 
@@ -123,7 +123,7 @@ func TestService_processAttesterSlashings(t *testing.T) {
 		firstAtt.Signature = signature.Marshal()
 		secondAtt.Signature = signature.Marshal()
 
-		slashing := &ethpb.AttesterSlashing{
+		slashing := &silapb.AttesterSlashing{
 			Attestation_1: firstAtt,
 			Attestation_2: secondAtt,
 		}
@@ -131,7 +131,7 @@ func TestService_processAttesterSlashings(t *testing.T) {
 		root, err := slashing.HashTreeRoot()
 		require.NoError(tt, err, "failed to hash tree root")
 
-		slashings := map[[fieldparams.RootLength]byte]ethpb.AttSlashing{
+		slashings := map[[fieldparams.RootLength]byte]silapb.AttSlashing{
 			root: slashing,
 		}
 
@@ -151,8 +151,8 @@ func TestService_processProposerSlashings(t *testing.T) {
 
 	privKey, err := bls.RandKey()
 	require.NoError(t, err)
-	validators := make([]*ethpb.Validator, 1)
-	validators[0] = &ethpb.Validator{
+	validators := make([]*silapb.Validator, 1)
+	validators[0] = &silapb.Validator{
 		PublicKey:             privKey.PublicKey().Marshal(),
 		WithdrawalCredentials: make([]byte, 32),
 		EffectiveBalance:      params.BeaconConfig().MaxEffectiveBalance,
@@ -177,15 +177,15 @@ func TestService_processProposerSlashings(t *testing.T) {
 	err = s.serviceCfg.StateGen.SaveState(ctx, parentRoot, beaconState)
 	require.NoError(t, err)
 
-	firstBlockHeader := util.HydrateSignedBeaconHeader(&ethpb.SignedBeaconBlockHeader{
-		Header: &ethpb.BeaconBlockHeader{
+	firstBlockHeader := util.HydrateSignedBeaconHeader(&silapb.SignedBeaconBlockHeader{
+		Header: &silapb.BeaconBlockHeader{
 			Slot:          0,
 			ProposerIndex: 0,
 			ParentRoot:    parentRoot[:],
 		},
 	})
-	secondBlockHeader := util.HydrateSignedBeaconHeader(&ethpb.SignedBeaconBlockHeader{
-		Header: &ethpb.BeaconBlockHeader{
+	secondBlockHeader := util.HydrateSignedBeaconHeader(&silapb.SignedBeaconBlockHeader{
+		Header: &silapb.BeaconBlockHeader{
 			Slot:          0,
 			ProposerIndex: 0,
 			ParentRoot:    parentRoot[:],
@@ -201,7 +201,7 @@ func TestService_processProposerSlashings(t *testing.T) {
 	require.NoError(t, err)
 	htr, err := firstBlockHeader.Header.HashTreeRoot()
 	require.NoError(t, err)
-	container := &ethpb.SigningData{
+	container := &silapb.SigningData{
 		ObjectRoot: htr[:],
 		Domain:     domain,
 	}
@@ -216,7 +216,7 @@ func TestService_processProposerSlashings(t *testing.T) {
 		firstBlockHeader.Signature = signature.Marshal()
 		secondBlockHeader.Signature = make([]byte, 96)
 
-		slashings := []*ethpb.ProposerSlashing{
+		slashings := []*silapb.ProposerSlashing{
 			{
 				Header_1: firstBlockHeader,
 				Header_2: secondBlockHeader,
@@ -235,7 +235,7 @@ func TestService_processProposerSlashings(t *testing.T) {
 		firstBlockHeader.Signature = make([]byte, 96)
 		secondBlockHeader.Signature = signature.Marshal()
 
-		slashings := []*ethpb.ProposerSlashing{
+		slashings := []*silapb.ProposerSlashing{
 			{
 				Header_1: firstBlockHeader,
 				Header_2: secondBlockHeader,
@@ -254,7 +254,7 @@ func TestService_processProposerSlashings(t *testing.T) {
 		firstBlockHeader.Signature = signature.Marshal()
 		secondBlockHeader.Signature = signature.Marshal()
 
-		slashings := []*ethpb.ProposerSlashing{
+		slashings := []*silapb.ProposerSlashing{
 			{
 				Header_1: firstBlockHeader,
 				Header_2: secondBlockHeader,

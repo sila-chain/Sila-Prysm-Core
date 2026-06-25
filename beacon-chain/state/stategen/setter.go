@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sirupsen/logrus"
 )
@@ -117,7 +117,7 @@ func (s *State) saveStateByRoot(ctx context.Context, blockRoot [32]byte, st stat
 		}
 	}
 
-	if err := s.beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{
+	if err := s.beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{
 		Slot: st.Slot(),
 		Root: blockRoot[:],
 	}); err != nil {

@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/slice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/proto"
@@ -78,11 +78,11 @@ func (b *BeaconState) SetSlot(val primitives.Slot) error {
 }
 
 // SetFork version for the beacon chain.
-func (b *BeaconState) SetFork(val *ethpb.Fork) error {
+func (b *BeaconState) SetFork(val *silapb.Fork) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	fk, ok := proto.Clone(val).(*ethpb.Fork)
+	fk, ok := proto.Clone(val).(*silapb.Fork)
 	if !ok {
 		return errors.New("proto.Clone did not return a fork proto")
 	}
@@ -134,7 +134,7 @@ func (b *BeaconState) AppendHistoricalRoots(root [32]byte) error {
 
 // AppendHistoricalSummaries for the beacon state. Appends the new value
 // to the end of list.
-func (b *BeaconState) AppendHistoricalSummaries(summary *ethpb.HistoricalSummary) error {
+func (b *BeaconState) AppendHistoricalSummaries(summary *silapb.HistoricalSummary) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
@@ -144,7 +144,7 @@ func (b *BeaconState) AppendHistoricalSummaries(summary *ethpb.HistoricalSummary
 
 	summaries := b.historicalSummaries
 	if b.sharedFieldReferences[types.HistoricalSummaries].Refs() > 1 {
-		summaries = make([]*ethpb.HistoricalSummary, 0, len(b.historicalSummaries)+1)
+		summaries = make([]*silapb.HistoricalSummary, 0, len(b.historicalSummaries)+1)
 		summaries = append(summaries, b.historicalSummaries...)
 		b.sharedFieldReferences[types.HistoricalSummaries].MinusRef()
 		b.sharedFieldReferences[types.HistoricalSummaries] = stateutil.NewRef(1)

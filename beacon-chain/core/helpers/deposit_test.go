@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -21,14 +21,14 @@ func TestBatchVerifyDepositsSignatures_Ok(t *testing.T) {
 	require.NoError(t, err)
 	domain, err := signing.ComputeDomain(params.BeaconConfig().DomainDeposit, nil, nil)
 	require.NoError(t, err)
-	deposit := &ethpb.Deposit{
-		Data: &ethpb.Deposit_Data{
+	deposit := &silapb.Deposit{
+		Data: &silapb.Deposit_Data{
 			PublicKey:             sk.PublicKey().Marshal(),
 			WithdrawalCredentials: make([]byte, 32),
 			Amount:                3000,
 		},
 	}
-	sr, err := signing.ComputeSigningRoot(&ethpb.DepositMessage{
+	sr, err := signing.ComputeSigningRoot(&silapb.DepositMessage{
 		PublicKey:             deposit.Data.PublicKey,
 		WithdrawalCredentials: deposit.Data.WithdrawalCredentials,
 		Amount:                3000,
@@ -46,14 +46,14 @@ func TestBatchVerifyDepositsSignatures_Ok(t *testing.T) {
 
 	deposit.Proof = proof
 	require.NoError(t, err)
-	verified, err := helpers.BatchVerifyDepositsSignatures(t.Context(), []*ethpb.Deposit{deposit})
+	verified, err := helpers.BatchVerifyDepositsSignatures(t.Context(), []*silapb.Deposit{deposit})
 	require.NoError(t, err)
 	require.Equal(t, true, verified)
 }
 
 func TestBatchVerifyDepositsSignatures_InvalidSignature(t *testing.T) {
-	deposit := &ethpb.Deposit{
-		Data: &ethpb.Deposit_Data{
+	deposit := &silapb.Deposit{
+		Data: &silapb.Deposit_Data{
 			PublicKey:             bytesutil.PadTo([]byte{1, 2, 3}, 48),
 			WithdrawalCredentials: make([]byte, 32),
 			Signature:             make([]byte, 96),
@@ -69,14 +69,14 @@ func TestBatchVerifyDepositsSignatures_InvalidSignature(t *testing.T) {
 
 	deposit.Proof = proof
 	require.NoError(t, err)
-	verified, err := helpers.BatchVerifyDepositsSignatures(t.Context(), []*ethpb.Deposit{deposit})
+	verified, err := helpers.BatchVerifyDepositsSignatures(t.Context(), []*silapb.Deposit{deposit})
 	require.NoError(t, err)
 	require.Equal(t, false, verified)
 }
 
 func TestVerifyDeposit_MerkleBranchFailsVerification(t *testing.T) {
-	deposit := &ethpb.Deposit{
-		Data: &ethpb.Deposit_Data{
+	deposit := &silapb.Deposit{
+		Data: &silapb.Deposit_Data{
 			PublicKey:             bytesutil.PadTo([]byte{1, 2, 3}, 48),
 			WithdrawalCredentials: make([]byte, 32),
 			Signature:             make([]byte, 96),
@@ -92,8 +92,8 @@ func TestVerifyDeposit_MerkleBranchFailsVerification(t *testing.T) {
 	require.NoError(t, err, "Could not generate proof")
 
 	deposit.Proof = proof
-	beaconState, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
-		Eth1Data: &ethpb.Eth1Data{
+	beaconState, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
+		Eth1Data: &silapb.Eth1Data{
 			DepositRoot: []byte{0},
 			BlockHash:   []byte{1},
 		},
@@ -107,13 +107,13 @@ func TestVerifyDeposit_MerkleBranchFailsVerification(t *testing.T) {
 func TestIsValidDepositSignature_Ok(t *testing.T) {
 	sk, err := bls.RandKey()
 	require.NoError(t, err)
-	depositData := &ethpb.Deposit_Data{
+	depositData := &silapb.Deposit_Data{
 		PublicKey:             sk.PublicKey().Marshal(),
 		Amount:                0,
 		WithdrawalCredentials: make([]byte, 32),
 		Signature:             make([]byte, fieldparams.BLSSignatureLength),
 	}
-	dm := &ethpb.DepositMessage{
+	dm := &silapb.DepositMessage{
 		PublicKey:             sk.PublicKey().Marshal(),
 		WithdrawalCredentials: make([]byte, 32),
 		Amount:                0,
@@ -134,12 +134,12 @@ func TestBatchVerifyPendingDepositsSignatures_Ok(t *testing.T) {
 	require.NoError(t, err)
 	domain, err := signing.ComputeDomain(params.BeaconConfig().DomainDeposit, nil, nil)
 	require.NoError(t, err)
-	pendingDeposit := &ethpb.PendingDeposit{
+	pendingDeposit := &silapb.PendingDeposit{
 		PublicKey:             sk.PublicKey().Marshal(),
 		WithdrawalCredentials: make([]byte, 32),
 		Amount:                3000,
 	}
-	sr, err := signing.ComputeSigningRoot(&ethpb.DepositMessage{
+	sr, err := signing.ComputeSigningRoot(&silapb.DepositMessage{
 		PublicKey:             pendingDeposit.PublicKey,
 		WithdrawalCredentials: pendingDeposit.WithdrawalCredentials,
 		Amount:                3000,
@@ -150,12 +150,12 @@ func TestBatchVerifyPendingDepositsSignatures_Ok(t *testing.T) {
 
 	sk2, err := bls.RandKey()
 	require.NoError(t, err)
-	pendingDeposit2 := &ethpb.PendingDeposit{
+	pendingDeposit2 := &silapb.PendingDeposit{
 		PublicKey:             sk2.PublicKey().Marshal(),
 		WithdrawalCredentials: make([]byte, 32),
 		Amount:                4000,
 	}
-	sr2, err := signing.ComputeSigningRoot(&ethpb.DepositMessage{
+	sr2, err := signing.ComputeSigningRoot(&silapb.DepositMessage{
 		PublicKey:             pendingDeposit2.PublicKey,
 		WithdrawalCredentials: pendingDeposit2.WithdrawalCredentials,
 		Amount:                4000,
@@ -164,18 +164,18 @@ func TestBatchVerifyPendingDepositsSignatures_Ok(t *testing.T) {
 	sig2 := sk2.Sign(sr2[:])
 	pendingDeposit2.Signature = sig2.Marshal()
 
-	verified, err := helpers.BatchVerifyPendingDepositsSignatures(t.Context(), []*ethpb.PendingDeposit{pendingDeposit, pendingDeposit2})
+	verified, err := helpers.BatchVerifyPendingDepositsSignatures(t.Context(), []*silapb.PendingDeposit{pendingDeposit, pendingDeposit2})
 	require.NoError(t, err)
 	require.Equal(t, true, verified)
 }
 
 func TestBatchVerifyPendingDepositsSignatures_InvalidSignature(t *testing.T) {
-	pendingDeposit := &ethpb.PendingDeposit{
+	pendingDeposit := &silapb.PendingDeposit{
 		PublicKey:             bytesutil.PadTo([]byte{1, 2, 3}, 48),
 		WithdrawalCredentials: make([]byte, 32),
 		Signature:             make([]byte, 96),
 	}
-	verified, err := helpers.BatchVerifyPendingDepositsSignatures(t.Context(), []*ethpb.PendingDeposit{pendingDeposit})
+	verified, err := helpers.BatchVerifyPendingDepositsSignatures(t.Context(), []*silapb.PendingDeposit{pendingDeposit})
 	require.NoError(t, err)
 	require.Equal(t, false, verified)
 }
@@ -187,7 +187,7 @@ func makeValidDepositRequest(t *testing.T, amount uint64) *enginev1.DepositReque
 	domain, err := signing.ComputeDomain(params.BeaconConfig().DomainDeposit, nil, nil)
 	require.NoError(t, err)
 	wc := make([]byte, 32)
-	sr, err := signing.ComputeSigningRoot(&ethpb.DepositMessage{
+	sr, err := signing.ComputeSigningRoot(&silapb.DepositMessage{
 		PublicKey:             sk.PublicKey().Marshal(),
 		WithdrawalCredentials: wc,
 		Amount:                amount,

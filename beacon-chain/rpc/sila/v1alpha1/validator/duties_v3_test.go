@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -50,7 +50,7 @@ func TestGetAttesterDuties_OK(t *testing.T) {
 		CoreService:           &core.Service{},
 	}
 
-	req := &ethpb.AttesterDutiesRequest{
+	req := &silapb.AttesterDutiesRequest{
 		Epoch:            0,
 		ValidatorIndices: []primitives.ValidatorIndex{0, 1},
 	}
@@ -69,7 +69,7 @@ func TestGetAttesterDuties_Syncing(t *testing.T) {
 	vs := &Server{
 		SyncChecker: &mockSync.Sync{IsSyncing: true},
 	}
-	_, err := vs.GetAttesterDuties(t.Context(), &ethpb.AttesterDutiesRequest{})
+	_, err := vs.GetAttesterDuties(t.Context(), &silapb.AttesterDutiesRequest{})
 	assert.ErrorContains(t, "Syncing to latest head", err)
 }
 
@@ -80,7 +80,7 @@ func TestGetAttesterDuties_EpochOutOfBound(t *testing.T) {
 		SyncChecker: &mockSync.Sync{IsSyncing: false},
 	}
 	currentEpoch := primitives.Epoch(chain.CurrentSlot() / params.BeaconConfig().SlotsPerEpoch)
-	req := &ethpb.AttesterDutiesRequest{Epoch: currentEpoch + 2}
+	req := &silapb.AttesterDutiesRequest{Epoch: currentEpoch + 2}
 	_, err := vs.GetAttesterDuties(t.Context(), req)
 	assert.ErrorContains(t, "can not be greater than next epoch", err)
 }
@@ -112,7 +112,7 @@ func TestGetProposerDutiesV2_OK(t *testing.T) {
 		CoreService:           &core.Service{},
 	}
 
-	req := &ethpb.ProposerDutiesRequest{Epoch: 0}
+	req := &silapb.ProposerDutiesRequest{Epoch: 0}
 	res, err := vs.GetProposerDutiesV2(t.Context(), req)
 	require.NoError(t, err)
 	assert.Equal(t, true, len(res.Duties) > 0)
@@ -165,7 +165,7 @@ func TestGetProposerDutiesV2_DependentRoot(t *testing.T) {
 			CoreService:           &core.Service{},
 		}
 
-		res, err := vs.GetProposerDutiesV2(t.Context(), &ethpb.ProposerDutiesRequest{Epoch: 1})
+		res, err := vs.GetProposerDutiesV2(t.Context(), &silapb.ProposerDutiesRequest{Epoch: 1})
 		require.NoError(t, err)
 		// Pre-Fulu: ProposalDependentRoot uses epoch_start-1 = spe-1.
 		assert.Equal(t, byte(spe-1), res.DependentRoot[0])
@@ -205,7 +205,7 @@ func TestGetProposerDutiesV2_DependentRoot(t *testing.T) {
 			CoreService:           &core.Service{},
 		}
 
-		res, err := vs.GetProposerDutiesV2(t.Context(), &ethpb.ProposerDutiesRequest{Epoch: 1})
+		res, err := vs.GetProposerDutiesV2(t.Context(), &silapb.ProposerDutiesRequest{Epoch: 1})
 		require.NoError(t, err)
 		// Post-Fulu: epoch 1 uses genesis root from DB.
 		assert.Equal(t, byte(0xff), res.DependentRoot[0])
@@ -216,7 +216,7 @@ func TestGetProposerDutiesV2_Syncing(t *testing.T) {
 	vs := &Server{
 		SyncChecker: &mockSync.Sync{IsSyncing: true},
 	}
-	_, err := vs.GetProposerDutiesV2(t.Context(), &ethpb.ProposerDutiesRequest{})
+	_, err := vs.GetProposerDutiesV2(t.Context(), &silapb.ProposerDutiesRequest{})
 	assert.ErrorContains(t, "Syncing to latest head", err)
 }
 
@@ -227,7 +227,7 @@ func TestGetProposerDutiesV2_EpochOutOfBound(t *testing.T) {
 		SyncChecker: &mockSync.Sync{IsSyncing: false},
 	}
 	currentEpoch := primitives.Epoch(chain.CurrentSlot() / params.BeaconConfig().SlotsPerEpoch)
-	req := &ethpb.ProposerDutiesRequest{Epoch: currentEpoch + 2}
+	req := &silapb.ProposerDutiesRequest{Epoch: currentEpoch + 2}
 	_, err := vs.GetProposerDutiesV2(t.Context(), req)
 	assert.ErrorContains(t, "can not be greater than next epoch", err)
 }
@@ -245,7 +245,7 @@ func TestGetSyncCommitteeDuties_OK(t *testing.T) {
 	bs, err := util.GenesisBeaconState(t.Context(), deposits, 0, eth1Data)
 	require.NoError(t, err)
 
-	h := &ethpb.BeaconBlockHeader{
+	h := &silapb.BeaconBlockHeader{
 		StateRoot:  bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength),
 		ParentRoot: bytesutil.PadTo([]byte{'b'}, fieldparams.RootLength),
 		BodyRoot:   bytesutil.PadTo([]byte{'c'}, fieldparams.RootLength),
@@ -271,7 +271,7 @@ func TestGetSyncCommitteeDuties_OK(t *testing.T) {
 	}
 
 	currentEpoch := primitives.Epoch(params.BeaconConfig().EpochsPerSyncCommitteePeriod - 1)
-	req := &ethpb.SyncCommitteeDutiesRequest{
+	req := &silapb.SyncCommitteeDutiesRequest{
 		Epoch:            currentEpoch,
 		ValidatorIndices: []primitives.ValidatorIndex{0, 1},
 	}
@@ -289,7 +289,7 @@ func TestGetSyncCommitteeDuties_Syncing(t *testing.T) {
 	vs := &Server{
 		SyncChecker: &mockSync.Sync{IsSyncing: true},
 	}
-	_, err := vs.GetSyncCommitteeDuties(t.Context(), &ethpb.SyncCommitteeDutiesRequest{})
+	_, err := vs.GetSyncCommitteeDuties(t.Context(), &silapb.SyncCommitteeDutiesRequest{})
 	assert.ErrorContains(t, "Syncing to latest head", err)
 }
 
@@ -307,7 +307,7 @@ func TestGetSyncCommitteeDuties_EpochOutOfBound(t *testing.T) {
 	}
 	currentEpoch := primitives.Epoch(chain.CurrentSlot() / params.BeaconConfig().SlotsPerEpoch)
 	lastValid := core.SyncCommitteeDutiesLastValidEpoch(currentEpoch)
-	req := &ethpb.SyncCommitteeDutiesRequest{Epoch: lastValid + 1}
+	req := &silapb.SyncCommitteeDutiesRequest{Epoch: lastValid + 1}
 	_, err := vs.GetSyncCommitteeDuties(t.Context(), req)
 	assert.ErrorContains(t, "can not be greater than last valid epoch", err)
 }
@@ -339,7 +339,7 @@ func TestGetPTCDuties_OK(t *testing.T) {
 		CoreService:           &core.Service{},
 	}
 
-	req := &ethpb.PTCDutiesRequest{
+	req := &silapb.PTCDutiesRequest{
 		Epoch:            0,
 		ValidatorIndices: []primitives.ValidatorIndex{0, 1, 2, 3, 4},
 	}
@@ -357,7 +357,7 @@ func TestGetPTCDuties_Syncing(t *testing.T) {
 	vs := &Server{
 		SyncChecker: &mockSync.Sync{IsSyncing: true},
 	}
-	_, err := vs.GetPTCDuties(t.Context(), &ethpb.PTCDutiesRequest{})
+	_, err := vs.GetPTCDuties(t.Context(), &silapb.PTCDutiesRequest{})
 	assert.ErrorContains(t, "Syncing to latest head", err)
 }
 
@@ -373,7 +373,7 @@ func TestGetPTCDuties_EpochOutOfBound(t *testing.T) {
 		SyncChecker: &mockSync.Sync{IsSyncing: false},
 	}
 	currentEpoch := primitives.Epoch(chain.CurrentSlot() / params.BeaconConfig().SlotsPerEpoch)
-	req := &ethpb.PTCDutiesRequest{Epoch: currentEpoch + 2}
+	req := &silapb.PTCDutiesRequest{Epoch: currentEpoch + 2}
 	_, err := vs.GetPTCDuties(t.Context(), req)
 	assert.ErrorContains(t, "can not be greater than next epoch", err)
 }
@@ -389,7 +389,7 @@ func TestGetPTCDuties_PreGloasFork(t *testing.T) {
 		TimeFetcher: chain,
 		SyncChecker: &mockSync.Sync{IsSyncing: false},
 	}
-	req := &ethpb.PTCDutiesRequest{Epoch: 0}
+	req := &silapb.PTCDutiesRequest{Epoch: 0}
 	_, err := vs.GetPTCDuties(t.Context(), req)
 	s, ok := status.FromError(err)
 	require.Equal(t, true, ok)

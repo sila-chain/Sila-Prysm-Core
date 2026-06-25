@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -72,13 +72,13 @@ func TestValidatorStatus_Nominal(t *testing.T) {
 
 	actualValidatorStatusResponse, err := validatorClient.ValidatorStatus(
 		ctx,
-		&ethpb.ValidatorStatusRequest{
+		&silapb.ValidatorStatusRequest{
 			PublicKey: validatorPubKey,
 		},
 	)
 
-	expectedValidatorStatusResponse := ethpb.ValidatorStatusResponse{
-		Status:          ethpb.ValidatorStatus_ACTIVE,
+	expectedValidatorStatusResponse := silapb.ValidatorStatusResponse{
+		Status:          silapb.ValidatorStatus_ACTIVE,
 		ActivationEpoch: 56,
 	}
 
@@ -108,7 +108,7 @@ func TestValidatorStatus_Error(t *testing.T) {
 
 	_, err := validatorClient.ValidatorStatus(
 		ctx,
-		&ethpb.ValidatorStatusRequest{
+		&silapb.ValidatorStatusRequest{
 			PublicKey: []byte{},
 		},
 	)
@@ -186,19 +186,19 @@ func TestMultipleValidatorStatus_Nominal(t *testing.T) {
 		},
 	}
 
-	expectedValidatorStatusResponse := ethpb.MultipleValidatorStatusResponse{
+	expectedValidatorStatusResponse := silapb.MultipleValidatorStatusResponse{
 		PublicKeys: validatorsPubKey,
 		Indices: []primitives.ValidatorIndex{
 			11111,
 			22222,
 		},
-		Statuses: []*ethpb.ValidatorStatusResponse{
+		Statuses: []*silapb.ValidatorStatusResponse{
 			{
-				Status:          ethpb.ValidatorStatus_ACTIVE,
+				Status:          silapb.ValidatorStatus_ACTIVE,
 				ActivationEpoch: 12,
 			},
 			{
-				Status:          ethpb.ValidatorStatus_ACTIVE,
+				Status:          silapb.ValidatorStatus_ACTIVE,
 				ActivationEpoch: 34,
 			},
 		},
@@ -206,7 +206,7 @@ func TestMultipleValidatorStatus_Nominal(t *testing.T) {
 
 	actualValidatorStatusResponse, err := validatorClient.MultipleValidatorStatus(
 		ctx,
-		&ethpb.MultipleValidatorStatusRequest{
+		&silapb.MultipleValidatorStatusRequest{
 			PublicKeys: validatorsPubKey,
 		},
 	)
@@ -225,12 +225,12 @@ func TestMultipleValidatorStatus_No_Keys(t *testing.T) {
 
 	resp, err := validatorClient.MultipleValidatorStatus(
 		ctx,
-		&ethpb.MultipleValidatorStatusRequest{
+		&silapb.MultipleValidatorStatusRequest{
 			PublicKeys: [][]byte{},
 		},
 	)
 	require.NoError(t, err)
-	require.DeepEqual(t, &ethpb.MultipleValidatorStatusResponse{}, resp)
+	require.DeepEqual(t, &silapb.MultipleValidatorStatusResponse{}, resp)
 }
 
 func TestGetValidatorsStatusResponse_Nominal_SomeActiveValidators(t *testing.T) {
@@ -383,35 +383,35 @@ func TestGetValidatorsStatusResponse_Nominal_SomeActiveValidators(t *testing.T) 
 		primitives.ValidatorIndex(^uint64(0)),
 	}
 
-	wantedValidatorsStatusResponse := []*ethpb.ValidatorStatusResponse{
+	wantedValidatorsStatusResponse := []*silapb.ValidatorStatusResponse{
 		{
-			Status:          ethpb.ValidatorStatus_ACTIVE,
+			Status:          silapb.ValidatorStatus_ACTIVE,
 			ActivationEpoch: 12,
 		},
 		{
-			Status:          ethpb.ValidatorStatus_EXITING,
+			Status:          silapb.ValidatorStatus_EXITING,
 			ActivationEpoch: 34,
 		},
 		{
-			Status:          ethpb.ValidatorStatus_ACTIVE,
+			Status:          silapb.ValidatorStatus_ACTIVE,
 			ActivationEpoch: 56,
 		},
 		{
-			Status:                    ethpb.ValidatorStatus_PENDING,
+			Status:                    silapb.ValidatorStatus_PENDING,
 			ActivationEpoch:           params.BeaconConfig().FarFutureEpoch,
 			PositionInActivationQueue: 1000,
 		},
 		{
-			Status:                    ethpb.ValidatorStatus_PENDING,
+			Status:                    silapb.ValidatorStatus_PENDING,
 			ActivationEpoch:           params.BeaconConfig().FarFutureEpoch,
 			PositionInActivationQueue: 11000,
 		},
 		{
-			Status:          ethpb.ValidatorStatus_UNKNOWN_STATUS,
+			Status:          silapb.ValidatorStatus_UNKNOWN_STATUS,
 			ActivationEpoch: params.BeaconConfig().FarFutureEpoch,
 		},
 		{
-			Status:          ethpb.ValidatorStatus_UNKNOWN_STATUS,
+			Status:          silapb.ValidatorStatus_UNKNOWN_STATUS,
 			ActivationEpoch: params.BeaconConfig().FarFutureEpoch,
 		},
 	}
@@ -479,9 +479,9 @@ func TestGetValidatorsStatusResponse_Nominal_NoActiveValidators(t *testing.T) {
 
 	wantedValidatorsPubKey := [][]byte{validatorPubKey}
 	wantedValidatorsIndex := []primitives.ValidatorIndex{40000}
-	wantedValidatorsStatusResponse := []*ethpb.ValidatorStatusResponse{
+	wantedValidatorsStatusResponse := []*silapb.ValidatorStatusResponse{
 		{
-			Status:          ethpb.ValidatorStatus_PENDING,
+			Status:          silapb.ValidatorStatus_PENDING,
 			ActivationEpoch: params.BeaconConfig().FarFutureEpoch,
 		},
 	}

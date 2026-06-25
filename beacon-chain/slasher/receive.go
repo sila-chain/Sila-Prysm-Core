@@ -7,7 +7,7 @@ import (
 	slashertypes "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/slasher/types"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -53,7 +53,7 @@ func (s *Service) receiveAttestations(ctx context.Context, indexedAttsChan chan 
 }
 
 // Receive beacon blocks from some source event feed,
-func (s *Service) receiveBlocks(ctx context.Context, beaconBlockHeadersChan chan *ethpb.SignedBeaconBlockHeader) {
+func (s *Service) receiveBlocks(ctx context.Context, beaconBlockHeadersChan chan *silapb.SignedBeaconBlockHeader) {
 	defer s.wg.Done()
 
 	sub := s.serviceCfg.BeaconBlockHeadersFeed.Subscribe(beaconBlockHeadersChan)
@@ -108,7 +108,7 @@ func (s *Service) processAttestations(
 	ctx context.Context,
 	attestations []*slashertypes.IndexedAttestationWrapper,
 	currentSlot primitives.Slot,
-) map[[fieldparams.RootLength]byte]ethpb.AttSlashing {
+) map[[fieldparams.RootLength]byte]silapb.AttSlashing {
 	// Get the current epoch from the current slot.
 	currentEpoch := slots.ToEpoch(currentSlot)
 

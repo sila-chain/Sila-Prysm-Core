@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -102,7 +102,7 @@ func TestGloasBuilderDiffs(t *testing.T) {
 		))
 	} else {
 		// Mutate existing builder balance.
-		builders[0] = ethpb.CopyBuilder(builders[0])
+		builders[0] = silapb.CopyBuilder(builders[0])
 		builders[0].Balance = 999_000_000_000
 		require.NoError(t, target.SetBuilders(builders))
 	}
@@ -136,7 +136,7 @@ func TestGloasBuilderReplacement(t *testing.T) {
 	builders, err := target.Builders()
 	require.NoError(t, err)
 	for _, idx := range []int{0, 2} {
-		builders[idx] = &ethpb.Builder{
+		builders[idx] = &silapb.Builder{
 			Pubkey:            make([]byte, 48),
 			Version:           []byte{0x04},
 			ExecutionAddress:  make([]byte, 20),
@@ -162,7 +162,7 @@ func TestGloasBuilderPendingWithdrawals(t *testing.T) {
 	require.NoError(t, err)
 
 	// Add multiple pending withdrawals to source.
-	require.NoError(t, source.AppendBuilderPendingWithdrawals([]*ethpb.BuilderPendingWithdrawal{
+	require.NoError(t, source.AppendBuilderPendingWithdrawals([]*silapb.BuilderPendingWithdrawal{
 		{FeeRecipient: make([]byte, 20), Amount: 100, BuilderIndex: 0},
 		{FeeRecipient: make([]byte, 20), Amount: 200, BuilderIndex: 1},
 		{FeeRecipient: make([]byte, 20), Amount: 300, BuilderIndex: 2},
@@ -175,7 +175,7 @@ func TestGloasBuilderPendingWithdrawals(t *testing.T) {
 
 	// Simulate prefix-drop (dequeue first 2) + append multiple new.
 	require.NoError(t, target.DequeueBuilderPendingWithdrawals(2))
-	require.NoError(t, target.AppendBuilderPendingWithdrawals([]*ethpb.BuilderPendingWithdrawal{
+	require.NoError(t, target.AppendBuilderPendingWithdrawals([]*silapb.BuilderPendingWithdrawal{
 		{FeeRecipient: make([]byte, 20), Amount: 600, BuilderIndex: 5},
 		{FeeRecipient: make([]byte, 20), Amount: 700, BuilderIndex: 6},
 	}))
@@ -200,9 +200,9 @@ func TestGloasPendingPaymentsOverride(t *testing.T) {
 	payments, err := target.BuilderPendingPayments()
 	require.NoError(t, err)
 	for _, idx := range []int{0, 5, 10} {
-		payments[idx] = &ethpb.BuilderPendingPayment{
+		payments[idx] = &silapb.BuilderPendingPayment{
 			Weight: primitives.Gwei(500 * (idx + 1)),
-			Withdrawal: &ethpb.BuilderPendingWithdrawal{
+			Withdrawal: &silapb.BuilderPendingWithdrawal{
 				FeeRecipient: make([]byte, 20),
 				Amount:       primitives.Gwei(1000 * (idx + 1)),
 				BuilderIndex: primitives.BuilderIndex(idx),
@@ -353,7 +353,7 @@ func TestGloasExecutionRequestsRoot(t *testing.T) {
 	for i := range newRequestsRoot {
 		newRequestsRoot[i] = byte(i + 99)
 	}
-	newBidProto := &ethpb.ExecutionPayloadBid{
+	newBidProto := &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       parentBlockHash[:],
 		ParentBlockRoot:       parentBlockRoot[:],
 		BlockHash:             blockHash[:],

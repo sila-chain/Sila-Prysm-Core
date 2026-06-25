@@ -5,7 +5,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
 const (
@@ -61,30 +61,30 @@ const (
 // UnAggregatedAttReceivedData is the data sent with UnaggregatedAttReceived events.
 type UnAggregatedAttReceivedData struct {
 	// Attestation is the unaggregated attestation object.
-	Attestation ethpb.Att
+	Attestation silapb.Att
 }
 
 // AggregatedAttReceivedData is the data sent with AggregatedAttReceived events.
 type AggregatedAttReceivedData struct {
 	// Attestation is the aggregated attestation object.
-	Attestation ethpb.AggregateAttAndProof
+	Attestation silapb.AggregateAttAndProof
 }
 
 // ExitReceivedData is the data sent with ExitReceived events.
 type ExitReceivedData struct {
 	// Exit is the voluntary exit object.
-	Exit *ethpb.SignedVoluntaryExit
+	Exit *silapb.SignedVoluntaryExit
 }
 
 // SyncCommitteeContributionReceivedData is the data sent with SyncCommitteeContributionReceived objects.
 type SyncCommitteeContributionReceivedData struct {
 	// Contribution is the sync committee contribution object.
-	Contribution *ethpb.SignedContributionAndProof
+	Contribution *silapb.SignedContributionAndProof
 }
 
 // BLSToExecutionChangeReceivedData is the data sent with BLSToExecutionChangeReceived events.
 type BLSToExecutionChangeReceivedData struct {
-	Change *ethpb.SignedBLSToExecutionChange
+	Change *silapb.SignedBLSToExecutionChange
 }
 
 // BlobSidecarReceivedData is the data sent with BlobSidecarReceived events.
@@ -94,17 +94,17 @@ type BlobSidecarReceivedData struct {
 
 // ProposerSlashingReceivedData is the data sent with ProposerSlashingReceived events.
 type ProposerSlashingReceivedData struct {
-	ProposerSlashing *ethpb.ProposerSlashing
+	ProposerSlashing *silapb.ProposerSlashing
 }
 
 // AttesterSlashingReceivedData is the data sent with AttesterSlashingReceived events.
 type AttesterSlashingReceivedData struct {
-	AttesterSlashing ethpb.AttSlashing
+	AttesterSlashing silapb.AttSlashing
 }
 
 // SingleAttReceivedData is the data sent with SingleAttReceived events.
 type SingleAttReceivedData struct {
-	Attestation ethpb.Att
+	Attestation silapb.Att
 }
 
 // DataColumnSidecarReceivedData is the data sent with DataColumnSidecarReceived events.
@@ -127,7 +127,7 @@ type DataColumnReceivedData struct {
 
 // PayloadAttestationMessageReceivedData is the data sent with PayloadAttestationMessageReceived events.
 type PayloadAttestationMessageReceivedData struct {
-	Message *ethpb.PayloadAttestationMessage
+	Message *silapb.PayloadAttestationMessage
 }
 
 // ExecutionPayloadGossipReceivedData is the data sent with ExecutionPayloadGossipReceived events.
@@ -140,5 +140,5 @@ type ExecutionPayloadGossipReceivedData struct {
 
 // ProposerPreferencesReceivedData is the data sent with ProposerPreferencesReceived events.
 type ProposerPreferencesReceivedData struct {
-	Data *ethpb.SignedProposerPreferences
+	Data *silapb.SignedProposerPreferences
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/validator"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	mock "github.com/sila-chain/Sila-Consensus-Core/v7/testing/validator-mock"
@@ -17,7 +17,7 @@ import (
 func TestGetValidatorCount(t *testing.T) {
 	st, _ := util.DeterministicGenesisState(t, 10)
 	farFutureEpoch := params.BeaconConfig().FarFutureEpoch
-	validators := []*ethpb.Validator{
+	validators := []*silapb.Validator{
 		// Pending initialized.
 		{
 			ActivationEpoch:            farFutureEpoch,
@@ -283,9 +283,9 @@ func TestGetValidatorCount(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			listValidatorResp := &ethpb.Validators{}
+			listValidatorResp := &silapb.Validators{}
 			for _, val := range st.Validators() {
-				listValidatorResp.ValidatorList = append(listValidatorResp.ValidatorList, &ethpb.Validators_ValidatorContainer{
+				listValidatorResp.ValidatorList = append(listValidatorResp.ValidatorList, &silapb.Validators_ValidatorContainer{
 					Validator: val,
 				})
 			}
@@ -303,7 +303,7 @@ func TestGetValidatorCount(t *testing.T) {
 				gomock.Any(),
 				gomock.Any(),
 			).Return(
-				&ethpb.ChainHead{HeadEpoch: primitives.Epoch(test.currentEpoch)},
+				&silapb.ChainHead{HeadEpoch: primitives.Epoch(test.currentEpoch)},
 				nil,
 			)
 

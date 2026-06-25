@@ -7,7 +7,7 @@ import (
 	blockfeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/block"
 	statefeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
@@ -17,7 +17,7 @@ import (
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // StreamBlocksAltair to clients every single time a block is received by the beacon node.
-func (vs *Server) StreamBlocksAltair(req *ethpb.StreamBlocksRequest, stream ethpb.BeaconNodeValidator_StreamBlocksAltairServer) error {
+func (vs *Server) StreamBlocksAltair(req *silapb.StreamBlocksRequest, stream silapb.BeaconNodeValidator_StreamBlocksAltairServer) error {
 	blocksChannel := make(chan *feed.Event, 1)
 	var blockSub event.Subscription
 	if req.VerifiedOnly {
@@ -52,7 +52,7 @@ func (vs *Server) StreamBlocksAltair(req *ethpb.StreamBlocksRequest, stream ethp
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.
 //
 // StreamSlots sends a the block's slot and dependent roots to clients every single time a block is received by the beacon node.
-func (vs *Server) StreamSlots(req *ethpb.StreamSlotsRequest, stream ethpb.BeaconNodeValidator_StreamSlotsServer) error {
+func (vs *Server) StreamSlots(req *silapb.StreamSlotsRequest, stream silapb.BeaconNodeValidator_StreamSlotsServer) error {
 	ch := make(chan *feed.Event, 1)
 	var sub event.Subscription
 	if req.VerifiedOnly {
@@ -91,7 +91,7 @@ func (vs *Server) StreamSlots(req *ethpb.StreamSlotsRequest, stream ethpb.Beacon
 				prevDependentRoot = data.PrevDependentRoot
 			}
 			if err := stream.Send(
-				&ethpb.StreamSlotsResponse{
+				&silapb.StreamSlotsResponse{
 					Slot:                      s,
 					PreviousDutyDependentRoot: prevDependentRoot[:],
 					CurrentDutyDependentRoot:  currDependentRoot[:],
@@ -108,7 +108,7 @@ func (vs *Server) StreamSlots(req *ethpb.StreamSlotsRequest, stream ethpb.Beacon
 	}
 }
 
-func sendVerifiedBlocks(stream ethpb.BeaconNodeValidator_StreamBlocksAltairServer, blockEvent *feed.Event) error {
+func sendVerifiedBlocks(stream silapb.BeaconNodeValidator_StreamBlocksAltairServer, blockEvent *feed.Event) error {
 	if blockEvent.Type != statefeed.BlockProcessed {
 		return nil
 	}
@@ -116,85 +116,85 @@ func sendVerifiedBlocks(stream ethpb.BeaconNodeValidator_StreamBlocksAltairServe
 	if !ok || data == nil {
 		return nil
 	}
-	b := &ethpb.StreamBlocksResponse{}
+	b := &silapb.StreamBlocksResponse{}
 	switch data.SignedBlock.Version() {
 	case version.Phase0:
 		pb, err := data.SignedBlock.Proto()
 		if err != nil {
 			return errors.Wrap(err, "could not get protobuf block")
 		}
-		phBlk, ok := pb.(*ethpb.SignedBeaconBlock)
+		phBlk, ok := pb.(*silapb.SignedBeaconBlock)
 		if !ok {
 			log.Warn("Mismatch between version and block type, was expecting SignedBeaconBlock")
 			return nil
 		}
-		b.Block = &ethpb.StreamBlocksResponse_Phase0Block{Phase0Block: phBlk}
+		b.Block = &silapb.StreamBlocksResponse_Phase0Block{Phase0Block: phBlk}
 	case version.Altair:
 		pb, err := data.SignedBlock.Proto()
 		if err != nil {
 			return errors.Wrap(err, "could not get protobuf block")
 		}
-		phBlk, ok := pb.(*ethpb.SignedBeaconBlockAltair)
+		phBlk, ok := pb.(*silapb.SignedBeaconBlockAltair)
 		if !ok {
 			log.Warn("Mismatch between version and block type, was expecting SignedBeaconBlockAltair")
 			return nil
 		}
-		b.Block = &ethpb.StreamBlocksResponse_AltairBlock{AltairBlock: phBlk}
+		b.Block = &silapb.StreamBlocksResponse_AltairBlock{AltairBlock: phBlk}
 	case version.Bellatrix:
 		pb, err := data.SignedBlock.Proto()
 		if err != nil {
 			return errors.Wrap(err, "could not get protobuf block")
 		}
-		phBlk, ok := pb.(*ethpb.SignedBeaconBlockBellatrix)
+		phBlk, ok := pb.(*silapb.SignedBeaconBlockBellatrix)
 		if !ok {
 			log.Warn("Mismatch between version and block type, was expecting SignedBeaconBlockBellatrix")
 			return nil
 		}
-		b.Block = &ethpb.StreamBlocksResponse_BellatrixBlock{BellatrixBlock: phBlk}
+		b.Block = &silapb.StreamBlocksResponse_BellatrixBlock{BellatrixBlock: phBlk}
 	case version.Capella:
 		pb, err := data.SignedBlock.Proto()
 		if err != nil {
 			return errors.Wrap(err, "could not get protobuf block")
 		}
-		phBlk, ok := pb.(*ethpb.SignedBeaconBlockCapella)
+		phBlk, ok := pb.(*silapb.SignedBeaconBlockCapella)
 		if !ok {
 			log.Warn("Mismatch between version and block type, was expecting SignedBeaconBlockCapella")
 			return nil
 		}
-		b.Block = &ethpb.StreamBlocksResponse_CapellaBlock{CapellaBlock: phBlk}
+		b.Block = &silapb.StreamBlocksResponse_CapellaBlock{CapellaBlock: phBlk}
 	case version.Deneb:
 		pb, err := data.SignedBlock.Proto()
 		if err != nil {
 			return errors.Wrap(err, "could not get protobuf block")
 		}
-		phBlk, ok := pb.(*ethpb.SignedBeaconBlockDeneb)
+		phBlk, ok := pb.(*silapb.SignedBeaconBlockDeneb)
 		if !ok {
 			log.Warn("Mismatch between version and block type, was expecting SignedBeaconBlockDeneb")
 			return nil
 		}
-		b.Block = &ethpb.StreamBlocksResponse_DenebBlock{DenebBlock: phBlk}
+		b.Block = &silapb.StreamBlocksResponse_DenebBlock{DenebBlock: phBlk}
 	case version.Electra:
 		pb, err := data.SignedBlock.Proto()
 		if err != nil {
 			return errors.Wrap(err, "could not get protobuf block")
 		}
-		phBlk, ok := pb.(*ethpb.SignedBeaconBlockElectra)
+		phBlk, ok := pb.(*silapb.SignedBeaconBlockElectra)
 		if !ok {
 			log.Warn("Mismatch between version and block type, was expecting SignedBeaconBlockElectra")
 			return nil
 		}
-		b.Block = &ethpb.StreamBlocksResponse_ElectraBlock{ElectraBlock: phBlk}
+		b.Block = &silapb.StreamBlocksResponse_ElectraBlock{ElectraBlock: phBlk}
 	case version.Fulu:
 		pb, err := data.SignedBlock.Proto()
 		if err != nil {
 			return errors.Wrap(err, "could not get protobuf block")
 		}
-		phBlk, ok := pb.(*ethpb.SignedBeaconBlockFulu)
+		phBlk, ok := pb.(*silapb.SignedBeaconBlockFulu)
 		if !ok {
 			log.Warn("Mismatch between version and block type, was expecting SignedBeaconBlockFulu")
 			return nil
 		}
-		b.Block = &ethpb.StreamBlocksResponse_FuluBlock{FuluBlock: phBlk}
+		b.Block = &silapb.StreamBlocksResponse_FuluBlock{FuluBlock: phBlk}
 	}
 
 	if err := stream.Send(b); err != nil {
@@ -204,7 +204,7 @@ func sendVerifiedBlocks(stream ethpb.BeaconNodeValidator_StreamBlocksAltairServe
 	return nil
 }
 
-func (vs *Server) sendBlocks(stream ethpb.BeaconNodeValidator_StreamBlocksAltairServer, blockEvent *feed.Event) error {
+func (vs *Server) sendBlocks(stream silapb.BeaconNodeValidator_StreamBlocksAltairServer, blockEvent *feed.Event) error {
 	if blockEvent.Type != blockfeed.ReceivedBlock {
 		return nil
 	}
@@ -230,26 +230,26 @@ func (vs *Server) sendBlocks(stream ethpb.BeaconNodeValidator_StreamBlocksAltair
 		log.WithError(err).Error("Could not verify block signature")
 		return nil
 	}
-	b := &ethpb.StreamBlocksResponse{}
+	b := &silapb.StreamBlocksResponse{}
 	pb, err := data.SignedBlock.Proto()
 	if err != nil {
 		return errors.Wrap(err, "could not get protobuf block")
 	}
 	switch p := pb.(type) {
-	case *ethpb.SignedBeaconBlock:
-		b.Block = &ethpb.StreamBlocksResponse_Phase0Block{Phase0Block: p}
-	case *ethpb.SignedBeaconBlockAltair:
-		b.Block = &ethpb.StreamBlocksResponse_AltairBlock{AltairBlock: p}
-	case *ethpb.SignedBeaconBlockBellatrix:
-		b.Block = &ethpb.StreamBlocksResponse_BellatrixBlock{BellatrixBlock: p}
-	case *ethpb.SignedBeaconBlockCapella:
-		b.Block = &ethpb.StreamBlocksResponse_CapellaBlock{CapellaBlock: p}
-	case *ethpb.SignedBeaconBlockDeneb:
-		b.Block = &ethpb.StreamBlocksResponse_DenebBlock{DenebBlock: p}
-	case *ethpb.SignedBeaconBlockElectra:
-		b.Block = &ethpb.StreamBlocksResponse_ElectraBlock{ElectraBlock: p}
-	case *ethpb.SignedBeaconBlockFulu:
-		b.Block = &ethpb.StreamBlocksResponse_FuluBlock{FuluBlock: p}
+	case *silapb.SignedBeaconBlock:
+		b.Block = &silapb.StreamBlocksResponse_Phase0Block{Phase0Block: p}
+	case *silapb.SignedBeaconBlockAltair:
+		b.Block = &silapb.StreamBlocksResponse_AltairBlock{AltairBlock: p}
+	case *silapb.SignedBeaconBlockBellatrix:
+		b.Block = &silapb.StreamBlocksResponse_BellatrixBlock{BellatrixBlock: p}
+	case *silapb.SignedBeaconBlockCapella:
+		b.Block = &silapb.StreamBlocksResponse_CapellaBlock{CapellaBlock: p}
+	case *silapb.SignedBeaconBlockDeneb:
+		b.Block = &silapb.StreamBlocksResponse_DenebBlock{DenebBlock: p}
+	case *silapb.SignedBeaconBlockElectra:
+		b.Block = &silapb.StreamBlocksResponse_ElectraBlock{ElectraBlock: p}
+	case *silapb.SignedBeaconBlockFulu:
+		b.Block = &silapb.StreamBlocksResponse_FuluBlock{FuluBlock: p}
 	default:
 		log.Errorf("Unknown block type %T", p)
 	}

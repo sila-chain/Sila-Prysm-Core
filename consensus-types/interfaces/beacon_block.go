@@ -4,7 +4,7 @@ import (
 	field_params "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/pkg/errors"
 	ssz "github.com/sila-chain/fastssz"
@@ -21,13 +21,13 @@ type ReadOnlySignedBeaconBlock interface {
 	IsNil() bool
 	Copy() (SignedBeaconBlock, error)
 	Proto() (proto.Message, error)
-	PbGenericBlock() (*ethpb.GenericSignedBeaconBlock, error)
+	PbGenericBlock() (*silapb.GenericSignedBeaconBlock, error)
 	ToBlinded() (ReadOnlySignedBeaconBlock, error)
 	ssz.Marshaler
 	ssz.Unmarshaler
 	Version() int
 	IsBlinded() bool
-	Header() (*ethpb.SignedBeaconBlockHeader, error)
+	Header() (*silapb.SignedBeaconBlockHeader, error)
 }
 
 // ReadOnlyBeaconBlock describes an interface which states the methods
@@ -54,39 +54,39 @@ type ReadOnlyBeaconBlock interface {
 type ReadOnlyBeaconBlockBody interface {
 	Version() int
 	RandaoReveal() [field_params.BLSSignatureLength]byte
-	Eth1Data() *ethpb.Eth1Data
+	Eth1Data() *silapb.Eth1Data
 	Graffiti() [field_params.RootLength]byte
-	ProposerSlashings() []*ethpb.ProposerSlashing
-	AttesterSlashings() []ethpb.AttSlashing
-	Attestations() []ethpb.Att
-	Deposits() []*ethpb.Deposit
-	VoluntaryExits() []*ethpb.SignedVoluntaryExit
-	SyncAggregate() (*ethpb.SyncAggregate, error)
+	ProposerSlashings() []*silapb.ProposerSlashing
+	AttesterSlashings() []silapb.AttSlashing
+	Attestations() []silapb.Att
+	Deposits() []*silapb.Deposit
+	VoluntaryExits() []*silapb.SignedVoluntaryExit
+	SyncAggregate() (*silapb.SyncAggregate, error)
 	IsNil() bool
 	HashTreeRoot() ([field_params.RootLength]byte, error)
 	Proto() (proto.Message, error)
 	Execution() (ExecutionData, error)
-	BLSToExecutionChanges() ([]*ethpb.SignedBLSToExecutionChange, error)
+	BLSToExecutionChanges() ([]*silapb.SignedBLSToExecutionChange, error)
 	BlobKzgCommitments() ([][]byte, error)
 	ExecutionRequests() (*enginev1.ExecutionRequests, error)
-	PayloadAttestations() ([]*ethpb.PayloadAttestation, error)
-	SignedExecutionPayloadBid() (*ethpb.SignedExecutionPayloadBid, error)
+	PayloadAttestations() ([]*silapb.PayloadAttestation, error)
+	SignedExecutionPayloadBid() (*silapb.SignedExecutionPayloadBid, error)
 	ParentExecutionRequests() (*enginev1.ExecutionRequests, error)
 }
 
 type SignedBeaconBlock interface {
 	ReadOnlySignedBeaconBlock
 	SetExecution(ExecutionData) error
-	SetBLSToExecutionChanges([]*ethpb.SignedBLSToExecutionChange) error
+	SetBLSToExecutionChanges([]*silapb.SignedBLSToExecutionChange) error
 	SetBlobKzgCommitments(c [][]byte) error
-	SetSyncAggregate(*ethpb.SyncAggregate) error
-	SetVoluntaryExits([]*ethpb.SignedVoluntaryExit)
-	SetDeposits([]*ethpb.Deposit)
-	SetAttestations([]ethpb.Att) error
-	SetAttesterSlashings([]ethpb.AttSlashing) error
-	SetProposerSlashings([]*ethpb.ProposerSlashing)
+	SetSyncAggregate(*silapb.SyncAggregate) error
+	SetVoluntaryExits([]*silapb.SignedVoluntaryExit)
+	SetDeposits([]*silapb.Deposit)
+	SetAttestations([]silapb.Att) error
+	SetAttesterSlashings([]silapb.AttSlashing) error
+	SetProposerSlashings([]*silapb.ProposerSlashing)
 	SetGraffiti([]byte)
-	SetEth1Data(*ethpb.Eth1Data)
+	SetEth1Data(*silapb.Eth1Data)
 	SetRandaoReveal([]byte)
 	SetStateRoot([]byte)
 	SetParentRoot([]byte)
@@ -94,8 +94,8 @@ type SignedBeaconBlock interface {
 	SetSlot(slot primitives.Slot)
 	SetSignature(sig []byte)
 	SetExecutionRequests(er *enginev1.ExecutionRequests) error
-	SetPayloadAttestations(pa []*ethpb.PayloadAttestation) error
-	SetSignedExecutionPayloadBid(header *ethpb.SignedExecutionPayloadBid) error
+	SetPayloadAttestations(pa []*silapb.PayloadAttestation) error
+	SetSignedExecutionPayloadBid(header *silapb.SignedExecutionPayloadBid) error
 	SetParentExecutionRequests(r *enginev1.ExecutionRequests) error
 	Unblind(e ExecutionData) error
 }

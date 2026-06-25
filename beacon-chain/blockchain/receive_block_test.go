@@ -20,8 +20,8 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpbv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapbv1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -36,7 +36,7 @@ func TestService_ReceiveBlock(t *testing.T) {
 
 	genesis, keys := util.DeterministicGenesisState(t, 64)
 	copiedGen := genesis.Copy()
-	genFullBlock := func(t *testing.T, conf *util.BlockGenConfig, slot primitives.Slot) *ethpb.SignedBeaconBlock {
+	genFullBlock := func(t *testing.T, conf *util.BlockGenConfig, slot primitives.Slot) *silapb.SignedBeaconBlock {
 		blk, err := util.GenerateFullBlock(copiedGen.Copy(), keys, conf, slot)
 		require.NoError(t, err)
 		return blk
@@ -57,7 +57,7 @@ func TestService_ReceiveBlock(t *testing.T) {
 	defer resetCfg()
 
 	type args struct {
-		block *ethpb.SignedBeaconBlock
+		block *silapb.SignedBeaconBlock
 	}
 	tests := []struct {
 		name      string
@@ -183,9 +183,9 @@ func TestService_ReceiveBlock(t *testing.T) {
 	wg.Wait()
 }
 func TestHandleDA(t *testing.T) {
-	signedBeaconBlock, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlock{
-		Block: &ethpb.BeaconBlock{
-			Body: &ethpb.BeaconBlockBody{},
+	signedBeaconBlock, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlock{
+		Block: &silapb.BeaconBlock{
+			Body: &silapb.BeaconBlockBody{},
 		},
 	})
 	require.NoError(t, err)
@@ -233,14 +233,14 @@ func TestService_ReceiveBlockBatch(t *testing.T) {
 	ctx := t.Context()
 
 	genesis, keys := util.DeterministicGenesisState(t, 64)
-	genFullBlock := func(t *testing.T, conf *util.BlockGenConfig, slot primitives.Slot) *ethpb.SignedBeaconBlock {
+	genFullBlock := func(t *testing.T, conf *util.BlockGenConfig, slot primitives.Slot) *silapb.SignedBeaconBlock {
 		blk, err := util.GenerateFullBlock(genesis, keys, conf, slot)
 		assert.NoError(t, err)
 		return blk
 	}
 
 	type args struct {
-		block *ethpb.SignedBeaconBlock
+		block *silapb.SignedBeaconBlock
 	}
 	tests := []struct {
 		name      string
@@ -379,8 +379,8 @@ func TestHandleBlockBLSToExecutionChanges(t *testing.T) {
 	pool := tr.blsPool
 
 	t.Run("pre Capella block", func(t *testing.T) {
-		body := &ethpb.BeaconBlockBodyBellatrix{}
-		pbb := &ethpb.BeaconBlockBellatrix{
+		body := &silapb.BeaconBlockBodyBellatrix{}
+		pbb := &silapb.BeaconBlockBellatrix{
 			Body: body,
 		}
 		blk, err := blocks.NewBeaconBlock(pbb)
@@ -389,8 +389,8 @@ func TestHandleBlockBLSToExecutionChanges(t *testing.T) {
 	})
 
 	t.Run("Post Capella no changes", func(t *testing.T) {
-		body := &ethpb.BeaconBlockBodyCapella{}
-		pbb := &ethpb.BeaconBlockCapella{
+		body := &silapb.BeaconBlockBodyCapella{}
+		pbb := &silapb.BeaconBlockCapella{
 			Body: body,
 		}
 		blk, err := blocks.NewBeaconBlock(pbb)
@@ -400,16 +400,16 @@ func TestHandleBlockBLSToExecutionChanges(t *testing.T) {
 
 	t.Run("Post Capella some changes", func(t *testing.T) {
 		idx := primitives.ValidatorIndex(123)
-		change := &ethpb.BLSToExecutionChange{
+		change := &silapb.BLSToExecutionChange{
 			ValidatorIndex: idx,
 		}
-		signedChange := &ethpb.SignedBLSToExecutionChange{
+		signedChange := &silapb.SignedBLSToExecutionChange{
 			Message: change,
 		}
-		body := &ethpb.BeaconBlockBodyCapella{
-			BlsToExecutionChanges: []*ethpb.SignedBLSToExecutionChange{signedChange},
+		body := &silapb.BeaconBlockBodyCapella{
+			BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{signedChange},
 		}
-		pbb := &ethpb.BeaconBlockCapella{
+		pbb := &silapb.BeaconBlockCapella{
 			Body: body,
 		}
 		blk, err := blocks.NewBeaconBlock(pbb)
@@ -439,7 +439,7 @@ func Test_sendNewFinalizedEvent(t *testing.T) {
 	require.NoError(t, s.cfg.BeaconDB.SaveBlock(s.ctx, sbb))
 	st, err := util.NewBeaconState()
 	require.NoError(t, err)
-	require.NoError(t, st.SetFinalizedCheckpoint(&ethpb.Checkpoint{
+	require.NoError(t, st.SetFinalizedCheckpoint(&silapb.Checkpoint{
 		Epoch: 123,
 		Root:  sbbRoot[:],
 	}))
@@ -449,7 +449,7 @@ func Test_sendNewFinalizedEvent(t *testing.T) {
 	require.Equal(t, 1, len(notifier.ReceivedEvents()))
 	e := notifier.ReceivedEvents()[0]
 	assert.Equal(t, statefeed.FinalizedCheckpoint, int(e.Type))
-	fc, ok := e.Data.(*ethpbv1.EventFinalizedCheckpoint)
+	fc, ok := e.Data.(*silapbv1.EventFinalizedCheckpoint)
 	require.Equal(t, true, ok, "event has wrong data type")
 	assert.Equal(t, primitives.Epoch(123), fc.Epoch)
 	assert.DeepEqual(t, sbbRoot[:], fc.Block)
@@ -479,14 +479,14 @@ func Test_executePostFinalizationTasks(t *testing.T) {
 	hexKey := "0x93247f2209abcacf57b75a51dafae777f9dd38bc7053d1af526f220a7489a6d3a2753e5f3e8b1cfe39b56f43611df74a"
 	key, err := hexutil.Decode(hexKey)
 	require.NoError(t, err)
-	require.NoError(t, headState.SetValidators([]*ethpb.Validator{
+	require.NoError(t, headState.SetValidators([]*silapb.Validator{
 		{
 			PublicKey:             key,
 			WithdrawalCredentials: make([]byte, fieldparams.RootLength),
 		},
 	}))
 	require.NoError(t, headState.SetSlot(finalizedSlot))
-	require.NoError(t, headState.SetFinalizedCheckpoint(&ethpb.Checkpoint{
+	require.NoError(t, headState.SetFinalizedCheckpoint(&silapb.Checkpoint{
 		Epoch: 123,
 		Root:  headRoot[:],
 	}))
@@ -501,11 +501,11 @@ func Test_executePostFinalizationTasks(t *testing.T) {
 		require.NoError(t, beaconDB.SaveState(ctx, headState, headRoot))
 		require.NoError(t, beaconDB.SaveState(ctx, headState, genesisRoot))
 		util.SaveBlock(t, ctx, beaconDB, headBlock)
-		require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
+		require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
 
 		require.NoError(t, err)
 		require.NoError(t, stateGen.SaveState(ctx, headRoot, headState))
-		require.NoError(t, beaconDB.SaveLastValidatedCheckpoint(ctx, &ethpb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
+		require.NoError(t, beaconDB.SaveLastValidatedCheckpoint(ctx, &silapb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
 
 		notifier := &blockchainTesting.MockStateNotifier{RecordEvents: true}
 		s.cfg.StateNotifier = notifier
@@ -516,7 +516,7 @@ func Test_executePostFinalizationTasks(t *testing.T) {
 		}, 5*time.Second, 50*time.Millisecond, "Expected exactly 1 state notification")
 		e := notifier.ReceivedEvents()[0]
 		assert.Equal(t, statefeed.FinalizedCheckpoint, int(e.Type))
-		fc, ok := e.Data.(*ethpbv1.EventFinalizedCheckpoint)
+		fc, ok := e.Data.(*silapbv1.EventFinalizedCheckpoint)
 		require.Equal(t, true, ok, "event has wrong data type")
 		assert.Equal(t, primitives.Epoch(123), fc.Epoch)
 		assert.DeepEqual(t, headRoot[:], fc.Block)
@@ -542,11 +542,11 @@ func Test_executePostFinalizationTasks(t *testing.T) {
 		require.NoError(t, beaconDB.SaveState(ctx, headState, headRoot))
 		require.NoError(t, beaconDB.SaveState(ctx, headState, genesisRoot))
 		util.SaveBlock(t, ctx, beaconDB, headBlock)
-		require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
+		require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
 
 		require.NoError(t, err)
 		require.NoError(t, stateGen.SaveState(ctx, headRoot, headState))
-		require.NoError(t, beaconDB.SaveLastValidatedCheckpoint(ctx, &ethpb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
+		require.NoError(t, beaconDB.SaveLastValidatedCheckpoint(ctx, &silapb.Checkpoint{Epoch: slots.ToEpoch(finalizedSlot), Root: headRoot[:]}))
 
 		notifier := &blockchainTesting.MockStateNotifier{RecordEvents: true}
 		s.cfg.StateNotifier = notifier
@@ -557,7 +557,7 @@ func Test_executePostFinalizationTasks(t *testing.T) {
 		}, 5*time.Second, 50*time.Millisecond, "Expected exactly 1 state notification")
 		e := notifier.ReceivedEvents()[0]
 		assert.Equal(t, statefeed.FinalizedCheckpoint, int(e.Type))
-		fc, ok := e.Data.(*ethpbv1.EventFinalizedCheckpoint)
+		fc, ok := e.Data.(*silapbv1.EventFinalizedCheckpoint)
 		require.Equal(t, true, ok, "event has wrong data type")
 		assert.Equal(t, primitives.Epoch(123), fc.Epoch)
 		assert.DeepEqual(t, headRoot[:], fc.Block)

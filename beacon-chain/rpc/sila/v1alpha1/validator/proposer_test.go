@@ -43,7 +43,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	attaggregation "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
@@ -69,12 +69,12 @@ func TestServer_GetBeaconBlock_Phase0(t *testing.T) {
 	require.NoError(t, err, "Could not hash genesis state")
 
 	genesis := b.NewGenesisBlock(stateRoot[:])
-	genBlk := &ethpb.SignedBeaconBlock{
-		Block: &ethpb.BeaconBlock{
+	genBlk := &silapb.SignedBeaconBlock{
+		Block: &silapb.BeaconBlock{
 			Slot:       genesis.Block.Slot,
 			ParentRoot: genesis.Block.ParentRoot,
 			StateRoot:  genesis.Block.StateRoot,
-			Body: &ethpb.BeaconBlockBody{
+			Body: &silapb.BeaconBlockBody{
 				RandaoReveal: genesis.Block.Body.RandaoReveal,
 				Graffiti:     genesis.Block.Body.Graffiti,
 				Eth1Data:     genesis.Block.Body.Eth1Data,
@@ -107,7 +107,7 @@ func TestServer_GetBeaconBlock_Phase0(t *testing.T) {
 	require.NoError(t, err)
 
 	graffiti := bytesutil.ToBytes32([]byte("sila"))
-	req := &ethpb.BlockRequest{
+	req := &silapb.BlockRequest{
 		Slot:         1,
 		RandaoReveal: randaoReveal,
 		Graffiti:     graffiti[:],
@@ -116,7 +116,7 @@ func TestServer_GetBeaconBlock_Phase0(t *testing.T) {
 
 	block, err := proposerServer.GetBeaconBlock(ctx, req)
 	require.NoError(t, err)
-	phase0Blk, ok := block.GetBlock().(*ethpb.GenericBeaconBlock_Phase0)
+	phase0Blk, ok := block.GetBlock().(*silapb.GenericBeaconBlock_Phase0)
 	require.Equal(t, true, ok)
 	assert.Equal(t, req.Slot, phase0Blk.Phase0.Slot)
 	assert.DeepEqual(t, parentRoot[:], phase0Blk.Phase0.ParentRoot, "Expected block to have correct parent root")
@@ -153,16 +153,16 @@ func TestServer_GetBeaconBlock_Altair(t *testing.T) {
 	require.NoError(t, err)
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
-	genAltair := &ethpb.SignedBeaconBlockAltair{
-		Block: &ethpb.BeaconBlockAltair{
+	genAltair := &silapb.SignedBeaconBlockAltair{
+		Block: &silapb.BeaconBlockAltair{
 			Slot:       altairSlot + 1,
 			ParentRoot: parentRoot[:],
 			StateRoot:  genesis.Block.StateRoot,
-			Body: &ethpb.BeaconBlockBodyAltair{
+			Body: &silapb.BeaconBlockBodyAltair{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
 				Eth1Data:      genesis.Block.Body.Eth1Data,
-				SyncAggregate: &ethpb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
+				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 			},
 		},
 	}
@@ -180,7 +180,7 @@ func TestServer_GetBeaconBlock_Altair(t *testing.T) {
 
 	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
-	req := &ethpb.BlockRequest{
+	req := &silapb.BlockRequest{
 		Slot:         altairSlot + 1,
 		RandaoReveal: randaoReveal,
 		Graffiti:     graffiti[:],
@@ -189,7 +189,7 @@ func TestServer_GetBeaconBlock_Altair(t *testing.T) {
 
 	block, err := proposerServer.GetBeaconBlock(ctx, req)
 	require.NoError(t, err)
-	altairBlk, ok := block.GetBlock().(*ethpb.GenericBeaconBlock_Altair)
+	altairBlk, ok := block.GetBlock().(*silapb.GenericBeaconBlock_Altair)
 	require.Equal(t, true, ok)
 
 	assert.Equal(t, req.Slot, altairBlk.Altair.Slot)
@@ -232,16 +232,16 @@ func TestServer_GetBeaconBlock_Bellatrix(t *testing.T) {
 	require.NoError(t, err)
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
-	blk := &ethpb.SignedBeaconBlockBellatrix{
-		Block: &ethpb.BeaconBlockBellatrix{
+	blk := &silapb.SignedBeaconBlockBellatrix{
+		Block: &silapb.BeaconBlockBellatrix{
 			Slot:       bellatrixSlot + 1,
 			ParentRoot: parentRoot[:],
 			StateRoot:  genesis.Block.StateRoot,
-			Body: &ethpb.BeaconBlockBodyBellatrix{
+			Body: &silapb.BeaconBlockBodyBellatrix{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
 				Eth1Data:      genesis.Block.Body.Eth1Data,
-				SyncAggregate: &ethpb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
+				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 				ExecutionPayload: &enginev1.ExecutionPayload{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
@@ -300,7 +300,7 @@ func TestServer_GetBeaconBlock_Bellatrix(t *testing.T) {
 
 	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
-	req := &ethpb.BlockRequest{
+	req := &silapb.BlockRequest{
 		Slot:         bellatrixSlot + 1,
 		RandaoReveal: randaoReveal,
 		Graffiti:     graffiti[:],
@@ -308,7 +308,7 @@ func TestServer_GetBeaconBlock_Bellatrix(t *testing.T) {
 
 	block, err := proposerServer.GetBeaconBlock(ctx, req)
 	require.NoError(t, err)
-	bellatrixBlk, ok := block.GetBlock().(*ethpb.GenericBeaconBlock_Bellatrix)
+	bellatrixBlk, ok := block.GetBlock().(*silapb.GenericBeaconBlock_Bellatrix)
 	require.Equal(t, true, ok)
 
 	assert.Equal(t, req.Slot, bellatrixBlk.Bellatrix.Slot)
@@ -357,16 +357,16 @@ func TestServer_GetBeaconBlock_Capella(t *testing.T) {
 	require.NoError(t, err)
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
-	blk := &ethpb.SignedBeaconBlockCapella{
-		Block: &ethpb.BeaconBlockCapella{
+	blk := &silapb.SignedBeaconBlockCapella{
+		Block: &silapb.BeaconBlockCapella{
 			Slot:       capellaSlot + 1,
 			ParentRoot: parentRoot[:],
 			StateRoot:  genesis.Block.StateRoot,
-			Body: &ethpb.BeaconBlockBodyCapella{
+			Body: &silapb.BeaconBlockBodyCapella{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
 				Eth1Data:      genesis.Block.Body.Eth1Data,
-				SyncAggregate: &ethpb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
+				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 				ExecutionPayload: &enginev1.ExecutionPayloadCapella{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
@@ -433,7 +433,7 @@ func TestServer_GetBeaconBlock_Capella(t *testing.T) {
 
 	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
-	req := &ethpb.BlockRequest{
+	req := &silapb.BlockRequest{
 		Slot:         capellaSlot + 1,
 		RandaoReveal: randaoReveal,
 		Graffiti:     graffiti[:],
@@ -481,16 +481,16 @@ func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
 	require.NoError(t, err)
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
-	blk := &ethpb.SignedBeaconBlockDeneb{
-		Block: &ethpb.BeaconBlockDeneb{
+	blk := &silapb.SignedBeaconBlockDeneb{
+		Block: &silapb.BeaconBlockDeneb{
 			Slot:       denebSlot + 1,
 			ParentRoot: parentRoot[:],
 			StateRoot:  genesis.Block.StateRoot,
-			Body: &ethpb.BeaconBlockBodyDeneb{
+			Body: &silapb.BeaconBlockBodyDeneb{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
 				Eth1Data:      genesis.Block.Body.Eth1Data,
-				SyncAggregate: &ethpb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
+				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 				ExecutionPayload: &enginev1.ExecutionPayloadDeneb{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
@@ -565,7 +565,7 @@ func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
 
 	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
-	req := &ethpb.BlockRequest{
+	req := &silapb.BlockRequest{
 		Slot:         denebSlot + 1,
 		RandaoReveal: randaoReveal,
 		Graffiti:     graffiti[:],
@@ -634,16 +634,16 @@ func TestServer_GetBeaconBlock_Electra(t *testing.T) {
 			TargetPubkey:  bytesutil.PadTo(privKeys[2].PublicKey().Marshal(), 48),
 		},
 	}
-	blk := &ethpb.SignedBeaconBlockElectra{
-		Block: &ethpb.BeaconBlockElectra{
+	blk := &silapb.SignedBeaconBlockElectra{
+		Block: &silapb.BeaconBlockElectra{
 			Slot:       electraSlot + 1,
 			ParentRoot: parentRoot[:],
 			StateRoot:  genesis.Block.StateRoot,
-			Body: &ethpb.BeaconBlockBodyElectra{
+			Body: &silapb.BeaconBlockBodyElectra{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
 				Eth1Data:      genesis.Block.Body.Eth1Data,
-				SyncAggregate: &ethpb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
+				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 				ExecutionPayload: &enginev1.ExecutionPayloadDeneb{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
@@ -709,7 +709,7 @@ func TestServer_GetBeaconBlock_Electra(t *testing.T) {
 
 	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
-	req := &ethpb.BlockRequest{
+	req := &silapb.BlockRequest{
 		Slot:         electraSlot + 1,
 		RandaoReveal: randaoReveal,
 		Graffiti:     graffiti[:],
@@ -771,16 +771,16 @@ func TestServer_GetBeaconBlock_Fulu(t *testing.T) {
 			TargetPubkey:  bytesutil.PadTo(privKeys[2].PublicKey().Marshal(), 48),
 		},
 	}
-	blk := &ethpb.SignedBeaconBlockFulu{
-		Block: &ethpb.BeaconBlockElectra{
+	blk := &silapb.SignedBeaconBlockFulu{
+		Block: &silapb.BeaconBlockElectra{
 			Slot:       fuluSlot + 1,
 			ParentRoot: parentRoot[:],
 			StateRoot:  genesis.Block.StateRoot,
-			Body: &ethpb.BeaconBlockBodyElectra{
+			Body: &silapb.BeaconBlockBodyElectra{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
 				Eth1Data:      genesis.Block.Body.Eth1Data,
-				SyncAggregate: &ethpb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
+				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 				ExecutionPayload: &enginev1.ExecutionPayloadDeneb{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
@@ -846,7 +846,7 @@ func TestServer_GetBeaconBlock_Fulu(t *testing.T) {
 
 	graffiti := bytesutil.ToBytes32([]byte("sila"))
 	require.NoError(t, err)
-	req := &ethpb.BlockRequest{
+	req := &silapb.BlockRequest{
 		Slot:         fuluSlot + 1,
 		RandaoReveal: randaoReveal,
 		Graffiti:     graffiti[:],
@@ -873,7 +873,7 @@ func TestServer_GetBeaconBlock_Optimistic(t *testing.T) {
 		ForkFetcher:           mockChainService,
 		ForkchoiceFetcher:     mockChainService,
 		TimeFetcher:           &mock.ChainService{}}
-	req := &ethpb.BlockRequest{
+	req := &silapb.BlockRequest{
 		Slot: bellatrixSlot + 1,
 	}
 	_, err = proposerServer.GetBeaconBlock(t.Context(), req)
@@ -913,8 +913,8 @@ func getProposerServer(ctx context.Context, db db.HeadAccessDatabase, headState 
 	}
 }
 
-func injectSlashings(t *testing.T, st state.BeaconState, keys []bls.SecretKey, server *Server) ([]*ethpb.ProposerSlashing, []*ethpb.AttesterSlashing) {
-	proposerSlashings := make([]*ethpb.ProposerSlashing, params.BeaconConfig().MaxProposerSlashings)
+func injectSlashings(t *testing.T, st state.BeaconState, keys []bls.SecretKey, server *Server) ([]*silapb.ProposerSlashing, []*silapb.AttesterSlashing) {
+	proposerSlashings := make([]*silapb.ProposerSlashing, params.BeaconConfig().MaxProposerSlashings)
 	for i := primitives.ValidatorIndex(0); uint64(i) < params.BeaconConfig().MaxProposerSlashings; i++ {
 		proposerSlashing, err := util.GenerateProposerSlashingForValidator(st, keys[i], i /* validator index */)
 		require.NoError(t, err)
@@ -923,14 +923,14 @@ func injectSlashings(t *testing.T, st state.BeaconState, keys []bls.SecretKey, s
 		require.NoError(t, err)
 	}
 
-	attSlashings := make([]*ethpb.AttesterSlashing, params.BeaconConfig().MaxAttesterSlashings)
+	attSlashings := make([]*silapb.AttesterSlashing, params.BeaconConfig().MaxAttesterSlashings)
 	for i := uint64(0); i < params.BeaconConfig().MaxAttesterSlashings; i++ {
 		generatedAttesterSlashing, err := util.GenerateAttesterSlashingForValidator(st, keys[i+params.BeaconConfig().MaxProposerSlashings], primitives.ValidatorIndex(i+params.BeaconConfig().MaxProposerSlashings) /* validator index */)
 		require.NoError(t, err)
-		attesterSlashing, ok := generatedAttesterSlashing.(*ethpb.AttesterSlashing)
-		require.Equal(t, true, ok, "Attester slashing has the wrong type (expected %T, got %T)", &ethpb.AttesterSlashing{}, generatedAttesterSlashing)
+		attesterSlashing, ok := generatedAttesterSlashing.(*silapb.AttesterSlashing)
+		require.Equal(t, true, ok, "Attester slashing has the wrong type (expected %T, got %T)", &silapb.AttesterSlashing{}, generatedAttesterSlashing)
 		attSlashings[i] = attesterSlashing
-		err = server.SlashingsPool.InsertAttesterSlashing(t.Context(), st, generatedAttesterSlashing.(*ethpb.AttesterSlashing))
+		err = server.SlashingsPool.InsertAttesterSlashing(t.Context(), st, generatedAttesterSlashing.(*silapb.AttesterSlashing))
 		require.NoError(t, err)
 	}
 	return proposerSlashings, attSlashings
@@ -942,43 +942,43 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 
 	tests := []struct {
 		name       string
-		block      func([32]byte) *ethpb.GenericSignedBeaconBlock
+		block      func([32]byte) *silapb.GenericSignedBeaconBlock
 		err        string
 		useBuilder bool
 	}{
 		{
 			name: "phase0",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBeaconBlock()
 				blockToPropose.Block.Slot = 5
 				blockToPropose.Block.ParentRoot = parent[:]
-				blk := &ethpb.GenericSignedBeaconBlock_Phase0{Phase0: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_Phase0{Phase0: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 		},
 		{
 			name: "altair",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBeaconBlockAltair()
 				blockToPropose.Block.Slot = 5
 				blockToPropose.Block.ParentRoot = parent[:]
-				blk := &ethpb.GenericSignedBeaconBlock_Altair{Altair: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_Altair{Altair: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 		},
 		{
 			name: "bellatrix",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBeaconBlockBellatrix()
 				blockToPropose.Block.Slot = 5
 				blockToPropose.Block.ParentRoot = parent[:]
-				blk := &ethpb.GenericSignedBeaconBlock_Bellatrix{Bellatrix: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_Bellatrix{Bellatrix: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 		},
 		{
 			name: "blind capella",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBlindedBeaconBlockCapella()
 				blockToPropose.Block.Slot = 5
 				blockToPropose.Block.ParentRoot = parent[:]
@@ -988,14 +988,14 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				require.NoError(t, err)
 				blockToPropose.Block.Body.ExecutionPayloadHeader.TransactionsRoot = txRoot[:]
 				blockToPropose.Block.Body.ExecutionPayloadHeader.WithdrawalsRoot = withdrawalsRoot[:]
-				blk := &ethpb.GenericSignedBeaconBlock_BlindedCapella{BlindedCapella: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_BlindedCapella{BlindedCapella: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 			useBuilder: true,
 		},
 		{
 			name: "blind capella no builder",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBlindedBeaconBlockCapella()
 				blockToPropose.Block.Slot = 5
 				blockToPropose.Block.ParentRoot = parent[:]
@@ -1005,60 +1005,60 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				require.NoError(t, err)
 				blockToPropose.Block.Body.ExecutionPayloadHeader.TransactionsRoot = txRoot[:]
 				blockToPropose.Block.Body.ExecutionPayloadHeader.WithdrawalsRoot = withdrawalsRoot[:]
-				blk := &ethpb.GenericSignedBeaconBlock_BlindedCapella{BlindedCapella: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_BlindedCapella{BlindedCapella: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 			err: "unconfigured block builder",
 		},
 		{
 			name: "bellatrix",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBeaconBlockBellatrix()
 				blockToPropose.Block.Slot = 5
 				blockToPropose.Block.ParentRoot = parent[:]
-				blk := &ethpb.GenericSignedBeaconBlock_Bellatrix{Bellatrix: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_Bellatrix{Bellatrix: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 		},
 		{
 			name: "deneb block no blob",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBeaconBlockContentsDeneb()
 				blockToPropose.Block.Block.Slot = 5
 				blockToPropose.Block.Block.ParentRoot = parent[:]
-				blk := &ethpb.GenericSignedBeaconBlock_Deneb{Deneb: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_Deneb{Deneb: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 		},
 		{
 			name: "deneb block some blobs",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBeaconBlockContentsDeneb()
 				blockToPropose.Block.Block.Slot = 5
 				blockToPropose.Block.Block.ParentRoot = parent[:]
 				blockToPropose.Blobs = [][]byte{{0x01}, {0x02}, {0x03}}
 				blockToPropose.KzgProofs = [][]byte{{0x01}, {0x02}, {0x03}}
 				blockToPropose.Block.Block.Body.BlobKzgCommitments = [][]byte{bytesutil.PadTo([]byte("kc"), 48), bytesutil.PadTo([]byte("kc1"), 48), bytesutil.PadTo([]byte("kc2"), 48)}
-				blk := &ethpb.GenericSignedBeaconBlock_Deneb{Deneb: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_Deneb{Deneb: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 		},
 		{
 			name: "deneb block some blobs (kzg and blob count mismatch)",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBeaconBlockContentsDeneb()
 				blockToPropose.Block.Block.Slot = 5
 				blockToPropose.Block.Block.ParentRoot = parent[:]
 				blockToPropose.Blobs = [][]byte{{0x01}, {0x02}, {0x03}}
 				blockToPropose.KzgProofs = [][]byte{{0x01}, {0x02}, {0x03}}
-				blk := &ethpb.GenericSignedBeaconBlock_Deneb{Deneb: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_Deneb{Deneb: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 			err: "blob KZG commitments don't match number of blobs or KZG proofs",
 		},
 		{
 			name: "blind deneb block some blobs",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBlindedBeaconBlockDeneb()
 				blockToPropose.Message.Slot = 5
 				blockToPropose.Message.ParentRoot = parent[:]
@@ -1069,14 +1069,14 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				blockToPropose.Message.Body.ExecutionPayloadHeader.TransactionsRoot = txRoot[:]
 				blockToPropose.Message.Body.ExecutionPayloadHeader.WithdrawalsRoot = withdrawalsRoot[:]
 				blockToPropose.Message.Body.BlobKzgCommitments = [][]byte{bytesutil.PadTo([]byte{0x01}, 48)}
-				blk := &ethpb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 			useBuilder: true,
 		},
 		{
 			name: "blind deneb block some blobs (commitment value does not match blob)",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBlindedBeaconBlockDeneb()
 				blockToPropose.Message.Slot = 5
 				blockToPropose.Message.ParentRoot = parent[:]
@@ -1087,32 +1087,32 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				blockToPropose.Message.Body.ExecutionPayloadHeader.TransactionsRoot = txRoot[:]
 				blockToPropose.Message.Body.ExecutionPayloadHeader.WithdrawalsRoot = withdrawalsRoot[:]
 				blockToPropose.Message.Body.BlobKzgCommitments = [][]byte{bytesutil.PadTo([]byte("kc"), 48)}
-				blk := &ethpb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 			useBuilder: true,
 			err:        "unblind blobs sidecars: commitment value doesn't match block",
 		},
 		{
 			name: "electra block no blob",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
-				sb := &ethpb.SignedBeaconBlockContentsElectra{
-					Block: &ethpb.SignedBeaconBlockElectra{
-						Block: &ethpb.BeaconBlockElectra{Slot: 5, ParentRoot: parent[:], Body: util.HydrateBeaconBlockBodyElectra(&ethpb.BeaconBlockBodyElectra{})},
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
+				sb := &silapb.SignedBeaconBlockContentsElectra{
+					Block: &silapb.SignedBeaconBlockElectra{
+						Block: &silapb.BeaconBlockElectra{Slot: 5, ParentRoot: parent[:], Body: util.HydrateBeaconBlockBodyElectra(&silapb.BeaconBlockBodyElectra{})},
 					},
 				}
-				blk := &ethpb.GenericSignedBeaconBlock_Electra{Electra: sb}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
+				blk := &silapb.GenericSignedBeaconBlock_Electra{Electra: sb}
+				return &silapb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
 			},
 		},
 		{
 			name: "electra block some blob",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
-				sb := &ethpb.SignedBeaconBlockContentsElectra{
-					Block: &ethpb.SignedBeaconBlockElectra{
-						Block: &ethpb.BeaconBlockElectra{
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
+				sb := &silapb.SignedBeaconBlockContentsElectra{
+					Block: &silapb.SignedBeaconBlockElectra{
+						Block: &silapb.BeaconBlockElectra{
 							Slot: 5, ParentRoot: parent[:],
-							Body: util.HydrateBeaconBlockBodyElectra(&ethpb.BeaconBlockBodyElectra{
+							Body: util.HydrateBeaconBlockBodyElectra(&silapb.BeaconBlockBodyElectra{
 								BlobKzgCommitments: [][]byte{bytesutil.PadTo([]byte("kc"), 48), bytesutil.PadTo([]byte("kc1"), 48), bytesutil.PadTo([]byte("kc2"), 48)},
 							}),
 						},
@@ -1120,18 +1120,18 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 					KzgProofs: [][]byte{{0x01}, {0x02}, {0x03}},
 					Blobs:     [][]byte{{0x01}, {0x02}, {0x03}},
 				}
-				blk := &ethpb.GenericSignedBeaconBlock_Electra{Electra: sb}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
+				blk := &silapb.GenericSignedBeaconBlock_Electra{Electra: sb}
+				return &silapb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
 			},
 		},
 		{
 			name: "electra block some blob (kzg and blob count mismatch)",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
-				sb := &ethpb.SignedBeaconBlockContentsElectra{
-					Block: &ethpb.SignedBeaconBlockElectra{
-						Block: &ethpb.BeaconBlockElectra{
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
+				sb := &silapb.SignedBeaconBlockContentsElectra{
+					Block: &silapb.SignedBeaconBlockElectra{
+						Block: &silapb.BeaconBlockElectra{
 							Slot: 5, ParentRoot: parent[:],
-							Body: util.HydrateBeaconBlockBodyElectra(&ethpb.BeaconBlockBodyElectra{
+							Body: util.HydrateBeaconBlockBodyElectra(&silapb.BeaconBlockBodyElectra{
 								BlobKzgCommitments: [][]byte{bytesutil.PadTo([]byte("kc"), 48), bytesutil.PadTo([]byte("kc1"), 48)},
 							}),
 						},
@@ -1139,26 +1139,26 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 					KzgProofs: [][]byte{{0x01}, {0x02}, {0x03}},
 					Blobs:     [][]byte{{0x01}, {0x02}, {0x03}},
 				}
-				blk := &ethpb.GenericSignedBeaconBlock_Electra{Electra: sb}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
+				blk := &silapb.GenericSignedBeaconBlock_Electra{Electra: sb}
+				return &silapb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
 			},
 			err: "blob KZG commitments don't match number of blobs or KZG proofs",
 		},
 		{
 			name: "fulu block no blob",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
-				sb := &ethpb.SignedBeaconBlockContentsFulu{
-					Block: &ethpb.SignedBeaconBlockFulu{
-						Block: &ethpb.BeaconBlockElectra{Slot: 5, ParentRoot: parent[:], Body: util.HydrateBeaconBlockBodyElectra(&ethpb.BeaconBlockBodyElectra{})},
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
+				sb := &silapb.SignedBeaconBlockContentsFulu{
+					Block: &silapb.SignedBeaconBlockFulu{
+						Block: &silapb.BeaconBlockElectra{Slot: 5, ParentRoot: parent[:], Body: util.HydrateBeaconBlockBodyElectra(&silapb.BeaconBlockBodyElectra{})},
 					},
 				}
-				blk := &ethpb.GenericSignedBeaconBlock_Fulu{Fulu: sb}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
+				blk := &silapb.GenericSignedBeaconBlock_Fulu{Fulu: sb}
+				return &silapb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
 			},
 		},
 		{
 			name: "fulu block with single blob and cell proofs",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				numberOfColumns := uint64(128)
 				// For Fulu, we have cell proofs (blobs * numberOfColumns)
 				cellProofs := make([][]byte, numberOfColumns)
@@ -1168,11 +1168,11 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				// Blob must be exactly 131072 bytes
 				blob := make([]byte, 131072)
 				blob[0] = 0x01
-				sb := &ethpb.SignedBeaconBlockContentsFulu{
-					Block: &ethpb.SignedBeaconBlockFulu{
-						Block: &ethpb.BeaconBlockElectra{
+				sb := &silapb.SignedBeaconBlockContentsFulu{
+					Block: &silapb.SignedBeaconBlockFulu{
+						Block: &silapb.BeaconBlockElectra{
 							Slot: 5, ParentRoot: parent[:],
-							Body: util.HydrateBeaconBlockBodyElectra(&ethpb.BeaconBlockBodyElectra{
+							Body: util.HydrateBeaconBlockBodyElectra(&silapb.BeaconBlockBodyElectra{
 								BlobKzgCommitments: [][]byte{bytesutil.PadTo([]byte("kc"), 48)},
 							}),
 						},
@@ -1180,13 +1180,13 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 					KzgProofs: cellProofs,
 					Blobs:     [][]byte{blob},
 				}
-				blk := &ethpb.GenericSignedBeaconBlock_Fulu{Fulu: sb}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
+				blk := &silapb.GenericSignedBeaconBlock_Fulu{Fulu: sb}
+				return &silapb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
 			},
 		},
 		{
 			name: "fulu block with multiple blobs and cell proofs",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				numberOfColumns := uint64(128)
 				blobCount := 3
 				// For Fulu, we have cell proofs (blobs * numberOfColumns)
@@ -1201,11 +1201,11 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 					blob[0] = byte(i + 1)
 					blobs[i] = blob
 				}
-				sb := &ethpb.SignedBeaconBlockContentsFulu{
-					Block: &ethpb.SignedBeaconBlockFulu{
-						Block: &ethpb.BeaconBlockElectra{
+				sb := &silapb.SignedBeaconBlockContentsFulu{
+					Block: &silapb.SignedBeaconBlockFulu{
+						Block: &silapb.BeaconBlockElectra{
 							Slot: 5, ParentRoot: parent[:],
-							Body: util.HydrateBeaconBlockBodyElectra(&ethpb.BeaconBlockBodyElectra{
+							Body: util.HydrateBeaconBlockBodyElectra(&silapb.BeaconBlockBodyElectra{
 								BlobKzgCommitments: [][]byte{
 									bytesutil.PadTo([]byte("kc"), 48),
 									bytesutil.PadTo([]byte("kc1"), 48),
@@ -1217,24 +1217,24 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 					KzgProofs: cellProofs,
 					Blobs:     blobs,
 				}
-				blk := &ethpb.GenericSignedBeaconBlock_Fulu{Fulu: sb}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
+				blk := &silapb.GenericSignedBeaconBlock_Fulu{Fulu: sb}
+				return &silapb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
 			},
 		},
 		{
 			name: "fulu block wrong cell proof count (should be blobs * 128)",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				// Wrong number of cell proofs - should be 2 * 128 = 256, but providing only 2
 				// Create properly sized blobs
 				blob1 := make([]byte, 131072)
 				blob1[0] = 0x01
 				blob2 := make([]byte, 131072)
 				blob2[0] = 0x02
-				sb := &ethpb.SignedBeaconBlockContentsFulu{
-					Block: &ethpb.SignedBeaconBlockFulu{
-						Block: &ethpb.BeaconBlockElectra{
+				sb := &silapb.SignedBeaconBlockContentsFulu{
+					Block: &silapb.SignedBeaconBlockFulu{
+						Block: &silapb.BeaconBlockElectra{
 							Slot: 5, ParentRoot: parent[:],
-							Body: util.HydrateBeaconBlockBodyElectra(&ethpb.BeaconBlockBodyElectra{
+							Body: util.HydrateBeaconBlockBodyElectra(&silapb.BeaconBlockBodyElectra{
 								BlobKzgCommitments: [][]byte{
 									bytesutil.PadTo([]byte("kc"), 48),
 									bytesutil.PadTo([]byte("kc1"), 48),
@@ -1245,14 +1245,14 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 					KzgProofs: [][]byte{{0x01}, {0x02}}, // Wrong: should be 256 cell proofs
 					Blobs:     [][]byte{blob1, blob2},
 				}
-				blk := &ethpb.GenericSignedBeaconBlock_Fulu{Fulu: sb}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
+				blk := &silapb.GenericSignedBeaconBlock_Fulu{Fulu: sb}
+				return &silapb.GenericSignedBeaconBlock{Block: blk, IsBlinded: false}
 			},
 			err: "blobs and cells proofs mismatch",
 		},
 		{
 			name: "blind fulu block with blob commitments",
-			block: func(parent [32]byte) *ethpb.GenericSignedBeaconBlock {
+			block: func(parent [32]byte) *silapb.GenericSignedBeaconBlock {
 				blockToPropose := util.NewBlindedBeaconBlockFulu()
 				blockToPropose.Message.Slot = 5
 				blockToPropose.Message.ParentRoot = parent[:]
@@ -1263,8 +1263,8 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				blockToPropose.Message.Body.ExecutionPayloadHeader.TransactionsRoot = txRoot[:]
 				blockToPropose.Message.Body.ExecutionPayloadHeader.WithdrawalsRoot = withdrawalsRoot[:]
 				blockToPropose.Message.Body.BlobKzgCommitments = [][]byte{bytesutil.PadTo([]byte{0x01}, 48)}
-				blk := &ethpb.GenericSignedBeaconBlock_BlindedFulu{BlindedFulu: blockToPropose}
-				return &ethpb.GenericSignedBeaconBlock{Block: blk}
+				blk := &silapb.GenericSignedBeaconBlock_BlindedFulu{BlindedFulu: blockToPropose}
+				return &silapb.GenericSignedBeaconBlock{Block: blk}
 			},
 			useBuilder: true,
 			err:        "commitment value doesn't match block", // Known issue with mock builder cell proof mismatch
@@ -1425,11 +1425,11 @@ func TestProposer_PendingDeposits_Eth1DataVoteOK(t *testing.T) {
 		},
 	}
 
-	var votes []*ethpb.Eth1Data
+	var votes []*silapb.Eth1Data
 
 	blockHash := make([]byte, 32)
 	copy(blockHash, "0x1")
-	vote := &ethpb.Eth1Data{
+	vote := &silapb.Eth1Data{
 		DepositRoot:  make([]byte, 32),
 		BlockHash:    blockHash,
 		DepositCount: 3,
@@ -1444,7 +1444,7 @@ func TestProposer_PendingDeposits_Eth1DataVoteOK(t *testing.T) {
 	beaconState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetEth1DepositIndex(2))
-	require.NoError(t, beaconState.SetEth1Data(&ethpb.Eth1Data{
+	require.NoError(t, beaconState.SetEth1Data(&silapb.Eth1Data{
 		DepositRoot:  make([]byte, 32),
 		BlockHash:    blockHash,
 		DepositCount: 2,
@@ -1465,7 +1465,7 @@ func TestProposer_PendingDeposits_Eth1DataVoteOK(t *testing.T) {
 
 	// It should also return the recent deposits after their follow window.
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	_, eth1Height, err := bs.canonicalEth1Data(ctx, beaconState, &ethpb.Eth1Data{})
+	_, eth1Height, err := bs.canonicalEth1Data(ctx, beaconState, &silapb.Eth1Data{})
 	require.NoError(t, err)
 
 	assert.Equal(t, 0, eth1Height.Cmp(height))
@@ -1503,8 +1503,8 @@ func TestProposer_PendingDeposits_OutsideEth1FollowWindow(t *testing.T) {
 		},
 	}
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-		Eth1Data: &ethpb.Eth1Data{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+		Eth1Data: &silapb.Eth1Data{
 			BlockHash:   bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot: make([]byte, 32),
 		},
@@ -1516,12 +1516,12 @@ func TestProposer_PendingDeposits_OutsideEth1FollowWindow(t *testing.T) {
 	var mockCreds [32]byte
 
 	// Using the merkleTreeIndex as the block number for this test...
-	readyDeposits := []*ethpb.DepositContainer{
+	readyDeposits := []*silapb.DepositContainer{
 		{
 			Index:           0,
 			Eth1BlockHeight: 2,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1530,8 +1530,8 @@ func TestProposer_PendingDeposits_OutsideEth1FollowWindow(t *testing.T) {
 		{
 			Index:           1,
 			Eth1BlockHeight: 8,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1539,12 +1539,12 @@ func TestProposer_PendingDeposits_OutsideEth1FollowWindow(t *testing.T) {
 		},
 	}
 
-	recentDeposits := []*ethpb.DepositContainer{
+	recentDeposits := []*silapb.DepositContainer{
 		{
 			Index:           2,
 			Eth1BlockHeight: 400,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("c"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1553,8 +1553,8 @@ func TestProposer_PendingDeposits_OutsideEth1FollowWindow(t *testing.T) {
 		{
 			Index:           3,
 			Eth1BlockHeight: 600,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("d"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1598,14 +1598,14 @@ func TestProposer_PendingDeposits_OutsideEth1FollowWindow(t *testing.T) {
 		HeadFetcher:            &mock.ChainService{State: beaconState, Root: blkRoot[:]},
 	}
 
-	deposits, err := bs.deposits(ctx, beaconState, &ethpb.Eth1Data{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.Eth1Data{})
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(deposits), "Received unexpected list of deposits")
 
 	// It should not return the recent deposits after their follow window.
 	// as latest block number makes no difference in retrieval of deposits
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	deposits, err = bs.deposits(ctx, beaconState, &ethpb.Eth1Data{})
+	deposits, err = bs.deposits(ctx, beaconState, &silapb.Eth1Data{})
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(deposits), "Received unexpected number of pending deposits")
 }
@@ -1623,9 +1623,9 @@ func TestProposer_PendingDeposits_FollowsCorrectEth1Block(t *testing.T) {
 		},
 	}
 
-	var votes []*ethpb.Eth1Data
+	var votes []*silapb.Eth1Data
 
-	vote := &ethpb.Eth1Data{
+	vote := &silapb.Eth1Data{
 		BlockHash:    bytesutil.PadTo([]byte("0x1"), 32),
 		DepositRoot:  make([]byte, 32),
 		DepositCount: 7,
@@ -1635,8 +1635,8 @@ func TestProposer_PendingDeposits_FollowsCorrectEth1Block(t *testing.T) {
 		votes = append(votes, vote)
 	}
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-		Eth1Data: &ethpb.Eth1Data{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+		Eth1Data: &silapb.Eth1Data{
 			BlockHash:    []byte("0x0"),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 5,
@@ -1655,12 +1655,12 @@ func TestProposer_PendingDeposits_FollowsCorrectEth1Block(t *testing.T) {
 	var mockCreds [32]byte
 
 	// Using the merkleTreeIndex as the block number for this test...
-	readyDeposits := []*ethpb.DepositContainer{
+	readyDeposits := []*silapb.DepositContainer{
 		{
 			Index:           0,
 			Eth1BlockHeight: 8,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1669,8 +1669,8 @@ func TestProposer_PendingDeposits_FollowsCorrectEth1Block(t *testing.T) {
 		{
 			Index:           1,
 			Eth1BlockHeight: 14,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1678,12 +1678,12 @@ func TestProposer_PendingDeposits_FollowsCorrectEth1Block(t *testing.T) {
 		},
 	}
 
-	recentDeposits := []*ethpb.DepositContainer{
+	recentDeposits := []*silapb.DepositContainer{
 		{
 			Index:           2,
 			Eth1BlockHeight: 5000,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("c"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1692,8 +1692,8 @@ func TestProposer_PendingDeposits_FollowsCorrectEth1Block(t *testing.T) {
 		{
 			Index:           3,
 			Eth1BlockHeight: 6000,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("d"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1731,7 +1731,7 @@ func TestProposer_PendingDeposits_FollowsCorrectEth1Block(t *testing.T) {
 		HeadFetcher:            &mock.ChainService{State: beaconState, Root: blkRoot[:]},
 	}
 
-	deposits, err := bs.deposits(ctx, beaconState, &ethpb.Eth1Data{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.Eth1Data{})
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(deposits), "Received unexpected list of deposits")
 
@@ -1756,7 +1756,7 @@ func TestProposer_PendingDeposits_CantReturnBelowStateEth1DepositIndex(t *testin
 
 	beaconState, err := util.NewBeaconState()
 	require.NoError(t, err)
-	require.NoError(t, beaconState.SetEth1Data(&ethpb.Eth1Data{
+	require.NoError(t, beaconState.SetEth1Data(&silapb.Eth1Data{
 		BlockHash:    bytesutil.PadTo([]byte("0x0"), 32),
 		DepositRoot:  make([]byte, 32),
 		DepositCount: 100,
@@ -1770,11 +1770,11 @@ func TestProposer_PendingDeposits_CantReturnBelowStateEth1DepositIndex(t *testin
 	var mockSig [96]byte
 	var mockCreds [32]byte
 
-	readyDeposits := []*ethpb.DepositContainer{
+	readyDeposits := []*silapb.DepositContainer{
 		{
 			Index: 0,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1782,8 +1782,8 @@ func TestProposer_PendingDeposits_CantReturnBelowStateEth1DepositIndex(t *testin
 		},
 		{
 			Index: 1,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1791,12 +1791,12 @@ func TestProposer_PendingDeposits_CantReturnBelowStateEth1DepositIndex(t *testin
 		},
 	}
 
-	var recentDeposits []*ethpb.DepositContainer
+	var recentDeposits []*silapb.DepositContainer
 	for i := int64(2); i < 16; i++ {
-		recentDeposits = append(recentDeposits, &ethpb.DepositContainer{
+		recentDeposits = append(recentDeposits, &silapb.DepositContainer{
 			Index: i,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{byte(i)}, 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1836,7 +1836,7 @@ func TestProposer_PendingDeposits_CantReturnBelowStateEth1DepositIndex(t *testin
 
 	// It should also return the recent deposits after their follow window.
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	deposits, err := bs.deposits(ctx, beaconState, &ethpb.Eth1Data{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.Eth1Data{})
 	require.NoError(t, err)
 
 	expectedDeposits := 6
@@ -1854,8 +1854,8 @@ func TestProposer_PendingDeposits_CantReturnMoreThanMax(t *testing.T) {
 		},
 	}
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-		Eth1Data: &ethpb.Eth1Data{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+		Eth1Data: &silapb.Eth1Data{
 			BlockHash:    bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 100,
@@ -1870,11 +1870,11 @@ func TestProposer_PendingDeposits_CantReturnMoreThanMax(t *testing.T) {
 	var mockSig [96]byte
 	var mockCreds [32]byte
 
-	readyDeposits := []*ethpb.DepositContainer{
+	readyDeposits := []*silapb.DepositContainer{
 		{
 			Index: 0,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1882,8 +1882,8 @@ func TestProposer_PendingDeposits_CantReturnMoreThanMax(t *testing.T) {
 		},
 		{
 			Index: 1,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1891,12 +1891,12 @@ func TestProposer_PendingDeposits_CantReturnMoreThanMax(t *testing.T) {
 		},
 	}
 
-	var recentDeposits []*ethpb.DepositContainer
+	var recentDeposits []*silapb.DepositContainer
 	for i := int64(2); i < 22; i++ {
-		recentDeposits = append(recentDeposits, &ethpb.DepositContainer{
+		recentDeposits = append(recentDeposits, &silapb.DepositContainer{
 			Index: i,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{byte(i)}, 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1936,7 +1936,7 @@ func TestProposer_PendingDeposits_CantReturnMoreThanMax(t *testing.T) {
 
 	// It should also return the recent deposits after their follow window.
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	deposits, err := bs.deposits(ctx, beaconState, &ethpb.Eth1Data{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.Eth1Data{})
 	require.NoError(t, err)
 	assert.Equal(t, params.BeaconConfig().MaxDeposits, uint64(len(deposits)), "Received unexpected number of pending deposits")
 }
@@ -1952,8 +1952,8 @@ func TestProposer_PendingDeposits_CantReturnMoreThanDepositCount(t *testing.T) {
 		},
 	}
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-		Eth1Data: &ethpb.Eth1Data{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+		Eth1Data: &silapb.Eth1Data{
 			BlockHash:    bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 5,
@@ -1968,11 +1968,11 @@ func TestProposer_PendingDeposits_CantReturnMoreThanDepositCount(t *testing.T) {
 	var mockSig [96]byte
 	var mockCreds [32]byte
 
-	readyDeposits := []*ethpb.DepositContainer{
+	readyDeposits := []*silapb.DepositContainer{
 		{
 			Index: 0,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1980,8 +1980,8 @@ func TestProposer_PendingDeposits_CantReturnMoreThanDepositCount(t *testing.T) {
 		},
 		{
 			Index: 1,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -1989,12 +1989,12 @@ func TestProposer_PendingDeposits_CantReturnMoreThanDepositCount(t *testing.T) {
 		},
 	}
 
-	var recentDeposits []*ethpb.DepositContainer
+	var recentDeposits []*silapb.DepositContainer
 	for i := int64(2); i < 22; i++ {
-		recentDeposits = append(recentDeposits, &ethpb.DepositContainer{
+		recentDeposits = append(recentDeposits, &silapb.DepositContainer{
 			Index: i,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{byte(i)}, 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -2034,7 +2034,7 @@ func TestProposer_PendingDeposits_CantReturnMoreThanDepositCount(t *testing.T) {
 
 	// It should also return the recent deposits after their follow window.
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	deposits, err := bs.deposits(ctx, beaconState, &ethpb.Eth1Data{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.Eth1Data{})
 	require.NoError(t, err)
 	assert.Equal(t, 3, len(deposits), "Received unexpected number of pending deposits")
 }
@@ -2050,8 +2050,8 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 		},
 	}
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-		Eth1Data: &ethpb.Eth1Data{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+		Eth1Data: &silapb.Eth1Data{
 			BlockHash:    bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 4,
@@ -2069,12 +2069,12 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 	var mockCreds [32]byte
 
 	// Using the merkleTreeIndex as the block number for this test...
-	finalizedDeposits := []*ethpb.DepositContainer{
+	finalizedDeposits := []*silapb.DepositContainer{
 		{
 			Index:           0,
 			Eth1BlockHeight: 10,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -2083,8 +2083,8 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 		{
 			Index:           1,
 			Eth1BlockHeight: 10,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -2092,12 +2092,12 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 		},
 	}
 
-	recentDeposits := []*ethpb.DepositContainer{
+	recentDeposits := []*silapb.DepositContainer{
 		{
 			Index:           2,
 			Eth1BlockHeight: 11,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("c"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -2106,8 +2106,8 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 		{
 			Index:           3,
 			Eth1BlockHeight: 11,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("d"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -2145,7 +2145,7 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 		HeadFetcher:            &mock.ChainService{State: beaconState, Root: blkRoot[:]},
 	}
 
-	dt, err := bs.depositTrie(ctx, &ethpb.Eth1Data{}, big.NewInt(int64(params.BeaconConfig().Eth1FollowDistance)))
+	dt, err := bs.depositTrie(ctx, &silapb.Eth1Data{}, big.NewInt(int64(params.BeaconConfig().Eth1FollowDistance)))
 	require.NoError(t, err)
 
 	actualRoot, err := dt.HashTreeRoot()
@@ -2166,8 +2166,8 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 		},
 	}
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-		Eth1Data: &ethpb.Eth1Data{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+		Eth1Data: &silapb.Eth1Data{
 			BlockHash:    bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 4,
@@ -2185,12 +2185,12 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 	var mockCreds [32]byte
 
 	// Using the merkleTreeIndex as the block number for this test...
-	finalizedDeposits := []*ethpb.DepositContainer{
+	finalizedDeposits := []*silapb.DepositContainer{
 		{
 			Index:           0,
 			Eth1BlockHeight: 10,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -2199,8 +2199,8 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 		{
 			Index:           1,
 			Eth1BlockHeight: 10,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -2208,12 +2208,12 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 		},
 	}
 
-	recentDeposits := []*ethpb.DepositContainer{
+	recentDeposits := []*silapb.DepositContainer{
 		{
 			Index:           2,
 			Eth1BlockHeight: 11,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("c"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -2222,8 +2222,8 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 		{
 			Index:           3,
 			Eth1BlockHeight: 11,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("d"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -2251,7 +2251,7 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 		depositCache.InsertPendingDeposit(ctx, dp.Deposit, dp.Eth1BlockHeight, dp.Index, root)
 	}
 	d := depositCache.AllDepositContainers(ctx)
-	origDeposit, ok := proto.Clone(d[0].Deposit).(*ethpb.Deposit)
+	origDeposit, ok := proto.Clone(d[0].Deposit).(*silapb.Deposit)
 	assert.Equal(t, true, ok)
 	junkCreds := mockCreds
 	copy(junkCreds[:1], []byte{'A'})
@@ -2274,7 +2274,7 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 		HeadFetcher:            &mock.ChainService{State: beaconState, Root: blkRoot[:]},
 	}
 
-	dt, err := bs.depositTrie(ctx, &ethpb.Eth1Data{}, big.NewInt(int64(params.BeaconConfig().Eth1FollowDistance)))
+	dt, err := bs.depositTrie(ctx, &silapb.Eth1Data{}, big.NewInt(int64(params.BeaconConfig().Eth1FollowDistance)))
 	require.NoError(t, err)
 
 	expectedRoot, err := depositTrie.HashTreeRoot()
@@ -2288,14 +2288,14 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 func TestProposer_ValidateDepositTrie(t *testing.T) {
 	tt := []struct {
 		name            string
-		eth1dataCreator func() *ethpb.Eth1Data
+		eth1dataCreator func() *silapb.Eth1Data
 		trieCreator     func() *trie.SparseMerkleTrie
 		success         bool
 	}{
 		{
 			name: "invalid trie items",
-			eth1dataCreator: func() *ethpb.Eth1Data {
-				return &ethpb.Eth1Data{DepositRoot: []byte{}, DepositCount: 10, BlockHash: []byte{}}
+			eth1dataCreator: func() *silapb.Eth1Data {
+				return &silapb.Eth1Data{DepositRoot: []byte{}, DepositCount: 10, BlockHash: []byte{}}
 			},
 			trieCreator: func() *trie.SparseMerkleTrie {
 				newTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
@@ -2306,13 +2306,13 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 		},
 		{
 			name: "invalid deposit root",
-			eth1dataCreator: func() *ethpb.Eth1Data {
+			eth1dataCreator: func() *silapb.Eth1Data {
 				newTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
 				assert.NoError(t, err)
 				assert.NoError(t, newTrie.Insert([]byte{'a'}, 0))
 				assert.NoError(t, newTrie.Insert([]byte{'b'}, 1))
 				assert.NoError(t, newTrie.Insert([]byte{'c'}, 2))
-				return &ethpb.Eth1Data{DepositRoot: []byte{'B'}, DepositCount: 3, BlockHash: []byte{}}
+				return &silapb.Eth1Data{DepositRoot: []byte{'B'}, DepositCount: 3, BlockHash: []byte{}}
 			},
 			trieCreator: func() *trie.SparseMerkleTrie {
 				newTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
@@ -2326,7 +2326,7 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 		},
 		{
 			name: "valid deposit trie",
-			eth1dataCreator: func() *ethpb.Eth1Data {
+			eth1dataCreator: func() *silapb.Eth1Data {
 				newTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
 				assert.NoError(t, err)
 				assert.NoError(t, newTrie.Insert([]byte{'a'}, 0))
@@ -2334,7 +2334,7 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 				assert.NoError(t, newTrie.Insert([]byte{'c'}, 2))
 				rt, err := newTrie.HashTreeRoot()
 				require.NoError(t, err)
-				return &ethpb.Eth1Data{DepositRoot: rt[:], DepositCount: 3, BlockHash: []byte{}}
+				return &silapb.Eth1Data{DepositRoot: rt[:], DepositCount: 3, BlockHash: []byte{}}
 			},
 			trieCreator: func() *trie.SparseMerkleTrie {
 				newTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
@@ -2380,12 +2380,12 @@ func TestProposer_Eth1Data_MajorityVote_SpansGenesis(t *testing.T) {
 		Eth1BlockFetcher:  p,
 		BlockFetcher:      p,
 		DepositFetcher:    depositCache,
-		HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{BlockHash: headBlockHash, DepositCount: 0}},
+		HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{BlockHash: headBlockHash, DepositCount: 0}},
 	}
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot: slot,
-		Eth1DataVotes: []*ethpb.Eth1Data{
+		Eth1DataVotes: []*silapb.Eth1Data{
 			{BlockHash: []byte("earliest"), DepositCount: 1},
 		},
 	})
@@ -2401,11 +2401,11 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 	slot := primitives.Slot(64 + followSlots)
 	earliestValidTime, latestValidTime := majorityVoteBoundaryTime(slot)
 
-	dc := ethpb.DepositContainer{
+	dc := silapb.DepositContainer{
 		Index:           0,
 		Eth1BlockHeight: 0,
-		Deposit: &ethpb.Deposit{
-			Data: &ethpb.Deposit_Data{
+		Deposit: &silapb.Deposit{
+			Data: &silapb.Deposit_Data{
 				PublicKey:             bytesutil.PadTo([]byte("a"), 48),
 				Signature:             make([]byte, 96),
 				WithdrawalCredentials: make([]byte, 32),
@@ -2427,9 +2427,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(52, earliestValidTime+2, []byte("second")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("first"), DepositCount: 1},
 				{BlockHash: []byte("first"), DepositCount: 1},
 				{BlockHash: []byte("second"), DepositCount: 1},
@@ -2443,7 +2443,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2463,9 +2463,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(52, earliestValidTime+2, []byte("second")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("earliest"), DepositCount: 1},
 				{BlockHash: []byte("earliest"), DepositCount: 1},
 				{BlockHash: []byte("second"), DepositCount: 1},
@@ -2479,7 +2479,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2499,9 +2499,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(51, earliestValidTime+1, []byte("first")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("first"), DepositCount: 1},
 				{BlockHash: []byte("latest"), DepositCount: 1},
 				{BlockHash: []byte("latest"), DepositCount: 1},
@@ -2515,7 +2515,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2536,9 +2536,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(51, earliestValidTime+1, []byte("first")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("before_range"), DepositCount: 1},
 				{BlockHash: []byte("before_range"), DepositCount: 1},
 				{BlockHash: []byte("first"), DepositCount: 1},
@@ -2552,7 +2552,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2573,9 +2573,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(100, latestValidTime, []byte("latest")).
 			InsertBlock(101, latestValidTime+1, []byte("after_range"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("first"), DepositCount: 1},
 				{BlockHash: []byte("after_range"), DepositCount: 1},
 				{BlockHash: []byte("after_range"), DepositCount: 1},
@@ -2589,7 +2589,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2610,9 +2610,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(52, earliestValidTime+2, []byte("second")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("unknown"), DepositCount: 1},
 				{BlockHash: []byte("unknown"), DepositCount: 1},
 				{BlockHash: []byte("first"), DepositCount: 1},
@@ -2626,7 +2626,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2644,12 +2644,12 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(49, earliestValidTime-1, []byte("before_range")).
 			InsertBlock(101, latestValidTime+1, []byte("after_range"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
 		})
 		require.NoError(t, err)
 
-		currentEth1Data := &ethpb.Eth1Data{DepositCount: 1, BlockHash: []byte("current")}
+		currentEth1Data := &silapb.Eth1Data{DepositCount: 1, BlockHash: []byte("current")}
 		ps := &Server{
 			ChainStartFetcher: p,
 			Eth1InfoFetcher:   p,
@@ -2676,9 +2676,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(52, earliestValidTime+2, []byte("second")).
 			InsertBlock(101, latestValidTime+1, []byte("after_range"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("before_range"), DepositCount: 1},
 				{BlockHash: []byte("after_range"), DepositCount: 1},
 			},
@@ -2691,7 +2691,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2710,9 +2710,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(50, earliestValidTime, []byte("earliest")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot:          slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{}})
+			Eth1DataVotes: []*silapb.Eth1Data{}})
 		require.NoError(t, err)
 
 		ps := &Server{
@@ -2721,7 +2721,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2740,13 +2740,13 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(50, earliestValidTime, []byte("earliest")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
 		})
 		require.NoError(t, err)
 
 		// Set the deposit count in current eth1data to exceed the latest most recent block's deposit count.
-		currentEth1Data := &ethpb.Eth1Data{DepositCount: 2, BlockHash: []byte("current")}
+		currentEth1Data := &silapb.Eth1Data{DepositCount: 2, BlockHash: []byte("current")}
 		ps := &Server{
 			ChainStartFetcher: p,
 			Eth1InfoFetcher:   p,
@@ -2774,9 +2774,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(52, earliestValidTime+2, []byte("second")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("first"), DepositCount: 1},
 				{BlockHash: []byte("second"), DepositCount: 1},
 			},
@@ -2789,7 +2789,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2810,9 +2810,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			InsertBlock(52, earliestValidTime+2, []byte("second")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("no_new_deposits"), DepositCount: 0},
 				{BlockHash: []byte("no_new_deposits"), DepositCount: 0},
 				{BlockHash: []byte("second"), DepositCount: 1},
@@ -2826,7 +2826,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2843,9 +2843,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 		t.Skip()
 		p := mockExecution.New().InsertBlock(50, earliestValidTime, []byte("earliest"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("earliest"), DepositCount: 1},
 			},
 		})
@@ -2857,7 +2857,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2877,9 +2877,9 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			// because of earliest block increment in the algorithm.
 			InsertBlock(50, earliestValidTime+1, []byte("first"))
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("before_range"), DepositCount: 1},
 			},
 		})
@@ -2891,7 +2891,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
@@ -2909,16 +2909,16 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 		p := mockExecution.New().
 			InsertBlock(50, earliestValidTime, []byte("earliest")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
-		p.Eth1Data = &ethpb.Eth1Data{
+		p.Eth1Data = &silapb.Eth1Data{
 			BlockHash: []byte("eth1data"),
 		}
 
 		depositCache, err := depositsnapshot.New()
 		require.NoError(t, err)
 
-		beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
+		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			Eth1DataVotes: []*ethpb.Eth1Data{
+			Eth1DataVotes: []*silapb.Eth1Data{
 				{BlockHash: []byte("earliest"), DepositCount: 1},
 			},
 		})
@@ -2930,7 +2930,7 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 			Eth1BlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{ETH1Data: &ethpb.Eth1Data{DepositCount: 0}},
+			HeadFetcher:       &mock.ChainService{ETH1Data: &silapb.Eth1Data{DepositCount: 0}},
 		}
 
 		ctx := t.Context()
@@ -2947,16 +2947,16 @@ func TestProposer_Eth1Data_MajorityVote(t *testing.T) {
 		p := mockExecution.New().
 			InsertBlock(50, earliestValidTime, []byte("earliest")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
-		p.Eth1Data = &ethpb.Eth1Data{
+		p.Eth1Data = &silapb.Eth1Data{
 			BlockHash: []byte("eth1data"),
 		}
 
 		depositCache, err := depositsnapshot.New()
 		require.NoError(t, err)
 
-		beaconState, err := state_native.InitializeFromProtoElectra(&ethpb.BeaconStateElectra{
+		beaconState, err := state_native.InitializeFromProtoElectra(&silapb.BeaconStateElectra{
 			Slot:     slot,
-			Eth1Data: &ethpb.Eth1Data{BlockHash: []byte("legacy"), DepositCount: 1},
+			Eth1Data: &silapb.Eth1Data{BlockHash: []byte("legacy"), DepositCount: 1},
 		})
 		require.NoError(t, err)
 
@@ -2992,44 +2992,44 @@ func TestProposer_FilterAttestation(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		inputAtts    func() []ethpb.Att
-		expectedAtts func(inputAtts []ethpb.Att) []ethpb.Att
+		inputAtts    func() []silapb.Att
+		expectedAtts func(inputAtts []silapb.Att) []silapb.Att
 	}{
 		{
 			name: "nil attestations",
-			inputAtts: func() []ethpb.Att {
+			inputAtts: func() []silapb.Att {
 				return nil
 			},
-			expectedAtts: func(inputAtts []ethpb.Att) []ethpb.Att {
-				return []ethpb.Att{}
+			expectedAtts: func(inputAtts []silapb.Att) []silapb.Att {
+				return []silapb.Att{}
 			},
 		},
 		{
 			name: "invalid attestations",
-			inputAtts: func() []ethpb.Att {
-				atts := make([]ethpb.Att, 10)
+			inputAtts: func() []silapb.Att {
+				atts := make([]silapb.Att, 10)
 				for i := range atts {
-					atts[i] = util.HydrateAttestation(&ethpb.Attestation{
-						Data: &ethpb.AttestationData{
+					atts[i] = util.HydrateAttestation(&silapb.Attestation{
+						Data: &silapb.AttestationData{
 							CommitteeIndex: primitives.CommitteeIndex(i),
 						},
 					})
 				}
 				return atts
 			},
-			expectedAtts: func(inputAtts []ethpb.Att) []ethpb.Att {
-				return []ethpb.Att{}
+			expectedAtts: func(inputAtts []silapb.Att) []silapb.Att {
+				return []silapb.Att{}
 			},
 		},
 		{
 			name: "filter aggregates ok",
-			inputAtts: func() []ethpb.Att {
-				atts := make([]ethpb.Att, 10)
+			inputAtts: func() []silapb.Att {
+				atts := make([]silapb.Att, 10)
 				for i := range atts {
-					atts[i] = util.HydrateAttestation(&ethpb.Attestation{
-						Data: &ethpb.AttestationData{
+					atts[i] = util.HydrateAttestation(&silapb.Attestation{
+						Data: &silapb.AttestationData{
 							CommitteeIndex: primitives.CommitteeIndex(i),
-							Source:         &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
+							Source:         &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]},
 						},
 						AggregationBits: bitfield.Bitlist{0b00010010},
 					})
@@ -3042,7 +3042,7 @@ func TestProposer_FilterAttestation(t *testing.T) {
 					require.NoError(t, err)
 					sigs := make([]bls.Signature, len(attestingIndices))
 					var zeroSig [96]byte
-					atts[i].(*ethpb.Attestation).Signature = zeroSig[:]
+					atts[i].(*silapb.Attestation).Signature = zeroSig[:]
 
 					for i, indice := range attestingIndices {
 						hashTreeRoot, err := signing.ComputeSigningRoot(atts[i].GetData(), domain)
@@ -3050,12 +3050,12 @@ func TestProposer_FilterAttestation(t *testing.T) {
 						sig := privKeys[indice].Sign(hashTreeRoot[:])
 						sigs[i] = sig
 					}
-					atts[i].(*ethpb.Attestation).Signature = bls.AggregateSignatures(sigs).Marshal()
+					atts[i].(*silapb.Attestation).Signature = bls.AggregateSignatures(sigs).Marshal()
 				}
 				return atts
 			},
-			expectedAtts: func(inputAtts []ethpb.Att) []ethpb.Att {
-				return []ethpb.Att{inputAtts[0], inputAtts[1]}
+			expectedAtts: func(inputAtts []silapb.Att) []silapb.Att {
+				return []silapb.Att{inputAtts[0], inputAtts[1]}
 			},
 		},
 	}
@@ -3085,8 +3085,8 @@ func TestProposer_Deposits_ReturnsEmptyList_IfLatestEth1DataEqGenesisEth1Block(t
 		GenesisEth1Block: height,
 	}
 
-	beaconState, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{
-		Eth1Data: &ethpb.Eth1Data{
+	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
+		Eth1Data: &silapb.Eth1Data{
 			BlockHash:   bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot: make([]byte, 32),
 		},
@@ -3101,11 +3101,11 @@ func TestProposer_Deposits_ReturnsEmptyList_IfLatestEth1DataEqGenesisEth1Block(t
 	var mockSig [96]byte
 	var mockCreds [32]byte
 
-	readyDeposits := []*ethpb.DepositContainer{
+	readyDeposits := []*silapb.DepositContainer{
 		{
 			Index: 0,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -3113,8 +3113,8 @@ func TestProposer_Deposits_ReturnsEmptyList_IfLatestEth1DataEqGenesisEth1Block(t
 		},
 		{
 			Index: 1,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -3122,12 +3122,12 @@ func TestProposer_Deposits_ReturnsEmptyList_IfLatestEth1DataEqGenesisEth1Block(t
 		},
 	}
 
-	var recentDeposits []*ethpb.DepositContainer
+	var recentDeposits []*silapb.DepositContainer
 	for i := int64(2); i < 22; i++ {
-		recentDeposits = append(recentDeposits, &ethpb.DepositContainer{
+		recentDeposits = append(recentDeposits, &silapb.DepositContainer{
 			Index: i,
-			Deposit: &ethpb.Deposit{
-				Data: &ethpb.Deposit_Data{
+			Deposit: &silapb.Deposit{
+				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{byte(i)}, 48),
 					Signature:             mockSig[:],
 					WithdrawalCredentials: mockCreds[:],
@@ -3167,7 +3167,7 @@ func TestProposer_Deposits_ReturnsEmptyList_IfLatestEth1DataEqGenesisEth1Block(t
 
 	// It should also return the recent deposits after their follow window.
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	deposits, err := bs.deposits(ctx, beaconState, &ethpb.Eth1Data{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.Eth1Data{})
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(deposits), "Received unexpected number of pending deposits")
 }
@@ -3179,12 +3179,12 @@ func TestProposer_DeleteAttsInPool_Aggregated(t *testing.T) {
 	priv, err := bls.RandKey()
 	require.NoError(t, err)
 	sig := priv.Sign([]byte("foo")).Marshal()
-	aggregatedAtts := []ethpb.Att{
-		util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b10101}, Signature: sig}),
-		util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b11010}, Signature: sig})}
-	unaggregatedAtts := []ethpb.Att{
-		util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b10010}, Signature: sig}),
-		util.HydrateAttestation(&ethpb.Attestation{Data: &ethpb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b10100}, Signature: sig})}
+	aggregatedAtts := []silapb.Att{
+		util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b10101}, Signature: sig}),
+		util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b11010}, Signature: sig})}
+	unaggregatedAtts := []silapb.Att{
+		util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b10010}, Signature: sig}),
+		util.HydrateAttestation(&silapb.Attestation{Data: &silapb.AttestationData{Slot: 1}, AggregationBits: bitfield.Bitlist{0b10100}, Signature: sig})}
 
 	require.NoError(t, s.AttPool.SaveAggregatedAttestations(aggregatedAtts))
 	require.NoError(t, s.AttPool.SaveUnaggregatedAttestations(unaggregatedAtts))
@@ -3199,7 +3199,7 @@ func TestProposer_DeleteAttsInPool_Aggregated(t *testing.T) {
 
 func TestProposer_PrepareBeaconProposer(t *testing.T) {
 	type args struct {
-		request *ethpb.PrepareBeaconProposerRequest
+		request *silapb.PrepareBeaconProposerRequest
 	}
 	tests := []struct {
 		name    string
@@ -3209,8 +3209,8 @@ func TestProposer_PrepareBeaconProposer(t *testing.T) {
 		{
 			name: "Happy Path",
 			args: args{
-				request: &ethpb.PrepareBeaconProposerRequest{
-					Recipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+				request: &silapb.PrepareBeaconProposerRequest{
+					Recipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 						{
 							FeeRecipient:   make([]byte, fieldparams.FeeRecipientLength),
 							ValidatorIndex: 1,
@@ -3223,8 +3223,8 @@ func TestProposer_PrepareBeaconProposer(t *testing.T) {
 		{
 			name: "invalid fee recipient length",
 			args: args{
-				request: &ethpb.PrepareBeaconProposerRequest{
-					Recipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+				request: &silapb.PrepareBeaconProposerRequest{
+					Recipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 						{
 							FeeRecipient:   make([]byte, fieldparams.BLSPubkeyLength),
 							ValidatorIndex: 1,
@@ -3273,8 +3273,8 @@ func TestProposer_PrepareBeaconProposerOverlapping(t *testing.T) {
 
 	// New validator
 	f := bytesutil.PadTo([]byte{0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF}, fieldparams.FeeRecipientLength)
-	req := &ethpb.PrepareBeaconProposerRequest{
-		Recipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+	req := &silapb.PrepareBeaconProposerRequest{
+		Recipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 			{FeeRecipient: f, ValidatorIndex: 1},
 		},
 	}
@@ -3291,8 +3291,8 @@ func TestProposer_PrepareBeaconProposerOverlapping(t *testing.T) {
 	// Same validator with different fee recipient
 	hook.Reset()
 	f = bytesutil.PadTo([]byte{0x01, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF}, fieldparams.FeeRecipientLength)
-	req = &ethpb.PrepareBeaconProposerRequest{
-		Recipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+	req = &silapb.PrepareBeaconProposerRequest{
+		Recipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 			{FeeRecipient: f, ValidatorIndex: 1},
 		},
 	}
@@ -3303,8 +3303,8 @@ func TestProposer_PrepareBeaconProposerOverlapping(t *testing.T) {
 	// More than one validator
 	hook.Reset()
 	f = bytesutil.PadTo([]byte{0x01, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF}, fieldparams.FeeRecipientLength)
-	req = &ethpb.PrepareBeaconProposerRequest{
-		Recipients: []*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{
+	req = &silapb.PrepareBeaconProposerRequest{
+		Recipients: []*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{
 			{FeeRecipient: f, ValidatorIndex: 1},
 			{FeeRecipient: f, ValidatorIndex: 2},
 		},
@@ -3328,12 +3328,12 @@ func BenchmarkServer_PrepareBeaconProposer(b *testing.B) {
 		TrackedValidatorsCache: cache.NewTrackedValidatorsCache(),
 	}
 	f := bytesutil.PadTo([]byte{0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF, 0x01, 0xFF}, fieldparams.FeeRecipientLength)
-	recipients := make([]*ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer, 0)
+	recipients := make([]*silapb.PrepareBeaconProposerRequest_FeeRecipientContainer, 0)
 	for i := range 10000 {
-		recipients = append(recipients, &ethpb.PrepareBeaconProposerRequest_FeeRecipientContainer{FeeRecipient: f, ValidatorIndex: primitives.ValidatorIndex(i)})
+		recipients = append(recipients, &silapb.PrepareBeaconProposerRequest_FeeRecipientContainer{FeeRecipient: f, ValidatorIndex: primitives.ValidatorIndex(i)})
 	}
 
-	req := &ethpb.PrepareBeaconProposerRequest{
+	req := &silapb.PrepareBeaconProposerRequest{
 		Recipients: recipients,
 	}
 
@@ -3348,7 +3348,7 @@ func BenchmarkServer_PrepareBeaconProposer(b *testing.B) {
 func TestProposer_SubmitValidatorRegistrations(t *testing.T) {
 	ctx := t.Context()
 	proposerServer := &Server{}
-	reg := &ethpb.SignedValidatorRegistrationsV1{}
+	reg := &silapb.SignedValidatorRegistrationsV1{}
 	_, err := proposerServer.SubmitValidatorRegistrations(ctx, reg)
 	require.ErrorContains(t, builder.ErrNoBuilder.Error(), err)
 	proposerServer = &Server{BlockBuilder: &builderTest.MockBuilderService{}}
@@ -3384,26 +3384,26 @@ func TestProposer_GetFeeRecipientByPubKey(t *testing.T) {
 	}
 	pubkey, err := hexutil.Decode("0xa057816155ad77931185101128655c0191bd0214c201ca48ed887f6c4c6adf334070efcd75140eada5ac83a92506dd7a")
 	require.NoError(t, err)
-	resp, err := proposerServer.GetFeeRecipientByPubKey(ctx, &ethpb.FeeRecipientByPubKeyRequest{
+	resp, err := proposerServer.GetFeeRecipientByPubKey(ctx, &silapb.FeeRecipientByPubKeyRequest{
 		PublicKey: pubkey,
 	})
 	require.NoError(t, err)
 
 	require.Equal(t, params.BeaconConfig().DefaultFeeRecipient.Hex(), hexutil.Encode(resp.FeeRecipient))
 	params.BeaconConfig().DefaultFeeRecipient = common.HexToAddress("0x046Fb65722E7b2455012BFEBf6177F1D2e9728D9")
-	resp, err = proposerServer.GetFeeRecipientByPubKey(ctx, &ethpb.FeeRecipientByPubKeyRequest{
+	resp, err = proposerServer.GetFeeRecipientByPubKey(ctx, &silapb.FeeRecipientByPubKeyRequest{
 		PublicKey: beaconState.Validators()[0].PublicKey,
 	})
 	require.NoError(t, err)
 
 	require.Equal(t, params.BeaconConfig().DefaultFeeRecipient.Hex(), common.BytesToAddress(resp.FeeRecipient).Hex())
-	index, err := proposerServer.ValidatorIndex(ctx, &ethpb.ValidatorIndexRequest{
+	index, err := proposerServer.ValidatorIndex(ctx, &silapb.ValidatorIndexRequest{
 		PublicKey: beaconState.Validators()[0].PublicKey,
 	})
 	require.NoError(t, err)
 	err = proposerServer.BeaconDB.SaveFeeRecipientsByValidatorIDs(ctx, []primitives.ValidatorIndex{index.Index}, []common.Address{common.HexToAddress("0x055Fb65722E7b2455012BFEBf6177F1D2e9728D8")})
 	require.NoError(t, err)
-	resp, err = proposerServer.GetFeeRecipientByPubKey(ctx, &ethpb.FeeRecipientByPubKeyRequest{
+	resp, err = proposerServer.GetFeeRecipientByPubKey(ctx, &silapb.FeeRecipientByPubKeyRequest{
 		PublicKey: beaconState.Validators()[0].PublicKey,
 	})
 	require.NoError(t, err)
@@ -3528,11 +3528,11 @@ func TestProposer_GetParentHeadState(t *testing.T) {
 }
 
 func TestProposer_ElectraBlobsAndProofs(t *testing.T) {
-	electraContents := &ethpb.SignedBeaconBlockContentsElectra{Block: &ethpb.SignedBeaconBlockElectra{}}
+	electraContents := &silapb.SignedBeaconBlockContentsElectra{Block: &silapb.SignedBeaconBlockElectra{}}
 	electraContents.KzgProofs = make([][]byte, 10)
 	electraContents.Blobs = make([][]byte, 10)
 
-	genBlock := &ethpb.GenericSignedBeaconBlock{Block: &ethpb.GenericSignedBeaconBlock_Electra{Electra: electraContents}}
+	genBlock := &silapb.GenericSignedBeaconBlock{Block: &silapb.GenericSignedBeaconBlock_Electra{Electra: electraContents}}
 	blobs, proofs, err := blobsAndProofs(genBlock)
 	require.NoError(t, err)
 	require.Equal(t, 10, len(blobs))
@@ -3584,8 +3584,8 @@ func TestServer_ProposeBeaconBlock_PostFuluBlindedBlock(t *testing.T) {
 		blindedBlock.Message.ParentRoot = parentRoot[:]
 		blindedBlock.Message.StateRoot = make([]byte, 32)
 
-		req := &ethpb.GenericSignedBeaconBlock{
-			Block: &ethpb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blindedBlock},
+		req := &silapb.GenericSignedBeaconBlock{
+			Block: &silapb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blindedBlock},
 		}
 
 		// This should trigger the post-Fulu early return path
@@ -3633,8 +3633,8 @@ func TestServer_ProposeBeaconBlock_PostFuluBlindedBlock(t *testing.T) {
 		blindedBlock.Message.ParentRoot = parentRoot[:]
 		blindedBlock.Message.StateRoot = make([]byte, 32)
 
-		req := &ethpb.GenericSignedBeaconBlock{
-			Block: &ethpb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blindedBlock},
+		req := &silapb.GenericSignedBeaconBlock{
+			Block: &silapb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blindedBlock},
 		}
 
 		_, err := proposerServer.ProposeBeaconBlock(ctx, req)
@@ -3681,8 +3681,8 @@ func TestServer_ProposeBeaconBlock_PostFuluBlindedBlock(t *testing.T) {
 		blindedBlock.Message.ParentRoot = parentRoot[:]
 		blindedBlock.Message.StateRoot = make([]byte, 32)
 
-		req := &ethpb.GenericSignedBeaconBlock{
-			Block: &ethpb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blindedBlock},
+		req := &silapb.GenericSignedBeaconBlock{
+			Block: &silapb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blindedBlock},
 		}
 
 		// This should NOT trigger the post-Fulu early return path, but use handleBlindedBlock instead
@@ -3730,8 +3730,8 @@ func TestServer_ProposeBeaconBlock_PostFuluBlindedBlock(t *testing.T) {
 		blindedBlock.Message.ParentRoot = parentRoot[:]
 		blindedBlock.Message.StateRoot = make([]byte, 32)
 
-		req := &ethpb.GenericSignedBeaconBlock{
-			Block: &ethpb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blindedBlock},
+		req := &silapb.GenericSignedBeaconBlock{
+			Block: &silapb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blindedBlock},
 		}
 
 		// Should trigger post-Fulu path since epoch 5 >= FuluForkEpoch (5)
@@ -3772,9 +3772,9 @@ func TestServer_ProposeBeaconBlock_PostFuluBlindedBlock(t *testing.T) {
 		unblindeBlock.Block.ParentRoot = parentRoot[:]
 		unblindeBlock.Block.StateRoot = make([]byte, 32)
 
-		req := &ethpb.GenericSignedBeaconBlock{
-			Block: &ethpb.GenericSignedBeaconBlock_Deneb{
-				Deneb: &ethpb.SignedBeaconBlockContentsDeneb{
+		req := &silapb.GenericSignedBeaconBlock{
+			Block: &silapb.GenericSignedBeaconBlock_Deneb{
+				Deneb: &silapb.SignedBeaconBlockContentsDeneb{
 					Block: unblindeBlock,
 				},
 			},
@@ -3824,8 +3824,8 @@ func TestServer_ProposeBeaconBlock_PostFuluBlindedBlock(t *testing.T) {
 		blindedBlock.Message.ParentRoot = parentRoot[:]
 		blindedBlock.Message.StateRoot = make([]byte, 32)
 
-		req := &ethpb.GenericSignedBeaconBlock{
-			Block: &ethpb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blindedBlock},
+		req := &silapb.GenericSignedBeaconBlock{
+			Block: &silapb.GenericSignedBeaconBlock_BlindedDeneb{BlindedDeneb: blindedBlock},
 		}
 
 		// Should handle 502 error gracefully and continue with original blinded block

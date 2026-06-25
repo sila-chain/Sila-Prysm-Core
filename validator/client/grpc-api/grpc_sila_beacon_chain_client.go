@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/eth/helpers"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/helpers"
 	statenative "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/validator"
-	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/eth/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
 	validatorHelpers "github.com/sila-chain/Sila-Consensus-Core/v7/validator/helpers"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -22,12 +22,12 @@ type grpcSilaChainClient struct {
 }
 
 func (g grpcSilaChainClient) ValidatorCount(ctx context.Context, _ string, statuses []validator.Status) ([]iface.ValidatorCount, error) {
-	resp, err := g.chainClient.Validators(ctx, &ethpb.ListValidatorsRequest{PageSize: 0})
+	resp, err := g.chainClient.Validators(ctx, &silapb.ListValidatorsRequest{PageSize: 0})
 	if err != nil {
 		return nil, errors.Wrap(err, "list validators failed")
 	}
 
-	var vals []*ethpb.Validator
+	var vals []*silapb.Validator
 	for _, val := range resp.ValidatorList {
 		vals = append(vals, val.Validator)
 	}
@@ -52,7 +52,7 @@ func (g grpcSilaChainClient) ValidatorCount(ctx context.Context, _ string, statu
 }
 
 // validatorCountByStatus returns a slice of validator count for each status in the given epoch.
-func validatorCountByStatus(validators []*ethpb.Validator, statuses []validator.Status, epoch primitives.Epoch) ([]iface.ValidatorCount, error) {
+func validatorCountByStatus(validators []*silapb.Validator, statuses []validator.Status, epoch primitives.Epoch) ([]iface.ValidatorCount, error) {
 	countByStatus := make(map[validator.Status]uint64)
 	for _, val := range validators {
 		readOnlyVal, err := statenative.NewValidator(val)
@@ -91,7 +91,7 @@ func validatorCountByStatus(validators []*ethpb.Validator, statuses []validator.
 	return resp, nil
 }
 
-func (c *grpcSilaChainClient) ValidatorPerformance(ctx context.Context, in *ethpb.ValidatorPerformanceRequest) (*ethpb.ValidatorPerformanceResponse, error) {
+func (c *grpcSilaChainClient) ValidatorPerformance(ctx context.Context, in *silapb.ValidatorPerformanceRequest) (*silapb.ValidatorPerformanceResponse, error) {
 	return c.chainClient.ValidatorPerformance(ctx, in)
 }
 

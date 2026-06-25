@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -52,19 +52,19 @@ func buildBlockResult(
 	}, nil
 }
 
-func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *ethpb.GenericSignedBeaconBlock) (*ethpb.ProposeResponse, error) {
+func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *silapb.GenericSignedBeaconBlock) (*silapb.ProposeResponse, error) {
 	var res *blockProcessingResult
 	var err error
 	switch blockType := in.Block.(type) {
-	case *ethpb.GenericSignedBeaconBlock_Phase0:
+	case *silapb.GenericSignedBeaconBlock_Phase0:
 		res, err = buildBlockResult("phase0", false, blockType.Phase0, blockType.Phase0.Block, func() ([]byte, error) {
 			return json.Marshal(structs.SignedBeaconBlockPhase0FromConsensus(blockType.Phase0))
 		})
-	case *ethpb.GenericSignedBeaconBlock_Altair:
+	case *silapb.GenericSignedBeaconBlock_Altair:
 		res, err = buildBlockResult("altair", false, blockType.Altair, blockType.Altair.Block, func() ([]byte, error) {
 			return json.Marshal(structs.SignedBeaconBlockAltairFromConsensus(blockType.Altair))
 		})
-	case *ethpb.GenericSignedBeaconBlock_Bellatrix:
+	case *silapb.GenericSignedBeaconBlock_Bellatrix:
 		res, err = buildBlockResult("bellatrix", false, blockType.Bellatrix, blockType.Bellatrix.Block, func() ([]byte, error) {
 			signedBlock, err := structs.SignedBeaconBlockBellatrixFromConsensus(blockType.Bellatrix)
 			if err != nil {
@@ -72,7 +72,7 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 			}
 			return json.Marshal(signedBlock)
 		})
-	case *ethpb.GenericSignedBeaconBlock_BlindedBellatrix:
+	case *silapb.GenericSignedBeaconBlock_BlindedBellatrix:
 		res, err = buildBlockResult("bellatrix", true, blockType.BlindedBellatrix, blockType.BlindedBellatrix.Block, func() ([]byte, error) {
 			signedBlock, err := structs.SignedBlindedBeaconBlockBellatrixFromConsensus(blockType.BlindedBellatrix)
 			if err != nil {
@@ -80,7 +80,7 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 			}
 			return json.Marshal(signedBlock)
 		})
-	case *ethpb.GenericSignedBeaconBlock_Capella:
+	case *silapb.GenericSignedBeaconBlock_Capella:
 		res, err = buildBlockResult("capella", false, blockType.Capella, blockType.Capella.Block, func() ([]byte, error) {
 			signedBlock, err := structs.SignedBeaconBlockCapellaFromConsensus(blockType.Capella)
 			if err != nil {
@@ -88,7 +88,7 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 			}
 			return json.Marshal(signedBlock)
 		})
-	case *ethpb.GenericSignedBeaconBlock_BlindedCapella:
+	case *silapb.GenericSignedBeaconBlock_BlindedCapella:
 		res, err = buildBlockResult("capella", true, blockType.BlindedCapella, blockType.BlindedCapella.Block, func() ([]byte, error) {
 			signedBlock, err := structs.SignedBlindedBeaconBlockCapellaFromConsensus(blockType.BlindedCapella)
 			if err != nil {
@@ -96,7 +96,7 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 			}
 			return json.Marshal(signedBlock)
 		})
-	case *ethpb.GenericSignedBeaconBlock_Deneb:
+	case *silapb.GenericSignedBeaconBlock_Deneb:
 		res, err = buildBlockResult("deneb", false, blockType.Deneb, blockType.Deneb.Block, func() ([]byte, error) {
 			signedBlock, err := structs.SignedBeaconBlockContentsDenebFromConsensus(blockType.Deneb)
 			if err != nil {
@@ -104,7 +104,7 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 			}
 			return json.Marshal(signedBlock)
 		})
-	case *ethpb.GenericSignedBeaconBlock_BlindedDeneb:
+	case *silapb.GenericSignedBeaconBlock_BlindedDeneb:
 		res, err = buildBlockResult("deneb", true, blockType.BlindedDeneb, blockType.BlindedDeneb, func() ([]byte, error) {
 			signedBlock, err := structs.SignedBlindedBeaconBlockDenebFromConsensus(blockType.BlindedDeneb)
 			if err != nil {
@@ -112,7 +112,7 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 			}
 			return json.Marshal(signedBlock)
 		})
-	case *ethpb.GenericSignedBeaconBlock_Electra:
+	case *silapb.GenericSignedBeaconBlock_Electra:
 		res, err = buildBlockResult("electra", false, blockType.Electra, blockType.Electra.Block, func() ([]byte, error) {
 			signedBlock, err := structs.SignedBeaconBlockContentsElectraFromConsensus(blockType.Electra)
 			if err != nil {
@@ -120,7 +120,7 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 			}
 			return json.Marshal(signedBlock)
 		})
-	case *ethpb.GenericSignedBeaconBlock_BlindedElectra:
+	case *silapb.GenericSignedBeaconBlock_BlindedElectra:
 		res, err = buildBlockResult("electra", true, blockType.BlindedElectra, blockType.BlindedElectra, func() ([]byte, error) {
 			signedBlock, err := structs.SignedBlindedBeaconBlockElectraFromConsensus(blockType.BlindedElectra)
 			if err != nil {
@@ -128,7 +128,7 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 			}
 			return json.Marshal(signedBlock)
 		})
-	case *ethpb.GenericSignedBeaconBlock_Fulu:
+	case *silapb.GenericSignedBeaconBlock_Fulu:
 		res, err = buildBlockResult("fulu", false, blockType.Fulu, blockType.Fulu.Block, func() ([]byte, error) {
 			signedBlock, err := structs.SignedBeaconBlockContentsFuluFromConsensus(blockType.Fulu)
 			if err != nil {
@@ -136,7 +136,7 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 			}
 			return json.Marshal(signedBlock)
 		})
-	case *ethpb.GenericSignedBeaconBlock_BlindedFulu:
+	case *silapb.GenericSignedBeaconBlock_BlindedFulu:
 		res, err = buildBlockResult("fulu", true, blockType.BlindedFulu, blockType.BlindedFulu, func() ([]byte, error) {
 			signedBlock, err := structs.SignedBlindedBeaconBlockFuluFromConsensus(blockType.BlindedFulu)
 			if err != nil {
@@ -144,7 +144,7 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 			}
 			return json.Marshal(signedBlock)
 		})
-	case *ethpb.GenericSignedBeaconBlock_Gloas:
+	case *silapb.GenericSignedBeaconBlock_Gloas:
 		res, err = buildBlockResult("gloas", false, blockType.Gloas, blockType.Gloas.Block, func() ([]byte, error) {
 			signedBlock, err := structs.SignedBeaconBlockGloasFromConsensus(blockType.Gloas)
 			if err != nil {
@@ -217,5 +217,5 @@ func (c *beaconApiValidatorClient) proposeBeaconBlock(ctx context.Context, in *e
 		}
 	}
 
-	return &ethpb.ProposeResponse{BlockRoot: res.beaconBlockRoot[:]}, nil
+	return &silapb.ProposeResponse{BlockRoot: res.beaconBlockRoot[:]}, nil
 }

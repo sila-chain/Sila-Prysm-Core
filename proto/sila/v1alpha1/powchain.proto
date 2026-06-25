@@ -5,7 +5,7 @@ package ethereum.eth.v1alpha1;
 import "google/protobuf/descriptor.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
 import "proto/sila/v1alpha1/beacon_state.proto";
-import "proto/eth/ext/options.proto";
+import "proto/silaapi/ext/options.proto";
 
 option csharp_namespace = "Ethereum.Eth.V1alpha1";
 option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";

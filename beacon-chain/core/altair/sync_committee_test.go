@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -20,9 +20,9 @@ import (
 
 func TestSyncCommitteeIndices_CanGet(t *testing.T) {
 	getState := func(t *testing.T, count uint64, vers int) state.BeaconState {
-		validators := make([]*ethpb.Validator, count)
+		validators := make([]*silapb.Validator, count)
 		for i := range validators {
-			validators[i] = &ethpb.Validator{
+			validators[i] = &silapb.Validator{
 				ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 				EffectiveBalance: params.BeaconConfig().MinDepositAmount,
 			}
@@ -31,11 +31,11 @@ func TestSyncCommitteeIndices_CanGet(t *testing.T) {
 		var err error
 		switch vers {
 		case version.Altair:
-			st, err = state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+			st, err = state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 				RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 			})
 		case version.Electra:
-			st, err = state_native.InitializeFromProtoElectra(&ethpb.BeaconStateElectra{
+			st, err = state_native.InitializeFromProtoElectra(&silapb.BeaconStateElectra{
 				RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 			})
 		default:
@@ -112,14 +112,14 @@ func TestSyncCommitteeIndices_CanGet(t *testing.T) {
 func TestSyncCommitteeIndices_DifferentPeriods(t *testing.T) {
 	helpers.ClearCache()
 	getState := func(t *testing.T, count uint64) state.BeaconState {
-		validators := make([]*ethpb.Validator, count)
+		validators := make([]*silapb.Validator, count)
 		for i := range validators {
-			validators[i] = &ethpb.Validator{
+			validators[i] = &silapb.Validator{
 				ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 				EffectiveBalance: params.BeaconConfig().MinDepositAmount,
 			}
 		}
-		st, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+		st, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 			Validators:  validators,
 			RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 		})
@@ -146,17 +146,17 @@ func TestSyncCommitteeIndices_DifferentPeriods(t *testing.T) {
 
 func TestSyncCommittee_CanGet(t *testing.T) {
 	getState := func(t *testing.T, count uint64) state.BeaconState {
-		validators := make([]*ethpb.Validator, count)
+		validators := make([]*silapb.Validator, count)
 		for i := range validators {
 			blsKey, err := bls.RandKey()
 			require.NoError(t, err)
-			validators[i] = &ethpb.Validator{
+			validators[i] = &silapb.Validator{
 				ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 				EffectiveBalance: params.BeaconConfig().MinDepositAmount,
 				PublicKey:        blsKey.PublicKey().Marshal(),
 			}
 		}
-		st, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+		st, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 			Validators:  validators,
 			RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 		})
@@ -220,7 +220,7 @@ func TestSyncCommittee_CanGet(t *testing.T) {
 func TestValidateNilSyncContribution(t *testing.T) {
 	tests := []struct {
 		name    string
-		s       *ethpb.SignedContributionAndProof
+		s       *silapb.SignedContributionAndProof
 		wantErr bool
 	}{
 		{
@@ -230,27 +230,27 @@ func TestValidateNilSyncContribution(t *testing.T) {
 		},
 		{
 			name:    "nil message",
-			s:       &ethpb.SignedContributionAndProof{},
+			s:       &silapb.SignedContributionAndProof{},
 			wantErr: true,
 		},
 		{
 			name:    "nil contribution",
-			s:       &ethpb.SignedContributionAndProof{Message: &ethpb.ContributionAndProof{}},
+			s:       &silapb.SignedContributionAndProof{Message: &silapb.ContributionAndProof{}},
 			wantErr: true,
 		},
 		{
 			name: "nil bitfield",
-			s: &ethpb.SignedContributionAndProof{
-				Message: &ethpb.ContributionAndProof{
-					Contribution: &ethpb.SyncCommitteeContribution{},
+			s: &silapb.SignedContributionAndProof{
+				Message: &silapb.ContributionAndProof{
+					Contribution: &silapb.SyncCommitteeContribution{},
 				}},
 			wantErr: true,
 		},
 		{
 			name: "non nil sync contribution",
-			s: &ethpb.SignedContributionAndProof{
-				Message: &ethpb.ContributionAndProof{
-					Contribution: &ethpb.SyncCommitteeContribution{
+			s: &silapb.SignedContributionAndProof{
+				Message: &silapb.ContributionAndProof{
+					Contribution: &silapb.SyncCommitteeContribution{
 						AggregationBits: []byte{},
 					},
 				}},
@@ -393,17 +393,17 @@ func Test_ValidateSyncMessageTime(t *testing.T) {
 }
 
 func getState(t *testing.T, count uint64) state.BeaconState {
-	validators := make([]*ethpb.Validator, count)
+	validators := make([]*silapb.Validator, count)
 	for i := range validators {
 		blsKey, err := bls.RandKey()
 		require.NoError(t, err)
-		validators[i] = &ethpb.Validator{
+		validators[i] = &silapb.Validator{
 			ExitEpoch:        params.BeaconConfig().FarFutureEpoch,
 			EffectiveBalance: params.BeaconConfig().MinDepositAmount,
 			PublicKey:        blsKey.PublicKey().Marshal(),
 		}
 	}
-	st, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+	st, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 		Validators:  validators,
 		RandaoMixes: make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 	})

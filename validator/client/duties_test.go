@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -31,7 +31,7 @@ func TestUpdateDuties_ReturnsError(t *testing.T) {
 	v := validator{
 		validatorClient: client,
 		km:              newMockKeymanager(t, randKeypair(t)),
-		duties:          testDutyStore(&ethpb.ValidatorDuty{CommitteeIndex: 1}),
+		duties:          testDutyStore(&silapb.ValidatorDuty{CommitteeIndex: 1}),
 	}
 
 	expected := errors.New("bad")
@@ -50,8 +50,8 @@ func TestUpdateDuties_OK(t *testing.T) {
 	defer ctrl.Finish()
 	client := validatormock.NewMockValidatorClient(ctrl)
 
-	resp := &ethpb.ValidatorDutiesContainer{
-		CurrentEpochDuties: []*ethpb.ValidatorDuty{
+	resp := &silapb.ValidatorDutiesContainer{
+		CurrentEpochDuties: []*silapb.ValidatorDuty{
 			{
 				AttesterSlot:    params.BeaconConfig().SlotsPerEpoch,
 				ValidatorIndex:  200,
@@ -80,7 +80,7 @@ func TestUpdateDuties_OK(t *testing.T) {
 		gomock.Any(),
 		gomock.Any(),
 		gomock.Any(),
-	).DoAndReturn(func(_ context.Context, _ *ethpb.CommitteeSubnetsSubscribeRequest, _ []*ethpb.ValidatorDuty) (*emptypb.Empty, error) {
+	).DoAndReturn(func(_ context.Context, _ *silapb.CommitteeSubnetsSubscribeRequest, _ []*silapb.ValidatorDuty) (*emptypb.Empty, error) {
 		wg.Done()
 		return nil, nil
 	})
@@ -91,7 +91,7 @@ func TestUpdateDuties_OK(t *testing.T) {
 
 	snap := v.duties.snapshot()
 	require.Equal(t, 1, snap.currentDutyCount(), "Expected one duty")
-	var gotDuty *ethpb.ValidatorDuty
+	var gotDuty *silapb.ValidatorDuty
 	for _, d := range snap.currentDuties() {
 		gotDuty = d
 	}
@@ -121,8 +121,8 @@ func TestUpdateDuties_OK_FilterBlacklistedPublicKeys(t *testing.T) {
 	}
 	v.aggSelector = testLocalSelector(t, &v)
 
-	resp := &ethpb.ValidatorDutiesContainer{
-		CurrentEpochDuties: []*ethpb.ValidatorDuty{},
+	resp := &silapb.ValidatorDutiesContainer{
+		CurrentEpochDuties: []*silapb.ValidatorDuty{},
 	}
 	client.EXPECT().Duties(
 		gomock.Any(),
@@ -135,7 +135,7 @@ func TestUpdateDuties_OK_FilterBlacklistedPublicKeys(t *testing.T) {
 		gomock.Any(),
 		gomock.Any(),
 		gomock.Any(),
-	).DoAndReturn(func(_ context.Context, _ *ethpb.CommitteeSubnetsSubscribeRequest, _ []*ethpb.ValidatorDuty) (*emptypb.Empty, error) {
+	).DoAndReturn(func(_ context.Context, _ *silapb.CommitteeSubnetsSubscribeRequest, _ []*silapb.ValidatorDuty) (*emptypb.Empty, error) {
 		wg.Done()
 		return nil, nil
 	})
@@ -154,8 +154,8 @@ func TestUpdateDuties_AllValidatorsExited(t *testing.T) {
 	defer ctrl.Finish()
 	client := validatormock.NewMockValidatorClient(ctrl)
 
-	resp := &ethpb.ValidatorDutiesContainer{
-		CurrentEpochDuties: []*ethpb.ValidatorDuty{
+	resp := &silapb.ValidatorDutiesContainer{
+		CurrentEpochDuties: []*silapb.ValidatorDuty{
 			{
 				AttesterSlot:    params.BeaconConfig().SlotsPerEpoch,
 				ValidatorIndex:  200,
@@ -163,7 +163,7 @@ func TestUpdateDuties_AllValidatorsExited(t *testing.T) {
 				CommitteeLength: 4,
 				PublicKey:       []byte("testPubKey_1"),
 				ProposerSlots:   []primitives.Slot{params.BeaconConfig().SlotsPerEpoch + 1},
-				Status:          ethpb.ValidatorStatus_EXITED,
+				Status:          silapb.ValidatorStatus_EXITED,
 			},
 			{
 				AttesterSlot:    params.BeaconConfig().SlotsPerEpoch,
@@ -172,7 +172,7 @@ func TestUpdateDuties_AllValidatorsExited(t *testing.T) {
 				CommitteeLength: 4,
 				PublicKey:       []byte("testPubKey_2"),
 				ProposerSlots:   []primitives.Slot{params.BeaconConfig().SlotsPerEpoch + 1},
-				Status:          ethpb.ValidatorStatus_EXITED,
+				Status:          silapb.ValidatorStatus_EXITED,
 			},
 		},
 	}
@@ -199,23 +199,23 @@ func TestUpdateDuties_Distributed(t *testing.T) {
 	// Start of third epoch.
 	slot := 2 * params.BeaconConfig().SlotsPerEpoch
 	keys := randKeypair(t)
-	resp := &ethpb.ValidatorDutiesContainer{
-		CurrentEpochDuties: []*ethpb.ValidatorDuty{
+	resp := &silapb.ValidatorDutiesContainer{
+		CurrentEpochDuties: []*silapb.ValidatorDuty{
 			{
 				AttesterSlot:   slot, // First slot in epoch.
 				ValidatorIndex: 200,
 				CommitteeIndex: 100,
 				PublicKey:      keys.pub[:],
-				Status:         ethpb.ValidatorStatus_ACTIVE,
+				Status:         silapb.ValidatorStatus_ACTIVE,
 			},
 		},
-		NextEpochDuties: []*ethpb.ValidatorDuty{
+		NextEpochDuties: []*silapb.ValidatorDuty{
 			{
 				AttesterSlot:   slot + params.BeaconConfig().SlotsPerEpoch, // First slot in next epoch.
 				ValidatorIndex: 200,
 				CommitteeIndex: 100,
 				PublicKey:      keys.pub[:],
-				Status:         ethpb.ValidatorStatus_ACTIVE,
+				Status:         silapb.ValidatorStatus_ACTIVE,
 			},
 		},
 	}
@@ -232,7 +232,7 @@ func TestUpdateDuties_Distributed(t *testing.T) {
 		pubkeyToStatus: map[[fieldparams.BLSPubkeyLength]byte]*validatorStatus{
 			keys.pub: {
 				publicKey: keys.pub[:],
-				status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+				status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 				index:     200,
 			},
 		},
@@ -250,7 +250,7 @@ func TestUpdateDuties_Distributed(t *testing.T) {
 		gomock.Any(), // ctx
 		gomock.Any(), // epoch
 	).Return(
-		&ethpb.DomainResponse{SignatureDomain: sigDomain},
+		&silapb.DomainResponse{SignatureDomain: sigDomain},
 		nil, /*err*/
 	)
 
@@ -275,7 +275,7 @@ func TestUpdateDuties_Distributed(t *testing.T) {
 		gomock.Any(),
 		gomock.Any(),
 		gomock.Any(),
-	).DoAndReturn(func(_ context.Context, _ *ethpb.CommitteeSubnetsSubscribeRequest, _ []*ethpb.ValidatorDuty) (*emptypb.Empty, error) {
+	).DoAndReturn(func(_ context.Context, _ *silapb.CommitteeSubnetsSubscribeRequest, _ []*silapb.ValidatorDuty) (*emptypb.Empty, error) {
 		wg.Done()
 		return nil, nil
 	})
@@ -294,8 +294,8 @@ func TestValidator_CheckDependentRoots(t *testing.T) {
 	ctx := t.Context()
 	client := validatormock.NewMockValidatorClient(ctrl)
 
-	dutiesContainer := &ethpb.ValidatorDutiesContainer{
-		CurrentEpochDuties: []*ethpb.ValidatorDuty{
+	dutiesContainer := &silapb.ValidatorDutiesContainer{
+		CurrentEpochDuties: []*silapb.ValidatorDuty{
 			{
 				AttesterSlot:    params.BeaconConfig().SlotsPerEpoch,
 				ValidatorIndex:  200,
@@ -355,7 +355,7 @@ func TestValidator_CheckDependentRoots(t *testing.T) {
 			gomock.Any(),
 			gomock.Any(),
 			gomock.Any(),
-		).DoAndReturn(func(_ context.Context, _ *ethpb.CommitteeSubnetsSubscribeRequest, _ []*ethpb.ValidatorDuty) (*emptypb.Empty, error) {
+		).DoAndReturn(func(_ context.Context, _ *silapb.CommitteeSubnetsSubscribeRequest, _ []*silapb.ValidatorDuty) (*emptypb.Empty, error) {
 			return nil, nil
 		}).AnyTimes()
 		client.EXPECT().Duties(gomock.Any(), gomock.Any()).Return(dutiesContainer, nil)
@@ -377,7 +377,7 @@ func TestValidator_CheckDependentRoots(t *testing.T) {
 			gomock.Any(),
 			gomock.Any(),
 			gomock.Any(),
-		).DoAndReturn(func(_ context.Context, _ *ethpb.CommitteeSubnetsSubscribeRequest, _ []*ethpb.ValidatorDuty) (*emptypb.Empty, error) {
+		).DoAndReturn(func(_ context.Context, _ *silapb.CommitteeSubnetsSubscribeRequest, _ []*silapb.ValidatorDuty) (*emptypb.Empty, error) {
 			wg.Done()
 			return nil, nil
 		}).AnyTimes()
@@ -409,8 +409,8 @@ func TestValidator_CheckDependentRoots_NoEmptyWindowDuringRefetch(t *testing.T) 
 	ctx := t.Context()
 	client := validatormock.NewMockValidatorClient(ctrl)
 
-	oldContainer := &ethpb.ValidatorDutiesContainer{
-		CurrentEpochDuties: []*ethpb.ValidatorDuty{{
+	oldContainer := &silapb.ValidatorDutiesContainer{
+		CurrentEpochDuties: []*silapb.ValidatorDuty{{
 			AttesterSlot:    params.BeaconConfig().SlotsPerEpoch,
 			ValidatorIndex:  200,
 			CommitteeIndex:  100,
@@ -420,7 +420,7 @@ func TestValidator_CheckDependentRoots_NoEmptyWindowDuringRefetch(t *testing.T) 
 		PrevDependentRoot: bytesutil.PadTo([]byte{0x01, 0x02, 0x03}, fieldparams.RootLength),
 		CurrDependentRoot: bytesutil.PadTo([]byte{0x04, 0x05, 0x06}, fieldparams.RootLength),
 	}
-	newContainer := &ethpb.ValidatorDutiesContainer{
+	newContainer := &silapb.ValidatorDutiesContainer{
 		CurrentEpochDuties: oldContainer.CurrentEpochDuties,
 		PrevDependentRoot:  bytesutil.PadTo([]byte{0xaa, 0xbb, 0xcc}, fieldparams.RootLength),
 		CurrDependentRoot:  bytesutil.PadTo([]byte{0xdd, 0xee, 0xff}, fieldparams.RootLength),
@@ -443,7 +443,7 @@ func TestValidator_CheckDependentRoots_NoEmptyWindowDuringRefetch(t *testing.T) 
 	entered := make(chan struct{})
 	release := make(chan struct{})
 	client.EXPECT().Duties(gomock.Any(), gomock.Any()).DoAndReturn(
-		func(_ context.Context, _ *ethpb.DutiesRequest) (*ethpb.ValidatorDutiesContainer, error) {
+		func(_ context.Context, _ *silapb.DutiesRequest) (*silapb.ValidatorDutiesContainer, error) {
 			close(entered)
 			<-release
 			return newContainer, nil
@@ -505,7 +505,7 @@ func TestUpdateDutiesSplit(t *testing.T) {
 			pubkeyToStatus: map[pubkey]*validatorStatus{
 				keys.pub: {
 					publicKey: keys.pub[:],
-					status:    &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE},
+					status:    &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE},
 					index:     42,
 				},
 			},
@@ -517,33 +517,33 @@ func TestUpdateDutiesSplit(t *testing.T) {
 		v, client, keys := setup(t)
 		spe := params.BeaconConfig().SlotsPerEpoch
 
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
 			DependentRoot: make([]byte, 32),
-			Duties: []*ethpb.AttesterDuty{{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(epoch)*spe + 3, CommitteeIndex: 1, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
-			Duties: []*ethpb.AttesterDuty{{
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(epoch+1)*spe + 7, CommitteeIndex: 2, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&ethpb.ProposerDutiesResponse{
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&silapb.ProposerDutiesResponse{
 			DependentRoot: make([]byte, 32),
-			Duties:        []*ethpb.ProposerDutyV2{{Pubkey: keys.pub[:], ValidatorIndex: 42, Slot: primitives.Slot(epoch)*spe + 1}},
+			Duties:        []*silapb.ProposerDutyV2{{Pubkey: keys.pub[:], ValidatorIndex: 42, Slot: primitives.Slot(epoch)*spe + 1}},
 		}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&ethpb.ProposerDutiesResponse{}, nil)
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch, gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{
-			Duties: []*ethpb.SyncCommitteeDuty{{Pubkey: keys.pub[:], ValidatorIndex: 42}},
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&silapb.ProposerDutiesResponse{}, nil)
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch, gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{
+			Duties: []*silapb.SyncCommitteeDuty{{Pubkey: keys.pub[:], ValidatorIndex: 42}},
 		}, nil)
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil)
-		client.EXPECT().PTCDuties(gomock.Any(), epoch, gomock.Any()).Return(&ethpb.PTCDutiesResponse{
-			Duties: []*ethpb.PTCDuty{{Pubkey: keys.pub[:], ValidatorIndex: 42, Slot: primitives.Slot(epoch)*spe + 5}},
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil)
+		client.EXPECT().PTCDuties(gomock.Any(), epoch, gomock.Any()).Return(&silapb.PTCDutiesResponse{
+			Duties: []*silapb.PTCDuty{{Pubkey: keys.pub[:], ValidatorIndex: 42, Slot: primitives.Slot(epoch)*spe + 5}},
 		}, nil)
-		client.EXPECT().PTCDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.PTCDutiesResponse{
-			Duties: []*ethpb.PTCDuty{{Pubkey: keys.pub[:], ValidatorIndex: 42, Slot: primitives.Slot(epoch+1)*spe + 2}},
+		client.EXPECT().PTCDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.PTCDutiesResponse{
+			Duties: []*silapb.PTCDuty{{Pubkey: keys.pub[:], ValidatorIndex: 42, Slot: primitives.Slot(epoch+1)*spe + 2}},
 		}, nil)
 
 		require.NoError(t, v.updateDutiesSplit(t.Context(), epoch, []primitives.ValidatorIndex{42}))
@@ -579,23 +579,23 @@ func TestUpdateDutiesSplit(t *testing.T) {
 	t.Run("attester error preserves existing duties", func(t *testing.T) {
 		v, client, keys := setup(t)
 		spe := params.BeaconConfig().SlotsPerEpoch
-		seedDuty := &ethpb.ValidatorDuty{
+		seedDuty := &silapb.ValidatorDuty{
 			PublicKey: keys.pub[:], ValidatorIndex: 42,
-			AttesterSlot: primitives.Slot(epoch)*spe + 3, Status: ethpb.ValidatorStatus_ACTIVE,
+			AttesterSlot: primitives.Slot(epoch)*spe + 3, Status: silapb.ValidatorStatus_ACTIVE,
 		}
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{seedDuty},
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{seedDuty},
 			})
 			v.duties.write(data)
 		}
 
 		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(nil, errors.New("attester fail"))
 		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(nil, nil).AnyTimes()
-		client.EXPECT().ProposerDuties(gomock.Any(), gomock.Any()).Return(&ethpb.ProposerDutiesResponse{}, nil).AnyTimes()
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil).AnyTimes()
-		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.PTCDutiesResponse{}, nil).AnyTimes()
+		client.EXPECT().ProposerDuties(gomock.Any(), gomock.Any()).Return(&silapb.ProposerDutiesResponse{}, nil).AnyTimes()
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil).AnyTimes()
+		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.PTCDutiesResponse{}, nil).AnyTimes()
 
 		err := v.updateDutiesSplit(t.Context(), epoch, []primitives.ValidatorIndex{42})
 		require.ErrorContains(t, "attester fail", err)
@@ -606,23 +606,23 @@ func TestUpdateDutiesSplit(t *testing.T) {
 	t.Run("proposer error preserves existing duties", func(t *testing.T) {
 		v, client, keys := setup(t)
 		spe := params.BeaconConfig().SlotsPerEpoch
-		seedDuty := &ethpb.ValidatorDuty{
+		seedDuty := &silapb.ValidatorDuty{
 			PublicKey: keys.pub[:], ValidatorIndex: 42,
-			AttesterSlot: primitives.Slot(epoch)*spe + 3, Status: ethpb.ValidatorStatus_ACTIVE,
+			AttesterSlot: primitives.Slot(epoch)*spe + 3, Status: silapb.ValidatorStatus_ACTIVE,
 		}
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{seedDuty},
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{seedDuty},
 			})
 			v.duties.write(data)
 		}
 
-		client.EXPECT().AttesterDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.AttesterDutiesResponse{}, nil).AnyTimes()
+		client.EXPECT().AttesterDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.AttesterDutiesResponse{}, nil).AnyTimes()
 		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(nil, errors.New("proposer fail"))
 		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(nil, nil).AnyTimes()
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil).AnyTimes()
-		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.PTCDutiesResponse{}, nil).AnyTimes()
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil).AnyTimes()
+		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.PTCDutiesResponse{}, nil).AnyTimes()
 
 		err := v.updateDutiesSplit(t.Context(), epoch, []primitives.ValidatorIndex{42})
 		require.ErrorContains(t, "proposer fail", err)
@@ -634,19 +634,19 @@ func TestUpdateDutiesSplit(t *testing.T) {
 		v, client, keys := setup(t)
 		spe := params.BeaconConfig().SlotsPerEpoch
 
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
 			DependentRoot: make([]byte, 32),
-			Duties: []*ethpb.AttesterDuty{{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(epoch)*spe + 3, CommitteeIndex: 1, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&ethpb.ProposerDutiesResponse{DependentRoot: make([]byte, 32)}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&ethpb.ProposerDutiesResponse{}, nil)
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil).AnyTimes()
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.AttesterDutiesResponse{}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&silapb.ProposerDutiesResponse{DependentRoot: make([]byte, 32)}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&silapb.ProposerDutiesResponse{}, nil)
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil).AnyTimes()
 		client.EXPECT().PTCDuties(gomock.Any(), epoch, gomock.Any()).Return(nil, errors.New("ptc fail"))
-		client.EXPECT().PTCDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.PTCDutiesResponse{}, nil)
+		client.EXPECT().PTCDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.PTCDutiesResponse{}, nil)
 
 		require.NoError(t, v.updateDutiesSplit(t.Context(), epoch, []primitives.ValidatorIndex{42}))
 		assert.Equal(t, true, v.duties.isInitialized())
@@ -661,10 +661,10 @@ func TestUpdateDutiesSplit(t *testing.T) {
 		// (rather than passing tautologically against an empty store).
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				CurrentEpochDuties: []*ethpb.ValidatorDuty{{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				CurrentEpochDuties: []*silapb.ValidatorDuty{{
 					PublicKey: keys.pub[:], ValidatorIndex: 42,
-					Status: ethpb.ValidatorStatus_ACTIVE,
+					Status: silapb.ValidatorStatus_ACTIVE,
 				}},
 			})
 			v.duties.write(data)
@@ -684,11 +684,11 @@ func TestUpdateDutiesSplit(t *testing.T) {
 		// duties present, init flag set).
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				NextEpochDuties: []*ethpb.ValidatorDuty{{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				NextEpochDuties: []*silapb.ValidatorDuty{{
 					PublicKey: keys.pub[:], ValidatorIndex: 42,
 					AttesterSlot: primitives.Slot(epoch)*spe + 3,
-					Status:       ethpb.ValidatorStatus_ACTIVE,
+					Status:       silapb.ValidatorStatus_ACTIVE,
 				}},
 			})
 			v.duties.write(data)
@@ -702,38 +702,38 @@ func TestUpdateDutiesSplit(t *testing.T) {
 		rootC := bytesutil.PadTo([]byte{0x03}, 32)
 
 		// Promote path: mismatched roots.
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
 			DependentRoot: rootA,
-			Duties: []*ethpb.AttesterDuty{{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(epoch+1)*spe + 7, CommitteeIndex: 2, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&ethpb.ProposerDutiesResponse{DependentRoot: rootB}, nil)
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil)
-		client.EXPECT().PTCDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.PTCDutiesResponse{}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&silapb.ProposerDutiesResponse{DependentRoot: rootB}, nil)
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil)
+		client.EXPECT().PTCDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.PTCDutiesResponse{}, nil)
 
 		// Refetch path: aligned roots, full set of RPCs.
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
 			DependentRoot: bytesutil.PadTo([]byte{0x10}, 32),
-			Duties: []*ethpb.AttesterDuty{{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(epoch)*spe + 3, CommitteeIndex: 1, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
 			DependentRoot: rootC,
-			Duties: []*ethpb.AttesterDuty{{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(epoch+1)*spe + 7, CommitteeIndex: 2, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&ethpb.ProposerDutiesResponse{DependentRoot: bytesutil.PadTo([]byte{0x11}, 32)}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&ethpb.ProposerDutiesResponse{DependentRoot: rootC}, nil)
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch, gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil)
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil)
-		client.EXPECT().PTCDuties(gomock.Any(), epoch, gomock.Any()).Return(&ethpb.PTCDutiesResponse{}, nil)
-		client.EXPECT().PTCDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.PTCDutiesResponse{}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&silapb.ProposerDutiesResponse{DependentRoot: bytesutil.PadTo([]byte{0x11}, 32)}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&silapb.ProposerDutiesResponse{DependentRoot: rootC}, nil)
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch, gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil)
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil)
+		client.EXPECT().PTCDuties(gomock.Any(), epoch, gomock.Any()).Return(&silapb.PTCDutiesResponse{}, nil)
+		client.EXPECT().PTCDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.PTCDutiesResponse{}, nil)
 
 		require.NoError(t, v.updateDutiesSplit(t.Context(), epoch, []primitives.ValidatorIndex{42}))
 		assert.LogsContain(t, hook, "diverged on promotion")
@@ -749,23 +749,23 @@ func TestUpdateDutiesSplit(t *testing.T) {
 
 		// First iteration at epoch: next-epoch proposer soft-fails. All other RPCs succeed.
 		// fetchProposerDuties logs nextErr at Debug and returns next=nil, so propErr is nil.
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
 			DependentRoot: make([]byte, 32),
-			Duties: []*ethpb.AttesterDuty{{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(epoch) * spe, CommitteeIndex: 1, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
-			Duties: []*ethpb.AttesterDuty{{
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(epoch+1) * spe, CommitteeIndex: 2, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&ethpb.ProposerDutiesResponse{}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&silapb.ProposerDutiesResponse{}, nil)
 		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(nil, errors.New("next proposer fail"))
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil).Times(2)
-		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.PTCDutiesResponse{}, nil).Times(2)
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil).Times(2)
+		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.PTCDutiesResponse{}, nil).Times(2)
 
 		require.NoError(t, v.updateDutiesSplit(t.Context(), epoch, []primitives.ValidatorIndex{42}))
 		require.Equal(t, missingNextProposer, v.duties.data.missingNext&missingNextProposer)
@@ -774,23 +774,23 @@ func TestUpdateDutiesSplit(t *testing.T) {
 		// the promote path (only 4 next-epoch RPCs). The dirty mask must force a full fetch,
 		// so we expect all 8 RPCs (current+next for each duty type).
 		nextEpoch := epoch + 1
-		client.EXPECT().AttesterDuties(gomock.Any(), nextEpoch, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
+		client.EXPECT().AttesterDuties(gomock.Any(), nextEpoch, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
 			DependentRoot: make([]byte, 32),
-			Duties: []*ethpb.AttesterDuty{{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(nextEpoch) * spe, CommitteeIndex: 1, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().AttesterDuties(gomock.Any(), nextEpoch+1, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
-			Duties: []*ethpb.AttesterDuty{{
+		client.EXPECT().AttesterDuties(gomock.Any(), nextEpoch+1, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(nextEpoch+1) * spe, CommitteeIndex: 2, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), nextEpoch).Return(&ethpb.ProposerDutiesResponse{}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), nextEpoch+1).Return(&ethpb.ProposerDutiesResponse{}, nil)
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil).Times(2)
-		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.PTCDutiesResponse{}, nil).Times(2)
+		client.EXPECT().ProposerDuties(gomock.Any(), nextEpoch).Return(&silapb.ProposerDutiesResponse{}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), nextEpoch+1).Return(&silapb.ProposerDutiesResponse{}, nil)
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil).Times(2)
+		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.PTCDutiesResponse{}, nil).Times(2)
 
 		require.NoError(t, v.updateDutiesSplit(t.Context(), nextEpoch, []primitives.ValidatorIndex{42}))
 		require.Equal(t, missingNextDuties(0), v.duties.data.missingNext)
@@ -804,10 +804,10 @@ func TestUpdateDutiesSplit(t *testing.T) {
 		// that, ignoring drift, canPromote would otherwise return true.
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				NextEpochDuties: []*ethpb.ValidatorDuty{{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				NextEpochDuties: []*silapb.ValidatorDuty{{
 					PublicKey: keys.pub[:], ValidatorIndex: 42,
-					Status: ethpb.ValidatorStatus_ACTIVE,
+					Status: silapb.ValidatorStatus_ACTIVE,
 				}},
 			})
 			data.epoch = epoch - 1
@@ -817,18 +817,18 @@ func TestUpdateDutiesSplit(t *testing.T) {
 
 		// Caller now presents a different (larger) index set; canPromote must
 		// reject promotion and fall through to fetchAllDuties.
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
 			DependentRoot: make([]byte, 32),
-			Duties: []*ethpb.AttesterDuty{{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(epoch) * spe, CommitteeIndex: 1, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&ethpb.ProposerDutiesResponse{}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&ethpb.ProposerDutiesResponse{}, nil)
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil).Times(2)
-		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.PTCDutiesResponse{}, nil).Times(2)
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.AttesterDutiesResponse{}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&silapb.ProposerDutiesResponse{}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&silapb.ProposerDutiesResponse{}, nil)
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil).Times(2)
+		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.PTCDutiesResponse{}, nil).Times(2)
 
 		require.NoError(t, v.updateDutiesSplit(t.Context(), epoch, []primitives.ValidatorIndex{42, 99}))
 		require.DeepEqual(t, []primitives.ValidatorIndex{42, 99}, v.duties.data.indices)
@@ -843,10 +843,10 @@ func TestUpdateDutiesSplit(t *testing.T) {
 		// path doesn't track them). The first split call must refetch.
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				NextEpochDuties: []*ethpb.ValidatorDuty{{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				NextEpochDuties: []*silapb.ValidatorDuty{{
 					PublicKey: keys.pub[:], ValidatorIndex: 42,
-					Status: ethpb.ValidatorStatus_ACTIVE,
+					Status: silapb.ValidatorStatus_ACTIVE,
 				}},
 			})
 			data.missingNext = missingNextPtc
@@ -854,18 +854,18 @@ func TestUpdateDutiesSplit(t *testing.T) {
 		}
 
 		// Expect full-fetch RPC pattern (8 endpoints), not promote (4).
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
 			DependentRoot: make([]byte, 32),
-			Duties: []*ethpb.AttesterDuty{{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(epoch) * spe, CommitteeIndex: 1, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&ethpb.ProposerDutiesResponse{}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&ethpb.ProposerDutiesResponse{}, nil)
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil).Times(2)
-		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ethpb.PTCDutiesResponse{}, nil).Times(2)
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.AttesterDutiesResponse{}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch).Return(&silapb.ProposerDutiesResponse{}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&silapb.ProposerDutiesResponse{}, nil)
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil).Times(2)
+		client.EXPECT().PTCDuties(gomock.Any(), gomock.Any(), gomock.Any()).Return(&silapb.PTCDutiesResponse{}, nil).Times(2)
 
 		require.NoError(t, v.updateDutiesSplit(t.Context(), epoch, []primitives.ValidatorIndex{42}))
 		// After a full fetch, missingNext is reset.
@@ -880,11 +880,11 @@ func TestUpdateDutiesSplit(t *testing.T) {
 		// (activation epoch reached, so it was admitted into the duty set).
 		{
 			var data dutyStoreData
-			data.setFromContainer(&ethpb.ValidatorDutiesContainer{
-				NextEpochDuties: []*ethpb.ValidatorDuty{{
+			data.setFromContainer(&silapb.ValidatorDutiesContainer{
+				NextEpochDuties: []*silapb.ValidatorDuty{{
 					PublicKey: keys.pub[:], ValidatorIndex: 42,
 					AttesterSlot: primitives.Slot(epoch)*spe + 3,
-					Status:       ethpb.ValidatorStatus_PENDING,
+					Status:       silapb.ValidatorStatus_PENDING,
 				}},
 				CurrDependentRoot: bytesutil.PadTo([]byte{0xaa}, 32),
 			})
@@ -894,23 +894,23 @@ func TestUpdateDutiesSplit(t *testing.T) {
 		}
 
 		root := bytesutil.PadTo([]byte{0x01}, 32)
-		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.AttesterDutiesResponse{
+		client.EXPECT().AttesterDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.AttesterDutiesResponse{
 			DependentRoot: root,
-			Duties: []*ethpb.AttesterDuty{{
+			Duties: []*silapb.AttesterDuty{{
 				Pubkey: keys.pub[:], ValidatorIndex: 42,
 				Slot: primitives.Slot(epoch+1)*spe + 7, CommitteeIndex: 2, CommitteeLength: 64, CommitteesAtSlot: 4,
 			}},
 		}, nil)
-		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&ethpb.ProposerDutiesResponse{DependentRoot: root}, nil)
-		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.SyncCommitteeDutiesResponse{}, nil)
-		client.EXPECT().PTCDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&ethpb.PTCDutiesResponse{}, nil)
+		client.EXPECT().ProposerDuties(gomock.Any(), epoch+1).Return(&silapb.ProposerDutiesResponse{DependentRoot: root}, nil)
+		client.EXPECT().SyncCommitteeDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.SyncCommitteeDutiesResponse{}, nil)
+		client.EXPECT().PTCDuties(gomock.Any(), epoch+1, gomock.Any()).Return(&silapb.PTCDutiesResponse{}, nil)
 
 		require.NoError(t, v.updateDutiesSplit(t.Context(), epoch, []primitives.ValidatorIndex{42}))
 
 		snap := v.duties.snapshot()
 		require.Equal(t, 1, snap.currentDutyCount())
 		for _, d := range snap.currentDuties() {
-			assert.Equal(t, ethpb.ValidatorStatus_ACTIVE, d.Status)
+			assert.Equal(t, silapb.ValidatorStatus_ACTIVE, d.Status)
 		}
 	})
 }
@@ -918,22 +918,22 @@ func TestUpdateDutiesSplit(t *testing.T) {
 func TestIsActiveForDuties(t *testing.T) {
 	tests := []struct {
 		name     string
-		status   *ethpb.ValidatorStatusResponse
+		status   *silapb.ValidatorStatusResponse
 		epoch    primitives.Epoch
 		expected bool
 	}{
 		{"nil", nil, 5, false},
-		{"unknown", &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_UNKNOWN_STATUS}, 5, false},
-		{"deposited", &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_DEPOSITED}, 5, false},
-		{"pending before activation", &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_PENDING, ActivationEpoch: 10}, 5, false},
-		{"pending at activation", &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_PENDING, ActivationEpoch: 5}, 5, true},
-		{"pending after activation", &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_PENDING, ActivationEpoch: 3}, 5, true},
-		{"active", &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE}, 5, true},
-		{"exiting", &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_EXITING}, 5, true},
-		{"slashing", &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_SLASHING}, 5, false},
-		{"exited", &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_EXITED}, 5, false},
-		{"invalid", &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_INVALID}, 5, false},
-		{"partially deposited", &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_PARTIALLY_DEPOSITED}, 5, false},
+		{"unknown", &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_UNKNOWN_STATUS}, 5, false},
+		{"deposited", &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_DEPOSITED}, 5, false},
+		{"pending before activation", &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_PENDING, ActivationEpoch: 10}, 5, false},
+		{"pending at activation", &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_PENDING, ActivationEpoch: 5}, 5, true},
+		{"pending after activation", &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_PENDING, ActivationEpoch: 3}, 5, true},
+		{"active", &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE}, 5, true},
+		{"exiting", &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_EXITING}, 5, true},
+		{"slashing", &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_SLASHING}, 5, false},
+		{"exited", &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_EXITED}, 5, false},
+		{"invalid", &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_INVALID}, 5, false},
+		{"partially deposited", &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_PARTIALLY_DEPOSITED}, 5, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -951,11 +951,11 @@ func TestFilteredKeysAndIndices(t *testing.T) {
 
 	v := &validator{
 		pubkeyToStatus: map[pubkey]*validatorStatus{
-			pkActive:  {status: &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE}, index: 99},
-			pkPending: {status: &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_PENDING, ActivationEpoch: 10}, index: 50},
-			pkExited:  {status: &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_EXITED}, index: 7},
+			pkActive:  {status: &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE}, index: 99},
+			pkPending: {status: &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_PENDING, ActivationEpoch: 10}, index: 50},
+			pkExited:  {status: &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_EXITED}, index: 7},
 			// pkActive2 has a smaller index than pkActive to verify sorting.
-			pkActive2: {status: &ethpb.ValidatorStatusResponse{Status: ethpb.ValidatorStatus_ACTIVE}, index: 3},
+			pkActive2: {status: &silapb.ValidatorStatusResponse{Status: silapb.ValidatorStatus_ACTIVE}, index: 3},
 		},
 	}
 

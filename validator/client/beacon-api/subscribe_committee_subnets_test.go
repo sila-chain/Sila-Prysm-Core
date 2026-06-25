@@ -9,7 +9,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api/mock"
@@ -70,12 +70,12 @@ func TestSubscribeCommitteeSubnets_Valid(t *testing.T) {
 	}
 	err = validatorClient.subscribeCommitteeSubnets(
 		ctx,
-		&ethpb.CommitteeSubnetsSubscribeRequest{
+		&silapb.CommitteeSubnetsSubscribeRequest{
 			Slots:        subscribeSlots,
 			CommitteeIds: committeeIndices,
 			IsAggregator: isAggregator,
 		},
-		[]*ethpb.ValidatorDuty{
+		[]*silapb.ValidatorDuty{
 			{
 				ValidatorIndex:   validatorIndices[0],
 				CommitteesAtSlot: committeesAtSlot[0],
@@ -98,8 +98,8 @@ func TestSubscribeCommitteeSubnets_Error(t *testing.T) {
 
 	testCases := []struct {
 		name                    string
-		subscribeRequest        *ethpb.CommitteeSubnetsSubscribeRequest
-		duties                  []*ethpb.ValidatorDuty
+		subscribeRequest        *silapb.CommitteeSubnetsSubscribeRequest
+		duties                  []*silapb.ValidatorDuty
 		expectSubscribeRestCall bool
 		expectedErrorMessage    string
 	}{
@@ -110,12 +110,12 @@ func TestSubscribeCommitteeSubnets_Error(t *testing.T) {
 		},
 		{
 			name: "CommitteeIds size mismatch",
-			subscribeRequest: &ethpb.CommitteeSubnetsSubscribeRequest{
+			subscribeRequest: &silapb.CommitteeSubnetsSubscribeRequest{
 				CommitteeIds: []primitives.CommitteeIndex{1},
 				Slots:        []primitives.Slot{1, 2},
 				IsAggregator: []bool{false, true},
 			},
-			duties: []*ethpb.ValidatorDuty{
+			duties: []*silapb.ValidatorDuty{
 				{
 					ValidatorIndex:   1,
 					CommitteesAtSlot: 1,
@@ -129,12 +129,12 @@ func TestSubscribeCommitteeSubnets_Error(t *testing.T) {
 		},
 		{
 			name: "Slots size mismatch",
-			subscribeRequest: &ethpb.CommitteeSubnetsSubscribeRequest{
+			subscribeRequest: &silapb.CommitteeSubnetsSubscribeRequest{
 				CommitteeIds: []primitives.CommitteeIndex{1, 2},
 				Slots:        []primitives.Slot{1},
 				IsAggregator: []bool{false, true},
 			},
-			duties: []*ethpb.ValidatorDuty{
+			duties: []*silapb.ValidatorDuty{
 				{
 					ValidatorIndex:   1,
 					CommitteesAtSlot: 1,
@@ -148,12 +148,12 @@ func TestSubscribeCommitteeSubnets_Error(t *testing.T) {
 		},
 		{
 			name: "IsAggregator size mismatch",
-			subscribeRequest: &ethpb.CommitteeSubnetsSubscribeRequest{
+			subscribeRequest: &silapb.CommitteeSubnetsSubscribeRequest{
 				CommitteeIds: []primitives.CommitteeIndex{1, 2},
 				Slots:        []primitives.Slot{1, 2},
 				IsAggregator: []bool{false},
 			},
-			duties: []*ethpb.ValidatorDuty{
+			duties: []*silapb.ValidatorDuty{
 				{
 					ValidatorIndex:   1,
 					CommitteesAtSlot: 1,
@@ -167,12 +167,12 @@ func TestSubscribeCommitteeSubnets_Error(t *testing.T) {
 		},
 		{
 			name: "duties size mismatch",
-			subscribeRequest: &ethpb.CommitteeSubnetsSubscribeRequest{
+			subscribeRequest: &silapb.CommitteeSubnetsSubscribeRequest{
 				CommitteeIds: []primitives.CommitteeIndex{1, 2},
 				Slots:        []primitives.Slot{1, 2},
 				IsAggregator: []bool{false, true},
 			},
-			duties: []*ethpb.ValidatorDuty{
+			duties: []*silapb.ValidatorDuty{
 				{
 					ValidatorIndex:   1,
 					CommitteesAtSlot: 1,
@@ -182,12 +182,12 @@ func TestSubscribeCommitteeSubnets_Error(t *testing.T) {
 		},
 		{
 			name: "bad POST request",
-			subscribeRequest: &ethpb.CommitteeSubnetsSubscribeRequest{
+			subscribeRequest: &silapb.CommitteeSubnetsSubscribeRequest{
 				Slots:        []primitives.Slot{1},
 				CommitteeIds: []primitives.CommitteeIndex{2},
 				IsAggregator: []bool{false},
 			},
-			duties: []*ethpb.ValidatorDuty{
+			duties: []*silapb.ValidatorDuty{
 				{
 					ValidatorIndex:   1,
 					CommitteesAtSlot: 1,

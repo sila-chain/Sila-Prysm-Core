@@ -34,7 +34,7 @@
 
 - name: CELLS_PER_EXT_BLOB#fulu
   sources:
-    - file: beacon-chain/rpc/eth/config/handlers.go
+    - file: beacon-chain/rpc/silaapi/config/handlers.go
       search: data\["CELLS_PER_EXT_BLOB"\]
       regex: true
   spec: |
@@ -732,7 +732,7 @@
 
 - name: UPDATE_TIMEOUT#altair
   sources:
-    - file: beacon-chain/rpc/eth/config/handlers.go
+    - file: beacon-chain/rpc/silaapi/config/handlers.go
       search: data\["UPDATE_TIMEOUT"\]
       regex: true
   spec: |

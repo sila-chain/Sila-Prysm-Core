@@ -11,7 +11,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/proposer"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/accounts/wallet"
 	beaconApi "github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-api"
 	beaconChainClientFactory "github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/beacon-chain-client-factory"
@@ -215,7 +215,7 @@ func (v *ValidatorService) Start() {
 		km:                           nil,
 		web3SignerConfig:             v.web3SignerConfig,
 		proposerSettings:             v.proposerSettings,
-		signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*ethpb.SignedValidatorRegistrationV1),
+		signedValidatorRegistrations: make(map[[fieldparams.BLSPubkeyLength]byte]*silapb.SignedValidatorRegistrationV1),
 		validatorsRegBatchSize:       v.validatorsRegBatchSize,
 		interopKeysConfig:            v.interopKeysConfig,
 		domainDataCache:              cache,

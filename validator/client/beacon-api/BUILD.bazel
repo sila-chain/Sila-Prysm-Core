@@ -124,7 +124,7 @@ go_test(
         "//api/rest:go_default_library",
         "//api/server/structs:go_default_library",
         "//beacon-chain/core/helpers:go_default_library",
-        "//beacon-chain/rpc/eth/shared/testing:go_default_library",
+        "//beacon-chain/rpc/silaapi/shared/testing:go_default_library",
         "//config/params:go_default_library",
         "//consensus-types/primitives:go_default_library",
         "//consensus-types/validator:go_default_library",

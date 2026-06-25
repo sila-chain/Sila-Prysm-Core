@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/policies"
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
@@ -105,12 +105,12 @@ var FuluForkTransition = e2etypes.Evaluator{
 func altairForkOccurs(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 
 	conn := conns[0]
-	client := ethpb.NewBeaconNodeValidatorClient(conn)
+	client := silapb.NewBeaconNodeValidatorClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), streamDeadline)
 	defer cancel()
 
-	stream, err := client.StreamBlocksAltair(ctx, &ethpb.StreamBlocksRequest{VerifiedOnly: true})
+	stream, err := client.StreamBlocksAltair(ctx, &silapb.StreamBlocksRequest{VerifiedOnly: true})
 	if err != nil {
 		return errors.Wrap(err, "failed to get stream")
 	}
@@ -152,12 +152,12 @@ func altairForkOccurs(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) 
 
 func bellatrixForkOccurs(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconNodeValidatorClient(conn)
+	client := silapb.NewBeaconNodeValidatorClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), streamDeadline)
 	defer cancel()
 
-	stream, err := client.StreamBlocksAltair(ctx, &ethpb.StreamBlocksRequest{VerifiedOnly: true})
+	stream, err := client.StreamBlocksAltair(ctx, &silapb.StreamBlocksRequest{VerifiedOnly: true})
 	if err != nil {
 		return errors.Wrap(err, "failed to get stream")
 	}
@@ -201,10 +201,10 @@ func bellatrixForkOccurs(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientCon
 
 func capellaForkOccurs(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconNodeValidatorClient(conn)
+	client := silapb.NewBeaconNodeValidatorClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), streamDeadline)
 	defer cancel()
-	stream, err := client.StreamBlocksAltair(ctx, &ethpb.StreamBlocksRequest{VerifiedOnly: true})
+	stream, err := client.StreamBlocksAltair(ctx, &silapb.StreamBlocksRequest{VerifiedOnly: true})
 	if err != nil {
 		return errors.Wrap(err, "failed to get stream")
 	}
@@ -246,10 +246,10 @@ func capellaForkOccurs(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn)
 
 func denebForkOccurs(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconNodeValidatorClient(conn)
+	client := silapb.NewBeaconNodeValidatorClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), streamDeadline)
 	defer cancel()
-	stream, err := client.StreamBlocksAltair(ctx, &ethpb.StreamBlocksRequest{VerifiedOnly: true})
+	stream, err := client.StreamBlocksAltair(ctx, &silapb.StreamBlocksRequest{VerifiedOnly: true})
 	if err != nil {
 		return errors.Wrap(err, "failed to get stream")
 	}
@@ -291,10 +291,10 @@ func denebForkOccurs(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) e
 
 func electraForkOccurs(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconNodeValidatorClient(conn)
+	client := silapb.NewBeaconNodeValidatorClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), streamDeadline)
 	defer cancel()
-	stream, err := client.StreamBlocksAltair(ctx, &ethpb.StreamBlocksRequest{VerifiedOnly: true})
+	stream, err := client.StreamBlocksAltair(ctx, &silapb.StreamBlocksRequest{VerifiedOnly: true})
 	if err != nil {
 		return errors.Wrap(err, "failed to get stream")
 	}
@@ -336,12 +336,12 @@ func electraForkOccurs(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn)
 
 func fuluForkOccurs(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) error {
 	conn := conns[0]
-	client := ethpb.NewBeaconNodeValidatorClient(conn)
+	client := silapb.NewBeaconNodeValidatorClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), streamDeadline)
 	defer cancel()
 
-	stream, err := client.StreamBlocksAltair(ctx, &ethpb.StreamBlocksRequest{VerifiedOnly: true})
+	stream, err := client.StreamBlocksAltair(ctx, &silapb.StreamBlocksRequest{VerifiedOnly: true})
 	if err != nil {
 		return errors.Wrap(err, "failed to get stream")
 	}

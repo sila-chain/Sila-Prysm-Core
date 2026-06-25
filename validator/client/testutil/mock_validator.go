@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/proposer"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/keymanager"
@@ -48,7 +48,7 @@ type FakeValidator struct {
 	UpdateDutiesArg1                  uint64
 	NextSlotRet                       <-chan primitives.Slot
 	ProposerSettingWait               time.Duration
-	PubkeysToStatusesMap              map[[fieldparams.BLSPubkeyLength]byte]ethpb.ValidatorStatus
+	PubkeysToStatusesMap              map[[fieldparams.BLSPubkeyLength]byte]silapb.ValidatorStatus
 	PubkeyToIndexMap                  map[[fieldparams.BLSPubkeyLength]byte]uint64
 	IndexToPubkeyMap                  map[uint64][fieldparams.BLSPubkeyLength]byte
 	WaitForChainStartCalled           int
@@ -227,7 +227,7 @@ func (fv *FakeValidator) PubkeysToIndices(_ context.Context) map[[fieldparams.BL
 }
 
 // PubkeysToStatuses for mocking.
-func (fv *FakeValidator) PubkeysToStatuses(_ context.Context) map[[fieldparams.BLSPubkeyLength]byte]ethpb.ValidatorStatus {
+func (fv *FakeValidator) PubkeysToStatuses(_ context.Context) map[[fieldparams.BLSPubkeyLength]byte]silapb.ValidatorStatus {
 	return fv.PubkeysToStatusesMap
 }
 
@@ -284,7 +284,7 @@ func (*FakeValidator) SetPubKeyToValidatorIndexMap(_ context.Context, _ keymanag
 }
 
 // SignValidatorRegistrationRequest for mocking
-func (*FakeValidator) SignValidatorRegistrationRequest(_ context.Context, _ iface.SigningFunc, _ *ethpb.ValidatorRegistrationV1) (*ethpb.SignedValidatorRegistrationV1, bool, error) {
+func (*FakeValidator) SignValidatorRegistrationRequest(_ context.Context, _ iface.SigningFunc, _ *silapb.ValidatorRegistrationV1) (*silapb.SignedValidatorRegistrationV1, bool, error) {
 	return nil, false, nil
 }
 

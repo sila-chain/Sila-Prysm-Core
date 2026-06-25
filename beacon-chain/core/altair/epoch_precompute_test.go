@@ -9,20 +9,20 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func TestInitializeEpochValidators_Ok(t *testing.T) {
 	ffe := params.BeaconConfig().FarFutureEpoch
-	s, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+	s, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 		Slot: params.BeaconConfig().SlotsPerEpoch,
 		// Validator 0 is slashed
 		// Validator 1 is withdrawable
 		// Validator 2 is active prev epoch and current epoch
 		// Validator 3 is active prev epoch
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{Slashed: true, WithdrawableEpoch: ffe, EffectiveBalance: 100},
 			{EffectiveBalance: 100},
 			{WithdrawableEpoch: ffe, ExitEpoch: ffe, EffectiveBalance: 100},
@@ -64,9 +64,9 @@ func TestInitializeEpochValidators_Ok(t *testing.T) {
 
 func TestInitializeEpochValidators_Overflow(t *testing.T) {
 	ffe := params.BeaconConfig().FarFutureEpoch
-	s, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+	s, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 		Slot: params.BeaconConfig().SlotsPerEpoch,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{WithdrawableEpoch: ffe, ExitEpoch: ffe, EffectiveBalance: math.MaxUint64},
 			{WithdrawableEpoch: ffe, ExitEpoch: ffe, EffectiveBalance: math.MaxUint64},
 		},
@@ -78,8 +78,8 @@ func TestInitializeEpochValidators_Overflow(t *testing.T) {
 }
 
 func TestInitializeEpochValidators_BadState(t *testing.T) {
-	s, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
-		Validators:       []*ethpb.Validator{{}},
+	s, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
+		Validators:       []*silapb.Validator{{}},
 		InactivityScores: []uint64{},
 	})
 	require.NoError(t, err)
@@ -148,9 +148,9 @@ func TestProcessEpochParticipation_InactiveValidator(t *testing.T) {
 		}
 		return b
 	}
-	st, err := state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+	st, err := state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 		Slot: 2 * params.BeaconConfig().SlotsPerEpoch,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance},                                                  // Inactive
 			{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: 2},                                    // Inactive current epoch, active previous epoch
 			{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: params.BeaconConfig().FarFutureEpoch}, // Active
@@ -487,9 +487,9 @@ func testState() (state.BeaconState, error) {
 		}
 		return b
 	}
-	return state_native.InitializeFromProtoAltair(&ethpb.BeaconStateAltair{
+	return state_native.InitializeFromProtoAltair(&silapb.BeaconStateAltair{
 		Slot: 2 * params.BeaconConfig().SlotsPerEpoch,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: params.BeaconConfig().FarFutureEpoch},
 			{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: params.BeaconConfig().FarFutureEpoch},
 			{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: params.BeaconConfig().FarFutureEpoch},
@@ -524,9 +524,9 @@ func testStateBellatrix() (state.BeaconState, error) {
 		}
 		return b
 	}
-	return state_native.InitializeFromProtoBellatrix(&ethpb.BeaconStateBellatrix{
+	return state_native.InitializeFromProtoBellatrix(&silapb.BeaconStateBellatrix{
 		Slot: 2 * params.BeaconConfig().SlotsPerEpoch,
-		Validators: []*ethpb.Validator{
+		Validators: []*silapb.Validator{
 			{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: params.BeaconConfig().FarFutureEpoch},
 			{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: params.BeaconConfig().FarFutureEpoch},
 			{EffectiveBalance: params.BeaconConfig().MaxEffectiveBalance, ExitEpoch: params.BeaconConfig().FarFutureEpoch},

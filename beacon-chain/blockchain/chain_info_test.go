@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -37,10 +37,10 @@ func prepareForkchoiceState(
 	blockRoot [32]byte,
 	parentRoot [32]byte,
 	payloadHash [32]byte,
-	justified *ethpb.Checkpoint,
-	finalized *ethpb.Checkpoint,
+	justified *silapb.Checkpoint,
+	finalized *silapb.Checkpoint,
 ) (state.BeaconState, blocks.ROBlock, error) {
-	blockHeader := &ethpb.BeaconBlockHeader{
+	blockHeader := &silapb.BeaconBlockHeader{
 		ParentRoot: parentRoot[:],
 	}
 
@@ -48,7 +48,7 @@ func prepareForkchoiceState(
 		BlockHash: payloadHash[:],
 	}
 
-	base := &ethpb.BeaconStateBellatrix{
+	base := &silapb.BeaconStateBellatrix{
 		Slot:                         slot,
 		RandaoMixes:                  make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
 		BlockRoots:                   make([][]byte, 1),
@@ -63,11 +63,11 @@ func prepareForkchoiceState(
 	if err != nil {
 		return nil, blocks.ROBlock{}, err
 	}
-	blk := &ethpb.SignedBeaconBlockBellatrix{
-		Block: &ethpb.BeaconBlockBellatrix{
+	blk := &silapb.SignedBeaconBlockBellatrix{
+		Block: &silapb.BeaconBlockBellatrix{
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
-			Body: &ethpb.BeaconBlockBodyBellatrix{
+			Body: &silapb.BeaconBlockBodyBellatrix{
 				ExecutionPayload: &enginev1.ExecutionPayload{
 					BlockHash: payloadHash[:],
 				},
@@ -140,8 +140,8 @@ func TestFinalizedBlockHash(t *testing.T) {
 func TestUnrealizedJustifiedBlockHash(t *testing.T) {
 	ctx := t.Context()
 	service := testServiceWithDB(t)
-	ojc := &ethpb.Checkpoint{Root: []byte{'j'}}
-	ofc := &ethpb.Checkpoint{Root: []byte{'f'}}
+	ojc := &silapb.Checkpoint{Root: []byte{'j'}}
+	ofc := &silapb.Checkpoint{Root: []byte{'f'}}
 	st, roblock, err := prepareForkchoiceState(ctx, 0, [32]byte{}, [32]byte{}, params.BeaconConfig().ZeroHash, ojc, ofc)
 	require.NoError(t, err)
 	require.NoError(t, service.cfg.ForkChoiceStore.InsertNode(ctx, st, roblock))
@@ -155,7 +155,7 @@ func TestUnrealizedJustifiedBlockHash(t *testing.T) {
 
 func TestHeadSlot_CanRetrieve(t *testing.T) {
 	c := testServiceNoDB(t)
-	s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{})
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{})
 	require.NoError(t, err)
 	b, err := blocks.NewSignedBeaconBlock(util.NewBeaconBlock())
 	require.NoError(t, err)
@@ -187,7 +187,7 @@ func TestHeadRoot_UseDB(t *testing.T) {
 	wsb, err := blocks.NewSignedBeaconBlock(b)
 	require.NoError(t, err)
 	require.NoError(t, beaconDB.SaveBlock(ctx, wsb))
-	require.NoError(t, beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Root: br[:]}))
+	require.NoError(t, beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Root: br[:]}))
 	require.NoError(t, beaconDB.SaveHeadBlockRoot(ctx, br))
 	r, err := service.HeadRoot(ctx)
 	require.NoError(t, err)
@@ -197,7 +197,7 @@ func TestHeadRoot_UseDB(t *testing.T) {
 func TestHeadBlock_CanRetrieve(t *testing.T) {
 	b := util.NewBeaconBlock()
 	b.Block.Slot = 1
-	s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{})
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{})
 	require.NoError(t, err)
 	wsb, err := blocks.NewSignedBeaconBlock(b)
 	require.NoError(t, err)
@@ -212,7 +212,7 @@ func TestHeadBlock_CanRetrieve(t *testing.T) {
 }
 
 func TestHeadState_CanRetrieve(t *testing.T) {
-	s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Slot: 2, GenesisValidatorsRoot: params.BeaconConfig().ZeroHash[:]})
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Slot: 2, GenesisValidatorsRoot: params.BeaconConfig().ZeroHash[:]})
 	require.NoError(t, err)
 	c := testServiceNoDB(t)
 	c.head = &head{state: s}
@@ -229,8 +229,8 @@ func TestGenesisTime_CanRetrieve(t *testing.T) {
 }
 
 func TestCurrentFork_CanRetrieve(t *testing.T) {
-	f := &ethpb.Fork{Epoch: 999}
-	s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Fork: f})
+	f := &silapb.Fork{Epoch: 999}
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Fork: f})
 	require.NoError(t, err)
 	c := testServiceNoDB(t)
 	c.head = &head{state: s}
@@ -240,7 +240,7 @@ func TestCurrentFork_CanRetrieve(t *testing.T) {
 }
 
 func TestCurrentFork_NilHeadSTate(t *testing.T) {
-	f := &ethpb.Fork{
+	f := &silapb.Fork{
 		PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 		CurrentVersion:  params.BeaconConfig().GenesisForkVersion,
 	}
@@ -255,7 +255,7 @@ func TestGenesisValidatorsRoot_CanRetrieve(t *testing.T) {
 	c := testServiceNoDB(t)
 	assert.Equal(t, [32]byte{}, c.GenesisValidatorsRoot(), "Did not get correct genesis validators root")
 
-	s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{GenesisValidatorsRoot: []byte{'a'}})
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{GenesisValidatorsRoot: []byte{'a'}})
 	require.NoError(t, err)
 	c.head = &head{state: s}
 	assert.Equal(t, [32]byte{'a'}, c.GenesisValidatorsRoot(), "Did not get correct genesis validators root")
@@ -264,12 +264,12 @@ func TestGenesisValidatorsRoot_CanRetrieve(t *testing.T) {
 func TestHeadETH1Data_Nil(t *testing.T) {
 	beaconDB := testDB.SetupDB(t)
 	c := setupBeaconChain(t, beaconDB)
-	assert.DeepEqual(t, &ethpb.Eth1Data{}, c.HeadETH1Data(), "Incorrect pre chain start value")
+	assert.DeepEqual(t, &silapb.Eth1Data{}, c.HeadETH1Data(), "Incorrect pre chain start value")
 }
 
 func TestHeadETH1Data_CanRetrieve(t *testing.T) {
-	d := &ethpb.Eth1Data{DepositCount: 999}
-	s, err := state_native.InitializeFromProtoPhase0(&ethpb.BeaconState{Eth1Data: d})
+	d := &silapb.Eth1Data{DepositCount: 999}
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{Eth1Data: d})
 	require.NoError(t, err)
 	c := testServiceNoDB(t)
 	c.head = &head{state: s}
@@ -335,8 +335,8 @@ func TestService_HeadGenesisValidatorsRoot(t *testing.T) {
 func TestService_ChainHeads(t *testing.T) {
 	ctx := t.Context()
 	c := testServiceWithDB(t)
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	st, roblock, err := prepareForkchoiceState(ctx, 0, [32]byte{}, [32]byte{}, params.BeaconConfig().ZeroHash, ojc, ofc)
 	require.NoError(t, err)
 	require.NoError(t, c.cfg.ForkChoiceStore.InsertNode(ctx, st, roblock))
@@ -431,8 +431,8 @@ func TestService_IsOptimistic(t *testing.T) {
 	params.OverrideBeaconConfig(cfg)
 
 	ctx := t.Context()
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	c := testServiceWithDB(t)
 	c.SetGenesisTime(time.Now())
 	c.head = &head{root: [32]byte{'b'}}
@@ -472,8 +472,8 @@ func TestService_IsOptimisticForRoot(t *testing.T) {
 	ctx := t.Context()
 	c := testServiceWithDB(t)
 	c.head = &head{root: [32]byte{'b'}}
-	ojc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
-	ofc := &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ojc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	ofc := &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	st, roblock, err := prepareForkchoiceState(ctx, 100, [32]byte{'a'}, [32]byte{}, params.BeaconConfig().ZeroHash, ojc, ofc)
 	require.NoError(t, err)
 	require.NoError(t, c.cfg.ForkChoiceStore.InsertNode(ctx, st, roblock))
@@ -497,7 +497,7 @@ func TestService_IsOptimisticForRoot_DB(t *testing.T) {
 	br, err := b.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, b)
-	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &ethpb.StateSummary{Root: br[:], Slot: 10}))
+	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &silapb.StateSummary{Root: br[:], Slot: 10}))
 
 	optimisticBlock := util.NewBeaconBlock()
 	optimisticBlock.Block.Slot = 97
@@ -511,14 +511,14 @@ func TestService_IsOptimisticForRoot_DB(t *testing.T) {
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, validatedBlock)
 
-	validatedCheckpoint := &ethpb.Checkpoint{Root: br[:]}
+	validatedCheckpoint := &silapb.Checkpoint{Root: br[:]}
 	require.NoError(t, beaconDB.SaveLastValidatedCheckpoint(ctx, validatedCheckpoint))
 
 	optimistic, err := c.IsOptimisticForRoot(ctx, optimisticRoot)
 	require.NoError(t, err)
 	require.Equal(t, true, optimistic)
 
-	cp := &ethpb.Checkpoint{
+	cp := &silapb.Checkpoint{
 		Epoch: 1,
 		Root:  validatedRoot[:],
 	}
@@ -529,12 +529,12 @@ func TestService_IsOptimisticForRoot_DB(t *testing.T) {
 	require.Equal(t, false, validated)
 
 	// Before the first finalized epoch, finalized root could be zeros.
-	validatedCheckpoint = &ethpb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
+	validatedCheckpoint = &silapb.Checkpoint{Root: params.BeaconConfig().ZeroHash[:]}
 	require.NoError(t, beaconDB.SaveGenesisBlockRoot(ctx, br))
-	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &ethpb.StateSummary{Root: params.BeaconConfig().ZeroHash[:], Slot: 10}))
+	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &silapb.StateSummary{Root: params.BeaconConfig().ZeroHash[:], Slot: 10}))
 	require.NoError(t, beaconDB.SaveLastValidatedCheckpoint(ctx, validatedCheckpoint))
 
-	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &ethpb.StateSummary{Root: optimisticRoot[:], Slot: 11}))
+	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &silapb.StateSummary{Root: optimisticRoot[:], Slot: 11}))
 	optimistic, err = c.IsOptimisticForRoot(ctx, optimisticRoot)
 	require.NoError(t, err)
 	require.Equal(t, true, optimistic)
@@ -550,7 +550,7 @@ func TestService_IsOptimisticForRoot_DB_non_canonical(t *testing.T) {
 	br, err := b.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, b)
-	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &ethpb.StateSummary{Root: br[:], Slot: 10}))
+	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &silapb.StateSummary{Root: br[:], Slot: 10}))
 
 	optimisticBlock := util.NewBeaconBlock()
 	optimisticBlock.Block.Slot = 97
@@ -564,15 +564,15 @@ func TestService_IsOptimisticForRoot_DB_non_canonical(t *testing.T) {
 	require.NoError(t, err)
 	util.SaveBlock(t, t.Context(), beaconDB, validatedBlock)
 
-	validatedCheckpoint := &ethpb.Checkpoint{Root: br[:]}
+	validatedCheckpoint := &silapb.Checkpoint{Root: br[:]}
 	require.NoError(t, beaconDB.SaveLastValidatedCheckpoint(ctx, validatedCheckpoint))
 
-	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &ethpb.StateSummary{Root: optimisticRoot[:], Slot: 11}))
+	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &silapb.StateSummary{Root: optimisticRoot[:], Slot: 11}))
 	optimistic, err := c.IsOptimisticForRoot(ctx, optimisticRoot)
 	require.NoError(t, err)
 	require.Equal(t, true, optimistic)
 
-	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &ethpb.StateSummary{Root: validatedRoot[:], Slot: 9}))
+	require.NoError(t, beaconDB.SaveStateSummary(t.Context(), &silapb.StateSummary{Root: validatedRoot[:], Slot: 9}))
 	validated, err := c.IsOptimisticForRoot(ctx, validatedRoot)
 	require.NoError(t, err)
 	require.Equal(t, true, validated)
@@ -611,9 +611,9 @@ func TestService_IsFinalized(t *testing.T) {
 	br, err := b.Block.HashTreeRoot()
 	require.NoError(t, err)
 	util.SaveBlock(t, ctx, beaconDB, b)
-	require.NoError(t, beaconDB.SaveStateSummary(ctx, &ethpb.StateSummary{Root: br[:], Slot: 10}))
+	require.NoError(t, beaconDB.SaveStateSummary(ctx, &silapb.StateSummary{Root: br[:], Slot: 10}))
 	require.NoError(t, beaconDB.SaveGenesisBlockRoot(ctx, br))
-	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &ethpb.Checkpoint{
+	require.NoError(t, beaconDB.SaveFinalizedCheckpoint(ctx, &silapb.Checkpoint{
 		Root: br[:],
 	}))
 	require.Equal(t, true, c.IsFinalized(ctx, r1))
@@ -642,8 +642,8 @@ func TestParentPayloadReady(t *testing.T) {
 	require.NoError(t, fcs.InsertNode(ctx, st, parentROBlock))
 
 	t.Run("pre-Gloas always true", func(t *testing.T) {
-		blk := util.HydrateSignedBeaconBlockDeneb(&ethpb.SignedBeaconBlockDeneb{
-			Block: &ethpb.BeaconBlockDeneb{ParentRoot: parentRoot[:]},
+		blk := util.HydrateSignedBeaconBlockDeneb(&silapb.SignedBeaconBlockDeneb{
+			Block: &silapb.BeaconBlockDeneb{ParentRoot: parentRoot[:]},
 		})
 		wsb, err := blocks.NewSignedBeaconBlock(blk)
 		require.NoError(t, err)
@@ -652,17 +652,17 @@ func TestParentPayloadReady(t *testing.T) {
 
 	t.Run("parent not in forkchoice", func(t *testing.T) {
 		unknownParent := [32]byte{99}
-		bid := util.HydrateSignedExecutionPayloadBid(&ethpb.SignedExecutionPayloadBid{
-			Message: &ethpb.ExecutionPayloadBid{
+		bid := util.HydrateSignedExecutionPayloadBid(&silapb.SignedExecutionPayloadBid{
+			Message: &silapb.ExecutionPayloadBid{
 				BlockHash:       []byte{20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				ParentBlockHash: parentBlockHash[:],
 			},
 		})
-		blk := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-			Block: &ethpb.BeaconBlockGloas{
+		blk := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+			Block: &silapb.BeaconBlockGloas{
 				Slot:       2,
 				ParentRoot: unknownParent[:],
-				Body:       &ethpb.BeaconBlockBodyGloas{SignedExecutionPayloadBid: bid},
+				Body:       &silapb.BeaconBlockBodyGloas{SignedExecutionPayloadBid: bid},
 			},
 		})
 		wsb, err := blocks.NewSignedBeaconBlock(blk)
@@ -672,17 +672,17 @@ func TestParentPayloadReady(t *testing.T) {
 
 	t.Run("builds on empty", func(t *testing.T) {
 		differentHash := [32]byte{99}
-		bid := util.HydrateSignedExecutionPayloadBid(&ethpb.SignedExecutionPayloadBid{
-			Message: &ethpb.ExecutionPayloadBid{
+		bid := util.HydrateSignedExecutionPayloadBid(&silapb.SignedExecutionPayloadBid{
+			Message: &silapb.ExecutionPayloadBid{
 				BlockHash:       []byte{20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				ParentBlockHash: differentHash[:],
 			},
 		})
-		blk := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-			Block: &ethpb.BeaconBlockGloas{
+		blk := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+			Block: &silapb.BeaconBlockGloas{
 				Slot:       2,
 				ParentRoot: parentRoot[:],
-				Body:       &ethpb.BeaconBlockBodyGloas{SignedExecutionPayloadBid: bid},
+				Body:       &silapb.BeaconBlockBodyGloas{SignedExecutionPayloadBid: bid},
 			},
 		})
 		wsb, err := blocks.NewSignedBeaconBlock(blk)
@@ -691,17 +691,17 @@ func TestParentPayloadReady(t *testing.T) {
 	})
 
 	t.Run("builds on full without payload", func(t *testing.T) {
-		bid := util.HydrateSignedExecutionPayloadBid(&ethpb.SignedExecutionPayloadBid{
-			Message: &ethpb.ExecutionPayloadBid{
+		bid := util.HydrateSignedExecutionPayloadBid(&silapb.SignedExecutionPayloadBid{
+			Message: &silapb.ExecutionPayloadBid{
 				BlockHash:       []byte{20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				ParentBlockHash: parentBlockHash[:],
 			},
 		})
-		blk := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-			Block: &ethpb.BeaconBlockGloas{
+		blk := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+			Block: &silapb.BeaconBlockGloas{
 				Slot:       2,
 				ParentRoot: parentRoot[:],
-				Body:       &ethpb.BeaconBlockBodyGloas{SignedExecutionPayloadBid: bid},
+				Body:       &silapb.BeaconBlockBodyGloas{SignedExecutionPayloadBid: bid},
 			},
 		})
 		wsb, err := blocks.NewSignedBeaconBlock(blk)
@@ -710,7 +710,7 @@ func TestParentPayloadReady(t *testing.T) {
 	})
 
 	t.Run("builds on full with payload", func(t *testing.T) {
-		pe, err := blocks.WrappedROExecutionPayloadEnvelope(&ethpb.ExecutionPayloadEnvelope{
+		pe, err := blocks.WrappedROExecutionPayloadEnvelope(&silapb.ExecutionPayloadEnvelope{
 			BeaconBlockRoot:       parentRoot[:],
 			ParentBeaconBlockRoot: make([]byte, 32),
 			Payload:               &enginev1.ExecutionPayloadGloas{},
@@ -718,17 +718,17 @@ func TestParentPayloadReady(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, fcs.InsertPayload(pe))
 
-		bid := util.HydrateSignedExecutionPayloadBid(&ethpb.SignedExecutionPayloadBid{
-			Message: &ethpb.ExecutionPayloadBid{
+		bid := util.HydrateSignedExecutionPayloadBid(&silapb.SignedExecutionPayloadBid{
+			Message: &silapb.ExecutionPayloadBid{
 				BlockHash:       []byte{20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				ParentBlockHash: parentBlockHash[:],
 			},
 		})
-		blk := util.HydrateSignedBeaconBlockGloas(&ethpb.SignedBeaconBlockGloas{
-			Block: &ethpb.BeaconBlockGloas{
+		blk := util.HydrateSignedBeaconBlockGloas(&silapb.SignedBeaconBlockGloas{
+			Block: &silapb.BeaconBlockGloas{
 				Slot:       2,
 				ParentRoot: parentRoot[:],
-				Body:       &ethpb.BeaconBlockBodyGloas{SignedExecutionPayloadBid: bid},
+				Body:       &silapb.BeaconBlockBodyGloas{SignedExecutionPayloadBid: bid},
 			},
 		})
 		wsb, err := blocks.NewSignedBeaconBlock(blk)
@@ -756,15 +756,15 @@ func TestService_ShouldIgnoreData(t *testing.T) {
 	nodeBSlot := primitives.Slot(slotsPerEpoch)     // epoch 1
 	nodeCSlot := primitives.Slot(2 * slotsPerEpoch) // epoch 2
 
-	stA, robA, err := prepareForkchoiceState(ctx, nodeASlot, nodeARoot, zeroHash, [32]byte{10}, &ethpb.Checkpoint{Epoch: 0, Root: zeroHash[:]}, &ethpb.Checkpoint{Epoch: 0, Root: zeroHash[:]})
+	stA, robA, err := prepareForkchoiceState(ctx, nodeASlot, nodeARoot, zeroHash, [32]byte{10}, &silapb.Checkpoint{Epoch: 0, Root: zeroHash[:]}, &silapb.Checkpoint{Epoch: 0, Root: zeroHash[:]})
 	require.NoError(t, err)
 	require.NoError(t, fcs.InsertNode(ctx, stA, robA))
 
-	stB, robB, err := prepareForkchoiceState(ctx, nodeBSlot, nodeBRoot, nodeARoot, [32]byte{11}, &ethpb.Checkpoint{Epoch: 0, Root: zeroHash[:]}, &ethpb.Checkpoint{Epoch: 0, Root: zeroHash[:]})
+	stB, robB, err := prepareForkchoiceState(ctx, nodeBSlot, nodeBRoot, nodeARoot, [32]byte{11}, &silapb.Checkpoint{Epoch: 0, Root: zeroHash[:]}, &silapb.Checkpoint{Epoch: 0, Root: zeroHash[:]})
 	require.NoError(t, err)
 	require.NoError(t, fcs.InsertNode(ctx, stB, robB))
 
-	stC, robC, err := prepareForkchoiceState(ctx, nodeCSlot, nodeCRoot, nodeBRoot, [32]byte{12}, &ethpb.Checkpoint{Epoch: 0, Root: zeroHash[:]}, &ethpb.Checkpoint{Epoch: 0, Root: zeroHash[:]})
+	stC, robC, err := prepareForkchoiceState(ctx, nodeCSlot, nodeCRoot, nodeBRoot, [32]byte{12}, &silapb.Checkpoint{Epoch: 0, Root: zeroHash[:]}, &silapb.Checkpoint{Epoch: 0, Root: zeroHash[:]})
 	require.NoError(t, err)
 	require.NoError(t, fcs.InsertNode(ctx, stC, robC))
 
@@ -795,7 +795,7 @@ func TestService_ShouldIgnoreData(t *testing.T) {
 	t.Run("non-canonical parent before justified is not ignored", func(t *testing.T) {
 		// Insert a fork: nodeD at slot 2 (epoch 0) branching from nodeA, not on the canonical chain.
 		nodeDRoot := [32]byte{4}
-		stD, robD, err := prepareForkchoiceState(ctx, 2, nodeDRoot, nodeARoot, [32]byte{13}, &ethpb.Checkpoint{Epoch: 0, Root: zeroHash[:]}, &ethpb.Checkpoint{Epoch: 0, Root: zeroHash[:]})
+		stD, robD, err := prepareForkchoiceState(ctx, 2, nodeDRoot, nodeARoot, [32]byte{13}, &silapb.Checkpoint{Epoch: 0, Root: zeroHash[:]}, &silapb.Checkpoint{Epoch: 0, Root: zeroHash[:]})
 		require.NoError(t, err)
 		require.NoError(t, fcs.InsertNode(ctx, stD, robD))
 
@@ -828,7 +828,7 @@ func Test_hashForGenesisRoot_Gloas(t *testing.T) {
 	c := setupBeaconChain(t, beaconDB)
 
 	expectedHash := [32]byte{1, 2, 3, 4, 5}
-	st, err := state_native.InitializeFromProtoGloas(&ethpb.BeaconStateGloas{
+	st, err := state_native.InitializeFromProtoGloas(&silapb.BeaconStateGloas{
 		LatestBlockHash: expectedHash[:],
 	})
 	require.NoError(t, err)

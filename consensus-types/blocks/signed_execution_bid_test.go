@@ -8,13 +8,13 @@ import (
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
-func validExecutionPayloadBid() *ethpb.ExecutionPayloadBid {
-	return &ethpb.ExecutionPayloadBid{
+func validExecutionPayloadBid() *silapb.ExecutionPayloadBid {
+	return &silapb.ExecutionPayloadBid{
 		ParentBlockHash:       bytes.Repeat([]byte{0x01}, 32),
 		ParentBlockRoot:       bytes.Repeat([]byte{0x02}, 32),
 		BlockHash:             bytes.Repeat([]byte{0x03}, 32),
@@ -34,31 +34,31 @@ func TestWrappedROExecutionPayloadBid(t *testing.T) {
 	t.Run("returns error on invalid lengths", func(t *testing.T) {
 		testCases := []struct {
 			name   string
-			mutate func(*ethpb.ExecutionPayloadBid)
+			mutate func(*silapb.ExecutionPayloadBid)
 		}{
 			{
 				name:   "parent block hash",
-				mutate: func(b *ethpb.ExecutionPayloadBid) { b.ParentBlockHash = []byte{0x01} },
+				mutate: func(b *silapb.ExecutionPayloadBid) { b.ParentBlockHash = []byte{0x01} },
 			},
 			{
 				name:   "parent block root",
-				mutate: func(b *ethpb.ExecutionPayloadBid) { b.ParentBlockRoot = []byte{0x02} },
+				mutate: func(b *silapb.ExecutionPayloadBid) { b.ParentBlockRoot = []byte{0x02} },
 			},
 			{
 				name:   "block hash",
-				mutate: func(b *ethpb.ExecutionPayloadBid) { b.BlockHash = []byte{0x03} },
+				mutate: func(b *silapb.ExecutionPayloadBid) { b.BlockHash = []byte{0x03} },
 			},
 			{
 				name:   "prev randao",
-				mutate: func(b *ethpb.ExecutionPayloadBid) { b.PrevRandao = []byte{0x04} },
+				mutate: func(b *silapb.ExecutionPayloadBid) { b.PrevRandao = []byte{0x04} },
 			},
 			{
 				name:   "blob kzg commitments length",
-				mutate: func(b *ethpb.ExecutionPayloadBid) { b.BlobKzgCommitments = [][]byte{[]byte{0x05}} },
+				mutate: func(b *silapb.ExecutionPayloadBid) { b.BlobKzgCommitments = [][]byte{[]byte{0x05}} },
 			},
 			{
 				name:   "fee recipient",
-				mutate: func(b *ethpb.ExecutionPayloadBid) { b.FeeRecipient = []byte{0x06} },
+				mutate: func(b *silapb.ExecutionPayloadBid) { b.FeeRecipient = []byte{0x06} },
 			},
 		}
 
@@ -94,7 +94,7 @@ func TestWrappedROExecutionPayloadBid(t *testing.T) {
 
 func TestWrappedROSignedExecutionPayloadBid(t *testing.T) {
 	t.Run("returns error for invalid signature length", func(t *testing.T) {
-		signed := &ethpb.SignedExecutionPayloadBid{
+		signed := &silapb.SignedExecutionPayloadBid{
 			Message:   validExecutionPayloadBid(),
 			Signature: bytes.Repeat([]byte{0xAA}, 95),
 		}
@@ -104,7 +104,7 @@ func TestWrappedROSignedExecutionPayloadBid(t *testing.T) {
 
 	t.Run("wraps and provides bid/signing data", func(t *testing.T) {
 		sig := bytes.Repeat([]byte{0xAB}, 96)
-		signed := &ethpb.SignedExecutionPayloadBid{
+		signed := &silapb.SignedExecutionPayloadBid{
 			Message:   validExecutionPayloadBid(),
 			Signature: sig,
 		}

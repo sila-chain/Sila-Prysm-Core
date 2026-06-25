@@ -31,7 +31,7 @@ import (
 	ecdsasila "github.com/sila-chain/Sila-Consensus-Core/v7/crypto/ecdsa"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	silaNetwork "github.com/sila-chain/Sila-Consensus-Core/v7/network"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/p2p/discover"
@@ -530,14 +530,14 @@ func TestInboundPeerLimit(t *testing.T) {
 	}
 
 	for range 30 {
-		_ = addPeer(t, s.peers, peerdata.ConnectionState(ethpb.ConnectionState_CONNECTED), false)
+		_ = addPeer(t, s.peers, peerdata.ConnectionState(silapb.ConnectionState_CONNECTED), false)
 	}
 
 	require.Equal(t, true, s.isPeerAtLimit(all), "not at limit for outbound peers")
 	require.Equal(t, false, s.isPeerAtLimit(inbound), "at limit for inbound peers")
 
 	for range highWatermarkBuffer {
-		_ = addPeer(t, s.peers, peerdata.ConnectionState(ethpb.ConnectionState_CONNECTED), false)
+		_ = addPeer(t, s.peers, peerdata.ConnectionState(silapb.ConnectionState_CONNECTED), false)
 	}
 
 	require.Equal(t, true, s.isPeerAtLimit(inbound), "not at limit for inbound peers")
@@ -556,13 +556,13 @@ func TestOutboundPeerThreshold(t *testing.T) {
 	}
 
 	for range 2 {
-		_ = addPeer(t, s.peers, peerdata.ConnectionState(ethpb.ConnectionState_CONNECTED), true)
+		_ = addPeer(t, s.peers, peerdata.ConnectionState(silapb.ConnectionState_CONNECTED), true)
 	}
 
 	require.Equal(t, true, s.isBelowOutboundPeerThreshold(), "not at outbound peer threshold")
 
 	for range 3 {
-		_ = addPeer(t, s.peers, peerdata.ConnectionState(ethpb.ConnectionState_CONNECTED), true)
+		_ = addPeer(t, s.peers, peerdata.ConnectionState(silapb.ConnectionState_CONNECTED), true)
 	}
 
 	require.Equal(t, false, s.isBelowOutboundPeerThreshold(), "still at outbound peer threshold")
@@ -680,7 +680,7 @@ func addPeer(t *testing.T, p *peers.Status, state peerdata.ConnectionState, outb
 	}
 	p.Add(new(enr.Record), id, nil, dir)
 	p.SetConnectionState(id, state)
-	p.SetMetadata(id, wrapper.WrappedMetadataV0(&ethpb.MetaDataV0{
+	p.SetMetadata(id, wrapper.WrappedMetadataV0(&silapb.MetaDataV0{
 		SeqNumber: 0,
 		Attnets:   bitfield.NewBitvector64(),
 	}))
@@ -967,7 +967,7 @@ func TestRefreshPersistentSubnets(t *testing.T) {
 			require.NoError(t, err)
 
 			service.dv5Listener = listener
-			service.metaData = wrapper.WrappedMetadataV0(new(ethpb.MetaDataV0))
+			service.metaData = wrapper.WrappedMetadataV0(new(silapb.MetaDataV0))
 
 			// Run a check.
 			checkPingCountCacheMetadataRecord(t, service, tc.checks[0])

@@ -12,7 +12,7 @@ import (
 	dbTest "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/mock"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -39,7 +39,7 @@ func TestServer_StreamAltairBlocksVerified_ContextCanceled(t *testing.T) {
 	mockStream := mock.NewMockBeaconNodeValidatorAltair_StreamBlocksServer(ctrl)
 	mockStream.EXPECT().Context().Return(ctx)
 	go func(tt *testing.T) {
-		assert.ErrorContains(tt, "Context canceled", server.StreamBlocksAltair(&ethpb.StreamBlocksRequest{
+		assert.ErrorContains(tt, "Context canceled", server.StreamBlocksAltair(&silapb.StreamBlocksRequest{
 			VerifiedOnly: true,
 		}, mockStream))
 		<-exitRoutine
@@ -65,7 +65,7 @@ func TestServer_StreamAltairBlocks_ContextCanceled(t *testing.T) {
 	mockStream := mock.NewMockBeaconNodeValidatorAltair_StreamBlocksServer(ctrl)
 	mockStream.EXPECT().Context().Return(ctx)
 	go func(tt *testing.T) {
-		assert.ErrorContains(tt, "Context canceled", server.StreamBlocksAltair(&ethpb.StreamBlocksRequest{}, mockStream))
+		assert.ErrorContains(tt, "Context canceled", server.StreamBlocksAltair(&silapb.StreamBlocksRequest{}, mockStream))
 		<-exitRoutine
 	}(t)
 	cancel()
@@ -94,13 +94,13 @@ func TestServer_StreamAltairBlocks_OnHeadUpdated(t *testing.T) {
 	defer ctrl.Finish()
 	mockStream := mock.NewMockBeaconNodeValidatorAltair_StreamBlocksServer(ctrl)
 
-	mockStream.EXPECT().Send(&ethpb.StreamBlocksResponse{Block: &ethpb.StreamBlocksResponse_AltairBlock{AltairBlock: b}}).Do(func(arg0 any) {
+	mockStream.EXPECT().Send(&silapb.StreamBlocksResponse{Block: &silapb.StreamBlocksResponse_AltairBlock{AltairBlock: b}}).Do(func(arg0 any) {
 		exitRoutine <- true
 	})
 	mockStream.EXPECT().Context().Return(ctx).AnyTimes()
 
 	go func(tt *testing.T) {
-		err := server.StreamBlocksAltair(&ethpb.StreamBlocksRequest{}, mockStream)
+		err := server.StreamBlocksAltair(&silapb.StreamBlocksRequest{}, mockStream)
 		if s, _ := status.FromError(err); s.Code() != codes.Canceled {
 			assert.NoError(tt, err)
 		}
@@ -139,13 +139,13 @@ func TestServer_StreamCapellaBlocks_OnHeadUpdated(t *testing.T) {
 	defer ctrl.Finish()
 	mockStream := mock.NewMockBeaconNodeValidatorAltair_StreamBlocksServer(ctrl)
 
-	mockStream.EXPECT().Send(&ethpb.StreamBlocksResponse{Block: &ethpb.StreamBlocksResponse_CapellaBlock{CapellaBlock: b}}).Do(func(arg0 any) {
+	mockStream.EXPECT().Send(&silapb.StreamBlocksResponse{Block: &silapb.StreamBlocksResponse_CapellaBlock{CapellaBlock: b}}).Do(func(arg0 any) {
 		exitRoutine <- true
 	})
 	mockStream.EXPECT().Context().Return(ctx).AnyTimes()
 
 	go func(tt *testing.T) {
-		err := server.StreamBlocksAltair(&ethpb.StreamBlocksRequest{}, mockStream)
+		err := server.StreamBlocksAltair(&silapb.StreamBlocksRequest{}, mockStream)
 		if s, _ := status.FromError(err); s.Code() != codes.Canceled {
 			assert.NoError(tt, err)
 		}
@@ -185,13 +185,13 @@ func TestServer_StreamAltairBlocksVerified_OnHeadUpdated(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockStream := mock.NewMockBeaconNodeValidatorAltair_StreamBlocksServer(ctrl)
-	mockStream.EXPECT().Send(&ethpb.StreamBlocksResponse{Block: &ethpb.StreamBlocksResponse_AltairBlock{AltairBlock: b}}).Do(func(arg0 any) {
+	mockStream.EXPECT().Send(&silapb.StreamBlocksResponse{Block: &silapb.StreamBlocksResponse_AltairBlock{AltairBlock: b}}).Do(func(arg0 any) {
 		exitRoutine <- true
 	})
 	mockStream.EXPECT().Context().Return(ctx).AnyTimes()
 
 	go func(tt *testing.T) {
-		err := server.StreamBlocksAltair(&ethpb.StreamBlocksRequest{VerifiedOnly: true}, mockStream)
+		err := server.StreamBlocksAltair(&silapb.StreamBlocksRequest{VerifiedOnly: true}, mockStream)
 		if s, _ := status.FromError(err); s.Code() != codes.Canceled {
 			assert.NoError(tt, err)
 		}
@@ -229,13 +229,13 @@ func TestServer_StreamCapellaBlocksVerified_OnHeadUpdated(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockStream := mock.NewMockBeaconNodeValidatorAltair_StreamBlocksServer(ctrl)
-	mockStream.EXPECT().Send(&ethpb.StreamBlocksResponse{Block: &ethpb.StreamBlocksResponse_CapellaBlock{CapellaBlock: b}}).Do(func(arg0 any) {
+	mockStream.EXPECT().Send(&silapb.StreamBlocksResponse{Block: &silapb.StreamBlocksResponse_CapellaBlock{CapellaBlock: b}}).Do(func(arg0 any) {
 		exitRoutine <- true
 	})
 	mockStream.EXPECT().Context().Return(ctx).AnyTimes()
 
 	go func(tt *testing.T) {
-		err := server.StreamBlocksAltair(&ethpb.StreamBlocksRequest{VerifiedOnly: true}, mockStream)
+		err := server.StreamBlocksAltair(&silapb.StreamBlocksRequest{VerifiedOnly: true}, mockStream)
 		if s, _ := status.FromError(err); s.Code() != codes.Canceled {
 			assert.NoError(tt, err)
 		}
@@ -267,7 +267,7 @@ func TestServer_StreamSlotsVerified_ContextCanceled(t *testing.T) {
 	mockStream := mock.NewMockBeaconNodeValidator_StreamSlotsServer(ctrl)
 	mockStream.EXPECT().Context().Return(ctx)
 	go func(tt *testing.T) {
-		assert.ErrorContains(tt, "Context canceled", server.StreamSlots(&ethpb.StreamSlotsRequest{
+		assert.ErrorContains(tt, "Context canceled", server.StreamSlots(&silapb.StreamSlotsRequest{
 			VerifiedOnly: true,
 		}, mockStream))
 		<-exitRoutine
@@ -293,7 +293,7 @@ func TestServer_StreamSlots_ContextCanceled(t *testing.T) {
 	mockStream := mock.NewMockBeaconNodeValidator_StreamSlotsServer(ctrl)
 	mockStream.EXPECT().Context().Return(ctx)
 	go func(tt *testing.T) {
-		assert.ErrorContains(tt, "Context canceled", server.StreamSlots(&ethpb.StreamSlotsRequest{}, mockStream))
+		assert.ErrorContains(tt, "Context canceled", server.StreamSlots(&silapb.StreamSlotsRequest{}, mockStream))
 		<-exitRoutine
 	}(t)
 	cancel()
@@ -316,7 +316,7 @@ func TestServer_StreamSlots_OnHeadUpdated(t *testing.T) {
 	defer ctrl.Finish()
 	mockStream := mock.NewMockBeaconNodeValidator_StreamSlotsServer(ctrl)
 
-	mockStream.EXPECT().Send(&ethpb.StreamSlotsResponse{
+	mockStream.EXPECT().Send(&silapb.StreamSlotsResponse{
 		Slot:                      123,
 		PreviousDutyDependentRoot: params.BeaconConfig().ZeroHash[:],
 		CurrentDutyDependentRoot:  params.BeaconConfig().ZeroHash[:],
@@ -326,12 +326,12 @@ func TestServer_StreamSlots_OnHeadUpdated(t *testing.T) {
 	mockStream.EXPECT().Context().Return(ctx).AnyTimes()
 
 	go func(tt *testing.T) {
-		err := server.StreamSlots(&ethpb.StreamSlotsRequest{}, mockStream)
+		err := server.StreamSlots(&silapb.StreamSlotsRequest{}, mockStream)
 		if s, _ := status.FromError(err); s.Code() != codes.Canceled {
 			assert.NoError(tt, err)
 		}
 	}(t)
-	wrappedBlk, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlock{Block: &ethpb.BeaconBlock{Slot: 123, Body: &ethpb.BeaconBlockBody{}}})
+	wrappedBlk, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlock{Block: &silapb.BeaconBlock{Slot: 123, Body: &silapb.BeaconBlockBody{}}})
 	require.NoError(t, err)
 	// Send in a loop to ensure it is delivered (busy wait for the service to subscribe to the state feed).
 	for sent := 0; sent == 0; {
@@ -355,7 +355,7 @@ func TestServer_StreamSlotsVerified_OnHeadUpdated(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockStream := mock.NewMockBeaconNodeValidator_StreamSlotsServer(ctrl)
-	mockStream.EXPECT().Send(&ethpb.StreamSlotsResponse{
+	mockStream.EXPECT().Send(&silapb.StreamSlotsResponse{
 		Slot:                      123,
 		PreviousDutyDependentRoot: params.BeaconConfig().ZeroHash[:],
 		CurrentDutyDependentRoot:  params.BeaconConfig().ZeroHash[:],
@@ -365,12 +365,12 @@ func TestServer_StreamSlotsVerified_OnHeadUpdated(t *testing.T) {
 	mockStream.EXPECT().Context().Return(ctx).AnyTimes()
 
 	go func(tt *testing.T) {
-		err := server.StreamSlots(&ethpb.StreamSlotsRequest{VerifiedOnly: true}, mockStream)
+		err := server.StreamSlots(&silapb.StreamSlotsRequest{VerifiedOnly: true}, mockStream)
 		if s, _ := status.FromError(err); s.Code() != codes.Canceled {
 			assert.NoError(tt, err)
 		}
 	}(t)
-	wrappedBlk, err := blocks.NewSignedBeaconBlock(&ethpb.SignedBeaconBlock{Block: &ethpb.BeaconBlock{Slot: 123, Body: &ethpb.BeaconBlockBody{}}})
+	wrappedBlk, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlock{Block: &silapb.BeaconBlock{Slot: 123, Body: &silapb.BeaconBlockBody{}}})
 	require.NoError(t, err)
 	// Send in a loop to ensure it is delivered (busy wait for the service to subscribe to the state feed).
 	for sent := 0; sent == 0; {
@@ -405,13 +405,13 @@ func TestServer_StreamBlocksVerified_FuluBlock(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockStream := mock.NewMockBeaconNodeValidatorAltair_StreamBlocksServer(ctrl)
-	mockStream.EXPECT().Send(&ethpb.StreamBlocksResponse{Block: &ethpb.StreamBlocksResponse_FuluBlock{FuluBlock: b}}).Do(func(arg0 any) {
+	mockStream.EXPECT().Send(&silapb.StreamBlocksResponse{Block: &silapb.StreamBlocksResponse_FuluBlock{FuluBlock: b}}).Do(func(arg0 any) {
 		exitRoutine <- true
 	})
 	mockStream.EXPECT().Context().Return(ctx).AnyTimes()
 
 	go func(tt *testing.T) {
-		err := server.StreamBlocksAltair(&ethpb.StreamBlocksRequest{VerifiedOnly: true}, mockStream)
+		err := server.StreamBlocksAltair(&silapb.StreamBlocksRequest{VerifiedOnly: true}, mockStream)
 		if s, _ := status.FromError(err); s.Code() != codes.Canceled {
 			assert.NoError(tt, err)
 		}
@@ -448,13 +448,13 @@ func TestServer_StreamBlocks_FuluBlock(t *testing.T) {
 	defer ctrl.Finish()
 	mockStream := mock.NewMockBeaconNodeValidatorAltair_StreamBlocksServer(ctrl)
 
-	mockStream.EXPECT().Send(&ethpb.StreamBlocksResponse{Block: &ethpb.StreamBlocksResponse_FuluBlock{FuluBlock: b}}).Do(func(arg0 any) {
+	mockStream.EXPECT().Send(&silapb.StreamBlocksResponse{Block: &silapb.StreamBlocksResponse_FuluBlock{FuluBlock: b}}).Do(func(arg0 any) {
 		exitRoutine <- true
 	})
 	mockStream.EXPECT().Context().Return(ctx).AnyTimes()
 
 	go func(tt *testing.T) {
-		err := server.StreamBlocksAltair(&ethpb.StreamBlocksRequest{}, mockStream)
+		err := server.StreamBlocksAltair(&silapb.StreamBlocksRequest{}, mockStream)
 		if s, _ := status.FromError(err); s.Code() != codes.Canceled {
 			assert.NoError(tt, err)
 		}

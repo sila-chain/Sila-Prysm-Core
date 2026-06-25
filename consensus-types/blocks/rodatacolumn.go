@@ -4,7 +4,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
 
@@ -17,14 +17,14 @@ var (
 // RODataColumn represents a read-only data column sidecar with its block root.
 // It supports both Fulu and Gloas fork variants. Only one of fulu/gloas is non-nil.
 type RODataColumn struct {
-	fulu                *ethpb.DataColumnSidecar
-	gloas               *ethpb.DataColumnSidecarGloas
+	fulu                *silapb.DataColumnSidecar
+	gloas               *silapb.DataColumnSidecarGloas
 	root                [fieldparams.RootLength]byte
 	bidCommitmentsGloas [][]byte // KZG commitments from the block's execution payload bid.
 }
 
 // NewRODataColumn creates a new RODataColumn from a Fulu DataColumnSidecar.
-func NewRODataColumn(dc *ethpb.DataColumnSidecar) (RODataColumn, error) {
+func NewRODataColumn(dc *silapb.DataColumnSidecar) (RODataColumn, error) {
 	if err := roDataColumnNilCheck(dc); err != nil {
 		return RODataColumn{}, err
 	}
@@ -36,7 +36,7 @@ func NewRODataColumn(dc *ethpb.DataColumnSidecar) (RODataColumn, error) {
 }
 
 // NewRODataColumnWithRoot creates a new RODataColumn from a Fulu DataColumnSidecar with a given root.
-func NewRODataColumnWithRoot(dc *ethpb.DataColumnSidecar, root [fieldparams.RootLength]byte) (RODataColumn, error) {
+func NewRODataColumnWithRoot(dc *silapb.DataColumnSidecar, root [fieldparams.RootLength]byte) (RODataColumn, error) {
 	if err := roDataColumnNilCheck(dc); err != nil {
 		return RODataColumn{}, err
 	}
@@ -44,7 +44,7 @@ func NewRODataColumnWithRoot(dc *ethpb.DataColumnSidecar, root [fieldparams.Root
 }
 
 // NewRODataColumnGloas creates a new RODataColumn from a Gloas DataColumnSidecarGloas.
-func NewRODataColumnGloas(dc *ethpb.DataColumnSidecarGloas) (RODataColumn, error) {
+func NewRODataColumnGloas(dc *silapb.DataColumnSidecarGloas) (RODataColumn, error) {
 	if dc == nil {
 		return RODataColumn{}, errNilGloasDataColumn
 	}
@@ -53,14 +53,14 @@ func NewRODataColumnGloas(dc *ethpb.DataColumnSidecarGloas) (RODataColumn, error
 }
 
 // NewRODataColumnGloasWithRoot creates a new RODataColumn from a Gloas DataColumnSidecarGloas with a given root.
-func NewRODataColumnGloasWithRoot(dc *ethpb.DataColumnSidecarGloas, root [fieldparams.RootLength]byte) (RODataColumn, error) {
+func NewRODataColumnGloasWithRoot(dc *silapb.DataColumnSidecarGloas, root [fieldparams.RootLength]byte) (RODataColumn, error) {
 	if dc == nil {
 		return RODataColumn{}, errNilGloasDataColumn
 	}
 	return RODataColumn{gloas: dc, root: root}, nil
 }
 
-func roDataColumnNilCheck(dc *ethpb.DataColumnSidecar) error {
+func roDataColumnNilCheck(dc *silapb.DataColumnSidecar) error {
 	if dc == nil {
 		return errNilDataColumn
 	}
@@ -136,7 +136,7 @@ func (dc *RODataColumn) ParentRoot() ([fieldparams.RootLength]byte, error) {
 }
 
 // SignedBlockHeader returns the signed block header. Returns an error for Gloas sidecars.
-func (dc *RODataColumn) SignedBlockHeader() (*ethpb.SignedBeaconBlockHeader, error) {
+func (dc *RODataColumn) SignedBlockHeader() (*silapb.SignedBeaconBlockHeader, error) {
 	if dc.gloas != nil {
 		return nil, errNotFuluDataColumn
 	}
@@ -197,12 +197,12 @@ func (dc *RODataColumn) SizeSSZ() int {
 // --- Proto access ---
 
 // DataColumnSidecar returns the underlying Fulu proto, or nil if this is a Gloas sidecar.
-func (dc *RODataColumn) DataColumnSidecar() *ethpb.DataColumnSidecar {
+func (dc *RODataColumn) DataColumnSidecar() *silapb.DataColumnSidecar {
 	return dc.fulu
 }
 
 // DataColumnSidecarGloas returns the underlying Gloas proto, or nil if this is a Fulu sidecar.
-func (dc *RODataColumn) DataColumnSidecarGloas() *ethpb.DataColumnSidecarGloas {
+func (dc *RODataColumn) DataColumnSidecarGloas() *silapb.DataColumnSidecarGloas {
 	return dc.gloas
 }
 
@@ -213,7 +213,7 @@ type VerifiedRODataColumn struct {
 
 // NewRODataColumnNoVerify creates an RODataColumn without validation. This should only be used in tests
 // where intentionally malformed sidecars are needed to test error handling.
-func NewRODataColumnNoVerify(dc *ethpb.DataColumnSidecar) RODataColumn {
+func NewRODataColumnNoVerify(dc *silapb.DataColumnSidecar) RODataColumn {
 	return RODataColumn{fulu: dc}
 }
 

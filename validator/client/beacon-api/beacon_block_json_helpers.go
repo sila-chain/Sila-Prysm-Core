@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/apiutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
-	ethpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 )
 
@@ -19,7 +19,7 @@ func jsonifyTransactions(transactions [][]byte) []string {
 	return jsonTransactions
 }
 
-func jsonifyEth1Data(eth1Data *ethpb.Eth1Data) *structs.Eth1Data {
+func jsonifyEth1Data(eth1Data *silapb.Eth1Data) *structs.Eth1Data {
 	return &structs.Eth1Data{
 		BlockHash:    hexutil.Encode(eth1Data.BlockHash),
 		DepositCount: apiutil.Uint64ToString(eth1Data.DepositCount),
@@ -27,7 +27,7 @@ func jsonifyEth1Data(eth1Data *ethpb.Eth1Data) *structs.Eth1Data {
 	}
 }
 
-func jsonifyAttestations(attestations []*ethpb.Attestation) []*structs.Attestation {
+func jsonifyAttestations(attestations []*silapb.Attestation) []*structs.Attestation {
 	jsonAttestations := make([]*structs.Attestation, len(attestations))
 	for index, attestation := range attestations {
 		jsonAttestations[index] = jsonifyAttestation(attestation)
@@ -35,7 +35,7 @@ func jsonifyAttestations(attestations []*ethpb.Attestation) []*structs.Attestati
 	return jsonAttestations
 }
 
-func jsonifySingleAttestations(attestations []*ethpb.SingleAttestation) []*structs.SingleAttestation {
+func jsonifySingleAttestations(attestations []*silapb.SingleAttestation) []*structs.SingleAttestation {
 	jsonAttestations := make([]*structs.SingleAttestation, len(attestations))
 	for index, attestation := range attestations {
 		jsonAttestations[index] = jsonifySingleAttestation(attestation)
@@ -44,7 +44,7 @@ func jsonifySingleAttestations(attestations []*ethpb.SingleAttestation) []*struc
 }
 
 // JsonifySignedVoluntaryExits converts an array of voluntary exit structs to a JSON hex string compatible format.
-func JsonifySignedVoluntaryExits(voluntaryExits []*ethpb.SignedVoluntaryExit) []*structs.SignedVoluntaryExit {
+func JsonifySignedVoluntaryExits(voluntaryExits []*silapb.SignedVoluntaryExit) []*structs.SignedVoluntaryExit {
 	jsonSignedVoluntaryExits := make([]*structs.SignedVoluntaryExit, len(voluntaryExits))
 	for index, signedVoluntaryExit := range voluntaryExits {
 		jsonSignedVoluntaryExit := &structs.SignedVoluntaryExit{
@@ -59,7 +59,7 @@ func JsonifySignedVoluntaryExits(voluntaryExits []*ethpb.SignedVoluntaryExit) []
 	return jsonSignedVoluntaryExits
 }
 
-func jsonifySignedBeaconBlockHeader(signedBeaconBlockHeader *ethpb.SignedBeaconBlockHeader) *structs.SignedBeaconBlockHeader {
+func jsonifySignedBeaconBlockHeader(signedBeaconBlockHeader *silapb.SignedBeaconBlockHeader) *structs.SignedBeaconBlockHeader {
 	return &structs.SignedBeaconBlockHeader{
 		Message: &structs.BeaconBlockHeader{
 			BodyRoot:      hexutil.Encode(signedBeaconBlockHeader.Header.BodyRoot),
@@ -72,7 +72,7 @@ func jsonifySignedBeaconBlockHeader(signedBeaconBlockHeader *ethpb.SignedBeaconB
 	}
 }
 
-func jsonifyIndexedAttestation(indexedAttestation *ethpb.IndexedAttestation) *structs.IndexedAttestation {
+func jsonifyIndexedAttestation(indexedAttestation *silapb.IndexedAttestation) *structs.IndexedAttestation {
 	attestingIndices := make([]string, len(indexedAttestation.AttestingIndices))
 	for index, attestingIndex := range indexedAttestation.AttestingIndices {
 		attestingIndex := apiutil.Uint64ToString(attestingIndex)
@@ -86,7 +86,7 @@ func jsonifyIndexedAttestation(indexedAttestation *ethpb.IndexedAttestation) *st
 	}
 }
 
-func jsonifyAttestationData(attestationData *ethpb.AttestationData) *structs.AttestationData {
+func jsonifyAttestationData(attestationData *silapb.AttestationData) *structs.AttestationData {
 	return &structs.AttestationData{
 		BeaconBlockRoot: hexutil.Encode(attestationData.BeaconBlockRoot),
 		CommitteeIndex:  apiutil.Uint64ToString(attestationData.CommitteeIndex),
@@ -102,7 +102,7 @@ func jsonifyAttestationData(attestationData *ethpb.AttestationData) *structs.Att
 	}
 }
 
-func jsonifyAttestation(attestation *ethpb.Attestation) *structs.Attestation {
+func jsonifyAttestation(attestation *silapb.Attestation) *structs.Attestation {
 	return &structs.Attestation{
 		AggregationBits: hexutil.Encode(attestation.AggregationBits),
 		Data:            jsonifyAttestationData(attestation.Data),
@@ -110,7 +110,7 @@ func jsonifyAttestation(attestation *ethpb.Attestation) *structs.Attestation {
 	}
 }
 
-func jsonifyAttestationElectra(attestation *ethpb.AttestationElectra) *structs.AttestationElectra {
+func jsonifyAttestationElectra(attestation *silapb.AttestationElectra) *structs.AttestationElectra {
 	return &structs.AttestationElectra{
 		AggregationBits: hexutil.Encode(attestation.AggregationBits),
 		Data:            jsonifyAttestationData(attestation.Data),
@@ -119,7 +119,7 @@ func jsonifyAttestationElectra(attestation *ethpb.AttestationElectra) *structs.A
 	}
 }
 
-func jsonifySingleAttestation(attestation *ethpb.SingleAttestation) *structs.SingleAttestation {
+func jsonifySingleAttestation(attestation *silapb.SingleAttestation) *structs.SingleAttestation {
 	return &structs.SingleAttestation{
 		CommitteeIndex: apiutil.Uint64ToString(attestation.CommitteeId),
 		AttesterIndex:  apiutil.Uint64ToString(attestation.AttesterIndex),
@@ -128,7 +128,7 @@ func jsonifySingleAttestation(attestation *ethpb.SingleAttestation) *structs.Sin
 	}
 }
 
-func jsonifySignedAggregateAndProof(signedAggregateAndProof *ethpb.SignedAggregateAttestationAndProof) *structs.SignedAggregateAttestationAndProof {
+func jsonifySignedAggregateAndProof(signedAggregateAndProof *silapb.SignedAggregateAttestationAndProof) *structs.SignedAggregateAttestationAndProof {
 	return &structs.SignedAggregateAttestationAndProof{
 		Message: &structs.AggregateAttestationAndProof{
 			AggregatorIndex: apiutil.Uint64ToString(signedAggregateAndProof.Message.AggregatorIndex),
@@ -139,7 +139,7 @@ func jsonifySignedAggregateAndProof(signedAggregateAndProof *ethpb.SignedAggrega
 	}
 }
 
-func jsonifySignedAggregateAndProofElectra(signedAggregateAndProof *ethpb.SignedAggregateAttestationAndProofElectra) *structs.SignedAggregateAttestationAndProofElectra {
+func jsonifySignedAggregateAndProofElectra(signedAggregateAndProof *silapb.SignedAggregateAttestationAndProofElectra) *structs.SignedAggregateAttestationAndProofElectra {
 	return &structs.SignedAggregateAttestationAndProofElectra{
 		Message: &structs.AggregateAttestationAndProofElectra{
 			AggregatorIndex: apiutil.Uint64ToString(signedAggregateAndProof.Message.AggregatorIndex),
