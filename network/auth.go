@@ -13,9 +13,9 @@ const DefaultRPCHTTPTimeout = time.Second * 30
 
 // This creates a custom HTTP transport which we can attach to our HTTP client
 // in order to inject JWT auth strings into our HTTP request headers. Authentication
-// is required when interacting with an Sila engine API server via HTTP, and JWT
+// is required when interacting with an Sila SilaEngine API server via HTTP, and JWT
 // is chosen as the scheme of choice.
-// For more details on the requirements of authentication when using the engine API, see
+// For more details on the requirements of authentication when using the SilaEngine API, see
 // the specification here: https://github.com/sila-chain/Sila-Execution-APIs/blob/main/src/engine/authentication.md
 //
 // To use this transport, initialize a new &http.Client{} from the standard library
@@ -34,7 +34,7 @@ type jwtTransport struct {
 // our HTTP client makes.
 func (t *jwtTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	claims := jwt.MapClaims{
-		// Required claim for engine API auth. "iat" stands for issued at
+		// Required claim for SilaEngine API auth. "iat" stands for issued at
 		// and it must be a unix timestamp that is +/- 5 seconds from the current
 		// timestamp at the moment the server verifies this value.
 		"iat": time.Now().Unix(),

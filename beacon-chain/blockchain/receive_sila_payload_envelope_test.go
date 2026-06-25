@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -46,7 +46,7 @@ func gloasEnvelopeFixture(t *testing.T, blockRoot [32]byte) (*silapb.BeaconState
 		ExecutionAddress: make([]byte, 20),
 	}}
 
-	emptyRequestsRoot, err := enginev1.EmptyExecutionRequestsHashTreeRoot()
+	emptyRequestsRoot, err := silaenginev1.EmptyExecutionRequestsHashTreeRoot()
 	require.NoError(t, err)
 
 	base.LatestSilaPayloadBid.ExecutionRequestsRoot = emptyRequestsRoot[:]
@@ -54,7 +54,7 @@ func gloasEnvelopeFixture(t *testing.T, blockRoot [32]byte) (*silapb.BeaconState
 
 	// Build a payload that is consistent with the committed bid and the state.
 	bid := base.LatestSilaPayloadBid
-	payload := &enginev1.SilaPayloadGloas{
+	payload := &silaenginev1.SilaPayloadGloas{
 		ParentHash:    base.LatestBlockHash,
 		FeeRecipient:  make([]byte, 20),
 		StateRoot:     make([]byte, 32),
@@ -68,7 +68,7 @@ func gloasEnvelopeFixture(t *testing.T, blockRoot [32]byte) (*silapb.BeaconState
 		BaseFeePerGas: make([]byte, 32),
 		BlockHash:     bid.BlockHash,
 		Transactions:  [][]byte{},
-		Withdrawals:   []*enginev1.Withdrawal{},
+		Withdrawals:   []*silaenginev1.Withdrawal{},
 		SlotNumber:    slot,
 	}
 
@@ -78,7 +78,7 @@ func gloasEnvelopeFixture(t *testing.T, blockRoot [32]byte) (*silapb.BeaconState
 		BeaconBlockRoot:       blockRoot[:],
 		ParentBeaconBlockRoot: parentBeaconRoot,
 		Payload:               payload,
-		ExecutionRequests:     &enginev1.ExecutionRequests{},
+		ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 	}
 
 	domain, err := signing.Domain(base.Fork, slots.ToEpoch(slot), cfg.DomainBeaconBuilder, base.GenesisValidatorsRoot)
@@ -101,21 +101,21 @@ func gloasEnvelopeFixture(t *testing.T, blockRoot [32]byte) (*silapb.BeaconState
 func TestReceiveSilaPayloadEnvelope_EmitEvents(t *testing.T) {
 	tests := []struct {
 		name          string
-		engine        *mockExecution.EngineClient
+		engine        *mockExecution.SilaEngineClient
 		wantErr       bool
 		wantAvailable int
 		wantProcessed int
 	}{
 		{
 			name:          "valid payload emits available and processed",
-			engine:        &mockExecution.EngineClient{},
+			engine:        &mockExecution.SilaEngineClient{},
 			wantErr:       false,
 			wantAvailable: 1,
 			wantProcessed: 1,
 		},
 		{
 			name:          "EL-invalid still emits available but not processed",
-			engine:        &mockExecution.EngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus},
+			engine:        &mockExecution.SilaEngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus},
 			wantErr:       true,
 			wantAvailable: 1,
 			wantProcessed: 0,

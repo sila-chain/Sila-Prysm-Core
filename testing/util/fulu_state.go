@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -96,7 +96,7 @@ func emptyGenesisStateFulu() (state.BeaconState, error) {
 		SilaExecutionDataVotes:    []*silapb.SilaExecutionData{},
 		SilaExecutionDepositIndex: 0,
 
-		LatestSilaPayloadHeader: &enginev1.SilaPayloadHeaderDeneb{},
+		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{},
 
 		// Electra fields
 		DepositBalanceToConsume:       primitives.Gwei(0),
@@ -232,7 +232,7 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 			SyncCommitteeBits:      scBits[:],
 			SyncCommitteeSignature: make([]byte, 96),
 		},
-		SilaPayload: &enginev1.SilaPayloadDeneb{
+		SilaPayload: &silaenginev1.SilaPayloadDeneb{
 			ParentHash:    make([]byte, 32),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, 32),
@@ -244,10 +244,10 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 			BlockHash:     make([]byte, 32),
 			Transactions:  make([][]byte, 0),
 		},
-		ExecutionRequests: &enginev1.ExecutionRequests{
-			Deposits:       make([]*enginev1.DepositRequest, 0),
-			Withdrawals:    make([]*enginev1.WithdrawalRequest, 0),
-			Consolidations: make([]*enginev1.ConsolidationRequest, 0),
+		ExecutionRequests: &silaenginev1.ExecutionRequests{
+			Deposits:       make([]*silaenginev1.DepositRequest, 0),
+			Withdrawals:    make([]*silaenginev1.WithdrawalRequest, 0),
+			Consolidations: make([]*silaenginev1.ConsolidationRequest, 0),
 		},
 	}).HashTreeRoot()
 	if err != nil {
@@ -279,7 +279,7 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 		AggregatePubkey: aggregated.Marshal(),
 	}
 
-	st.LatestSilaPayloadHeader = &enginev1.SilaPayloadHeaderDeneb{
+	st.LatestSilaPayloadHeader = &silaenginev1.SilaPayloadHeaderDeneb{
 		ParentHash:       make([]byte, 32),
 		FeeRecipient:     make([]byte, 20),
 		StateRoot:        make([]byte, 32),

@@ -2,7 +2,7 @@ package payloadattribute
 
 import (
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
 
@@ -28,7 +28,7 @@ func (a *data) SuggestedFeeRecipient() []byte {
 
 // Withdrawals returns the withdrawals of the payload attribute.
 // Support for withdrawals was added in version 2 of the payload attribute.
-func (a *data) Withdrawals() ([]*enginev1.Withdrawal, error) {
+func (a *data) Withdrawals() ([]*silaenginev1.Withdrawal, error) {
 	if a == nil {
 		return nil, errNilPayloadAttribute
 	}
@@ -49,7 +49,7 @@ func (a *data) ParentBeaconBlockRoot() ([]byte, error) {
 }
 
 // PbV1 returns the payload attribute in version 1.
-func (a *data) PbV1() (*enginev1.PayloadAttributes, error) {
+func (a *data) PbV1() (*silaenginev1.PayloadAttributes, error) {
 	if a == nil {
 		return nil, errNilPayloadAttribute
 	}
@@ -59,7 +59,7 @@ func (a *data) PbV1() (*enginev1.PayloadAttributes, error) {
 	if a.timeStamp == 0 && len(a.prevRandao) == 0 {
 		return nil, nil
 	}
-	return &enginev1.PayloadAttributes{
+	return &silaenginev1.PayloadAttributes{
 		Timestamp:             a.timeStamp,
 		PrevRandao:            a.prevRandao,
 		SuggestedFeeRecipient: a.suggestedFeeRecipient,
@@ -67,7 +67,7 @@ func (a *data) PbV1() (*enginev1.PayloadAttributes, error) {
 }
 
 // PbV2 returns the payload attribute in version 2.
-func (a *data) PbV2() (*enginev1.PayloadAttributesV2, error) {
+func (a *data) PbV2() (*silaenginev1.PayloadAttributesV2, error) {
 	if a == nil {
 		return nil, errNilPayloadAttribute
 	}
@@ -77,7 +77,7 @@ func (a *data) PbV2() (*enginev1.PayloadAttributesV2, error) {
 	if a.timeStamp == 0 && len(a.prevRandao) == 0 {
 		return nil, nil
 	}
-	return &enginev1.PayloadAttributesV2{
+	return &silaenginev1.PayloadAttributesV2{
 		Timestamp:             a.timeStamp,
 		PrevRandao:            a.prevRandao,
 		SuggestedFeeRecipient: a.suggestedFeeRecipient,
@@ -86,7 +86,7 @@ func (a *data) PbV2() (*enginev1.PayloadAttributesV2, error) {
 }
 
 // PbV3 returns the payload attribute in version 3.
-func (a *data) PbV3() (*enginev1.PayloadAttributesV3, error) {
+func (a *data) PbV3() (*silaenginev1.PayloadAttributesV3, error) {
 	if a == nil {
 		return nil, errNilPayloadAttribute
 	}
@@ -96,7 +96,7 @@ func (a *data) PbV3() (*enginev1.PayloadAttributesV3, error) {
 	if a.timeStamp == 0 && len(a.prevRandao) == 0 && len(a.parentBeaconBlockRoot) == 0 {
 		return nil, nil
 	}
-	return &enginev1.PayloadAttributesV3{
+	return &silaenginev1.PayloadAttributesV3{
 		Timestamp:             a.timeStamp,
 		PrevRandao:            a.prevRandao,
 		SuggestedFeeRecipient: a.suggestedFeeRecipient,
@@ -106,7 +106,7 @@ func (a *data) PbV3() (*enginev1.PayloadAttributesV3, error) {
 }
 
 // PbV4 returns the payload attribute in version 4 (Amsterdam/Gloas).
-func (a *data) PbV4() (*enginev1.PayloadAttributesV4, error) {
+func (a *data) PbV4() (*silaenginev1.PayloadAttributesV4, error) {
 	if a == nil {
 		return nil, errNilPayloadAttribute
 	}
@@ -116,7 +116,7 @@ func (a *data) PbV4() (*enginev1.PayloadAttributesV4, error) {
 	if a.timeStamp == 0 && len(a.prevRandao) == 0 && len(a.parentBeaconBlockRoot) == 0 {
 		return nil, nil
 	}
-	return &enginev1.PayloadAttributesV4{
+	return &silaenginev1.PayloadAttributesV4{
 		Timestamp:             a.timeStamp,
 		PrevRandao:            a.prevRandao,
 		SuggestedFeeRecipient: a.suggestedFeeRecipient,

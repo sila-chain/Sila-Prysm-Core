@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -20,12 +20,12 @@ import (
 )
 
 func blockWithDepositRequest(ssz []byte) (interfaces.SignedBeaconBlock, error) {
-	dr := &enginev1.DepositRequest{}
+	dr := &silaenginev1.DepositRequest{}
 	if err := dr.UnmarshalSSZ(ssz); err != nil {
 		return nil, err
 	}
-	er := &enginev1.ExecutionRequests{
-		Deposits: []*enginev1.DepositRequest{dr},
+	er := &silaenginev1.ExecutionRequests{
+		Deposits: []*silaenginev1.DepositRequest{dr},
 	}
 	b := util.NewBeaconBlockElectra()
 	b.Block.Body = &silapb.BeaconBlockBodyElectra{ExecutionRequests: er}

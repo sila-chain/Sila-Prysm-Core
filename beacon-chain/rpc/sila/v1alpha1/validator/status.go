@@ -258,7 +258,7 @@ func (vs *Server) activationStatus(
 
 // optimisticStatus returns an error if the node is currently optimistic with respect to head.
 // by definition, an optimistic node is not a full node. It is unable to produce blocks,
-// since an execution engine cannot produce a payload upon an unknown parent.
+// since an SilaEngine cannot produce a payload upon an unknown parent.
 // It cannot faithfully attest to the head block of the chain, since it has not fully verified that block.
 //
 // Spec:

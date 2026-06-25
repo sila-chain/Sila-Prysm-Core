@@ -21,7 +21,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -168,7 +168,7 @@ var ErrEmptyBlockHash = errors.New("Block hash is empty 0x0000...")
 
 // NewPayload request calls the silaEngine_newPayloadVX method via JSON-RPC.
 func (s *Service) NewPayload(ctx context.Context, payload interfaces.ExecutionData, versionedHashes []common.Hash, parentBlockRoot *common.Hash, executionRequests *pb.ExecutionRequests) ([]byte, error) {
-	ctx, span := trace.StartSpan(ctx, "powchain.engine-api-client.NewPayload")
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.NewPayload")
 	defer span.End()
 	defer func(start time.Time) {
 		newPayloadLatency.Observe(float64(time.Since(start).Milliseconds()))
@@ -242,7 +242,7 @@ func (s *Service) NewPayload(ctx context.Context, payload interfaces.ExecutionDa
 func (s *Service) ForkchoiceUpdated(
 	ctx context.Context, state *pb.ForkchoiceState, attrs payloadattribute.Attributer,
 ) (*pb.PayloadIDBytes, []byte, error) {
-	ctx, span := trace.StartSpan(ctx, "powchain.engine-api-client.ForkchoiceUpdated")
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.ForkchoiceUpdated")
 	defer span.End()
 	start := time.Now()
 	defer func() {
@@ -340,7 +340,7 @@ func getPayloadMethodAndMessage(slot primitives.Slot) (string, proto.Message) {
 // GetPayload calls the silaEngine_getPayloadVX method via JSON-RPC.
 // It returns the execution data as well as the blobs bundle.
 func (s *Service) GetPayload(ctx context.Context, payloadId [8]byte, slot primitives.Slot) (*blocks.GetPayloadResponse, error) {
-	ctx, span := trace.StartSpan(ctx, "powchain.engine-api-client.GetPayload")
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.GetPayload")
 	defer span.End()
 	start := time.Now()
 	defer func() {
@@ -363,7 +363,7 @@ func (s *Service) GetPayload(ctx context.Context, payloadId [8]byte, slot primit
 }
 
 func (s *Service) ExchangeCapabilities(ctx context.Context) ([]string, error) {
-	ctx, span := trace.StartSpan(ctx, "powchain.engine-api-client.ExchangeCapabilities")
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.ExchangeCapabilities")
 	defer span.End()
 
 	if params.ElectraEnabled() {
@@ -485,10 +485,10 @@ func (s *Service) GetTerminalBlockHash(ctx context.Context, transitionTime uint6
 	}
 }
 
-// LatestExecutionBlock fetches the latest execution engine block by calling
+// LatestExecutionBlock fetches the latest SilaEngine block by calling
 // sila_blockByNumber via JSON-RPC.
 func (s *Service) LatestExecutionBlock(ctx context.Context) (*pb.ExecutionBlock, error) {
-	ctx, span := trace.StartSpan(ctx, "powchain.engine-api-client.LatestExecutionBlock")
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.LatestExecutionBlock")
 	defer span.End()
 
 	result := &pb.ExecutionBlock{}
@@ -502,20 +502,20 @@ func (s *Service) LatestExecutionBlock(ctx context.Context) (*pb.ExecutionBlock,
 	return result, handleRPCError(err)
 }
 
-// ExecutionBlockByHash fetches an execution engine block by hash by calling
+// ExecutionBlockByHash fetches an SilaEngine block by hash by calling
 // sila_blockByHash via JSON-RPC.
 func (s *Service) ExecutionBlockByHash(ctx context.Context, hash common.Hash, withTxs bool) (*pb.ExecutionBlock, error) {
-	ctx, span := trace.StartSpan(ctx, "powchain.engine-api-client.ExecutionBlockByHash")
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.ExecutionBlockByHash")
 	defer span.End()
 	result := &pb.ExecutionBlock{}
 	err := s.rpcClient.CallContext(ctx, result, BlockByHashMethod, hash, withTxs)
 	return result, handleRPCError(err)
 }
 
-// ExecutionBlocksByHashes fetches a batch of execution engine blocks by hash by calling
+// ExecutionBlocksByHashes fetches a batch of SilaEngine blocks by hash by calling
 // sila_blockByHash via JSON-RPC.
 func (s *Service) ExecutionBlocksByHashes(ctx context.Context, hashes []common.Hash, withTxs bool) ([]*pb.ExecutionBlock, error) {
-	_, span := trace.StartSpan(ctx, "powchain.engine-api-client.ExecutionBlocksByHashes")
+	_, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.ExecutionBlocksByHashes")
 	defer span.End()
 	numOfHashes := len(hashes)
 	elems := make([]gethRPC.BatchElem, 0, numOfHashes)
@@ -566,12 +566,12 @@ func (s *Service) HeaderByNumber(ctx context.Context, number *big.Int) (*types.H
 	return hdr, err
 }
 
-// GetBlobs returns the blob and proof from the execution engine for the given versioned hashes.
+// GetBlobs returns the blob and proof from the SilaEngine for the given versioned hashes.
 func (s *Service) GetBlobs(ctx context.Context, versionedHashes []common.Hash) ([]*pb.BlobAndProof, error) {
-	ctx, span := trace.StartSpan(ctx, "powchain.engine-api-client.GetBlobs")
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.GetBlobs")
 	defer span.End()
 
-	// If the execution engine does not support `GetBlobsV1`, return early to prevent encountering an error later.
+	// If the SilaEngine does not support `GetBlobsV1`, return early to prevent encountering an error later.
 	if !s.capabilityCache.has(GetBlobsV1) {
 		return nil, errors.New(fmt.Sprintf("%s is not supported", GetBlobsV1))
 	}
@@ -582,7 +582,7 @@ func (s *Service) GetBlobs(ctx context.Context, versionedHashes []common.Hash) (
 }
 
 func (s *Service) GetBlobsV2(ctx context.Context, versionedHashes []common.Hash) ([]*pb.BlobAndProofV2, error) {
-	ctx, span := trace.StartSpan(ctx, "powchain.engine-api-client.GetBlobsV2")
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.GetBlobsV2")
 	defer span.End()
 
 	start := time.Now()
@@ -607,7 +607,7 @@ func (s *Service) GetBlobsV2(ctx context.Context, versionedHashes []common.Hash)
 
 // GetClientVersion calls silaEngine_getClientVersionV1 to retrieve EL client information.
 func (s *Service) GetClientVersionV1(ctx context.Context) ([]*structs.ClientVersionV1, error) {
-	ctx, span := trace.StartSpan(ctx, "powchain.engine-api-client.GetClientVersionV1")
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.GetClientVersionV1")
 	defer span.End()
 
 	// First 4 bytes of the git commit are used.
@@ -640,7 +640,7 @@ func (s *Service) GetClientVersionV1(ctx context.Context) ([]*structs.ClientVers
 }
 
 // ReconstructFullBlock takes in a blinded beacon block and reconstructs
-// a beacon block with a full sila payload via the engine API.
+// a beacon block with a full sila payload via the SilaEngine API.
 func (s *Service) ReconstructFullBlock(
 	ctx context.Context, blindedBlock interfaces.ReadOnlySignedBeaconBlock,
 ) (interfaces.SignedBeaconBlock, error) {
@@ -655,7 +655,7 @@ func (s *Service) ReconstructFullBlock(
 }
 
 // ReconstructFullBellatrixBlockBatch takes in a batch of blinded beacon blocks and reconstructs
-// them with a full sila payload for each block via the engine API.
+// them with a full sila payload for each block via the SilaEngine API.
 func (s *Service) ReconstructFullBellatrixBlockBatch(
 	ctx context.Context, blindedBlocks []interfaces.ReadOnlySignedBeaconBlock,
 ) ([]interfaces.SignedBeaconBlock, error) {
@@ -829,7 +829,7 @@ func gloasPayloadFromExecutionBlock(
 //
 // The 'hasIndex' argument is a function returns true if the given uint64 blob index already exists on disc.
 // Only the blobs that do not already exist (where hasIndex(i) is false)
-// will be fetched from the execution engine using the KZG commitments from block body.
+// will be fetched from the SilaEngine using the KZG commitments from block body.
 func (s *Service) ReconstructBlobSidecars(ctx context.Context, block interfaces.ReadOnlySignedBeaconBlock, blockRoot [32]byte, hasIndex func(uint64) bool) ([]blocks.VerifiedROBlob, error) {
 	blockBody := block.Block().Body()
 	kzgCommitments, err := blockBody.BlobKzgCommitments()

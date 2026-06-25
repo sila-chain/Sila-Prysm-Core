@@ -11,7 +11,7 @@ import (
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -23,7 +23,7 @@ import (
 func testGloasBlock(t *testing.T) (*consensusblocks.GetPayloadResponse, interfaces.SignedBeaconBlock) {
 	t.Helper()
 
-	payload := &enginev1.SilaPayloadGloas{
+	payload := &silaenginev1.SilaPayloadGloas{
 		ParentHash:    make([]byte, 32),
 		FeeRecipient:  make([]byte, 20),
 		StateRoot:     make([]byte, 32),
@@ -40,7 +40,7 @@ func testGloasBlock(t *testing.T) (*consensusblocks.GetPayloadResponse, interfac
 	local := &consensusblocks.GetPayloadResponse{
 		ExecutionData:     ed,
 		Bid:               big.NewInt(0),
-		ExecutionRequests: &enginev1.ExecutionRequests{},
+		ExecutionRequests: &silaenginev1.ExecutionRequests{},
 	}
 
 	sBlk, err := consensusblocks.NewSignedBeaconBlock(util.NewBeaconBlockGloas())
@@ -62,7 +62,7 @@ func TestStoreSilaPayloadEnvelope(t *testing.T) {
 }
 
 func TestExtractSilaPayloadGloas(t *testing.T) {
-	payload := &enginev1.SilaPayloadGloas{
+	payload := &silaenginev1.SilaPayloadGloas{
 		ParentHash:    make([]byte, 32),
 		FeeRecipient:  make([]byte, 20),
 		StateRoot:     make([]byte, 32),
@@ -128,7 +128,7 @@ func TestPublishSilaPayloadEnvelope_PreFork(t *testing.T) {
 	vs := &Server{}
 	_, err := vs.PublishSilaPayloadEnvelope(t.Context(), &silapb.SignedSilaPayloadEnvelope{
 		Message: &silapb.SilaPayloadEnvelope{
-			Payload: &enginev1.SilaPayloadGloas{SlotNumber: 0}, // epoch 0, before GloasForkEpoch 10
+			Payload: &silaenginev1.SilaPayloadGloas{SlotNumber: 0}, // epoch 0, before GloasForkEpoch 10
 		},
 	})
 	require.ErrorContains(t, "not supported before Gloas fork", err)
@@ -141,7 +141,7 @@ func TestGetSilaPayloadEnvelopeRPC_Success(t *testing.T) {
 	params.OverrideBeaconConfig(cfg)
 
 	envelope := &silapb.SilaPayloadEnvelope{
-		Payload: &enginev1.SilaPayloadGloas{
+		Payload: &silaenginev1.SilaPayloadGloas{
 			ParentHash:    make([]byte, 32),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, 32),
@@ -182,7 +182,7 @@ func TestPublishSilaPayloadEnvelope_Success(t *testing.T) {
 
 	req := &silapb.SignedSilaPayloadEnvelope{
 		Message: &silapb.SilaPayloadEnvelope{
-			Payload: &enginev1.SilaPayloadGloas{
+			Payload: &silaenginev1.SilaPayloadGloas{
 				ParentHash:    make([]byte, 32),
 				FeeRecipient:  make([]byte, 20),
 				StateRoot:     make([]byte, 32),
@@ -194,7 +194,7 @@ func TestPublishSilaPayloadEnvelope_Success(t *testing.T) {
 				ExtraData:     make([]byte, 0),
 				SlotNumber:    1,
 			},
-			ExecutionRequests:     &enginev1.ExecutionRequests{},
+			ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 			BuilderIndex:          0,
 			BeaconBlockRoot:       make([]byte, 32),
 			ParentBeaconBlockRoot: make([]byte, 32),
@@ -225,7 +225,7 @@ func TestPublishSilaPayloadEnvelope_ImportFailureIsAborted(t *testing.T) {
 
 	req := &silapb.SignedSilaPayloadEnvelope{
 		Message: &silapb.SilaPayloadEnvelope{
-			Payload: &enginev1.SilaPayloadGloas{
+			Payload: &silaenginev1.SilaPayloadGloas{
 				ParentHash:    make([]byte, 32),
 				FeeRecipient:  make([]byte, 20),
 				StateRoot:     make([]byte, 32),
@@ -237,7 +237,7 @@ func TestPublishSilaPayloadEnvelope_ImportFailureIsAborted(t *testing.T) {
 				ExtraData:     make([]byte, 0),
 				SlotNumber:    1,
 			},
-			ExecutionRequests:     &enginev1.ExecutionRequests{},
+			ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 			BeaconBlockRoot:       make([]byte, 32),
 			ParentBeaconBlockRoot: make([]byte, 32),
 		},

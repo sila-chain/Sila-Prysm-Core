@@ -7,7 +7,7 @@ import (
 
 	bitfield "github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	v1alpha1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"google.golang.org/protobuf/proto"
@@ -843,8 +843,8 @@ func genSyncCommitteeMessage() *v1alpha1.SyncCommitteeMessage {
 	}
 }
 
-func genPayload() *enginev1.SilaPayload {
-	return &enginev1.SilaPayload{
+func genPayload() *silaenginev1.SilaPayload {
+	return &silaenginev1.SilaPayload{
 		ParentHash:    bytes(32),
 		FeeRecipient:  bytes(32),
 		StateRoot:     bytes(32),
@@ -862,8 +862,8 @@ func genPayload() *enginev1.SilaPayload {
 	}
 }
 
-func genPayloadCapella() *enginev1.SilaPayloadCapella {
-	return &enginev1.SilaPayloadCapella{
+func genPayloadCapella() *silaenginev1.SilaPayloadCapella {
+	return &silaenginev1.SilaPayloadCapella{
 		ParentHash:    bytes(32),
 		FeeRecipient:  bytes(20),
 		StateRoot:     bytes(32),
@@ -878,7 +878,7 @@ func genPayloadCapella() *enginev1.SilaPayloadCapella {
 		BaseFeePerGas: bytes(32),
 		BlockHash:     bytes(32),
 		Transactions:  [][]byte{{'a'}, {'b'}, {'c'}},
-		Withdrawals: []*enginev1.Withdrawal{
+		Withdrawals: []*silaenginev1.Withdrawal{
 			{
 				Index:          123,
 				ValidatorIndex: 123,
@@ -895,8 +895,8 @@ func genPayloadCapella() *enginev1.SilaPayloadCapella {
 	}
 }
 
-func genPayloadDeneb() *enginev1.SilaPayloadDeneb {
-	return &enginev1.SilaPayloadDeneb{
+func genPayloadDeneb() *silaenginev1.SilaPayloadDeneb {
+	return &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    bytes(32),
 		FeeRecipient:  bytes(20),
 		StateRoot:     bytes(32),
@@ -911,7 +911,7 @@ func genPayloadDeneb() *enginev1.SilaPayloadDeneb {
 		BaseFeePerGas: bytes(32),
 		BlockHash:     bytes(32),
 		Transactions:  [][]byte{{'a'}, {'b'}, {'c'}},
-		Withdrawals: []*enginev1.Withdrawal{
+		Withdrawals: []*silaenginev1.Withdrawal{
 			{
 				Index:          123,
 				ValidatorIndex: 123,
@@ -932,8 +932,8 @@ func genPayloadDeneb() *enginev1.SilaPayloadDeneb {
 
 var genPayloadElectra = genPayloadDeneb
 
-func genPayloadHeaderCapella() *enginev1.SilaPayloadHeaderCapella {
-	return &enginev1.SilaPayloadHeaderCapella{
+func genPayloadHeaderCapella() *silaenginev1.SilaPayloadHeaderCapella {
+	return &silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       bytes(32),
 		FeeRecipient:     bytes(20),
 		StateRoot:        bytes(32),
@@ -952,8 +952,8 @@ func genPayloadHeaderCapella() *enginev1.SilaPayloadHeaderCapella {
 	}
 }
 
-func genPayloadHeaderDeneb() *enginev1.SilaPayloadHeaderDeneb {
-	return &enginev1.SilaPayloadHeaderDeneb{
+func genPayloadHeaderDeneb() *silaenginev1.SilaPayloadHeaderDeneb {
+	return &silaenginev1.SilaPayloadHeaderDeneb{
 		ParentHash:       bytes(32),
 		FeeRecipient:     bytes(20),
 		StateRoot:        bytes(32),
@@ -976,8 +976,8 @@ func genPayloadHeaderDeneb() *enginev1.SilaPayloadHeaderDeneb {
 
 var genPayloadHeaderElectra = genPayloadHeaderDeneb
 
-func genWithdrawal() *enginev1.Withdrawal {
-	return &enginev1.Withdrawal{
+func genWithdrawal() *silaenginev1.Withdrawal {
+	return &silaenginev1.Withdrawal{
 		Index:          123456,
 		ValidatorIndex: 654321,
 		Address:        bytes(20),
@@ -1114,24 +1114,24 @@ func genBeaconBlockBodyElectra() *v1alpha1.BeaconBlockBodyElectra {
 	}
 }
 
-func genExecutionRequests() *enginev1.ExecutionRequests {
-	return &enginev1.ExecutionRequests{
+func genExecutionRequests() *silaenginev1.ExecutionRequests {
+	return &silaenginev1.ExecutionRequests{
 		Deposits:       genDepositRequests(10),
 		Withdrawals:    genWithdrawalRequests(10),
 		Consolidations: genConsolidationRequests(10),
 	}
 }
 
-func genDepositRequests(num int) []*enginev1.DepositRequest {
-	drs := make([]*enginev1.DepositRequest, num)
+func genDepositRequests(num int) []*silaenginev1.DepositRequest {
+	drs := make([]*silaenginev1.DepositRequest, num)
 	for i := range num {
 		drs[i] = genDepositRequest()
 	}
 	return drs
 }
 
-func genDepositRequest() *enginev1.DepositRequest {
-	return &enginev1.DepositRequest{
+func genDepositRequest() *silaenginev1.DepositRequest {
+	return &silaenginev1.DepositRequest{
 		Pubkey:                bytes(48),
 		WithdrawalCredentials: bytes(32),
 		Amount:                55555,
@@ -1140,32 +1140,32 @@ func genDepositRequest() *enginev1.DepositRequest {
 	}
 }
 
-func genWithdrawalRequests(num int) []*enginev1.WithdrawalRequest {
-	wrs := make([]*enginev1.WithdrawalRequest, num)
+func genWithdrawalRequests(num int) []*silaenginev1.WithdrawalRequest {
+	wrs := make([]*silaenginev1.WithdrawalRequest, num)
 	for i := range num {
 		wrs[i] = genWithdrawalRequest()
 	}
 	return wrs
 }
 
-func genWithdrawalRequest() *enginev1.WithdrawalRequest {
-	return &enginev1.WithdrawalRequest{
+func genWithdrawalRequest() *silaenginev1.WithdrawalRequest {
+	return &silaenginev1.WithdrawalRequest{
 		SourceAddress:   bytes(20),
 		ValidatorPubkey: bytes(48),
 		Amount:          55555,
 	}
 }
 
-func genConsolidationRequests(num int) []*enginev1.ConsolidationRequest {
-	crs := make([]*enginev1.ConsolidationRequest, num)
+func genConsolidationRequests(num int) []*silaenginev1.ConsolidationRequest {
+	crs := make([]*silaenginev1.ConsolidationRequest, num)
 	for i := range num {
 		crs[i] = genConsolidationRequest()
 	}
 	return crs
 }
 
-func genConsolidationRequest() *enginev1.ConsolidationRequest {
-	return &enginev1.ConsolidationRequest{
+func genConsolidationRequest() *silaenginev1.ConsolidationRequest {
+	return &silaenginev1.ConsolidationRequest{
 		SourceAddress: bytes(20),
 		SourcePubkey:  bytes(48),
 		TargetPubkey:  bytes(48),

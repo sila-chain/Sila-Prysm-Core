@@ -26,7 +26,7 @@ import (
 	payloadattribute "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/payload-attribute"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common"
@@ -68,7 +68,7 @@ func startChainService(t testing.TB,
 	fc.SetGenesisTime(genesis)
 	sg := stategen.New(db, fc)
 	opts := append([]blockchain.Option{},
-		blockchain.WithExecutionEngineCaller(engineMock),
+		blockchain.WithSilaEngineCaller(engineMock),
 		blockchain.WithFinalizedStateAtStartUp(st),
 		blockchain.WithDatabase(db),
 		blockchain.WithAttestationService(attPool),

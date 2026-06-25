@@ -4,7 +4,7 @@ import (
 	field_params "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
@@ -56,10 +56,10 @@ type BeaconBlockBody struct {
 	silaPayloadHeader    interfaces.ExecutionData
 	blsToExecutionChanges     []*eth.SignedBLSToExecutionChange
 	blobKzgCommitments        [][]byte
-	executionRequests         *enginev1.ExecutionRequests
+	executionRequests         *silaenginev1.ExecutionRequests
 	signedSilaPayloadBid *eth.SignedSilaPayloadBid
 	payloadAttestations       []*eth.PayloadAttestation
-	parentExecutionRequests   *enginev1.ExecutionRequests
+	parentExecutionRequests   *silaenginev1.ExecutionRequests
 }
 
 var _ interfaces.ReadOnlyBeaconBlockBody = &BeaconBlockBody{}

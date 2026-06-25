@@ -64,10 +64,10 @@ func WithChainStartFetcher(f execution.ChainStartFetcher) Option {
 	}
 }
 
-// WithExecutionEngineCaller to call execution engine.
-func WithExecutionEngineCaller(c execution.EngineCaller) Option {
+// WithSilaEngineCaller to call SilaEngine.
+func WithSilaEngineCaller(c execution.EngineCaller) Option {
 	return func(s *Service) error {
-		s.cfg.ExecutionEngineCaller = c
+		s.cfg.SilaEngineCaller = c
 		return nil
 	}
 }

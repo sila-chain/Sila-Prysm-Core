@@ -23,7 +23,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
@@ -66,7 +66,7 @@ func TestGetSilaPayloadEnvelope_AcceptsSlotID(t *testing.T) {
 
 	env := &silapb.SignedSilaPayloadEnvelope{
 		Message: &silapb.SilaPayloadEnvelope{
-			Payload: &enginev1.SilaPayloadGloas{
+			Payload: &silaenginev1.SilaPayloadGloas{
 				ParentHash:    bytesutil.PadTo([]byte("parent"), 32),
 				FeeRecipient:  bytesutil.PadTo([]byte("fee"), 20),
 				StateRoot:     bytesutil.PadTo([]byte("state"), 32),
@@ -76,10 +76,10 @@ func TestGetSilaPayloadEnvelope_AcceptsSlotID(t *testing.T) {
 				BaseFeePerGas: bytesutil.PadTo([]byte{1}, 32),
 				BlockHash:     blockHash[:],
 				Transactions:  [][]byte{},
-				Withdrawals:   []*enginev1.Withdrawal{},
+				Withdrawals:   []*silaenginev1.Withdrawal{},
 				SlotNumber:    primitives.Slot(177),
 			},
-			ExecutionRequests:     &enginev1.ExecutionRequests{},
+			ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 			BuilderIndex:          primitives.BuilderIndex(42),
 			BeaconBlockRoot:       root[:],
 			ParentBeaconBlockRoot: bytesutil.PadTo([]byte("parent-beacon-root"), 32),
@@ -88,9 +88,9 @@ func TestGetSilaPayloadEnvelope_AcceptsSlotID(t *testing.T) {
 	}
 	require.NoError(t, beaconDB.SaveSilaPayloadEnvelope(ctx, env))
 
-	reconstructor := &executiontesting.EngineClient{
-		SilaPayloadByBlockHash: map[[32]byte]*enginev1.SilaPayload{
-			blockHash: &enginev1.SilaPayload{
+	reconstructor := &executiontesting.SilaEngineClient{
+		SilaPayloadByBlockHash: map[[32]byte]*silaenginev1.SilaPayload{
+			blockHash: &silaenginev1.SilaPayload{
 				ParentHash:    bytesutil.PadTo([]byte("parent"), 32),
 				FeeRecipient:  bytesutil.PadTo([]byte("fee"), 20),
 				StateRoot:     bytesutil.PadTo([]byte("state"), 32),
@@ -146,7 +146,7 @@ func TestGetSilaPayloadEnvelope_BlockNotFound(t *testing.T) {
 func testSignedEnvelope() *silapb.SignedSilaPayloadEnvelope {
 	return &silapb.SignedSilaPayloadEnvelope{
 		Message: &silapb.SilaPayloadEnvelope{
-			Payload: &enginev1.SilaPayloadGloas{
+			Payload: &silaenginev1.SilaPayloadGloas{
 				ParentHash:    bytesutil.PadTo([]byte("parent"), 32),
 				FeeRecipient:  bytesutil.PadTo([]byte("fee"), 20),
 				StateRoot:     bytesutil.PadTo([]byte("state"), 32),
@@ -156,10 +156,10 @@ func testSignedEnvelope() *silapb.SignedSilaPayloadEnvelope {
 				BaseFeePerGas: bytesutil.PadTo([]byte{1}, 32),
 				BlockHash:     bytesutil.PadTo([]byte("blockhash"), 32),
 				Transactions:  [][]byte{},
-				Withdrawals:   []*enginev1.Withdrawal{},
+				Withdrawals:   []*silaenginev1.Withdrawal{},
 				SlotNumber:    primitives.Slot(100),
 			},
-			ExecutionRequests:     &enginev1.ExecutionRequests{},
+			ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 			BuilderIndex:          primitives.BuilderIndex(42),
 			BeaconBlockRoot:       bytesutil.PadTo([]byte("beacon-root"), 32),
 			ParentBeaconBlockRoot: bytesutil.PadTo([]byte("parent-beacon-root"), 32),

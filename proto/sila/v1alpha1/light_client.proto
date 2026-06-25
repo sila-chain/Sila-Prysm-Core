@@ -17,7 +17,7 @@ package sila.eth.v1alpha1;
 
 import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
-import "proto/engine/v1/execution_engine.proto";
+import "proto/silaengine/v1/sila_engine.proto";
 
 option csharp_namespace = "Sila.Eth.V1alpha1";
 option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1alpha1;eth";
@@ -120,7 +120,7 @@ message LightClientOptimisticUpdateCapella {
 
 message LightClientHeaderCapella {
   BeaconBlockHeader beacon = 1;
-  sila.engine.v1.SilaPayloadHeaderCapella execution = 2;
+  sila.silaengine.v1.SilaPayloadHeaderCapella execution = 2;
   repeated bytes execution_branch = 3 [ (sila.eth.ext.ssz_size) = "4,32" ];
 }
 
@@ -171,7 +171,7 @@ message LightClientOptimisticUpdateDeneb {
 
 message LightClientHeaderDeneb {
   BeaconBlockHeader beacon = 1;
-  sila.engine.v1.SilaPayloadHeaderDeneb execution = 2;
+  sila.silaengine.v1.SilaPayloadHeaderDeneb execution = 2;
   repeated bytes execution_branch = 3 [ (sila.eth.ext.ssz_size) = "4,32" ];
 }
 

@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	common "github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/common/operations"
@@ -13,12 +13,12 @@ import (
 )
 
 func blockWithConsolidation(ssz []byte) (interfaces.SignedBeaconBlock, error) {
-	cr := &enginev1.ConsolidationRequest{}
+	cr := &silaenginev1.ConsolidationRequest{}
 	if err := cr.UnmarshalSSZ(ssz); err != nil {
 		return nil, err
 	}
-	er := &enginev1.ExecutionRequests{
-		Consolidations: []*enginev1.ConsolidationRequest{cr},
+	er := &silaenginev1.ExecutionRequests{
+		Consolidations: []*silaenginev1.ConsolidationRequest{cr},
 	}
 	b := util.NewBeaconBlockElectra()
 	b.Block.Body = &silapb.BeaconBlockBodyElectra{ExecutionRequests: er}

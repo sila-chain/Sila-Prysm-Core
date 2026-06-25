@@ -8,7 +8,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 )
@@ -80,7 +80,7 @@ func (e *SilaPayloadEnvelope) ToConsensus() (*eth.SilaPayloadEnvelope, error) {
 	if err != nil {
 		return nil, server.NewDecodeError(err, "Payload")
 	}
-	var requests *enginev1.ExecutionRequests
+	var requests *silaenginev1.ExecutionRequests
 	if e.ExecutionRequests != nil {
 		requests, err = e.ExecutionRequests.ToConsensus()
 		if err != nil {
@@ -152,7 +152,7 @@ func (b *BlindedSilaPayloadEnvelope) ToConsensus() (*eth.WireBlindedSilaPayloadE
 	if err != nil {
 		return nil, server.NewDecodeError(err, "PayloadRoot")
 	}
-	var requests *enginev1.ExecutionRequests
+	var requests *silaenginev1.ExecutionRequests
 	if b.ExecutionRequests != nil {
 		requests, err = b.ExecutionRequests.ToConsensus()
 		if err != nil {

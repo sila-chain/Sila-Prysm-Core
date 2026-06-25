@@ -13,15 +13,15 @@
 // limitations under the License.
 syntax = "proto3";
 
-package sila.engine.v1;
+package sila.silaengine.v1;
 
 import "proto/silaapi/ext/options.proto";
 
 option csharp_namespace = "Sila.Engine.V1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1;enginev1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1;silaenginev1";
 option java_multiple_files = true;
 option java_outer_classname = "ExecutionEngineProto";
-option java_package = "org.sila.engine.v1";
+option java_package = "org.sila.silaengine.v1";
 option php_namespace = "Sila\\Engine\\v1";
 
 message SilaPayload {
@@ -277,7 +277,7 @@ message Withdrawal {
   uint64 amount = 4;
 }
 
-// BlobsBundle is retrieved through engine-api from the execution layer client.
+// BlobsBundle is retrieved through silaengine-api from the execution layer client.
 // It consists of the necessary components for constructing blob sidecars
 // objects to gossip through p2p.
 message BlobsBundle {
@@ -300,7 +300,7 @@ message BlobsBundle {
   ];
 }
 
-// BlobsBundleV2 is retrieved through engine-api from the execution layer
+// BlobsBundleV2 is retrieved through silaengine-api from the execution layer
 // client. It consists of the necessary components for constructing data column
 // sidecars objects to gossip through p2p. It is introduced in Fulu network
 // upgrade.

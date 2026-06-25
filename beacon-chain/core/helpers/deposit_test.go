@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -180,7 +180,7 @@ func TestBatchVerifyPendingDepositsSignatures_InvalidSignature(t *testing.T) {
 	require.Equal(t, false, verified)
 }
 
-func makeValidDepositRequest(t *testing.T, amount uint64) *enginev1.DepositRequest {
+func makeValidDepositRequest(t *testing.T, amount uint64) *silaenginev1.DepositRequest {
 	t.Helper()
 	sk, err := bls.RandKey()
 	require.NoError(t, err)
@@ -193,7 +193,7 @@ func makeValidDepositRequest(t *testing.T, amount uint64) *enginev1.DepositReque
 		Amount:                amount,
 	}, domain)
 	require.NoError(t, err)
-	return &enginev1.DepositRequest{
+	return &silaenginev1.DepositRequest{
 		Pubkey:                sk.PublicKey().Marshal(),
 		WithdrawalCredentials: wc,
 		Amount:                amount,
@@ -201,11 +201,11 @@ func makeValidDepositRequest(t *testing.T, amount uint64) *enginev1.DepositReque
 	}
 }
 
-func makeInvalidDepositRequest(t *testing.T, amount uint64) *enginev1.DepositRequest {
+func makeInvalidDepositRequest(t *testing.T, amount uint64) *silaenginev1.DepositRequest {
 	t.Helper()
 	sk, err := bls.RandKey()
 	require.NoError(t, err)
-	return &enginev1.DepositRequest{
+	return &silaenginev1.DepositRequest{
 		Pubkey:                sk.PublicKey().Marshal(),
 		WithdrawalCredentials: make([]byte, 32),
 		Amount:                amount,
@@ -220,7 +220,7 @@ func TestBatchVerifyDepositRequestSignatures_Empty(t *testing.T) {
 }
 
 func TestBatchVerifyDepositRequestSignatures_AllValid(t *testing.T) {
-	reqs := []*enginev1.DepositRequest{
+	reqs := []*silaenginev1.DepositRequest{
 		makeValidDepositRequest(t, 100),
 		makeValidDepositRequest(t, 200),
 		makeValidDepositRequest(t, 300),
@@ -232,7 +232,7 @@ func TestBatchVerifyDepositRequestSignatures_AllValid(t *testing.T) {
 }
 
 func TestBatchVerifyDepositRequestSignatures_AllInvalid(t *testing.T) {
-	reqs := []*enginev1.DepositRequest{
+	reqs := []*silaenginev1.DepositRequest{
 		makeInvalidDepositRequest(t, 100),
 		makeInvalidDepositRequest(t, 200),
 		makeInvalidDepositRequest(t, 300),
@@ -243,19 +243,19 @@ func TestBatchVerifyDepositRequestSignatures_AllInvalid(t *testing.T) {
 }
 
 func TestBatchVerifyDepositRequestSignatures_SingleValid(t *testing.T) {
-	invalid, err := helpers.BatchVerifyDepositRequestSignatures(t.Context(), []*enginev1.DepositRequest{makeValidDepositRequest(t, 1)})
+	invalid, err := helpers.BatchVerifyDepositRequestSignatures(t.Context(), []*silaenginev1.DepositRequest{makeValidDepositRequest(t, 1)})
 	require.NoError(t, err)
 	require.Equal(t, 0, len(invalid))
 }
 
 func TestBatchVerifyDepositRequestSignatures_SingleInvalid(t *testing.T) {
-	invalid, err := helpers.BatchVerifyDepositRequestSignatures(t.Context(), []*enginev1.DepositRequest{makeInvalidDepositRequest(t, 1)})
+	invalid, err := helpers.BatchVerifyDepositRequestSignatures(t.Context(), []*silaenginev1.DepositRequest{makeInvalidDepositRequest(t, 1)})
 	require.NoError(t, err)
 	require.DeepEqual(t, []int{0}, invalid)
 }
 
 func TestBatchVerifyDepositRequestSignatures_MixedDC(t *testing.T) {
-	reqs := []*enginev1.DepositRequest{
+	reqs := []*silaenginev1.DepositRequest{
 		makeInvalidDepositRequest(t, 1),
 		makeValidDepositRequest(t, 2),
 		makeValidDepositRequest(t, 3),
@@ -272,7 +272,7 @@ func TestBatchVerifyDepositRequestSignatures_MixedDC(t *testing.T) {
 
 func TestBatchVerifyDepositRequestSignatures_OneBadInLargeBatch(t *testing.T) {
 	const n = 128
-	reqs := make([]*enginev1.DepositRequest, n)
+	reqs := make([]*silaenginev1.DepositRequest, n)
 	for i := range n {
 		reqs[i] = makeValidDepositRequest(t, uint64(i+1))
 	}
@@ -285,7 +285,7 @@ func TestBatchVerifyDepositRequestSignatures_OneBadInLargeBatch(t *testing.T) {
 
 func TestBatchVerifyDepositRequestSignatures_MultipleBadAcrossSubtrees(t *testing.T) {
 	const n = 128
-	reqs := make([]*enginev1.DepositRequest, n)
+	reqs := make([]*silaenginev1.DepositRequest, n)
 	for i := range n {
 		reqs[i] = makeValidDepositRequest(t, uint64(i+1))
 	}

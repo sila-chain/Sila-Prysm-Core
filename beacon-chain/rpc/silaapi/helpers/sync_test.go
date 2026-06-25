@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -427,7 +427,7 @@ func prepareForkchoiceState(
 		ParentRoot: parentRoot[:],
 	}
 
-	executionHeader := &enginev1.SilaPayloadHeader{
+	executionHeader := &silaenginev1.SilaPayloadHeader{
 		BlockHash: payloadHash[:],
 	}
 
@@ -451,7 +451,7 @@ func prepareForkchoiceState(
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
 			Body: &eth.BeaconBlockBodyBellatrix{
-				SilaPayload: &enginev1.SilaPayload{
+				SilaPayload: &silaenginev1.SilaPayload{
 					BlockHash: payloadHash[:],
 				},
 			},

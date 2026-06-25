@@ -23,7 +23,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	leakybucket "github.com/sila-chain/Sila-Consensus-Core/v7/container/leaky-bucket"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -108,7 +108,7 @@ func TestRecentBeaconBlocksRPCHandler_ReturnsBlocks_ReconstructsPayload(t *testi
 	encodedBinaryTxs[0], err = txs[0].MarshalBinary()
 	require.NoError(t, err)
 	blockHash := bytesutil.ToBytes32([]byte("foo"))
-	payload := &enginev1.SilaPayload{
+	payload := &silaenginev1.SilaPayload{
 		ParentHash:    parent,
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     stateRoot,
@@ -143,8 +143,8 @@ func TestRecentBeaconBlocksRPCHandler_ReturnsBlocks_ReconstructsPayload(t *testi
 		blkRoots = append(blkRoots, root)
 	}
 
-	mockEngine := &mockExecution.EngineClient{
-		SilaPayloadByBlockHash: map[[32]byte]*enginev1.SilaPayload{
+	mockEngine := &mockExecution.SilaEngineClient{
+		SilaPayloadByBlockHash: map[[32]byte]*silaenginev1.SilaPayload{
 			blockHash: payload,
 		},
 	}

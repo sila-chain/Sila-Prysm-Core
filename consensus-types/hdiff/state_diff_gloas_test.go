@@ -8,7 +8,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -51,7 +51,7 @@ func TestGloasRoundTrip(t *testing.T) {
 	require.NoError(t, target.SetNextWithdrawalBuilderIndex(42))
 
 	// Mutate payloadExpectedWithdrawals (multiple entries).
-	require.NoError(t, target.SetPayloadExpectedWithdrawals([]*enginev1.Withdrawal{
+	require.NoError(t, target.SetPayloadExpectedWithdrawals([]*silaenginev1.Withdrawal{
 		{
 			Index:          1,
 			ValidatorIndex: 2,

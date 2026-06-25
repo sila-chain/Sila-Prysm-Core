@@ -11,7 +11,7 @@ The current project still depends on:
 
 These packages are used by:
 
-- proto/engine/v1
+- proto/silaengine/v1
 - proto/sila/v1alpha1
 - proto/migration
 - beacon-chain packages

@@ -26,7 +26,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -385,7 +385,7 @@ func TestQueuePendingPayloadEnvelope_SelfBuildInvalidSignature(t *testing.T) {
 func testSignedSilaPayloadEnvelope(t *testing.T, slot primitives.Slot, builderIdx primitives.BuilderIndex, root, blockHash [32]byte) *silapb.SignedSilaPayloadEnvelope {
 	t.Helper()
 
-	payload := &enginev1.SilaPayloadGloas{
+	payload := &silaenginev1.SilaPayloadGloas{
 		ParentHash:    bytes.Repeat([]byte{0x01}, 32),
 		FeeRecipient:  bytes.Repeat([]byte{0x02}, 20),
 		StateRoot:     bytes.Repeat([]byte{0x03}, 32),
@@ -399,7 +399,7 @@ func testSignedSilaPayloadEnvelope(t *testing.T, slot primitives.Slot, builderId
 		BaseFeePerGas: bytes.Repeat([]byte{0x07}, 32),
 		BlockHash:     blockHash[:],
 		Transactions:  [][]byte{},
-		Withdrawals:   []*enginev1.Withdrawal{},
+		Withdrawals:   []*silaenginev1.Withdrawal{},
 		BlobGasUsed:   0,
 		ExcessBlobGas: 0,
 		SlotNumber:    slot,
@@ -408,8 +408,8 @@ func testSignedSilaPayloadEnvelope(t *testing.T, slot primitives.Slot, builderId
 	return &silapb.SignedSilaPayloadEnvelope{
 		Message: &silapb.SilaPayloadEnvelope{
 			Payload: payload,
-			ExecutionRequests: &enginev1.ExecutionRequests{
-				Deposits: []*enginev1.DepositRequest{},
+			ExecutionRequests: &silaenginev1.ExecutionRequests{
+				Deposits: []*silaenginev1.DepositRequest{},
 			},
 			BuilderIndex:          builderIdx,
 			BeaconBlockRoot:       root[:],

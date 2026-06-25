@@ -758,7 +758,7 @@ func (b *BeaconNode) registerBlockchainService(fc forkchoice.ForkChoicer, gs *st
 		blockchain.WithDatabase(b.db),
 		blockchain.WithDepositCache(b.depositCache),
 		blockchain.WithChainStartFetcher(web3Service),
-		blockchain.WithExecutionEngineCaller(web3Service),
+		blockchain.WithSilaEngineCaller(web3Service),
 		blockchain.WithAttestationCache(b.attestationCache),
 		blockchain.WithAttestationPool(b.attestationPool),
 		blockchain.WithExitPool(b.exitPool),
@@ -979,7 +979,7 @@ func (b *BeaconNode) registerRPCService(router *http.ServeMux) error {
 
 	p2pService := b.fetchP2P()
 	rpcService := rpc.NewService(b.ctx, &rpc.Config{
-		ExecutionEngineCaller:            web3Service,
+		SilaEngineCaller:            web3Service,
 		ExecutionReconstructor:           web3Service,
 		Host:                             host,
 		Port:                             port,

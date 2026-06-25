@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	common "github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/common/operations"
@@ -13,12 +13,12 @@ import (
 )
 
 func blockWithWithdrawalRequest(ssz []byte) (interfaces.SignedBeaconBlock, error) {
-	wr := &enginev1.WithdrawalRequest{}
+	wr := &silaenginev1.WithdrawalRequest{}
 	if err := wr.UnmarshalSSZ(ssz); err != nil {
 		return nil, err
 	}
-	er := &enginev1.ExecutionRequests{
-		Withdrawals: []*enginev1.WithdrawalRequest{wr},
+	er := &silaenginev1.ExecutionRequests{
+		Withdrawals: []*silaenginev1.WithdrawalRequest{wr},
 	}
 	b := util.NewBeaconBlockElectra()
 	b.Block.Body = &silapb.BeaconBlockBodyElectra{ExecutionRequests: er}

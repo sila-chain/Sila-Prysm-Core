@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/rand"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
@@ -744,7 +744,7 @@ func HydrateBeaconBlockBodyBellatrix(b *silapb.BeaconBlockBodyBellatrix) *silapb
 		}
 	}
 	if b.SilaPayload == nil {
-		b.SilaPayload = &enginev1.SilaPayload{
+		b.SilaPayload = &silaenginev1.SilaPayload{
 			ParentHash:    make([]byte, fieldparams.RootLength),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, fieldparams.RootLength),
@@ -811,7 +811,7 @@ func HydrateBlindedBeaconBlockBodyBellatrix(b *silapb.BlindedBeaconBlockBodyBell
 		}
 	}
 	if b.SilaPayloadHeader == nil {
-		b.SilaPayloadHeader = &enginev1.SilaPayloadHeader{
+		b.SilaPayloadHeader = &silaenginev1.SilaPayloadHeader{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
 			StateRoot:        make([]byte, fieldparams.RootLength),
@@ -882,7 +882,7 @@ func HydrateBeaconBlockBodyCapella(b *silapb.BeaconBlockBodyCapella) *silapb.Bea
 		}
 	}
 	if b.SilaPayload == nil {
-		b.SilaPayload = &enginev1.SilaPayloadCapella{
+		b.SilaPayload = &silaenginev1.SilaPayloadCapella{
 			ParentHash:    make([]byte, fieldparams.RootLength),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, fieldparams.RootLength),
@@ -893,7 +893,7 @@ func HydrateBeaconBlockBodyCapella(b *silapb.BeaconBlockBodyCapella) *silapb.Bea
 			BaseFeePerGas: make([]byte, fieldparams.RootLength),
 			BlockHash:     make([]byte, fieldparams.RootLength),
 			Transactions:  make([][]byte, 0),
-			Withdrawals:   make([]*enginev1.Withdrawal, 0),
+			Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 		}
 	}
 	return b
@@ -950,7 +950,7 @@ func HydrateBlindedBeaconBlockBodyCapella(b *silapb.BlindedBeaconBlockBodyCapell
 		}
 	}
 	if b.SilaPayloadHeader == nil {
-		b.SilaPayloadHeader = &enginev1.SilaPayloadHeaderCapella{
+		b.SilaPayloadHeader = &silaenginev1.SilaPayloadHeaderCapella{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
 			StateRoot:        make([]byte, fieldparams.RootLength),
@@ -1032,7 +1032,7 @@ func HydrateBeaconBlockBodyDeneb(b *silapb.BeaconBlockBodyDeneb) *silapb.BeaconB
 		}
 	}
 	if b.SilaPayload == nil {
-		b.SilaPayload = &enginev1.SilaPayloadDeneb{
+		b.SilaPayload = &silaenginev1.SilaPayloadDeneb{
 			ParentHash:    make([]byte, fieldparams.RootLength),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, fieldparams.RootLength),
@@ -1043,7 +1043,7 @@ func HydrateBeaconBlockBodyDeneb(b *silapb.BeaconBlockBodyDeneb) *silapb.BeaconB
 			BaseFeePerGas: make([]byte, fieldparams.RootLength),
 			BlockHash:     make([]byte, fieldparams.RootLength),
 			Transactions:  make([][]byte, 0),
-			Withdrawals:   make([]*enginev1.Withdrawal, 0),
+			Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 		}
 	}
 	return b
@@ -1084,7 +1084,7 @@ func HydrateBlindedBeaconBlockBodyDeneb(b *silapb.BlindedBeaconBlockBodyDeneb) *
 		}
 	}
 	if b.SilaPayloadHeader == nil {
-		b.SilaPayloadHeader = &enginev1.SilaPayloadHeaderDeneb{
+		b.SilaPayloadHeader = &silaenginev1.SilaPayloadHeaderDeneb{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
 			StateRoot:        make([]byte, fieldparams.RootLength),
@@ -1182,7 +1182,7 @@ func HydrateBeaconBlockBodyElectra(b *silapb.BeaconBlockBodyElectra) *silapb.Bea
 		}
 	}
 	if b.SilaPayload == nil {
-		b.SilaPayload = &enginev1.SilaPayloadDeneb{
+		b.SilaPayload = &silaenginev1.SilaPayloadDeneb{
 			ParentHash:    make([]byte, fieldparams.RootLength),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, fieldparams.RootLength),
@@ -1193,7 +1193,7 @@ func HydrateBeaconBlockBodyElectra(b *silapb.BeaconBlockBodyElectra) *silapb.Bea
 			BaseFeePerGas: make([]byte, fieldparams.RootLength),
 			BlockHash:     make([]byte, fieldparams.RootLength),
 			Transactions:  make([][]byte, 0),
-			Withdrawals:   make([]*enginev1.Withdrawal, 0),
+			Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 		}
 	}
 	b.ExecutionRequests = HydrateExecutionRequests(b.ExecutionRequests)
@@ -1202,18 +1202,18 @@ func HydrateBeaconBlockBodyElectra(b *silapb.BeaconBlockBodyElectra) *silapb.Bea
 
 // HydrateExecutionRequests fills the execution requests with the correct field
 // lengths
-func HydrateExecutionRequests(e *enginev1.ExecutionRequests) *enginev1.ExecutionRequests {
+func HydrateExecutionRequests(e *silaenginev1.ExecutionRequests) *silaenginev1.ExecutionRequests {
 	if e == nil {
-		e = &enginev1.ExecutionRequests{}
+		e = &silaenginev1.ExecutionRequests{}
 	}
 	if e.Deposits == nil {
-		e.Deposits = make([]*enginev1.DepositRequest, 0)
+		e.Deposits = make([]*silaenginev1.DepositRequest, 0)
 	}
 	if e.Withdrawals == nil {
-		e.Withdrawals = make([]*enginev1.WithdrawalRequest, 0)
+		e.Withdrawals = make([]*silaenginev1.WithdrawalRequest, 0)
 	}
 	if e.Consolidations == nil {
-		e.Consolidations = make([]*enginev1.ConsolidationRequest, 0)
+		e.Consolidations = make([]*silaenginev1.ConsolidationRequest, 0)
 	}
 	return e
 }
@@ -1269,7 +1269,7 @@ func HydrateBlindedBeaconBlockBodyElectra(b *silapb.BlindedBeaconBlockBodyElectr
 		}
 	}
 	if b.SilaPayloadHeader == nil {
-		b.SilaPayloadHeader = &enginev1.SilaPayloadHeaderDeneb{
+		b.SilaPayloadHeader = &silaenginev1.SilaPayloadHeaderDeneb{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
 			StateRoot:        make([]byte, fieldparams.RootLength),
@@ -1291,8 +1291,8 @@ func generateWithdrawals(
 	bState state.BeaconState,
 	privs []bls.SecretKey,
 	numWithdrawals uint64,
-) ([]*enginev1.Withdrawal, error) {
-	withdrawalRequests := make([]*enginev1.Withdrawal, numWithdrawals)
+) ([]*silaenginev1.Withdrawal, error) {
+	withdrawalRequests := make([]*silaenginev1.Withdrawal, numWithdrawals)
 	for i := range numWithdrawals {
 		valIndex, err := randValIndex(bState)
 		if err != nil {
@@ -1313,7 +1313,7 @@ func generateWithdrawals(
 			return nil, err
 		}
 		randomIndex := nBig.Uint64()
-		withdrawalRequests[i] = &enginev1.Withdrawal{
+		withdrawalRequests[i] = &silaenginev1.Withdrawal{
 			ValidatorIndex: valIndex,
 			Address:        make([]byte, common.AddressLength),
 			Amount:         amounts[randomIndex],
@@ -1387,7 +1387,7 @@ func HydrateBeaconBlockBodyFulu(b *silapb.BeaconBlockBodyElectra) *silapb.Beacon
 		}
 	}
 	if b.SilaPayload == nil {
-		b.SilaPayload = &enginev1.SilaPayloadDeneb{
+		b.SilaPayload = &silaenginev1.SilaPayloadDeneb{
 			ParentHash:    make([]byte, fieldparams.RootLength),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, fieldparams.RootLength),
@@ -1398,7 +1398,7 @@ func HydrateBeaconBlockBodyFulu(b *silapb.BeaconBlockBodyElectra) *silapb.Beacon
 			BaseFeePerGas: make([]byte, fieldparams.RootLength),
 			BlockHash:     make([]byte, fieldparams.RootLength),
 			Transactions:  make([][]byte, 0),
-			Withdrawals:   make([]*enginev1.Withdrawal, 0),
+			Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 		}
 	}
 	b.ExecutionRequests = HydrateExecutionRequests(b.ExecutionRequests)
@@ -1456,7 +1456,7 @@ func HydrateBlindedBeaconBlockBodyFulu(b *silapb.BlindedBeaconBlockBodyElectra) 
 		}
 	}
 	if b.SilaPayloadHeader == nil {
-		b.SilaPayloadHeader = &enginev1.SilaPayloadHeaderDeneb{
+		b.SilaPayloadHeader = &silaenginev1.SilaPayloadHeaderDeneb{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
 			StateRoot:        make([]byte, fieldparams.RootLength),
@@ -1532,7 +1532,7 @@ func HydrateBeaconBlockBodyGloas(b *silapb.BeaconBlockBodyGloas) *silapb.BeaconB
 		b.PayloadAttestations = make([]*silapb.PayloadAttestation, 0)
 	}
 	if b.ParentExecutionRequests == nil {
-		b.ParentExecutionRequests = &enginev1.ExecutionRequests{}
+		b.ParentExecutionRequests = &silaenginev1.ExecutionRequests{}
 	}
 	return b
 }

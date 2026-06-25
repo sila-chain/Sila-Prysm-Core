@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -23,7 +23,7 @@ func fillByteSlice(sliceLength int, value byte) []byte {
 // TestSilaPayloadFromConsensus_HappyPath checks the
 // SilaPayloadFromConsensus function under normal conditions.
 func TestSilaPayloadFromConsensus_HappyPath(t *testing.T) {
-	consensusPayload := &enginev1.SilaPayload{
+	consensusPayload := &silaenginev1.SilaPayload{
 		ParentHash:    fillByteSlice(common.HashLength, 0xaa),
 		FeeRecipient:  fillByteSlice(20, 0xbb),
 		StateRoot:     fillByteSlice(32, 0xcc),
@@ -86,7 +86,7 @@ func TestSilaPayload_ToConsensus_HappyPath(t *testing.T) {
 // TestSilaPayloadHeaderFromConsensus_HappyPath checks the
 // SilaPayloadHeaderFromConsensus function under normal conditions.
 func TestSilaPayloadHeaderFromConsensus_HappyPath(t *testing.T) {
-	consensusHeader := &enginev1.SilaPayloadHeader{
+	consensusHeader := &silaenginev1.SilaPayloadHeader{
 		ParentHash:       fillByteSlice(common.HashLength, 0xaa),
 		FeeRecipient:     fillByteSlice(20, 0xbb),
 		StateRoot:        fillByteSlice(32, 0xcc),
@@ -140,7 +140,7 @@ func TestSilaPayloadHeader_ToConsensus_HappyPath(t *testing.T) {
 // TestSilaPayloadCapellaFromConsensus_HappyPath checks the
 // SilaPayloadCapellaFromConsensus function under normal conditions.
 func TestSilaPayloadCapellaFromConsensus_HappyPath(t *testing.T) {
-	capellaPayload := &enginev1.SilaPayloadCapella{
+	capellaPayload := &silaenginev1.SilaPayloadCapella{
 		ParentHash:    fillByteSlice(common.HashLength, 0xaa),
 		FeeRecipient:  fillByteSlice(20, 0xbb),
 		StateRoot:     fillByteSlice(32, 0xcc),
@@ -157,7 +157,7 @@ func TestSilaPayloadCapellaFromConsensus_HappyPath(t *testing.T) {
 		Transactions: [][]byte{
 			fillByteSlice(5, 0x44),
 		},
-		Withdrawals: []*enginev1.Withdrawal{
+		Withdrawals: []*silaenginev1.Withdrawal{
 			{
 				Index:          1,
 				ValidatorIndex: 2,
@@ -215,7 +215,7 @@ func TestSilaPayloadCapella_ToConsensus_HappyPath(t *testing.T) {
 // TestSilaPayloadDenebFromConsensus_HappyPath checks the
 // SilaPayloadDenebFromConsensus function under normal conditions.
 func TestSilaPayloadDenebFromConsensus_HappyPath(t *testing.T) {
-	denebPayload := &enginev1.SilaPayloadDeneb{
+	denebPayload := &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    fillByteSlice(common.HashLength, 0xaa),
 		FeeRecipient:  fillByteSlice(20, 0xbb),
 		StateRoot:     fillByteSlice(32, 0xcc),
@@ -232,7 +232,7 @@ func TestSilaPayloadDenebFromConsensus_HappyPath(t *testing.T) {
 		Transactions: [][]byte{
 			fillByteSlice(5, 0x44),
 		},
-		Withdrawals: []*enginev1.Withdrawal{
+		Withdrawals: []*silaenginev1.Withdrawal{
 			{
 				Index:          1,
 				ValidatorIndex: 2,
@@ -293,7 +293,7 @@ func TestSilaPayloadDeneb_ToConsensus_HappyPath(t *testing.T) {
 }
 
 func TestSilaPayloadHeaderCapellaFromConsensus_HappyPath(t *testing.T) {
-	capellaHeader := &enginev1.SilaPayloadHeaderCapella{
+	capellaHeader := &silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       fillByteSlice(common.HashLength, 0xaa),
 		FeeRecipient:     fillByteSlice(20, 0xbb),
 		StateRoot:        fillByteSlice(32, 0xcc),
@@ -346,7 +346,7 @@ func TestSilaPayloadHeaderCapella_ToConsensus_HappyPath(t *testing.T) {
 }
 
 func TestSilaPayloadHeaderDenebFromConsensus_HappyPath(t *testing.T) {
-	denebHeader := &enginev1.SilaPayloadHeaderDeneb{
+	denebHeader := &silaenginev1.SilaPayloadHeaderDeneb{
 		ParentHash:       fillByteSlice(common.HashLength, 0xaa),
 		FeeRecipient:     fillByteSlice(20, 0xbb),
 		StateRoot:        fillByteSlice(32, 0xcc),
@@ -404,7 +404,7 @@ func TestSilaPayloadHeaderDeneb_ToConsensus_HappyPath(t *testing.T) {
 }
 
 func TestWithdrawalRequestsFromConsensus_HappyPath(t *testing.T) {
-	consensusRequests := []*enginev1.WithdrawalRequest{
+	consensusRequests := []*silaenginev1.WithdrawalRequest{
 		{
 			SourceAddress:   fillByteSlice(20, 0xbb),
 			ValidatorPubkey: fillByteSlice(48, 0xbb),
@@ -423,7 +423,7 @@ func TestWithdrawalRequestsFromConsensus_HappyPath(t *testing.T) {
 }
 
 func TestWithdrawalRequestFromConsensus_HappyPath(t *testing.T) {
-	req := &enginev1.WithdrawalRequest{
+	req := &silaenginev1.WithdrawalRequest{
 		SourceAddress:   fillByteSlice(20, 0xbb),
 		ValidatorPubkey: fillByteSlice(48, 0xbb),
 		Amount:          42,
@@ -445,7 +445,7 @@ func TestWithdrawalRequest_ToConsensus_HappyPath(t *testing.T) {
 }
 
 func TestConsolidationRequestsFromConsensus_HappyPath(t *testing.T) {
-	consensusRequests := []*enginev1.ConsolidationRequest{
+	consensusRequests := []*silaenginev1.ConsolidationRequest{
 		{
 			SourceAddress: fillByteSlice(20, 111),
 			SourcePubkey:  fillByteSlice(48, 112),
@@ -458,7 +458,7 @@ func TestConsolidationRequestsFromConsensus_HappyPath(t *testing.T) {
 }
 
 func TestDepositRequestsFromConsensus_HappyPath(t *testing.T) {
-	ds := []*enginev1.DepositRequest{
+	ds := []*silaenginev1.DepositRequest{
 		{
 			Pubkey:                fillByteSlice(48, 0xbb),
 			WithdrawalCredentials: fillByteSlice(32, 0xdd),
@@ -488,8 +488,8 @@ func TestDepositRequest_ToConsensus_HappyPath(t *testing.T) {
 }
 
 func TestExecutionRequestsFromConsensus_HappyPath(t *testing.T) {
-	er := &enginev1.ExecutionRequests{
-		Deposits: []*enginev1.DepositRequest{
+	er := &silaenginev1.ExecutionRequests{
+		Deposits: []*silaenginev1.DepositRequest{
 			{
 				Pubkey:                fillByteSlice(48, 0xba),
 				WithdrawalCredentials: fillByteSlice(32, 0xaa),
@@ -498,14 +498,14 @@ func TestExecutionRequestsFromConsensus_HappyPath(t *testing.T) {
 				Index:                 44,
 			},
 		},
-		Withdrawals: []*enginev1.WithdrawalRequest{
+		Withdrawals: []*silaenginev1.WithdrawalRequest{
 			{
 				SourceAddress:   fillByteSlice(20, 0xaa),
 				ValidatorPubkey: fillByteSlice(48, 0xba),
 				Amount:          555,
 			},
 		},
-		Consolidations: []*enginev1.ConsolidationRequest{
+		Consolidations: []*silaenginev1.ConsolidationRequest{
 			{
 				SourceAddress: fillByteSlice(20, 0xdd),
 				SourcePubkey:  fillByteSlice(48, 0xdd),

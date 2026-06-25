@@ -19,7 +19,7 @@ func TestIsInvalidBlock(t *testing.T) {
 }
 
 func TestInvalidBlockRoot(t *testing.T) {
-	require.Equal(t, [32]byte{}, InvalidBlockRoot(ErrUndefinedExecutionEngineError))
+	require.Equal(t, [32]byte{}, InvalidBlockRoot(ErrUndefinedSilaEngineError))
 	require.Equal(t, [32]byte{}, InvalidBlockRoot(ErrInvalidPayload))
 
 	err := invalidBlock{error: ErrInvalidPayload, root: [32]byte{'a'}}

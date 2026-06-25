@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
@@ -17,7 +17,7 @@ import (
 
 // prefetchedDepositSigs returns the cached per-request validity slice, or nil
 // on cache miss.
-func prefetchedDepositSigs(rqs *enginev1.ExecutionRequests) []bool {
+func prefetchedDepositSigs(rqs *silaenginev1.ExecutionRequests) []bool {
 	if rqs == nil || len(rqs.Deposits) == 0 {
 		return nil
 	}
@@ -42,7 +42,7 @@ func prefetchedDepositSigs(rqs *enginev1.ExecutionRequests) []bool {
 	return valid
 }
 
-func ProcessDepositRequests(ctx context.Context, beaconState state.BeaconState, requests []*enginev1.DepositRequest, prefetched []bool) error {
+func ProcessDepositRequests(ctx context.Context, beaconState state.BeaconState, requests []*silaenginev1.DepositRequest, prefetched []bool) error {
 	if len(requests) == 0 {
 		return nil
 	}
@@ -99,7 +99,7 @@ func ProcessDepositRequests(ctx context.Context, beaconState state.BeaconState, 
 //	        )
 //	    )
 //	</spec>
-func processDepositRequest(beaconState state.BeaconState, request *enginev1.DepositRequest, prefetchedValid *bool) error {
+func processDepositRequest(beaconState state.BeaconState, request *silaenginev1.DepositRequest, prefetchedValid *bool) error {
 	if request == nil {
 		return errors.New("nil deposit request")
 	}
@@ -148,7 +148,7 @@ func processDepositRequest(beaconState state.BeaconState, request *enginev1.Depo
 //	    state.builders[builder_index].balance += amount
 //
 // </spec>
-func applyBuilderDepositRequest(beaconState state.BeaconState, request *enginev1.DepositRequest, prefetchedValid *bool) (bool, error) {
+func applyBuilderDepositRequest(beaconState state.BeaconState, request *silaenginev1.DepositRequest, prefetchedValid *bool) (bool, error) {
 	if beaconState.Version() < version.Gloas {
 		return false, nil
 	}

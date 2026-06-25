@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -42,7 +42,7 @@ func signedGloasBlock(t *testing.T, slot primitives.Slot, builderIndex primitive
 
 func testSilaPayloadEnvelope(slot primitives.Slot, builderIndex primitives.BuilderIndex) *silapb.SilaPayloadEnvelope {
 	return &silapb.SilaPayloadEnvelope{
-		Payload: &enginev1.SilaPayloadGloas{
+		Payload: &silaenginev1.SilaPayloadGloas{
 			ParentHash:    make([]byte, 32),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, 32),
@@ -54,7 +54,7 @@ func testSilaPayloadEnvelope(slot primitives.Slot, builderIndex primitives.Build
 			ExtraData:     make([]byte, 0),
 			SlotNumber:    slot,
 		},
-		ExecutionRequests:     &enginev1.ExecutionRequests{},
+		ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 		BuilderIndex:          builderIndex,
 		BeaconBlockRoot:       make([]byte, 32),
 		ParentBeaconBlockRoot: make([]byte, 32),

@@ -1,4 +1,4 @@
-// Package proxy provides a proxy middleware for engine API requests between Sila
+// Package proxy provides a proxy middleware for SilaEngine API requests between Sila
 // consensus clients and execution clients accordingly. Allows for customizing
 // in-flight requests or responses using custom triggers. Useful for end-to-end testing.
 package proxy
@@ -271,7 +271,7 @@ func parseRequestBytes(req *http.Request) ([]byte, error) {
 	return requestBytes, nil
 }
 
-// Checks whether the JSON-RPC request is for the Sila engine API.
+// Checks whether the JSON-RPC request is for the Sila SilaEngine API.
 func isEngineAPICall(reqBytes []byte) bool {
 	jsonRequest, err := unmarshalRPCObject(reqBytes)
 	if err != nil {

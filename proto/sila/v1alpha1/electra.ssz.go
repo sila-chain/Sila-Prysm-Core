@@ -3,7 +3,7 @@ package eth
 
 import (
 	github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	ssz "github.com/sila-chain/fastssz"
 )
 

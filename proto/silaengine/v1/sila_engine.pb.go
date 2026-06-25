@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.3
 // 	protoc        v3.21.7
-// source: proto/engine/v1/execution_engine.proto
+// source: proto/silaengine/v1/sila_engine.proto
 
-package enginev1
+package silaenginev1
 
 import (
 	reflect "reflect"
@@ -65,11 +65,11 @@ func (x PayloadStatus_Status) String() string {
 }
 
 func (PayloadStatus_Status) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_engine_v1_execution_engine_proto_enumTypes[0].Descriptor()
+	return file_proto_engine_v1_sila_engine_proto_enumTypes[0].Descriptor()
 }
 
 func (PayloadStatus_Status) Type() protoreflect.EnumType {
-	return &file_proto_engine_v1_execution_engine_proto_enumTypes[0]
+	return &file_proto_engine_v1_sila_engine_proto_enumTypes[0]
 }
 
 func (x PayloadStatus_Status) Number() protoreflect.EnumNumber {
@@ -78,7 +78,7 @@ func (x PayloadStatus_Status) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PayloadStatus_Status.Descriptor instead.
 func (PayloadStatus_Status) EnumDescriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{15, 0}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{15, 0}
 }
 
 type SilaPayload struct {
@@ -103,7 +103,7 @@ type SilaPayload struct {
 
 func (x *SilaPayload) Reset() {
 	*x = SilaPayload{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[0]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -115,7 +115,7 @@ func (x *SilaPayload) String() string {
 func (*SilaPayload) ProtoMessage() {}
 
 func (x *SilaPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[0]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -128,7 +128,7 @@ func (x *SilaPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SilaPayload.ProtoReflect.Descriptor instead.
 func (*SilaPayload) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{0}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *SilaPayload) GetParentHash() []byte {
@@ -252,7 +252,7 @@ type SilaPayloadCapella struct {
 
 func (x *SilaPayloadCapella) Reset() {
 	*x = SilaPayloadCapella{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[1]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -264,7 +264,7 @@ func (x *SilaPayloadCapella) String() string {
 func (*SilaPayloadCapella) ProtoMessage() {}
 
 func (x *SilaPayloadCapella) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[1]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -277,7 +277,7 @@ func (x *SilaPayloadCapella) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SilaPayloadCapella.ProtoReflect.Descriptor instead.
 func (*SilaPayloadCapella) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{1}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SilaPayloadCapella) GetParentHash() []byte {
@@ -410,7 +410,7 @@ type SilaPayloadDeneb struct {
 
 func (x *SilaPayloadDeneb) Reset() {
 	*x = SilaPayloadDeneb{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[2]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -422,7 +422,7 @@ func (x *SilaPayloadDeneb) String() string {
 func (*SilaPayloadDeneb) ProtoMessage() {}
 
 func (x *SilaPayloadDeneb) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[2]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -435,7 +435,7 @@ func (x *SilaPayloadDeneb) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SilaPayloadDeneb.ProtoReflect.Descriptor instead.
 func (*SilaPayloadDeneb) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{2}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *SilaPayloadDeneb) GetParentHash() []byte {
@@ -584,7 +584,7 @@ type SilaPayloadGloas struct {
 
 func (x *SilaPayloadGloas) Reset() {
 	*x = SilaPayloadGloas{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[3]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -596,7 +596,7 @@ func (x *SilaPayloadGloas) String() string {
 func (*SilaPayloadGloas) ProtoMessage() {}
 
 func (x *SilaPayloadGloas) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[3]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -609,7 +609,7 @@ func (x *SilaPayloadGloas) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SilaPayloadGloas.ProtoReflect.Descriptor instead.
 func (*SilaPayloadGloas) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{3}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SilaPayloadGloas) GetParentHash() []byte {
@@ -755,7 +755,7 @@ type SilaPayloadCapellaWithValue struct {
 
 func (x *SilaPayloadCapellaWithValue) Reset() {
 	*x = SilaPayloadCapellaWithValue{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[4]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -767,7 +767,7 @@ func (x *SilaPayloadCapellaWithValue) String() string {
 func (*SilaPayloadCapellaWithValue) ProtoMessage() {}
 
 func (x *SilaPayloadCapellaWithValue) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[4]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -780,7 +780,7 @@ func (x *SilaPayloadCapellaWithValue) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SilaPayloadCapellaWithValue.ProtoReflect.Descriptor instead.
 func (*SilaPayloadCapellaWithValue) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{4}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *SilaPayloadCapellaWithValue) GetPayload() *SilaPayloadCapella {
@@ -807,7 +807,7 @@ type SilaPayloadDenebAndBlobsBundle struct {
 
 func (x *SilaPayloadDenebAndBlobsBundle) Reset() {
 	*x = SilaPayloadDenebAndBlobsBundle{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[5]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -819,7 +819,7 @@ func (x *SilaPayloadDenebAndBlobsBundle) String() string {
 func (*SilaPayloadDenebAndBlobsBundle) ProtoMessage() {}
 
 func (x *SilaPayloadDenebAndBlobsBundle) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[5]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -832,7 +832,7 @@ func (x *SilaPayloadDenebAndBlobsBundle) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SilaPayloadDenebAndBlobsBundle.ProtoReflect.Descriptor instead.
 func (*SilaPayloadDenebAndBlobsBundle) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{5}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *SilaPayloadDenebAndBlobsBundle) GetPayload() *SilaPayloadDeneb {
@@ -859,7 +859,7 @@ type SilaPayloadDenebAndBlobsBundleV2 struct {
 
 func (x *SilaPayloadDenebAndBlobsBundleV2) Reset() {
 	*x = SilaPayloadDenebAndBlobsBundleV2{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[6]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -871,7 +871,7 @@ func (x *SilaPayloadDenebAndBlobsBundleV2) String() string {
 func (*SilaPayloadDenebAndBlobsBundleV2) ProtoMessage() {}
 
 func (x *SilaPayloadDenebAndBlobsBundleV2) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[6]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -884,7 +884,7 @@ func (x *SilaPayloadDenebAndBlobsBundleV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SilaPayloadDenebAndBlobsBundleV2.ProtoReflect.Descriptor instead.
 func (*SilaPayloadDenebAndBlobsBundleV2) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{6}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *SilaPayloadDenebAndBlobsBundleV2) GetPayload() *SilaPayloadDeneb {
@@ -913,7 +913,7 @@ type SilaPayloadDenebWithValueAndBlobsBundle struct {
 
 func (x *SilaPayloadDenebWithValueAndBlobsBundle) Reset() {
 	*x = SilaPayloadDenebWithValueAndBlobsBundle{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[7]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -925,7 +925,7 @@ func (x *SilaPayloadDenebWithValueAndBlobsBundle) String() string {
 func (*SilaPayloadDenebWithValueAndBlobsBundle) ProtoMessage() {}
 
 func (x *SilaPayloadDenebWithValueAndBlobsBundle) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[7]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -938,7 +938,7 @@ func (x *SilaPayloadDenebWithValueAndBlobsBundle) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use SilaPayloadDenebWithValueAndBlobsBundle.ProtoReflect.Descriptor instead.
 func (*SilaPayloadDenebWithValueAndBlobsBundle) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{7}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SilaPayloadDenebWithValueAndBlobsBundle) GetPayload() *SilaPayloadDeneb {
@@ -991,7 +991,7 @@ type SilaPayloadHeader struct {
 
 func (x *SilaPayloadHeader) Reset() {
 	*x = SilaPayloadHeader{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[8]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1003,7 +1003,7 @@ func (x *SilaPayloadHeader) String() string {
 func (*SilaPayloadHeader) ProtoMessage() {}
 
 func (x *SilaPayloadHeader) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[8]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1016,7 +1016,7 @@ func (x *SilaPayloadHeader) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SilaPayloadHeader.ProtoReflect.Descriptor instead.
 func (*SilaPayloadHeader) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{8}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SilaPayloadHeader) GetParentHash() []byte {
@@ -1140,7 +1140,7 @@ type SilaPayloadHeaderCapella struct {
 
 func (x *SilaPayloadHeaderCapella) Reset() {
 	*x = SilaPayloadHeaderCapella{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[9]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1152,7 +1152,7 @@ func (x *SilaPayloadHeaderCapella) String() string {
 func (*SilaPayloadHeaderCapella) ProtoMessage() {}
 
 func (x *SilaPayloadHeaderCapella) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[9]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1165,7 +1165,7 @@ func (x *SilaPayloadHeaderCapella) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SilaPayloadHeaderCapella.ProtoReflect.Descriptor instead.
 func (*SilaPayloadHeaderCapella) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{9}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *SilaPayloadHeaderCapella) GetParentHash() []byte {
@@ -1298,7 +1298,7 @@ type SilaPayloadHeaderDeneb struct {
 
 func (x *SilaPayloadHeaderDeneb) Reset() {
 	*x = SilaPayloadHeaderDeneb{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[10]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1310,7 +1310,7 @@ func (x *SilaPayloadHeaderDeneb) String() string {
 func (*SilaPayloadHeaderDeneb) ProtoMessage() {}
 
 func (x *SilaPayloadHeaderDeneb) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[10]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1323,7 +1323,7 @@ func (x *SilaPayloadHeaderDeneb) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SilaPayloadHeaderDeneb.ProtoReflect.Descriptor instead.
 func (*SilaPayloadHeaderDeneb) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{10}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *SilaPayloadHeaderDeneb) GetParentHash() []byte {
@@ -1456,7 +1456,7 @@ type PayloadAttributes struct {
 
 func (x *PayloadAttributes) Reset() {
 	*x = PayloadAttributes{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[11]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1468,7 +1468,7 @@ func (x *PayloadAttributes) String() string {
 func (*PayloadAttributes) ProtoMessage() {}
 
 func (x *PayloadAttributes) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[11]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1481,7 +1481,7 @@ func (x *PayloadAttributes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayloadAttributes.ProtoReflect.Descriptor instead.
 func (*PayloadAttributes) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{11}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *PayloadAttributes) GetTimestamp() uint64 {
@@ -1517,7 +1517,7 @@ type PayloadAttributesV2 struct {
 
 func (x *PayloadAttributesV2) Reset() {
 	*x = PayloadAttributesV2{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[12]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1529,7 +1529,7 @@ func (x *PayloadAttributesV2) String() string {
 func (*PayloadAttributesV2) ProtoMessage() {}
 
 func (x *PayloadAttributesV2) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[12]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1542,7 +1542,7 @@ func (x *PayloadAttributesV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayloadAttributesV2.ProtoReflect.Descriptor instead.
 func (*PayloadAttributesV2) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{12}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *PayloadAttributesV2) GetTimestamp() uint64 {
@@ -1586,7 +1586,7 @@ type PayloadAttributesV3 struct {
 
 func (x *PayloadAttributesV3) Reset() {
 	*x = PayloadAttributesV3{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[13]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1598,7 +1598,7 @@ func (x *PayloadAttributesV3) String() string {
 func (*PayloadAttributesV3) ProtoMessage() {}
 
 func (x *PayloadAttributesV3) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[13]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1611,7 +1611,7 @@ func (x *PayloadAttributesV3) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayloadAttributesV3.ProtoReflect.Descriptor instead.
 func (*PayloadAttributesV3) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{13}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *PayloadAttributesV3) GetTimestamp() uint64 {
@@ -1664,7 +1664,7 @@ type PayloadAttributesV4 struct {
 
 func (x *PayloadAttributesV4) Reset() {
 	*x = PayloadAttributesV4{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[14]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1676,7 +1676,7 @@ func (x *PayloadAttributesV4) String() string {
 func (*PayloadAttributesV4) ProtoMessage() {}
 
 func (x *PayloadAttributesV4) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[14]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1689,7 +1689,7 @@ func (x *PayloadAttributesV4) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayloadAttributesV4.ProtoReflect.Descriptor instead.
 func (*PayloadAttributesV4) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{14}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *PayloadAttributesV4) GetTimestamp() uint64 {
@@ -1743,7 +1743,7 @@ func (x *PayloadAttributesV4) GetTargetGasLimit() uint64 {
 
 type PayloadStatus struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Status          PayloadStatus_Status   `protobuf:"varint,1,opt,name=status,proto3,enum=sila.engine.v1.PayloadStatus_Status" json:"status,omitempty"`
+	Status          PayloadStatus_Status   `protobuf:"varint,1,opt,name=status,proto3,enum=sila.silaengine.v1.PayloadStatus_Status" json:"status,omitempty"`
 	LatestValidHash []byte                 `protobuf:"bytes,2,opt,name=latest_valid_hash,json=latestValidHash,proto3" json:"latest_valid_hash,omitempty" ssz-size:"32"`
 	ValidationError string                 `protobuf:"bytes,3,opt,name=validation_error,json=validationError,proto3" json:"validation_error,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -1752,7 +1752,7 @@ type PayloadStatus struct {
 
 func (x *PayloadStatus) Reset() {
 	*x = PayloadStatus{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[15]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1764,7 +1764,7 @@ func (x *PayloadStatus) String() string {
 func (*PayloadStatus) ProtoMessage() {}
 
 func (x *PayloadStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[15]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1777,7 +1777,7 @@ func (x *PayloadStatus) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayloadStatus.ProtoReflect.Descriptor instead.
 func (*PayloadStatus) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{15}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *PayloadStatus) GetStatus() PayloadStatus_Status {
@@ -1812,7 +1812,7 @@ type ForkchoiceState struct {
 
 func (x *ForkchoiceState) Reset() {
 	*x = ForkchoiceState{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[16]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1824,7 +1824,7 @@ func (x *ForkchoiceState) String() string {
 func (*ForkchoiceState) ProtoMessage() {}
 
 func (x *ForkchoiceState) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[16]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1837,7 +1837,7 @@ func (x *ForkchoiceState) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ForkchoiceState.ProtoReflect.Descriptor instead.
 func (*ForkchoiceState) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{16}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ForkchoiceState) GetHeadBlockHash() []byte {
@@ -1873,7 +1873,7 @@ type Withdrawal struct {
 
 func (x *Withdrawal) Reset() {
 	*x = Withdrawal{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[17]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1885,7 +1885,7 @@ func (x *Withdrawal) String() string {
 func (*Withdrawal) ProtoMessage() {}
 
 func (x *Withdrawal) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[17]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1898,7 +1898,7 @@ func (x *Withdrawal) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Withdrawal.ProtoReflect.Descriptor instead.
 func (*Withdrawal) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{17}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *Withdrawal) GetIndex() uint64 {
@@ -1940,7 +1940,7 @@ type BlobsBundle struct {
 
 func (x *BlobsBundle) Reset() {
 	*x = BlobsBundle{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[18]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1952,7 +1952,7 @@ func (x *BlobsBundle) String() string {
 func (*BlobsBundle) ProtoMessage() {}
 
 func (x *BlobsBundle) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[18]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1965,7 +1965,7 @@ func (x *BlobsBundle) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BlobsBundle.ProtoReflect.Descriptor instead.
 func (*BlobsBundle) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{18}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *BlobsBundle) GetKzgCommitments() [][]byte {
@@ -2000,7 +2000,7 @@ type BlobsBundleV2 struct {
 
 func (x *BlobsBundleV2) Reset() {
 	*x = BlobsBundleV2{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[19]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2012,7 +2012,7 @@ func (x *BlobsBundleV2) String() string {
 func (*BlobsBundleV2) ProtoMessage() {}
 
 func (x *BlobsBundleV2) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[19]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2025,7 +2025,7 @@ func (x *BlobsBundleV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BlobsBundleV2.ProtoReflect.Descriptor instead.
 func (*BlobsBundleV2) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{19}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *BlobsBundleV2) GetKzgCommitments() [][]byte {
@@ -2058,7 +2058,7 @@ type Blob struct {
 
 func (x *Blob) Reset() {
 	*x = Blob{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[20]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2070,7 +2070,7 @@ func (x *Blob) String() string {
 func (*Blob) ProtoMessage() {}
 
 func (x *Blob) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[20]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2083,7 +2083,7 @@ func (x *Blob) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Blob.ProtoReflect.Descriptor instead.
 func (*Blob) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{20}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *Blob) GetData() []byte {
@@ -2103,7 +2103,7 @@ type BlobAndProof struct {
 
 func (x *BlobAndProof) Reset() {
 	*x = BlobAndProof{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[21]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2115,7 +2115,7 @@ func (x *BlobAndProof) String() string {
 func (*BlobAndProof) ProtoMessage() {}
 
 func (x *BlobAndProof) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[21]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2128,7 +2128,7 @@ func (x *BlobAndProof) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BlobAndProof.ProtoReflect.Descriptor instead.
 func (*BlobAndProof) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{21}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *BlobAndProof) GetBlob() []byte {
@@ -2155,7 +2155,7 @@ type BlobAndProofV2 struct {
 
 func (x *BlobAndProofV2) Reset() {
 	*x = BlobAndProofV2{}
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[22]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2167,7 +2167,7 @@ func (x *BlobAndProofV2) String() string {
 func (*BlobAndProofV2) ProtoMessage() {}
 
 func (x *BlobAndProofV2) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_engine_v1_execution_engine_proto_msgTypes[22]
+	mi := &file_proto_engine_v1_sila_engine_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2180,7 +2180,7 @@ func (x *BlobAndProofV2) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BlobAndProofV2.ProtoReflect.Descriptor instead.
 func (*BlobAndProofV2) Descriptor() ([]byte, []int) {
-	return file_proto_engine_v1_execution_engine_proto_rawDescGZIP(), []int{22}
+	return file_proto_engine_v1_sila_engine_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *BlobAndProofV2) GetBlob() []byte {
@@ -2197,9 +2197,9 @@ func (x *BlobAndProofV2) GetKzgProofs() [][]byte {
 	return nil
 }
 
-var File_proto_engine_v1_execution_engine_proto protoreflect.FileDescriptor
+var File_proto_engine_v1_sila_engine_proto protoreflect.FileDescriptor
 
-var file_proto_engine_v1_execution_engine_proto_rawDesc = []byte{
+var file_proto_engine_v1_sila_engine_proto_rawDesc = []byte{
 	0x0a, 0x26, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x65, 0x6e, 0x67, 0x69, 0x6e, 0x65, 0x2f, 0x76,
 	0x31, 0x2f, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x65, 0x6e, 0x67, 0x69,
 	0x6e, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x12, 0x65, 0x74, 0x68, 0x65, 0x72, 0x65,
@@ -2710,60 +2710,60 @@ var file_proto_engine_v1_execution_engine_proto_rawDesc = []byte{
 }
 
 var (
-	file_proto_engine_v1_execution_engine_proto_rawDescOnce sync.Once
-	file_proto_engine_v1_execution_engine_proto_rawDescData = file_proto_engine_v1_execution_engine_proto_rawDesc
+	file_proto_engine_v1_sila_engine_proto_rawDescOnce sync.Once
+	file_proto_engine_v1_sila_engine_proto_rawDescData = file_proto_engine_v1_sila_engine_proto_rawDesc
 )
 
-func file_proto_engine_v1_execution_engine_proto_rawDescGZIP() []byte {
-	file_proto_engine_v1_execution_engine_proto_rawDescOnce.Do(func() {
-		file_proto_engine_v1_execution_engine_proto_rawDescData = protoimpl.X.CompressGZIP(file_proto_engine_v1_execution_engine_proto_rawDescData)
+func file_proto_engine_v1_sila_engine_proto_rawDescGZIP() []byte {
+	file_proto_engine_v1_sila_engine_proto_rawDescOnce.Do(func() {
+		file_proto_engine_v1_sila_engine_proto_rawDescData = protoimpl.X.CompressGZIP(file_proto_engine_v1_sila_engine_proto_rawDescData)
 	})
-	return file_proto_engine_v1_execution_engine_proto_rawDescData
+	return file_proto_engine_v1_sila_engine_proto_rawDescData
 }
 
-var file_proto_engine_v1_execution_engine_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_engine_v1_execution_engine_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
-var file_proto_engine_v1_execution_engine_proto_goTypes = []any{
-	(PayloadStatus_Status)(0),                            // 0: sila.engine.v1.PayloadStatus.Status
-	(*SilaPayload)(nil),                             // 1: sila.engine.v1.SilaPayload
-	(*SilaPayloadCapella)(nil),                      // 2: sila.engine.v1.SilaPayloadCapella
-	(*SilaPayloadDeneb)(nil),                        // 3: sila.engine.v1.SilaPayloadDeneb
-	(*SilaPayloadGloas)(nil),                        // 4: sila.engine.v1.SilaPayloadGloas
-	(*SilaPayloadCapellaWithValue)(nil),             // 5: sila.engine.v1.SilaPayloadCapellaWithValue
-	(*SilaPayloadDenebAndBlobsBundle)(nil),          // 6: sila.engine.v1.SilaPayloadDenebAndBlobsBundle
-	(*SilaPayloadDenebAndBlobsBundleV2)(nil),        // 7: sila.engine.v1.SilaPayloadDenebAndBlobsBundleV2
-	(*SilaPayloadDenebWithValueAndBlobsBundle)(nil), // 8: sila.engine.v1.SilaPayloadDenebWithValueAndBlobsBundle
-	(*SilaPayloadHeader)(nil),                       // 9: sila.engine.v1.SilaPayloadHeader
-	(*SilaPayloadHeaderCapella)(nil),                // 10: sila.engine.v1.SilaPayloadHeaderCapella
-	(*SilaPayloadHeaderDeneb)(nil),                  // 11: sila.engine.v1.SilaPayloadHeaderDeneb
-	(*PayloadAttributes)(nil),                            // 12: sila.engine.v1.PayloadAttributes
-	(*PayloadAttributesV2)(nil),                          // 13: sila.engine.v1.PayloadAttributesV2
-	(*PayloadAttributesV3)(nil),                          // 14: sila.engine.v1.PayloadAttributesV3
-	(*PayloadAttributesV4)(nil),                          // 15: sila.engine.v1.PayloadAttributesV4
-	(*PayloadStatus)(nil),                                // 16: sila.engine.v1.PayloadStatus
-	(*ForkchoiceState)(nil),                              // 17: sila.engine.v1.ForkchoiceState
-	(*Withdrawal)(nil),                                   // 18: sila.engine.v1.Withdrawal
-	(*BlobsBundle)(nil),                                  // 19: sila.engine.v1.BlobsBundle
-	(*BlobsBundleV2)(nil),                                // 20: sila.engine.v1.BlobsBundleV2
-	(*Blob)(nil),                                         // 21: sila.engine.v1.Blob
-	(*BlobAndProof)(nil),                                 // 22: sila.engine.v1.BlobAndProof
-	(*BlobAndProofV2)(nil),                               // 23: sila.engine.v1.BlobAndProofV2
+var file_proto_engine_v1_sila_engine_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_proto_engine_v1_sila_engine_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_proto_engine_v1_sila_engine_proto_goTypes = []any{
+	(PayloadStatus_Status)(0),                            // 0: sila.silaengine.v1.PayloadStatus.Status
+	(*SilaPayload)(nil),                             // 1: sila.silaengine.v1.SilaPayload
+	(*SilaPayloadCapella)(nil),                      // 2: sila.silaengine.v1.SilaPayloadCapella
+	(*SilaPayloadDeneb)(nil),                        // 3: sila.silaengine.v1.SilaPayloadDeneb
+	(*SilaPayloadGloas)(nil),                        // 4: sila.silaengine.v1.SilaPayloadGloas
+	(*SilaPayloadCapellaWithValue)(nil),             // 5: sila.silaengine.v1.SilaPayloadCapellaWithValue
+	(*SilaPayloadDenebAndBlobsBundle)(nil),          // 6: sila.silaengine.v1.SilaPayloadDenebAndBlobsBundle
+	(*SilaPayloadDenebAndBlobsBundleV2)(nil),        // 7: sila.silaengine.v1.SilaPayloadDenebAndBlobsBundleV2
+	(*SilaPayloadDenebWithValueAndBlobsBundle)(nil), // 8: sila.silaengine.v1.SilaPayloadDenebWithValueAndBlobsBundle
+	(*SilaPayloadHeader)(nil),                       // 9: sila.silaengine.v1.SilaPayloadHeader
+	(*SilaPayloadHeaderCapella)(nil),                // 10: sila.silaengine.v1.SilaPayloadHeaderCapella
+	(*SilaPayloadHeaderDeneb)(nil),                  // 11: sila.silaengine.v1.SilaPayloadHeaderDeneb
+	(*PayloadAttributes)(nil),                            // 12: sila.silaengine.v1.PayloadAttributes
+	(*PayloadAttributesV2)(nil),                          // 13: sila.silaengine.v1.PayloadAttributesV2
+	(*PayloadAttributesV3)(nil),                          // 14: sila.silaengine.v1.PayloadAttributesV3
+	(*PayloadAttributesV4)(nil),                          // 15: sila.silaengine.v1.PayloadAttributesV4
+	(*PayloadStatus)(nil),                                // 16: sila.silaengine.v1.PayloadStatus
+	(*ForkchoiceState)(nil),                              // 17: sila.silaengine.v1.ForkchoiceState
+	(*Withdrawal)(nil),                                   // 18: sila.silaengine.v1.Withdrawal
+	(*BlobsBundle)(nil),                                  // 19: sila.silaengine.v1.BlobsBundle
+	(*BlobsBundleV2)(nil),                                // 20: sila.silaengine.v1.BlobsBundleV2
+	(*Blob)(nil),                                         // 21: sila.silaengine.v1.Blob
+	(*BlobAndProof)(nil),                                 // 22: sila.silaengine.v1.BlobAndProof
+	(*BlobAndProofV2)(nil),                               // 23: sila.silaengine.v1.BlobAndProofV2
 }
-var file_proto_engine_v1_execution_engine_proto_depIdxs = []int32{
-	18, // 0: sila.engine.v1.SilaPayloadCapella.withdrawals:type_name -> sila.engine.v1.Withdrawal
-	18, // 1: sila.engine.v1.SilaPayloadDeneb.withdrawals:type_name -> sila.engine.v1.Withdrawal
-	18, // 2: sila.engine.v1.SilaPayloadGloas.withdrawals:type_name -> sila.engine.v1.Withdrawal
-	2,  // 3: sila.engine.v1.SilaPayloadCapellaWithValue.payload:type_name -> sila.engine.v1.SilaPayloadCapella
-	3,  // 4: sila.engine.v1.SilaPayloadDenebAndBlobsBundle.payload:type_name -> sila.engine.v1.SilaPayloadDeneb
-	19, // 5: sila.engine.v1.SilaPayloadDenebAndBlobsBundle.blobs_bundle:type_name -> sila.engine.v1.BlobsBundle
-	3,  // 6: sila.engine.v1.SilaPayloadDenebAndBlobsBundleV2.payload:type_name -> sila.engine.v1.SilaPayloadDeneb
-	20, // 7: sila.engine.v1.SilaPayloadDenebAndBlobsBundleV2.blobs_bundle:type_name -> sila.engine.v1.BlobsBundleV2
-	3,  // 8: sila.engine.v1.SilaPayloadDenebWithValueAndBlobsBundle.payload:type_name -> sila.engine.v1.SilaPayloadDeneb
-	19, // 9: sila.engine.v1.SilaPayloadDenebWithValueAndBlobsBundle.blobs_bundle:type_name -> sila.engine.v1.BlobsBundle
-	18, // 10: sila.engine.v1.PayloadAttributesV2.withdrawals:type_name -> sila.engine.v1.Withdrawal
-	18, // 11: sila.engine.v1.PayloadAttributesV3.withdrawals:type_name -> sila.engine.v1.Withdrawal
-	18, // 12: sila.engine.v1.PayloadAttributesV4.withdrawals:type_name -> sila.engine.v1.Withdrawal
-	0,  // 13: sila.engine.v1.PayloadStatus.status:type_name -> sila.engine.v1.PayloadStatus.Status
+var file_proto_engine_v1_sila_engine_proto_depIdxs = []int32{
+	18, // 0: sila.silaengine.v1.SilaPayloadCapella.withdrawals:type_name -> sila.silaengine.v1.Withdrawal
+	18, // 1: sila.silaengine.v1.SilaPayloadDeneb.withdrawals:type_name -> sila.silaengine.v1.Withdrawal
+	18, // 2: sila.silaengine.v1.SilaPayloadGloas.withdrawals:type_name -> sila.silaengine.v1.Withdrawal
+	2,  // 3: sila.silaengine.v1.SilaPayloadCapellaWithValue.payload:type_name -> sila.silaengine.v1.SilaPayloadCapella
+	3,  // 4: sila.silaengine.v1.SilaPayloadDenebAndBlobsBundle.payload:type_name -> sila.silaengine.v1.SilaPayloadDeneb
+	19, // 5: sila.silaengine.v1.SilaPayloadDenebAndBlobsBundle.blobs_bundle:type_name -> sila.silaengine.v1.BlobsBundle
+	3,  // 6: sila.silaengine.v1.SilaPayloadDenebAndBlobsBundleV2.payload:type_name -> sila.silaengine.v1.SilaPayloadDeneb
+	20, // 7: sila.silaengine.v1.SilaPayloadDenebAndBlobsBundleV2.blobs_bundle:type_name -> sila.silaengine.v1.BlobsBundleV2
+	3,  // 8: sila.silaengine.v1.SilaPayloadDenebWithValueAndBlobsBundle.payload:type_name -> sila.silaengine.v1.SilaPayloadDeneb
+	19, // 9: sila.silaengine.v1.SilaPayloadDenebWithValueAndBlobsBundle.blobs_bundle:type_name -> sila.silaengine.v1.BlobsBundle
+	18, // 10: sila.silaengine.v1.PayloadAttributesV2.withdrawals:type_name -> sila.silaengine.v1.Withdrawal
+	18, // 11: sila.silaengine.v1.PayloadAttributesV3.withdrawals:type_name -> sila.silaengine.v1.Withdrawal
+	18, // 12: sila.silaengine.v1.PayloadAttributesV4.withdrawals:type_name -> sila.silaengine.v1.Withdrawal
+	0,  // 13: sila.silaengine.v1.PayloadStatus.status:type_name -> sila.silaengine.v1.PayloadStatus.Status
 	14, // [14:14] is the sub-list for method output_type
 	14, // [14:14] is the sub-list for method input_type
 	14, // [14:14] is the sub-list for extension type_name
@@ -2771,28 +2771,28 @@ var file_proto_engine_v1_execution_engine_proto_depIdxs = []int32{
 	0,  // [0:14] is the sub-list for field type_name
 }
 
-func init() { file_proto_engine_v1_execution_engine_proto_init() }
-func file_proto_engine_v1_execution_engine_proto_init() {
-	if File_proto_engine_v1_execution_engine_proto != nil {
+func init() { file_proto_engine_v1_sila_engine_proto_init() }
+func file_proto_engine_v1_sila_engine_proto_init() {
+	if File_proto_engine_v1_sila_engine_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_proto_engine_v1_execution_engine_proto_rawDesc,
+			RawDescriptor: file_proto_engine_v1_sila_engine_proto_rawDesc,
 			NumEnums:      1,
 			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_proto_engine_v1_execution_engine_proto_goTypes,
-		DependencyIndexes: file_proto_engine_v1_execution_engine_proto_depIdxs,
-		EnumInfos:         file_proto_engine_v1_execution_engine_proto_enumTypes,
-		MessageInfos:      file_proto_engine_v1_execution_engine_proto_msgTypes,
+		GoTypes:           file_proto_engine_v1_sila_engine_proto_goTypes,
+		DependencyIndexes: file_proto_engine_v1_sila_engine_proto_depIdxs,
+		EnumInfos:         file_proto_engine_v1_sila_engine_proto_enumTypes,
+		MessageInfos:      file_proto_engine_v1_sila_engine_proto_msgTypes,
 	}.Build()
-	File_proto_engine_v1_execution_engine_proto = out.File
-	file_proto_engine_v1_execution_engine_proto_rawDesc = nil
-	file_proto_engine_v1_execution_engine_proto_goTypes = nil
-	file_proto_engine_v1_execution_engine_proto_depIdxs = nil
+	File_proto_engine_v1_sila_engine_proto = out.File
+	file_proto_engine_v1_sila_engine_proto_rawDesc = nil
+	file_proto_engine_v1_sila_engine_proto_goTypes = nil
+	file_proto_engine_v1_sila_engine_proto_depIdxs = nil
 }

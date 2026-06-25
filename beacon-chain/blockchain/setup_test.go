@@ -203,7 +203,7 @@ func minimalTestService(t *testing.T, opts ...Option) (*Service, *testServiceReq
 		WithBlobStorage(filesystem.NewEphemeralBlobStorage(t)),
 		WithDataColumnStorage(filesystem.NewEphemeralDataColumnStorage(t)),
 		WithSyncChecker(mock.MockChecker{}),
-		WithExecutionEngineCaller(&mockExecution.EngineClient{}),
+		WithSilaEngineCaller(&mockExecution.SilaEngineClient{}),
 		WithP2PBroadcaster(&mockAccessor{}),
 		WithLightClientStore(&lightclient.Store{}),
 		WithGenesisTime(genesis),

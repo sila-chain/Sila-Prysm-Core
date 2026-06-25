@@ -7,7 +7,7 @@ import (
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
@@ -185,7 +185,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 	}
 
 	if b.version >= version.Fulu {
-		p, ok := payload.Proto().(*enginev1.SilaPayloadDeneb)
+		p, ok := payload.Proto().(*silaenginev1.SilaPayloadDeneb)
 		if !ok {
 			return nil, fmt.Errorf("%T is not an sila payload header of Deneb version", p)
 		}
@@ -222,7 +222,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 	}
 
 	if b.version >= version.Electra {
-		p, ok := payload.Proto().(*enginev1.SilaPayloadDeneb)
+		p, ok := payload.Proto().(*silaenginev1.SilaPayloadDeneb)
 		if !ok {
 			return nil, fmt.Errorf("%T is not an sila payload header of Deneb version", p)
 		}
@@ -258,7 +258,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 	}
 
 	switch p := payload.Proto().(type) {
-	case *enginev1.SilaPayload:
+	case *silaenginev1.SilaPayload:
 		header, err := PayloadToHeader(payload)
 		if err != nil {
 			return nil, errors.Wrap(err, "payload to header")
@@ -285,7 +285,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 				},
 				Signature: b.signature[:],
 			})
-	case *enginev1.SilaPayloadCapella:
+	case *silaenginev1.SilaPayloadCapella:
 		header, err := PayloadToHeaderCapella(payload)
 		if err != nil {
 			return nil, err
@@ -313,7 +313,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 				},
 				Signature: b.signature[:],
 			})
-	case *enginev1.SilaPayloadDeneb:
+	case *silaenginev1.SilaPayloadDeneb:
 		header, err := PayloadToHeaderDeneb(payload)
 		if err != nil {
 			return nil, errors.Wrap(err, "payload to header deneb")
@@ -1280,7 +1280,7 @@ func (b *BeaconBlockBody) BlobKzgCommitments() ([][]byte, error) {
 }
 
 // ExecutionRequests returns the execution requests
-func (b *BeaconBlockBody) ExecutionRequests() (*enginev1.ExecutionRequests, error) {
+func (b *BeaconBlockBody) ExecutionRequests() (*silaenginev1.ExecutionRequests, error) {
 	if b.version < version.Electra || b.version >= version.Gloas {
 		return nil, consensus_types.ErrNotSupported("ExecutionRequests", b.version)
 	}
@@ -1304,7 +1304,7 @@ func (b *BeaconBlockBody) SignedSilaPayloadBid() (*eth.SignedSilaPayloadBid, err
 }
 
 // ParentExecutionRequests returns the parent's deferred execution requests.
-func (b *BeaconBlockBody) ParentExecutionRequests() (*enginev1.ExecutionRequests, error) {
+func (b *BeaconBlockBody) ParentExecutionRequests() (*silaenginev1.ExecutionRequests, error) {
 	if b.version >= version.Gloas {
 		return b.parentExecutionRequests, nil
 	}

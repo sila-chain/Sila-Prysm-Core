@@ -7,7 +7,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -17,7 +17,7 @@ func testEnvelope(t *testing.T) *silapb.SignedSilaPayloadEnvelope {
 	t.Helper()
 	return &silapb.SignedSilaPayloadEnvelope{
 		Message: &silapb.SilaPayloadEnvelope{
-			Payload: &enginev1.SilaPayloadGloas{
+			Payload: &silaenginev1.SilaPayloadGloas{
 				ParentHash:    bytesutil.PadTo([]byte("parent"), 32),
 				FeeRecipient:  bytesutil.PadTo([]byte("fee"), 20),
 				StateRoot:     bytesutil.PadTo([]byte("stateroot"), 32),
@@ -32,12 +32,12 @@ func testEnvelope(t *testing.T) *silapb.SignedSilaPayloadEnvelope {
 				BaseFeePerGas: bytesutil.PadTo([]byte{1}, 32),
 				BlockHash:     bytesutil.PadTo([]byte("blockhash"), 32),
 				Transactions:  [][]byte{[]byte("tx1"), []byte("tx2")},
-				Withdrawals:   []*enginev1.Withdrawal{{Index: 1, ValidatorIndex: 2, Address: bytesutil.PadTo([]byte("addr"), 20), Amount: 100}},
+				Withdrawals:   []*silaenginev1.Withdrawal{{Index: 1, ValidatorIndex: 2, Address: bytesutil.PadTo([]byte("addr"), 20), Amount: 100}},
 				BlobGasUsed:   131072,
 				ExcessBlobGas: 0,
 				SlotNumber:    99,
 			},
-			ExecutionRequests:     &enginev1.ExecutionRequests{},
+			ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 			BuilderIndex:          primitives.BuilderIndex(42),
 			BeaconBlockRoot:       bytesutil.PadTo([]byte("beaconroot"), 32),
 			ParentBeaconBlockRoot: make([]byte, 32),

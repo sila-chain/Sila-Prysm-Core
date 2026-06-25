@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/golang/snappy"
@@ -127,7 +127,7 @@ type stateDiff struct {
 	builderPendingWithdrawalsIndex uint64                            // prefix-drop index.
 	builderPendingWithdrawalsDiff  []*silapb.BuilderPendingWithdrawal // prefix-drop + append.
 	latestBlockHash                [fieldparams.RootLength]byte      // override.
-	payloadExpectedWithdrawals     []*enginev1.Withdrawal            // override.
+	payloadExpectedWithdrawals     []*silaenginev1.Withdrawal            // override.
 	ptcWindow                      []*silapb.PTCs                     // override.
 }
 
@@ -607,11 +607,11 @@ func (ret *stateDiff) readSilaPayloadHeader(data *[]byte) error {
 	var header sszSizeUnmarshaler
 	switch ret.targetVersion {
 	case version.Bellatrix:
-		header = &enginev1.SilaPayloadHeader{}
+		header = &silaenginev1.SilaPayloadHeader{}
 	case version.Capella:
-		header = &enginev1.SilaPayloadHeaderCapella{}
+		header = &silaenginev1.SilaPayloadHeaderCapella{}
 	case version.Deneb, version.Electra, version.Fulu:
-		header = &enginev1.SilaPayloadHeaderDeneb{}
+		header = &silaenginev1.SilaPayloadHeaderDeneb{}
 	default:
 		return errors.Errorf("unknown target version %d", ret.targetVersion)
 	}

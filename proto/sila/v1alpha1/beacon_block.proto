@@ -20,8 +20,8 @@ import "proto/sila/v1alpha1/attestation.proto";
 import "proto/sila/v1alpha1/withdrawals.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
 import "proto/sila/v1alpha1/gloas.proto";
-import "proto/engine/v1/execution_engine.proto";
-import "proto/engine/v1/electra.proto";
+import "proto/silaengine/v1/sila_engine.proto";
+import "proto/silaengine/v1/electra.proto";
 
 option csharp_namespace = "Sila.Eth.v1alpha1";
 option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
@@ -241,7 +241,7 @@ message SignedBuilderBid {
 }
 
 message BuilderBid {
-  sila.engine.v1.SilaPayloadHeader header = 1;
+  sila.silaengine.v1.SilaPayloadHeader header = 1;
   bytes value = 2 [ (sila.eth.ext.ssz_size) = "32" ];
   bytes pubkey = 3 [ (sila.eth.ext.ssz_size) = "48" ];
 }
@@ -394,7 +394,7 @@ message BeaconBlockBodyBellatrix {
 
   // Sila payload from the execution chain. New in Bellatrix network
   // upgrade.
-  sila.engine.v1.SilaPayload sila_payload = 10;
+  sila.silaengine.v1.SilaPayload sila_payload = 10;
 }
 
 message SignedBlindedBeaconBlockBellatrix {
@@ -461,7 +461,7 @@ message BlindedBeaconBlockBodyBellatrix {
 
   // Sila payload header from the execution chain. New in Bellatrix network
   // upgrade.
-  sila.engine.v1.SilaPayloadHeader sila_payload_header = 10;
+  sila.silaengine.v1.SilaPayloadHeader sila_payload_header = 10;
 }
 
 // ----------------------------------------------------------------------------
@@ -535,7 +535,7 @@ message BeaconBlockBodyCapella {
   SyncAggregate sync_aggregate = 9;
 
   // Sila payload from the execution chain.
-  sila.engine.v1.SilaPayloadCapella sila_payload = 10;
+  sila.silaengine.v1.SilaPayloadCapella sila_payload = 10;
 
   // At most MAX_BLS_TO_EXECUTION_CHANGES. New in Capella network upgrade.
   repeated SignedBLSToExecutionChange bls_to_execution_changes = 11
@@ -605,7 +605,7 @@ message BlindedBeaconBlockBodyCapella {
   SyncAggregate sync_aggregate = 9;
 
   // Sila payload header from the execution chain.
-  sila.engine.v1.SilaPayloadHeaderCapella sila_payload_header =
+  sila.silaengine.v1.SilaPayloadHeaderCapella sila_payload_header =
       10;
 
   // At most MAX_BLS_TO_EXECUTION_CHANGES. New in Capella network upgrade.
@@ -619,7 +619,7 @@ message SignedBuilderBidCapella {
 }
 
 message BuilderBidCapella {
-  sila.engine.v1.SilaPayloadHeaderCapella header = 1;
+  sila.silaengine.v1.SilaPayloadHeaderCapella header = 1;
   bytes value = 2 [ (sila.eth.ext.ssz_size) = "32" ];
   bytes pubkey = 3 [ (sila.eth.ext.ssz_size) = "48" ];
 }
@@ -719,7 +719,7 @@ message BeaconBlockBodyDeneb {
   SyncAggregate sync_aggregate = 9;
 
   // Sila payload from the execution chain.
-  sila.engine.v1.SilaPayloadDeneb sila_payload = 10;
+  sila.silaengine.v1.SilaPayloadDeneb sila_payload = 10;
 
   // At most MAX_BLS_TO_EXECUTION_CHANGES.
   repeated SignedBLSToExecutionChange bls_to_execution_changes = 11
@@ -794,7 +794,7 @@ message BlindedBeaconBlockBodyDeneb {
   SyncAggregate sync_aggregate = 9;
 
   // Sila payload header from the execution chain.
-  sila.engine.v1.SilaPayloadHeaderDeneb sila_payload_header = 10;
+  sila.silaengine.v1.SilaPayloadHeaderDeneb sila_payload_header = 10;
 
   // At most MAX_BLS_TO_EXECUTION_CHANGES.
   repeated SignedBLSToExecutionChange bls_to_execution_changes = 11
@@ -813,7 +813,7 @@ message SignedBuilderBidDeneb {
 }
 
 message BuilderBidDeneb {
-  sila.engine.v1.SilaPayloadHeaderDeneb header = 1;
+  sila.silaengine.v1.SilaPayloadHeaderDeneb header = 1;
   repeated bytes blob_kzg_commitments = 2 [
     (sila.eth.ext.ssz_size) = "?,48",
     (sila.eth.ext.ssz_max) = "max_blob_commitments.size"
@@ -823,12 +823,12 @@ message BuilderBidDeneb {
 }
 
 message BuilderBidElectra {
-  sila.engine.v1.SilaPayloadHeaderDeneb header = 1;
+  sila.silaengine.v1.SilaPayloadHeaderDeneb header = 1;
   repeated bytes blob_kzg_commitments = 2 [
     (sila.eth.ext.ssz_size) = "?,48",
     (sila.eth.ext.ssz_max) = "max_blob_commitments.size"
   ];
-  sila.engine.v1.ExecutionRequests execution_requests = 3;
+  sila.silaengine.v1.ExecutionRequests execution_requests = 3;
   bytes value = 4 [ (sila.eth.ext.ssz_size) = "32" ];
   bytes pubkey = 5 [ (sila.eth.ext.ssz_size) = "48" ];
 }
@@ -951,7 +951,7 @@ message BeaconBlockBodyElectra {
 
   // Sila payload from the execution chain. New in Bellatrix network
   // upgrade.
-  sila.engine.v1.SilaPayloadDeneb sila_payload = 10;
+  sila.silaengine.v1.SilaPayloadDeneb sila_payload = 10;
 
   // At most MAX_BLS_TO_EXECUTION_CHANGES. New in Capella network upgrade.
   repeated SignedBLSToExecutionChange bls_to_execution_changes = 11
@@ -964,7 +964,7 @@ message BeaconBlockBodyElectra {
   ];
 
   // Execution requests. New in Electra network upgrade.
-  sila.engine.v1.ExecutionRequests execution_requests = 13;
+  sila.silaengine.v1.ExecutionRequests execution_requests = 13;
 }
 
 message SignedBlindedBeaconBlockElectra {
@@ -1031,7 +1031,7 @@ message BlindedBeaconBlockBodyElectra {
   SyncAggregate sync_aggregate = 9;
 
   // Sila payload header from the execution chain.
-  sila.engine.v1.SilaPayloadHeaderDeneb sila_payload_header = 10;
+  sila.silaengine.v1.SilaPayloadHeaderDeneb sila_payload_header = 10;
 
   // At most MAX_BLS_TO_EXECUTION_CHANGES.
   repeated SignedBLSToExecutionChange bls_to_execution_changes = 11
@@ -1044,7 +1044,7 @@ message BlindedBeaconBlockBodyElectra {
   ];
 
   // Execution requests. New in Electra network upgrade.
-  sila.engine.v1.ExecutionRequests execution_requests = 13;
+  sila.silaengine.v1.ExecutionRequests execution_requests = 13;
 }
 
 // ----------------------------------------------------------------------------

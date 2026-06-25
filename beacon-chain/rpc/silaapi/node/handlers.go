@@ -119,13 +119,13 @@ func (*Server) GetVersion(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetVersionV2 Retrieves structured information about the version of the beacon node and its attached
-// execution client in the same format as used on the Engine API
+// execution client in the same format as used on the SilaEngine API
 func (s *Server) GetVersionV2(w http.ResponseWriter, r *http.Request) {
 	ctx, span := trace.StartSpan(r.Context(), "node.GetVersionV2")
 	defer span.End()
 
 	var elData *structs.ClientVersionV1
-	elDataList, err := s.ExecutionEngineCaller.GetClientVersionV1(ctx)
+	elDataList, err := s.SilaEngineCaller.GetClientVersionV1(ctx)
 	if err != nil {
 		log.WithError(err).WithField("endpoint", "GetVersionV2").Debug("Could not get execution client version")
 	} else if len(elDataList) > 0 {

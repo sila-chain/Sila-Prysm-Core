@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila/common"
 	"github.com/pkg/errors"
@@ -259,12 +259,12 @@ type BeaconChainConfig struct {
 	DefaultBuilderGasLimit           uint64           // DefaultBuilderGasLimit is the default used to set the gaslimit for the Builder APIs, typically at around 30M wei.
 
 	// Mev-boost circuit breaker
-	MaxBuilderConsecutiveMissedSlots primitives.Slot // MaxBuilderConsecutiveMissedSlots defines the number of consecutive skip slot to fallback from using relay/builder to local execution engine for block construction.
-	MaxBuilderEpochMissedSlots       primitives.Slot // MaxBuilderEpochMissedSlots is defining the number of total skip slot (per epoch rolling windows) to fallback from using relay/builder to local execution engine for block construction.
+	MaxBuilderConsecutiveMissedSlots primitives.Slot // MaxBuilderConsecutiveMissedSlots defines the number of consecutive skip slot to fallback from using relay/builder to local SilaEngine for block construction.
+	MaxBuilderEpochMissedSlots       primitives.Slot // MaxBuilderEpochMissedSlots is defining the number of total skip slot (per epoch rolling windows) to fallback from using relay/builder to local SilaEngine for block construction.
 	LocalBlockValueBoost             uint64          // LocalBlockValueBoost is the value boost for local block construction. This is used to prioritize local block construction over relay/builder block construction.
 	MinBuilderBid                    uint64          // MinBuilderBid is the minimum value that the builder's block can have to be considered by this node.
 	MinBuilderDiff                   uint64          // MinBuilderDiff is the minimum value above the local block value that the builder has to bid to be considered by this node
-	// Execution engine timeout value
+	// SilaEngine timeout value
 	ExecutionEngineTimeoutValue uint64 // ExecutionEngineTimeoutValue defines the seconds to wait before timing out engine endpoints with sila payload execution semantics (newPayload, forkchoiceUpdated).
 
 	// Subnet value
@@ -365,8 +365,8 @@ func (b *BeaconChainConfig) VersionToForkEpochMap() map[int]primitives.Epoch {
 	}
 }
 
-func (b *BeaconChainConfig) ExecutionRequestLimits() enginev1.ExecutionRequestLimits {
-	return enginev1.ExecutionRequestLimits{
+func (b *BeaconChainConfig) ExecutionRequestLimits() silaenginev1.ExecutionRequestLimits {
+	return silaenginev1.ExecutionRequestLimits{
 		Deposits:       b.MaxDepositRequestsPerPayload,
 		Withdrawals:    b.MaxWithdrawalsPerPayload,
 		Consolidations: b.MaxConsolidationsRequestsPerPayload,

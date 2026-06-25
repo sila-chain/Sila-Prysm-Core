@@ -9,7 +9,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -309,7 +309,7 @@ func upgradeToGloas(beaconState state.BeaconState) (state.BeaconState, error) {
 		}
 	}
 
-	emptyExecutionRequestsRoot, err := enginev1.EmptyExecutionRequestsHashTreeRoot()
+	emptyExecutionRequestsRoot, err := silaenginev1.EmptyExecutionRequestsHashTreeRoot()
 	if err != nil {
 		return nil, errors.Wrap(err, "could not compute empty execution requests root")
 	}
@@ -371,7 +371,7 @@ func upgradeToGloas(beaconState state.BeaconState) (state.BeaconState, error) {
 		BuilderPendingPayments:        builderPendingPayments,
 		BuilderPendingWithdrawals:     []*silapb.BuilderPendingWithdrawal{},
 		LatestBlockHash:               payloadHeader.BlockHash(),
-		PayloadExpectedWithdrawals:    []*enginev1.Withdrawal{},
+		PayloadExpectedWithdrawals:    []*silaenginev1.Withdrawal{},
 	}
 	return state_native.InitializeFromProtoUnsafeGloas(s)
 }

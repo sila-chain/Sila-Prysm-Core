@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -238,7 +238,7 @@ func createFullBellatrixBlockWithOperations(t *testing.T) (state.BeaconState,
 				Deposits:          altairBlk.Block.Body.Deposits,
 				VoluntaryExits:    altairBlk.Block.Body.VoluntaryExits,
 				SyncAggregate:     altairBlk.Block.Body.SyncAggregate,
-				SilaPayload: &enginev1.SilaPayload{
+				SilaPayload: &silaenginev1.SilaPayload{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 					StateRoot:     make([]byte, fieldparams.RootLength),
@@ -277,7 +277,7 @@ func createFullCapellaBlockWithOperations(t *testing.T) (state.BeaconState,
 				Deposits:          bellatrixBlk.Block.Body.Deposits,
 				VoluntaryExits:    bellatrixBlk.Block.Body.VoluntaryExits,
 				SyncAggregate:     bellatrixBlk.Block.Body.SyncAggregate,
-				SilaPayload: &enginev1.SilaPayloadCapella{
+				SilaPayload: &silaenginev1.SilaPayloadCapella{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 					StateRoot:     make([]byte, fieldparams.RootLength),
@@ -288,7 +288,7 @@ func createFullCapellaBlockWithOperations(t *testing.T) (state.BeaconState,
 					BaseFeePerGas: bytesutil.PadTo([]byte{1, 2, 3, 4}, fieldparams.RootLength),
 					BlockHash:     make([]byte, fieldparams.RootLength),
 					Transactions:  make([][]byte, 0),
-					Withdrawals:   make([]*enginev1.Withdrawal, 0),
+					Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 				},
 			},
 		},

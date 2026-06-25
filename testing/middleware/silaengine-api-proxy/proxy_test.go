@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/rand"
-	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/rpc"
@@ -83,7 +83,7 @@ func TestProxy(t *testing.T) {
 }
 
 func TestProxy_CustomInterceptors(t *testing.T) {
-	t.Run("only intercepts engine API methods", func(t *testing.T) {
+	t.Run("only intercepts SilaEngine API methods", func(t *testing.T) {
 		ctx := t.Context()
 
 		type syncingResponse struct {

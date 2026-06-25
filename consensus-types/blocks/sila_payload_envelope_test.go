@@ -8,14 +8,14 @@ import (
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func validSilaPayloadEnvelope() *silapb.SilaPayloadEnvelope {
-	payload := &enginev1.SilaPayloadGloas{
+	payload := &silaenginev1.SilaPayloadGloas{
 		ParentHash:    bytes.Repeat([]byte{0x01}, 32),
 		FeeRecipient:  bytes.Repeat([]byte{0x02}, 20),
 		StateRoot:     bytes.Repeat([]byte{0x03}, 32),
@@ -29,7 +29,7 @@ func validSilaPayloadEnvelope() *silapb.SilaPayloadEnvelope {
 		BaseFeePerGas: bytes.Repeat([]byte{0x07}, 32),
 		BlockHash:     bytes.Repeat([]byte{0x08}, 32),
 		Transactions:  [][]byte{},
-		Withdrawals:   []*enginev1.Withdrawal{},
+		Withdrawals:   []*silaenginev1.Withdrawal{},
 		BlobGasUsed:   0,
 		ExcessBlobGas: 0,
 		SlotNumber:    9,
@@ -37,8 +37,8 @@ func validSilaPayloadEnvelope() *silapb.SilaPayloadEnvelope {
 
 	return &silapb.SilaPayloadEnvelope{
 		Payload: payload,
-		ExecutionRequests: &enginev1.ExecutionRequests{
-			Deposits: []*enginev1.DepositRequest{
+		ExecutionRequests: &silaenginev1.ExecutionRequests{
+			Deposits: []*silaenginev1.DepositRequest{
 				{
 					Pubkey:                bytes.Repeat([]byte{0x09}, 48),
 					WithdrawalCredentials: bytes.Repeat([]byte{0x0A}, 32),

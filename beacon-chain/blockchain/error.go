@@ -10,11 +10,11 @@ import (
 var (
 	// ErrInvalid indicates a verification failure that should result in peer downscoring.
 	// ErrInvalidPayload is returned when the payload is invalid
-	ErrInvalidPayload = invalidBlock{error: errors.New("received an INVALID payload from execution engine")}
+	ErrInvalidPayload = invalidBlock{error: errors.New("received an INVALID payload from SilaEngine")}
 	// ErrInvalidBlockHashPayloadStatus is returned when the payload has invalid block hash.
-	ErrInvalidBlockHashPayloadStatus = invalidBlock{error: errors.New("received an INVALID_BLOCK_HASH payload from execution engine")}
-	// ErrUndefinedExecutionEngineError is returned when the execution engine returns an error that is not defined
-	ErrUndefinedExecutionEngineError = errors.New("received an undefined execution engine error")
+	ErrInvalidBlockHashPayloadStatus = invalidBlock{error: errors.New("received an INVALID_BLOCK_HASH payload from SilaEngine")}
+	// ErrUndefinedSilaEngineError is returned when the SilaEngine returns an error that is not defined
+	ErrUndefinedSilaEngineError = errors.New("received an undefined SilaEngine error")
 	// errNilFinalizedInStore is returned when a nil finalized checkpt is returned from store.
 	errNilFinalizedInStore = errors.New("nil finalized checkpoint returned from store")
 	// errNilFinalizedCheckpoint is returned when a nil finalized checkpt is returned from a state.

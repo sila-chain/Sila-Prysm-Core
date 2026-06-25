@@ -4,7 +4,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
@@ -41,8 +41,8 @@ type writeOnlyGloasFields interface {
 	SetSilaPayloadAvailabilityVector([]byte) error
 
 	// Withdrawals.
-	SetPayloadExpectedWithdrawals(withdrawals []*enginev1.Withdrawal) error
-	DecreaseWithdrawalBalances(withdrawals []*enginev1.Withdrawal) error
+	SetPayloadExpectedWithdrawals(withdrawals []*silaenginev1.Withdrawal) error
+	DecreaseWithdrawalBalances(withdrawals []*silaenginev1.Withdrawal) error
 	DequeueBuilderPendingWithdrawals(num uint64) error
 	SetNextWithdrawalBuilderIndex(idx primitives.BuilderIndex) error
 	OnboardBuildersFromPendingDeposits() error
@@ -56,7 +56,7 @@ type readOnlyGloasFields interface {
 
 	// Builder pending payments / withdrawals.
 	BuilderPendingPayments() ([]*silapb.BuilderPendingPayment, error)
-	WithdrawalsMatchPayloadExpected(withdrawals []*enginev1.Withdrawal) (bool, error)
+	WithdrawalsMatchPayloadExpected(withdrawals []*silaenginev1.Withdrawal) (bool, error)
 	BuilderPendingWithdrawals() ([]*silapb.BuilderPendingWithdrawal, error)
 
 	// Misc.
@@ -79,14 +79,14 @@ type readOnlyGloasFields interface {
 	// Withdrawals
 	LatestBlockHashMatchesBidBlockHash() (bool, error)
 	ExpectedWithdrawalsGloas() (ExpectedWithdrawalsGloasResult, error)
-	PayloadExpectedWithdrawals() ([]*enginev1.Withdrawal, error)
-	WithdrawalsForPayload() ([]*enginev1.Withdrawal, error)
+	PayloadExpectedWithdrawals() ([]*silaenginev1.Withdrawal, error)
+	WithdrawalsForPayload() ([]*silaenginev1.Withdrawal, error)
 }
 
 // ExpectedWithdrawalsGloasResult bundles the expected withdrawals and related counters
 // for the Gloas fork to avoid positional return mistakes.
 type ExpectedWithdrawalsGloasResult struct {
-	Withdrawals                      []*enginev1.Withdrawal
+	Withdrawals                      []*silaenginev1.Withdrawal
 	ProcessedBuilderWithdrawalsCount uint64
 	ProcessedPartialWithdrawalsCount uint64
 	NextWithdrawalBuilderIndex       primitives.BuilderIndex

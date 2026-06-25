@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -66,14 +66,14 @@ func TestUpgradeToCapella(t *testing.T) {
 
 	header, err := mSt.LatestSilaPayloadHeader()
 	require.NoError(t, err)
-	protoHeader, ok := header.Proto().(*enginev1.SilaPayloadHeaderCapella)
+	protoHeader, ok := header.Proto().(*silaenginev1.SilaPayloadHeaderCapella)
 	require.Equal(t, true, ok)
 	prevHeader, err := preForkState.LatestSilaPayloadHeader()
 	require.NoError(t, err)
 	txRoot, err := prevHeader.TransactionsRoot()
 	require.NoError(t, err)
 
-	wanted := &enginev1.SilaPayloadHeaderCapella{
+	wanted := &silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       prevHeader.ParentHash(),
 		FeeRecipient:     prevHeader.FeeRecipient(),
 		StateRoot:        prevHeader.StateRoot(),

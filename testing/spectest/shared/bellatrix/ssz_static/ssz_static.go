@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	common "github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/common/ssz_static"
@@ -35,9 +35,9 @@ func unmarshalledSSZ(t *testing.T, serializedBytes []byte, folderName string) (a
 	var obj any
 	switch folderName {
 	case "SilaPayload":
-		obj = &enginev1.SilaPayload{}
+		obj = &silaenginev1.SilaPayload{}
 	case "SilaPayloadHeader":
-		obj = &enginev1.SilaPayloadHeader{}
+		obj = &silaenginev1.SilaPayloadHeader{}
 	case "Attestation":
 		obj = &silapb.Attestation{}
 	case "AttestationData":

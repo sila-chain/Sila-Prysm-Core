@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -276,7 +276,7 @@ func (b *BeaconState) LatestSilaPayloadBid() (interfaces.ROSilaPayloadBid, error
 
 // WithdrawalsMatchPayloadExpected returns true if the given withdrawals root matches the state's
 // payload_expected_withdrawals root.
-func (b *BeaconState) WithdrawalsMatchPayloadExpected(withdrawals []*enginev1.Withdrawal) (bool, error) {
+func (b *BeaconState) WithdrawalsMatchPayloadExpected(withdrawals []*silaenginev1.Withdrawal) (bool, error) {
 	if b.version < version.Gloas {
 		return false, errNotSupported("WithdrawalsMatchPayloadExpected", b.version)
 	}
@@ -287,7 +287,7 @@ func (b *BeaconState) WithdrawalsMatchPayloadExpected(withdrawals []*enginev1.Wi
 	return withdrawalsEqual(withdrawals, b.payloadExpectedWithdrawals), nil
 }
 
-func withdrawalsEqual(a, b []*enginev1.Withdrawal) bool {
+func withdrawalsEqual(a, b []*silaenginev1.Withdrawal) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -425,7 +425,7 @@ func (b *BeaconState) ExpectedWithdrawalsGloas() (state.ExpectedWithdrawalsGloas
 	defer b.lock.RUnlock()
 
 	cfg := params.BeaconConfig()
-	withdrawals := make([]*enginev1.Withdrawal, 0, cfg.MaxWithdrawalsPerPayload)
+	withdrawals := make([]*silaenginev1.Withdrawal, 0, cfg.MaxWithdrawalsPerPayload)
 	withdrawalIndex := b.nextWithdrawalIndex
 
 	withdrawalIndex, processedBuilderWithdrawalsCount, err := b.appendBuilderWithdrawals(withdrawalIndex, &withdrawals)
@@ -490,7 +490,7 @@ func (b *BeaconState) ExpectedWithdrawalsGloas() (state.ExpectedWithdrawalsGloas
 //
 //	    return withdrawals, withdrawal_index, processed_count
 //	</spec>
-func (b *BeaconState) appendBuilderWithdrawals(withdrawalIndex uint64, withdrawals *[]*enginev1.Withdrawal) (uint64, uint64, error) {
+func (b *BeaconState) appendBuilderWithdrawals(withdrawalIndex uint64, withdrawals *[]*silaenginev1.Withdrawal) (uint64, uint64, error) {
 	cfg := params.BeaconConfig()
 	withdrawalsLimit := int(cfg.MaxWithdrawalsPerPayload - 1)
 	ws := *withdrawals
@@ -504,7 +504,7 @@ func (b *BeaconState) appendBuilderWithdrawals(withdrawalIndex uint64, withdrawa
 			break
 		}
 
-		ws = append(ws, &enginev1.Withdrawal{
+		ws = append(ws, &silaenginev1.Withdrawal{
 			Index:          withdrawalIndex,
 			ValidatorIndex: w.BuilderIndex.ToValidatorIndex(),
 			Address:        w.FeeRecipient,
@@ -558,7 +558,7 @@ func (b *BeaconState) appendBuilderWithdrawals(withdrawalIndex uint64, withdrawa
 //
 //	    return withdrawals, withdrawal_index, processed_count
 //	</spec>
-func (b *BeaconState) appendBuildersSweepWithdrawals(withdrawalIndex uint64, withdrawals *[]*enginev1.Withdrawal) (uint64, primitives.BuilderIndex, error) {
+func (b *BeaconState) appendBuildersSweepWithdrawals(withdrawalIndex uint64, withdrawals *[]*silaenginev1.Withdrawal) (uint64, primitives.BuilderIndex, error) {
 	cfg := params.BeaconConfig()
 	withdrawalsLimit := int(cfg.MaxWithdrawalsPerPayload - 1)
 	if len(*withdrawals) > withdrawalsLimit {
@@ -588,7 +588,7 @@ func (b *BeaconState) appendBuildersSweepWithdrawals(withdrawalIndex uint64, wit
 			return withdrawalIndex, 0, fmt.Errorf("builder at index %d is nil", builderIndex)
 		}
 		if builder.WithdrawableEpoch <= epoch && builder.Balance > 0 {
-			ws = append(ws, &enginev1.Withdrawal{
+			ws = append(ws, &silaenginev1.Withdrawal{
 				Index:          withdrawalIndex,
 				ValidatorIndex: builderIndex.ToValidatorIndex(),
 				Address:        builder.ExecutionAddress,
@@ -641,7 +641,7 @@ func (b *BeaconState) BuilderPendingWithdrawals() ([]*silapb.BuilderPendingWithd
 }
 
 // PayloadExpectedWithdrawals returns a copy of the payload expected withdrawals.
-func (b *BeaconState) PayloadExpectedWithdrawals() ([]*enginev1.Withdrawal, error) {
+func (b *BeaconState) PayloadExpectedWithdrawals() ([]*silaenginev1.Withdrawal, error) {
 	if b.version < version.Gloas {
 		return nil, errNotSupported("PayloadExpectedWithdrawals", b.version)
 	}
@@ -659,7 +659,7 @@ func (b *BeaconState) PayloadExpectedWithdrawals() ([]*enginev1.Withdrawal, erro
 // This method does not acquire a lock directly; it delegates to
 // LatestBlockHashMatchesBidBlockHash, ExpectedWithdrawalsGloas, and PayloadExpectedWithdrawals
 // which each acquire their own read lock.
-func (b *BeaconState) WithdrawalsForPayload() ([]*enginev1.Withdrawal, error) {
+func (b *BeaconState) WithdrawalsForPayload() ([]*silaenginev1.Withdrawal, error) {
 	if b.version < version.Gloas {
 		return nil, errNotSupported("WithdrawalsForPayload", b.version)
 	}

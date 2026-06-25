@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -291,7 +291,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 		NextWithdrawalIndex             uint64
 		FullWithdrawalIndices           []primitives.ValidatorIndex
 		PendingPartialWithdrawalIndices []primitives.ValidatorIndex
-		Withdrawals                     []*enginev1.Withdrawal
+		Withdrawals                     []*silaenginev1.Withdrawal
 	}
 	type control struct {
 		NextWithdrawalValidatorIndex primitives.ValidatorIndex
@@ -311,16 +311,16 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 	withdrawalAmount := func(i primitives.ValidatorIndex) uint64 {
 		return maxEffectiveBalance + uint64(i)*100000
 	}
-	fullWithdrawal := func(i primitives.ValidatorIndex, idx uint64) *enginev1.Withdrawal {
-		return &enginev1.Withdrawal{
+	fullWithdrawal := func(i primitives.ValidatorIndex, idx uint64) *silaenginev1.Withdrawal {
+		return &silaenginev1.Withdrawal{
 			Index:          idx,
 			ValidatorIndex: i,
 			Address:        executionAddress(i),
 			Amount:         withdrawalAmount(i),
 		}
 	}
-	PendingPartialWithdrawal := func(i primitives.ValidatorIndex, idx uint64) *enginev1.Withdrawal {
-		return &enginev1.Withdrawal{
+	PendingPartialWithdrawal := func(i primitives.ValidatorIndex, idx uint64) *silaenginev1.Withdrawal {
+		return &silaenginev1.Withdrawal{
 			Index:          idx,
 			ValidatorIndex: i,
 			Address:        executionAddress(i),
@@ -345,7 +345,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          3,
 				NextWithdrawalValidatorIndex: 5,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{70},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(70, 3),
 				},
 			},
@@ -361,7 +361,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:             21,
 				NextWithdrawalValidatorIndex:    120,
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{7},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					PendingPartialWithdrawal(7, 21),
 				},
 			},
@@ -377,7 +377,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{7, 19, 28, 1},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(7, 22), fullWithdrawal(19, 23), fullWithdrawal(28, 24),
 				},
 			},
@@ -393,7 +393,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{80, 81, 82, 83},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(80, 22), fullWithdrawal(81, 23), fullWithdrawal(82, 24),
 					fullWithdrawal(83, 25),
 				},
@@ -410,7 +410,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{4, 5, 6},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(4, 22), fullWithdrawal(5, 23), fullWithdrawal(6, 24),
 				},
 			},
@@ -426,7 +426,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:             22,
 				NextWithdrawalValidatorIndex:    4,
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{7, 19, 28},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					PendingPartialWithdrawal(7, 22), PendingPartialWithdrawal(19, 23), PendingPartialWithdrawal(28, 24),
 				},
 			},
@@ -447,7 +447,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalValidatorIndex:    88,
 				FullWithdrawalIndices:           []primitives.ValidatorIndex{7, 19, 28},
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{2, 1, 89, 15},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					PendingPartialWithdrawal(89, 22), PendingPartialWithdrawal(1, 23), PendingPartialWithdrawal(2, 24),
 					fullWithdrawal(7, 25), PendingPartialWithdrawal(15, 26), fullWithdrawal(19, 27),
 					fullWithdrawal(28, 28),
@@ -469,7 +469,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 0,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{1, 2, 3, 4, 5, 6, 7, 8, 9, 21, 22, 23, 24, 25, 26, 27, 29, 35, 89},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(1, 22), fullWithdrawal(2, 23), fullWithdrawal(3, 24),
 					fullWithdrawal(4, 25), fullWithdrawal(5, 26), fullWithdrawal(6, 27),
 					fullWithdrawal(7, 28), fullWithdrawal(8, 29), fullWithdrawal(9, 30),
@@ -493,7 +493,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:             22,
 				NextWithdrawalValidatorIndex:    0,
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{1, 2, 3, 4, 5, 6, 7, 8, 9, 21, 22, 23, 24, 25, 26, 27, 29, 35, 89},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					PendingPartialWithdrawal(1, 22), PendingPartialWithdrawal(2, 23), PendingPartialWithdrawal(3, 24),
 					PendingPartialWithdrawal(4, 25), PendingPartialWithdrawal(5, 26), PendingPartialWithdrawal(6, 27),
 					PendingPartialWithdrawal(7, 28), PendingPartialWithdrawal(8, 29), PendingPartialWithdrawal(9, 30),
@@ -531,7 +531,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:             21,
 				NextWithdrawalValidatorIndex:    37,
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{7},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					PendingPartialWithdrawal(7, 21), PendingPartialWithdrawal(9, 22),
 				},
 			},
@@ -545,7 +545,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{7, 19, 28, 1},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(7, 22), fullWithdrawal(19, 23), fullWithdrawal(28, 25),
 					fullWithdrawal(1, 25),
 				},
@@ -560,7 +560,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{7, 19, 28, 1},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(7, 22), fullWithdrawal(19, 23), fullWithdrawal(27, 24),
 					fullWithdrawal(1, 25),
 				},
@@ -575,7 +575,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{7, 19, 28, 1},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(7, 22), fullWithdrawal(19, 23), PendingPartialWithdrawal(28, 24),
 					fullWithdrawal(1, 25),
 				},
@@ -590,7 +590,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{notWithdrawableIndex},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(notWithdrawableIndex, 22),
 				},
 			},
@@ -604,7 +604,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:             22,
 				NextWithdrawalValidatorIndex:    4,
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{notPartiallyWithdrawable},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(notPartiallyWithdrawable, 22),
 				},
 			},
@@ -660,7 +660,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 			saved := params.BeaconConfig().MaxValidatorsPerWithdrawalsSweep
 			params.BeaconConfig().MaxValidatorsPerWithdrawalsSweep = maxSweep
 			if test.Args.Withdrawals == nil {
-				test.Args.Withdrawals = make([]*enginev1.Withdrawal, 0)
+				test.Args.Withdrawals = make([]*silaenginev1.Withdrawal, 0)
 			}
 			if test.Args.FullWithdrawalIndices == nil {
 				test.Args.FullWithdrawalIndices = make([]primitives.ValidatorIndex, 0)
@@ -679,7 +679,7 @@ func TestProcessBlindWithdrawals(t *testing.T) {
 			require.NoError(t, err)
 			wdRoot, err := ssz.WithdrawalSliceRoot(test.Args.Withdrawals, fieldparams.MaxWithdrawalsPerPayload)
 			require.NoError(t, err)
-			p, err := consensusblocks.WrappedSilaPayloadHeaderCapella(&enginev1.SilaPayloadHeaderCapella{WithdrawalsRoot: wdRoot[:]})
+			p, err := consensusblocks.WrappedSilaPayloadHeaderCapella(&silaenginev1.SilaPayloadHeaderCapella{WithdrawalsRoot: wdRoot[:]})
 			require.NoError(t, err)
 			post, err := blocks.ProcessWithdrawals(st, p)
 			if test.Control.ExpectedError {
@@ -711,7 +711,7 @@ func TestProcessWithdrawals(t *testing.T) {
 		NextWithdrawalIndex             uint64
 		FullWithdrawalIndices           []primitives.ValidatorIndex
 		PendingPartialWithdrawalIndices []primitives.ValidatorIndex
-		Withdrawals                     []*enginev1.Withdrawal
+		Withdrawals                     []*silaenginev1.Withdrawal
 		PendingPartialWithdrawals       []*silapb.PendingPartialWithdrawal // Electra
 	}
 	type control struct {
@@ -732,16 +732,16 @@ func TestProcessWithdrawals(t *testing.T) {
 	withdrawalAmount := func(i primitives.ValidatorIndex) uint64 {
 		return maxEffectiveBalance + uint64(i)*100000
 	}
-	fullWithdrawal := func(i primitives.ValidatorIndex, idx uint64) *enginev1.Withdrawal {
-		return &enginev1.Withdrawal{
+	fullWithdrawal := func(i primitives.ValidatorIndex, idx uint64) *silaenginev1.Withdrawal {
+		return &silaenginev1.Withdrawal{
 			Index:          idx,
 			ValidatorIndex: i,
 			Address:        executionAddress(i),
 			Amount:         withdrawalAmount(i),
 		}
 	}
-	PendingPartialWithdrawal := func(i primitives.ValidatorIndex, idx uint64) *enginev1.Withdrawal {
-		return &enginev1.Withdrawal{
+	PendingPartialWithdrawal := func(i primitives.ValidatorIndex, idx uint64) *silaenginev1.Withdrawal {
+		return &silaenginev1.Withdrawal{
 			Index:          idx,
 			ValidatorIndex: i,
 			Address:        executionAddress(i),
@@ -766,7 +766,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          3,
 				NextWithdrawalValidatorIndex: 5,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{70},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(70, 3),
 				},
 			},
@@ -782,7 +782,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:             21,
 				NextWithdrawalValidatorIndex:    120,
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{7},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					PendingPartialWithdrawal(7, 21),
 				},
 			},
@@ -798,7 +798,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{7, 19, 28, 1},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(7, 22), fullWithdrawal(19, 23), fullWithdrawal(28, 24),
 				},
 			},
@@ -814,7 +814,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{80, 81, 82, 83},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(80, 22), fullWithdrawal(81, 23), fullWithdrawal(82, 24),
 					fullWithdrawal(83, 25),
 				},
@@ -831,7 +831,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{4, 5, 6},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(4, 22), fullWithdrawal(5, 23), fullWithdrawal(6, 24),
 				},
 			},
@@ -847,7 +847,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:             22,
 				NextWithdrawalValidatorIndex:    4,
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{7, 19, 28},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					PendingPartialWithdrawal(7, 22), PendingPartialWithdrawal(19, 23), PendingPartialWithdrawal(28, 24),
 				},
 			},
@@ -868,7 +868,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalValidatorIndex:    88,
 				FullWithdrawalIndices:           []primitives.ValidatorIndex{7, 19, 28},
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{2, 1, 89, 15},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					PendingPartialWithdrawal(89, 22), PendingPartialWithdrawal(1, 23), PendingPartialWithdrawal(2, 24),
 					fullWithdrawal(7, 25), PendingPartialWithdrawal(15, 26), fullWithdrawal(19, 27),
 					fullWithdrawal(28, 28),
@@ -891,7 +891,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalValidatorIndex:    88,
 				FullWithdrawalIndices:           []primitives.ValidatorIndex{7, 19, 28},
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{2, 1, 89, 15},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					PendingPartialWithdrawal(89, 22), PendingPartialWithdrawal(1, 23), PendingPartialWithdrawal(2, 24),
 					fullWithdrawal(7, 25), PendingPartialWithdrawal(15, 26), fullWithdrawal(19, 27),
 					fullWithdrawal(28, 28),
@@ -920,7 +920,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 0,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{1, 2, 3, 4, 5, 6, 7, 8, 9, 21, 22, 23, 24, 25, 26, 27, 29, 35, 89},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(1, 22), fullWithdrawal(2, 23), fullWithdrawal(3, 24),
 					fullWithdrawal(4, 25), fullWithdrawal(5, 26), fullWithdrawal(6, 27),
 					fullWithdrawal(7, 28), fullWithdrawal(8, 29), fullWithdrawal(9, 30),
@@ -944,7 +944,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:             22,
 				NextWithdrawalValidatorIndex:    0,
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{1, 2, 3, 4, 5, 6, 7, 8, 9, 21, 22, 23, 24, 25, 26, 27, 29, 35, 89},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					PendingPartialWithdrawal(1, 22), PendingPartialWithdrawal(2, 23), PendingPartialWithdrawal(3, 24),
 					PendingPartialWithdrawal(4, 25), PendingPartialWithdrawal(5, 26), PendingPartialWithdrawal(6, 27),
 					PendingPartialWithdrawal(7, 28), PendingPartialWithdrawal(8, 29), PendingPartialWithdrawal(9, 30),
@@ -982,7 +982,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:             21,
 				NextWithdrawalValidatorIndex:    37,
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{7},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					PendingPartialWithdrawal(7, 21), PendingPartialWithdrawal(9, 22),
 				},
 			},
@@ -996,7 +996,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{7, 19, 28, 1},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(7, 22), fullWithdrawal(19, 23), fullWithdrawal(28, 25),
 					fullWithdrawal(1, 25),
 				},
@@ -1011,7 +1011,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{7, 19, 28, 1},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(7, 22), fullWithdrawal(19, 23), fullWithdrawal(27, 24),
 					fullWithdrawal(1, 25),
 				},
@@ -1026,7 +1026,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{7, 19, 28, 1},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(7, 22), fullWithdrawal(19, 23), PendingPartialWithdrawal(28, 24),
 					fullWithdrawal(1, 25),
 				},
@@ -1041,7 +1041,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:          22,
 				NextWithdrawalValidatorIndex: 4,
 				FullWithdrawalIndices:        []primitives.ValidatorIndex{notWithdrawableIndex},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(notWithdrawableIndex, 22),
 				},
 			},
@@ -1055,7 +1055,7 @@ func TestProcessWithdrawals(t *testing.T) {
 				NextWithdrawalIndex:             22,
 				NextWithdrawalValidatorIndex:    4,
 				PendingPartialWithdrawalIndices: []primitives.ValidatorIndex{notPartiallyWithdrawable},
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					fullWithdrawal(notPartiallyWithdrawable, 22),
 				},
 			},
@@ -1120,7 +1120,7 @@ func TestProcessWithdrawals(t *testing.T) {
 					saved := params.BeaconConfig().MaxValidatorsPerWithdrawalsSweep
 					params.BeaconConfig().MaxValidatorsPerWithdrawalsSweep = maxSweep
 					if test.Args.Withdrawals == nil {
-						test.Args.Withdrawals = make([]*enginev1.Withdrawal, 0)
+						test.Args.Withdrawals = make([]*silaenginev1.Withdrawal, 0)
 					}
 					if test.Args.FullWithdrawalIndices == nil {
 						test.Args.FullWithdrawalIndices = make([]primitives.ValidatorIndex, 0)
@@ -1141,7 +1141,7 @@ func TestProcessWithdrawals(t *testing.T) {
 						}
 						st, err = state_native.InitializeFromProtoUnsafeCapella(spb)
 						require.NoError(t, err)
-						p, err = consensusblocks.WrappedSilaPayloadCapella(&enginev1.SilaPayloadCapella{Withdrawals: test.Args.Withdrawals})
+						p, err = consensusblocks.WrappedSilaPayloadCapella(&silaenginev1.SilaPayloadCapella{Withdrawals: test.Args.Withdrawals})
 						require.NoError(t, err)
 					case version.Electra:
 						spb := &silapb.BeaconStateElectra{
@@ -1152,7 +1152,7 @@ func TestProcessWithdrawals(t *testing.T) {
 						}
 						st, err = state_native.InitializeFromProtoUnsafeElectra(spb)
 						require.NoError(t, err)
-						p, err = consensusblocks.WrappedSilaPayloadDeneb(&enginev1.SilaPayloadDeneb{Withdrawals: test.Args.Withdrawals})
+						p, err = consensusblocks.WrappedSilaPayloadDeneb(&silaenginev1.SilaPayloadDeneb{Withdrawals: test.Args.Withdrawals})
 						require.NoError(t, err)
 					default:
 						t.Fatalf("Add a beacon state setup for version %s", version.String(fork))

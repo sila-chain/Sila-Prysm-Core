@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -29,7 +29,7 @@ func TestProcessWithdrawRequests(t *testing.T) {
 	require.NoError(t, err)
 	type args struct {
 		st  state.BeaconState
-		wrs []*enginev1.WithdrawalRequest
+		wrs []*silaenginev1.WithdrawalRequest
 	}
 	tests := []struct {
 		name    string
@@ -41,7 +41,7 @@ func TestProcessWithdrawRequests(t *testing.T) {
 			name: "nil request",
 			args: args{
 				st:  func() state.BeaconState { return st }(),
-				wrs: []*enginev1.WithdrawalRequest{nil},
+				wrs: []*silaenginev1.WithdrawalRequest{nil},
 			},
 			wantErr: true,
 			wantFn: func(t *testing.T, got state.BeaconState) {
@@ -66,7 +66,7 @@ func TestProcessWithdrawRequests(t *testing.T) {
 					require.NoError(t, preSt.SetValidators([]*eth.Validator{v}))
 					return preSt
 				}(),
-				wrs: []*enginev1.WithdrawalRequest{
+				wrs: []*silaenginev1.WithdrawalRequest{
 					{
 						SourceAddress:   source,
 						ValidatorPubkey: bytesutil.SafeCopyBytes(val.PublicKey),
@@ -127,7 +127,7 @@ func TestProcessWithdrawRequests(t *testing.T) {
 					}))
 					return preSt
 				}(),
-				wrs: []*enginev1.WithdrawalRequest{
+				wrs: []*silaenginev1.WithdrawalRequest{
 					{
 						SourceAddress:   source,
 						ValidatorPubkey: bytesutil.SafeCopyBytes(val.PublicKey),
@@ -195,7 +195,7 @@ func TestProcessWithdrawRequests(t *testing.T) {
 					require.NoError(t, preSt.SetValidators([]*eth.Validator{v}))
 					return preSt
 				}(),
-				wrs: []*enginev1.WithdrawalRequest{
+				wrs: []*silaenginev1.WithdrawalRequest{
 					{
 						SourceAddress:   source,
 						ValidatorPubkey: bytesutil.SafeCopyBytes(val.PublicKey),
@@ -232,7 +232,7 @@ func TestProcessWithdrawRequests(t *testing.T) {
 					require.NoError(t, preSt.SetValidators([]*eth.Validator{v}))
 					return preSt
 				}(),
-				wrs: []*enginev1.WithdrawalRequest{
+				wrs: []*silaenginev1.WithdrawalRequest{
 					{
 						SourceAddress:   source,
 						ValidatorPubkey: bytesutil.SafeCopyBytes(val.PublicKey),
@@ -271,7 +271,7 @@ func TestProcessWithdrawRequests(t *testing.T) {
 					}))
 					return preSt
 				}(),
-				wrs: []*enginev1.WithdrawalRequest{
+				wrs: []*silaenginev1.WithdrawalRequest{
 					{
 						SourceAddress:   source,
 						ValidatorPubkey: bytesutil.SafeCopyBytes(val.PublicKey),

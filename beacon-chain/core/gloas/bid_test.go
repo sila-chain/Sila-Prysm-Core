@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
@@ -44,7 +44,7 @@ func (s stubBlockBody) BLSToExecutionChanges() ([]*silapb.SignedBLSToExecutionCh
 	return nil, nil
 }
 func (s stubBlockBody) BlobKzgCommitments() ([][]byte, error) { return nil, nil }
-func (s stubBlockBody) ExecutionRequests() (*enginev1.ExecutionRequests, error) {
+func (s stubBlockBody) ExecutionRequests() (*silaenginev1.ExecutionRequests, error) {
 	return nil, nil
 }
 func (s stubBlockBody) PayloadAttestations() ([]*silapb.PayloadAttestation, error) {
@@ -53,7 +53,7 @@ func (s stubBlockBody) PayloadAttestations() ([]*silapb.PayloadAttestation, erro
 func (s stubBlockBody) SignedSilaPayloadBid() (*silapb.SignedSilaPayloadBid, error) {
 	return s.signedBid, nil
 }
-func (s stubBlockBody) ParentExecutionRequests() (*enginev1.ExecutionRequests, error) {
+func (s stubBlockBody) ParentExecutionRequests() (*silaenginev1.ExecutionRequests, error) {
 	return nil, nil
 }
 func (s stubBlockBody) MarshalSSZ() ([]byte, error)         { return nil, nil }

@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
@@ -306,7 +306,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTBellatrixBlockToProto(block *s
 			Deposits:          altairBlock.Body.Deposits,
 			VoluntaryExits:    altairBlock.Body.VoluntaryExits,
 			SyncAggregate:     altairBlock.Body.SyncAggregate,
-			SilaPayload: &enginev1.SilaPayload{
+			SilaPayload: &silaenginev1.SilaPayload{
 				ParentHash:    parentHash,
 				FeeRecipient:  feeRecipient,
 				StateRoot:     stateRoot,
@@ -400,7 +400,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTCapellaBlockToProto(block *str
 			Deposits:          bellatrixBlock.Body.Deposits,
 			VoluntaryExits:    bellatrixBlock.Body.VoluntaryExits,
 			SyncAggregate:     bellatrixBlock.Body.SyncAggregate,
-			SilaPayload: &enginev1.SilaPayloadCapella{
+			SilaPayload: &silaenginev1.SilaPayloadCapella{
 				ParentHash:    bellatrixBlock.Body.SilaPayload.ParentHash,
 				FeeRecipient:  bellatrixBlock.Body.SilaPayload.FeeRecipient,
 				StateRoot:     bellatrixBlock.Body.SilaPayload.StateRoot,

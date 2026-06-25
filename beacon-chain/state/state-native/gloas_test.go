@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/stretchr/testify/require"
 )
@@ -31,7 +31,7 @@ func TestPayloadExpectedWithdrawalsVal(t *testing.T) {
 
 	require.Nil(t, st.payloadExpectedWithdrawalsVal())
 
-	st.payloadExpectedWithdrawals = []*enginev1.Withdrawal{
+	st.payloadExpectedWithdrawals = []*silaenginev1.Withdrawal{
 		{Index: 1, ValidatorIndex: 2, Address: []byte{0x03}, Amount: 4},
 		nil,
 	}

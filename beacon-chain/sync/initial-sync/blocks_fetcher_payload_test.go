@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -36,8 +36,8 @@ func makeEnvelope(t *testing.T, slot primitives.Slot, blockHash [32]byte, parent
 		Message: &silapb.SilaPayloadEnvelope{
 			BeaconBlockRoot:       make([]byte, fieldparams.RootLength),
 			ParentBeaconBlockRoot: make([]byte, fieldparams.RootLength),
-			ExecutionRequests:     &enginev1.ExecutionRequests{},
-			Payload: &enginev1.SilaPayloadGloas{
+			ExecutionRequests:     &silaenginev1.ExecutionRequests{},
+			Payload: &silaenginev1.SilaPayloadGloas{
 				ParentHash:    parentHash[:],
 				FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 				StateRoot:     make([]byte, fieldparams.RootLength),

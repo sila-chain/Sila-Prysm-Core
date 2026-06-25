@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	payloadattribute "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/payload-attribute"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -77,7 +77,7 @@ func (s *Service) checkIfProposing(st state.ReadOnlyBeaconState, slot primitives
 // If the parent's payload was delivered (full), it applies the parent's
 // execution requests on a state copy before computing withdrawals.
 // If the parent was empty, it returns the existing payload_expected_withdrawals.
-func (s *Service) computePayloadWithdrawals(ctx context.Context, st state.BeaconState, parentRoot [32]byte, headFull bool) ([]*enginev1.Withdrawal, error) {
+func (s *Service) computePayloadWithdrawals(ctx context.Context, st state.BeaconState, parentRoot [32]byte, headFull bool) ([]*silaenginev1.Withdrawal, error) {
 	if slots.ToEpoch(s.HeadSlot()) < params.BeaconConfig().GloasForkEpoch {
 		result, err := st.ExpectedWithdrawalsGloas()
 		if err != nil {
@@ -137,7 +137,7 @@ func (s *Service) getLatePayloadAttribute(ctx context.Context, st state.ReadOnly
 		return emptyAttri
 	}
 
-	attr, err := payloadattribute.New(&enginev1.PayloadAttributesV4{
+	attr, err := payloadattribute.New(&silaenginev1.PayloadAttributesV4{
 		Timestamp:             uint64(t.Unix()),
 		PrevRandao:            prevRando,
 		SuggestedFeeRecipient: val.FeeRecipient[:],

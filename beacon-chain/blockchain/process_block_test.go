@@ -39,7 +39,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
@@ -1011,7 +1011,7 @@ func Test_getStateVersionAndPayload(t *testing.T) {
 		name    string
 		st      state.BeaconState
 		version int
-		header  *enginev1.SilaPayloadHeader
+		header  *silaenginev1.SilaPayloadHeader
 	}{
 		{
 			name: "phase 0 state",
@@ -1020,7 +1020,7 @@ func Test_getStateVersionAndPayload(t *testing.T) {
 				return s
 			}(),
 			version: version.Phase0,
-			header:  (*enginev1.SilaPayloadHeader)(nil),
+			header:  (*silaenginev1.SilaPayloadHeader)(nil),
 		},
 		{
 			name: "altair state",
@@ -1029,13 +1029,13 @@ func Test_getStateVersionAndPayload(t *testing.T) {
 				return s
 			}(),
 			version: version.Altair,
-			header:  (*enginev1.SilaPayloadHeader)(nil),
+			header:  (*silaenginev1.SilaPayloadHeader)(nil),
 		},
 		{
 			name: "bellatrix state",
 			st: func() state.BeaconState {
 				s, _ := util.DeterministicGenesisStateBellatrix(t, 1)
-				wrappedHeader, err := consensusblocks.WrappedSilaPayloadHeader(&enginev1.SilaPayloadHeader{
+				wrappedHeader, err := consensusblocks.WrappedSilaPayloadHeader(&silaenginev1.SilaPayloadHeader{
 					BlockNumber: 1,
 				})
 				require.NoError(t, err)
@@ -1043,7 +1043,7 @@ func Test_getStateVersionAndPayload(t *testing.T) {
 				return s
 			}(),
 			version: version.Bellatrix,
-			header: &enginev1.SilaPayloadHeader{
+			header: &silaenginev1.SilaPayloadHeader{
 				BlockNumber: 1,
 			},
 		},
@@ -1054,7 +1054,7 @@ func Test_getStateVersionAndPayload(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.version, ver)
 			if header != nil {
-				protoHeader, ok := header.Proto().(*enginev1.SilaPayloadHeader)
+				protoHeader, ok := header.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				require.DeepEqual(t, tt.header, protoHeader)
 			}
@@ -1078,7 +1078,7 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 		name         string
 		stateVersion int
 		header       interfaces.ExecutionData
-		payload      *enginev1.SilaPayload
+		payload      *silaenginev1.SilaPayload
 		errString    string
 	}{
 		{
@@ -1089,7 +1089,7 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 		{
 			name:         "state older than Bellatrix, empty payload",
 			stateVersion: 1,
-			payload: &enginev1.SilaPayload{
+			payload: &silaenginev1.SilaPayload{
 				ParentHash:    make([]byte, fieldparams.RootLength),
 				FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 				StateRoot:     make([]byte, fieldparams.RootLength),
@@ -1105,7 +1105,7 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 		{
 			name:         "state older than Bellatrix, non empty payload",
 			stateVersion: 1,
-			payload: &enginev1.SilaPayload{
+			payload: &silaenginev1.SilaPayload{
 				ParentHash: aHash[:],
 			},
 		},
@@ -1117,7 +1117,7 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 		{
 			name:         "state is Bellatrix, empty payload",
 			stateVersion: 2,
-			payload: &enginev1.SilaPayload{
+			payload: &silaenginev1.SilaPayload{
 				ParentHash:    make([]byte, fieldparams.RootLength),
 				FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 				StateRoot:     make([]byte, fieldparams.RootLength),
@@ -1131,11 +1131,11 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 		{
 			name:         "state is Bellatrix, non empty payload, empty header",
 			stateVersion: 2,
-			payload: &enginev1.SilaPayload{
+			payload: &silaenginev1.SilaPayload{
 				ParentHash: aHash[:],
 			},
 			header: func() interfaces.ExecutionData {
-				h, err := consensusblocks.WrappedSilaPayloadHeader(&enginev1.SilaPayloadHeader{
+				h, err := consensusblocks.WrappedSilaPayloadHeader(&silaenginev1.SilaPayloadHeader{
 					ParentHash:       make([]byte, fieldparams.RootLength),
 					FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 					StateRoot:        make([]byte, fieldparams.RootLength),
@@ -1154,11 +1154,11 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 		{
 			name:         "state is Bellatrix, non empty payload, non empty header",
 			stateVersion: 2,
-			payload: &enginev1.SilaPayload{
+			payload: &silaenginev1.SilaPayload{
 				ParentHash: aHash[:],
 			},
 			header: func() interfaces.ExecutionData {
-				h, err := consensusblocks.WrappedSilaPayloadHeader(&enginev1.SilaPayloadHeader{
+				h, err := consensusblocks.WrappedSilaPayloadHeader(&silaenginev1.SilaPayloadHeader{
 					BlockNumber: 1,
 				})
 				require.NoError(t, err)
@@ -1168,20 +1168,20 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e := &mockExecution.EngineClient{BlockByHashMap: map[[32]byte]*enginev1.ExecutionBlock{}}
-			e.BlockByHashMap[aHash] = &enginev1.ExecutionBlock{
+			e := &mockExecution.SilaEngineClient{BlockByHashMap: map[[32]byte]*silaenginev1.ExecutionBlock{}}
+			e.BlockByHashMap[aHash] = &silaenginev1.ExecutionBlock{
 				Header: gethtypes.Header{
 					ParentHash: bHash,
 				},
 				TotalDifficulty: "0x2",
 			}
-			e.BlockByHashMap[bHash] = &enginev1.ExecutionBlock{
+			e.BlockByHashMap[bHash] = &silaenginev1.ExecutionBlock{
 				Header: gethtypes.Header{
 					ParentHash: common.BytesToHash([]byte("3")),
 				},
 				TotalDifficulty: "0x1",
 			}
-			service.cfg.ExecutionEngineCaller = e
+			service.cfg.SilaEngineCaller = e
 			b := util.HydrateSignedBeaconBlockBellatrix(&silapb.SignedBeaconBlockBellatrix{})
 			b.Block.Body.SilaPayload = tt.payload
 			blk, err := consensusblocks.NewSignedBeaconBlock(b)
@@ -1412,8 +1412,8 @@ func TestStore_NoViableHead_NewPayload(t *testing.T) {
 	config.BellatrixForkEpoch = 2
 	params.OverrideBeaconConfig(config)
 
-	mockEngine := &mockExecution.EngineClient{ErrNewPayload: execution.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: execution.ErrAcceptedSyncingPayloadStatus}
-	service, tr := minimalTestService(t, WithExecutionEngineCaller(mockEngine))
+	mockEngine := &mockExecution.SilaEngineClient{ErrNewPayload: execution.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: execution.ErrAcceptedSyncingPayloadStatus}
+	service, tr := minimalTestService(t, WithSilaEngineCaller(mockEngine))
 	ctx := tr.ctx
 
 	st, keys := util.DeterministicGenesisState(t, 64)
@@ -1537,8 +1537,8 @@ func TestStore_NoViableHead_NewPayload(t *testing.T) {
 	time.Sleep(20 * time.Millisecond) // wait for async forkchoice update to be processed
 
 	// import another block to find out that it was invalid
-	mockEngine = &mockExecution.EngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
-	service.cfg.ExecutionEngineCaller = mockEngine
+	mockEngine = &mockExecution.SilaEngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
+	service.cfg.SilaEngineCaller = mockEngine
 	driftGenesisTime(service, 19, 0)
 	st, err = service.HeadState(ctx)
 	require.NoError(t, err)
@@ -1556,7 +1556,7 @@ func TestStore_NoViableHead_NewPayload(t *testing.T) {
 	preStateVersion, preStateHeader, err := getStateVersionAndPayload(preState)
 	require.NoError(t, err)
 	_, err = service.validateExecutionOnBlock(ctx, preStateVersion, preStateHeader, rowsb)
-	require.ErrorContains(t, "received an INVALID payload from execution engine", err)
+	require.ErrorContains(t, "received an INVALID payload from SilaEngine", err)
 	// Check that forkchoice's head and store's headroot are the previous head (since the invalid block did
 	// not finish importing and it was never imported to forkchoice). Check
 	// also that the node is optimistic
@@ -1569,8 +1569,8 @@ func TestStore_NoViableHead_NewPayload(t *testing.T) {
 	require.Equal(t, true, optimistic)
 
 	// import another block based on the last valid head state
-	mockEngine = &mockExecution.EngineClient{}
-	service.cfg.ExecutionEngineCaller = mockEngine
+	mockEngine = &mockExecution.SilaEngineClient{}
+	service.cfg.SilaEngineCaller = mockEngine
 	driftGenesisTime(service, 20, 0)
 	b, err = util.GenerateFullBlockBellatrix(validHeadState, keys, &util.BlockGenConfig{}, 20)
 	require.NoError(t, err)
@@ -1616,8 +1616,8 @@ func TestStore_NoViableHead_Liveness(t *testing.T) {
 	config.BellatrixForkEpoch = 2
 	params.OverrideBeaconConfig(config)
 
-	mockEngine := &mockExecution.EngineClient{ErrNewPayload: execution.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: execution.ErrAcceptedSyncingPayloadStatus}
-	service, tr := minimalTestService(t, WithExecutionEngineCaller(mockEngine))
+	mockEngine := &mockExecution.SilaEngineClient{ErrNewPayload: execution.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: execution.ErrAcceptedSyncingPayloadStatus}
+	service, tr := minimalTestService(t, WithSilaEngineCaller(mockEngine))
 	ctx := tr.ctx
 
 	st, keys := util.DeterministicGenesisState(t, 64)
@@ -1741,8 +1741,8 @@ func TestStore_NoViableHead_Liveness(t *testing.T) {
 
 	// import block 19 to find out that the whole chain 13--18 was in fact
 	// invalid
-	mockEngine = &mockExecution.EngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
-	service.cfg.ExecutionEngineCaller = mockEngine
+	mockEngine = &mockExecution.SilaEngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
+	service.cfg.SilaEngineCaller = mockEngine
 	driftGenesisTime(service, 19, 0)
 	st, err = service.HeadState(ctx)
 	require.NoError(t, err)
@@ -1760,7 +1760,7 @@ func TestStore_NoViableHead_Liveness(t *testing.T) {
 	preStateVersion, preStateHeader, err := getStateVersionAndPayload(preState)
 	require.NoError(t, err)
 	_, err = service.validateExecutionOnBlock(ctx, preStateVersion, preStateHeader, rowsb)
-	require.ErrorContains(t, "received an INVALID payload from execution engine", err)
+	require.ErrorContains(t, "received an INVALID payload from SilaEngine", err)
 
 	// Check that forkchoice's head and store's headroot are the previous head (since the invalid block did
 	// not finish importing and it was never imported to forkchoice). Check
@@ -1784,8 +1784,8 @@ func TestStore_NoViableHead_Liveness(t *testing.T) {
 	require.Equal(t, primitives.Epoch(2), sjc.Epoch)
 
 	// import another block based on the last valid head state
-	mockEngine = &mockExecution.EngineClient{}
-	service.cfg.ExecutionEngineCaller = mockEngine
+	mockEngine = &mockExecution.SilaEngineClient{}
+	service.cfg.SilaEngineCaller = mockEngine
 	driftGenesisTime(service, 20, 0)
 	b, err = util.GenerateFullBlockBellatrix(validHeadState, keys, &util.BlockGenConfig{}, 20)
 	require.NoError(t, err)
@@ -1882,8 +1882,8 @@ func TestNoViableHead_Reboot(t *testing.T) {
 	config.BellatrixForkEpoch = 2
 	params.OverrideBeaconConfig(config)
 
-	mockEngine := &mockExecution.EngineClient{ErrNewPayload: execution.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: execution.ErrAcceptedSyncingPayloadStatus}
-	service, tr := minimalTestService(t, WithExecutionEngineCaller(mockEngine))
+	mockEngine := &mockExecution.SilaEngineClient{ErrNewPayload: execution.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: execution.ErrAcceptedSyncingPayloadStatus}
+	service, tr := minimalTestService(t, WithSilaEngineCaller(mockEngine))
 	ctx := tr.ctx
 
 	genesisState, keys := util.DeterministicGenesisState(t, 64)
@@ -2010,8 +2010,8 @@ func TestNoViableHead_Reboot(t *testing.T) {
 
 	// import block 19 to find out that the whole chain 13--18 was in fact
 	// invalid
-	mockEngine = &mockExecution.EngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
-	service.cfg.ExecutionEngineCaller = mockEngine
+	mockEngine = &mockExecution.SilaEngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
+	service.cfg.SilaEngineCaller = mockEngine
 	driftGenesisTime(service, 19, 0)
 	st, err = service.HeadState(ctx)
 	require.NoError(t, err)
@@ -2028,7 +2028,7 @@ func TestNoViableHead_Reboot(t *testing.T) {
 	preStateVersion, preStateHeader, err := getStateVersionAndPayload(preState)
 	require.NoError(t, err)
 	_, err = service.validateExecutionOnBlock(ctx, preStateVersion, preStateHeader, rowsb)
-	require.ErrorContains(t, "received an INVALID payload from execution engine", err)
+	require.ErrorContains(t, "received an INVALID payload from SilaEngine", err)
 
 	// Check that the headroot/state are not in DB and restart the node
 	blk, err := service.cfg.BeaconDB.HeadBlock(ctx)
@@ -2061,8 +2061,8 @@ func TestNoViableHead_Reboot(t *testing.T) {
 	require.Equal(t, primitives.Epoch(2), sjc.Epoch)
 
 	// import another block based on the last valid head state
-	mockEngine = &mockExecution.EngineClient{}
-	service.cfg.ExecutionEngineCaller = mockEngine
+	mockEngine = &mockExecution.SilaEngineClient{}
+	service.cfg.SilaEngineCaller = mockEngine
 	driftGenesisTime(service, 20, 0)
 	b, err = util.GenerateFullBlockBellatrix(validHeadState, keys, &util.BlockGenConfig{}, 20)
 	require.NoError(t, err)
@@ -3488,7 +3488,7 @@ func TestHandleBlockPayloadAttestations(t *testing.T) {
 	params.OverrideBeaconConfig(cfg)
 
 	t.Run("pre-Gloas block is no-op", func(t *testing.T) {
-		s, _ := setupGloasService(t, &mockExecution.EngineClient{})
+		s, _ := setupGloasService(t, &mockExecution.SilaEngineClient{})
 		blk := util.NewBeaconBlockElectra()
 		wsb, err := consensusblocks.NewSignedBeaconBlock(blk)
 		require.NoError(t, err)
@@ -3498,7 +3498,7 @@ func TestHandleBlockPayloadAttestations(t *testing.T) {
 	})
 
 	t.Run("empty payload attestations", func(t *testing.T) {
-		s, _ := setupGloasService(t, &mockExecution.EngineClient{})
+		s, _ := setupGloasService(t, &mockExecution.SilaEngineClient{})
 		blk := util.NewBeaconBlockGloas()
 		wsb, err := consensusblocks.NewSignedBeaconBlock(blk)
 		require.NoError(t, err)
@@ -3508,7 +3508,7 @@ func TestHandleBlockPayloadAttestations(t *testing.T) {
 	})
 
 	t.Run("unknown root is skipped", func(t *testing.T) {
-		s, _ := setupGloasService(t, &mockExecution.EngineClient{})
+		s, _ := setupGloasService(t, &mockExecution.SilaEngineClient{})
 		ctx := t.Context()
 
 		numVals := 2048
@@ -3542,7 +3542,7 @@ func TestHandleBlockPayloadAttestations(t *testing.T) {
 	})
 
 	t.Run("known root sets PTC votes", func(t *testing.T) {
-		s, _ := setupGloasService(t, &mockExecution.EngineClient{})
+		s, _ := setupGloasService(t, &mockExecution.SilaEngineClient{})
 		ctx := t.Context()
 
 		blockRoot := bytesutil.ToBytes32([]byte("root1"))
@@ -3587,7 +3587,7 @@ func TestHandleBlockPayloadAttestations(t *testing.T) {
 	})
 
 	t.Run("multiple attestations", func(t *testing.T) {
-		s, _ := setupGloasService(t, &mockExecution.EngineClient{})
+		s, _ := setupGloasService(t, &mockExecution.SilaEngineClient{})
 		ctx := t.Context()
 
 		blockRoot := bytesutil.ToBytes32([]byte("root1"))
@@ -3645,7 +3645,7 @@ func TestHandleBlockAttestations_GloasSameSlotPayloadVote(t *testing.T) {
 	cfg.GloasForkEpoch = 0
 	params.OverrideBeaconConfig(cfg)
 
-	s, _ := setupGloasService(t, &mockExecution.EngineClient{})
+	s, _ := setupGloasService(t, &mockExecution.SilaEngineClient{})
 	ctx := t.Context()
 
 	// Insert an empty node at slot 1 into forkchoice.

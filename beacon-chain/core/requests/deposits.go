@@ -7,14 +7,14 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
 
 // ProcessDepositRequests processes execution layer deposits requests.
-func ProcessDepositRequests(ctx context.Context, beaconState state.BeaconState, reqs []*enginev1.DepositRequest) (state.BeaconState, error) {
+func ProcessDepositRequests(ctx context.Context, beaconState state.BeaconState, reqs []*silaenginev1.DepositRequest) (state.BeaconState, error) {
 	_, span := trace.StartSpan(ctx, "requests.ProcessDepositRequests")
 	defer span.End()
 
@@ -48,7 +48,7 @@ func ProcessDepositRequests(ctx context.Context, beaconState state.BeaconState, 
 //	    signature=deposit_request.signature,
 //	    slot=state.slot,
 //	))
-func processDepositRequest(beaconState state.BeaconState, req *enginev1.DepositRequest) (state.BeaconState, error) {
+func processDepositRequest(beaconState state.BeaconState, req *silaenginev1.DepositRequest) (state.BeaconState, error) {
 	if req == nil {
 		return nil, errors.New("nil deposit request")
 	}

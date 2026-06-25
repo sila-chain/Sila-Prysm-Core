@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	common "github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/common/ssz_static"
@@ -37,9 +37,9 @@ func UnmarshalledSSZ(t *testing.T, serializedBytes []byte, folderName string) (a
 	var obj any
 	switch folderName {
 	case "SilaPayload":
-		obj = &enginev1.SilaPayloadDeneb{}
+		obj = &silaenginev1.SilaPayloadDeneb{}
 	case "SilaPayloadHeader":
-		obj = &enginev1.SilaPayloadHeaderDeneb{}
+		obj = &silaenginev1.SilaPayloadHeaderDeneb{}
 	case "Attestation":
 		obj = &silapb.AttestationElectra{}
 	case "AttestationData":
@@ -128,7 +128,7 @@ func UnmarshalledSSZ(t *testing.T, serializedBytes []byte, folderName string) (a
 	case "PowBlock":
 		obj = &silapb.PowBlock{}
 	case "Withdrawal":
-		obj = &enginev1.Withdrawal{}
+		obj = &silaenginev1.Withdrawal{}
 	case "HistoricalSummary":
 		obj = &silapb.HistoricalSummary{}
 	case "BLSToExecutionChange":
@@ -142,13 +142,13 @@ func UnmarshalledSSZ(t *testing.T, serializedBytes []byte, folderName string) (a
 	case "PendingConsolidation":
 		obj = &silapb.PendingConsolidation{}
 	case "WithdrawalRequest":
-		obj = &enginev1.WithdrawalRequest{}
+		obj = &silaenginev1.WithdrawalRequest{}
 	case "DepositRequest":
-		obj = &enginev1.DepositRequest{}
+		obj = &silaenginev1.DepositRequest{}
 	case "ConsolidationRequest":
-		obj = &enginev1.ConsolidationRequest{}
+		obj = &silaenginev1.ConsolidationRequest{}
 	case "ExecutionRequests":
-		obj = &enginev1.ExecutionRequests{}
+		obj = &silaenginev1.ExecutionRequests{}
 	case "DataColumnSidecar":
 		obj = &silapb.DataColumnSidecar{}
 	case "DataColumnsByRootIdentifier":

@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
@@ -30,7 +30,7 @@ type fuluBlockGenerator struct {
 	sk        bls.SecretKey
 	proposer  primitives.ValidatorIndex
 	valRoot   []byte
-	payload   *enginev1.SilaPayloadDeneb
+	payload   *silaenginev1.SilaPayloadDeneb
 }
 
 func WithFuluProposerSigning(idx primitives.ValidatorIndex, sk bls.SecretKey, valRoot []byte) FuluBlockGeneratorOption {
@@ -42,7 +42,7 @@ func WithFuluProposerSigning(idx primitives.ValidatorIndex, sk bls.SecretKey, va
 	}
 }
 
-func WithFuluPayload(p *enginev1.SilaPayloadDeneb) FuluBlockGeneratorOption {
+func WithFuluPayload(p *silaenginev1.SilaPayloadDeneb) FuluBlockGeneratorOption {
 	return func(g *fuluBlockGenerator) {
 		g.payload = p
 	}
@@ -87,7 +87,7 @@ func GenerateTestFuluBlockWithSidecars(t *testing.T, blobCount int, options ...F
 
 		blockHash := bytesutil.ToBytes32([]byte("foo"))
 
-		generator.payload = &enginev1.SilaPayloadDeneb{
+		generator.payload = &silaenginev1.SilaPayloadDeneb{
 			ParentHash:    bytesutil.PadTo([]byte("parentHash"), fieldparams.RootLength),
 			FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 			StateRoot:     bytesutil.PadTo([]byte("stateRoot"), fieldparams.RootLength),
@@ -102,7 +102,7 @@ func GenerateTestFuluBlockWithSidecars(t *testing.T, blobCount int, options ...F
 			BaseFeePerGas: bytesutil.PadTo([]byte("baseFeePerGas"), fieldparams.RootLength),
 			BlockHash:     blockHash[:],
 			Transactions:  encodedBinaryTxs,
-			Withdrawals:   make([]*enginev1.Withdrawal, 0),
+			Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			BlobGasUsed:   0,
 			ExcessBlobGas: 0,
 		}

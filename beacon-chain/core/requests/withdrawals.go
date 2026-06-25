@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -87,7 +87,7 @@ import (
 //	        amount=to_withdraw,
 //	        withdrawable_epoch=withdrawable_epoch,
 //	    ))
-func ProcessWithdrawalRequests(ctx context.Context, st state.BeaconState, wrs []*enginev1.WithdrawalRequest) (state.BeaconState, error) {
+func ProcessWithdrawalRequests(ctx context.Context, st state.BeaconState, wrs []*silaenginev1.WithdrawalRequest) (state.BeaconState, error) {
 	ctx, span := trace.StartSpan(ctx, "requests.ProcessWithdrawalRequests")
 	defer span.End()
 	currentEpoch := slots.ToEpoch(st.Slot())

@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -209,7 +209,7 @@ func NewBeaconStateBellatrix(options ...func(state *silapb.BeaconStateBellatrix)
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		LatestSilaPayloadHeader: &enginev1.SilaPayloadHeader{
+		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeader{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
 			StateRoot:        make([]byte, 32),
@@ -276,7 +276,7 @@ func NewBeaconStateCapella(options ...func(state *silapb.BeaconStateCapella) err
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		LatestSilaPayloadHeader: &enginev1.SilaPayloadHeaderCapella{
+		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeaderCapella{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
 			StateRoot:        make([]byte, 32),
@@ -344,7 +344,7 @@ func NewBeaconStateDeneb(options ...func(state *silapb.BeaconStateDeneb) error) 
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		LatestSilaPayloadHeader: &enginev1.SilaPayloadHeaderDeneb{
+		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
 			StateRoot:        make([]byte, 32),
@@ -412,7 +412,7 @@ func NewBeaconStateElectra(options ...func(state *silapb.BeaconStateElectra) err
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		LatestSilaPayloadHeader: &enginev1.SilaPayloadHeaderDeneb{
+		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
 			StateRoot:        make([]byte, 32),
@@ -480,7 +480,7 @@ func NewBeaconStateFulu(options ...func(state *silapb.BeaconStateFulu) error) (s
 			Pubkeys:         pubkeys,
 			AggregatePubkey: make([]byte, 48),
 		},
-		LatestSilaPayloadHeader: &enginev1.SilaPayloadHeaderDeneb{
+		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
 			StateRoot:        make([]byte, 32),
@@ -580,7 +580,7 @@ func NewBeaconStateGloas(options ...func(state *silapb.BeaconStateGloas) error) 
 		BuilderPendingPayments:       builderPendingPayments,
 		BuilderPendingWithdrawals:    make([]*silapb.BuilderPendingWithdrawal, 0),
 		LatestBlockHash:              make([]byte, 32),
-		PayloadExpectedWithdrawals:   make([]*enginev1.Withdrawal, 0),
+		PayloadExpectedWithdrawals:   make([]*silaenginev1.Withdrawal, 0),
 		PtcWindow:                    ptcWindow,
 	}
 

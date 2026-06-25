@@ -5,7 +5,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
 )
@@ -19,7 +19,7 @@ type data struct {
 	timeStamp             uint64
 	prevRandao            []byte
 	suggestedFeeRecipient []byte
-	withdrawals           []*enginev1.Withdrawal
+	withdrawals           []*silaenginev1.Withdrawal
 	parentBeaconBlockRoot []byte
 	slotNumber            uint64
 	targetGasLimit        uint64
@@ -36,13 +36,13 @@ func New(i any) (Attributer, error) {
 	switch a := i.(type) {
 	case nil:
 		return nil, blocks.ErrNilObject
-	case *enginev1.PayloadAttributes:
+	case *silaenginev1.PayloadAttributes:
 		return initPayloadAttributeFromV1(a)
-	case *enginev1.PayloadAttributesV2:
+	case *silaenginev1.PayloadAttributesV2:
 		return initPayloadAttributeFromV2(a)
-	case *enginev1.PayloadAttributesV3:
+	case *silaenginev1.PayloadAttributesV3:
 		return initPayloadAttributeFromV3(a)
-	case *enginev1.PayloadAttributesV4:
+	case *silaenginev1.PayloadAttributesV4:
 		return initPayloadAttributeFromV4(a)
 	default:
 		return nil, errors.Wrapf(errUnsupportedPayloadAttribute, "unable to create payload attribute from type %T", i)
@@ -56,7 +56,7 @@ func EmptyWithVersion(version int) Attributer {
 	}
 }
 
-func initPayloadAttributeFromV1(a *enginev1.PayloadAttributes) (Attributer, error) {
+func initPayloadAttributeFromV1(a *silaenginev1.PayloadAttributes) (Attributer, error) {
 	if a == nil {
 		return nil, errNilPayloadAttribute
 	}
@@ -69,7 +69,7 @@ func initPayloadAttributeFromV1(a *enginev1.PayloadAttributes) (Attributer, erro
 	}, nil
 }
 
-func initPayloadAttributeFromV2(a *enginev1.PayloadAttributesV2) (Attributer, error) {
+func initPayloadAttributeFromV2(a *silaenginev1.PayloadAttributesV2) (Attributer, error) {
 	if a == nil {
 		return nil, errNilPayloadAttribute
 	}
@@ -83,7 +83,7 @@ func initPayloadAttributeFromV2(a *enginev1.PayloadAttributesV2) (Attributer, er
 	}, nil
 }
 
-func initPayloadAttributeFromV3(a *enginev1.PayloadAttributesV3) (Attributer, error) {
+func initPayloadAttributeFromV3(a *silaenginev1.PayloadAttributesV3) (Attributer, error) {
 	if a == nil {
 		return nil, errNilPayloadAttribute
 	}
@@ -98,7 +98,7 @@ func initPayloadAttributeFromV3(a *enginev1.PayloadAttributesV3) (Attributer, er
 	}, nil
 }
 
-func initPayloadAttributeFromV4(a *enginev1.PayloadAttributesV4) (Attributer, error) {
+func initPayloadAttributeFromV4(a *silaenginev1.PayloadAttributesV4) (Attributer, error) {
 	if a == nil {
 		return nil, errNilPayloadAttribute
 	}

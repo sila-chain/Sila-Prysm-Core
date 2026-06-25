@@ -7,13 +7,13 @@ import (
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func TestWrapSilaPayload(t *testing.T) {
-	data := &enginev1.SilaPayload{GasUsed: 54}
+	data := &silaenginev1.SilaPayload{GasUsed: 54}
 	wsb, err := blocks.WrappedSilaPayload(data)
 	require.NoError(t, err)
 
@@ -21,7 +21,7 @@ func TestWrapSilaPayload(t *testing.T) {
 }
 
 func TestWrapSilaPayloadHeader(t *testing.T) {
-	data := &enginev1.SilaPayloadHeader{GasUsed: 54}
+	data := &silaenginev1.SilaPayloadHeader{GasUsed: 54}
 	wsb, err := blocks.WrappedSilaPayloadHeader(data)
 	require.NoError(t, err)
 
@@ -32,7 +32,7 @@ func TestWrapSilaPayload_IsNil(t *testing.T) {
 	_, err := blocks.WrappedSilaPayload(nil)
 	require.Equal(t, consensus_types.ErrNilObjectWrapped, err)
 
-	data := &enginev1.SilaPayload{GasUsed: 54}
+	data := &silaenginev1.SilaPayload{GasUsed: 54}
 	wsb, err := blocks.WrappedSilaPayload(data)
 	require.NoError(t, err)
 
@@ -43,7 +43,7 @@ func TestWrapSilaPayloadHeader_IsNil(t *testing.T) {
 	_, err := blocks.WrappedSilaPayloadHeader(nil)
 	require.Equal(t, consensus_types.ErrNilObjectWrapped, err)
 
-	data := &enginev1.SilaPayloadHeader{GasUsed: 54}
+	data := &silaenginev1.SilaPayloadHeader{GasUsed: 54}
 	wsb, err := blocks.WrappedSilaPayloadHeader(data)
 	require.NoError(t, err)
 
@@ -83,7 +83,7 @@ func TestWrapSilaPayloadHeader_SSZ(t *testing.T) {
 }
 
 func TestWrapSilaPayloadCapella(t *testing.T) {
-	data := &enginev1.SilaPayloadCapella{
+	data := &silaenginev1.SilaPayloadCapella{
 		ParentHash:    []byte("parenthash"),
 		FeeRecipient:  []byte("feerecipient"),
 		StateRoot:     []byte("stateroot"),
@@ -98,7 +98,7 @@ func TestWrapSilaPayloadCapella(t *testing.T) {
 		BaseFeePerGas: []byte("basefeepergas"),
 		BlockHash:     []byte("blockhash"),
 		Transactions:  [][]byte{[]byte("transaction")},
-		Withdrawals: []*enginev1.Withdrawal{{
+		Withdrawals: []*silaenginev1.Withdrawal{{
 			Index:          55,
 			ValidatorIndex: 66,
 			Address:        []byte("executionaddress"),
@@ -112,7 +112,7 @@ func TestWrapSilaPayloadCapella(t *testing.T) {
 }
 
 func TestWrapSilaPayloadHeaderCapella(t *testing.T) {
-	data := &enginev1.SilaPayloadHeaderCapella{
+	data := &silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       []byte("parenthash"),
 		FeeRecipient:     []byte("feerecipient"),
 		StateRoot:        []byte("stateroot"),
@@ -147,7 +147,7 @@ func TestWrapSilaPayloadCapella_IsNil(t *testing.T) {
 	_, err := blocks.WrappedSilaPayloadCapella(nil)
 	require.Equal(t, consensus_types.ErrNilObjectWrapped, err)
 
-	data := &enginev1.SilaPayloadCapella{GasUsed: 54}
+	data := &silaenginev1.SilaPayloadCapella{GasUsed: 54}
 	payload, err := blocks.WrappedSilaPayloadCapella(data)
 	require.NoError(t, err)
 
@@ -158,7 +158,7 @@ func TestWrapSilaPayloadHeaderCapella_IsNil(t *testing.T) {
 	_, err := blocks.WrappedSilaPayloadHeaderCapella(nil)
 	require.Equal(t, consensus_types.ErrNilObjectWrapped, err)
 
-	data := &enginev1.SilaPayloadHeaderCapella{GasUsed: 54}
+	data := &silaenginev1.SilaPayloadHeaderCapella{GasUsed: 54}
 	payload, err := blocks.WrappedSilaPayloadHeaderCapella(data)
 	require.NoError(t, err)
 
@@ -198,7 +198,7 @@ func TestWrapSilaPayloadHeaderCapella_SSZ(t *testing.T) {
 }
 
 func TestWrapSilaPayloadDeneb(t *testing.T) {
-	data := &enginev1.SilaPayloadDeneb{
+	data := &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    []byte("parenthash"),
 		FeeRecipient:  []byte("feerecipient"),
 		StateRoot:     []byte("stateroot"),
@@ -213,7 +213,7 @@ func TestWrapSilaPayloadDeneb(t *testing.T) {
 		BaseFeePerGas: []byte("basefeepergas"),
 		BlockHash:     []byte("blockhash"),
 		Transactions:  [][]byte{[]byte("transaction")},
-		Withdrawals: []*enginev1.Withdrawal{{
+		Withdrawals: []*silaenginev1.Withdrawal{{
 			Index:          55,
 			ValidatorIndex: 66,
 			Address:        []byte("executionaddress"),
@@ -235,7 +235,7 @@ func TestWrapSilaPayloadDeneb(t *testing.T) {
 }
 
 func TestWrapSilaPayloadHeaderDeneb(t *testing.T) {
-	data := &enginev1.SilaPayloadHeaderDeneb{
+	data := &silaenginev1.SilaPayloadHeaderDeneb{
 		ParentHash:       []byte("parenthash"),
 		FeeRecipient:     []byte("feerecipient"),
 		StateRoot:        []byte("stateroot"),
@@ -299,7 +299,7 @@ func TestWrapSilaPayloadHeaderDeneb_SSZ(t *testing.T) {
 }
 
 func createWrappedPayload(t testing.TB) interfaces.ExecutionData {
-	wsb, err := blocks.WrappedSilaPayload(&enginev1.SilaPayload{
+	wsb, err := blocks.WrappedSilaPayload(&silaenginev1.SilaPayload{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     make([]byte, fieldparams.RootLength),
@@ -320,7 +320,7 @@ func createWrappedPayload(t testing.TB) interfaces.ExecutionData {
 }
 
 func createWrappedPayloadHeader(t testing.TB) interfaces.ExecutionData {
-	wsb, err := blocks.WrappedSilaPayloadHeader(&enginev1.SilaPayloadHeader{
+	wsb, err := blocks.WrappedSilaPayloadHeader(&silaenginev1.SilaPayloadHeader{
 		ParentHash:       make([]byte, fieldparams.RootLength),
 		FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:        make([]byte, fieldparams.RootLength),
@@ -341,7 +341,7 @@ func createWrappedPayloadHeader(t testing.TB) interfaces.ExecutionData {
 }
 
 func createWrappedPayloadCapella(t testing.TB) interfaces.ExecutionData {
-	payload, err := blocks.WrappedSilaPayloadCapella(&enginev1.SilaPayloadCapella{
+	payload, err := blocks.WrappedSilaPayloadCapella(&silaenginev1.SilaPayloadCapella{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     make([]byte, fieldparams.RootLength),
@@ -356,14 +356,14 @@ func createWrappedPayloadCapella(t testing.TB) interfaces.ExecutionData {
 		BaseFeePerGas: make([]byte, fieldparams.RootLength),
 		BlockHash:     make([]byte, fieldparams.RootLength),
 		Transactions:  make([][]byte, 0),
-		Withdrawals:   make([]*enginev1.Withdrawal, 0),
+		Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 	})
 	require.NoError(t, err)
 	return payload
 }
 
 func createWrappedPayloadHeaderCapella(t testing.TB) interfaces.ExecutionData {
-	payload, err := blocks.WrappedSilaPayloadHeaderCapella(&enginev1.SilaPayloadHeaderCapella{
+	payload, err := blocks.WrappedSilaPayloadHeaderCapella(&silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       make([]byte, fieldparams.RootLength),
 		FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:        make([]byte, fieldparams.RootLength),
@@ -385,7 +385,7 @@ func createWrappedPayloadHeaderCapella(t testing.TB) interfaces.ExecutionData {
 }
 
 func createWrappedPayloadDeneb(t testing.TB) interfaces.ExecutionData {
-	payload, err := blocks.WrappedSilaPayloadDeneb(&enginev1.SilaPayloadDeneb{
+	payload, err := blocks.WrappedSilaPayloadDeneb(&silaenginev1.SilaPayloadDeneb{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     make([]byte, fieldparams.RootLength),
@@ -400,7 +400,7 @@ func createWrappedPayloadDeneb(t testing.TB) interfaces.ExecutionData {
 		BaseFeePerGas: make([]byte, fieldparams.RootLength),
 		BlockHash:     make([]byte, fieldparams.RootLength),
 		Transactions:  make([][]byte, 0),
-		Withdrawals:   make([]*enginev1.Withdrawal, 0),
+		Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 		BlobGasUsed:   0,
 		ExcessBlobGas: 0,
 	})
@@ -409,7 +409,7 @@ func createWrappedPayloadDeneb(t testing.TB) interfaces.ExecutionData {
 }
 
 func createWrappedPayloadHeaderDeneb(t testing.TB) interfaces.ExecutionData {
-	payload, err := blocks.WrappedSilaPayloadHeaderDeneb(&enginev1.SilaPayloadHeaderDeneb{
+	payload, err := blocks.WrappedSilaPayloadHeaderDeneb(&silaenginev1.SilaPayloadHeaderDeneb{
 		ParentHash:       make([]byte, fieldparams.RootLength),
 		FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:        make([]byte, fieldparams.RootLength),

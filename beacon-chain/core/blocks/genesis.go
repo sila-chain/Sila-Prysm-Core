@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
@@ -98,7 +98,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 						SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 						SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 					},
-					SilaPayload: &enginev1.SilaPayload{
+					SilaPayload: &silaenginev1.SilaPayload{
 						ParentHash:    make([]byte, 32),
 						FeeRecipient:  make([]byte, 20),
 						StateRoot:     make([]byte, 32),
@@ -130,7 +130,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 						SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 						SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 					},
-					SilaPayload: &enginev1.SilaPayloadCapella{
+					SilaPayload: &silaenginev1.SilaPayloadCapella{
 						ParentHash:    make([]byte, 32),
 						FeeRecipient:  make([]byte, 20),
 						StateRoot:     make([]byte, 32),
@@ -141,7 +141,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 						BaseFeePerGas: make([]byte, 32),
 						BlockHash:     make([]byte, 32),
 						Transactions:  make([][]byte, 0),
-						Withdrawals:   make([]*enginev1.Withdrawal, 0),
+						Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 					},
 				},
 			},
@@ -163,7 +163,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 						SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 						SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 					},
-					SilaPayload: &enginev1.SilaPayloadDeneb{
+					SilaPayload: &silaenginev1.SilaPayloadDeneb{
 						ParentHash:    make([]byte, 32),
 						FeeRecipient:  make([]byte, 20),
 						StateRoot:     make([]byte, 32),
@@ -174,7 +174,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 						BaseFeePerGas: make([]byte, 32),
 						BlockHash:     make([]byte, 32),
 						Transactions:  make([][]byte, 0),
-						Withdrawals:   make([]*enginev1.Withdrawal, 0),
+						Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 					},
 					BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 					BlobKzgCommitments:    make([][]byte, 0),
@@ -240,10 +240,10 @@ func gloasGenesisBlock(root [fieldparams.RootLength]byte, latestBid *silapb.Sila
 				Signature: make([]byte, fieldparams.BLSSignatureLength),
 			},
 			PayloadAttestations: make([]*silapb.PayloadAttestation, 0),
-			ParentExecutionRequests: &enginev1.ExecutionRequests{
-				Withdrawals:    make([]*enginev1.WithdrawalRequest, 0),
-				Deposits:       make([]*enginev1.DepositRequest, 0),
-				Consolidations: make([]*enginev1.ConsolidationRequest, 0),
+			ParentExecutionRequests: &silaenginev1.ExecutionRequests{
+				Withdrawals:    make([]*silaenginev1.WithdrawalRequest, 0),
+				Deposits:       make([]*silaenginev1.DepositRequest, 0),
+				Consolidations: make([]*silaenginev1.ConsolidationRequest, 0),
 			},
 		},
 	}
@@ -264,7 +264,7 @@ func electraGenesisBlock(root [fieldparams.RootLength]byte) *silapb.BeaconBlockE
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
-			SilaPayload: &enginev1.SilaPayloadDeneb{
+			SilaPayload: &silaenginev1.SilaPayloadDeneb{
 				ParentHash:    make([]byte, 32),
 				FeeRecipient:  make([]byte, 20),
 				StateRoot:     make([]byte, 32),
@@ -275,14 +275,14 @@ func electraGenesisBlock(root [fieldparams.RootLength]byte) *silapb.BeaconBlockE
 				BaseFeePerGas: make([]byte, 32),
 				BlockHash:     make([]byte, 32),
 				Transactions:  make([][]byte, 0),
-				Withdrawals:   make([]*enginev1.Withdrawal, 0),
+				Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			},
 			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
-			ExecutionRequests: &enginev1.ExecutionRequests{
-				Withdrawals:    make([]*enginev1.WithdrawalRequest, 0),
-				Deposits:       make([]*enginev1.DepositRequest, 0),
-				Consolidations: make([]*enginev1.ConsolidationRequest, 0),
+			ExecutionRequests: &silaenginev1.ExecutionRequests{
+				Withdrawals:    make([]*silaenginev1.WithdrawalRequest, 0),
+				Deposits:       make([]*silaenginev1.DepositRequest, 0),
+				Consolidations: make([]*silaenginev1.ConsolidationRequest, 0),
 			},
 		},
 	}

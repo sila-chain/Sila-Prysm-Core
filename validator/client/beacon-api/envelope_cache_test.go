@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -12,7 +12,7 @@ import (
 
 func envelopeForSlot(slot primitives.Slot) *silapb.SilaPayloadEnvelope {
 	return &silapb.SilaPayloadEnvelope{
-		Payload: &enginev1.SilaPayloadGloas{SlotNumber: slot},
+		Payload: &silaenginev1.SilaPayloadGloas{SlotNumber: slot},
 	}
 }
 

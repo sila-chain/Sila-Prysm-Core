@@ -11,7 +11,7 @@ import (
 	sync "sync"
 
 	github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/ext"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -5894,15 +5894,15 @@ var file_proto_sila_v1alpha1_beacon_block_proto_goTypes = []any{
 	(*Deposit)(nil),                           // 61: sila.eth.v1alpha1.Deposit
 	(*SignedVoluntaryExit)(nil),               // 62: sila.eth.v1alpha1.SignedVoluntaryExit
 	(*AttestationData)(nil),                   // 63: sila.eth.v1alpha1.AttestationData
-	(*v1.SilaPayloadHeader)(nil),         // 64: sila.engine.v1.SilaPayloadHeader
+	(*v1.SilaPayloadHeader)(nil),         // 64: sila.silaengine.v1.SilaPayloadHeader
 	(*SyncAggregate)(nil),                     // 65: sila.eth.v1alpha1.SyncAggregate
-	(*v1.SilaPayload)(nil),               // 66: sila.engine.v1.SilaPayload
-	(*v1.SilaPayloadCapella)(nil),        // 67: sila.engine.v1.SilaPayloadCapella
+	(*v1.SilaPayload)(nil),               // 66: sila.silaengine.v1.SilaPayload
+	(*v1.SilaPayloadCapella)(nil),        // 67: sila.silaengine.v1.SilaPayloadCapella
 	(*SignedBLSToExecutionChange)(nil),        // 68: sila.eth.v1alpha1.SignedBLSToExecutionChange
-	(*v1.SilaPayloadHeaderCapella)(nil),  // 69: sila.engine.v1.SilaPayloadHeaderCapella
-	(*v1.SilaPayloadDeneb)(nil),          // 70: sila.engine.v1.SilaPayloadDeneb
-	(*v1.SilaPayloadHeaderDeneb)(nil),    // 71: sila.engine.v1.SilaPayloadHeaderDeneb
-	(*v1.ExecutionRequests)(nil),              // 72: sila.engine.v1.ExecutionRequests
+	(*v1.SilaPayloadHeaderCapella)(nil),  // 69: sila.silaengine.v1.SilaPayloadHeaderCapella
+	(*v1.SilaPayloadDeneb)(nil),          // 70: sila.silaengine.v1.SilaPayloadDeneb
+	(*v1.SilaPayloadHeaderDeneb)(nil),    // 71: sila.silaengine.v1.SilaPayloadHeaderDeneb
+	(*v1.ExecutionRequests)(nil),              // 72: sila.silaengine.v1.ExecutionRequests
 	(*SignedBeaconBlockHeader)(nil),           // 73: sila.eth.v1alpha1.SignedBeaconBlockHeader
 	(*AttesterSlashingElectra)(nil),           // 74: sila.eth.v1alpha1.AttesterSlashingElectra
 	(*AttestationElectra)(nil),                // 75: sila.eth.v1alpha1.AttestationElectra
@@ -5948,7 +5948,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	8,   // 37: sila.eth.v1alpha1.SignedValidatorRegistrationsV1.messages:type_name -> sila.eth.v1alpha1.SignedValidatorRegistrationV1
 	9,   // 38: sila.eth.v1alpha1.SignedValidatorRegistrationV1.message:type_name -> sila.eth.v1alpha1.ValidatorRegistrationV1
 	11,  // 39: sila.eth.v1alpha1.SignedBuilderBid.message:type_name -> sila.eth.v1alpha1.BuilderBid
-	64,  // 40: sila.eth.v1alpha1.BuilderBid.header:type_name -> sila.engine.v1.SilaPayloadHeader
+	64,  // 40: sila.eth.v1alpha1.BuilderBid.header:type_name -> sila.silaengine.v1.SilaPayloadHeader
 	13,  // 41: sila.eth.v1alpha1.SignedBeaconBlockAltair.block:type_name -> sila.eth.v1alpha1.BeaconBlockAltair
 	14,  // 42: sila.eth.v1alpha1.BeaconBlockAltair.body:type_name -> sila.eth.v1alpha1.BeaconBlockBodyAltair
 	58,  // 43: sila.eth.v1alpha1.BeaconBlockBodyAltair.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
@@ -5967,7 +5967,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	61,  // 56: sila.eth.v1alpha1.BeaconBlockBodyBellatrix.deposits:type_name -> sila.eth.v1alpha1.Deposit
 	62,  // 57: sila.eth.v1alpha1.BeaconBlockBodyBellatrix.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 58: sila.eth.v1alpha1.BeaconBlockBodyBellatrix.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
-	66,  // 59: sila.eth.v1alpha1.BeaconBlockBodyBellatrix.sila_payload:type_name -> sila.engine.v1.SilaPayload
+	66,  // 59: sila.eth.v1alpha1.BeaconBlockBodyBellatrix.sila_payload:type_name -> sila.silaengine.v1.SilaPayload
 	19,  // 60: sila.eth.v1alpha1.SignedBlindedBeaconBlockBellatrix.block:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBellatrix
 	20,  // 61: sila.eth.v1alpha1.BlindedBeaconBlockBellatrix.body:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix
 	58,  // 62: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
@@ -5977,7 +5977,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	61,  // 66: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.deposits:type_name -> sila.eth.v1alpha1.Deposit
 	62,  // 67: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 68: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
-	64,  // 69: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.sila_payload_header:type_name -> sila.engine.v1.SilaPayloadHeader
+	64,  // 69: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeader
 	22,  // 70: sila.eth.v1alpha1.SignedBeaconBlockCapella.block:type_name -> sila.eth.v1alpha1.BeaconBlockCapella
 	23,  // 71: sila.eth.v1alpha1.BeaconBlockCapella.body:type_name -> sila.eth.v1alpha1.BeaconBlockBodyCapella
 	58,  // 72: sila.eth.v1alpha1.BeaconBlockBodyCapella.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
@@ -5987,7 +5987,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	61,  // 76: sila.eth.v1alpha1.BeaconBlockBodyCapella.deposits:type_name -> sila.eth.v1alpha1.Deposit
 	62,  // 77: sila.eth.v1alpha1.BeaconBlockBodyCapella.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 78: sila.eth.v1alpha1.BeaconBlockBodyCapella.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
-	67,  // 79: sila.eth.v1alpha1.BeaconBlockBodyCapella.sila_payload:type_name -> sila.engine.v1.SilaPayloadCapella
+	67,  // 79: sila.eth.v1alpha1.BeaconBlockBodyCapella.sila_payload:type_name -> sila.silaengine.v1.SilaPayloadCapella
 	68,  // 80: sila.eth.v1alpha1.BeaconBlockBodyCapella.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
 	25,  // 81: sila.eth.v1alpha1.SignedBlindedBeaconBlockCapella.block:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockCapella
 	26,  // 82: sila.eth.v1alpha1.BlindedBeaconBlockCapella.body:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella
@@ -5998,10 +5998,10 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	61,  // 87: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.deposits:type_name -> sila.eth.v1alpha1.Deposit
 	62,  // 88: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 89: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
-	69,  // 90: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.sila_payload_header:type_name -> sila.engine.v1.SilaPayloadHeaderCapella
+	69,  // 90: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeaderCapella
 	68,  // 91: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
 	28,  // 92: sila.eth.v1alpha1.SignedBuilderBidCapella.message:type_name -> sila.eth.v1alpha1.BuilderBidCapella
-	69,  // 93: sila.eth.v1alpha1.BuilderBidCapella.header:type_name -> sila.engine.v1.SilaPayloadHeaderCapella
+	69,  // 93: sila.eth.v1alpha1.BuilderBidCapella.header:type_name -> sila.silaengine.v1.SilaPayloadHeaderCapella
 	30,  // 94: sila.eth.v1alpha1.SignedBeaconBlockContentsDeneb.block:type_name -> sila.eth.v1alpha1.SignedBeaconBlockDeneb
 	32,  // 95: sila.eth.v1alpha1.SignedBeaconBlockDeneb.block:type_name -> sila.eth.v1alpha1.BeaconBlockDeneb
 	32,  // 96: sila.eth.v1alpha1.BeaconBlockContentsDeneb.block:type_name -> sila.eth.v1alpha1.BeaconBlockDeneb
@@ -6013,7 +6013,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	61,  // 102: sila.eth.v1alpha1.BeaconBlockBodyDeneb.deposits:type_name -> sila.eth.v1alpha1.Deposit
 	62,  // 103: sila.eth.v1alpha1.BeaconBlockBodyDeneb.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 104: sila.eth.v1alpha1.BeaconBlockBodyDeneb.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
-	70,  // 105: sila.eth.v1alpha1.BeaconBlockBodyDeneb.sila_payload:type_name -> sila.engine.v1.SilaPayloadDeneb
+	70,  // 105: sila.eth.v1alpha1.BeaconBlockBodyDeneb.sila_payload:type_name -> sila.silaengine.v1.SilaPayloadDeneb
 	68,  // 106: sila.eth.v1alpha1.BeaconBlockBodyDeneb.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
 	35,  // 107: sila.eth.v1alpha1.SignedBlindedBeaconBlockDeneb.message:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockDeneb
 	36,  // 108: sila.eth.v1alpha1.BlindedBeaconBlockDeneb.body:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb
@@ -6024,12 +6024,12 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	61,  // 113: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.deposits:type_name -> sila.eth.v1alpha1.Deposit
 	62,  // 114: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 115: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
-	71,  // 116: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.sila_payload_header:type_name -> sila.engine.v1.SilaPayloadHeaderDeneb
+	71,  // 116: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeaderDeneb
 	68,  // 117: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
 	38,  // 118: sila.eth.v1alpha1.SignedBuilderBidDeneb.message:type_name -> sila.eth.v1alpha1.BuilderBidDeneb
-	71,  // 119: sila.eth.v1alpha1.BuilderBidDeneb.header:type_name -> sila.engine.v1.SilaPayloadHeaderDeneb
-	71,  // 120: sila.eth.v1alpha1.BuilderBidElectra.header:type_name -> sila.engine.v1.SilaPayloadHeaderDeneb
-	72,  // 121: sila.eth.v1alpha1.BuilderBidElectra.execution_requests:type_name -> sila.engine.v1.ExecutionRequests
+	71,  // 119: sila.eth.v1alpha1.BuilderBidDeneb.header:type_name -> sila.silaengine.v1.SilaPayloadHeaderDeneb
+	71,  // 120: sila.eth.v1alpha1.BuilderBidElectra.header:type_name -> sila.silaengine.v1.SilaPayloadHeaderDeneb
+	72,  // 121: sila.eth.v1alpha1.BuilderBidElectra.execution_requests:type_name -> sila.silaengine.v1.ExecutionRequests
 	39,  // 122: sila.eth.v1alpha1.SignedBuilderBidElectra.message:type_name -> sila.eth.v1alpha1.BuilderBidElectra
 	42,  // 123: sila.eth.v1alpha1.BlobSidecars.sidecars:type_name -> sila.eth.v1alpha1.BlobSidecar
 	73,  // 124: sila.eth.v1alpha1.BlobSidecar.signed_block_header:type_name -> sila.eth.v1alpha1.SignedBeaconBlockHeader
@@ -6044,9 +6044,9 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	61,  // 133: sila.eth.v1alpha1.BeaconBlockBodyElectra.deposits:type_name -> sila.eth.v1alpha1.Deposit
 	62,  // 134: sila.eth.v1alpha1.BeaconBlockBodyElectra.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 135: sila.eth.v1alpha1.BeaconBlockBodyElectra.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
-	70,  // 136: sila.eth.v1alpha1.BeaconBlockBodyElectra.sila_payload:type_name -> sila.engine.v1.SilaPayloadDeneb
+	70,  // 136: sila.eth.v1alpha1.BeaconBlockBodyElectra.sila_payload:type_name -> sila.silaengine.v1.SilaPayloadDeneb
 	68,  // 137: sila.eth.v1alpha1.BeaconBlockBodyElectra.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
-	72,  // 138: sila.eth.v1alpha1.BeaconBlockBodyElectra.execution_requests:type_name -> sila.engine.v1.ExecutionRequests
+	72,  // 138: sila.eth.v1alpha1.BeaconBlockBodyElectra.execution_requests:type_name -> sila.silaengine.v1.ExecutionRequests
 	49,  // 139: sila.eth.v1alpha1.SignedBlindedBeaconBlockElectra.message:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockElectra
 	50,  // 140: sila.eth.v1alpha1.BlindedBeaconBlockElectra.body:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra
 	58,  // 141: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
@@ -6056,9 +6056,9 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	61,  // 145: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.deposits:type_name -> sila.eth.v1alpha1.Deposit
 	62,  // 146: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 147: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
-	71,  // 148: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.sila_payload_header:type_name -> sila.engine.v1.SilaPayloadHeaderDeneb
+	71,  // 148: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeaderDeneb
 	68,  // 149: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
-	72,  // 150: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.execution_requests:type_name -> sila.engine.v1.ExecutionRequests
+	72,  // 150: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.execution_requests:type_name -> sila.silaengine.v1.ExecutionRequests
 	52,  // 151: sila.eth.v1alpha1.SignedBeaconBlockContentsFulu.block:type_name -> sila.eth.v1alpha1.SignedBeaconBlockFulu
 	46,  // 152: sila.eth.v1alpha1.SignedBeaconBlockFulu.block:type_name -> sila.eth.v1alpha1.BeaconBlockElectra
 	46,  // 153: sila.eth.v1alpha1.BeaconBlockContentsFulu.block:type_name -> sila.eth.v1alpha1.BeaconBlockElectra

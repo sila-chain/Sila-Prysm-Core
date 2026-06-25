@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stateutil"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
@@ -50,9 +50,9 @@ type BeaconState struct {
 	inactivityScoresMultiValue          *MultiValueInactivityScores
 	currentSyncCommittee                *silapb.SyncCommittee
 	nextSyncCommittee                   *silapb.SyncCommittee
-	latestSilaPayloadHeader        *enginev1.SilaPayloadHeader
-	latestSilaPayloadHeaderCapella *enginev1.SilaPayloadHeaderCapella
-	latestSilaPayloadHeaderDeneb   *enginev1.SilaPayloadHeaderDeneb
+	latestSilaPayloadHeader        *silaenginev1.SilaPayloadHeader
+	latestSilaPayloadHeaderCapella *silaenginev1.SilaPayloadHeaderCapella
+	latestSilaPayloadHeaderDeneb   *silaenginev1.SilaPayloadHeaderDeneb
 
 	// Capella fields
 	nextWithdrawalIndex          uint64
@@ -80,7 +80,7 @@ type BeaconState struct {
 	builderPendingPayments       []*silapb.BuilderPendingPayment
 	builderPendingWithdrawals    []*silapb.BuilderPendingWithdrawal
 	latestBlockHash              []byte
-	payloadExpectedWithdrawals   []*enginev1.Withdrawal
+	payloadExpectedWithdrawals   []*silaenginev1.Withdrawal
 	ptcWindow                    []*silapb.PTCs
 
 	id                    uint64
@@ -122,9 +122,9 @@ type beaconStateMarshalable struct {
 	InactivityScores                    []uint64                                `json:"inactivity_scores" yaml:"inactivity_scores"`
 	CurrentSyncCommittee                *silapb.SyncCommittee                    `json:"current_sync_committee" yaml:"current_sync_committee"`
 	NextSyncCommittee                   *silapb.SyncCommittee                    `json:"next_sync_committee" yaml:"next_sync_committee"`
-	LatestSilaPayloadHeader        *enginev1.SilaPayloadHeader        `json:"latest_sila_payload_header" yaml:"latest_sila_payload_header"`
-	LatestSilaPayloadHeaderCapella *enginev1.SilaPayloadHeaderCapella `json:"latest_sila_payload_header_capella" yaml:"latest_sila_payload_header_capella"`
-	LatestSilaPayloadHeaderDeneb   *enginev1.SilaPayloadHeaderDeneb   `json:"latest_sila_payload_header_deneb" yaml:"latest_sila_payload_header_deneb"`
+	LatestSilaPayloadHeader        *silaenginev1.SilaPayloadHeader        `json:"latest_sila_payload_header" yaml:"latest_sila_payload_header"`
+	LatestSilaPayloadHeaderCapella *silaenginev1.SilaPayloadHeaderCapella `json:"latest_sila_payload_header_capella" yaml:"latest_sila_payload_header_capella"`
+	LatestSilaPayloadHeaderDeneb   *silaenginev1.SilaPayloadHeaderDeneb   `json:"latest_sila_payload_header_deneb" yaml:"latest_sila_payload_header_deneb"`
 	NextWithdrawalIndex                 uint64                                  `json:"next_withdrawal_index" yaml:"next_withdrawal_index"`
 	NextWithdrawalValidatorIndex        primitives.ValidatorIndex               `json:"next_withdrawal_validator_index" yaml:"next_withdrawal_validator_index"`
 	HistoricalSummaries                 []*silapb.HistoricalSummary              `json:"historical_summaries" yaml:"historical_summaries"`
@@ -145,7 +145,7 @@ type beaconStateMarshalable struct {
 	BuilderPendingPayments              []*silapb.BuilderPendingPayment          `json:"builder_pending_payments" yaml:"builder_pending_payments"`
 	BuilderPendingWithdrawals           []*silapb.BuilderPendingWithdrawal       `json:"builder_pending_withdrawals" yaml:"builder_pending_withdrawals"`
 	LatestBlockHash                     []byte                                  `json:"latest_block_hash" yaml:"latest_block_hash"`
-	PayloadExpectedWithdrawals          []*enginev1.Withdrawal                  `json:"payload_expected_withdrawals" yaml:"payload_expected_withdrawals"`
+	PayloadExpectedWithdrawals          []*silaenginev1.Withdrawal                  `json:"payload_expected_withdrawals" yaml:"payload_expected_withdrawals"`
 	PtcWindow                           []*silapb.PTCs                           `json:"ptc_window" yaml:"ptc_window"`
 }
 

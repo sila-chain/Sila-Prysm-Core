@@ -3,7 +3,7 @@ package interfaces
 import (
 	field_params "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
 	"github.com/pkg/errors"
@@ -68,10 +68,10 @@ type ReadOnlyBeaconBlockBody interface {
 	Execution() (ExecutionData, error)
 	BLSToExecutionChanges() ([]*silapb.SignedBLSToExecutionChange, error)
 	BlobKzgCommitments() ([][]byte, error)
-	ExecutionRequests() (*enginev1.ExecutionRequests, error)
+	ExecutionRequests() (*silaenginev1.ExecutionRequests, error)
 	PayloadAttestations() ([]*silapb.PayloadAttestation, error)
 	SignedSilaPayloadBid() (*silapb.SignedSilaPayloadBid, error)
-	ParentExecutionRequests() (*enginev1.ExecutionRequests, error)
+	ParentExecutionRequests() (*silaenginev1.ExecutionRequests, error)
 }
 
 type SignedBeaconBlock interface {
@@ -93,10 +93,10 @@ type SignedBeaconBlock interface {
 	SetProposerIndex(idx primitives.ValidatorIndex)
 	SetSlot(slot primitives.Slot)
 	SetSignature(sig []byte)
-	SetExecutionRequests(er *enginev1.ExecutionRequests) error
+	SetExecutionRequests(er *silaenginev1.ExecutionRequests) error
 	SetPayloadAttestations(pa []*silapb.PayloadAttestation) error
 	SetSignedSilaPayloadBid(header *silapb.SignedSilaPayloadBid) error
-	SetParentExecutionRequests(r *enginev1.ExecutionRequests) error
+	SetParentExecutionRequests(r *silaenginev1.ExecutionRequests) error
 	Unblind(e ExecutionData) error
 }
 
@@ -126,7 +126,7 @@ type ExecutionData interface {
 	BlockHash() []byte
 	Transactions() ([][]byte, error)
 	TransactionsRoot() ([]byte, error)
-	Withdrawals() ([]*enginev1.Withdrawal, error)
+	Withdrawals() ([]*silaenginev1.Withdrawal, error)
 	WithdrawalsRoot() ([]byte, error)
 	BlockAccessList() ([]byte, error)
 }

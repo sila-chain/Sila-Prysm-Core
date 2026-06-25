@@ -3812,13 +3812,13 @@
   spec: |
     <spec fn="get_sila_payload" fork="bellatrix" hash="abcc202e">
     def get_sila_payload(
-        payload_id: Optional[PayloadId], execution_engine: ExecutionEngine
+        payload_id: Optional[PayloadId], sila_engine: SilaEngine
     ) -> SilaPayload:
         if payload_id is None:
             # Pre-merge, empty payload
             return SilaPayload()
         else:
-            return execution_engine.get_payload(payload_id).sila_payload
+            return sila_engine.get_payload(payload_id).sila_payload
     </spec>
 
 - name: get_sila_payload_bid_signature#gloas
@@ -3847,7 +3847,7 @@
 
 - name: get_execution_requests#electra
   sources:
-    - file: proto/engine/v1/electra.go
+    - file: proto/silaengine/v1/electra.go
       search: func (ebe *ExecutionBundleElectra) GetDecodedExecutionRequests(
   spec: |
     <spec fn="get_execution_requests" fork="electra" hash="2c0fb728">
@@ -3897,7 +3897,7 @@
 
 - name: get_execution_requests_list#electra
   sources:
-    - file: proto/engine/v1/electra.go
+    - file: proto/silaengine/v1/electra.go
       search: func EncodeExecutionRequests(
   spec: |
     <spec fn="get_execution_requests_list" fork="electra" hash="0a0be93f">
@@ -5123,7 +5123,7 @@
 
 - name: get_pow_block_at_terminal_total_difficulty#bellatrix
   sources:
-    - file: beacon-chain/execution/engine_client.go
+    - file: beacon-chain/execution/silaengine_client.go
       search: func (s *Service) GetTerminalBlockHash(
   spec: |
     <spec fn="get_pow_block_at_terminal_total_difficulty" fork="bellatrix" hash="7b6668d2">
@@ -8296,7 +8296,7 @@
         safe_block_hash: Hash32,
         finalized_block_hash: Hash32,
         suggested_fee_recipient: ExecutionAddress,
-        execution_engine: ExecutionEngine,
+        sila_engine: SilaEngine,
         pow_chain: Optional[Dict[Hash32, PowBlock]] = None,
     ) -> Optional[PayloadId]:
         if not is_merge_transition_complete(state):
@@ -8325,7 +8325,7 @@
             prev_randao=get_randao_mix(state, get_current_epoch(state)),
             suggested_fee_recipient=suggested_fee_recipient,
         )
-        return execution_engine.notify_forkchoice_updated(
+        return sila_engine.notify_forkchoice_updated(
             head_block_hash=parent_hash,
             safe_block_hash=safe_block_hash,
             finalized_block_hash=finalized_block_hash,
@@ -8342,7 +8342,7 @@
         safe_block_hash: Hash32,
         finalized_block_hash: Hash32,
         suggested_fee_recipient: ExecutionAddress,
-        execution_engine: ExecutionEngine,
+        sila_engine: SilaEngine,
         # [Modified in Capella]
         # Removed `pow_chain`
     ) -> Optional[PayloadId]:
@@ -8358,7 +8358,7 @@
             # [New in Capella]
             withdrawals=get_expected_withdrawals(state).withdrawals,
         )
-        return execution_engine.notify_forkchoice_updated(
+        return sila_engine.notify_forkchoice_updated(
             head_block_hash=parent_hash,
             safe_block_hash=safe_block_hash,
             finalized_block_hash=finalized_block_hash,
@@ -8375,7 +8375,7 @@
         safe_block_hash: Hash32,
         finalized_block_hash: Hash32,
         suggested_fee_recipient: ExecutionAddress,
-        execution_engine: ExecutionEngine,
+        sila_engine: SilaEngine,
     ) -> Optional[PayloadId]:
         # Verify consistency of the parent hash with respect to the previous sila payload header
         parent_hash = state.latest_sila_payload_header.block_hash
@@ -8389,7 +8389,7 @@
             # [New in Deneb:SIP4788]
             parent_beacon_block_root=hash_tree_root(state.latest_block_header),
         )
-        return execution_engine.notify_forkchoice_updated(
+        return sila_engine.notify_forkchoice_updated(
             head_block_hash=parent_hash,
             safe_block_hash=safe_block_hash,
             finalized_block_hash=finalized_block_hash,
@@ -8406,7 +8406,7 @@
         safe_block_hash: Hash32,
         finalized_block_hash: Hash32,
         suggested_fee_recipient: ExecutionAddress,
-        execution_engine: ExecutionEngine,
+        sila_engine: SilaEngine,
     ) -> Optional[PayloadId]:
         # Verify consistency of the parent hash with respect to the previous sila payload header
         parent_hash = state.latest_sila_payload_header.block_hash
@@ -8420,7 +8420,7 @@
             # [New in Deneb:SIP4788]
             parent_beacon_block_root=hash_tree_root(state.latest_block_header),
         )
-        return execution_engine.notify_forkchoice_updated(
+        return sila_engine.notify_forkchoice_updated(
             head_block_hash=parent_hash,
             safe_block_hash=safe_block_hash,
             finalized_block_hash=finalized_block_hash,
@@ -8440,7 +8440,7 @@
         finalized_block_hash: Hash32,
         suggested_fee_recipient: ExecutionAddress,
         target_gas_limit: uint64,
-        execution_engine: ExecutionEngine,
+        sila_engine: SilaEngine,
     ) -> Optional[PayloadId]:
         parent_bid = state.latest_sila_payload_bid
         if should_build_on_full(store, head):
@@ -8469,7 +8469,7 @@
                 get_inclusion_list_store(), state, Slot(state.slot - 1), only_timely=False
             ),
         )
-        return execution_engine.notify_forkchoice_updated(
+        return sila_engine.notify_forkchoice_updated(
             head_block_hash=head_block_hash,
             safe_block_hash=safe_block_hash,
             finalized_block_hash=finalized_block_hash,
@@ -9435,7 +9435,7 @@
   spec: |
     <spec fn="process_sila_payload" fork="bellatrix" hash="d1d1e466">
     def process_sila_payload(
-        state: BeaconState, body: BeaconBlockBody, execution_engine: ExecutionEngine
+        state: BeaconState, body: BeaconBlockBody, sila_engine: SilaEngine
     ) -> None:
         payload = body.sila_payload
 
@@ -9447,7 +9447,7 @@
         # Verify timestamp
         assert payload.timestamp == compute_time_at_slot(state, state.slot)
         # Verify the sila payload is valid
-        assert execution_engine.verify_and_notify_new_payload(
+        assert sila_engine.verify_and_notify_new_payload(
             NewPayloadRequest(sila_payload=payload)
         )
         # Cache sila payload header
@@ -9476,7 +9476,7 @@
   spec: |
     <spec fn="process_sila_payload" fork="capella" hash="8da02dfc">
     def process_sila_payload(
-        state: BeaconState, body: BeaconBlockBody, execution_engine: ExecutionEngine
+        state: BeaconState, body: BeaconBlockBody, sila_engine: SilaEngine
     ) -> None:
         payload = body.sila_payload
         # [Modified in Capella]
@@ -9488,7 +9488,7 @@
         # Verify timestamp
         assert payload.timestamp == compute_time_at_slot(state, state.slot)
         # Verify the sila payload is valid
-        assert execution_engine.verify_and_notify_new_payload(
+        assert sila_engine.verify_and_notify_new_payload(
             NewPayloadRequest(sila_payload=payload)
         )
         # Cache sila payload header
@@ -9519,7 +9519,7 @@
   spec: |
     <spec fn="process_sila_payload" fork="deneb" hash="5e93d3cd">
     def process_sila_payload(
-        state: BeaconState, body: BeaconBlockBody, execution_engine: ExecutionEngine
+        state: BeaconState, body: BeaconBlockBody, sila_engine: SilaEngine
     ) -> None:
         payload = body.sila_payload
 
@@ -9540,7 +9540,7 @@
         ]
 
         # Verify the sila payload is valid
-        assert execution_engine.verify_and_notify_new_payload(
+        assert sila_engine.verify_and_notify_new_payload(
             NewPayloadRequest(
                 sila_payload=payload,
                 # [New in Deneb:SIP4844]
@@ -9581,7 +9581,7 @@
   spec: |
     <spec fn="process_sila_payload" fork="electra" hash="078e4a6c">
     def process_sila_payload(
-        state: BeaconState, body: BeaconBlockBody, execution_engine: ExecutionEngine
+        state: BeaconState, body: BeaconBlockBody, sila_engine: SilaEngine
     ) -> None:
         payload = body.sila_payload
 
@@ -9601,7 +9601,7 @@
         ]
 
         # Verify the sila payload is valid
-        assert execution_engine.verify_and_notify_new_payload(
+        assert sila_engine.verify_and_notify_new_payload(
             NewPayloadRequest(
                 sila_payload=payload,
                 versioned_hashes=versioned_hashes,
@@ -9640,7 +9640,7 @@
   spec: |
     <spec fn="process_sila_payload" fork="fulu" hash="adc1f5c6">
     def process_sila_payload(
-        state: BeaconState, body: BeaconBlockBody, execution_engine: ExecutionEngine
+        state: BeaconState, body: BeaconBlockBody, sila_engine: SilaEngine
     ) -> None:
         payload = body.sila_payload
 
@@ -9663,7 +9663,7 @@
         ]
 
         # Verify the sila payload is valid
-        assert execution_engine.verify_and_notify_new_payload(
+        assert sila_engine.verify_and_notify_new_payload(
             NewPayloadRequest(
                 sila_payload=payload,
                 versioned_hashes=versioned_hashes,
@@ -9699,7 +9699,7 @@
   spec: |
     <spec fn="process_sila_payload" fork="gloas" hash="adc1f5c6">
     def process_sila_payload(
-        state: BeaconState, body: BeaconBlockBody, execution_engine: ExecutionEngine
+        state: BeaconState, body: BeaconBlockBody, sila_engine: SilaEngine
     ) -> None:
         payload = body.sila_payload
 
@@ -9722,7 +9722,7 @@
         ]
 
         # Verify the sila payload is valid
-        assert execution_engine.verify_and_notify_new_payload(
+        assert sila_engine.verify_and_notify_new_payload(
             NewPayloadRequest(
                 sila_payload=payload,
                 versioned_hashes=versioned_hashes,
@@ -11384,12 +11384,12 @@
         state: BeaconState,
         root: Root,
         payload: SilaPayload,
-        execution_engine: ExecutionEngine,
+        sila_engine: SilaEngine,
     ) -> None:
         inclusion_list_transactions = get_inclusion_list_transactions(
             get_inclusion_list_store(), state, Slot(state.slot - 1)
         )
-        is_inclusion_list_satisfied = execution_engine.is_inclusion_list_satisfied(
+        is_inclusion_list_satisfied = sila_engine.is_inclusion_list_satisfied(
             payload, inclusion_list_transactions
         )
         store.payload_inclusion_list_satisfaction[root] = is_inclusion_list_satisfied
@@ -15493,7 +15493,7 @@
     def verify_sila_payload_envelope(
         state: BeaconState,
         signed_envelope: SignedSilaPayloadEnvelope,
-        execution_engine: ExecutionEngine,
+        sila_engine: SilaEngine,
     ) -> None:
         envelope = signed_envelope.message
         payload = envelope.payload
@@ -15520,7 +15520,7 @@
         assert payload.parent_hash == state.latest_block_hash
         assert payload.timestamp == compute_time_at_slot(state, state.slot)
         assert hash_tree_root(payload.withdrawals) == hash_tree_root(state.payload_expected_withdrawals)
-        assert execution_engine.verify_and_notify_new_payload(
+        assert sila_engine.verify_and_notify_new_payload(
             NewPayloadRequest(
                 sila_payload=payload,
                 versioned_hashes=[

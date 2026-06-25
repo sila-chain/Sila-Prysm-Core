@@ -17,7 +17,7 @@ proto_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//proto/engine/v1:proto",
+        "//proto/silaengine/v1:proto",
         "//proto/silaapi/ext:proto",
         "@com_google_protobuf//:descriptor_proto",
         "@com_google_protobuf//:timestamp_proto",
@@ -38,7 +38,7 @@ ssz_gen_marshal(
     out = "gateway.ssz.go",
     includes = [
         "//consensus-types/primitives:go_default_library",
-        "//proto/engine/v1:go_default_library",
+        "//proto/silaengine/v1:go_default_library",
     ],
     objs = [
         "AggregateAttestationAndProof",
@@ -73,7 +73,7 @@ go_proto_library(
     visibility = ["//visibility:public"],
     deps = [
         "//consensus-types/primitives:go_default_library",
-        "//proto/engine/v1:go_default_library",
+        "//proto/silaengine/v1:go_default_library",
         "//proto/silaapi/ext:go_default_library",
         "@com_github_golang_protobuf//proto:go_default_library",
         "@com_github_sila_go_bitfield//:go_default_library",  # keep

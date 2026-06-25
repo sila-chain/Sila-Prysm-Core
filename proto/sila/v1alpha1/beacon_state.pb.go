@@ -12,7 +12,7 @@ import (
 
 	github_com_sila_chain_go_bitfield "github.com/sila-chain/go-bitfield"
 	github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/ext"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -3583,10 +3583,10 @@ var file_proto_sila_v1alpha1_beacon_state_proto_goTypes = []any{
 	(*Checkpoint)(nil),                       // 20: sila.eth.v1alpha1.Checkpoint
 	(*AttestationData)(nil),                  // 21: sila.eth.v1alpha1.AttestationData
 	(*SyncCommittee)(nil),                    // 22: sila.eth.v1alpha1.SyncCommittee
-	(*v1.SilaPayloadHeader)(nil),        // 23: sila.engine.v1.SilaPayloadHeader
-	(*v1.SilaPayloadHeaderCapella)(nil), // 24: sila.engine.v1.SilaPayloadHeaderCapella
+	(*v1.SilaPayloadHeader)(nil),        // 23: sila.silaengine.v1.SilaPayloadHeader
+	(*v1.SilaPayloadHeaderCapella)(nil), // 24: sila.silaengine.v1.SilaPayloadHeaderCapella
 	(*HistoricalSummary)(nil),                // 25: sila.eth.v1alpha1.HistoricalSummary
-	(*v1.SilaPayloadHeaderDeneb)(nil),   // 26: sila.engine.v1.SilaPayloadHeaderDeneb
+	(*v1.SilaPayloadHeaderDeneb)(nil),   // 26: sila.silaengine.v1.SilaPayloadHeaderDeneb
 	(*PendingDeposit)(nil),                   // 27: sila.eth.v1alpha1.PendingDeposit
 	(*PendingPartialWithdrawal)(nil),         // 28: sila.eth.v1alpha1.PendingPartialWithdrawal
 	(*PendingConsolidation)(nil),             // 29: sila.eth.v1alpha1.PendingConsolidation
@@ -3624,7 +3624,7 @@ var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	20, // 29: sila.eth.v1alpha1.BeaconStateBellatrix.finalized_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	22, // 30: sila.eth.v1alpha1.BeaconStateBellatrix.current_sync_committee:type_name -> sila.eth.v1alpha1.SyncCommittee
 	22, // 31: sila.eth.v1alpha1.BeaconStateBellatrix.next_sync_committee:type_name -> sila.eth.v1alpha1.SyncCommittee
-	23, // 32: sila.eth.v1alpha1.BeaconStateBellatrix.latest_sila_payload_header:type_name -> sila.engine.v1.SilaPayloadHeader
+	23, // 32: sila.eth.v1alpha1.BeaconStateBellatrix.latest_sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeader
 	16, // 33: sila.eth.v1alpha1.BeaconStateCapella.fork:type_name -> sila.eth.v1alpha1.Fork
 	17, // 34: sila.eth.v1alpha1.BeaconStateCapella.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
 	18, // 35: sila.eth.v1alpha1.BeaconStateCapella.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
@@ -3635,7 +3635,7 @@ var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	20, // 40: sila.eth.v1alpha1.BeaconStateCapella.finalized_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	22, // 41: sila.eth.v1alpha1.BeaconStateCapella.current_sync_committee:type_name -> sila.eth.v1alpha1.SyncCommittee
 	22, // 42: sila.eth.v1alpha1.BeaconStateCapella.next_sync_committee:type_name -> sila.eth.v1alpha1.SyncCommittee
-	24, // 43: sila.eth.v1alpha1.BeaconStateCapella.latest_sila_payload_header:type_name -> sila.engine.v1.SilaPayloadHeaderCapella
+	24, // 43: sila.eth.v1alpha1.BeaconStateCapella.latest_sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeaderCapella
 	25, // 44: sila.eth.v1alpha1.BeaconStateCapella.historical_summaries:type_name -> sila.eth.v1alpha1.HistoricalSummary
 	16, // 45: sila.eth.v1alpha1.BeaconStateDeneb.fork:type_name -> sila.eth.v1alpha1.Fork
 	17, // 46: sila.eth.v1alpha1.BeaconStateDeneb.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
@@ -3647,7 +3647,7 @@ var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	20, // 52: sila.eth.v1alpha1.BeaconStateDeneb.finalized_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	22, // 53: sila.eth.v1alpha1.BeaconStateDeneb.current_sync_committee:type_name -> sila.eth.v1alpha1.SyncCommittee
 	22, // 54: sila.eth.v1alpha1.BeaconStateDeneb.next_sync_committee:type_name -> sila.eth.v1alpha1.SyncCommittee
-	26, // 55: sila.eth.v1alpha1.BeaconStateDeneb.latest_sila_payload_header:type_name -> sila.engine.v1.SilaPayloadHeaderDeneb
+	26, // 55: sila.eth.v1alpha1.BeaconStateDeneb.latest_sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeaderDeneb
 	25, // 56: sila.eth.v1alpha1.BeaconStateDeneb.historical_summaries:type_name -> sila.eth.v1alpha1.HistoricalSummary
 	16, // 57: sila.eth.v1alpha1.BeaconStateElectra.fork:type_name -> sila.eth.v1alpha1.Fork
 	17, // 58: sila.eth.v1alpha1.BeaconStateElectra.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
@@ -3659,7 +3659,7 @@ var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	20, // 64: sila.eth.v1alpha1.BeaconStateElectra.finalized_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	22, // 65: sila.eth.v1alpha1.BeaconStateElectra.current_sync_committee:type_name -> sila.eth.v1alpha1.SyncCommittee
 	22, // 66: sila.eth.v1alpha1.BeaconStateElectra.next_sync_committee:type_name -> sila.eth.v1alpha1.SyncCommittee
-	26, // 67: sila.eth.v1alpha1.BeaconStateElectra.latest_sila_payload_header:type_name -> sila.engine.v1.SilaPayloadHeaderDeneb
+	26, // 67: sila.eth.v1alpha1.BeaconStateElectra.latest_sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeaderDeneb
 	25, // 68: sila.eth.v1alpha1.BeaconStateElectra.historical_summaries:type_name -> sila.eth.v1alpha1.HistoricalSummary
 	27, // 69: sila.eth.v1alpha1.BeaconStateElectra.pending_deposits:type_name -> sila.eth.v1alpha1.PendingDeposit
 	28, // 70: sila.eth.v1alpha1.BeaconStateElectra.pending_partial_withdrawals:type_name -> sila.eth.v1alpha1.PendingPartialWithdrawal
@@ -3674,7 +3674,7 @@ var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	20, // 79: sila.eth.v1alpha1.BeaconStateFulu.finalized_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	22, // 80: sila.eth.v1alpha1.BeaconStateFulu.current_sync_committee:type_name -> sila.eth.v1alpha1.SyncCommittee
 	22, // 81: sila.eth.v1alpha1.BeaconStateFulu.next_sync_committee:type_name -> sila.eth.v1alpha1.SyncCommittee
-	26, // 82: sila.eth.v1alpha1.BeaconStateFulu.latest_sila_payload_header:type_name -> sila.engine.v1.SilaPayloadHeaderDeneb
+	26, // 82: sila.eth.v1alpha1.BeaconStateFulu.latest_sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeaderDeneb
 	25, // 83: sila.eth.v1alpha1.BeaconStateFulu.historical_summaries:type_name -> sila.eth.v1alpha1.HistoricalSummary
 	27, // 84: sila.eth.v1alpha1.BeaconStateFulu.pending_deposits:type_name -> sila.eth.v1alpha1.PendingDeposit
 	28, // 85: sila.eth.v1alpha1.BeaconStateFulu.pending_partial_withdrawals:type_name -> sila.eth.v1alpha1.PendingPartialWithdrawal

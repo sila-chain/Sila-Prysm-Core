@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
@@ -283,11 +283,11 @@ func BuildSignedBeaconBlock(blk interfaces.ReadOnlyBeaconBlock, signature []byte
 
 func getWrappedPayload(payload any) (wrappedPayload interfaces.ExecutionData, wrapErr error) {
 	switch p := payload.(type) {
-	case *enginev1.SilaPayload:
+	case *silaenginev1.SilaPayload:
 		wrappedPayload, wrapErr = WrappedSilaPayload(p)
-	case *enginev1.SilaPayloadCapella:
+	case *silaenginev1.SilaPayloadCapella:
 		wrappedPayload, wrapErr = WrappedSilaPayloadCapella(p)
-	case *enginev1.SilaPayloadDeneb:
+	case *silaenginev1.SilaPayloadDeneb:
 		wrappedPayload, wrapErr = WrappedSilaPayloadDeneb(p)
 	default:
 		wrappedPayload, wrapErr = nil, fmt.Errorf("%T is not a type of sila payload", p)
@@ -357,9 +357,9 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 	var fullBlock any
 	switch blk.Version() {
 	case version.Bellatrix:
-		p, ok := payload.(*enginev1.SilaPayload)
+		p, ok := payload.(*silaenginev1.SilaPayload)
 		if !ok {
-			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &enginev1.SilaPayload{}, payload)
+			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &silaenginev1.SilaPayload{}, payload)
 		}
 		var atts []*eth.Attestation
 		if b.Body().Attestations() != nil {
@@ -405,9 +405,9 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 			Signature: sig[:],
 		}
 	case version.Capella:
-		p, ok := payload.(*enginev1.SilaPayloadCapella)
+		p, ok := payload.(*silaenginev1.SilaPayloadCapella)
 		if !ok {
-			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &enginev1.SilaPayloadCapella{}, payload)
+			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &silaenginev1.SilaPayloadCapella{}, payload)
 		}
 		blsToExecutionChanges, err := b.Body().BLSToExecutionChanges()
 		if err != nil {
@@ -458,9 +458,9 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 			Signature: sig[:],
 		}
 	case version.Deneb:
-		p, ok := payload.(*enginev1.SilaPayloadDeneb)
+		p, ok := payload.(*silaenginev1.SilaPayloadDeneb)
 		if !ok {
-			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &enginev1.SilaPayloadDeneb{}, payload)
+			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &silaenginev1.SilaPayloadDeneb{}, payload)
 		}
 		blsToExecutionChanges, err := b.Body().BLSToExecutionChanges()
 		if err != nil {
@@ -516,9 +516,9 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 			Signature: sig[:],
 		}
 	case version.Electra:
-		p, ok := payload.(*enginev1.SilaPayloadDeneb)
+		p, ok := payload.(*silaenginev1.SilaPayloadDeneb)
 		if !ok {
-			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &enginev1.SilaPayloadDeneb{}, payload)
+			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &silaenginev1.SilaPayloadDeneb{}, payload)
 		}
 		blsToExecutionChanges, err := b.Body().BLSToExecutionChanges()
 		if err != nil {
@@ -581,9 +581,9 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 			Signature: sig[:],
 		}
 	case version.Fulu:
-		p, ok := payload.(*enginev1.SilaPayloadDeneb)
+		p, ok := payload.(*silaenginev1.SilaPayloadDeneb)
 		if !ok {
-			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &enginev1.SilaPayloadDeneb{}, payload)
+			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &silaenginev1.SilaPayloadDeneb{}, payload)
 		}
 		blsToExecutionChanges, err := b.Body().BLSToExecutionChanges()
 		if err != nil {

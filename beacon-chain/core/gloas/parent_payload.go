@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/pkg/errors"
 )
 
@@ -67,7 +67,7 @@ func ProcessParentSilaPayload(ctx context.Context, st state.BeaconState, blk int
 func ApplyParentSilaPayload(
 	ctx context.Context,
 	st state.BeaconState,
-	reqs *enginev1.ExecutionRequests,
+	reqs *silaenginev1.ExecutionRequests,
 ) error {
 	parentBid, err := st.LatestSilaPayloadBid()
 	if err != nil {
@@ -95,7 +95,7 @@ func ApplyParentSilaPayload(
 	return nil
 }
 
-func processExecutionRequests(ctx context.Context, st state.BeaconState, rqs *enginev1.ExecutionRequests) error {
+func processExecutionRequests(ctx context.Context, st state.BeaconState, rqs *silaenginev1.ExecutionRequests) error {
 	if err := ProcessDepositRequests(ctx, st, rqs.Deposits, prefetchedDepositSigs(rqs)); err != nil {
 		return errors.Wrap(err, "could not process deposit requests")
 	}
@@ -108,7 +108,7 @@ func processExecutionRequests(ctx context.Context, st state.BeaconState, rqs *en
 }
 
 // IsEmptyExecutionRequests returns true if the execution requests contain no entries.
-func IsEmptyExecutionRequests(r *enginev1.ExecutionRequests) bool {
+func IsEmptyExecutionRequests(r *silaenginev1.ExecutionRequests) bool {
 	if r == nil {
 		return true
 	}

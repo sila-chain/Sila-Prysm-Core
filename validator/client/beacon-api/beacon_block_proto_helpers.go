@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
@@ -397,8 +397,8 @@ func convertTransactionsToProto(jsonTransactions []string) ([][]byte, error) {
 	return transactions, nil
 }
 
-func convertWithdrawalsToProto(jsonWithdrawals []*structs.Withdrawal) ([]*enginev1.Withdrawal, error) {
-	withdrawals := make([]*enginev1.Withdrawal, len(jsonWithdrawals))
+func convertWithdrawalsToProto(jsonWithdrawals []*structs.Withdrawal) ([]*silaenginev1.Withdrawal, error) {
+	withdrawals := make([]*silaenginev1.Withdrawal, len(jsonWithdrawals))
 
 	for index, jsonWithdrawal := range jsonWithdrawals {
 		if jsonWithdrawal == nil {
@@ -425,7 +425,7 @@ func convertWithdrawalsToProto(jsonWithdrawals []*structs.Withdrawal) ([]*engine
 			return nil, errors.Wrapf(err, "failed to parse withdrawal amount `%s`", jsonWithdrawal.Amount)
 		}
 
-		withdrawals[index] = &enginev1.Withdrawal{
+		withdrawals[index] = &silaenginev1.Withdrawal{
 			Index:          withdrawalIndex,
 			ValidatorIndex: primitives.ValidatorIndex(validatorIndex),
 			Address:        executionAddress,

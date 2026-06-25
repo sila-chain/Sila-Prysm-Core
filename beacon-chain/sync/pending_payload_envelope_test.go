@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -250,7 +250,7 @@ func TestPrunePendingPayloadEnvelopes(t *testing.T) {
 	oldRoot := [32]byte{0x01}
 	oldEnv := &silapb.SignedSilaPayloadEnvelope{
 		Message: &silapb.SilaPayloadEnvelope{
-			Payload:         &enginev1.SilaPayloadGloas{SlotNumber: primitives.Slot(finalizedEpoch-1) * slotsPerEpoch},
+			Payload:         &silaenginev1.SilaPayloadGloas{SlotNumber: primitives.Slot(finalizedEpoch-1) * slotsPerEpoch},
 			BeaconBlockRoot: oldRoot[:],
 		},
 		Signature: bytes.Repeat([]byte{0xAA}, 96),
@@ -259,7 +259,7 @@ func TestPrunePendingPayloadEnvelopes(t *testing.T) {
 	atFinalizedRoot := [32]byte{0x03}
 	atFinalizedEnv := &silapb.SignedSilaPayloadEnvelope{
 		Message: &silapb.SilaPayloadEnvelope{
-			Payload:         &enginev1.SilaPayloadGloas{SlotNumber: primitives.Slot(finalizedEpoch) * slotsPerEpoch},
+			Payload:         &silaenginev1.SilaPayloadGloas{SlotNumber: primitives.Slot(finalizedEpoch) * slotsPerEpoch},
 			BeaconBlockRoot: atFinalizedRoot[:],
 		},
 		Signature: bytes.Repeat([]byte{0xCC}, 96),
@@ -268,7 +268,7 @@ func TestPrunePendingPayloadEnvelopes(t *testing.T) {
 	freshRoot := [32]byte{0x02}
 	freshEnv := &silapb.SignedSilaPayloadEnvelope{
 		Message: &silapb.SilaPayloadEnvelope{
-			Payload:         &enginev1.SilaPayloadGloas{SlotNumber: primitives.Slot(finalizedEpoch+1) * slotsPerEpoch},
+			Payload:         &silaenginev1.SilaPayloadGloas{SlotNumber: primitives.Slot(finalizedEpoch+1) * slotsPerEpoch},
 			BeaconBlockRoot: freshRoot[:],
 		},
 		Signature: bytes.Repeat([]byte{0xBB}, 96),
@@ -452,7 +452,7 @@ func TestQueuePendingPayloadEnvelope_RootCountBound(t *testing.T) {
 	for i := range maxPendingPayloadRoots {
 		root := [32]byte{byte(i + 1)}
 		env := &silapb.SignedSilaPayloadEnvelope{
-			Message: &silapb.SilaPayloadEnvelope{Payload: &enginev1.SilaPayloadGloas{SlotNumber: 1}, BeaconBlockRoot: root[:]},
+			Message: &silapb.SilaPayloadEnvelope{Payload: &silaenginev1.SilaPayloadGloas{SlotNumber: 1}, BeaconBlockRoot: root[:]},
 		}
 		s.pendingPayloadEnvelopes[root] = map[uint64]*silapb.SignedSilaPayloadEnvelope{uint64(i): env}
 	}
@@ -483,7 +483,7 @@ func TestQueuePendingPayloadEnvelope_SelfBuildBypassesRootBound(t *testing.T) {
 	for i := range maxPendingPayloadRoots {
 		root := [32]byte{byte(i + 1)}
 		env := &silapb.SignedSilaPayloadEnvelope{
-			Message: &silapb.SilaPayloadEnvelope{Payload: &enginev1.SilaPayloadGloas{SlotNumber: 1}, BeaconBlockRoot: root[:]},
+			Message: &silapb.SilaPayloadEnvelope{Payload: &silaenginev1.SilaPayloadGloas{SlotNumber: 1}, BeaconBlockRoot: root[:]},
 		}
 		s.pendingPayloadEnvelopes[root] = map[uint64]*silapb.SignedSilaPayloadEnvelope{uint64(i): env}
 	}

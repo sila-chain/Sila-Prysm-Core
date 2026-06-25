@@ -75,7 +75,7 @@ func TestService_beaconBlockSubscriber(t *testing.T) {
 					},
 					attPool:                attestations.NewPool(),
 					blobStorage:            filesystem.NewEphemeralBlobStorage(t),
-					executionReconstructor: &mockExecution.EngineClient{},
+					executionReconstructor: &mockExecution.SilaEngineClient{},
 				},
 			}
 			s.initCaches()
@@ -118,7 +118,7 @@ func TestService_BeaconBlockSubscribe_ExecutionEngineTimesOut(t *testing.T) {
 
 func TestService_BeaconBlockSubscribe_UndefinedEeError(t *testing.T) {
 	msg := "timeout"
-	err := errors.WithMessage(blockchain.ErrUndefinedExecutionEngineError, msg)
+	err := errors.WithMessage(blockchain.ErrUndefinedSilaEngineError, msg)
 
 	s := &Service{
 		cfg: &config{
@@ -129,7 +129,7 @@ func TestService_BeaconBlockSubscribe_UndefinedEeError(t *testing.T) {
 		seenBlockCache: lruwrpr.New(10),
 		badBlockCache:  lruwrpr.New(10),
 	}
-	require.ErrorIs(t, s.beaconBlockSubscriber(t.Context(), util.NewBeaconBlock()), blockchain.ErrUndefinedExecutionEngineError)
+	require.ErrorIs(t, s.beaconBlockSubscriber(t.Context(), util.NewBeaconBlock()), blockchain.ErrUndefinedSilaEngineError)
 	require.Equal(t, 0, len(s.badBlockCache.Keys()))
 	require.Equal(t, 1, len(s.seenBlockCache.Keys()))
 }
@@ -187,7 +187,7 @@ func TestProcessSidecarsFromExecutionFromBlock(t *testing.T) {
 						chain:       chainService,
 						clock:       startup.NewClock(time.Now(), [32]byte{}),
 						blobStorage: filesystem.NewEphemeralBlobStorage(t),
-						executionReconstructor: &mockExecution.EngineClient{
+						executionReconstructor: &mockExecution.SilaEngineClient{
 							BlobSidecars: tt.blobSidecars,
 						},
 						operationNotifier: &chainMock.MockOperationNotifier{},
@@ -268,7 +268,7 @@ func TestProcessSidecarsFromExecutionFromBlock(t *testing.T) {
 						chain:             chainService,
 						clock:             startup.NewClock(time.Now(), [32]byte{}),
 						dataColumnStorage: filesystem.NewEphemeralDataColumnStorage(t),
-						executionReconstructor: &mockExecution.EngineClient{
+						executionReconstructor: &mockExecution.SilaEngineClient{
 							DataColumnSidecars: tt.dataColumnSidecars,
 						},
 						operationNotifier: &chainMock.MockOperationNotifier{},
@@ -360,7 +360,7 @@ func TestProcessSidecarsFromExecutionFromBlock(t *testing.T) {
 						chain:             chainService,
 						clock:             startup.NewClock(time.Now(), [32]byte{}),
 						dataColumnStorage: filesystem.NewEphemeralDataColumnStorage(t),
-						executionReconstructor: &mockExecution.EngineClient{
+						executionReconstructor: &mockExecution.SilaEngineClient{
 							DataColumnSidecars: tt.dataColumnSidecars,
 						},
 						operationNotifier: &chainMock.MockOperationNotifier{},

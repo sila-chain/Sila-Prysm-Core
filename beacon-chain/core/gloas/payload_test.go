@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -24,11 +24,11 @@ type payloadFixture struct {
 	signed      interfaces.ROSignedSilaPayloadEnvelope
 	signedProto *silapb.SignedSilaPayloadEnvelope
 	envelope    *silapb.SilaPayloadEnvelope
-	payload     *enginev1.SilaPayloadGloas
+	payload     *silaenginev1.SilaPayloadGloas
 	slot        primitives.Slot
 }
 
-func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.SilaPayloadGloas, bid *silapb.SilaPayloadBid, envelope *silapb.SilaPayloadEnvelope)) payloadFixture {
+func buildPayloadFixture(t *testing.T, mutate func(payload *silaenginev1.SilaPayloadGloas, bid *silapb.SilaPayloadBid, envelope *silapb.SilaPayloadEnvelope)) payloadFixture {
 	t.Helper()
 
 	cfg := params.BeaconConfig()
@@ -43,11 +43,11 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.SilaPayload
 	parentHash := bytes.Repeat([]byte{0xBB}, 32)
 	blockHash := bytes.Repeat([]byte{0xCC}, 32)
 
-	withdrawals := []*enginev1.Withdrawal{
+	withdrawals := []*silaenginev1.Withdrawal{
 		{Index: 0, ValidatorIndex: 1, Address: bytes.Repeat([]byte{0x01}, 20), Amount: 0},
 	}
 
-	payload := &enginev1.SilaPayloadGloas{
+	payload := &silaenginev1.SilaPayloadGloas{
 		ParentHash:    parentHash,
 		FeeRecipient:  bytes.Repeat([]byte{0x01}, 20),
 		StateRoot:     bytes.Repeat([]byte{0x02}, 32),
@@ -68,7 +68,7 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.SilaPayload
 		SlotNumber:    slot,
 	}
 
-	emptyRequestsRoot, err := enginev1.EmptyExecutionRequestsHashTreeRoot()
+	emptyRequestsRoot, err := silaenginev1.EmptyExecutionRequestsHashTreeRoot()
 	require.NoError(t, err)
 	bid := &silapb.SilaPayloadBid{
 		ParentBlockHash:       parentHash,
@@ -98,7 +98,7 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *enginev1.SilaPayload
 		BeaconBlockRoot:       headerRoot[:],
 		ParentBeaconBlockRoot: header.ParentRoot,
 		Payload:               payload,
-		ExecutionRequests:     &enginev1.ExecutionRequests{},
+		ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 	}
 
 	if mutate != nil {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/apiutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 )
@@ -150,7 +150,7 @@ func jsonifySignedAggregateAndProofElectra(signedAggregateAndProof *silapb.Signe
 	}
 }
 
-func jsonifyWithdrawals(withdrawals []*enginev1.Withdrawal) []*structs.Withdrawal {
+func jsonifyWithdrawals(withdrawals []*silaenginev1.Withdrawal) []*structs.Withdrawal {
 	jsonWithdrawals := make([]*structs.Withdrawal, len(withdrawals))
 	for index, withdrawal := range withdrawals {
 		jsonWithdrawals[index] = &structs.Withdrawal{

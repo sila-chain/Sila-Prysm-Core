@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	light_client "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -80,7 +80,7 @@ func createUpdate(t *testing.T, v int) (interfaces.LightClientUpdate, error) {
 				StateRoot:     sampleRoot,
 				BodyRoot:      sampleRoot,
 			},
-			Execution: &enginev1.SilaPayloadHeaderCapella{
+			Execution: &silaenginev1.SilaPayloadHeaderCapella{
 				ParentHash:       make([]byte, fieldparams.RootLength),
 				FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 				StateRoot:        make([]byte, fieldparams.RootLength),
@@ -108,7 +108,7 @@ func createUpdate(t *testing.T, v int) (interfaces.LightClientUpdate, error) {
 				StateRoot:     sampleRoot,
 				BodyRoot:      sampleRoot,
 			},
-			Execution: &enginev1.SilaPayloadHeaderDeneb{
+			Execution: &silaenginev1.SilaPayloadHeaderDeneb{
 				ParentHash:       make([]byte, fieldparams.RootLength),
 				FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 				StateRoot:        make([]byte, fieldparams.RootLength),
@@ -136,7 +136,7 @@ func createUpdate(t *testing.T, v int) (interfaces.LightClientUpdate, error) {
 				StateRoot:     sampleRoot,
 				BodyRoot:      sampleRoot,
 			},
-			Execution: &enginev1.SilaPayloadHeaderDeneb{
+			Execution: &silaenginev1.SilaPayloadHeaderDeneb{
 				ParentHash:       make([]byte, fieldparams.RootLength),
 				FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 				StateRoot:        make([]byte, fieldparams.RootLength),
@@ -164,7 +164,7 @@ func createUpdate(t *testing.T, v int) (interfaces.LightClientUpdate, error) {
 				StateRoot:     sampleRoot,
 				BodyRoot:      sampleRoot,
 			},
-			Execution: &enginev1.SilaPayloadHeaderDeneb{
+			Execution: &silaenginev1.SilaPayloadHeaderDeneb{
 				ParentHash:       make([]byte, fieldparams.RootLength),
 				FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 				StateRoot:        make([]byte, fieldparams.RootLength),
@@ -509,7 +509,7 @@ func createDefaultLightClientUpdate(currentSlot primitives.Slot, attestedState s
 		m = &pb.LightClientUpdateCapella{
 			AttestedHeader: &pb.LightClientHeaderCapella{
 				Beacon:          &pb.BeaconBlockHeader{},
-				Execution:       &enginev1.SilaPayloadHeaderCapella{},
+				Execution:       &silaenginev1.SilaPayloadHeaderCapella{},
 				ExecutionBranch: executionBranch,
 			},
 			NextSyncCommittee:       nextSyncCommittee,
@@ -520,7 +520,7 @@ func createDefaultLightClientUpdate(currentSlot primitives.Slot, attestedState s
 		m = &pb.LightClientUpdateDeneb{
 			AttestedHeader: &pb.LightClientHeaderDeneb{
 				Beacon:          &pb.BeaconBlockHeader{},
-				Execution:       &enginev1.SilaPayloadHeaderDeneb{},
+				Execution:       &silaenginev1.SilaPayloadHeaderDeneb{},
 				ExecutionBranch: executionBranch,
 			},
 			NextSyncCommittee:       nextSyncCommittee,
@@ -532,7 +532,7 @@ func createDefaultLightClientUpdate(currentSlot primitives.Slot, attestedState s
 			m = &pb.LightClientUpdateElectra{
 				AttestedHeader: &pb.LightClientHeaderDeneb{
 					Beacon:          &pb.BeaconBlockHeader{},
-					Execution:       &enginev1.SilaPayloadHeaderDeneb{},
+					Execution:       &silaenginev1.SilaPayloadHeaderDeneb{},
 					ExecutionBranch: executionBranch,
 				},
 				NextSyncCommittee:       nextSyncCommittee,
@@ -543,7 +543,7 @@ func createDefaultLightClientUpdate(currentSlot primitives.Slot, attestedState s
 			m = &pb.LightClientUpdateDeneb{
 				AttestedHeader: &pb.LightClientHeaderDeneb{
 					Beacon:          &pb.BeaconBlockHeader{},
-					Execution:       &enginev1.SilaPayloadHeaderDeneb{},
+					Execution:       &silaenginev1.SilaPayloadHeaderDeneb{},
 					ExecutionBranch: executionBranch,
 				},
 				NextSyncCommittee:       nextSyncCommittee,
@@ -786,7 +786,7 @@ func createDefaultLightClientBootstrap(currentSlot primitives.Slot) (interfaces.
 					StateRoot:  make([]byte, 32),
 					BodyRoot:   make([]byte, 32),
 				},
-				Execution: &enginev1.SilaPayloadHeaderCapella{
+				Execution: &silaenginev1.SilaPayloadHeaderCapella{
 					ParentHash:       make([]byte, fieldparams.RootLength),
 					FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 					StateRoot:        make([]byte, fieldparams.RootLength),
@@ -813,7 +813,7 @@ func createDefaultLightClientBootstrap(currentSlot primitives.Slot) (interfaces.
 					StateRoot:  make([]byte, 32),
 					BodyRoot:   make([]byte, 32),
 				},
-				Execution: &enginev1.SilaPayloadHeaderDeneb{
+				Execution: &silaenginev1.SilaPayloadHeaderDeneb{
 					ParentHash:       make([]byte, fieldparams.RootLength),
 					FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 					StateRoot:        make([]byte, fieldparams.RootLength),
@@ -842,7 +842,7 @@ func createDefaultLightClientBootstrap(currentSlot primitives.Slot) (interfaces.
 					StateRoot:  make([]byte, 32),
 					BodyRoot:   make([]byte, 32),
 				},
-				Execution: &enginev1.SilaPayloadHeaderDeneb{
+				Execution: &silaenginev1.SilaPayloadHeaderDeneb{
 					ParentHash:       make([]byte, fieldparams.RootLength),
 					FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 					StateRoot:        make([]byte, fieldparams.RootLength),

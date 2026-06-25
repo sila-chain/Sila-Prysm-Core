@@ -21,7 +21,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	engpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	engpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -263,7 +263,7 @@ func TestSilaPayloadEnvelopesByRangeRPCHandler(t *testing.T) {
 			}
 		}
 
-		mockEngine := &mockExecution.EngineClient{
+		mockEngine := &mockExecution.SilaEngineClient{
 			SilaPayloadByBlockHash: make(map[[32]byte]*engpb.SilaPayload, len(roots)),
 			SlotByBlockHash:             make(map[[32]byte]primitives.Slot, len(roots)),
 		}
@@ -370,7 +370,7 @@ func TestSilaPayloadEnvelopesByRangeRPCHandler(t *testing.T) {
 			}
 		}
 
-		mockEngine := &mockExecution.EngineClient{
+		mockEngine := &mockExecution.SilaEngineClient{
 			SilaPayloadByBlockHash: make(map[[32]byte]*engpb.SilaPayload, len(roots)),
 			SlotByBlockHash:             make(map[[32]byte]primitives.Slot, len(roots)),
 		}

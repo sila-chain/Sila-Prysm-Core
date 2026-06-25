@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	beaconState "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila/common/hexutil"
 )
 
@@ -285,7 +285,7 @@ func BeaconStateBellatrixFromConsensus(st beaconState.BeaconState) (*BeaconState
 	if err != nil {
 		return nil, err
 	}
-	srcPayload, ok := execData.Proto().(*enginev1.SilaPayloadHeader)
+	srcPayload, ok := execData.Proto().(*silaenginev1.SilaPayloadHeader)
 	if !ok {
 		return nil, errPayloadHeaderNotFound
 	}
@@ -404,7 +404,7 @@ func BeaconStateCapellaFromConsensus(st beaconState.BeaconState) (*BeaconStateCa
 	if err != nil {
 		return nil, err
 	}
-	srcPayload, ok := execData.Proto().(*enginev1.SilaPayloadHeaderCapella)
+	srcPayload, ok := execData.Proto().(*silaenginev1.SilaPayloadHeaderCapella)
 	if !ok {
 		return nil, errPayloadHeaderNotFound
 	}
@@ -542,7 +542,7 @@ func BeaconStateDenebFromConsensus(st beaconState.BeaconState) (*BeaconStateDene
 	if err != nil {
 		return nil, err
 	}
-	srcPayload, ok := execData.Proto().(*enginev1.SilaPayloadHeaderDeneb)
+	srcPayload, ok := execData.Proto().(*silaenginev1.SilaPayloadHeaderDeneb)
 	if !ok {
 		return nil, errPayloadHeaderNotFound
 	}
@@ -680,7 +680,7 @@ func BeaconStateElectraFromConsensus(st beaconState.BeaconState) (*BeaconStateEl
 	if err != nil {
 		return nil, err
 	}
-	srcPayload, ok := execData.Proto().(*enginev1.SilaPayloadHeaderDeneb)
+	srcPayload, ok := execData.Proto().(*silaenginev1.SilaPayloadHeaderDeneb)
 	if !ok {
 		return nil, errPayloadHeaderNotFound
 	}
@@ -863,7 +863,7 @@ func BeaconStateFuluFromConsensus(st beaconState.BeaconState) (*BeaconStateFulu,
 	if err != nil {
 		return nil, err
 	}
-	srcPayload, ok := execData.Proto().(*enginev1.SilaPayloadHeaderDeneb)
+	srcPayload, ok := execData.Proto().(*silaenginev1.SilaPayloadHeaderDeneb)
 	if !ok {
 		return nil, errPayloadHeaderNotFound
 	}

@@ -13,16 +13,16 @@
 // limitations under the License.
 syntax = "proto3";
 
-package sila.engine.v1;
+package sila.silaengine.v1;
 
 import "proto/silaapi/ext/options.proto";
-import "proto/engine/v1/execution_engine.proto";
+import "proto/silaengine/v1/sila_engine.proto";
 
 option csharp_namespace = "Sila.Engine.V1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1;enginev1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1;silaenginev1";
 option java_multiple_files = true;
 option java_outer_classname = "ElectraProto";
-option java_package = "org.sila.engine.v1";
+option java_package = "org.sila.silaengine.v1";
 option php_namespace = "Sila\\Engine\\v1";
 
 // WithdrawalRequest is the message from the execution layer to trigger the

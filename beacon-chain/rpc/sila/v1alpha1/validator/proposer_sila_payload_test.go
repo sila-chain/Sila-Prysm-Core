@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -148,7 +148,7 @@ func TestServer_getSilaPayload(t *testing.T) {
 			ed, err := blocks.NewWrappedExecutionData(&pb.SilaPayload{})
 			require.NoError(t, err)
 			vs := &Server{
-				ExecutionEngineCaller:  &powtesting.EngineClient{PayloadIDBytes: tt.payloadID, ErrForkchoiceUpdated: tt.forkchoiceErr, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, OverrideBuilder: tt.override}},
+				SilaEngineCaller:  &powtesting.SilaEngineClient{PayloadIDBytes: tt.payloadID, ErrForkchoiceUpdated: tt.forkchoiceErr, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, OverrideBuilder: tt.override}},
 				HeadFetcher:            &chainMock.ChainService{State: tt.st},
 				FinalizationFetcher:    &chainMock.ChainService{},
 				BeaconDB:               beaconDB,
@@ -263,7 +263,7 @@ func TestServer_getSilaPayloadContextTimeout(t *testing.T) {
 	ed, err := blocks.NewWrappedExecutionData(&pb.SilaPayload{})
 	require.NoError(t, err)
 	vs := &Server{
-		ExecutionEngineCaller:  &powtesting.EngineClient{PayloadIDBytes: &pb.PayloadIDBytes{}, ErrGetPayload: context.DeadlineExceeded, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed}},
+		SilaEngineCaller:  &powtesting.SilaEngineClient{PayloadIDBytes: &pb.PayloadIDBytes{}, ErrGetPayload: context.DeadlineExceeded, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed}},
 		HeadFetcher:            &chainMock.ChainService{State: nonTransitionSt},
 		BeaconDB:               beaconDB,
 		PayloadIDCache:         cache.NewPayloadIDCache(),
@@ -312,7 +312,7 @@ func TestServer_getSilaPayload_UnexpectedFeeRecipient(t *testing.T) {
 	ed, err := blocks.NewWrappedExecutionData(payload)
 	require.NoError(t, err)
 	vs := &Server{
-		ExecutionEngineCaller: &powtesting.EngineClient{
+		SilaEngineCaller: &powtesting.SilaEngineClient{
 			PayloadIDBytes:     payloadID,
 			GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
 		},
@@ -436,7 +436,7 @@ func TestServer_getTerminalBlockHashIfExists(t *testing.T) {
 			c.HashesByHeight[0] = tt.wantTerminalBlockHash
 			vs := &Server{
 				SilaExecutionBlockFetcher: c,
-				ExecutionEngineCaller: &powtesting.EngineClient{
+				SilaEngineCaller: &powtesting.SilaEngineClient{
 					ExecutionBlock: tt.currentPowBlock,
 					BlockByHashMap: m,
 				},

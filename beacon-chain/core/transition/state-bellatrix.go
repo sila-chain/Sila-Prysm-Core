@@ -11,7 +11,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
@@ -58,7 +58,7 @@ import (
 //	  return state
 //
 // This method differs from the spec so as to process deposits beforehand instead of the end of the function.
-func GenesisBeaconStateBellatrix(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, silaexecData *silapb.SilaExecutionData, ep *enginev1.SilaPayload) (state.BeaconState, error) {
+func GenesisBeaconStateBellatrix(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, silaexecData *silapb.SilaExecutionData, ep *silaenginev1.SilaPayload) (state.BeaconState, error) {
 	st, err := EmptyGenesisStateBellatrix()
 	if err != nil {
 		return nil, err
@@ -89,7 +89,7 @@ func GenesisBeaconStateBellatrix(ctx context.Context, deposits []*silapb.Deposit
 
 // OptimizedGenesisBeaconStateBellatrix is used to create a state that has already processed deposits. This is to efficiently
 // create a mainnet state at chainstart.
-func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.BeaconState, silaexecData *silapb.SilaExecutionData, ep *enginev1.SilaPayload) (state.BeaconState, error) {
+func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.BeaconState, silaexecData *silapb.SilaExecutionData, ep *silaenginev1.SilaPayload) (state.BeaconState, error) {
 	if silaexecData == nil {
 		return nil, errors.New("no silaExecutionData provided for genesis state")
 	}
@@ -202,7 +202,7 @@ func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.Bea
 			SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 			SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 		},
-		SilaPayload: &enginev1.SilaPayload{
+		SilaPayload: &silaenginev1.SilaPayload{
 			ParentHash:    make([]byte, 32),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, 32),
@@ -263,7 +263,7 @@ func EmptyGenesisStateBellatrix() (state.BeaconState, error) {
 		SilaExecutionData:         &silapb.SilaExecutionData{},
 		SilaExecutionDataVotes:    []*silapb.SilaExecutionData{},
 		SilaExecutionDepositIndex: 0,
-		LatestSilaPayloadHeader: &enginev1.SilaPayloadHeader{
+		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeader{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
 			StateRoot:        make([]byte, 32),

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -303,7 +303,7 @@ func TestBeaconBlockJsonHelpers_JsonifyAttestationData(t *testing.T) {
 }
 
 func TestBeaconBlockJsonHelpers_JsonifyWithdrawals(t *testing.T) {
-	input := []*enginev1.Withdrawal{
+	input := []*silaenginev1.Withdrawal{
 		{
 			Index:          1,
 			ValidatorIndex: 2,

@@ -346,7 +346,7 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	// Mevboost circuit breaker
 	MaxBuilderConsecutiveMissedSlots: 3,
 	MaxBuilderEpochMissedSlots:       5,
-	// Execution engine timeout value
+	// SilaEngine timeout value
 	ExecutionEngineTimeoutValue: 8, // 8 seconds default based on: https://github.com/sila-chain/Sila-Execution-APIs/blob/main/src/engine/specification.md#core
 
 	// Subnet value

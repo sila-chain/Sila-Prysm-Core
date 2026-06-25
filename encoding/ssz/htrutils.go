@@ -7,7 +7,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash/htr"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
@@ -97,19 +97,19 @@ func TransactionsRoot(txs [][]byte) ([32]byte, error) {
 
 // WithdrawalSliceRoot computes the HTR of a slice of withdrawals.
 // The limit parameter is used as input to the bitwise merkleization algorithm.
-func WithdrawalSliceRoot(withdrawals []*enginev1.Withdrawal, limit uint64) ([32]byte, error) {
+func WithdrawalSliceRoot(withdrawals []*silaenginev1.Withdrawal, limit uint64) ([32]byte, error) {
 	return SliceRoot(withdrawals, limit)
 }
 
 // DepositRequestsSliceRoot computes the HTR of a slice of deposit requests.
 // The limit parameter is used as input to the bitwise merkleization algorithm.
-func DepositRequestsSliceRoot(depositRequests []*enginev1.DepositRequest, limit uint64) ([32]byte, error) {
+func DepositRequestsSliceRoot(depositRequests []*silaenginev1.DepositRequest, limit uint64) ([32]byte, error) {
 	return SliceRoot(depositRequests, limit)
 }
 
 // WithdrawalRequestsSliceRoot computes the HTR of a slice of withdrawal requests from the EL.
 // The limit parameter is used as input to the bitwise merkleization algorithm.
-func WithdrawalRequestsSliceRoot(withdrawalRequests []*enginev1.WithdrawalRequest, limit uint64) ([32]byte, error) {
+func WithdrawalRequestsSliceRoot(withdrawalRequests []*silaenginev1.WithdrawalRequest, limit uint64) ([32]byte, error) {
 	return SliceRoot(withdrawalRequests, limit)
 }
 
@@ -135,7 +135,7 @@ func ByteSliceRoot(slice []byte, maxLength uint64) ([32]byte, error) {
 	return MixInLength(bytesRoot, bytesRootBufRoot), nil
 }
 
-func withdrawalRoot(w *enginev1.Withdrawal) ([32]byte, error) {
+func withdrawalRoot(w *silaenginev1.Withdrawal) ([32]byte, error) {
 	if w == nil {
 		fieldRoots := make([][32]byte, 4)
 		return BitwiseMerkleize(fieldRoots, uint64(len(fieldRoots)), uint64(len(fieldRoots)))

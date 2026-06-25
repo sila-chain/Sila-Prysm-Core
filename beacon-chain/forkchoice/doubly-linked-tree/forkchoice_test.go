@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -35,7 +35,7 @@ func prepareForkchoiceState(
 		ParentRoot: parentRoot[:],
 	}
 
-	executionHeader := &enginev1.SilaPayloadHeader{
+	executionHeader := &silaenginev1.SilaPayloadHeader{
 		BlockHash: payloadHash[:],
 	}
 
@@ -65,7 +65,7 @@ func prepareForkchoiceState(
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
 			Body: &silapb.BeaconBlockBodyBellatrix{
-				SilaPayload: &enginev1.SilaPayload{
+				SilaPayload: &silaenginev1.SilaPayload{
 					BlockHash: payloadHash[:],
 				},
 			},
@@ -1001,7 +1001,7 @@ func prepareBellatrixForkchoiceStateWithGasLimit(
 	gasLimit uint64,
 ) (state.BeaconState, blocks.ROBlock, error) {
 	blockHeader := &silapb.BeaconBlockHeader{ParentRoot: parentRoot[:]}
-	executionHeader := &enginev1.SilaPayloadHeader{BlockHash: payloadHash[:], GasLimit: gasLimit}
+	executionHeader := &silaenginev1.SilaPayloadHeader{BlockHash: payloadHash[:], GasLimit: gasLimit}
 	base := &silapb.BeaconStateBellatrix{
 		Slot:                         slot,
 		RandaoMixes:                  make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector),
@@ -1019,7 +1019,7 @@ func prepareBellatrixForkchoiceStateWithGasLimit(
 			Slot:       slot,
 			ParentRoot: parentRoot[:],
 			Body: &silapb.BeaconBlockBodyBellatrix{
-				SilaPayload: &enginev1.SilaPayload{BlockHash: payloadHash[:], GasLimit: gasLimit},
+				SilaPayload: &silaenginev1.SilaPayload{BlockHash: payloadHash[:], GasLimit: gasLimit},
 			},
 		},
 	}

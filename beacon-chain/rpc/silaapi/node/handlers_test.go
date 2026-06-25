@@ -100,7 +100,7 @@ func TestGetVersionV2(t *testing.T) {
 		writer.Body = &bytes.Buffer{}
 
 		s := &Server{
-			ExecutionEngineCaller: &mockengine.EngineClient{
+			SilaEngineCaller: &mockengine.SilaEngineClient{
 				ClientVersion: []*structs.ClientVersionV1{{
 					Code:    "EL",
 					Name:    "ExecutionClient",
@@ -134,7 +134,7 @@ func TestGetVersionV2(t *testing.T) {
 		writer.Body = &bytes.Buffer{}
 
 		s := &Server{
-			ExecutionEngineCaller: &mockengine.EngineClient{
+			SilaEngineCaller: &mockengine.SilaEngineClient{
 				ClientVersion:      nil,
 				ErrorClientVersion: fmt.Errorf("error"),
 			},

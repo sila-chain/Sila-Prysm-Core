@@ -60,7 +60,7 @@ go_proto_library(
     compilers = [
         "@com_github_sila_protoc_gen_go_cast//:go_cast_grpc",
     ],
-    importpath = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1",
+    importpath = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1",
     proto = ":proto",
     visibility = ["//visibility:public"],
     deps = [
@@ -79,7 +79,7 @@ go_library(
     srcs = [
         "blobs_bundle.go",
         "electra.go",
-        "execution_engine.go",
+        "sila_engine.go",
         "fulu.go",
         "gloas.go",
         "json_marshal_unmarshal.go",
@@ -88,7 +88,7 @@ go_library(
     embed = [
         ":go_proto",
     ],
-    importpath = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1",
+    importpath = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1",
     visibility = ["//visibility:public"],
     deps = [
         "//config/fieldparams:go_default_library",
@@ -116,7 +116,7 @@ ssz_proto_files(
     name = "ssz_proto_files",
     srcs = [
         "electra.proto",
-        "execution_engine.proto",
+        "sila_engine.proto",
         "fulu.proto",
     ],
     config = select({
@@ -129,7 +129,7 @@ ssz_proto_files(
 go_test(
     name = "go_default_test",
     srcs = [
-        "execution_engine_fuzz_test.go",
+        "sila_engine_fuzz_test.go",
         "export_test.go",
         "json_marshal_unmarshal_test.go",
     ],

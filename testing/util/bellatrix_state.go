@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
@@ -82,7 +82,7 @@ func emptyGenesisStateBellatrix() (state.BeaconState, error) {
 		SilaExecutionDataVotes:    []*silapb.SilaExecutionData{},
 		SilaExecutionDepositIndex: 0,
 
-		LatestSilaPayloadHeader: &enginev1.SilaPayloadHeader{},
+		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeader{},
 	}
 	return state_native.InitializeFromProtoUnsafeBellatrix(st)
 }
@@ -202,7 +202,7 @@ func buildGenesisBeaconStateBellatrix(genesisTime time.Time, preState state.Beac
 			SyncCommitteeBits:      scBits[:],
 			SyncCommitteeSignature: make([]byte, 96),
 		},
-		SilaPayload: &enginev1.SilaPayload{
+		SilaPayload: &silaenginev1.SilaPayload{
 			ParentHash:    make([]byte, 32),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, 32),
@@ -238,7 +238,7 @@ func buildGenesisBeaconStateBellatrix(genesisTime time.Time, preState state.Beac
 		AggregatePubkey: bytesutil.PadTo([]byte{}, params.BeaconConfig().BLSPubkeyLength),
 	}
 
-	st.LatestSilaPayloadHeader = &enginev1.SilaPayloadHeader{
+	st.LatestSilaPayloadHeader = &silaenginev1.SilaPayloadHeader{
 		ParentHash:       make([]byte, 32),
 		FeeRecipient:     make([]byte, 20),
 		StateRoot:        make([]byte, 32),

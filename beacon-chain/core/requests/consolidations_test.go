@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -47,7 +47,7 @@ func TestProcessConsolidationRequests(t *testing.T) {
 	tests := []struct {
 		name     string
 		state    state.BeaconState
-		reqs     []*enginev1.ConsolidationRequest
+		reqs     []*silaenginev1.ConsolidationRequest
 		validate func(*testing.T, state.BeaconState)
 		wantErr  bool
 	}{
@@ -59,7 +59,7 @@ func TestProcessConsolidationRequests(t *testing.T) {
 				require.NoError(t, err)
 				return s
 			}(),
-			reqs: []*enginev1.ConsolidationRequest{nil},
+			reqs: []*silaenginev1.ConsolidationRequest{nil},
 			validate: func(t *testing.T, st state.BeaconState) {
 				require.DeepEqual(t, st, st)
 			},
@@ -89,7 +89,7 @@ func TestProcessConsolidationRequests(t *testing.T) {
 				require.NoError(t, err)
 				return s
 			}(),
-			reqs: []*enginev1.ConsolidationRequest{
+			reqs: []*silaenginev1.ConsolidationRequest{
 				// Source doesn't have withdrawal credentials.
 				{
 					SourceAddress: append(bytesutil.PadTo(nil, 19), byte(1)),
@@ -193,7 +193,7 @@ func TestProcessConsolidationRequests(t *testing.T) {
 				require.NoError(t, err)
 				return s
 			}(),
-			reqs: []*enginev1.ConsolidationRequest{
+			reqs: []*silaenginev1.ConsolidationRequest{
 				{
 					SourceAddress: append(bytesutil.PadTo(nil, 19), byte(1)),
 					SourcePubkey:  []byte("val_1"),
@@ -226,7 +226,7 @@ func TestProcessConsolidationRequests(t *testing.T) {
 				require.NoError(t, err)
 				return s
 			}(),
-			reqs: []*enginev1.ConsolidationRequest{
+			reqs: []*silaenginev1.ConsolidationRequest{
 				{
 					SourceAddress: append(bytesutil.PadTo(nil, 19), byte(1)),
 					SourcePubkey:  []byte("val_1"),
@@ -272,7 +272,7 @@ func TestProcessConsolidationRequests(t *testing.T) {
 				require.NoError(t, err)
 				return s
 			}(),
-			reqs: []*enginev1.ConsolidationRequest{
+			reqs: []*silaenginev1.ConsolidationRequest{
 				{
 					SourceAddress: append(bytesutil.PadTo(nil, 19), byte(1)),
 					SourcePubkey:  []byte("val_1"),

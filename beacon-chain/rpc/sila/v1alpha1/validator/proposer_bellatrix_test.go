@@ -23,7 +23,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -81,7 +81,7 @@ func TestServer_setExecutionData(t *testing.T) {
 	ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadCapella{BlockNumber: 1, Withdrawals: withdrawals})
 	require.NoError(t, err)
 	vs := &Server{
-		ExecutionEngineCaller: &powtesting.EngineClient{
+		SilaEngineCaller: &powtesting.SilaEngineClient{
 			GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
 			PayloadIDBytes:     id,
 		},
@@ -399,7 +399,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		elBid := primitives.Uint64ToWei(2 * 1e9)
 		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadCapella{BlockNumber: 3})
 		require.NoError(t, err)
-		vs.ExecutionEngineCaller = &powtesting.EngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, Bid: elBid}}
+		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, Bid: elBid}}
 		b := blk.Block()
 		res, err := vs.getLocalPayload(ctx, b, capellaTransitionState, false)
 		require.NoError(t, err)
@@ -426,7 +426,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		elBid := primitives.Uint64ToWei(2 * 1e9)
 		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadCapella{BlockNumber: 3})
 		require.NoError(t, err)
-		vs.ExecutionEngineCaller = &powtesting.EngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, Bid: elBid}}
+		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, Bid: elBid}}
 		b := blk.Block()
 		res, err := vs.getLocalPayload(ctx, b, capellaTransitionState, false)
 		require.NoError(t, err)
@@ -456,7 +456,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadCapella{BlockNumber: 3})
 		require.NoError(t, err)
 
-		vs.ExecutionEngineCaller = &powtesting.EngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, Bid: elBid}}
+		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, Bid: elBid}}
 		b := blk.Block()
 		res, err := vs.getLocalPayload(ctx, b, capellaTransitionState, false)
 		require.NoError(t, err)
@@ -483,7 +483,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		}
 		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadCapella{BlockNumber: 4})
 		require.NoError(t, err)
-		vs.ExecutionEngineCaller = &powtesting.EngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed}}
+		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed}}
 		b := blk.Block()
 		res, err := vs.getLocalPayload(ctx, b, capellaTransitionState, false)
 		require.NoError(t, err)
@@ -516,7 +516,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		}
 		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadDeneb{BlockNumber: 4})
 		require.NoError(t, err)
-		vs.ExecutionEngineCaller = &powtesting.EngineClient{
+		vs.SilaEngineCaller = &powtesting.SilaEngineClient{
 			PayloadIDBytes: id,
 			GetPayloadResponse: &blocks.GetPayloadResponse{
 				ExecutionData: ed,
@@ -600,7 +600,7 @@ func TestServer_setExecutionData(t *testing.T) {
 
 		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadDeneb{BlockNumber: 4, Withdrawals: withdrawals})
 		require.NoError(t, err)
-		vs.ExecutionEngineCaller = &powtesting.EngineClient{
+		vs.SilaEngineCaller = &powtesting.SilaEngineClient{
 			PayloadIDBytes:     id,
 			GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
 		}
@@ -724,7 +724,7 @@ func TestServer_setExecutionData(t *testing.T) {
 
 		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadDeneb{BlockNumber: 4, Withdrawals: withdrawals})
 		require.NoError(t, err)
-		vs.ExecutionEngineCaller = &powtesting.EngineClient{
+		vs.SilaEngineCaller = &powtesting.SilaEngineClient{
 			PayloadIDBytes:     id,
 			GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
 		}

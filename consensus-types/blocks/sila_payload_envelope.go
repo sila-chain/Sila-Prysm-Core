@@ -8,7 +8,7 @@ import (
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"google.golang.org/protobuf/proto"
 )
@@ -114,7 +114,7 @@ func (p *silaPayloadEnvelope) Execution() (interfaces.ExecutionData, error) {
 }
 
 // ExecutionRequests returns the execution requests attached to the envelope.
-func (p *silaPayloadEnvelope) ExecutionRequests() *enginev1.ExecutionRequests {
+func (p *silaPayloadEnvelope) ExecutionRequests() *silaenginev1.ExecutionRequests {
 	return silapb.CopyExecutionRequests(p.p.ExecutionRequests)
 }
 
@@ -176,7 +176,7 @@ func (p *blindedSilaPayloadEnvelope) IsBlinded() bool {
 	return true
 }
 
-func (p *blindedSilaPayloadEnvelope) ExecutionRequests() *enginev1.ExecutionRequests {
+func (p *blindedSilaPayloadEnvelope) ExecutionRequests() *silaenginev1.ExecutionRequests {
 	return silapb.CopyExecutionRequests(p.p.ExecutionRequests)
 }
 

@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -241,7 +241,7 @@ func (b *BeaconState) SetLatestBlockHash(hash [32]byte) error {
 }
 
 // SetPayloadExpectedWithdrawals stores the expected withdrawals for the next payload.
-func (b *BeaconState) SetPayloadExpectedWithdrawals(withdrawals []*enginev1.Withdrawal) error {
+func (b *BeaconState) SetPayloadExpectedWithdrawals(withdrawals []*silaenginev1.Withdrawal) error {
 	if b.version < version.Gloas {
 		return errNotSupported("SetPayloadExpectedWithdrawals", b.version)
 	}
@@ -584,7 +584,7 @@ func (b *BeaconState) SetNextWithdrawalBuilderIndex(index primitives.BuilderInde
 
 // DecreaseWithdrawalBalances applies withdrawal balance decreases for validators and builders.
 // This method holds the state lock for the full batch to avoid lock churn.
-func (b *BeaconState) DecreaseWithdrawalBalances(withdrawals []*enginev1.Withdrawal) error {
+func (b *BeaconState) DecreaseWithdrawalBalances(withdrawals []*silaenginev1.Withdrawal) error {
 	if b.version < version.Gloas {
 		return errNotSupported("DecreaseWithdrawalBalances", b.version)
 	}

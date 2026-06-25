@@ -14,7 +14,7 @@ import (
 	forkchoice2 "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/forkchoice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -80,7 +80,7 @@ func prepareGloasForkchoiceState(
 		BuilderPendingPayments:       builderPendingPayments,
 		SilaPayloadAvailability: make([]byte, 1024),
 		LatestBlockHash:              make([]byte, 32),
-		PayloadExpectedWithdrawals:   make([]*enginev1.Withdrawal, 0),
+		PayloadExpectedWithdrawals:   make([]*silaenginev1.Withdrawal, 0),
 		ProposerLookahead:            make([]primitives.ValidatorIndex, 64),
 	}
 
@@ -120,7 +120,7 @@ func prepareGloasForkchoicePayload(
 	env := &silapb.SilaPayloadEnvelope{
 		BeaconBlockRoot:       blockRoot[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
-		Payload:               &enginev1.SilaPayloadGloas{},
+		Payload:               &silaenginev1.SilaPayloadGloas{},
 	}
 	return blocks.WrappedROSilaPayloadEnvelope(env)
 }
@@ -1869,7 +1869,7 @@ func TestGasLimit_GloasEmptyNodeWalksToFullAncestor(t *testing.T) {
 	env := &silapb.SilaPayloadEnvelope{
 		BeaconBlockRoot:       rootA[:],
 		ParentBeaconBlockRoot: make([]byte, 32),
-		Payload:               &enginev1.SilaPayloadGloas{GasLimit: gl},
+		Payload:               &silaenginev1.SilaPayloadGloas{GasLimit: gl},
 	}
 	pe, err := blocks.WrappedROSilaPayloadEnvelope(env)
 	require.NoError(t, err)

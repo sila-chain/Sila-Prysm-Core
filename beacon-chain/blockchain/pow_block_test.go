@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -107,18 +107,18 @@ func Test_validateMergeBlock(t *testing.T) {
 	service, tr := minimalTestService(t)
 	ctx := tr.ctx
 
-	engine := &mocks.EngineClient{BlockByHashMap: map[[32]byte]*enginev1.ExecutionBlock{}}
-	service.cfg.ExecutionEngineCaller = engine
+	engine := &mocks.SilaEngineClient{BlockByHashMap: map[[32]byte]*silaenginev1.ExecutionBlock{}}
+	service.cfg.SilaEngineCaller = engine
 	a := [32]byte{'a'}
 	b := [32]byte{'b'}
 	mergeBlockParentHash := [32]byte{'3'}
-	engine.BlockByHashMap[a] = &enginev1.ExecutionBlock{
+	engine.BlockByHashMap[a] = &silaenginev1.ExecutionBlock{
 		Header: gethtypes.Header{
 			ParentHash: b,
 		},
 		TotalDifficulty: "0x2",
 	}
-	engine.BlockByHashMap[b] = &enginev1.ExecutionBlock{
+	engine.BlockByHashMap[b] = &silaenginev1.ExecutionBlock{
 		Header: gethtypes.Header{
 			ParentHash: mergeBlockParentHash,
 		},
@@ -128,7 +128,7 @@ func Test_validateMergeBlock(t *testing.T) {
 		Block: &silapb.BeaconBlockBellatrix{
 			Slot: 1,
 			Body: &silapb.BeaconBlockBodyBellatrix{
-				SilaPayload: &enginev1.SilaPayload{
+				SilaPayload: &silaenginev1.SilaPayload{
 					ParentHash: a[:],
 				},
 			},
@@ -149,12 +149,12 @@ func Test_getBlkParentHashAndTD(t *testing.T) {
 	service, tr := minimalTestService(t)
 	ctx := tr.ctx
 
-	engine := &mocks.EngineClient{BlockByHashMap: map[[32]byte]*enginev1.ExecutionBlock{}}
-	service.cfg.ExecutionEngineCaller = engine
+	engine := &mocks.SilaEngineClient{BlockByHashMap: map[[32]byte]*silaenginev1.ExecutionBlock{}}
+	service.cfg.SilaEngineCaller = engine
 	h := [32]byte{'a'}
 	p := [32]byte{'b'}
 	td := "0x1"
-	engine.BlockByHashMap[h] = &enginev1.ExecutionBlock{
+	engine.BlockByHashMap[h] = &silaenginev1.ExecutionBlock{
 		Header: gethtypes.Header{
 			ParentHash: p,
 		},
@@ -172,7 +172,7 @@ func Test_getBlkParentHashAndTD(t *testing.T) {
 	_, _, err = service.getBlkParentHashAndTD(ctx, h[:])
 	require.ErrorContains(t, "pow block is nil", err)
 
-	engine.BlockByHashMap[h] = &enginev1.ExecutionBlock{
+	engine.BlockByHashMap[h] = &silaenginev1.ExecutionBlock{
 		Header: gethtypes.Header{
 			ParentHash: p,
 		},
@@ -181,7 +181,7 @@ func Test_getBlkParentHashAndTD(t *testing.T) {
 	_, _, err = service.getBlkParentHashAndTD(ctx, h[:])
 	require.ErrorContains(t, "could not decode merge block total difficulty: hex string without 0x prefix", err)
 
-	engine.BlockByHashMap[h] = &enginev1.ExecutionBlock{
+	engine.BlockByHashMap[h] = &silaenginev1.ExecutionBlock{
 		Header: gethtypes.Header{
 			ParentHash: p,
 		},
@@ -192,7 +192,7 @@ func Test_getBlkParentHashAndTD(t *testing.T) {
 }
 
 func Test_validateTerminalBlockHash(t *testing.T) {
-	wrapped, err := blocks.WrappedSilaPayload(&enginev1.SilaPayload{})
+	wrapped, err := blocks.WrappedSilaPayload(&silaenginev1.SilaPayload{})
 	require.NoError(t, err)
 	ok, err := canUseValidatedTerminalBlockHash(1, wrapped)
 	require.NoError(t, err)
@@ -211,7 +211,7 @@ func Test_validateTerminalBlockHash(t *testing.T) {
 	require.ErrorContains(t, "parent hash does not match terminal block hash", err)
 	require.Equal(t, false, ok)
 
-	wrapped, err = blocks.WrappedSilaPayload(&enginev1.SilaPayload{
+	wrapped, err = blocks.WrappedSilaPayload(&silaenginev1.SilaPayload{
 		ParentHash: cfg.TerminalBlockHash.Bytes(),
 	})
 	require.NoError(t, err)

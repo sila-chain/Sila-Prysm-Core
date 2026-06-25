@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/random"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -32,7 +32,7 @@ type denebBlockGenerator struct {
 	sk       bls.SecretKey
 	proposer primitives.ValidatorIndex
 	valRoot  []byte
-	payload  *enginev1.SilaPayloadDeneb
+	payload  *silaenginev1.SilaPayloadDeneb
 }
 
 func WithProposerSigning(idx primitives.ValidatorIndex, sk bls.SecretKey, valRoot []byte) DenebBlockGeneratorOption {
@@ -51,7 +51,7 @@ func WithProposer(idx primitives.ValidatorIndex) DenebBlockGeneratorOption {
 	}
 }
 
-func WithPayloadSetter(p *enginev1.SilaPayloadDeneb) DenebBlockGeneratorOption {
+func WithPayloadSetter(p *silaenginev1.SilaPayloadDeneb) DenebBlockGeneratorOption {
 	return func(g *denebBlockGenerator) {
 		g.payload = p
 	}
@@ -95,7 +95,7 @@ func GenerateTestDenebBlockWithSidecar(t *testing.T, parent [32]byte, slot primi
 		logsBloom := bytesutil.PadTo([]byte("logs"), fieldparams.LogsBloomLength)
 		receiptsRoot := bytesutil.PadTo([]byte("receiptsRoot"), fieldparams.RootLength)
 		parentHash := bytesutil.PadTo([]byte("parentHash"), fieldparams.RootLength)
-		g.payload = &enginev1.SilaPayloadDeneb{
+		g.payload = &silaenginev1.SilaPayloadDeneb{
 			ParentHash:    parentHash,
 			FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 			StateRoot:     stateRoot,
@@ -110,7 +110,7 @@ func GenerateTestDenebBlockWithSidecar(t *testing.T, parent [32]byte, slot primi
 			BaseFeePerGas: bytesutil.PadTo([]byte("baseFeePerGas"), fieldparams.RootLength),
 			BlockHash:     blockHash[:],
 			Transactions:  encodedBinaryTxs,
-			Withdrawals:   make([]*enginev1.Withdrawal, 0),
+			Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			BlobGasUsed:   0,
 			ExcessBlobGas: 0,
 		}

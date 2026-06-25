@@ -1,4 +1,4 @@
-package enginev1
+package silaenginev1
 
 import (
 	"encoding/json"
@@ -59,7 +59,7 @@ func (v BlsSig) Bytes() []byte {
 	return v[:]
 }
 
-// PayloadIDBytes defines a custom type for Payload IDs used by the engine API
+// PayloadIDBytes defines a custom type for Payload IDs used by the SilaEngine API
 // client with proper JSON Marshal and Unmarshal methods to hex.
 type PayloadIDBytes [8]byte
 
@@ -360,14 +360,14 @@ type GetPayloadV6ResponseJson struct {
 	ExecutionRequests     []hexutil.Bytes            `json:"executionRequests"`
 }
 
-// SilaPayloadBodyV2 represents the engine API SilaPayloadBodyV2 type (Amsterdam).
+// SilaPayloadBodyV2 represents the SilaEngine API SilaPayloadBodyV2 type (Amsterdam).
 type SilaPayloadBodyV2 struct {
 	Transactions    []hexutil.Bytes `json:"transactions"`
 	Withdrawals     []*Withdrawal   `json:"withdrawals"`
 	BlockAccessList *hexutil.Bytes  `json:"blockAccessList"`
 }
 
-// SilaPayloadBody represents the engine API SilaPayloadV1 or SilaPayloadV2 type.
+// SilaPayloadBody represents the SilaEngine API SilaPayloadV1 or SilaPayloadV2 type.
 type SilaPayloadBody struct {
 	Transactions          []hexutil.Bytes          `json:"transactions"`
 	Withdrawals           []*Withdrawal            `json:"withdrawals"`
@@ -396,7 +396,7 @@ type SilaPayloadDenebJSON struct {
 	Withdrawals   []*Withdrawal   `json:"withdrawals"`
 }
 
-// WithdrawalRequestV1 represents an execution engine WithdrawalRequestV1 value
+// WithdrawalRequestV1 represents an SilaEngine WithdrawalRequestV1 value
 // https://github.com/sila-chain/Sila-Execution-APIs/blob/main/src/engine/prague.md#withdrawalrequestv1
 type WithdrawalRequestV1 struct {
 	SourceAddress   *common.Address `json:"sourceAddress"`
@@ -417,7 +417,7 @@ func (r WithdrawalRequestV1) Validate() error {
 	return nil
 }
 
-// DepositRequestV1 represents an execution engine DepositRequestV1 value
+// DepositRequestV1 represents an SilaEngine DepositRequestV1 value
 // https://github.com/sila-chain/Sila-Execution-APIs/blob/main/src/engine/prague.md#depositrequestv1
 type DepositRequestV1 struct {
 	// pubkey: DATA, 48 Bytes
@@ -451,7 +451,7 @@ func (r DepositRequestV1) Validate() error {
 	return nil
 }
 
-// ConsolidationRequestV1 represents an execution engine ConsolidationRequestV1 value
+// ConsolidationRequestV1 represents an SilaEngine ConsolidationRequestV1 value
 // https://github.com/sila-chain/Sila-Execution-APIs/blob/main/src/engine/prague.md#consolidationrequestv1
 type ConsolidationRequestV1 struct {
 	// sourceAddress: DATA, 20 Bytes

@@ -4,12 +4,12 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/proto"
 )
 
-// GetPayloadResponse represents the result of unmarshaling an execution engine
+// GetPayloadResponse represents the result of unmarshaling an SilaEngine
 // GetPayloadResponseV(1|2|3|4|5) value.
 type GetPayloadResponse struct {
 	ExecutionData   interfaces.ExecutionData

@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
@@ -38,7 +38,7 @@ var (
 
 func testEnvelope() *eth.SilaPayloadEnvelope {
 	return &eth.SilaPayloadEnvelope{
-		Payload: &enginev1.SilaPayloadGloas{
+		Payload: &silaenginev1.SilaPayloadGloas{
 			ParentHash:    make([]byte, 32),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, 32),
@@ -49,7 +49,7 @@ func testEnvelope() *eth.SilaPayloadEnvelope {
 			BlockHash:     make([]byte, 32),
 			SlotNumber:    1,
 		},
-		ExecutionRequests:     &enginev1.ExecutionRequests{},
+		ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 		BuilderIndex:          0,
 		BeaconBlockRoot:       make([]byte, 32),
 		ParentBeaconBlockRoot: make([]byte, 32),

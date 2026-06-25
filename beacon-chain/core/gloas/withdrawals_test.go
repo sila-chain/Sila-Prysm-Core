@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
@@ -46,7 +46,7 @@ func TestProcessWithdrawals(t *testing.T) {
 					numValidators:      10,
 					nextValidatorIndex: 3,
 					expectedResult: state.ExpectedWithdrawalsGloasResult{
-						Withdrawals: []*enginev1.Withdrawal{
+						Withdrawals: []*silaenginev1.Withdrawal{
 							{Index: 7, ValidatorIndex: 2, Amount: 1, Address: []byte{0x01}},
 							{Index: 8, ValidatorIndex: 4, Amount: 2, Address: []byte{0x02}},
 						},
@@ -75,9 +75,9 @@ func TestProcessWithdrawals(t *testing.T) {
 			name: "full payload uses last validator index",
 			build: func(t *testing.T) *withdrawalsState {
 				max := int(params.BeaconConfig().MaxWithdrawalsPerPayload)
-				withdrawals := make([]*enginev1.Withdrawal, max)
+				withdrawals := make([]*silaenginev1.Withdrawal, max)
 				for i := range max {
-					withdrawals[i] = &enginev1.Withdrawal{
+					withdrawals[i] = &silaenginev1.Withdrawal{
 						Index:          uint64(i),
 						ValidatorIndex: 0,
 						Amount:         1,
@@ -112,7 +112,7 @@ func TestProcessWithdrawals(t *testing.T) {
 					parentFull:    true,
 					numValidators: 8,
 					expectedResult: state.ExpectedWithdrawalsGloasResult{
-						Withdrawals:                      []*enginev1.Withdrawal{},
+						Withdrawals:                      []*silaenginev1.Withdrawal{},
 						ProcessedBuilderWithdrawalsCount: 1,
 						ProcessedPartialWithdrawalsCount: 2,
 						NextWithdrawalBuilderIndex:       4,
@@ -149,7 +149,7 @@ func TestProcessWithdrawals_ErrorPaths(t *testing.T) {
 			parentFull:    true,
 			numValidators: 16,
 			expectedResult: state.ExpectedWithdrawalsGloasResult{
-				Withdrawals: []*enginev1.Withdrawal{
+				Withdrawals: []*silaenginev1.Withdrawal{
 					{Index: 1, ValidatorIndex: 2, Amount: 1, Address: []byte{0x01}},
 				},
 				ProcessedBuilderWithdrawalsCount: 1,
@@ -318,7 +318,7 @@ type withdrawalsState struct {
 	expectedErr                      error
 	parentErr                        error
 	setNextWithdrawalIndexErr        error
-	setPayloadExpectedWithdrawalsArg []*enginev1.Withdrawal
+	setPayloadExpectedWithdrawalsArg []*silaenginev1.Withdrawal
 	expectedResult                   state.ExpectedWithdrawalsGloasResult
 }
 
@@ -334,7 +334,7 @@ func (w *withdrawalsState) ExpectedWithdrawalsGloas() (state.ExpectedWithdrawals
 	return w.expectedResult, nil
 }
 
-func (w *withdrawalsState) DecreaseWithdrawalBalances(_ []*enginev1.Withdrawal) error {
+func (w *withdrawalsState) DecreaseWithdrawalBalances(_ []*silaenginev1.Withdrawal) error {
 	w.decreaseCalled = true
 	return w.decreaseErr
 }
@@ -345,7 +345,7 @@ func (w *withdrawalsState) SetNextWithdrawalIndex(index uint64) error {
 	return w.setNextWithdrawalIndexErr
 }
 
-func (w *withdrawalsState) SetPayloadExpectedWithdrawals(withdrawals []*enginev1.Withdrawal) error {
+func (w *withdrawalsState) SetPayloadExpectedWithdrawals(withdrawals []*silaenginev1.Withdrawal) error {
 	w.setPayloadExpectedWithdrawalsCalled = true
 	w.setPayloadExpectedWithdrawalsArg = withdrawals
 	return w.setPayloadExpectedWithdrawalsErr

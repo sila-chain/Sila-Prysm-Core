@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -221,7 +221,7 @@ func (s *Service) postPayloadTasks(ctx context.Context, envelope interfaces.ROSi
 	return nil
 }
 
-func (s *Service) prefetchDepositSignatures(requests *enginev1.ExecutionRequests) {
+func (s *Service) prefetchDepositSignatures(requests *silaenginev1.ExecutionRequests) {
 	invalidIdx, err := helpers.BatchVerifyDepositRequestSignatures(s.ctx, requests.Deposits)
 	if err != nil {
 		log.WithError(err).Debug("Could not batch verify deposit signatures for prefetch")
@@ -261,10 +261,10 @@ func (s *Service) callNewPayload(
 	payload interfaces.ExecutionData,
 	versionedHashes []common.Hash,
 	parentRoot common.Hash,
-	requests *enginev1.ExecutionRequests,
+	requests *silaenginev1.ExecutionRequests,
 	slot primitives.Slot,
 ) (bool, error) {
-	_, err := s.cfg.ExecutionEngineCaller.NewPayload(ctx, payload, versionedHashes, &parentRoot, requests)
+	_, err := s.cfg.SilaEngineCaller.NewPayload(ctx, payload, versionedHashes, &parentRoot, requests)
 	if err == nil {
 		return true, nil
 	}
@@ -278,7 +278,7 @@ func (s *Service) callNewPayload(
 	if errors.Is(err, execution.ErrInvalidPayloadStatus) {
 		return false, invalidBlock{error: ErrInvalidPayload}
 	}
-	return false, errors.WithMessage(ErrUndefinedExecutionEngineError, err.Error())
+	return false, errors.WithMessage(ErrUndefinedSilaEngineError, err.Error())
 }
 
 func (s *Service) notifyNewEnvelopeFromBlock(ctx context.Context, b blocks.ROBlock, envelope interfaces.ROSilaPayloadEnvelope) (bool, error) {
@@ -371,7 +371,7 @@ func (s *Service) PayloadEarly(root [32]byte) (bool, bool) {
 
 // notifyForkchoiceUpdateGloas takes the block hash directly because Gloas
 // blocks don't carry an sila payload in the body.
-func (s *Service) notifyForkchoiceUpdateGloas(ctx context.Context, blockHash [32]byte, attributes payloadattribute.Attributer) (*enginev1.PayloadIDBytes, error) {
+func (s *Service) notifyForkchoiceUpdateGloas(ctx context.Context, blockHash [32]byte, attributes payloadattribute.Attributer) (*silaenginev1.PayloadIDBytes, error) {
 	ctx, span := trace.StartSpan(ctx, "blockChain.notifyForkchoiceUpdateGloas")
 	defer span.End()
 
@@ -379,7 +379,7 @@ func (s *Service) notifyForkchoiceUpdateGloas(ctx context.Context, blockHash [32
 	finalizedHash := s.cfg.ForkChoiceStore.FinalizedPayloadBlockHash()
 	justifiedHash := s.cfg.ForkChoiceStore.UnrealizedJustifiedPayloadBlockHash()
 	s.cfg.ForkChoiceStore.RUnlock()
-	fcs := &enginev1.ForkchoiceState{
+	fcs := &silaenginev1.ForkchoiceState{
 		HeadBlockHash:      blockHash[:],
 		SafeBlockHash:      justifiedHash[:],
 		FinalizedBlockHash: finalizedHash[:],
@@ -388,7 +388,7 @@ func (s *Service) notifyForkchoiceUpdateGloas(ctx context.Context, blockHash [32
 		attributes = payloadattribute.EmptyWithVersion(version.Gloas)
 	}
 
-	payloadID, lastValidHash, err := s.cfg.ExecutionEngineCaller.ForkchoiceUpdated(ctx, fcs, attributes)
+	payloadID, lastValidHash, err := s.cfg.SilaEngineCaller.ForkchoiceUpdated(ctx, fcs, attributes)
 	if err == nil {
 		return payloadID, nil
 	}
@@ -409,7 +409,7 @@ func (s *Service) notifyForkchoiceUpdateGloas(ctx context.Context, blockHash [32
 			lastValidHash: bytesutil.ToBytes32(lastValidHash),
 		}
 	default:
-		log.WithError(err).Error(ErrUndefinedExecutionEngineError)
+		log.WithError(err).Error(ErrUndefinedSilaEngineError)
 		return nil, nil
 	}
 }

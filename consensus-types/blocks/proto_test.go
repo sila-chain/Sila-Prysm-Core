@@ -7,7 +7,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
@@ -25,15 +25,15 @@ type fields struct {
 	attesterSlashingsElectra []*eth.AttesterSlashingElectra
 	voluntaryExits           []*eth.SignedVoluntaryExit
 	syncAggregate            *eth.SyncAggregate
-	execPayload              *enginev1.SilaPayload
-	execPayloadHeader        *enginev1.SilaPayloadHeader
-	execPayloadCapella       *enginev1.SilaPayloadCapella
-	execPayloadHeaderCapella *enginev1.SilaPayloadHeaderCapella
-	execPayloadDeneb         *enginev1.SilaPayloadDeneb
-	execPayloadHeaderDeneb   *enginev1.SilaPayloadHeaderDeneb
+	execPayload              *silaenginev1.SilaPayload
+	execPayloadHeader        *silaenginev1.SilaPayloadHeader
+	execPayloadCapella       *silaenginev1.SilaPayloadCapella
+	execPayloadHeaderCapella *silaenginev1.SilaPayloadHeaderCapella
+	execPayloadDeneb         *silaenginev1.SilaPayloadDeneb
+	execPayloadHeaderDeneb   *silaenginev1.SilaPayloadHeaderDeneb
 	blsToExecutionChanges    []*eth.SignedBLSToExecutionChange
 	kzgCommitments           [][]byte
-	execRequests             *enginev1.ExecutionRequests
+	execRequests             *silaenginev1.ExecutionRequests
 }
 
 func Test_SignedBeaconBlock_Proto(t *testing.T) {
@@ -2024,7 +2024,7 @@ func getFields() fields {
 		SyncCommitteeBits:      syncCommitteeBits,
 		SyncCommitteeSignature: sig[:],
 	}
-	execPayload := &enginev1.SilaPayload{
+	execPayload := &silaenginev1.SilaPayload{
 		ParentHash:    root[:],
 		FeeRecipient:  b20,
 		StateRoot:     root[:],
@@ -2044,7 +2044,7 @@ func getFields() fields {
 			[]byte("transaction8"),
 		},
 	}
-	execPayloadHeader := &enginev1.SilaPayloadHeader{
+	execPayloadHeader := &silaenginev1.SilaPayloadHeader{
 		ParentHash:       root[:],
 		FeeRecipient:     b20,
 		StateRoot:        root[:],
@@ -2060,7 +2060,7 @@ func getFields() fields {
 		BlockHash:        root[:],
 		TransactionsRoot: root[:],
 	}
-	execPayloadCapella := &enginev1.SilaPayloadCapella{
+	execPayloadCapella := &silaenginev1.SilaPayloadCapella{
 		ParentHash:    root[:],
 		FeeRecipient:  b20,
 		StateRoot:     root[:],
@@ -2079,7 +2079,7 @@ func getFields() fields {
 			[]byte("transaction2"),
 			[]byte("transaction8"),
 		},
-		Withdrawals: []*enginev1.Withdrawal{
+		Withdrawals: []*silaenginev1.Withdrawal{
 			{
 				Index:   128,
 				Address: b20,
@@ -2087,7 +2087,7 @@ func getFields() fields {
 			},
 		},
 	}
-	execPayloadHeaderCapella := &enginev1.SilaPayloadHeaderCapella{
+	execPayloadHeaderCapella := &silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       root[:],
 		FeeRecipient:     b20,
 		StateRoot:        root[:],
@@ -2113,7 +2113,7 @@ func getFields() fields {
 		Signature: sig[:],
 	}}
 
-	execPayloadDeneb := &enginev1.SilaPayloadDeneb{
+	execPayloadDeneb := &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    root[:],
 		FeeRecipient:  b20,
 		StateRoot:     root[:],
@@ -2132,7 +2132,7 @@ func getFields() fields {
 			[]byte("transaction2"),
 			[]byte("transaction8"),
 		},
-		Withdrawals: []*enginev1.Withdrawal{
+		Withdrawals: []*silaenginev1.Withdrawal{
 			{
 				Index:   128,
 				Address: b20,
@@ -2142,7 +2142,7 @@ func getFields() fields {
 		BlobGasUsed:   128,
 		ExcessBlobGas: 128,
 	}
-	execPayloadHeaderDeneb := &enginev1.SilaPayloadHeaderDeneb{
+	execPayloadHeaderDeneb := &silaenginev1.SilaPayloadHeaderDeneb{
 		ParentHash:       root[:],
 		FeeRecipient:     b20,
 		StateRoot:        root[:],
@@ -2169,20 +2169,20 @@ func getFields() fields {
 		bytesutil.PadTo([]byte{143}, 48),
 	}
 
-	execRequests := &enginev1.ExecutionRequests{
-		Deposits: []*enginev1.DepositRequest{{
+	execRequests := &silaenginev1.ExecutionRequests{
+		Deposits: []*silaenginev1.DepositRequest{{
 			Pubkey:                b48,
 			WithdrawalCredentials: root[:],
 			Amount:                128,
 			Signature:             sig[:],
 			Index:                 128,
 		}},
-		Withdrawals: []*enginev1.WithdrawalRequest{{
+		Withdrawals: []*silaenginev1.WithdrawalRequest{{
 			SourceAddress:   b20,
 			ValidatorPubkey: b48,
 			Amount:          128,
 		}},
-		Consolidations: []*enginev1.ConsolidationRequest{{
+		Consolidations: []*silaenginev1.ConsolidationRequest{{
 			SourceAddress: b20,
 			SourcePubkey:  b48,
 			TargetPubkey:  b48,

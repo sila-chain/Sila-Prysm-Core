@@ -8,7 +8,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -269,7 +269,7 @@ func TestWithdrawalsMatchPayloadExpected(t *testing.T) {
 	})
 
 	t.Run("returns true when roots match", func(t *testing.T) {
-		withdrawals := []*enginev1.Withdrawal{
+		withdrawals := []*silaenginev1.Withdrawal{
 			{Index: 0, ValidatorIndex: 1, Address: bytes.Repeat([]byte{0x01}, 20), Amount: 10},
 		}
 		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
@@ -283,10 +283,10 @@ func TestWithdrawalsMatchPayloadExpected(t *testing.T) {
 	})
 
 	t.Run("returns false when roots do not match", func(t *testing.T) {
-		expected := []*enginev1.Withdrawal{
+		expected := []*silaenginev1.Withdrawal{
 			{Index: 0, ValidatorIndex: 1, Address: bytes.Repeat([]byte{0x01}, 20), Amount: 10},
 		}
-		actual := []*enginev1.Withdrawal{
+		actual := []*silaenginev1.Withdrawal{
 			{Index: 0, ValidatorIndex: 1, Address: bytes.Repeat([]byte{0x01}, 20), Amount: 11},
 		}
 
@@ -621,7 +621,7 @@ func TestAppendBuilderWithdrawals(t *testing.T) {
 	t.Run("errors when prior withdrawals exceed limit", func(t *testing.T) {
 		st := &BeaconState{}
 		limit := params.BeaconConfig().MaxWithdrawalsPerPayload - 1
-		withdrawals := make([]*enginev1.Withdrawal, limit+1)
+		withdrawals := make([]*silaenginev1.Withdrawal, limit+1)
 
 		nextIndex, processed, err := st.appendBuilderWithdrawals(5, &withdrawals)
 		require.ErrorContains(t, "exceeds limit", err)
@@ -638,7 +638,7 @@ func TestAppendBuilderWithdrawals(t *testing.T) {
 				{BuilderIndex: 3, FeeRecipient: []byte{0x03}, Amount: 33},
 			},
 		}
-		withdrawals := []*enginev1.Withdrawal{
+		withdrawals := []*silaenginev1.Withdrawal{
 			{Index: 7, ValidatorIndex: 9, Address: []byte{0xAA}, Amount: 99},
 		}
 
@@ -648,19 +648,19 @@ func TestAppendBuilderWithdrawals(t *testing.T) {
 		require.Equal(t, uint64(3), processed)
 		require.Equal(t, 4, len(withdrawals))
 
-		require.DeepEqual(t, &enginev1.Withdrawal{
+		require.DeepEqual(t, &silaenginev1.Withdrawal{
 			Index:          10,
 			ValidatorIndex: primitives.BuilderIndex(1).ToValidatorIndex(),
 			Address:        []byte{0x01},
 			Amount:         11,
 		}, withdrawals[1])
-		require.DeepEqual(t, &enginev1.Withdrawal{
+		require.DeepEqual(t, &silaenginev1.Withdrawal{
 			Index:          11,
 			ValidatorIndex: primitives.BuilderIndex(2).ToValidatorIndex(),
 			Address:        []byte{0x02},
 			Amount:         22,
 		}, withdrawals[2])
-		require.DeepEqual(t, &enginev1.Withdrawal{
+		require.DeepEqual(t, &silaenginev1.Withdrawal{
 			Index:          12,
 			ValidatorIndex: primitives.BuilderIndex(3).ToValidatorIndex(),
 			Address:        []byte{0x03},
@@ -676,14 +676,14 @@ func TestAppendBuilderWithdrawals(t *testing.T) {
 				{BuilderIndex: 5, FeeRecipient: []byte{0x05}, Amount: 55},
 			},
 		}
-		withdrawals := make([]*enginev1.Withdrawal, limit-1)
+		withdrawals := make([]*silaenginev1.Withdrawal, limit-1)
 
 		nextIndex, processed, err := st.appendBuilderWithdrawals(20, &withdrawals)
 		require.NoError(t, err)
 		require.Equal(t, uint64(21), nextIndex)
 		require.Equal(t, uint64(1), processed)
 		require.Equal(t, int(limit), len(withdrawals))
-		require.DeepEqual(t, &enginev1.Withdrawal{
+		require.DeepEqual(t, &silaenginev1.Withdrawal{
 			Index:          20,
 			ValidatorIndex: primitives.BuilderIndex(4).ToValidatorIndex(),
 			Address:        []byte{0x04},
@@ -701,7 +701,7 @@ func TestAppendBuilderWithdrawals(t *testing.T) {
 				{BuilderIndex: 6, FeeRecipient: []byte{0x06}, Amount: 66},
 			},
 		}
-		withdrawals := make([]*enginev1.Withdrawal, limit)
+		withdrawals := make([]*silaenginev1.Withdrawal, limit)
 
 		nextIndex, processed, err := st.appendBuilderWithdrawals(30, &withdrawals)
 		require.NoError(t, err)
@@ -715,7 +715,7 @@ func TestAppendBuildersSweepWithdrawals(t *testing.T) {
 	t.Run("errors when prior withdrawals exceed limit", func(t *testing.T) {
 		st := &BeaconState{}
 		limit := params.BeaconConfig().MaxWithdrawalsPerPayload - 1
-		withdrawals := make([]*enginev1.Withdrawal, limit+1)
+		withdrawals := make([]*silaenginev1.Withdrawal, limit+1)
 
 		nextIndex, nextBuilderIndex, err := st.appendBuildersSweepWithdrawals(5, &withdrawals)
 		require.ErrorContains(t, "exceeds limit", err)
@@ -729,7 +729,7 @@ func TestAppendBuildersSweepWithdrawals(t *testing.T) {
 			nextWithdrawalBuilderIndex: 3,
 			builders:                   nil,
 		}
-		withdrawals := []*enginev1.Withdrawal{}
+		withdrawals := []*silaenginev1.Withdrawal{}
 
 		nextIndex, nextBuilderIndex, err := st.appendBuildersSweepWithdrawals(5, &withdrawals)
 		require.NoError(t, err)
@@ -749,14 +749,14 @@ func TestAppendBuildersSweepWithdrawals(t *testing.T) {
 				{ExecutionAddress: []byte{0x03}, Balance: 20, WithdrawableEpoch: epoch},
 			},
 		}
-		withdrawals := []*enginev1.Withdrawal{}
+		withdrawals := []*silaenginev1.Withdrawal{}
 
 		nextIndex, nextBuilderIndex, err := st.appendBuildersSweepWithdrawals(100, &withdrawals)
 		require.NoError(t, err)
 		require.Equal(t, uint64(101), nextIndex)
 		require.Equal(t, primitives.BuilderIndex(2), nextBuilderIndex)
 		require.Equal(t, 1, len(withdrawals))
-		require.DeepEqual(t, &enginev1.Withdrawal{
+		require.DeepEqual(t, &silaenginev1.Withdrawal{
 			Index:          100,
 			ValidatorIndex: primitives.BuilderIndex(2).ToValidatorIndex(),
 			Address:        []byte{0x03},
@@ -782,7 +782,7 @@ func TestAppendBuildersSweepWithdrawals(t *testing.T) {
 			nextWithdrawalBuilderIndex: primitives.BuilderIndex(start),
 			builders:                   builders,
 		}
-		withdrawals := []*enginev1.Withdrawal{}
+		withdrawals := []*silaenginev1.Withdrawal{}
 
 		nextIndex, nextBuilderIndex, err := st.appendBuildersSweepWithdrawals(7, &withdrawals)
 		require.NoError(t, err)
@@ -810,7 +810,7 @@ func TestAppendBuildersSweepWithdrawals(t *testing.T) {
 			nextWithdrawalBuilderIndex: 0,
 			builders:                   builders,
 		}
-		withdrawals := make([]*enginev1.Withdrawal, limit)
+		withdrawals := make([]*silaenginev1.Withdrawal, limit)
 
 		nextIndex, nextBuilderIndex, err := st.appendBuildersSweepWithdrawals(20, &withdrawals)
 		require.NoError(t, err)
@@ -922,14 +922,14 @@ func TestPayloadExpectedWithdrawals(t *testing.T) {
 	})
 
 	t.Run("returns copy", func(t *testing.T) {
-		original := enginev1.Withdrawal{
+		original := silaenginev1.Withdrawal{
 			Index:          1,
 			ValidatorIndex: 2,
 			Address:        bytes.Repeat([]byte{0x01}, 20),
 			Amount:         10,
 		}
 		st, err := InitializeFromProtoGloas(&silapb.BeaconStateGloas{
-			PayloadExpectedWithdrawals: []*enginev1.Withdrawal{&original},
+			PayloadExpectedWithdrawals: []*silaenginev1.Withdrawal{&original},
 		})
 		require.NoError(t, err)
 
@@ -952,7 +952,7 @@ func TestWithdrawalsForPayload(t *testing.T) {
 	})
 
 	t.Run("returns existing withdrawals when parent empty", func(t *testing.T) {
-		existing := []*enginev1.Withdrawal{
+		existing := []*silaenginev1.Withdrawal{
 			{Index: 5, ValidatorIndex: 10, Address: bytes.Repeat([]byte{0x26}, 20), Amount: 100},
 		}
 		// Parent is empty: bid block hash differs from latest block hash.
@@ -972,7 +972,7 @@ func TestWithdrawalsForPayload(t *testing.T) {
 
 	t.Run("computes fresh withdrawals when parent full", func(t *testing.T) {
 		hash := bytes.Repeat([]byte{0xAB}, 32)
-		stale := []*enginev1.Withdrawal{
+		stale := []*silaenginev1.Withdrawal{
 			{Index: 1, ValidatorIndex: 2, Address: bytes.Repeat([]byte{0x01}, 20), Amount: 999},
 		}
 		// Parent is full: bid block hash == latest block hash.

@@ -114,7 +114,7 @@
 
 - name: CONSOLIDATION_REQUEST_TYPE#electra
   sources:
-    - file: proto/engine/v1/electra.go
+    - file: proto/silaengine/v1/electra.go
       search: ConsolidationRequestType\s*$
       regex: true
   spec: |
@@ -134,7 +134,7 @@
 
 - name: DEPOSIT_REQUEST_TYPE#electra
   sources:
-    - file: proto/engine/v1/electra.go
+    - file: proto/silaengine/v1/electra.go
       search: DepositRequestType\s*=\s*iota
       regex: true
   spec: |
@@ -713,7 +713,7 @@
 
 - name: WITHDRAWAL_REQUEST_TYPE#electra
   sources:
-    - file: proto/engine/v1/electra.go
+    - file: proto/silaengine/v1/electra.go
       search: WithdrawalRequestType\s*$
       regex: true
   spec: |

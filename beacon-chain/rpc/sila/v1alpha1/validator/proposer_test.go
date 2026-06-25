@@ -42,7 +42,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation"
 	attaggregation "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/attestation/aggregation/attestations"
@@ -242,7 +242,7 @@ func TestServer_GetBeaconBlock_Bellatrix(t *testing.T) {
 				Graffiti:      genesis.Block.Body.Graffiti,
 				SilaExecutionData:      genesis.Block.Body.SilaExecutionData,
 				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
-				SilaPayload: &enginev1.SilaPayload{
+				SilaPayload: &silaenginev1.SilaPayload{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 					StateRoot:     make([]byte, fieldparams.RootLength),
@@ -269,7 +269,7 @@ func TestServer_GetBeaconBlock_Bellatrix(t *testing.T) {
 	timeStamp, err := slots.StartTime(beaconState.GenesisTime(), bellatrixSlot+1)
 	require.NoError(t, err)
 
-	payload := &enginev1.SilaPayload{
+	payload := &silaenginev1.SilaPayload{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     make([]byte, fieldparams.RootLength),
@@ -290,8 +290,8 @@ func TestServer_GetBeaconBlock_Bellatrix(t *testing.T) {
 	proposerServer.SilaExecutionBlockFetcher = c
 	ed, err := blocks.NewWrappedExecutionData(payload)
 	require.NoError(t, err)
-	proposerServer.ExecutionEngineCaller = &mockExecution.EngineClient{
-		PayloadIDBytes:     &enginev1.PayloadIDBytes{1},
+	proposerServer.SilaEngineCaller = &mockExecution.SilaEngineClient{
+		PayloadIDBytes:     &silaenginev1.PayloadIDBytes{1},
 		GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
 	}
 
@@ -367,7 +367,7 @@ func TestServer_GetBeaconBlock_Capella(t *testing.T) {
 				Graffiti:      genesis.Block.Body.Graffiti,
 				SilaExecutionData:      genesis.Block.Body.SilaExecutionData,
 				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
-				SilaPayload: &enginev1.SilaPayloadCapella{
+				SilaPayload: &silaenginev1.SilaPayloadCapella{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 					StateRoot:     make([]byte, fieldparams.RootLength),
@@ -378,7 +378,7 @@ func TestServer_GetBeaconBlock_Capella(t *testing.T) {
 					BaseFeePerGas: make([]byte, fieldparams.RootLength),
 					BlockHash:     make([]byte, fieldparams.RootLength),
 					Transactions:  make([][]byte, 0),
-					Withdrawals:   make([]*enginev1.Withdrawal, 0),
+					Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 				},
 			},
 		},
@@ -394,7 +394,7 @@ func TestServer_GetBeaconBlock_Capella(t *testing.T) {
 	require.NoError(t, err)
 	timeStamp, err := slots.StartTime(beaconState.GenesisTime(), capellaSlot+1)
 	require.NoError(t, err)
-	payload := &enginev1.SilaPayloadCapella{
+	payload := &silaenginev1.SilaPayloadCapella{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     make([]byte, fieldparams.RootLength),
@@ -409,7 +409,7 @@ func TestServer_GetBeaconBlock_Capella(t *testing.T) {
 		BaseFeePerGas: make([]byte, fieldparams.RootLength),
 		BlockHash:     make([]byte, fieldparams.RootLength),
 		Transactions:  make([][]byte, 0),
-		Withdrawals:   make([]*enginev1.Withdrawal, 0),
+		Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 	}
 
 	proposerServer := getProposerServer(ctx, db, beaconState, parentRoot[:])
@@ -423,8 +423,8 @@ func TestServer_GetBeaconBlock_Capella(t *testing.T) {
 	}
 	ed, err := blocks.NewWrappedExecutionData(payload)
 	require.NoError(t, err)
-	proposerServer.ExecutionEngineCaller = &mockExecution.EngineClient{
-		PayloadIDBytes:     &enginev1.PayloadIDBytes{1},
+	proposerServer.SilaEngineCaller = &mockExecution.SilaEngineClient{
+		PayloadIDBytes:     &silaenginev1.PayloadIDBytes{1},
 		GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
 	}
 
@@ -491,7 +491,7 @@ func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
 				Graffiti:      genesis.Block.Body.Graffiti,
 				SilaExecutionData:      genesis.Block.Body.SilaExecutionData,
 				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
-				SilaPayload: &enginev1.SilaPayloadDeneb{
+				SilaPayload: &silaenginev1.SilaPayloadDeneb{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 					StateRoot:     make([]byte, fieldparams.RootLength),
@@ -515,7 +515,7 @@ func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
 	require.NoError(t, err)
 	timeStamp, err := slots.StartTime(beaconState.GenesisTime(), denebSlot+1)
 	require.NoError(t, err)
-	payload := &enginev1.SilaPayloadDeneb{
+	payload := &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     make([]byte, fieldparams.RootLength),
@@ -542,7 +542,7 @@ func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
 	kc = append(kc, bytesutil.PadTo([]byte("kc2"), 48))
 	proofs := [][]byte{[]byte("proof"), []byte("proof1"), []byte("proof2")}
 	blobs := [][]byte{[]byte("blob"), []byte("blob1"), []byte("blob2")}
-	bundle := &enginev1.BlobsBundle{KzgCommitments: kc, Proofs: proofs, Blobs: blobs}
+	bundle := &silaenginev1.BlobsBundle{KzgCommitments: kc, Proofs: proofs, Blobs: blobs}
 	proposerServer := getProposerServer(ctx, db, beaconState, parentRoot[:])
 	advancedState := beaconState.Copy()
 	advancedState, err = transition.ProcessSlots(ctx, advancedState, denebSlot)
@@ -552,8 +552,8 @@ func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
 		Root:            parentRoot[:],
 		ForkChoiceStore: doublylinkedtree.New(),
 	}
-	proposerServer.ExecutionEngineCaller = &mockExecution.EngineClient{
-		PayloadIDBytes: &enginev1.PayloadIDBytes{1},
+	proposerServer.SilaEngineCaller = &mockExecution.SilaEngineClient{
+		PayloadIDBytes: &silaenginev1.PayloadIDBytes{1},
 		GetPayloadResponse: &blocks.GetPayloadResponse{
 			ExecutionData: ed,
 			BlobsBundler:  bundle,
@@ -613,21 +613,21 @@ func TestServer_GetBeaconBlock_Electra(t *testing.T) {
 	require.NoError(t, err)
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
-	dr := []*enginev1.DepositRequest{{
+	dr := []*silaenginev1.DepositRequest{{
 		Pubkey:                bytesutil.PadTo(privKeys[0].PublicKey().Marshal(), 48),
 		WithdrawalCredentials: bytesutil.PadTo([]byte("wc"), 32),
 		Amount:                123,
 		Signature:             bytesutil.PadTo([]byte("sig"), 96),
 		Index:                 456,
 	}}
-	wr := []*enginev1.WithdrawalRequest{
+	wr := []*silaenginev1.WithdrawalRequest{
 		{
 			SourceAddress:   bytesutil.PadTo([]byte("sa"), 20),
 			ValidatorPubkey: bytesutil.PadTo(privKeys[1].PublicKey().Marshal(), 48),
 			Amount:          789,
 		},
 	}
-	cr := []*enginev1.ConsolidationRequest{
+	cr := []*silaenginev1.ConsolidationRequest{
 		{
 			SourceAddress: bytesutil.PadTo([]byte("sa"), 20),
 			SourcePubkey:  bytesutil.PadTo(privKeys[1].PublicKey().Marshal(), 48),
@@ -644,7 +644,7 @@ func TestServer_GetBeaconBlock_Electra(t *testing.T) {
 				Graffiti:      genesis.Block.Body.Graffiti,
 				SilaExecutionData:      genesis.Block.Body.SilaExecutionData,
 				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
-				SilaPayload: &enginev1.SilaPayloadDeneb{
+				SilaPayload: &silaenginev1.SilaPayloadDeneb{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 					StateRoot:     make([]byte, fieldparams.RootLength),
@@ -654,7 +654,7 @@ func TestServer_GetBeaconBlock_Electra(t *testing.T) {
 					BaseFeePerGas: make([]byte, fieldparams.RootLength),
 					BlockHash:     make([]byte, fieldparams.RootLength),
 				},
-				ExecutionRequests: &enginev1.ExecutionRequests{
+				ExecutionRequests: &silaenginev1.ExecutionRequests{
 					Withdrawals:    wr,
 					Deposits:       dr,
 					Consolidations: cr,
@@ -673,7 +673,7 @@ func TestServer_GetBeaconBlock_Electra(t *testing.T) {
 	require.NoError(t, err)
 	timeStamp, err := slots.StartTime(beaconState.GenesisTime(), electraSlot+1)
 	require.NoError(t, err)
-	payload := &enginev1.SilaPayloadDeneb{
+	payload := &silaenginev1.SilaPayloadDeneb{
 		Timestamp:     uint64(timeStamp.Unix()),
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
@@ -695,9 +695,9 @@ func TestServer_GetBeaconBlock_Electra(t *testing.T) {
 	}
 	ed, err := blocks.NewWrappedExecutionData(payload)
 	require.NoError(t, err)
-	proposerServer.ExecutionEngineCaller = &mockExecution.EngineClient{
-		PayloadIDBytes: &enginev1.PayloadIDBytes{1},
-		GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, ExecutionRequests: &enginev1.ExecutionRequests{
+	proposerServer.SilaEngineCaller = &mockExecution.SilaEngineClient{
+		PayloadIDBytes: &silaenginev1.PayloadIDBytes{1},
+		GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, ExecutionRequests: &silaenginev1.ExecutionRequests{
 			Withdrawals:    wr,
 			Deposits:       dr,
 			Consolidations: cr,
@@ -750,21 +750,21 @@ func TestServer_GetBeaconBlock_Fulu(t *testing.T) {
 	require.NoError(t, err)
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
-	dr := []*enginev1.DepositRequest{{
+	dr := []*silaenginev1.DepositRequest{{
 		Pubkey:                bytesutil.PadTo(privKeys[0].PublicKey().Marshal(), 48),
 		WithdrawalCredentials: bytesutil.PadTo([]byte("wc"), 32),
 		Amount:                123,
 		Signature:             bytesutil.PadTo([]byte("sig"), 96),
 		Index:                 456,
 	}}
-	wr := []*enginev1.WithdrawalRequest{
+	wr := []*silaenginev1.WithdrawalRequest{
 		{
 			SourceAddress:   bytesutil.PadTo([]byte("sa"), 20),
 			ValidatorPubkey: bytesutil.PadTo(privKeys[1].PublicKey().Marshal(), 48),
 			Amount:          789,
 		},
 	}
-	cr := []*enginev1.ConsolidationRequest{
+	cr := []*silaenginev1.ConsolidationRequest{
 		{
 			SourceAddress: bytesutil.PadTo([]byte("sa"), 20),
 			SourcePubkey:  bytesutil.PadTo(privKeys[1].PublicKey().Marshal(), 48),
@@ -781,7 +781,7 @@ func TestServer_GetBeaconBlock_Fulu(t *testing.T) {
 				Graffiti:      genesis.Block.Body.Graffiti,
 				SilaExecutionData:      genesis.Block.Body.SilaExecutionData,
 				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
-				SilaPayload: &enginev1.SilaPayloadDeneb{
+				SilaPayload: &silaenginev1.SilaPayloadDeneb{
 					ParentHash:    make([]byte, fieldparams.RootLength),
 					FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 					StateRoot:     make([]byte, fieldparams.RootLength),
@@ -791,7 +791,7 @@ func TestServer_GetBeaconBlock_Fulu(t *testing.T) {
 					BaseFeePerGas: make([]byte, fieldparams.RootLength),
 					BlockHash:     make([]byte, fieldparams.RootLength),
 				},
-				ExecutionRequests: &enginev1.ExecutionRequests{
+				ExecutionRequests: &silaenginev1.ExecutionRequests{
 					Withdrawals:    wr,
 					Deposits:       dr,
 					Consolidations: cr,
@@ -810,7 +810,7 @@ func TestServer_GetBeaconBlock_Fulu(t *testing.T) {
 	require.NoError(t, err)
 	timeStamp, err := slots.StartTime(beaconState.GenesisTime(), fuluSlot+1)
 	require.NoError(t, err)
-	payload := &enginev1.SilaPayloadDeneb{
+	payload := &silaenginev1.SilaPayloadDeneb{
 		Timestamp:     uint64(timeStamp.Unix()),
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
@@ -832,9 +832,9 @@ func TestServer_GetBeaconBlock_Fulu(t *testing.T) {
 	}
 	ed, err := blocks.NewWrappedExecutionData(payload)
 	require.NoError(t, err)
-	proposerServer.ExecutionEngineCaller = &mockExecution.EngineClient{
-		PayloadIDBytes: &enginev1.PayloadIDBytes{1},
-		GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, ExecutionRequests: &enginev1.ExecutionRequests{
+	proposerServer.SilaEngineCaller = &mockExecution.SilaEngineClient{
+		PayloadIDBytes: &silaenginev1.PayloadIDBytes{1},
+		GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, ExecutionRequests: &silaenginev1.ExecutionRequests{
 			Withdrawals:    wr,
 			Deposits:       dr,
 			Consolidations: cr,
@@ -984,7 +984,7 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				blockToPropose.Block.ParentRoot = parent[:]
 				txRoot, err := ssz.TransactionsRoot([][]byte{})
 				require.NoError(t, err)
-				withdrawalsRoot, err := ssz.WithdrawalSliceRoot([]*enginev1.Withdrawal{}, fieldparams.MaxWithdrawalsPerPayload)
+				withdrawalsRoot, err := ssz.WithdrawalSliceRoot([]*silaenginev1.Withdrawal{}, fieldparams.MaxWithdrawalsPerPayload)
 				require.NoError(t, err)
 				blockToPropose.Block.Body.SilaPayloadHeader.TransactionsRoot = txRoot[:]
 				blockToPropose.Block.Body.SilaPayloadHeader.WithdrawalsRoot = withdrawalsRoot[:]
@@ -1001,7 +1001,7 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				blockToPropose.Block.ParentRoot = parent[:]
 				txRoot, err := ssz.TransactionsRoot([][]byte{})
 				require.NoError(t, err)
-				withdrawalsRoot, err := ssz.WithdrawalSliceRoot([]*enginev1.Withdrawal{}, fieldparams.MaxWithdrawalsPerPayload)
+				withdrawalsRoot, err := ssz.WithdrawalSliceRoot([]*silaenginev1.Withdrawal{}, fieldparams.MaxWithdrawalsPerPayload)
 				require.NoError(t, err)
 				blockToPropose.Block.Body.SilaPayloadHeader.TransactionsRoot = txRoot[:]
 				blockToPropose.Block.Body.SilaPayloadHeader.WithdrawalsRoot = withdrawalsRoot[:]
@@ -1064,7 +1064,7 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				blockToPropose.Message.ParentRoot = parent[:]
 				txRoot, err := ssz.TransactionsRoot([][]byte{})
 				require.NoError(t, err)
-				withdrawalsRoot, err := ssz.WithdrawalSliceRoot([]*enginev1.Withdrawal{}, fieldparams.MaxWithdrawalsPerPayload)
+				withdrawalsRoot, err := ssz.WithdrawalSliceRoot([]*silaenginev1.Withdrawal{}, fieldparams.MaxWithdrawalsPerPayload)
 				require.NoError(t, err)
 				blockToPropose.Message.Body.SilaPayloadHeader.TransactionsRoot = txRoot[:]
 				blockToPropose.Message.Body.SilaPayloadHeader.WithdrawalsRoot = withdrawalsRoot[:]
@@ -1082,7 +1082,7 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				blockToPropose.Message.ParentRoot = parent[:]
 				txRoot, err := ssz.TransactionsRoot([][]byte{})
 				require.NoError(t, err)
-				withdrawalsRoot, err := ssz.WithdrawalSliceRoot([]*enginev1.Withdrawal{}, fieldparams.MaxWithdrawalsPerPayload)
+				withdrawalsRoot, err := ssz.WithdrawalSliceRoot([]*silaenginev1.Withdrawal{}, fieldparams.MaxWithdrawalsPerPayload)
 				require.NoError(t, err)
 				blockToPropose.Message.Body.SilaPayloadHeader.TransactionsRoot = txRoot[:]
 				blockToPropose.Message.Body.SilaPayloadHeader.WithdrawalsRoot = withdrawalsRoot[:]
@@ -1258,7 +1258,7 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				blockToPropose.Message.ParentRoot = parent[:]
 				txRoot, err := ssz.TransactionsRoot([][]byte{})
 				require.NoError(t, err)
-				withdrawalsRoot, err := ssz.WithdrawalSliceRoot([]*enginev1.Withdrawal{}, fieldparams.MaxWithdrawalsPerPayload)
+				withdrawalsRoot, err := ssz.WithdrawalSliceRoot([]*silaenginev1.Withdrawal{}, fieldparams.MaxWithdrawalsPerPayload)
 				require.NoError(t, err)
 				blockToPropose.Message.Body.SilaPayloadHeader.TransactionsRoot = txRoot[:]
 				blockToPropose.Message.Body.SilaPayloadHeader.WithdrawalsRoot = withdrawalsRoot[:]
@@ -1299,8 +1299,8 @@ func TestProposer_ProposeBlock_OK(t *testing.T) {
 				BlockNotifier: c.BlockNotifier(),
 				P2P:           mockp2p.NewTestP2P(t),
 				BlockBuilder: &builderTest.MockBuilderService{HasConfigured: tt.useBuilder, PayloadCapella: emptyPayloadCapella(), PayloadDeneb: emptyPayloadDeneb(),
-					BlobBundle:   &enginev1.BlobsBundle{KzgCommitments: [][]byte{mockCommitment}, Proofs: [][]byte{{0x02}}, Blobs: [][]byte{{0x03}}},
-					BlobBundleV2: &enginev1.BlobsBundleV2{KzgCommitments: [][]byte{mockCommitment}, Proofs: cellProofs, Blobs: [][]byte{mockBlob}}},
+					BlobBundle:   &silaenginev1.BlobsBundle{KzgCommitments: [][]byte{mockCommitment}, Proofs: [][]byte{{0x02}}, Blobs: [][]byte{{0x03}}},
+					BlobBundleV2: &silaenginev1.BlobsBundleV2{KzgCommitments: [][]byte{mockCommitment}, Proofs: cellProofs, Blobs: [][]byte{mockBlob}}},
 				BeaconDB:           db,
 				BlobReceiver:       c,
 				DataColumnReceiver: c, // Add DataColumnReceiver for Fulu blocks
@@ -3652,8 +3652,8 @@ func TestServer_ProposeBeaconBlock_PostFuluBlindedBlock(t *testing.T) {
 		mockBuilder := &builderTest.MockBuilderService{
 			HasConfigured: true,
 			Cfg:           &builderTest.Config{BeaconDB: db},
-			PayloadDeneb:  &enginev1.SilaPayloadDeneb{},
-			BlobBundle:    &enginev1.BlobsBundle{},
+			PayloadDeneb:  &silaenginev1.SilaPayloadDeneb{},
+			BlobBundle:    &silaenginev1.BlobsBundle{},
 		}
 
 		c := &mock.ChainService{State: beaconState, Root: parentRoot[:]}
@@ -3796,7 +3796,7 @@ func TestServer_ProposeBeaconBlock_PostFuluBlindedBlock(t *testing.T) {
 		mockBuilder := &builderTest.MockBuilderService{
 			HasConfigured:         true,
 			Cfg:                   &builderTest.Config{BeaconDB: db},
-			PayloadDeneb:          &enginev1.SilaPayloadDeneb{},
+			PayloadDeneb:          &silaenginev1.SilaPayloadDeneb{},
 			ErrSubmitBlindedBlock: builderapi.ErrBadGateway,
 		}
 

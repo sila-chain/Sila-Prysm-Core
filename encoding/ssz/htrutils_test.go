@@ -7,7 +7,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -248,7 +248,7 @@ func TestPackByChunk_SingleList(t *testing.T) {
 func TestWithdrawalRoot(t *testing.T) {
 	tests := []struct {
 		name  string
-		input *enginev1.Withdrawal
+		input *silaenginev1.Withdrawal
 		want  [32]byte
 	}{
 		{
@@ -258,14 +258,14 @@ func TestWithdrawalRoot(t *testing.T) {
 		},
 		{
 			name: "empty",
-			input: &enginev1.Withdrawal{
+			input: &silaenginev1.Withdrawal{
 				Address: make([]byte, 20),
 			},
 			want: [32]byte{0xdb, 0x56, 0x11, 0x4e, 0x0, 0xfd, 0xd4, 0xc1, 0xf8, 0x5c, 0x89, 0x2b, 0xf3, 0x5a, 0xc9, 0xa8, 0x92, 0x89, 0xaa, 0xec, 0xb1, 0xeb, 0xd0, 0xa9, 0x6c, 0xde, 0x60, 0x6a, 0x74, 0x8b, 0x5d, 0x71},
 		},
 		{
 			name: "non-empty",
-			input: &enginev1.Withdrawal{
+			input: &silaenginev1.Withdrawal{
 				Index:          123,
 				ValidatorIndex: 123123,
 				Address:        []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0},
@@ -286,17 +286,17 @@ func TestWithdrawalRoot(t *testing.T) {
 func TestWithrawalSliceRoot(t *testing.T) {
 	tests := []struct {
 		name  string
-		input []*enginev1.Withdrawal
+		input []*silaenginev1.Withdrawal
 		want  [32]byte
 	}{
 		{
 			name:  "empty",
-			input: make([]*enginev1.Withdrawal, 0),
+			input: make([]*silaenginev1.Withdrawal, 0),
 			want:  [32]byte{0x79, 0x29, 0x30, 0xbb, 0xd5, 0xba, 0xac, 0x43, 0xbc, 0xc7, 0x98, 0xee, 0x49, 0xaa, 0x81, 0x85, 0xef, 0x76, 0xbb, 0x3b, 0x44, 0xba, 0x62, 0xb9, 0x1d, 0x86, 0xae, 0x56, 0x9e, 0x4b, 0xb5, 0x35},
 		},
 		{
 			name: "non-empty",
-			input: []*enginev1.Withdrawal{{
+			input: []*silaenginev1.Withdrawal{{
 				Index:          123,
 				ValidatorIndex: 123123,
 				Address:        []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0},
@@ -318,18 +318,18 @@ func TestWithrawalSliceRoot(t *testing.T) {
 func TestDepositRequestsSliceRoot(t *testing.T) {
 	tests := []struct {
 		name  string
-		input []*enginev1.DepositRequest
+		input []*silaenginev1.DepositRequest
 		limit uint64
 		want  [32]byte
 	}{
 		{
 			name:  "empty",
-			input: make([]*enginev1.DepositRequest, 0),
+			input: make([]*silaenginev1.DepositRequest, 0),
 			want:  [32]byte{0xf5, 0xa5, 0xfd, 0x42, 0xd1, 0x6a, 0x20, 0x30, 0x27, 0x98, 0xef, 0x6e, 0xd3, 0x9, 0x97, 0x9b, 0x43, 0x0, 0x3d, 0x23, 0x20, 0xd9, 0xf0, 0xe8, 0xea, 0x98, 0x31, 0xa9, 0x27, 0x59, 0xfb, 0x4b},
 		},
 		{
 			name: "non-empty",
-			input: []*enginev1.DepositRequest{
+			input: []*silaenginev1.DepositRequest{
 				{
 					Pubkey:                bytesutil.PadTo([]byte{0x01, 0x02}, 48),
 					WithdrawalCredentials: bytesutil.PadTo([]byte{0x03, 0x04}, 32),
@@ -355,18 +355,18 @@ func TestDepositRequestsSliceRoot(t *testing.T) {
 func TestWithdrawalRequestSliceRoot(t *testing.T) {
 	tests := []struct {
 		name  string
-		input []*enginev1.WithdrawalRequest
+		input []*silaenginev1.WithdrawalRequest
 		limit uint64
 		want  [32]byte
 	}{
 		{
 			name:  "empty",
-			input: make([]*enginev1.WithdrawalRequest, 0),
+			input: make([]*silaenginev1.WithdrawalRequest, 0),
 			want:  [32]byte{0xf5, 0xa5, 0xfd, 0x42, 0xd1, 0x6a, 0x20, 0x30, 0x27, 0x98, 0xef, 0x6e, 0xd3, 0x9, 0x97, 0x9b, 0x43, 0x0, 0x3d, 0x23, 0x20, 0xd9, 0xf0, 0xe8, 0xea, 0x98, 0x31, 0xa9, 0x27, 0x59, 0xfb, 0x4b},
 		},
 		{
 			name: "non-empty",
-			input: []*enginev1.WithdrawalRequest{
+			input: []*silaenginev1.WithdrawalRequest{
 				{
 					SourceAddress:   bytesutil.PadTo([]byte{0x01, 0x02}, 20),
 					ValidatorPubkey: bytesutil.PadTo([]byte{0x03, 0x04}, 48),

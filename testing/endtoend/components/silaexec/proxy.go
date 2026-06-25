@@ -13,19 +13,19 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/helpers"
 	e2e "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/params"
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
-	proxy "github.com/sila-chain/Sila-Consensus-Core/v7/testing/middleware/engine-api-proxy"
+	proxy "github.com/sila-chain/Sila-Consensus-Core/v7/testing/middleware/silaengine-api-proxy"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
-// ProxySet represents a set of proxies for the engine-api.
+// ProxySet represents a set of proxies for the silaengine-api.
 type ProxySet struct {
 	e2etypes.ComponentRunner
 	started chan struct{}
 	proxies []e2etypes.ComponentRunner
 }
 
-// NewProxySet creates and returns a set of engine-api proxies.
+// NewProxySet creates and returns a set of silaengine-api proxies.
 func NewProxySet() *ProxySet {
 	return &ProxySet{
 		started: make(chan struct{}, 1),
@@ -116,7 +116,7 @@ func (s *ProxySet) ComponentAtIndex(i int) (e2etypes.ComponentRunner, error) {
 	return s.proxies[i], nil
 }
 
-// Proxy represents an engine-api proxy.
+// Proxy represents an silaengine-api proxy.
 type Proxy struct {
 	e2etypes.ComponentRunner
 	started     chan struct{}
@@ -125,7 +125,7 @@ type Proxy struct {
 	cancel      func()
 }
 
-// NewProxy creates and returns an engine-api proxy.
+// NewProxy creates and returns an silaengine-api proxy.
 func NewProxy(index int) *Proxy {
 	return &Proxy{
 		started: make(chan struct{}, 1),

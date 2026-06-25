@@ -38,12 +38,12 @@ var (
 
 	MaxBuilderConsecutiveMissedSlots = &cli.IntFlag{
 		Name:  "max-builder-consecutive-missed-slots",
-		Usage: "Number of consecutive skip slot to fallback from using relay/builder to local execution engine for block construction",
+		Usage: "Number of consecutive skip slot to fallback from using relay/builder to local SilaEngine for block construction",
 		Value: 3,
 	}
 	MaxBuilderEpochMissedSlots = &cli.IntFlag{
 		Name: "max-builder-epoch-missed-slots",
-		Usage: "Number of total skip slot to fallback from using relay/builder to local execution engine for block construction in last epoch rolling window. " +
+		Usage: "Number of total skip slot to fallback from using relay/builder to local SilaEngine for block construction in last epoch rolling window. " +
 			"The values are on the basis of the networks and the default value for mainnet is 5.",
 	}
 	// LocalBlockValueBoost sets a percentage boost for local block construction while using a custom builder.
@@ -254,7 +254,7 @@ var (
 	// https://github.com/sila-chain/Sila-Execution-APIs/blob/main/src/engine/specification.md#core
 	EngineEndpointTimeoutSeconds = &cli.Uint64Flag{
 		Name:  "engine-endpoint-timeout-seconds",
-		Usage: "Sets the execution engine timeout (seconds) for sila payload semantics (forkchoiceUpdated, newPayload)",
+		Usage: "Sets the SilaEngine timeout (seconds) for sila payload semantics (forkchoiceUpdated, newPayload)",
 	}
 	// SilaExecutionHeaderReqLimit defines a flag to set the maximum number of headers that a deposit log query can fetch. If none is set, 1000 will be the limit.
 	SilaExecutionHeaderReqLimit = &cli.Uint64Flag{

@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -41,7 +41,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.ParentHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
@@ -53,7 +53,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.FeeRecipient = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
@@ -65,7 +65,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.StateRoot = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
@@ -77,7 +77,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.ReceiptsRoot = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
@@ -89,7 +89,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.LogsBloom = bytesutil.PadTo([]byte{'a'}, fieldparams.LogsBloomLength)
 				return h
@@ -101,7 +101,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.PrevRandao = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
@@ -113,7 +113,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.BaseFeePerGas = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
@@ -125,7 +125,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.BlockHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
@@ -137,7 +137,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.ExtraData = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
@@ -149,7 +149,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.BlockNumber = 1
 				return h
@@ -161,7 +161,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.GasLimit = 1
 				return h
@@ -173,7 +173,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.GasUsed = 1
 				return h
@@ -185,7 +185,7 @@ func Test_IsMergeComplete(t *testing.T) {
 			payload: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.Timestamp = 1
 				return h
@@ -216,7 +216,7 @@ func Test_IsMergeCompleteCapella(t *testing.T) {
 func Test_IsExecutionBlock(t *testing.T) {
 	tests := []struct {
 		name    string
-		payload *enginev1.SilaPayload
+		payload *silaenginev1.SilaPayload
 		want    bool
 	}{
 		{
@@ -226,7 +226,7 @@ func Test_IsExecutionBlock(t *testing.T) {
 		},
 		{
 			name: "non-empty payload",
-			payload: func() *enginev1.SilaPayload {
+			payload: func() *silaenginev1.SilaPayload {
 				p := emptyPayload()
 				p.ParentHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return p
@@ -261,7 +261,7 @@ func Test_IsExecutionBlockCapella(t *testing.T) {
 func Test_IsExecutionEnabled(t *testing.T) {
 	tests := []struct {
 		name         string
-		payload      *enginev1.SilaPayload
+		payload      *silaenginev1.SilaPayload
 		header       interfaces.ExecutionData
 		useAltairSt  bool
 		useCapellaSt bool
@@ -294,7 +294,7 @@ func Test_IsExecutionEnabled(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.ParentHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
@@ -308,7 +308,7 @@ func Test_IsExecutionEnabled(t *testing.T) {
 				require.NoError(t, err)
 				return h
 			}(),
-			payload: func() *enginev1.SilaPayload {
+			payload: func() *silaenginev1.SilaPayload {
 				p := emptyPayload()
 				p.Timestamp = 1
 				return p
@@ -320,12 +320,12 @@ func Test_IsExecutionEnabled(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.ParentHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
 			}(),
-			payload: func() *enginev1.SilaPayload {
+			payload: func() *silaenginev1.SilaPayload {
 				p := emptyPayload()
 				p.Timestamp = 1
 				return p
@@ -369,7 +369,7 @@ func Test_IsExecutionEnabled(t *testing.T) {
 func Test_IsExecutionEnabledUsingHeader(t *testing.T) {
 	tests := []struct {
 		name    string
-		payload *enginev1.SilaPayload
+		payload *silaenginev1.SilaPayload
 		header  interfaces.ExecutionData
 		want    bool
 	}{
@@ -389,7 +389,7 @@ func Test_IsExecutionEnabledUsingHeader(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.ParentHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
@@ -403,7 +403,7 @@ func Test_IsExecutionEnabledUsingHeader(t *testing.T) {
 				require.NoError(t, err)
 				return h
 			}(),
-			payload: func() *enginev1.SilaPayload {
+			payload: func() *silaenginev1.SilaPayload {
 				p := emptyPayload()
 				p.Timestamp = 1
 				return p
@@ -415,12 +415,12 @@ func Test_IsExecutionEnabledUsingHeader(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.ParentHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
 			}(),
-			payload: func() *enginev1.SilaPayload {
+			payload: func() *silaenginev1.SilaPayload {
 				p := emptyPayload()
 				p.Timestamp = 1
 				return p
@@ -446,7 +446,7 @@ func Test_IsExecutionEnabledUsingHeader(t *testing.T) {
 func Test_ValidatePayloadWhenMergeCompletes(t *testing.T) {
 	tests := []struct {
 		name    string
-		payload *enginev1.SilaPayload
+		payload *silaenginev1.SilaPayload
 		header  interfaces.ExecutionData
 		err     error
 	}{
@@ -462,7 +462,7 @@ func Test_ValidatePayloadWhenMergeCompletes(t *testing.T) {
 		},
 		{
 			name: "validate passes",
-			payload: func() *enginev1.SilaPayload {
+			payload: func() *silaenginev1.SilaPayload {
 				p := emptyPayload()
 				p.ParentHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return p
@@ -470,7 +470,7 @@ func Test_ValidatePayloadWhenMergeCompletes(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.BlockHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return h
@@ -479,7 +479,7 @@ func Test_ValidatePayloadWhenMergeCompletes(t *testing.T) {
 		},
 		{
 			name: "incorrect blockhash",
-			payload: func() *enginev1.SilaPayload {
+			payload: func() *silaenginev1.SilaPayload {
 				p := emptyPayload()
 				p.ParentHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return p
@@ -487,7 +487,7 @@ func Test_ValidatePayloadWhenMergeCompletes(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.BlockHash = bytesutil.PadTo([]byte{'b'}, fieldparams.RootLength)
 				return h
@@ -519,12 +519,12 @@ func Test_ValidatePayload(t *testing.T) {
 	require.NoError(t, err)
 	tests := []struct {
 		name    string
-		payload *enginev1.SilaPayload
+		payload *silaenginev1.SilaPayload
 		err     error
 	}{
 		{
 			name: "validate passes",
-			payload: func() *enginev1.SilaPayload {
+			payload: func() *silaenginev1.SilaPayload {
 				h := emptyPayload()
 				h.PrevRandao = random
 				h.Timestamp = uint64(ts.Unix())
@@ -538,7 +538,7 @@ func Test_ValidatePayload(t *testing.T) {
 		},
 		{
 			name: "incorrect timestamp",
-			payload: func() *enginev1.SilaPayload {
+			payload: func() *silaenginev1.SilaPayload {
 				h := emptyPayload()
 				h.PrevRandao = random
 				h.Timestamp = 1
@@ -569,12 +569,12 @@ func Test_ProcessPayload(t *testing.T) {
 	require.NoError(t, err)
 	tests := []struct {
 		name    string
-		payload *enginev1.SilaPayload
+		payload *silaenginev1.SilaPayload
 		err     error
 	}{
 		{
 			name: "process passes",
-			payload: func() *enginev1.SilaPayload {
+			payload: func() *silaenginev1.SilaPayload {
 				h := emptyPayload()
 				h.PrevRandao = random
 				h.Timestamp = uint64(ts.Unix())
@@ -588,7 +588,7 @@ func Test_ProcessPayload(t *testing.T) {
 		},
 		{
 			name: "incorrect timestamp",
-			payload: func() *enginev1.SilaPayload {
+			payload: func() *silaenginev1.SilaPayload {
 				h := emptyPayload()
 				h.PrevRandao = random
 				h.Timestamp = 1
@@ -613,7 +613,7 @@ func Test_ProcessPayload(t *testing.T) {
 				require.Equal(t, tt.err, err)
 				h, err := st.LatestSilaPayloadHeader()
 				require.NoError(t, err)
-				got, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				got, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				require.DeepSSZEqual(t, want, got)
 			}
@@ -653,7 +653,7 @@ func Test_ProcessPayload_Blinded(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.PrevRandao = random
 				p.Timestamp = uint64(ts.Unix())
@@ -674,7 +674,7 @@ func Test_ProcessPayload_Blinded(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.PrevRandao = random
 				p.Timestamp = 1
@@ -685,7 +685,7 @@ func Test_ProcessPayload_Blinded(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p, ok := tt.header.Proto().(*enginev1.SilaPayloadHeader)
+			p, ok := tt.header.Proto().(*silaenginev1.SilaPayloadHeader)
 			require.Equal(t, true, ok)
 			body, err := consensusblocks.NewBeaconBlockBody(&silapb.BlindedBeaconBlockBodyBellatrix{
 				SilaPayloadHeader: p,
@@ -695,11 +695,11 @@ func Test_ProcessPayload_Blinded(t *testing.T) {
 				require.Equal(t, tt.err.Error(), err.Error())
 			} else {
 				require.Equal(t, tt.err, err)
-				want, ok := tt.header.Proto().(*enginev1.SilaPayloadHeader)
+				want, ok := tt.header.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				h, err := st.LatestSilaPayloadHeader()
 				require.NoError(t, err)
-				got, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				got, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				require.DeepSSZEqual(t, want, got)
 			}
@@ -723,7 +723,7 @@ func Test_ValidatePayloadHeader(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.PrevRandao = random
 				p.Timestamp = uint64(ts.Unix())
@@ -744,7 +744,7 @@ func Test_ValidatePayloadHeader(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.PrevRandao = random
 				p.Timestamp = 1
@@ -764,7 +764,7 @@ func Test_ValidatePayloadHeader(t *testing.T) {
 func Test_ValidatePayloadHeaderWhenMergeCompletes(t *testing.T) {
 	st, _ := util.DeterministicGenesisStateBellatrix(t, 1)
 	emptySt := st.Copy()
-	wrappedHeader, err := consensusblocks.WrappedSilaPayloadHeader(&enginev1.SilaPayloadHeader{BlockHash: []byte{'a'}})
+	wrappedHeader, err := consensusblocks.WrappedSilaPayloadHeader(&silaenginev1.SilaPayloadHeader{BlockHash: []byte{'a'}})
 	require.NoError(t, err)
 	require.NoError(t, st.SetLatestSilaPayloadHeader(wrappedHeader))
 	tests := []struct {
@@ -788,7 +788,7 @@ func Test_ValidatePayloadHeaderWhenMergeCompletes(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.ParentHash = []byte{'a'}
 				return h
@@ -801,7 +801,7 @@ func Test_ValidatePayloadHeaderWhenMergeCompletes(t *testing.T) {
 			header: func() interfaces.ExecutionData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
-				p, ok := h.Proto().(*enginev1.SilaPayloadHeader)
+				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
 				require.Equal(t, true, ok)
 				p.ParentHash = []byte{'b'}
 				return h
@@ -872,7 +872,7 @@ func BenchmarkBellatrixComplete(b *testing.B) {
 }
 
 func emptyPayloadHeader() (interfaces.ExecutionData, error) {
-	return consensusblocks.WrappedSilaPayloadHeader(&enginev1.SilaPayloadHeader{
+	return consensusblocks.WrappedSilaPayloadHeader(&silaenginev1.SilaPayloadHeader{
 		ParentHash:       make([]byte, fieldparams.RootLength),
 		FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:        make([]byte, fieldparams.RootLength),
@@ -887,7 +887,7 @@ func emptyPayloadHeader() (interfaces.ExecutionData, error) {
 }
 
 func emptyPayloadHeaderCapella() (interfaces.ExecutionData, error) {
-	return consensusblocks.WrappedSilaPayloadHeaderCapella(&enginev1.SilaPayloadHeaderCapella{
+	return consensusblocks.WrappedSilaPayloadHeaderCapella(&silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       make([]byte, fieldparams.RootLength),
 		FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:        make([]byte, fieldparams.RootLength),
@@ -902,8 +902,8 @@ func emptyPayloadHeaderCapella() (interfaces.ExecutionData, error) {
 	})
 }
 
-func emptyPayload() *enginev1.SilaPayload {
-	return &enginev1.SilaPayload{
+func emptyPayload() *silaenginev1.SilaPayload {
+	return &silaenginev1.SilaPayload{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     make([]byte, fieldparams.RootLength),
@@ -917,8 +917,8 @@ func emptyPayload() *enginev1.SilaPayload {
 	}
 }
 
-func emptyPayloadCapella() *enginev1.SilaPayloadCapella {
-	return &enginev1.SilaPayloadCapella{
+func emptyPayloadCapella() *silaenginev1.SilaPayloadCapella {
+	return &silaenginev1.SilaPayloadCapella{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     make([]byte, fieldparams.RootLength),
@@ -929,7 +929,7 @@ func emptyPayloadCapella() *enginev1.SilaPayloadCapella {
 		BaseFeePerGas: make([]byte, fieldparams.RootLength),
 		BlockHash:     make([]byte, fieldparams.RootLength),
 		Transactions:  make([][]byte, 0),
-		Withdrawals:   make([]*enginev1.Withdrawal, 0),
+		Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 	}
 }
 

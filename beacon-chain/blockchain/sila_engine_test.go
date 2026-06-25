@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
-	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -68,7 +68,7 @@ func Test_NotifyForkchoiceUpdate_GetPayloadAttrErrorCanContinue(t *testing.T) {
 	require.NoError(t, err)
 
 	pid := &v1.PayloadIDBytes{1}
-	service.cfg.ExecutionEngineCaller = &mockExecution.EngineClient{PayloadIDBytes: pid}
+	service.cfg.SilaEngineCaller = &mockExecution.SilaEngineClient{PayloadIDBytes: pid}
 	st, _ = util.DeterministicGenesisState(t, 1)
 	require.NoError(t, beaconDB.SaveState(ctx, st, bellatrixBlkRoot))
 	require.NoError(t, beaconDB.SaveGenesisBlockRoot(ctx, bellatrixBlkRoot))
@@ -228,7 +228,7 @@ func Test_NotifyForkchoiceUpdate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			service.cfg.ExecutionEngineCaller = &mockExecution.EngineClient{ErrForkchoiceUpdated: tt.newForkchoiceErr}
+			service.cfg.SilaEngineCaller = &mockExecution.SilaEngineClient{ErrForkchoiceUpdated: tt.newForkchoiceErr}
 			st, _ := util.DeterministicGenesisState(t, 1)
 			require.NoError(t, beaconDB.SaveState(ctx, st, tt.finalizedRoot))
 			require.NoError(t, beaconDB.SaveGenesisBlockRoot(ctx, tt.finalizedRoot))
@@ -303,7 +303,7 @@ func Test_NotifyForkchoiceUpdate_NIlLVH(t *testing.T) {
 	require.NoError(t, fcs.InsertNode(ctx, state, blkRoot))
 
 	// Prepare Engine Mock to return invalid LVH =  nil
-	service.cfg.ExecutionEngineCaller = &mockExecution.EngineClient{ErrForkchoiceUpdated: execution.ErrInvalidPayloadStatus, OverrideValidHash: [32]byte{'C'}}
+	service.cfg.SilaEngineCaller = &mockExecution.SilaEngineClient{ErrForkchoiceUpdated: execution.ErrInvalidPayloadStatus, OverrideValidHash: [32]byte{'C'}}
 	st, _ := util.DeterministicGenesisState(t, 1)
 	service.head = &head{
 		state: st,
@@ -442,7 +442,7 @@ func Test_NotifyForkchoiceUpdateRecursive_DoublyLinkedTree(t *testing.T) {
 	require.Equal(t, brg, headRoot)
 
 	// Prepare Engine Mock to return invalid unless head is D, LVH =  E
-	service.cfg.ExecutionEngineCaller = &mockExecution.EngineClient{ErrForkchoiceUpdated: execution.ErrInvalidPayloadStatus, ForkChoiceUpdatedResp: pe[:], OverrideValidHash: [32]byte{'D'}}
+	service.cfg.SilaEngineCaller = &mockExecution.SilaEngineClient{ErrForkchoiceUpdated: execution.ErrInvalidPayloadStatus, ForkChoiceUpdatedResp: pe[:], OverrideValidHash: [32]byte{'D'}}
 	st, _ := util.DeterministicGenesisState(t, 1)
 	service.head = &head{
 		state: st,
@@ -590,8 +590,8 @@ func Test_NotifyNewPayload(t *testing.T) {
 				require.NoError(t, err)
 				return b
 			}(),
-			newPayloadErr: ErrUndefinedExecutionEngineError,
-			errString:     ErrUndefinedExecutionEngineError.Error(),
+			newPayloadErr: ErrUndefinedSilaEngineError,
+			errString:     ErrUndefinedSilaEngineError.Error(),
 		},
 		{
 			name:      "invalid block hash error from ee",
@@ -609,7 +609,7 @@ func Test_NotifyNewPayload(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e := &mockExecution.EngineClient{ErrNewPayload: tt.newPayloadErr, BlockByHashMap: map[[32]byte]*v1.ExecutionBlock{}}
+			e := &mockExecution.SilaEngineClient{ErrNewPayload: tt.newPayloadErr, BlockByHashMap: map[[32]byte]*v1.ExecutionBlock{}}
 			e.BlockByHashMap[[32]byte{'a'}] = &v1.ExecutionBlock{
 				Header: gethtypes.Header{
 					ParentHash: common.BytesToHash([]byte("b")),
@@ -622,7 +622,7 @@ func Test_NotifyNewPayload(t *testing.T) {
 				},
 				TotalDifficulty: "0x1",
 			}
-			service.cfg.ExecutionEngineCaller = e
+			service.cfg.SilaEngineCaller = e
 			root := [32]byte{'a'}
 			state, blkRoot, err := prepareForkchoiceState(ctx, 0, root, [32]byte{}, params.BeaconConfig().ZeroHash, ojc, ofc)
 			require.NoError(t, err)
@@ -661,7 +661,7 @@ func Test_NotifyNewPayload_SetOptimisticToValid(t *testing.T) {
 	require.NoError(t, err)
 	rob, err := consensusblocks.NewROBlock(bellatrixBlk)
 	require.NoError(t, err)
-	e := &mockExecution.EngineClient{BlockByHashMap: map[[32]byte]*v1.ExecutionBlock{}}
+	e := &mockExecution.SilaEngineClient{BlockByHashMap: map[[32]byte]*v1.ExecutionBlock{}}
 	e.BlockByHashMap[[32]byte{'a'}] = &v1.ExecutionBlock{
 		Header: gethtypes.Header{
 			ParentHash: common.BytesToHash([]byte("b")),
@@ -674,7 +674,7 @@ func Test_NotifyNewPayload_SetOptimisticToValid(t *testing.T) {
 		},
 		TotalDifficulty: "0x1",
 	}
-	service.cfg.ExecutionEngineCaller = e
+	service.cfg.SilaEngineCaller = e
 	postVersion, postHeader, err := getStateVersionAndPayload(bellatrixState)
 	require.NoError(t, err)
 	validated, err := service.notifyNewPayload(ctx, postVersion, postHeader, rob)

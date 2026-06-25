@@ -65,7 +65,7 @@ go_library(
         "//crypto/random:go_default_library",
         "//encoding/bytesutil:go_default_library",
         "//encoding/ssz:go_default_library",
-        "//proto/engine/v1:go_default_library",
+        "//proto/silaengine/v1:go_default_library",
         "//proto/silaapi/v1:go_default_library",
         "//proto/sila/v1alpha1:go_default_library",
         "//runtime/interop:go_default_library",

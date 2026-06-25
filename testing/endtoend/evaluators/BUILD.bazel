@@ -7,7 +7,7 @@ go_library(
         "blob_limits.go",
         "builder.go",
         "data.go",
-        "execution_engine.go",
+        "sila_engine.go",
         "fee_recipient.go",
         "finality.go",
         "fork.go",

@@ -5,7 +5,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
@@ -87,7 +87,7 @@ func UpgradeToDeneb(state state.BeaconState) (state.BeaconState, error) {
 		InactivityScores:            inactivityScores,
 		CurrentSyncCommittee:        currentSyncCommittee,
 		NextSyncCommittee:           nextSyncCommittee,
-		LatestSilaPayloadHeader: &enginev1.SilaPayloadHeaderDeneb{
+		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{
 			ParentHash:       payloadHeader.ParentHash(),
 			FeeRecipient:     payloadHeader.FeeRecipient(),
 			StateRoot:        payloadHeader.StateRoot(),

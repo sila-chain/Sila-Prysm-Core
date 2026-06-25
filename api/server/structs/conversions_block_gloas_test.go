@@ -6,7 +6,7 @@ import (
 
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -16,7 +16,7 @@ import (
 
 func testEnvelopeProto() *eth.SilaPayloadEnvelope {
 	return &eth.SilaPayloadEnvelope{
-		Payload: &enginev1.SilaPayloadGloas{
+		Payload: &silaenginev1.SilaPayloadGloas{
 			ParentHash:    fillByteSlice(common.HashLength, 0xaa),
 			FeeRecipient:  fillByteSlice(20, 0xbb),
 			StateRoot:     fillByteSlice(32, 0xcc),
@@ -27,7 +27,7 @@ func testEnvelopeProto() *eth.SilaPayloadEnvelope {
 			BlockHash:     fillByteSlice(common.HashLength, 0x22),
 			SlotNumber:    42,
 		},
-		ExecutionRequests:     &enginev1.ExecutionRequests{},
+		ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 		BuilderIndex:          7,
 		BeaconBlockRoot:       fillByteSlice(32, 0x33),
 		ParentBeaconBlockRoot: fillByteSlice(32, 0x44),
@@ -58,7 +58,7 @@ func TestSilaPayloadEnvelopeFromConsensus_NilRequests(t *testing.T) {
 func testWireBlindedProto() *eth.WireBlindedSilaPayloadEnvelope {
 	return &eth.WireBlindedSilaPayloadEnvelope{
 		PayloadRoot:           fillByteSlice(32, 0x55),
-		ExecutionRequests:     &enginev1.ExecutionRequests{},
+		ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 		BuilderIndex:          7,
 		BeaconBlockRoot:       fillByteSlice(32, 0x33),
 		ParentBeaconBlockRoot: fillByteSlice(32, 0x44),
@@ -68,7 +68,7 @@ func testWireBlindedProto() *eth.WireBlindedSilaPayloadEnvelope {
 // HTR(blinded) must equal HTR(full) so the validator signature stays valid against either form.
 func TestWireBlindedHTRMatchesFull(t *testing.T) {
 	full := &eth.SilaPayloadEnvelope{
-		Payload: &enginev1.SilaPayloadGloas{
+		Payload: &silaenginev1.SilaPayloadGloas{
 			ParentHash:    fillByteSlice(32, 0x01),
 			FeeRecipient:  fillByteSlice(20, 0x02),
 			StateRoot:     fillByteSlice(32, 0x03),
@@ -78,10 +78,10 @@ func TestWireBlindedHTRMatchesFull(t *testing.T) {
 			BaseFeePerGas: fillByteSlice(32, 0x07),
 			BlockHash:     fillByteSlice(32, 0x08),
 			Transactions:  [][]byte{[]byte("tx1"), []byte("tx2")},
-			Withdrawals:   []*enginev1.Withdrawal{},
+			Withdrawals:   []*silaenginev1.Withdrawal{},
 			SlotNumber:    primitives.Slot(100),
 		},
-		ExecutionRequests:     &enginev1.ExecutionRequests{},
+		ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 		BuilderIndex:          primitives.BuilderIndex(42),
 		BeaconBlockRoot:       fillByteSlice(32, 0x09),
 		ParentBeaconBlockRoot: fillByteSlice(32, 0x0a),

@@ -149,7 +149,7 @@ func (bb *Builder) PayloadAttestationMessage(t testing.TB, m *silapb.PayloadAtte
 	}
 }
 
-// PoWBlock receives the block and notifies a mocked execution engine.
+// PoWBlock receives the block and notifies a mocked SilaEngine.
 func (bb *Builder) PoWBlock(pb *silapb.PowBlock) {
 	bb.execMock.powBlocks[bytesutil.ToBytes32(pb.BlockHash)] = pb
 }

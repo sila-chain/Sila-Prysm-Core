@@ -119,7 +119,7 @@ type Config struct {
 	OperationNotifier                opfeed.Notifier
 	StateGen                         *stategen.State
 	MaxMsgSize                       int
-	ExecutionEngineCaller            execution.EngineCaller
+	SilaEngineCaller            execution.EngineCaller
 	OptimisticModeFetcher            blockchain.OptimisticModeFetcher
 	BlockBuilder                     builder.BlockBuilder
 	Router                           *http.ServeMux
@@ -260,7 +260,7 @@ func NewService(ctx context.Context, cfg *Config) *Service {
 		StateGen:                         s.cfg.StateGen,
 		SyncCommitteePool:                s.cfg.SyncCommitteeObjectPool,
 		ReplayerBuilder:                  ch,
-		ExecutionEngineCaller:            s.cfg.ExecutionEngineCaller,
+		SilaEngineCaller:            s.cfg.SilaEngineCaller,
 		BeaconDB:                         s.cfg.BeaconDB,
 		BlockBuilder:                     s.cfg.BlockBuilder,
 		BLSChangesPool:                   s.cfg.BLSChangesPool,

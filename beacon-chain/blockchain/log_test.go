@@ -5,7 +5,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	logTest "github.com/sirupsen/logrus/hooks/test"
@@ -15,7 +15,7 @@ func Test_logStateTransitionData(t *testing.T) {
 	payloadBlk := &silapb.BeaconBlockBellatrix{
 		Body: &silapb.BeaconBlockBodyBellatrix{
 			SyncAggregate: &silapb.SyncAggregate{},
-			SilaPayload: &enginev1.SilaPayload{
+			SilaPayload: &silaenginev1.SilaPayload{
 				BlockHash:    []byte{1, 2, 3},
 				Transactions: [][]byte{{}, {}},
 			},

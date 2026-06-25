@@ -136,7 +136,7 @@ func TestService_forkchoiceUpdateWithExecution_SameHeadRootNewProposer(t *testin
 	require.NoError(t, err)
 	require.NoError(t, fcs.InsertNode(ctx, state, blkRoot))
 
-	service.cfg.ExecutionEngineCaller = &mockExecution.EngineClient{}
+	service.cfg.SilaEngineCaller = &mockExecution.SilaEngineClient{}
 	require.NoError(t, beaconDB.SaveState(ctx, st, bellatrixBlkRoot))
 	require.NoError(t, beaconDB.SaveGenesisBlockRoot(ctx, bellatrixBlkRoot))
 	sb, err := blocks.NewSignedBeaconBlock(util.HydrateSignedBeaconBlockBellatrix(&silapb.SignedBeaconBlockBellatrix{}))

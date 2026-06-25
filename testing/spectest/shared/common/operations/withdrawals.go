@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/utils"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -41,7 +41,7 @@ func RunWithdrawalsTest(t *testing.T, config string, fork string, sszToBlock SSZ
 				if err != nil {
 					return nil, err
 				}
-				p, err := consensusblocks.WrappedSilaPayloadCapella(&enginev1.SilaPayloadCapella{Withdrawals: withdrawals})
+				p, err := consensusblocks.WrappedSilaPayloadCapella(&silaenginev1.SilaPayloadCapella{Withdrawals: withdrawals})
 				require.NoError(t, err)
 				return blocks.ProcessWithdrawals(s, p)
 			})

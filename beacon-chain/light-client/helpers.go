@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	light_client "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -59,7 +59,7 @@ func createDefaultLightClientBootstrap(currentSlot primitives.Slot) (interfaces.
 		m = &pb.LightClientBootstrapCapella{
 			Header: &pb.LightClientHeaderCapella{
 				Beacon:          &pb.BeaconBlockHeader{},
-				Execution:       &enginev1.SilaPayloadHeaderCapella{},
+				Execution:       &silaenginev1.SilaPayloadHeaderCapella{},
 				ExecutionBranch: executionBranch,
 			},
 			CurrentSyncCommittee:       currentSyncCommittee,
@@ -69,7 +69,7 @@ func createDefaultLightClientBootstrap(currentSlot primitives.Slot) (interfaces.
 		m = &pb.LightClientBootstrapDeneb{
 			Header: &pb.LightClientHeaderDeneb{
 				Beacon:          &pb.BeaconBlockHeader{},
-				Execution:       &enginev1.SilaPayloadHeaderDeneb{},
+				Execution:       &silaenginev1.SilaPayloadHeaderDeneb{},
 				ExecutionBranch: executionBranch,
 			},
 			CurrentSyncCommittee:       currentSyncCommittee,
@@ -79,7 +79,7 @@ func createDefaultLightClientBootstrap(currentSlot primitives.Slot) (interfaces.
 		m = &pb.LightClientBootstrapElectra{
 			Header: &pb.LightClientHeaderDeneb{
 				Beacon:          &pb.BeaconBlockHeader{},
-				Execution:       &enginev1.SilaPayloadHeaderDeneb{},
+				Execution:       &silaenginev1.SilaPayloadHeaderDeneb{},
 				ExecutionBranch: executionBranch,
 			},
 			CurrentSyncCommittee:       currentSyncCommittee,
@@ -90,15 +90,15 @@ func createDefaultLightClientBootstrap(currentSlot primitives.Slot) (interfaces.
 	return light_client.NewWrappedBootstrap(m)
 }
 
-func makeExecutionAndProofDeneb(ctx context.Context, blk interfaces.ReadOnlySignedBeaconBlock) (*enginev1.SilaPayloadHeaderDeneb, [][]byte, error) {
+func makeExecutionAndProofDeneb(ctx context.Context, blk interfaces.ReadOnlySignedBeaconBlock) (*silaenginev1.SilaPayloadHeaderDeneb, [][]byte, error) {
 	if blk.Version() < version.Capella {
 		p, err := execution.EmptySilaPayloadHeader(version.Deneb)
 		if err != nil {
 			return nil, nil, errors.Wrap(err, "could not get payload header")
 		}
-		payloadHeader, ok := p.(*enginev1.SilaPayloadHeaderDeneb)
+		payloadHeader, ok := p.(*silaenginev1.SilaPayloadHeaderDeneb)
 		if !ok {
-			return nil, nil, fmt.Errorf("payload header type %T is not %T", p, &enginev1.SilaPayloadHeaderDeneb{})
+			return nil, nil, fmt.Errorf("payload header type %T is not %T", p, &silaenginev1.SilaPayloadHeaderDeneb{})
 		}
 		payloadProof := emptyPayloadProof()
 
@@ -118,7 +118,7 @@ func makeExecutionAndProofDeneb(ctx context.Context, blk interfaces.ReadOnlySign
 		return nil, nil, errors.Wrap(err, "could not get withdrawals root")
 	}
 
-	payloadHeader := &enginev1.SilaPayloadHeaderDeneb{
+	payloadHeader := &silaenginev1.SilaPayloadHeaderDeneb{
 		ParentHash:       payload.ParentHash(),
 		FeeRecipient:     payload.FeeRecipient(),
 		StateRoot:        payload.StateRoot(),
@@ -160,7 +160,7 @@ func makeExecutionAndProofDeneb(ctx context.Context, blk interfaces.ReadOnlySign
 	return payloadHeader, payloadProof, nil
 }
 
-func makeExecutionAndProofCapella(ctx context.Context, blk interfaces.ReadOnlySignedBeaconBlock) (*enginev1.SilaPayloadHeaderCapella, [][]byte, error) {
+func makeExecutionAndProofCapella(ctx context.Context, blk interfaces.ReadOnlySignedBeaconBlock) (*silaenginev1.SilaPayloadHeaderCapella, [][]byte, error) {
 	if blk.Version() > version.Capella {
 		return nil, nil, fmt.Errorf("unsupported block version %s for capella sila payload", version.String(blk.Version()))
 	}
@@ -169,9 +169,9 @@ func makeExecutionAndProofCapella(ctx context.Context, blk interfaces.ReadOnlySi
 		if err != nil {
 			return nil, nil, errors.Wrap(err, "could not get payload header")
 		}
-		payloadHeader, ok := p.(*enginev1.SilaPayloadHeaderCapella)
+		payloadHeader, ok := p.(*silaenginev1.SilaPayloadHeaderCapella)
 		if !ok {
-			return nil, nil, fmt.Errorf("payload header type %T is not %T", p, &enginev1.SilaPayloadHeaderCapella{})
+			return nil, nil, fmt.Errorf("payload header type %T is not %T", p, &silaenginev1.SilaPayloadHeaderCapella{})
 		}
 		payloadProof := emptyPayloadProof()
 
@@ -191,7 +191,7 @@ func makeExecutionAndProofCapella(ctx context.Context, blk interfaces.ReadOnlySi
 		return nil, nil, errors.Wrap(err, "could not get withdrawals root")
 	}
 
-	payloadHeader := &enginev1.SilaPayloadHeaderCapella{
+	payloadHeader := &silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       payload.ParentHash(),
 		FeeRecipient:     payload.FeeRecipient(),
 		StateRoot:        payload.StateRoot(),

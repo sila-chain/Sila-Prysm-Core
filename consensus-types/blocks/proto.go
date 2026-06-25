@@ -5,7 +5,7 @@ import (
 
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
@@ -466,10 +466,10 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 		}, nil
 	case version.Bellatrix:
 		if b.IsBlinded() {
-			var ph *enginev1.SilaPayloadHeader
+			var ph *silaenginev1.SilaPayloadHeader
 			var ok bool
 			if b.silaPayloadHeader != nil {
-				ph, ok = b.silaPayloadHeader.Proto().(*enginev1.SilaPayloadHeader)
+				ph, ok = b.silaPayloadHeader.Proto().(*silaenginev1.SilaPayloadHeader)
 				if !ok {
 					return nil, errPayloadHeaderWrongType
 				}
@@ -487,10 +487,10 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 				SilaPayloadHeader: ph,
 			}, nil
 		}
-		var p *enginev1.SilaPayload
+		var p *silaenginev1.SilaPayload
 		var ok bool
 		if b.silaPayload != nil {
-			p, ok = b.silaPayload.Proto().(*enginev1.SilaPayload)
+			p, ok = b.silaPayload.Proto().(*silaenginev1.SilaPayload)
 			if !ok {
 				return nil, errPayloadWrongType
 			}
@@ -509,10 +509,10 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 		}, nil
 	case version.Capella:
 		if b.IsBlinded() {
-			var ph *enginev1.SilaPayloadHeaderCapella
+			var ph *silaenginev1.SilaPayloadHeaderCapella
 			var ok bool
 			if b.silaPayloadHeader != nil {
-				ph, ok = b.silaPayloadHeader.Proto().(*enginev1.SilaPayloadHeaderCapella)
+				ph, ok = b.silaPayloadHeader.Proto().(*silaenginev1.SilaPayloadHeaderCapella)
 				if !ok {
 					return nil, errPayloadHeaderWrongType
 				}
@@ -531,10 +531,10 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 				BlsToExecutionChanges:  b.blsToExecutionChanges,
 			}, nil
 		}
-		var p *enginev1.SilaPayloadCapella
+		var p *silaenginev1.SilaPayloadCapella
 		var ok bool
 		if b.silaPayload != nil {
-			p, ok = b.silaPayload.Proto().(*enginev1.SilaPayloadCapella)
+			p, ok = b.silaPayload.Proto().(*silaenginev1.SilaPayloadCapella)
 			if !ok {
 				return nil, errPayloadWrongType
 			}
@@ -554,10 +554,10 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 		}, nil
 	case version.Deneb:
 		if b.IsBlinded() {
-			var ph *enginev1.SilaPayloadHeaderDeneb
+			var ph *silaenginev1.SilaPayloadHeaderDeneb
 			var ok bool
 			if b.silaPayloadHeader != nil {
-				ph, ok = b.silaPayloadHeader.Proto().(*enginev1.SilaPayloadHeaderDeneb)
+				ph, ok = b.silaPayloadHeader.Proto().(*silaenginev1.SilaPayloadHeaderDeneb)
 				if !ok {
 					return nil, errPayloadHeaderWrongType
 				}
@@ -577,10 +577,10 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 				BlobKzgCommitments:     b.blobKzgCommitments,
 			}, nil
 		}
-		var p *enginev1.SilaPayloadDeneb
+		var p *silaenginev1.SilaPayloadDeneb
 		var ok bool
 		if b.silaPayload != nil {
-			p, ok = b.silaPayload.Proto().(*enginev1.SilaPayloadDeneb)
+			p, ok = b.silaPayload.Proto().(*silaenginev1.SilaPayloadDeneb)
 			if !ok {
 				return nil, errPayloadWrongType
 			}
@@ -601,10 +601,10 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 		}, nil
 	case version.Electra:
 		if b.IsBlinded() {
-			var ph *enginev1.SilaPayloadHeaderDeneb
+			var ph *silaenginev1.SilaPayloadHeaderDeneb
 			var ok bool
 			if b.silaPayloadHeader != nil {
-				ph, ok = b.silaPayloadHeader.Proto().(*enginev1.SilaPayloadHeaderDeneb)
+				ph, ok = b.silaPayloadHeader.Proto().(*silaenginev1.SilaPayloadHeaderDeneb)
 				if !ok {
 					return nil, errPayloadHeaderWrongType
 				}
@@ -625,10 +625,10 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 				ExecutionRequests:      b.executionRequests,
 			}, nil
 		}
-		var p *enginev1.SilaPayloadDeneb
+		var p *silaenginev1.SilaPayloadDeneb
 		var ok bool
 		if b.silaPayload != nil {
-			p, ok = b.silaPayload.Proto().(*enginev1.SilaPayloadDeneb)
+			p, ok = b.silaPayload.Proto().(*silaenginev1.SilaPayloadDeneb)
 			if !ok {
 				return nil, errPayloadWrongType
 			}
@@ -650,10 +650,10 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 		}, nil
 	case version.Fulu:
 		if b.IsBlinded() {
-			var ph *enginev1.SilaPayloadHeaderDeneb
+			var ph *silaenginev1.SilaPayloadHeaderDeneb
 			var ok bool
 			if b.silaPayloadHeader != nil {
-				ph, ok = b.silaPayloadHeader.Proto().(*enginev1.SilaPayloadHeaderDeneb)
+				ph, ok = b.silaPayloadHeader.Proto().(*silaenginev1.SilaPayloadHeaderDeneb)
 				if !ok {
 					return nil, errPayloadHeaderWrongType
 				}
@@ -674,10 +674,10 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 				ExecutionRequests:      b.executionRequests,
 			}, nil
 		}
-		var p *enginev1.SilaPayloadDeneb
+		var p *silaenginev1.SilaPayloadDeneb
 		var ok bool
 		if b.silaPayload != nil {
-			p, ok = b.silaPayload.Proto().(*enginev1.SilaPayloadDeneb)
+			p, ok = b.silaPayload.Proto().(*silaenginev1.SilaPayloadDeneb)
 			if !ok {
 				return nil, errPayloadWrongType
 			}
@@ -1325,7 +1325,7 @@ func initBlockBodyFromProtoElectra(pb *eth.BeaconBlockBodyElectra) (*BeaconBlock
 	}
 	er := pb.ExecutionRequests
 	if er == nil {
-		er = &enginev1.ExecutionRequests{}
+		er = &silaenginev1.ExecutionRequests{}
 	}
 	b := &BeaconBlockBody{
 		version:                  version.Electra,
@@ -1358,7 +1358,7 @@ func initBlindedBlockBodyFromProtoElectra(pb *eth.BlindedBeaconBlockBodyElectra)
 	}
 	er := pb.ExecutionRequests
 	if er == nil {
-		er = &enginev1.ExecutionRequests{}
+		er = &silaenginev1.ExecutionRequests{}
 	}
 	b := &BeaconBlockBody{
 		version:                  version.Electra,
@@ -1469,7 +1469,7 @@ func initBlockBodyFromProtoFulu(pb *eth.BeaconBlockBodyElectra) (*BeaconBlockBod
 	}
 	er := pb.ExecutionRequests
 	if er == nil {
-		er = &enginev1.ExecutionRequests{}
+		er = &silaenginev1.ExecutionRequests{}
 	}
 	b := &BeaconBlockBody{
 		version:                  version.Fulu,
@@ -1502,7 +1502,7 @@ func initBlindedBlockBodyFromProtoFulu(pb *eth.BlindedBeaconBlockBodyElectra) (*
 	}
 	er := pb.ExecutionRequests
 	if er == nil {
-		er = &enginev1.ExecutionRequests{}
+		er = &silaenginev1.ExecutionRequests{}
 	}
 	b := &BeaconBlockBody{
 		version:                  version.Fulu,
@@ -1571,7 +1571,7 @@ func initBlockBodyFromProtoGloas(pb *eth.BeaconBlockBodyGloas) (*BeaconBlockBody
 
 	per := pb.ParentExecutionRequests
 	if per == nil {
-		per = &enginev1.ExecutionRequests{}
+		per = &silaenginev1.ExecutionRequests{}
 	}
 	b := &BeaconBlockBody{
 		version:                   version.Gloas,

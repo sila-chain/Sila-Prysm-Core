@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
@@ -208,7 +208,7 @@ type ReadOnlyAttestations interface {
 
 // ReadOnlyWithdrawals defines a struct which only has read access to withdrawal methods.
 type ReadOnlyWithdrawals interface {
-	ExpectedWithdrawals() ([]*enginev1.Withdrawal, uint64, error)
+	ExpectedWithdrawals() ([]*silaenginev1.Withdrawal, uint64, error)
 	NextWithdrawalValidatorIndex() (primitives.ValidatorIndex, error)
 	NextWithdrawalIndex() (uint64, error)
 	PendingBalanceToWithdraw(idx primitives.ValidatorIndex) (uint64, error)

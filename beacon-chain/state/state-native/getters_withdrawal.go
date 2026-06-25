@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	mathutil "github.com/sila-chain/Sila-Consensus-Core/v7/math"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -104,7 +104,7 @@ func (b *BeaconState) NextWithdrawalValidatorIndex() (primitives.ValidatorIndex,
 //				break
 //			validator_index = ValidatorIndex((validator_index + 1) % len(state.validators))
 //		return withdrawals, processed_partial_withdrawals_count
-func (b *BeaconState) ExpectedWithdrawals() ([]*enginev1.Withdrawal, uint64, error) {
+func (b *BeaconState) ExpectedWithdrawals() ([]*silaenginev1.Withdrawal, uint64, error) {
 	if b.version < version.Capella {
 		return nil, 0, errNotSupported("ExpectedWithdrawals", b.version)
 	}
@@ -112,7 +112,7 @@ func (b *BeaconState) ExpectedWithdrawals() ([]*enginev1.Withdrawal, uint64, err
 	b.lock.RLock()
 	defer b.lock.RUnlock()
 
-	withdrawals := make([]*enginev1.Withdrawal, 0, params.BeaconConfig().MaxWithdrawalsPerPayload)
+	withdrawals := make([]*silaenginev1.Withdrawal, 0, params.BeaconConfig().MaxWithdrawalsPerPayload)
 	withdrawalIndex := b.nextWithdrawalIndex
 
 	withdrawalIndex, processedPartialWithdrawalsCount, err := b.appendPendingPartialWithdrawals(withdrawalIndex, &withdrawals)
@@ -128,7 +128,7 @@ func (b *BeaconState) ExpectedWithdrawals() ([]*enginev1.Withdrawal, uint64, err
 	return withdrawals, processedPartialWithdrawalsCount, nil
 }
 
-func (b *BeaconState) appendPendingPartialWithdrawals(withdrawalIndex uint64, withdrawals *[]*enginev1.Withdrawal) (uint64, uint64, error) {
+func (b *BeaconState) appendPendingPartialWithdrawals(withdrawalIndex uint64, withdrawals *[]*silaenginev1.Withdrawal) (uint64, uint64, error) {
 	if b.version < version.Electra {
 		return withdrawalIndex, 0, nil
 	}
@@ -169,7 +169,7 @@ func (b *BeaconState) appendPendingPartialWithdrawals(withdrawalIndex uint64, wi
 		hasExcessBalance := balance > cfg.MinActivationBalance
 		if v.ExitEpoch() == cfg.FarFutureEpoch && hasSufficientEffectiveBalance && hasExcessBalance {
 			amount := min(balance-cfg.MinActivationBalance, w.Amount)
-			ws = append(ws, &enginev1.Withdrawal{
+			ws = append(ws, &silaenginev1.Withdrawal{
 				Index:          withdrawalIndex,
 				ValidatorIndex: w.Index,
 				Address:        v.GetWithdrawalCredentials()[12:],
@@ -184,7 +184,7 @@ func (b *BeaconState) appendPendingPartialWithdrawals(withdrawalIndex uint64, wi
 	return withdrawalIndex, processedPartialWithdrawalsCount, nil
 }
 
-func (b *BeaconState) appendValidatorsSweepWithdrawals(withdrawalIndex uint64, withdrawals *[]*enginev1.Withdrawal) error {
+func (b *BeaconState) appendValidatorsSweepWithdrawals(withdrawalIndex uint64, withdrawals *[]*silaenginev1.Withdrawal) error {
 	ws := *withdrawals
 	validatorIndex := b.nextWithdrawalValidatorIndex
 	validatorsLen := b.validatorsLen()
@@ -212,7 +212,7 @@ func (b *BeaconState) appendValidatorsSweepWithdrawals(withdrawalIndex uint64, w
 			}
 		}
 		if helpers.IsFullyWithdrawableValidator(val, balance, epoch, b.version) {
-			ws = append(ws, &enginev1.Withdrawal{
+			ws = append(ws, &silaenginev1.Withdrawal{
 				Index:          withdrawalIndex,
 				ValidatorIndex: validatorIndex,
 				Address:        bytesutil.SafeCopyBytes(val.GetWithdrawalCredentials()[SilaExecutionAddressOffset:]),
@@ -220,7 +220,7 @@ func (b *BeaconState) appendValidatorsSweepWithdrawals(withdrawalIndex uint64, w
 			})
 			withdrawalIndex++
 		} else if helpers.IsPartiallyWithdrawableValidator(val, balance, epoch, b.version) {
-			ws = append(ws, &enginev1.Withdrawal{
+			ws = append(ws, &silaenginev1.Withdrawal{
 				Index:          withdrawalIndex,
 				ValidatorIndex: validatorIndex,
 				Address:        bytesutil.SafeCopyBytes(val.GetWithdrawalCredentials()[SilaExecutionAddressOffset:]),

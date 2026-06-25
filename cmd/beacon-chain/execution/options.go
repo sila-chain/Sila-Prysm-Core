@@ -37,7 +37,7 @@ func FlagOptions(c *cli.Context) ([]execution.Option, error) {
 
 // Parses a JWT secret from a file path. This secret is required when connecting to execution nodes
 // over HTTP, and must be the same one used in Sila and the execution node server Sila is connecting to.
-// The engine API specification here https://github.com/sila-chain/Sila-Execution-APIs/blob/main/src/engine/authentication.md
+// The SilaEngine API specification here https://github.com/sila-chain/Sila-Execution-APIs/blob/main/src/engine/authentication.md
 // Explains how we should validate this secret and the format of the file a user can specify.
 //
 // The secret must be stored as a hex-encoded string within a file in the filesystem.

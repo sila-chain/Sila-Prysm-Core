@@ -7,7 +7,7 @@ import (
 
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
@@ -493,7 +493,7 @@ func TestBuildSignedBeaconBlockFromSilaPayload(t *testing.T) {
 	})
 	t.Run("payload header root and payload root mismatch", func(t *testing.T) {
 		blockHash := bytesutil.Bytes32(1)
-		payload := &enginev1.SilaPayload{
+		payload := &silaenginev1.SilaPayload{
 			ParentHash:    make([]byte, fieldparams.RootLength),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, fieldparams.RootLength),
@@ -522,7 +522,7 @@ func TestBuildSignedBeaconBlockFromSilaPayload(t *testing.T) {
 		require.ErrorContains(t, "roots do not match", err)
 	})
 	t.Run("ok", func(t *testing.T) {
-		payload := &enginev1.SilaPayload{
+		payload := &silaenginev1.SilaPayload{
 			ParentHash:    make([]byte, fieldparams.RootLength),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, fieldparams.RootLength),
@@ -552,7 +552,7 @@ func TestBuildSignedBeaconBlockFromSilaPayload(t *testing.T) {
 		require.DeepEqual(t, payload, got.Proto())
 	})
 	t.Run("deneb", func(t *testing.T) {
-		payload := &enginev1.SilaPayloadDeneb{
+		payload := &silaenginev1.SilaPayloadDeneb{
 			ParentHash:    make([]byte, fieldparams.RootLength),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, fieldparams.RootLength),

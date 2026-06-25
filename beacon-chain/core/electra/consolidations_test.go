@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -204,28 +204,28 @@ func TestProcessPendingConsolidations(t *testing.T) {
 func TestIsValidSwitchToCompoundingRequest(t *testing.T) {
 	st, _ := util.DeterministicGenesisStateElectra(t, 1)
 	t.Run("nil source pubkey", func(t *testing.T) {
-		ok := electra.IsValidSwitchToCompoundingRequest(st, &enginev1.ConsolidationRequest{
+		ok := electra.IsValidSwitchToCompoundingRequest(st, &silaenginev1.ConsolidationRequest{
 			SourcePubkey: nil,
 			TargetPubkey: []byte{'a'},
 		})
 		require.Equal(t, false, ok)
 	})
 	t.Run("nil target pubkey", func(t *testing.T) {
-		ok := electra.IsValidSwitchToCompoundingRequest(st, &enginev1.ConsolidationRequest{
+		ok := electra.IsValidSwitchToCompoundingRequest(st, &silaenginev1.ConsolidationRequest{
 			TargetPubkey: nil,
 			SourcePubkey: []byte{'a'},
 		})
 		require.Equal(t, false, ok)
 	})
 	t.Run("different source and target pubkey", func(t *testing.T) {
-		ok := electra.IsValidSwitchToCompoundingRequest(st, &enginev1.ConsolidationRequest{
+		ok := electra.IsValidSwitchToCompoundingRequest(st, &silaenginev1.ConsolidationRequest{
 			TargetPubkey: []byte{'a'},
 			SourcePubkey: []byte{'b'},
 		})
 		require.Equal(t, false, ok)
 	})
 	t.Run("source validator not found in state", func(t *testing.T) {
-		ok := electra.IsValidSwitchToCompoundingRequest(st, &enginev1.ConsolidationRequest{
+		ok := electra.IsValidSwitchToCompoundingRequest(st, &silaenginev1.ConsolidationRequest{
 			SourceAddress: make([]byte, 20),
 			TargetPubkey:  []byte{'a'},
 			SourcePubkey:  []byte{'a'},
@@ -236,7 +236,7 @@ func TestIsValidSwitchToCompoundingRequest(t *testing.T) {
 		v, err := st.ValidatorAtIndex(0)
 		require.NoError(t, err)
 		pubkey := v.PublicKey
-		ok := electra.IsValidSwitchToCompoundingRequest(st, &enginev1.ConsolidationRequest{
+		ok := electra.IsValidSwitchToCompoundingRequest(st, &silaenginev1.ConsolidationRequest{
 			SourceAddress: make([]byte, 20),
 			TargetPubkey:  pubkey,
 			SourcePubkey:  pubkey,
@@ -248,7 +248,7 @@ func TestIsValidSwitchToCompoundingRequest(t *testing.T) {
 		require.NoError(t, err)
 		pubkey := v.PublicKey
 		wc := v.WithdrawalCredentials
-		ok := electra.IsValidSwitchToCompoundingRequest(st, &enginev1.ConsolidationRequest{
+		ok := electra.IsValidSwitchToCompoundingRequest(st, &silaenginev1.ConsolidationRequest{
 			SourceAddress: wc[12:],
 			TargetPubkey:  pubkey,
 			SourcePubkey:  pubkey,
@@ -262,7 +262,7 @@ func TestIsValidSwitchToCompoundingRequest(t *testing.T) {
 		wc := v.WithdrawalCredentials
 		v.WithdrawalCredentials[0] = 1
 		require.NoError(t, st.UpdateValidatorAtIndex(0, v))
-		ok := electra.IsValidSwitchToCompoundingRequest(st, &enginev1.ConsolidationRequest{
+		ok := electra.IsValidSwitchToCompoundingRequest(st, &silaenginev1.ConsolidationRequest{
 			SourceAddress: wc[12:],
 			TargetPubkey:  pubkey,
 			SourcePubkey:  pubkey,
@@ -276,7 +276,7 @@ func TestIsValidSwitchToCompoundingRequest(t *testing.T) {
 		wc := v.WithdrawalCredentials
 		v.ExitEpoch = 100
 		require.NoError(t, st.UpdateValidatorAtIndex(0, v))
-		ok := electra.IsValidSwitchToCompoundingRequest(st, &enginev1.ConsolidationRequest{
+		ok := electra.IsValidSwitchToCompoundingRequest(st, &silaenginev1.ConsolidationRequest{
 			SourceAddress: wc[12:],
 			TargetPubkey:  pubkey,
 			SourcePubkey:  pubkey,

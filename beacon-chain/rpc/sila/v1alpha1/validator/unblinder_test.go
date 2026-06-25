@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -49,7 +49,7 @@ func TestUnblindBlobsSidecars_WithBlobsBundler(t *testing.T) {
 		require.NoError(t, err)
 
 		// Test with regular BlobsBundle
-		bundle := &enginev1.BlobsBundle{
+		bundle := &silaenginev1.BlobsBundle{
 			KzgCommitments: [][]byte{make([]byte, 48)},
 			Proofs:         [][]byte{make([]byte, 48)},
 			Blobs:          [][]byte{make([]byte, 131072)},
@@ -72,7 +72,7 @@ func TestUnblindBlobsSidecars_WithBlobsBundler(t *testing.T) {
 		require.NoError(t, err)
 
 		// Test with BlobsBundleV2 - this is the key test for the interface change
-		bundleV2 := &enginev1.BlobsBundleV2{
+		bundleV2 := &silaenginev1.BlobsBundleV2{
 			KzgCommitments: [][]byte{make([]byte, 48)},
 			Proofs:         [][]byte{make([]byte, 48)},
 			Blobs:          [][]byte{make([]byte, 131072)},
@@ -98,7 +98,7 @@ func TestUnblindBlobsSidecars_WithBlobsBundler(t *testing.T) {
 		require.NoError(t, err)
 
 		// Verify function accepts BlobsBundle through the interface
-		var regularBundle enginev1.BlobsBundler = &enginev1.BlobsBundle{
+		var regularBundle silaenginev1.BlobsBundler = &silaenginev1.BlobsBundle{
 			KzgCommitments: [][]byte{make([]byte, 48)},
 			Proofs:         [][]byte{make([]byte, 48)},
 			Blobs:          [][]byte{make([]byte, 131072)},
@@ -107,7 +107,7 @@ func TestUnblindBlobsSidecars_WithBlobsBundler(t *testing.T) {
 		require.NoError(t, err)
 
 		// Verify function accepts BlobsBundleV2 through the interface
-		var bundleV2 enginev1.BlobsBundler = &enginev1.BlobsBundleV2{
+		var bundleV2 silaenginev1.BlobsBundler = &silaenginev1.BlobsBundleV2{
 			KzgCommitments: [][]byte{make([]byte, 48)},
 			Proofs:         [][]byte{make([]byte, 48)},
 			Blobs:          [][]byte{make([]byte, 131072)},
@@ -130,7 +130,7 @@ func TestUnblindBlobsSidecars_PreDenebBlock(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	bundle := &enginev1.BlobsBundle{
+	bundle := &silaenginev1.BlobsBundle{
 		KzgCommitments: [][]byte{make([]byte, 48)},
 		Proofs:         [][]byte{make([]byte, 48)},
 		Blobs:          [][]byte{make([]byte, 131072)},
@@ -141,7 +141,7 @@ func TestUnblindBlobsSidecars_PreDenebBlock(t *testing.T) {
 	assert.Equal(t, true, sidecars == nil)
 
 	// Also test with BlobsBundleV2
-	bundleV2 := &enginev1.BlobsBundleV2{
+	bundleV2 := &silaenginev1.BlobsBundleV2{
 		KzgCommitments: [][]byte{make([]byte, 48)},
 		Proofs:         [][]byte{make([]byte, 48)},
 		Blobs:          [][]byte{make([]byte, 131072)},

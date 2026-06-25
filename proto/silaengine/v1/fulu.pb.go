@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.3
 // 	protoc        v3.21.7
-// source: proto/engine/v1/fulu.proto
+// source: proto/silaengine/v1/fulu.proto
 
-package enginev1
+package silaenginev1
 
 import (
 	reflect "reflect"
@@ -244,17 +244,17 @@ func file_proto_engine_v1_fulu_proto_rawDescGZIP() []byte {
 
 var file_proto_engine_v1_fulu_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_proto_engine_v1_fulu_proto_goTypes = []any{
-	(*ExecutionBundleFulu)(nil),   // 0: sila.engine.v1.ExecutionBundleFulu
-	(*ExecutionBundleGloas)(nil),  // 1: sila.engine.v1.ExecutionBundleGloas
-	(*SilaPayloadDeneb)(nil), // 2: sila.engine.v1.SilaPayloadDeneb
-	(*BlobsBundleV2)(nil),         // 3: sila.engine.v1.BlobsBundleV2
-	(*SilaPayloadGloas)(nil), // 4: sila.engine.v1.SilaPayloadGloas
+	(*ExecutionBundleFulu)(nil),   // 0: sila.silaengine.v1.ExecutionBundleFulu
+	(*ExecutionBundleGloas)(nil),  // 1: sila.silaengine.v1.ExecutionBundleGloas
+	(*SilaPayloadDeneb)(nil), // 2: sila.silaengine.v1.SilaPayloadDeneb
+	(*BlobsBundleV2)(nil),         // 3: sila.silaengine.v1.BlobsBundleV2
+	(*SilaPayloadGloas)(nil), // 4: sila.silaengine.v1.SilaPayloadGloas
 }
 var file_proto_engine_v1_fulu_proto_depIdxs = []int32{
-	2, // 0: sila.engine.v1.ExecutionBundleFulu.payload:type_name -> sila.engine.v1.SilaPayloadDeneb
-	3, // 1: sila.engine.v1.ExecutionBundleFulu.blobs_bundle:type_name -> sila.engine.v1.BlobsBundleV2
-	4, // 2: sila.engine.v1.ExecutionBundleGloas.payload:type_name -> sila.engine.v1.SilaPayloadGloas
-	3, // 3: sila.engine.v1.ExecutionBundleGloas.blobs_bundle:type_name -> sila.engine.v1.BlobsBundleV2
+	2, // 0: sila.silaengine.v1.ExecutionBundleFulu.payload:type_name -> sila.silaengine.v1.SilaPayloadDeneb
+	3, // 1: sila.silaengine.v1.ExecutionBundleFulu.blobs_bundle:type_name -> sila.silaengine.v1.BlobsBundleV2
+	4, // 2: sila.silaengine.v1.ExecutionBundleGloas.payload:type_name -> sila.silaengine.v1.SilaPayloadGloas
+	3, // 3: sila.silaengine.v1.ExecutionBundleGloas.blobs_bundle:type_name -> sila.silaengine.v1.BlobsBundleV2
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
@@ -267,7 +267,7 @@ func file_proto_engine_v1_fulu_proto_init() {
 	if File_proto_engine_v1_fulu_proto != nil {
 		return
 	}
-	file_proto_engine_v1_execution_engine_proto_init()
+	file_proto_engine_v1_sila_engine_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

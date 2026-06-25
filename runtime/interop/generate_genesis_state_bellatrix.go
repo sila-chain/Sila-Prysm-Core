@@ -9,7 +9,7 @@ import (
 	statenative "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/pkg/errors"
@@ -17,7 +17,7 @@ import (
 
 // GenerateGenesisStateBellatrix deterministically given a genesis time and number of validators.
 // If a genesis time of 0 is supplied it is set to the current time.
-func GenerateGenesisStateBellatrix(ctx context.Context, genesisTime, numValidators uint64, ep *enginev1.SilaPayload, ed *silapb.SilaExecutionData) (*silapb.BeaconStateBellatrix, []*silapb.Deposit, error) {
+func GenerateGenesisStateBellatrix(ctx context.Context, genesisTime, numValidators uint64, ep *silaenginev1.SilaPayload, ed *silapb.SilaExecutionData) (*silapb.BeaconStateBellatrix, []*silapb.Deposit, error) {
 	privKeys, pubKeys, err := DeterministicallyGenerateKeys(0 /*startIndex*/, numValidators)
 	if err != nil {
 		return nil, nil, errors.Wrapf(err, "could not deterministically generate keys for %d validators", numValidators)
@@ -32,7 +32,7 @@ func GenerateGenesisStateBellatrix(ctx context.Context, genesisTime, numValidato
 // GenerateGenesisStateBellatrixFromDepositData creates a genesis state given a list of
 // deposit data items and their corresponding roots.
 func GenerateGenesisStateBellatrixFromDepositData(
-	ctx context.Context, genesisTime uint64, depositData []*silapb.Deposit_Data, depositDataRoots [][]byte, ep *enginev1.SilaPayload, e1d *silapb.SilaExecutionData,
+	ctx context.Context, genesisTime uint64, depositData []*silapb.Deposit_Data, depositDataRoots [][]byte, ep *silaenginev1.SilaPayload, e1d *silapb.SilaExecutionData,
 ) (*silapb.BeaconStateBellatrix, []*silapb.Deposit, error) {
 	t, err := trie.GenerateTrieFromItems(depositDataRoots, params.BeaconConfig().DepositContractTreeDepth)
 	if err != nil {

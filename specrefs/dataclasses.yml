@@ -9,7 +9,7 @@
 
 - name: BlobsBundle#deneb
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: ^message BlobsBundle\s*\{
       regex: true
   spec: |
@@ -22,7 +22,7 @@
 
 - name: BlobsBundle#fulu
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: ^message BlobsBundleV2
       regex: true
   spec: |
@@ -255,7 +255,7 @@
 
 - name: NewPayloadRequest#bellatrix
   sources:
-    - file: beacon-chain/execution/engine_client.go
+    - file: beacon-chain/execution/silaengine_client.go
       search: func (s *Service) NewPayload(ctx context.Context, payload interfaces.ExecutionData
   spec: |
     <spec dataclass="NewPayloadRequest" fork="bellatrix" hash="cbd668dc">
@@ -265,7 +265,7 @@
 
 - name: NewPayloadRequest#deneb
   sources:
-    - file: beacon-chain/execution/engine_client.go
+    - file: beacon-chain/execution/silaengine_client.go
       search: func (s *Service) NewPayload(ctx context.Context, payload interfaces.ExecutionData, versionedHashes []common.Hash, parentBlockRoot *common.Hash
   spec: |
     <spec dataclass="NewPayloadRequest" fork="deneb" hash="a61cff05">
@@ -277,7 +277,7 @@
 
 - name: NewPayloadRequest#electra
   sources:
-    - file: beacon-chain/execution/engine_client.go
+    - file: beacon-chain/execution/silaengine_client.go
       search: func (s *Service) NewPayload(ctx context.Context, payload interfaces.ExecutionData, versionedHashes []common.Hash, parentBlockRoot *common.Hash, executionRequests *pb.ExecutionRequests
   spec: |
     <spec dataclass="NewPayloadRequest" fork="electra" hash="366a2e72">
@@ -302,7 +302,7 @@
 
 - name: PayloadAttributes#bellatrix
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: ^message PayloadAttributes\s*\{
       regex: true
   spec: |
@@ -315,7 +315,7 @@
 
 - name: PayloadAttributes#capella
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: ^message PayloadAttributesV2
       regex: true
   spec: |
@@ -330,7 +330,7 @@
 
 - name: PayloadAttributes#deneb
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: ^message PayloadAttributesV3
       regex: true
   spec: |

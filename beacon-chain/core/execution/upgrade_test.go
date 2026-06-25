@@ -6,7 +6,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -63,10 +63,10 @@ func TestUpgradeToBellatrix(t *testing.T) {
 
 	header, err := mSt.LatestSilaPayloadHeader()
 	require.NoError(t, err)
-	protoHeader, ok := header.Proto().(*enginev1.SilaPayloadHeader)
+	protoHeader, ok := header.Proto().(*silaenginev1.SilaPayloadHeader)
 	require.Equal(t, true, ok)
 
-	wanted := &enginev1.SilaPayloadHeader{
+	wanted := &silaenginev1.SilaPayloadHeader{
 		ParentHash:       make([]byte, 32),
 		FeeRecipient:     make([]byte, 20),
 		StateRoot:        make([]byte, 32),

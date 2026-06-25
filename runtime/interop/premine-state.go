@@ -15,7 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila/core/types"
@@ -475,7 +475,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
-			SilaPayload: &enginev1.SilaPayload{
+			SilaPayload: &silaenginev1.SilaPayload{
 				ParentHash:    make([]byte, 32),
 				FeeRecipient:  make([]byte, 20),
 				StateRoot:     make([]byte, 32),
@@ -500,7 +500,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
-			SilaPayload: &enginev1.SilaPayloadCapella{
+			SilaPayload: &silaenginev1.SilaPayloadCapella{
 				ParentHash:    make([]byte, 32),
 				FeeRecipient:  make([]byte, 20),
 				StateRoot:     make([]byte, 32),
@@ -511,7 +511,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				BaseFeePerGas: make([]byte, 32),
 				BlockHash:     make([]byte, 32),
 				Transactions:  make([][]byte, 0),
-				Withdrawals:   make([]*enginev1.Withdrawal, 0),
+				Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			},
 			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 		}
@@ -527,7 +527,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
-			SilaPayload: &enginev1.SilaPayloadDeneb{
+			SilaPayload: &silaenginev1.SilaPayloadDeneb{
 				ParentHash:    make([]byte, 32),
 				FeeRecipient:  make([]byte, 20),
 				StateRoot:     make([]byte, 32),
@@ -538,7 +538,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				BaseFeePerGas: make([]byte, 32),
 				BlockHash:     make([]byte, 32),
 				Transactions:  make([][]byte, 0),
-				Withdrawals:   make([]*enginev1.Withdrawal, 0),
+				Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			},
 			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
@@ -555,7 +555,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
-			SilaPayload: &enginev1.SilaPayloadDeneb{
+			SilaPayload: &silaenginev1.SilaPayloadDeneb{
 				ParentHash:    make([]byte, 32),
 				FeeRecipient:  make([]byte, 20),
 				StateRoot:     make([]byte, 32),
@@ -566,14 +566,14 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				BaseFeePerGas: make([]byte, 32),
 				BlockHash:     make([]byte, 32),
 				Transactions:  make([][]byte, 0),
-				Withdrawals:   make([]*enginev1.Withdrawal, 0),
+				Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			},
 			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
-			ExecutionRequests: &enginev1.ExecutionRequests{
-				Deposits:       make([]*enginev1.DepositRequest, 0),
-				Withdrawals:    make([]*enginev1.WithdrawalRequest, 0),
-				Consolidations: make([]*enginev1.ConsolidationRequest, 0),
+			ExecutionRequests: &silaenginev1.ExecutionRequests{
+				Deposits:       make([]*silaenginev1.DepositRequest, 0),
+				Withdrawals:    make([]*silaenginev1.WithdrawalRequest, 0),
+				Consolidations: make([]*silaenginev1.ConsolidationRequest, 0),
 			},
 		}
 	case version.Fulu:
@@ -588,7 +588,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				SyncCommitteeBits:      make([]byte, fieldparams.SyncCommitteeLength/8),
 				SyncCommitteeSignature: make([]byte, fieldparams.BLSSignatureLength),
 			},
-			SilaPayload: &enginev1.SilaPayloadDeneb{
+			SilaPayload: &silaenginev1.SilaPayloadDeneb{
 				ParentHash:    make([]byte, 32),
 				FeeRecipient:  make([]byte, 20),
 				StateRoot:     make([]byte, 32),
@@ -599,14 +599,14 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				BaseFeePerGas: make([]byte, 32),
 				BlockHash:     make([]byte, 32),
 				Transactions:  make([][]byte, 0),
-				Withdrawals:   make([]*enginev1.Withdrawal, 0),
+				Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			},
 			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
-			ExecutionRequests: &enginev1.ExecutionRequests{
-				Deposits:       make([]*enginev1.DepositRequest, 0),
-				Withdrawals:    make([]*enginev1.WithdrawalRequest, 0),
-				Consolidations: make([]*enginev1.ConsolidationRequest, 0),
+			ExecutionRequests: &silaenginev1.ExecutionRequests{
+				Deposits:       make([]*silaenginev1.DepositRequest, 0),
+				Withdrawals:    make([]*silaenginev1.WithdrawalRequest, 0),
+				Consolidations: make([]*silaenginev1.ConsolidationRequest, 0),
 			},
 		}
 	default:
@@ -633,7 +633,7 @@ func (s *PremineGenesisConfig) setSilaPayload(g state.BeaconState) error {
 	}
 
 	if s.Version >= version.Deneb {
-		payload := &enginev1.SilaPayloadDeneb{
+		payload := &silaenginev1.SilaPayloadDeneb{
 			ParentHash:    gb.ParentHash().Bytes(),
 			FeeRecipient:  gb.Coinbase().Bytes(),
 			StateRoot:     gb.Root().Bytes(),
@@ -648,7 +648,7 @@ func (s *PremineGenesisConfig) setSilaPayload(g state.BeaconState) error {
 			BaseFeePerGas: bytesutil.PadTo(bytesutil.ReverseByteOrder(gb.BaseFee().Bytes()), fieldparams.RootLength),
 			BlockHash:     gb.Hash().Bytes(),
 			Transactions:  make([][]byte, 0),
-			Withdrawals:   make([]*enginev1.Withdrawal, 0),
+			Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			ExcessBlobGas: unwrapUint64Ptr(gb.ExcessBlobGas()),
 			BlobGasUsed:   unwrapUint64Ptr(gb.BlobGasUsed()),
 		}
@@ -672,7 +672,7 @@ func (s *PremineGenesisConfig) setSilaPayload(g state.BeaconState) error {
 	}
 
 	if s.Version >= version.Capella {
-		payload := &enginev1.SilaPayloadCapella{
+		payload := &silaenginev1.SilaPayloadCapella{
 			ParentHash:    gb.ParentHash().Bytes(),
 			FeeRecipient:  gb.Coinbase().Bytes(),
 			StateRoot:     gb.Root().Bytes(),
@@ -687,7 +687,7 @@ func (s *PremineGenesisConfig) setSilaPayload(g state.BeaconState) error {
 			BaseFeePerGas: bytesutil.PadTo(bytesutil.ReverseByteOrder(gb.BaseFee().Bytes()), fieldparams.RootLength),
 			BlockHash:     gb.Hash().Bytes(),
 			Transactions:  make([][]byte, 0),
-			Withdrawals:   make([]*enginev1.Withdrawal, 0),
+			Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 		}
 
 		wep, err := blocks.WrappedSilaPayloadCapella(payload)
@@ -708,7 +708,7 @@ func (s *PremineGenesisConfig) setSilaPayload(g state.BeaconState) error {
 	}
 
 	if s.Version >= version.Bellatrix {
-		payload := &enginev1.SilaPayload{
+		payload := &silaenginev1.SilaPayload{
 			ParentHash:    gb.ParentHash().Bytes(),
 			FeeRecipient:  gb.Coinbase().Bytes(),
 			StateRoot:     gb.Root().Bytes(),

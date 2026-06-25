@@ -17,7 +17,7 @@ import (
 
 // VerifySilaPayloadEnvelope is a verification function called by fork-choice when
 // importing a signed sila payload. It verifies the payload against the
-// execution engine without processing execution requests or updating state.
+// SilaEngine without processing execution requests or updating state.
 // Actual state mutations are deferred to process_parent_sila_payload in
 // the next block.
 //
@@ -25,7 +25,7 @@ import (
 //	def verify_sila_payload_envelope(
 //	    state: BeaconState,
 //	    signed_envelope: SignedSilaPayloadEnvelope,
-//	    execution_engine: ExecutionEngine,
+//	    sila_engine: SilaEngine,
 //	) -> None:
 //	    envelope = signed_envelope.message
 //	    payload = envelope.payload
@@ -52,7 +52,7 @@ import (
 //	    assert payload.parent_hash == state.latest_block_hash
 //	    assert payload.timestamp == compute_time_at_slot(state, state.slot)
 //	    assert hash_tree_root(payload.withdrawals) == hash_tree_root(state.payload_expected_withdrawals)
-//	    assert execution_engine.verify_and_notify_new_payload(
+//	    assert sila_engine.verify_and_notify_new_payload(
 //	        NewPayloadRequest(
 //	            sila_payload=payload,
 //	            versioned_hashes=[

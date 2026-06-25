@@ -25,7 +25,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/file"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/components"
@@ -664,8 +664,8 @@ func (r *testRunner) executeProvidedEvaluators(ec *e2etypes.EvaluationContext, c
 // as expected.
 func (r *testRunner) multiScenarioMulticlient(ec *e2etypes.EvaluationContext, epoch uint64, conns []*grpc.ClientConn) bool {
 	type ForkchoiceUpdatedResponse struct {
-		Status    *enginev1.PayloadStatus  `json:"payloadStatus"`
-		PayloadId *enginev1.PayloadIDBytes `json:"payloadId"`
+		Status    *silaenginev1.PayloadStatus  `json:"payloadStatus"`
+		PayloadId *silaenginev1.PayloadIDBytes `json:"payloadId"`
 	}
 	lastForkEpoch := params.LastForkEpoch()
 	freezeStartEpoch := lastForkEpoch + 1
@@ -697,8 +697,8 @@ func (r *testRunner) multiScenarioMulticlient(ec *e2etypes.EvaluationContext, ep
 		component, err := r.comHandler.silaexecProxy.ComponentAtIndex(0)
 		require.NoError(r.t, err)
 		component.(e2etypes.EngineProxy).AddRequestInterceptor(newPayloadMethod, func() any {
-			return &enginev1.PayloadStatus{
-				Status:          enginev1.PayloadStatus_SYNCING,
+			return &silaenginev1.PayloadStatus{
+				Status:          silaenginev1.PayloadStatus_SYNCING,
 				LatestValidHash: make([]byte, 32),
 			}
 		}, func() bool {
@@ -708,8 +708,8 @@ func (r *testRunner) multiScenarioMulticlient(ec *e2etypes.EvaluationContext, ep
 		component, err = r.comHandler.silaexecProxy.ComponentAtIndex(2)
 		require.NoError(r.t, err)
 		component.(e2etypes.EngineProxy).AddRequestInterceptor(newPayloadMethod, func() any {
-			return &enginev1.PayloadStatus{
-				Status:          enginev1.PayloadStatus_SYNCING,
+			return &silaenginev1.PayloadStatus{
+				Status:          silaenginev1.PayloadStatus_SYNCING,
 				LatestValidHash: make([]byte, 32),
 			}
 		}, func() bool {
@@ -718,8 +718,8 @@ func (r *testRunner) multiScenarioMulticlient(ec *e2etypes.EvaluationContext, ep
 
 		component.(e2etypes.EngineProxy).AddRequestInterceptor(forkChoiceUpdatedMethod, func() any {
 			return &ForkchoiceUpdatedResponse{
-				Status: &enginev1.PayloadStatus{
-					Status:          enginev1.PayloadStatus_SYNCING,
+				Status: &silaenginev1.PayloadStatus{
+					Status:          silaenginev1.PayloadStatus_SYNCING,
 					LatestValidHash: nil,
 				},
 				PayloadId: nil,
@@ -822,8 +822,8 @@ func (r *testRunner) multiScenario(ec *e2etypes.EvaluationContext, epoch uint64,
 		component, err := r.comHandler.silaexecProxy.ComponentAtIndex(0)
 		require.NoError(r.t, err)
 		component.(e2etypes.EngineProxy).AddRequestInterceptor(newPayloadMethod, func() any {
-			return &enginev1.PayloadStatus{
-				Status:          enginev1.PayloadStatus_SYNCING,
+			return &silaenginev1.PayloadStatus{
+				Status:          silaenginev1.PayloadStatus_SYNCING,
 				LatestValidHash: make([]byte, 32),
 			}
 		}, func() bool {

@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -410,7 +410,7 @@ func syncCommittee(prefix string) *silapb.SyncCommittee {
 	}
 }
 
-func silaPayloadHeader() *enginev1.SilaPayloadHeader {
+func silaPayloadHeader() *silaenginev1.SilaPayloadHeader {
 	ph := bytesutil.ToBytes32([]byte("parent"))
 	fr := bytesutil.PadTo([]byte("fee"), 20)
 	sr := bytesutil.ToBytes32([]byte("state"))
@@ -421,7 +421,7 @@ func silaPayloadHeader() *enginev1.SilaPayloadHeader {
 	bf := bytesutil.ToBytes32([]byte("base"))
 	bh := bytesutil.ToBytes32([]byte("block"))
 	tr := bytesutil.ToBytes32([]byte("transactions"))
-	return &enginev1.SilaPayloadHeader{
+	return &silaenginev1.SilaPayloadHeader{
 		ParentHash:       ph[:],
 		FeeRecipient:     fr,
 		StateRoot:        sr[:],
@@ -439,7 +439,7 @@ func silaPayloadHeader() *enginev1.SilaPayloadHeader {
 	}
 }
 
-func silaPayloadHeaderCapella() *enginev1.SilaPayloadHeaderCapella {
+func silaPayloadHeaderCapella() *silaenginev1.SilaPayloadHeaderCapella {
 	ph := bytesutil.ToBytes32([]byte("parent"))
 	fr := bytesutil.PadTo([]byte("fee"), 20)
 	sr := bytesutil.ToBytes32([]byte("state"))
@@ -451,7 +451,7 @@ func silaPayloadHeaderCapella() *enginev1.SilaPayloadHeaderCapella {
 	bh := bytesutil.ToBytes32([]byte("block"))
 	tr := bytesutil.ToBytes32([]byte("transactions"))
 	wr := bytesutil.ToBytes32([]byte("withdrawals"))
-	return &enginev1.SilaPayloadHeaderCapella{
+	return &silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       ph[:],
 		FeeRecipient:     fr,
 		StateRoot:        sr[:],

@@ -220,7 +220,7 @@ type stateDiff struct {
 	builderPendingWithdrawalsIndex uint64
 	builderPendingWithdrawalsDiff  []*silapb.BuilderPendingWithdrawal
 	latestBlockHash                [fieldparams.RootLength]byte
-	payloadExpectedWithdrawals     []*enginev1.Withdrawal
+	payloadExpectedWithdrawals     []*silaenginev1.Withdrawal
 	ptcWindow                      []*silapb.PTCs
 }
 ```

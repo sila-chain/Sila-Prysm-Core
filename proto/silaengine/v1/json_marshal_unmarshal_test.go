@@ -9,7 +9,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -27,14 +27,14 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 	t.Run("payload attributes", func(t *testing.T) {
 		random := bytesutil.PadTo([]byte("random"), fieldparams.RootLength)
 		feeRecipient := bytesutil.PadTo([]byte("feeRecipient"), fieldparams.FeeRecipientLength)
-		jsonPayload := &enginev1.PayloadAttributes{
+		jsonPayload := &silaenginev1.PayloadAttributes{
 			Timestamp:             1,
 			PrevRandao:            random,
 			SuggestedFeeRecipient: feeRecipient,
 		}
 		enc, err := json.Marshal(jsonPayload)
 		require.NoError(t, err)
-		payloadPb := &enginev1.PayloadAttributes{}
+		payloadPb := &silaenginev1.PayloadAttributes{}
 		require.NoError(t, json.Unmarshal(enc, payloadPb))
 		require.DeepEqual(t, uint64(1), payloadPb.Timestamp)
 		require.DeepEqual(t, random, payloadPb.PrevRandao)
@@ -42,14 +42,14 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 	})
 	t.Run("payload status", func(t *testing.T) {
 		hash := bytesutil.PadTo([]byte("hash"), fieldparams.RootLength)
-		jsonPayload := &enginev1.PayloadStatus{
-			Status:          enginev1.PayloadStatus_INVALID,
+		jsonPayload := &silaenginev1.PayloadStatus{
+			Status:          silaenginev1.PayloadStatus_INVALID,
 			LatestValidHash: hash,
 			ValidationError: "failed validation",
 		}
 		enc, err := json.Marshal(jsonPayload)
 		require.NoError(t, err)
-		payloadPb := &enginev1.PayloadStatus{}
+		payloadPb := &silaenginev1.PayloadStatus{}
 		require.NoError(t, json.Unmarshal(enc, payloadPb))
 		require.DeepEqual(t, "INVALID", payloadPb.Status.String())
 		require.DeepEqual(t, hash, payloadPb.LatestValidHash)
@@ -59,14 +59,14 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		head := bytesutil.PadTo([]byte("head"), fieldparams.RootLength)
 		safe := bytesutil.PadTo([]byte("safe"), fieldparams.RootLength)
 		finalized := bytesutil.PadTo([]byte("finalized"), fieldparams.RootLength)
-		jsonPayload := &enginev1.ForkchoiceState{
+		jsonPayload := &silaenginev1.ForkchoiceState{
 			HeadBlockHash:      head,
 			SafeBlockHash:      safe,
 			FinalizedBlockHash: finalized,
 		}
 		enc, err := json.Marshal(jsonPayload)
 		require.NoError(t, err)
-		payloadPb := &enginev1.ForkchoiceState{}
+		payloadPb := &silaenginev1.ForkchoiceState{}
 		require.NoError(t, json.Unmarshal(enc, payloadPb))
 		require.DeepEqual(t, head, payloadPb.HeadBlockHash)
 		require.DeepEqual(t, safe, payloadPb.SafeBlockHash)
@@ -82,7 +82,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		random := bytesutil.PadTo([]byte("random"), fieldparams.RootLength)
 		extra := bytesutil.PadTo([]byte("extraData"), fieldparams.RootLength)
 		hash := bytesutil.PadTo([]byte("hash"), fieldparams.RootLength)
-		jsonPayload := &enginev1.SilaPayload{
+		jsonPayload := &silaenginev1.SilaPayload{
 			ParentHash:    parentHash,
 			FeeRecipient:  feeRecipient,
 			StateRoot:     stateRoot,
@@ -100,7 +100,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		}
 		enc, err := json.Marshal(jsonPayload)
 		require.NoError(t, err)
-		payloadPb := &enginev1.SilaPayload{}
+		payloadPb := &silaenginev1.SilaPayload{}
 		require.NoError(t, json.Unmarshal(enc, payloadPb))
 		require.DeepEqual(t, parentHash, payloadPb.ParentHash)
 		require.DeepEqual(t, feeRecipient, payloadPb.FeeRecipient)
@@ -131,9 +131,9 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		gu := hexutil.Uint64(3)
 		ts := hexutil.Uint64(4)
 
-		resp := &enginev1.GetPayloadV2ResponseJson{
+		resp := &silaenginev1.GetPayloadV2ResponseJson{
 			BlockValue: "0x123",
-			SilaPayload: &enginev1.SilaPayloadCapellaJSON{
+			SilaPayload: &silaenginev1.SilaPayloadCapellaJSON{
 				ParentHash:    &parentHash,
 				FeeRecipient:  &feeRecipient,
 				StateRoot:     &stateRoot,
@@ -148,7 +148,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 				BaseFeePerGas: "0x123",
 				BlockHash:     &hash,
 				Transactions:  []hexutil.Bytes{{}},
-				Withdrawals: []*enginev1.Withdrawal{{
+				Withdrawals: []*silaenginev1.Withdrawal{{
 					Index:          1,
 					ValidatorIndex: 1,
 					Address:        bytesutil.PadTo([]byte("address"), 20),
@@ -158,7 +158,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		}
 		enc, err := json.Marshal(resp)
 		require.NoError(t, err)
-		pb := &enginev1.SilaPayloadCapellaWithValue{}
+		pb := &silaenginev1.SilaPayloadCapellaWithValue{}
 		require.NoError(t, json.Unmarshal(enc, pb))
 		require.DeepEqual(t, parentHash.Bytes(), pb.Payload.ParentHash)
 		require.DeepEqual(t, feeRecipient.Bytes(), pb.Payload.FeeRecipient)
@@ -198,14 +198,14 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		bgu := hexutil.Uint64(5)
 		ebg := hexutil.Uint64(6)
 
-		resp := &enginev1.GetPayloadV3ResponseJson{
-			BlobsBundle: &enginev1.BlobBundleJSON{
+		resp := &silaenginev1.GetPayloadV3ResponseJson{
+			BlobsBundle: &silaenginev1.BlobBundleJSON{
 				Commitments: []hexutil.Bytes{{'a'}, {'b'}, {'c'}, {'d'}},
 				Proofs:      []hexutil.Bytes{{'e'}, {'f'}, {'g'}, {'h'}},
 				Blobs:       []hexutil.Bytes{{'i'}, {'j'}, {'k'}, {'l'}},
 			},
 			BlockValue: "0x123",
-			SilaPayload: &enginev1.SilaPayloadDenebJSON{
+			SilaPayload: &silaenginev1.SilaPayloadDenebJSON{
 				ParentHash:    &parentHash,
 				FeeRecipient:  &feeRecipient,
 				StateRoot:     &stateRoot,
@@ -220,7 +220,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 				BaseFeePerGas: "0x123",
 				BlockHash:     &hash,
 				Transactions:  []hexutil.Bytes{{}},
-				Withdrawals: []*enginev1.Withdrawal{{
+				Withdrawals: []*silaenginev1.Withdrawal{{
 					Index:          1,
 					ValidatorIndex: 1,
 					Address:        bytesutil.PadTo([]byte("address"), 20),
@@ -232,7 +232,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		}
 		enc, err := json.Marshal(resp)
 		require.NoError(t, err)
-		pb := &enginev1.SilaPayloadDenebWithValueAndBlobsBundle{}
+		pb := &silaenginev1.SilaPayloadDenebWithValueAndBlobsBundle{}
 		require.NoError(t, json.Unmarshal(enc, pb))
 		require.DeepEqual(t, parentHash.Bytes(), pb.Payload.ParentHash)
 		require.DeepEqual(t, feeRecipient.Bytes(), pb.Payload.FeeRecipient)
@@ -306,7 +306,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		encodedPayloadItems, err := json.Marshal(payloadItems)
 		require.NoError(t, err)
 
-		payloadPb := &enginev1.ExecutionBlock{}
+		payloadPb := &silaenginev1.ExecutionBlock{}
 		require.NoError(t, json.Unmarshal(encodedPayloadItems, payloadPb))
 
 		require.DeepEqual(t, blockHash, payloadPb.Hash)
@@ -362,7 +362,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		encodedPayloadItems, err := json.Marshal(payloadItems)
 		require.NoError(t, err)
 
-		payloadPb := &enginev1.ExecutionBlock{}
+		payloadPb := &silaenginev1.ExecutionBlock{}
 		require.NoError(t, json.Unmarshal(encodedPayloadItems, payloadPb))
 
 		require.DeepEqual(t, blockHash, payloadPb.Hash)
@@ -431,7 +431,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		encodedPayloadItems, err := json.Marshal(payloadItems)
 		require.NoError(t, err)
 
-		payloadPb := &enginev1.ExecutionBlock{}
+		payloadPb := &silaenginev1.ExecutionBlock{}
 		require.NoError(t, json.Unmarshal(encodedPayloadItems, payloadPb))
 
 		require.DeepEqual(t, blockHash, payloadPb.Hash)
@@ -511,7 +511,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		encodedPayloadItems, err := json.Marshal(payloadItems)
 		require.NoError(t, err)
 
-		payloadPb := &enginev1.ExecutionBlock{}
+		payloadPb := &silaenginev1.ExecutionBlock{}
 		require.NoError(t, json.Unmarshal(encodedPayloadItems, payloadPb))
 
 		require.DeepEqual(t, blockHash, payloadPb.Hash)
@@ -580,7 +580,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		encodedPayloadItems, err := json.Marshal(payloadItems)
 		require.NoError(t, err)
 
-		payloadPb := &enginev1.ExecutionBlock{}
+		payloadPb := &silaenginev1.ExecutionBlock{}
 		require.NoError(t, json.Unmarshal(encodedPayloadItems, payloadPb))
 
 		require.DeepEqual(t, blockHash, payloadPb.Hash)
@@ -612,7 +612,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 	})
 
 	t.Run("SilaPayloadDenebAndBlobsBundleV2 SSZ marshaling", func(t *testing.T) {
-		payload := &enginev1.SilaPayloadDeneb{
+		payload := &silaenginev1.SilaPayloadDeneb{
 			ParentHash:    make([]byte, 32),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, 32),
@@ -627,18 +627,18 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			BaseFeePerGas: bytesutil.PadTo(big.NewInt(1000000000).Bytes(), 32),
 			BlockHash:     make([]byte, 32),
 			Transactions:  [][]byte{},
-			Withdrawals:   []*enginev1.Withdrawal{},
+			Withdrawals:   []*silaenginev1.Withdrawal{},
 			BlobGasUsed:   1024,
 			ExcessBlobGas: 2048,
 		}
 
-		bundleV2 := &enginev1.BlobsBundleV2{
+		bundleV2 := &silaenginev1.BlobsBundleV2{
 			KzgCommitments: [][]byte{make([]byte, 48), make([]byte, 48)},
 			Proofs:         [][]byte{make([]byte, 48), make([]byte, 48)},
 			Blobs:          [][]byte{make([]byte, 131072), make([]byte, 131072)},
 		}
 
-		bundle := &enginev1.SilaPayloadDenebAndBlobsBundleV2{
+		bundle := &silaenginev1.SilaPayloadDenebAndBlobsBundleV2{
 			Payload:     payload,
 			BlobsBundle: bundleV2,
 		}
@@ -646,7 +646,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		sszBytes, err := bundle.MarshalSSZ()
 		require.NoError(t, err)
 
-		unmarshaled := &enginev1.SilaPayloadDenebAndBlobsBundleV2{}
+		unmarshaled := &silaenginev1.SilaPayloadDenebAndBlobsBundleV2{}
 		err = unmarshaled.UnmarshalSSZ(sszBytes)
 		require.NoError(t, err)
 
@@ -657,7 +657,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 	})
 
 	t.Run("BlobsBundleV2 SSZ marshaling", func(t *testing.T) {
-		bundle := &enginev1.BlobsBundleV2{
+		bundle := &silaenginev1.BlobsBundleV2{
 			KzgCommitments: [][]byte{
 				make([]byte, 48),
 				make([]byte, 48),
@@ -678,7 +678,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		sszBytes, err := bundle.MarshalSSZ()
 		require.NoError(t, err)
 
-		unmarshaled := &enginev1.BlobsBundleV2{}
+		unmarshaled := &silaenginev1.BlobsBundleV2{}
 		err = unmarshaled.UnmarshalSSZ(sszBytes)
 		require.NoError(t, err)
 
@@ -693,19 +693,19 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 
 func TestPayloadIDBytes_MarshalUnmarshalJSON(t *testing.T) {
 	item := [8]byte{1, 0, 0, 0, 0, 0, 0, 0}
-	enc, err := json.Marshal(enginev1.PayloadIDBytes(item))
+	enc, err := json.Marshal(silaenginev1.PayloadIDBytes(item))
 	require.NoError(t, err)
 	require.DeepEqual(t, "\"0x0100000000000000\"", string(enc))
-	res := &enginev1.PayloadIDBytes{}
+	res := &silaenginev1.PayloadIDBytes{}
 	err = res.UnmarshalJSON(enc)
 	require.NoError(t, err)
 	require.Equal(t, true, item == *res)
 }
 
 func TestSilaPayloadBody_MarshalUnmarshalJSON(t *testing.T) {
-	pBody := &enginev1.SilaPayloadBody{
+	pBody := &silaenginev1.SilaPayloadBody{
 		Transactions: []hexutil.Bytes{[]byte("random1"), []byte("random2"), []byte("random3")},
-		Withdrawals: []*enginev1.Withdrawal{
+		Withdrawals: []*silaenginev1.Withdrawal{
 			{
 				Index:          200,
 				ValidatorIndex: 20303,
@@ -722,19 +722,19 @@ func TestSilaPayloadBody_MarshalUnmarshalJSON(t *testing.T) {
 	}
 	enc, err := json.Marshal(pBody)
 	require.NoError(t, err)
-	res := &enginev1.SilaPayloadBody{}
+	res := &silaenginev1.SilaPayloadBody{}
 	err = json.Unmarshal(enc, res)
 	require.NoError(t, err)
 	require.DeepEqual(t, pBody, res)
 }
 
 func TestExecutionBlock_MarshalUnmarshalJSON_MainnetBlock(t *testing.T) {
-	newBlock := &enginev1.ExecutionBlock{}
+	newBlock := &silaenginev1.ExecutionBlock{}
 	require.NoError(t, newBlock.UnmarshalJSON([]byte(blockJson)))
 	_, err := newBlock.MarshalJSON()
 	require.NoError(t, err)
 
-	newBlock = &enginev1.ExecutionBlock{}
+	newBlock = &silaenginev1.ExecutionBlock{}
 	require.NoError(t, newBlock.UnmarshalJSON([]byte(blockNoTxJson)))
 	_, err = newBlock.MarshalJSON()
 	require.NoError(t, err)
@@ -747,9 +747,9 @@ func TestBlsPubKey(t *testing.T) {
 	pkb := bytesutil.ToBytes48([]byte{0xFF})
 	pks := "0xff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 	want := fmt.Sprintf(`{"V":"%s"}`, pks)
-	vpk := enginev1.BlsPubkey(pkb)
+	vpk := silaenginev1.BlsPubkey(pkb)
 	type testContainer struct {
-		V *enginev1.BlsPubkey
+		V *silaenginev1.BlsPubkey
 	}
 	tm := testContainer{V: &vpk}
 	b, err := json.Marshal(&tm)
@@ -764,9 +764,9 @@ func TestBlsSig(t *testing.T) {
 	sb := bytesutil.ToBytes96([]byte{0x23})
 	sbs := "0x230000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 	want := fmt.Sprintf(`{"V":"%s"}`, sbs)
-	vs := enginev1.BlsSig(sb)
+	vs := silaenginev1.BlsSig(sb)
 	type testContainer struct {
-		V *enginev1.BlsSig
+		V *silaenginev1.BlsSig
 	}
 	tm := testContainer{V: &vs}
 	b, err := json.Marshal(&tm)

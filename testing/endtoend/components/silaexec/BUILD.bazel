@@ -27,7 +27,7 @@ go_library(
         "//testing/endtoend/helpers:go_default_library",
         "//testing/endtoend/params:go_default_library",
         "//testing/endtoend/types:go_default_library",
-        "//testing/middleware/engine-api-proxy:go_default_library",
+        "//testing/middleware/silaengine-api-proxy:go_default_library",
         "//testing/util:go_default_library",
         "@com_github_sila_chain_sila//:go_default_library",
         "@com_github_sila_chain_sila//accounts/abi/bind:go_default_library",

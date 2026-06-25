@@ -4,7 +4,7 @@ package sila.eth.v1alpha1;
 
 import "proto/sila/v1alpha1/attestation.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
-import "proto/engine/v1/execution_engine.proto";
+import "proto/silaengine/v1/sila_engine.proto";
 import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1alpha1/sip_7251.proto";
 
@@ -329,7 +329,7 @@ message BeaconStateBellatrix {
   SyncCommittee next_sync_committee = 9003;
 
   // Bellatrix fields [10001-11000]
-  sila.engine.v1.SilaPayloadHeader latest_sila_payload_header =
+  sila.silaengine.v1.SilaPayloadHeader latest_sila_payload_header =
       10001; // [New in Bellatrix]
 }
 
@@ -402,7 +402,7 @@ message BeaconStateCapella {
   SyncCommittee next_sync_committee = 9003;
 
   // Bellatrix fields [10001-11000]
-  sila.engine.v1.SilaPayloadHeaderCapella
+  sila.silaengine.v1.SilaPayloadHeaderCapella
       latest_sila_payload_header = 10001;
 
   // Capella fields [11001-12000]
@@ -484,7 +484,7 @@ message BeaconStateDeneb {
   SyncCommittee next_sync_committee = 9003;
 
   // Fields introduced in Bellatrix fork [10001-11000]
-  sila.engine.v1.SilaPayloadHeaderDeneb
+  sila.silaengine.v1.SilaPayloadHeaderDeneb
       latest_sila_payload_header = 10001; // [New in Deneb]
 
   // Fields introduced in Capella fork [11001-12000]
@@ -566,7 +566,7 @@ message BeaconStateElectra {
   SyncCommittee next_sync_committee = 9003;
 
   // Fields introduced in Bellatrix fork [10001-11000]
-  sila.engine.v1.SilaPayloadHeaderDeneb
+  sila.silaengine.v1.SilaPayloadHeaderDeneb
       latest_sila_payload_header = 10001;
 
   // Fields introduced in Capella fork [11001-12000]
@@ -677,7 +677,7 @@ message BeaconStateFulu {
   SyncCommittee next_sync_committee = 9003;
 
   // Fields introduced in Bellatrix fork [10001-11000]
-  sila.engine.v1.SilaPayloadHeaderDeneb
+  sila.silaengine.v1.SilaPayloadHeaderDeneb
       latest_sila_payload_header = 10001;
 
   // Fields introduced in Capella fork [11001-12000]

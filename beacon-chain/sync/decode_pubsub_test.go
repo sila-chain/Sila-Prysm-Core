@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/wrapper"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/metadata"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -187,7 +187,7 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockBellatrix{Block: &silapb.BeaconBlockBellatrix{Body: &silapb.BeaconBlockBodyBellatrix{SilaPayload: &enginev1.SilaPayload{}}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockBellatrix{Block: &silapb.BeaconBlockBellatrix{Body: &silapb.BeaconBlockBodyBellatrix{SilaPayload: &silaenginev1.SilaPayload{}}}})
 				require.NoError(t, err)
 				return wsb
 			}(),
@@ -204,7 +204,7 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockCapella{Block: &silapb.BeaconBlockCapella{Body: &silapb.BeaconBlockBodyCapella{SilaPayload: &enginev1.SilaPayloadCapella{}}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockCapella{Block: &silapb.BeaconBlockCapella{Body: &silapb.BeaconBlockBodyCapella{SilaPayload: &silaenginev1.SilaPayloadCapella{}}}})
 				require.NoError(t, err)
 				return wsb
 			}(),
@@ -221,7 +221,7 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockDeneb{Block: &silapb.BeaconBlockDeneb{Body: &silapb.BeaconBlockBodyDeneb{SilaPayload: &enginev1.SilaPayloadDeneb{}}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockDeneb{Block: &silapb.BeaconBlockDeneb{Body: &silapb.BeaconBlockBodyDeneb{SilaPayload: &silaenginev1.SilaPayloadDeneb{}}}})
 				require.NoError(t, err)
 				return wsb
 			}(),
@@ -238,7 +238,7 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockElectra{Block: &silapb.BeaconBlockElectra{Body: &silapb.BeaconBlockBodyElectra{SilaPayload: &enginev1.SilaPayloadDeneb{}}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockElectra{Block: &silapb.BeaconBlockElectra{Body: &silapb.BeaconBlockBodyElectra{SilaPayload: &silaenginev1.SilaPayloadDeneb{}}}})
 				require.NoError(t, err)
 				return wsb
 			}(),
@@ -255,7 +255,7 @@ func TestExtractDataType(t *testing.T) {
 				chain:  &mock.ChainService{ValidatorsRoot: [32]byte{}},
 			},
 			wantBlock: func() interfaces.ReadOnlySignedBeaconBlock {
-				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockFulu{Block: &silapb.BeaconBlockElectra{Body: &silapb.BeaconBlockBodyElectra{SilaPayload: &enginev1.SilaPayloadDeneb{}}}})
+				wsb, err := blocks.NewSignedBeaconBlock(&silapb.SignedBeaconBlockFulu{Block: &silapb.BeaconBlockElectra{Body: &silapb.BeaconBlockBodyElectra{SilaPayload: &silaenginev1.SilaPayloadDeneb{}}}})
 				require.NoError(t, err)
 				return wsb
 			}(),

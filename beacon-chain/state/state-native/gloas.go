@@ -1,7 +1,7 @@
 package state_native
 
 import (
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
@@ -79,12 +79,12 @@ func (b *BeaconState) latestBlockHashVal() []byte {
 
 // payloadExpectedWithdrawalsVal returns a copy of the payload expected withdrawals.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) payloadExpectedWithdrawalsVal() []*enginev1.Withdrawal {
+func (b *BeaconState) payloadExpectedWithdrawalsVal() []*silaenginev1.Withdrawal {
 	if b.payloadExpectedWithdrawals == nil {
 		return nil
 	}
 
-	withdrawals := make([]*enginev1.Withdrawal, len(b.payloadExpectedWithdrawals))
+	withdrawals := make([]*silaenginev1.Withdrawal, len(b.payloadExpectedWithdrawals))
 	for i, withdrawal := range b.payloadExpectedWithdrawals {
 		withdrawals[i] = withdrawal.Copy()
 	}

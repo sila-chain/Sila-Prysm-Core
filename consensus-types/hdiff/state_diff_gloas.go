@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
@@ -360,9 +360,9 @@ func (ret *stateDiff) readGloasFields(data *[]byte) error {
 	if len(*data) < pewCount*withdrawalLength {
 		return errors.Wrap(errDataSmall, "payloadExpectedWithdrawals data")
 	}
-	ret.payloadExpectedWithdrawals = make([]*enginev1.Withdrawal, pewCount)
+	ret.payloadExpectedWithdrawals = make([]*silaenginev1.Withdrawal, pewCount)
 	for i := range pewCount {
-		ret.payloadExpectedWithdrawals[i] = &enginev1.Withdrawal{}
+		ret.payloadExpectedWithdrawals[i] = &silaenginev1.Withdrawal{}
 		if err := ret.payloadExpectedWithdrawals[i].UnmarshalSSZ((*data)[:withdrawalLength]); err != nil {
 			return errors.Wrap(err, "failed to unmarshal payload expected withdrawal")
 		}

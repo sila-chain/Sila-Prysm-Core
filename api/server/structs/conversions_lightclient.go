@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
@@ -132,9 +132,9 @@ func lightClientHeaderToJSON(header interfaces.LightClientHeader) (json.RawMessa
 		if err != nil {
 			return nil, err
 		}
-		ex, ok := exInterface.Proto().(*enginev1.SilaPayloadHeaderCapella)
+		ex, ok := exInterface.Proto().(*silaenginev1.SilaPayloadHeaderCapella)
 		if !ok {
-			return nil, fmt.Errorf("execution data is not %T", &enginev1.SilaPayloadHeaderCapella{})
+			return nil, fmt.Errorf("execution data is not %T", &silaenginev1.SilaPayloadHeaderCapella{})
 		}
 		execution, err := SilaPayloadHeaderCapellaFromConsensus(ex)
 		if err != nil {
@@ -154,9 +154,9 @@ func lightClientHeaderToJSON(header interfaces.LightClientHeader) (json.RawMessa
 		if err != nil {
 			return nil, err
 		}
-		ex, ok := exInterface.Proto().(*enginev1.SilaPayloadHeaderDeneb)
+		ex, ok := exInterface.Proto().(*silaenginev1.SilaPayloadHeaderDeneb)
 		if !ok {
-			return nil, fmt.Errorf("execution data is not %T", &enginev1.SilaPayloadHeaderDeneb{})
+			return nil, fmt.Errorf("execution data is not %T", &silaenginev1.SilaPayloadHeaderDeneb{})
 		}
 		execution, err := SilaPayloadHeaderDenebFromConsensus(ex)
 		if err != nil {
@@ -176,9 +176,9 @@ func lightClientHeaderToJSON(header interfaces.LightClientHeader) (json.RawMessa
 		if err != nil {
 			return nil, err
 		}
-		ex, ok := exInterface.Proto().(*enginev1.SilaPayloadHeaderDeneb)
+		ex, ok := exInterface.Proto().(*silaenginev1.SilaPayloadHeaderDeneb)
 		if !ok {
-			return nil, fmt.Errorf("execution data is not %T", &enginev1.SilaPayloadHeaderDeneb{})
+			return nil, fmt.Errorf("execution data is not %T", &silaenginev1.SilaPayloadHeaderDeneb{})
 		}
 		execution, err := SilaPayloadHeaderElectraFromConsensus(ex)
 		if err != nil {

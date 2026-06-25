@@ -6,13 +6,13 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/trie"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
 func TestGenerateGenesisStateBellatrix(t *testing.T) {
-	ep := &enginev1.SilaPayload{
+	ep := &silaenginev1.SilaPayload{
 		ParentHash:    make([]byte, 32),
 		FeeRecipient:  make([]byte, 20),
 		StateRoot:     make([]byte, 32),

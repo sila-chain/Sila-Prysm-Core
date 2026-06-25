@@ -18,7 +18,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -52,7 +52,7 @@ const blockBuilderTimeout = 1 * time.Second
 const gasLimitAdjustmentFactor = 1024
 
 // Sets the execution data for the block. Execution data can come from local EL client or remote builder depends on validator registration and circuit breaker conditions.
-func setExecutionData(ctx context.Context, blk interfaces.SignedBeaconBlock, local *blocks.GetPayloadResponse, bid builder.Bid, builderBoostFactor primitives.Gwei) (primitives.Wei, enginev1.BlobsBundler, error) {
+func setExecutionData(ctx context.Context, blk interfaces.SignedBeaconBlock, local *blocks.GetPayloadResponse, bid builder.Bid, builderBoostFactor primitives.Gwei) (primitives.Wei, silaenginev1.BlobsBundler, error) {
 	_, span := trace.StartSpan(ctx, "ProposerServer.setExecutionData")
 	defer span.End()
 
@@ -137,7 +137,7 @@ func setExecutionData(ctx context.Context, blk interfaces.SignedBeaconBlock, loc
 				}
 			}
 
-			var executionRequests *enginev1.ExecutionRequests
+			var executionRequests *silaenginev1.ExecutionRequests
 			if bid.Version() >= version.Electra {
 				bidElectra, ok := bid.(builder.BidElectra)
 				if !ok {
@@ -285,7 +285,7 @@ func (vs *Server) getPayloadHeaderFromBuilder(
 		}
 		kzgCommitments = dBid.BlobKzgCommitments()
 	}
-	var executionRequests *enginev1.ExecutionRequests
+	var executionRequests *silaenginev1.ExecutionRequests
 	if bid.Version() >= version.Electra {
 		eBid, ok := bid.(builder.BidElectra)
 		if !ok {
@@ -382,13 +382,13 @@ func setLocalExecution(blk interfaces.SignedBeaconBlock, local *blocks.GetPayloa
 
 // setBuilderExecution sets the execution context for a builder's beacon block.
 // It delegates to setExecution for the actual work.
-func setBuilderExecution(blk interfaces.SignedBeaconBlock, execution interfaces.ExecutionData, builderKzgCommitments [][]byte, requests *enginev1.ExecutionRequests) error {
+func setBuilderExecution(blk interfaces.SignedBeaconBlock, execution interfaces.ExecutionData, builderKzgCommitments [][]byte, requests *silaenginev1.ExecutionRequests) error {
 	return setExecution(blk, execution, true, builderKzgCommitments, requests)
 }
 
 // setExecution sets the execution context for a beacon block. It also sets KZG commitments based on the block version.
 // The function is designed to be flexible and handle both local and builder executions.
-func setExecution(blk interfaces.SignedBeaconBlock, execution interfaces.ExecutionData, isBlinded bool, kzgCommitments [][]byte, requests *enginev1.ExecutionRequests) error {
+func setExecution(blk interfaces.SignedBeaconBlock, execution interfaces.ExecutionData, isBlinded bool, kzgCommitments [][]byte, requests *silaenginev1.ExecutionRequests) error {
 	if execution == nil {
 		return errors.New("execution is nil")
 	}

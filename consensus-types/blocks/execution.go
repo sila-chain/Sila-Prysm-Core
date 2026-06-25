@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/pkg/errors"
 	fastssz "github.com/sila-chain/fastssz"
 	"google.golang.org/protobuf/proto"
@@ -18,7 +18,7 @@ import (
 // This wrapper allows us to conform to a common interface so that beacon
 // blocks for future forks can also be applied across Sila without issues.
 type silaPayload struct {
-	p *enginev1.SilaPayload
+	p *silaenginev1.SilaPayload
 }
 
 // NewWrappedExecutionData creates an appropriate sila payload wrapper based on the incoming type.
@@ -27,30 +27,30 @@ func NewWrappedExecutionData(v proto.Message) (interfaces.ExecutionData, error) 
 		return nil, consensus_types.ErrNilObjectWrapped
 	}
 	switch pbStruct := v.(type) {
-	case *enginev1.SilaPayload:
+	case *silaenginev1.SilaPayload:
 		return WrappedSilaPayload(pbStruct)
-	case *enginev1.SilaPayloadCapella:
+	case *silaenginev1.SilaPayloadCapella:
 		return WrappedSilaPayloadCapella(pbStruct)
-	case *enginev1.SilaPayloadCapellaWithValue:
+	case *silaenginev1.SilaPayloadCapellaWithValue:
 		return WrappedSilaPayloadCapella(pbStruct.Payload)
-	case *enginev1.SilaPayloadDeneb:
+	case *silaenginev1.SilaPayloadDeneb:
 		return WrappedSilaPayloadDeneb(pbStruct)
-	case *enginev1.SilaPayloadDenebWithValueAndBlobsBundle:
+	case *silaenginev1.SilaPayloadDenebWithValueAndBlobsBundle:
 		return WrappedSilaPayloadDeneb(pbStruct.Payload)
-	case *enginev1.ExecutionBundleElectra:
+	case *silaenginev1.ExecutionBundleElectra:
 		// note: no payload changes in electra so using deneb
 		return WrappedSilaPayloadDeneb(pbStruct.Payload)
-	case *enginev1.ExecutionBundleFulu:
+	case *silaenginev1.ExecutionBundleFulu:
 		return WrappedSilaPayloadDeneb(pbStruct.Payload)
-	case *enginev1.SilaPayloadGloas:
+	case *silaenginev1.SilaPayloadGloas:
 		return WrappedSilaPayloadGloas(pbStruct)
-	case *enginev1.ExecutionBundleGloas:
+	case *silaenginev1.ExecutionBundleGloas:
 		return WrappedSilaPayloadGloas(pbStruct.Payload)
-	case *enginev1.SilaPayloadHeader:
+	case *silaenginev1.SilaPayloadHeader:
 		return WrappedSilaPayloadHeader(pbStruct)
-	case *enginev1.SilaPayloadHeaderCapella:
+	case *silaenginev1.SilaPayloadHeaderCapella:
 		return WrappedSilaPayloadHeaderCapella(pbStruct)
-	case *enginev1.SilaPayloadHeaderDeneb:
+	case *silaenginev1.SilaPayloadHeaderDeneb:
 		return WrappedSilaPayloadHeaderDeneb(pbStruct)
 	default:
 		return nil, errors.Wrapf(ErrUnsupportedVersion, "type %T", pbStruct)
@@ -60,7 +60,7 @@ func NewWrappedExecutionData(v proto.Message) (interfaces.ExecutionData, error) 
 var _ interfaces.ExecutionData = &silaPayload{}
 
 // WrappedSilaPayload is a constructor which wraps a protobuf sila payload into an interface.
-func WrappedSilaPayload(p *enginev1.SilaPayload) (interfaces.ExecutionData, error) {
+func WrappedSilaPayload(p *silaenginev1.SilaPayload) (interfaces.ExecutionData, error) {
 	w := silaPayload{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -189,7 +189,7 @@ func (silaPayload) TransactionsRoot() ([]byte, error) {
 }
 
 // Withdrawals --
-func (silaPayload) Withdrawals() ([]*enginev1.Withdrawal, error) {
+func (silaPayload) Withdrawals() ([]*silaenginev1.Withdrawal, error) {
 	return nil, consensus_types.ErrUnsupportedField
 }
 
@@ -217,13 +217,13 @@ func (e silaPayload) ExcessBlobGas() (uint64, error) {
 // This wrapper allows us to conform to a common interface so that beacon
 // blocks for future forks can also be applied across Sila without issues.
 type silaPayloadHeader struct {
-	p *enginev1.SilaPayloadHeader
+	p *silaenginev1.SilaPayloadHeader
 }
 
 var _ interfaces.ExecutionData = &silaPayloadHeader{}
 
 // WrappedSilaPayloadHeader is a constructor which wraps a protobuf execution header into an interface.
-func WrappedSilaPayloadHeader(p *enginev1.SilaPayloadHeader) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadHeader(p *silaenginev1.SilaPayloadHeader) (interfaces.ExecutionData, error) {
 	w := silaPayloadHeader{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -352,7 +352,7 @@ func (e silaPayloadHeader) TransactionsRoot() ([]byte, error) {
 }
 
 // Withdrawals --
-func (silaPayloadHeader) Withdrawals() ([]*enginev1.Withdrawal, error) {
+func (silaPayloadHeader) Withdrawals() ([]*silaenginev1.Withdrawal, error) {
 	return nil, consensus_types.ErrUnsupportedField
 }
 
@@ -377,7 +377,7 @@ func (e silaPayloadHeader) ExcessBlobGas() (uint64, error) {
 }
 
 // PayloadToHeader converts `payload` into sila payload header format.
-func PayloadToHeader(payload interfaces.ExecutionData) (*enginev1.SilaPayloadHeader, error) {
+func PayloadToHeader(payload interfaces.ExecutionData) (*silaenginev1.SilaPayloadHeader, error) {
 	txs, err := payload.Transactions()
 	if err != nil {
 		return nil, err
@@ -386,7 +386,7 @@ func PayloadToHeader(payload interfaces.ExecutionData) (*enginev1.SilaPayloadHea
 	if err != nil {
 		return nil, err
 	}
-	return &enginev1.SilaPayloadHeader{
+	return &silaenginev1.SilaPayloadHeader{
 		ParentHash:       bytesutil.SafeCopyBytes(payload.ParentHash()),
 		FeeRecipient:     bytesutil.SafeCopyBytes(payload.FeeRecipient()),
 		StateRoot:        bytesutil.SafeCopyBytes(payload.StateRoot()),
@@ -408,13 +408,13 @@ func PayloadToHeader(payload interfaces.ExecutionData) (*enginev1.SilaPayloadHea
 // This wrapper allows us to conform to a common interface so that beacon
 // blocks for future forks can also be applied across Sila without issues.
 type silaPayloadCapella struct {
-	p *enginev1.SilaPayloadCapella
+	p *silaenginev1.SilaPayloadCapella
 }
 
 var _ interfaces.ExecutionData = &silaPayloadCapella{}
 
 // WrappedSilaPayloadCapella is a constructor which wraps a protobuf sila payload into an interface.
-func WrappedSilaPayloadCapella(p *enginev1.SilaPayloadCapella) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadCapella(p *silaenginev1.SilaPayloadCapella) (interfaces.ExecutionData, error) {
 	w := silaPayloadCapella{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -543,7 +543,7 @@ func (silaPayloadCapella) TransactionsRoot() ([]byte, error) {
 }
 
 // Withdrawals --
-func (e silaPayloadCapella) Withdrawals() ([]*enginev1.Withdrawal, error) {
+func (e silaPayloadCapella) Withdrawals() ([]*silaenginev1.Withdrawal, error) {
 	return e.p.Withdrawals, nil
 }
 
@@ -571,13 +571,13 @@ func (e silaPayloadCapella) ExcessBlobGas() (uint64, error) {
 // This wrapper allows us to conform to a common interface so that beacon
 // blocks for future forks can also be applied across Sila without issues.
 type silaPayloadHeaderCapella struct {
-	p *enginev1.SilaPayloadHeaderCapella
+	p *silaenginev1.SilaPayloadHeaderCapella
 }
 
 var _ interfaces.ExecutionData = &silaPayloadHeaderCapella{}
 
 // WrappedSilaPayloadHeaderCapella is a constructor which wraps a protobuf execution header into an interface.
-func WrappedSilaPayloadHeaderCapella(p *enginev1.SilaPayloadHeaderCapella) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadHeaderCapella(p *silaenginev1.SilaPayloadHeaderCapella) (interfaces.ExecutionData, error) {
 	w := silaPayloadHeaderCapella{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -706,7 +706,7 @@ func (e silaPayloadHeaderCapella) TransactionsRoot() ([]byte, error) {
 }
 
 // Withdrawals --
-func (silaPayloadHeaderCapella) Withdrawals() ([]*enginev1.Withdrawal, error) {
+func (silaPayloadHeaderCapella) Withdrawals() ([]*silaenginev1.Withdrawal, error) {
 	return nil, consensus_types.ErrUnsupportedField
 }
 
@@ -731,7 +731,7 @@ func (e silaPayloadHeaderCapella) ExcessBlobGas() (uint64, error) {
 }
 
 // PayloadToHeaderCapella converts `payload` into sila payload header format.
-func PayloadToHeaderCapella(payload interfaces.ExecutionData) (*enginev1.SilaPayloadHeaderCapella, error) {
+func PayloadToHeaderCapella(payload interfaces.ExecutionData) (*silaenginev1.SilaPayloadHeaderCapella, error) {
 	txs, err := payload.Transactions()
 	if err != nil {
 		return nil, err
@@ -749,7 +749,7 @@ func PayloadToHeaderCapella(payload interfaces.ExecutionData) (*enginev1.SilaPay
 		return nil, err
 	}
 
-	return &enginev1.SilaPayloadHeaderCapella{
+	return &silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       bytesutil.SafeCopyBytes(payload.ParentHash()),
 		FeeRecipient:     bytesutil.SafeCopyBytes(payload.FeeRecipient()),
 		StateRoot:        bytesutil.SafeCopyBytes(payload.StateRoot()),
@@ -769,7 +769,7 @@ func PayloadToHeaderCapella(payload interfaces.ExecutionData) (*enginev1.SilaPay
 }
 
 // PayloadToHeaderDeneb converts `payload` into sila payload header format.
-func PayloadToHeaderDeneb(payload interfaces.ExecutionData) (*enginev1.SilaPayloadHeaderDeneb, error) {
+func PayloadToHeaderDeneb(payload interfaces.ExecutionData) (*silaenginev1.SilaPayloadHeaderDeneb, error) {
 	txs, err := payload.Transactions()
 	if err != nil {
 		return nil, err
@@ -795,7 +795,7 @@ func PayloadToHeaderDeneb(payload interfaces.ExecutionData) (*enginev1.SilaPaylo
 		return nil, err
 	}
 
-	return &enginev1.SilaPayloadHeaderDeneb{
+	return &silaenginev1.SilaPayloadHeaderDeneb{
 		ParentHash:       bytesutil.SafeCopyBytes(payload.ParentHash()),
 		FeeRecipient:     bytesutil.SafeCopyBytes(payload.FeeRecipient()),
 		StateRoot:        bytesutil.SafeCopyBytes(payload.StateRoot()),
@@ -885,13 +885,13 @@ func IsEmptyExecutionData(data interfaces.ExecutionData) (bool, error) {
 // This wrapper allows us to conform to a common interface so that beacon
 // blocks for future forks can also be applied across Sila without issues.
 type silaPayloadHeaderDeneb struct {
-	p *enginev1.SilaPayloadHeaderDeneb
+	p *silaenginev1.SilaPayloadHeaderDeneb
 }
 
 var _ interfaces.ExecutionData = &silaPayloadHeaderDeneb{}
 
 // WrappedSilaPayloadHeaderDeneb is a constructor which wraps a protobuf execution header into an interface.
-func WrappedSilaPayloadHeaderDeneb(p *enginev1.SilaPayloadHeaderDeneb) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadHeaderDeneb(p *silaenginev1.SilaPayloadHeaderDeneb) (interfaces.ExecutionData, error) {
 	w := silaPayloadHeaderDeneb{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -1015,7 +1015,7 @@ func (e silaPayloadHeaderDeneb) TransactionsRoot() ([]byte, error) {
 }
 
 // Withdrawals --
-func (e silaPayloadHeaderDeneb) Withdrawals() ([]*enginev1.Withdrawal, error) {
+func (e silaPayloadHeaderDeneb) Withdrawals() ([]*silaenginev1.Withdrawal, error) {
 	return nil, consensus_types.ErrUnsupportedField
 }
 
@@ -1048,13 +1048,13 @@ func (e silaPayloadHeaderDeneb) IsBlinded() bool {
 // This wrapper allows us to conform to a common interface so that beacon
 // blocks for future forks can also be applied across Sila without issues.
 type silaPayloadDeneb struct {
-	p *enginev1.SilaPayloadDeneb
+	p *silaenginev1.SilaPayloadDeneb
 }
 
 var _ interfaces.ExecutionData = &silaPayloadDeneb{}
 
 // WrappedSilaPayloadDeneb is a constructor which wraps a protobuf sila payload into an interface.
-func WrappedSilaPayloadDeneb(p *enginev1.SilaPayloadDeneb) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadDeneb(p *silaenginev1.SilaPayloadDeneb) (interfaces.ExecutionData, error) {
 	w := silaPayloadDeneb{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -1178,7 +1178,7 @@ func (e silaPayloadDeneb) TransactionsRoot() ([]byte, error) {
 }
 
 // Withdrawals --
-func (e silaPayloadDeneb) Withdrawals() ([]*enginev1.Withdrawal, error) {
+func (e silaPayloadDeneb) Withdrawals() ([]*silaenginev1.Withdrawal, error) {
 	return e.p.Withdrawals, nil
 }
 
@@ -1209,13 +1209,13 @@ func (e silaPayloadDeneb) IsBlinded() bool {
 // This wrapper allows us to conform to a common interface so that beacon
 // blocks for future forks can also be applied across Sila without issues.
 type silaPayloadGloas struct {
-	p *enginev1.SilaPayloadGloas
+	p *silaenginev1.SilaPayloadGloas
 }
 
 var _ interfaces.ExecutionData = &silaPayloadGloas{}
 
 // WrappedSilaPayloadGloas is a constructor which wraps a protobuf sila payload into an interface.
-func WrappedSilaPayloadGloas(p *enginev1.SilaPayloadGloas) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadGloas(p *silaenginev1.SilaPayloadGloas) (interfaces.ExecutionData, error) {
 	w := silaPayloadGloas{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -1339,7 +1339,7 @@ func (silaPayloadGloas) TransactionsRoot() ([]byte, error) {
 }
 
 // Withdrawals --
-func (e silaPayloadGloas) Withdrawals() ([]*enginev1.Withdrawal, error) {
+func (e silaPayloadGloas) Withdrawals() ([]*silaenginev1.Withdrawal, error) {
 	return e.p.Withdrawals, nil
 }
 

@@ -13,7 +13,7 @@ import (
 	payloadattribute "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/payload-attribute"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -21,8 +21,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// EngineClient --
-type EngineClient struct {
+// SilaEngineClient --
+type SilaEngineClient struct {
 	NewPayloadResp              []byte
 	PayloadIDBytes              *pb.PayloadIDBytes
 	ForkChoiceUpdatedResp       []byte
@@ -50,12 +50,12 @@ type EngineClient struct {
 }
 
 // NewPayload --
-func (e *EngineClient) NewPayload(_ context.Context, _ interfaces.ExecutionData, _ []common.Hash, _ *common.Hash, _ *pb.ExecutionRequests) ([]byte, error) {
+func (e *SilaEngineClient) NewPayload(_ context.Context, _ interfaces.ExecutionData, _ []common.Hash, _ *common.Hash, _ *pb.ExecutionRequests) ([]byte, error) {
 	return e.NewPayloadResp, e.ErrNewPayload
 }
 
 // ForkchoiceUpdated --
-func (e *EngineClient) ForkchoiceUpdated(
+func (e *SilaEngineClient) ForkchoiceUpdated(
 	_ context.Context, fcs *pb.ForkchoiceState, _ payloadattribute.Attributer,
 ) (*pb.PayloadIDBytes, []byte, error) {
 	if e.OverrideValidHash != [32]byte{} && bytesutil.ToBytes32(fcs.HeadBlockHash) == e.OverrideValidHash {
@@ -65,17 +65,17 @@ func (e *EngineClient) ForkchoiceUpdated(
 }
 
 // GetPayload --
-func (e *EngineClient) GetPayload(_ context.Context, _ [8]byte, _ primitives.Slot) (*blocks.GetPayloadResponse, error) {
+func (e *SilaEngineClient) GetPayload(_ context.Context, _ [8]byte, _ primitives.Slot) (*blocks.GetPayloadResponse, error) {
 	return e.GetPayloadResponse, e.ErrGetPayload
 }
 
 // LatestExecutionBlock --
-func (e *EngineClient) LatestExecutionBlock(_ context.Context) (*pb.ExecutionBlock, error) {
+func (e *SilaEngineClient) LatestExecutionBlock(_ context.Context) (*pb.ExecutionBlock, error) {
 	return e.ExecutionBlock, e.ErrLatestExecBlock
 }
 
 // ExecutionBlockByHash --
-func (e *EngineClient) ExecutionBlockByHash(_ context.Context, h common.Hash, _ bool) (*pb.ExecutionBlock, error) {
+func (e *SilaEngineClient) ExecutionBlockByHash(_ context.Context, h common.Hash, _ bool) (*pb.ExecutionBlock, error) {
 	b, ok := e.BlockByHashMap[h]
 	if !ok {
 		return nil, errors.New("block not found")
@@ -84,7 +84,7 @@ func (e *EngineClient) ExecutionBlockByHash(_ context.Context, h common.Hash, _ 
 }
 
 // ReconstructFullBlock --
-func (e *EngineClient) ReconstructFullBlock(
+func (e *SilaEngineClient) ReconstructFullBlock(
 	_ context.Context, blindedBlock interfaces.ReadOnlySignedBeaconBlock,
 ) (interfaces.SignedBeaconBlock, error) {
 	if !blindedBlock.Block().IsBlinded() {
@@ -103,7 +103,7 @@ func (e *EngineClient) ReconstructFullBlock(
 }
 
 // ReconstructFullBellatrixBlockBatch --
-func (e *EngineClient) ReconstructFullBellatrixBlockBatch(
+func (e *SilaEngineClient) ReconstructFullBellatrixBlockBatch(
 	ctx context.Context, blindedBlocks []interfaces.ReadOnlySignedBeaconBlock,
 ) ([]interfaces.SignedBeaconBlock, error) {
 	fullBlocks := make([]interfaces.SignedBeaconBlock, 0, len(blindedBlocks))
@@ -118,7 +118,7 @@ func (e *EngineClient) ReconstructFullBellatrixBlockBatch(
 }
 
 // ReconstructFullGloasSilaPayloadsByHash --
-func (e *EngineClient) ReconstructFullGloasSilaPayloadsByHash(
+func (e *SilaEngineClient) ReconstructFullGloasSilaPayloadsByHash(
 	_ context.Context, blockHashes [][32]byte,
 ) (map[[32]byte]*pb.SilaPayloadGloas, error) {
 	payloads := make(map[[32]byte]*pb.SilaPayloadGloas, len(blockHashes))
@@ -157,17 +157,17 @@ func (e *EngineClient) ReconstructFullGloasSilaPayloadsByHash(
 }
 
 // ReconstructBlobSidecars is a mock implementation of the ReconstructBlobSidecars method.
-func (e *EngineClient) ReconstructBlobSidecars(context.Context, interfaces.ReadOnlySignedBeaconBlock, [fieldparams.RootLength]byte, func(uint64) bool) ([]blocks.VerifiedROBlob, error) {
+func (e *SilaEngineClient) ReconstructBlobSidecars(context.Context, interfaces.ReadOnlySignedBeaconBlock, [fieldparams.RootLength]byte, func(uint64) bool) ([]blocks.VerifiedROBlob, error) {
 	return e.BlobSidecars, e.ErrorBlobSidecars
 }
 
 // ConstructDataColumnSidecars is a mock implementation of the ConstructDataColumnSidecars method.
-func (e *EngineClient) ConstructDataColumnSidecars(context.Context, peerdas.ConstructionPopulator) ([]blocks.VerifiedRODataColumn, error) {
+func (e *SilaEngineClient) ConstructDataColumnSidecars(context.Context, peerdas.ConstructionPopulator) ([]blocks.VerifiedRODataColumn, error) {
 	return e.DataColumnSidecars, e.ErrorDataColumnSidecars
 }
 
 // ReconstructSilaPayloadEnvelope --
-func (e *EngineClient) ReconstructSilaPayloadEnvelope(
+func (e *SilaEngineClient) ReconstructSilaPayloadEnvelope(
 	_ context.Context, envelope *silapb.SignedBlindedSilaPayloadEnvelope,
 ) (*silapb.SignedSilaPayloadEnvelope, error) {
 	if e.Err != nil {
@@ -210,7 +210,7 @@ func payloadToPayloadGloas(p *pb.SilaPayload) *pb.SilaPayloadGloas {
 }
 
 // GetTerminalBlockHash --
-func (e *EngineClient) GetTerminalBlockHash(ctx context.Context, transitionTime uint64) ([]byte, bool, error) {
+func (e *SilaEngineClient) GetTerminalBlockHash(ctx context.Context, transitionTime uint64) ([]byte, bool, error) {
 	ttd := new(big.Int)
 	ttd.SetString(params.BeaconConfig().TerminalTotalDifficulty, 10)
 	terminalTotalDifficulty, overflows := uint256.FromBig(ttd)
@@ -262,6 +262,6 @@ func (e *EngineClient) GetTerminalBlockHash(ctx context.Context, transitionTime 
 }
 
 // GetClientVersionV1 --
-func (e *EngineClient) GetClientVersionV1(context.Context) ([]*structs.ClientVersionV1, error) {
+func (e *SilaEngineClient) GetClientVersionV1(context.Context) ([]*structs.ClientVersionV1, error) {
 	return e.ClientVersion, e.ErrorClientVersion
 }

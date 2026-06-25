@@ -6,7 +6,7 @@ import (
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
@@ -110,7 +110,7 @@ func TestExpectedWithdrawals(t *testing.T) {
 				expected, _, err := s.ExpectedWithdrawals()
 				require.NoError(t, err)
 				require.Equal(t, 1, len(expected))
-				withdrawal := &enginev1.Withdrawal{
+				withdrawal := &silaenginev1.Withdrawal{
 					Index:          0,
 					ValidatorIndex: 3,
 					Address:        vals[3].WithdrawalCredentials[12:],
@@ -141,7 +141,7 @@ func TestExpectedWithdrawals(t *testing.T) {
 				expected, _, err := s.ExpectedWithdrawals()
 				require.NoError(t, err)
 				require.Equal(t, 1, len(expected))
-				withdrawal := &enginev1.Withdrawal{
+				withdrawal := &silaenginev1.Withdrawal{
 					Index:          0,
 					ValidatorIndex: 3,
 					Address:        vals[3].WithdrawalCredentials[12:],
@@ -172,13 +172,13 @@ func TestExpectedWithdrawals(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, 2, len(expected))
 
-				withdrawalFull := &enginev1.Withdrawal{
+				withdrawalFull := &silaenginev1.Withdrawal{
 					Index:          1,
 					ValidatorIndex: 7,
 					Address:        vals[7].WithdrawalCredentials[12:],
 					Amount:         balances[7],
 				}
-				withdrawalPartial := &enginev1.Withdrawal{
+				withdrawalPartial := &silaenginev1.Withdrawal{
 					Index:          0,
 					ValidatorIndex: 3,
 					Address:        vals[3].WithdrawalCredentials[12:],
@@ -207,7 +207,7 @@ func TestExpectedWithdrawals(t *testing.T) {
 				expected, _, err := s.ExpectedWithdrawals()
 				require.NoError(t, err)
 				require.Equal(t, params.BeaconConfig().MaxWithdrawalsPerPayload, uint64(len(expected)))
-				withdrawal := &enginev1.Withdrawal{
+				withdrawal := &silaenginev1.Withdrawal{
 					Index:          0,
 					ValidatorIndex: 0,
 					Address:        vals[0].WithdrawalCredentials[12:],
@@ -235,7 +235,7 @@ func TestExpectedWithdrawals(t *testing.T) {
 				expected, _, err := s.ExpectedWithdrawals()
 				require.NoError(t, err)
 				require.Equal(t, params.BeaconConfig().MaxWithdrawalsPerPayload, uint64(len(expected)))
-				withdrawal := &enginev1.Withdrawal{
+				withdrawal := &silaenginev1.Withdrawal{
 					Index:          0,
 					ValidatorIndex: 0,
 					Address:        vals[0].WithdrawalCredentials[12:],
@@ -263,7 +263,7 @@ func TestExpectedWithdrawals(t *testing.T) {
 				expected, _, err := s.ExpectedWithdrawals()
 				require.NoError(t, err)
 				require.Equal(t, params.BeaconConfig().MaxWithdrawalsPerPayload, uint64(len(expected)))
-				withdrawal := &enginev1.Withdrawal{
+				withdrawal := &silaenginev1.Withdrawal{
 					Index:          0,
 					ValidatorIndex: 0,
 					Address:        vals[0].WithdrawalCredentials[12:],
@@ -320,7 +320,7 @@ func TestExpectedWithdrawals(t *testing.T) {
 				expected, _, err := s.ExpectedWithdrawals()
 				require.NoError(t, err)
 				require.Equal(t, 1, len(expected))
-				withdrawal := &enginev1.Withdrawal{
+				withdrawal := &silaenginev1.Withdrawal{
 					Index:          0,
 					ValidatorIndex: 3,
 					Address:        vals[3].WithdrawalCredentials[12:],
@@ -400,13 +400,13 @@ func TestExpectedWithdrawals(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, 2, len(expected))
 
-		withdrawalFull := &enginev1.Withdrawal{
+		withdrawalFull := &silaenginev1.Withdrawal{
 			Index:          1,
 			ValidatorIndex: 1,
 			Address:        vals[1].WithdrawalCredentials[12:],
 			Amount:         balances[1] - params.BeaconConfig().MinDepositAmount, // subtract the partial from this
 		}
-		withdrawalPartial := &enginev1.Withdrawal{
+		withdrawalPartial := &silaenginev1.Withdrawal{
 			Index:          0,
 			ValidatorIndex: 1,
 			Address:        vals[1].WithdrawalCredentials[12:],

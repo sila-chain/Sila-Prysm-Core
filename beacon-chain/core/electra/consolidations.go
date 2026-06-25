@@ -9,7 +9,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
 )
@@ -131,7 +131,7 @@ func ProcessPendingConsolidations(ctx context.Context, st state.BeaconState) err
 //	    return False
 //
 //	return True
-func IsValidSwitchToCompoundingRequest(st state.BeaconState, req *enginev1.ConsolidationRequest) bool {
+func IsValidSwitchToCompoundingRequest(st state.BeaconState, req *silaenginev1.ConsolidationRequest) bool {
 	if req.SourcePubkey == nil || req.TargetPubkey == nil {
 		return false
 	}

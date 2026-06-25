@@ -18,7 +18,7 @@ import (
 // When the current head is unchanged, saveHeadIfNeeded must return immediately
 // without touching the head or panicking.
 func TestSaveHeadIfNeeded_NotNewHead_NoOp(t *testing.T) {
-	s, _ := setupGloasService(t, &mockExecution.EngineClient{})
+	s, _ := setupGloasService(t, &mockExecution.SilaEngineClient{})
 	ctx := t.Context()
 
 	headRoot := bytesutil.ToBytes32([]byte("headroot"))

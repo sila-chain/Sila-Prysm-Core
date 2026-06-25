@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	silaMath "github.com/sila-chain/Sila-Consensus-Core/v7/math"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common/math"
@@ -100,7 +100,7 @@ import (
 //	        source_index=source_index,
 //	        target_index=target_index
 //	    ))
-func ProcessConsolidationRequests(ctx context.Context, st state.BeaconState, reqs []*enginev1.ConsolidationRequest) error {
+func ProcessConsolidationRequests(ctx context.Context, st state.BeaconState, reqs []*silaenginev1.ConsolidationRequest) error {
 	ctx, span := trace.StartSpan(ctx, "requests.ProcessConsolidationRequests")
 	defer span.End()
 
@@ -237,7 +237,7 @@ func ProcessConsolidationRequests(ctx context.Context, st state.BeaconState, req
 	return nil
 }
 
-func isValidSwitchToCompoundingRequest(st state.BeaconState, req *enginev1.ConsolidationRequest) bool {
+func isValidSwitchToCompoundingRequest(st state.BeaconState, req *silaenginev1.ConsolidationRequest) bool {
 	if req.SourcePubkey == nil || req.TargetPubkey == nil {
 		return false
 	}

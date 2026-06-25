@@ -10,7 +10,7 @@ import (
 	stateTesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -19,12 +19,12 @@ func TestProcessDepositRequests_EmptyAndNil(t *testing.T) {
 	st := newGloasState(t, nil, nil)
 
 	t.Run("empty requests continues", func(t *testing.T) {
-		err := ProcessDepositRequests(t.Context(), st, []*enginev1.DepositRequest{}, nil)
+		err := ProcessDepositRequests(t.Context(), st, []*silaenginev1.DepositRequest{}, nil)
 		require.NoError(t, err)
 	})
 
 	t.Run("nil request errors", func(t *testing.T) {
-		err := ProcessDepositRequests(t.Context(), st, []*enginev1.DepositRequest{nil}, nil)
+		err := ProcessDepositRequests(t.Context(), st, []*silaenginev1.DepositRequest{nil}, nil)
 		require.ErrorContains(t, "nil deposit request", err)
 	})
 }
@@ -134,11 +134,11 @@ func TestApplyDepositForBuilder_InvalidSignatureIgnoresDeposit(t *testing.T) {
 
 func TestPrefetchedDepositSigs_NilOrEmpty(t *testing.T) {
 	require.Equal(t, true, prefetchedDepositSigs(nil) == nil)
-	require.Equal(t, true, prefetchedDepositSigs(&enginev1.ExecutionRequests{}) == nil)
+	require.Equal(t, true, prefetchedDepositSigs(&silaenginev1.ExecutionRequests{}) == nil)
 }
 
 func TestPrefetchedDepositSigs_CacheMiss(t *testing.T) {
-	rqs := &enginev1.ExecutionRequests{Deposits: []*enginev1.DepositRequest{{
+	rqs := &silaenginev1.ExecutionRequests{Deposits: []*silaenginev1.DepositRequest{{
 		Pubkey:                make([]byte, 48),
 		WithdrawalCredentials: make([]byte, 32),
 		Signature:             make([]byte, 96),
@@ -148,7 +148,7 @@ func TestPrefetchedDepositSigs_CacheMiss(t *testing.T) {
 
 func TestPrefetchedDepositSigs_CacheHitAllValid(t *testing.T) {
 	cache.DepositSig = cache.NewDepositSigCache()
-	rqs := &enginev1.ExecutionRequests{Deposits: []*enginev1.DepositRequest{
+	rqs := &silaenginev1.ExecutionRequests{Deposits: []*silaenginev1.DepositRequest{
 		{Pubkey: make([]byte, 48), WithdrawalCredentials: make([]byte, 32), Signature: make([]byte, 96)},
 		{Pubkey: make([]byte, 48), WithdrawalCredentials: make([]byte, 32), Signature: make([]byte, 96), Amount: 1},
 	}}
@@ -162,7 +162,7 @@ func TestPrefetchedDepositSigs_CacheHitAllValid(t *testing.T) {
 
 func TestPrefetchedDepositSigs_CacheHitMarksInvalid(t *testing.T) {
 	cache.DepositSig = cache.NewDepositSigCache()
-	rqs := &enginev1.ExecutionRequests{Deposits: []*enginev1.DepositRequest{
+	rqs := &silaenginev1.ExecutionRequests{Deposits: []*silaenginev1.DepositRequest{
 		{Pubkey: make([]byte, 48), WithdrawalCredentials: make([]byte, 32), Signature: make([]byte, 96)},
 		{Pubkey: make([]byte, 48), WithdrawalCredentials: make([]byte, 32), Signature: make([]byte, 96), Amount: 1},
 		{Pubkey: make([]byte, 48), WithdrawalCredentials: make([]byte, 32), Signature: make([]byte, 96), Amount: 2},
@@ -177,7 +177,7 @@ func TestPrefetchedDepositSigs_CacheHitMarksInvalid(t *testing.T) {
 
 func TestPrefetchedDepositSigs_OutOfRangeIndexReturnsNil(t *testing.T) {
 	cache.DepositSig = cache.NewDepositSigCache()
-	rqs := &enginev1.ExecutionRequests{Deposits: []*enginev1.DepositRequest{
+	rqs := &silaenginev1.ExecutionRequests{Deposits: []*silaenginev1.DepositRequest{
 		{Pubkey: make([]byte, 48), WithdrawalCredentials: make([]byte, 32), Signature: make([]byte, 96)},
 	}}
 	root, err := rqs.HashTreeRoot()
@@ -195,7 +195,7 @@ func TestProcessDepositRequests_PrefetchedInvalidSkipsBuilderAdd(t *testing.T) {
 	req := depositRequestFromPending(pd, 1)
 
 	st := newGloasState(t, nil, nil)
-	err = ProcessDepositRequests(t.Context(), st, []*enginev1.DepositRequest{req}, []bool{false})
+	err = ProcessDepositRequests(t.Context(), st, []*silaenginev1.DepositRequest{req}, []bool{false})
 	require.NoError(t, err)
 
 	_, ok := st.BuilderIndexByPubkey(toBytes48(req.Pubkey))
@@ -206,7 +206,7 @@ func TestProcessDepositRequests_PrefetchedValidBypassesBLS(t *testing.T) {
 	sk, err := bls.RandKey()
 	require.NoError(t, err)
 	cred := builderWithdrawalCredentials()
-	req := &enginev1.DepositRequest{
+	req := &silaenginev1.DepositRequest{
 		Pubkey:                sk.PublicKey().Marshal(),
 		WithdrawalCredentials: cred[:],
 		Amount:                1234,
@@ -215,7 +215,7 @@ func TestProcessDepositRequests_PrefetchedValidBypassesBLS(t *testing.T) {
 	}
 
 	st := newGloasState(t, nil, nil)
-	err = ProcessDepositRequests(t.Context(), st, []*enginev1.DepositRequest{req}, []bool{true})
+	err = ProcessDepositRequests(t.Context(), st, []*silaenginev1.DepositRequest{req}, []bool{true})
 	require.NoError(t, err)
 
 	_, ok := st.BuilderIndexByPubkey(toBytes48(req.Pubkey))
@@ -237,8 +237,8 @@ func newGloasState(t *testing.T, validators []*silapb.Validator, builders []*sil
 	return st
 }
 
-func depositRequestFromPending(pd *silapb.PendingDeposit, index uint64) *enginev1.DepositRequest {
-	return &enginev1.DepositRequest{
+func depositRequestFromPending(pd *silapb.PendingDeposit, index uint64) *silaenginev1.DepositRequest {
+	return &silaenginev1.DepositRequest{
 		Pubkey:                pd.PublicKey,
 		WithdrawalCredentials: pd.WithdrawalCredentials,
 		Amount:                pd.Amount,

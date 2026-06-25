@@ -2,7 +2,7 @@ package test_helpers
 
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common/hexutil"
 )
@@ -147,7 +147,7 @@ func GenerateJsonGloasBeaconBlock() *structs.BeaconBlockGloas {
 
 func GenerateProtoSilaPayloadEnvelope() *silapb.SilaPayloadEnvelope {
 	return &silapb.SilaPayloadEnvelope{
-		Payload: &enginev1.SilaPayloadGloas{
+		Payload: &silaenginev1.SilaPayloadGloas{
 			ParentHash:    FillByteSlice(32, 200),
 			FeeRecipient:  FillByteSlice(20, 201),
 			StateRoot:     FillByteSlice(32, 202),
@@ -159,7 +159,7 @@ func GenerateProtoSilaPayloadEnvelope() *silapb.SilaPayloadEnvelope {
 			ExtraData:     make([]byte, 0),
 			SlotNumber:    1,
 		},
-		ExecutionRequests:     &enginev1.ExecutionRequests{},
+		ExecutionRequests:     &silaenginev1.ExecutionRequests{},
 		BuilderIndex:          121,
 		BeaconBlockRoot:       FillByteSlice(32, 210),
 		ParentBeaconBlockRoot: FillByteSlice(32, 211),

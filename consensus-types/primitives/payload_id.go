@@ -1,4 +1,4 @@
 package primitives
 
-// PayloadID represents an execution engine Payload ID
+// PayloadID represents an SilaEngine Payload ID
 type PayloadID [8]byte

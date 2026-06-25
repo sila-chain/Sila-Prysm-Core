@@ -482,7 +482,7 @@ func (s *Service) nodeEndpoints() []endpoint {
 		MetadataProvider:          s.cfg.MetadataProvider,
 		HeadFetcher:               s.cfg.HeadFetcher,
 		ExecutionChainInfoFetcher: s.cfg.ExecutionChainInfoFetcher,
-		ExecutionEngineCaller:     s.cfg.ExecutionEngineCaller,
+		SilaEngineCaller:     s.cfg.SilaEngineCaller,
 	}
 
 	const namespace = "node"

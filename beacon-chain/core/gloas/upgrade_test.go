@@ -12,7 +12,7 @@ import (
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -35,7 +35,7 @@ func TestUpgradeToGloas_Basic(t *testing.T) {
 	require.NoError(t, st.SetPendingConsolidations([]*silapb.PendingConsolidation{{SourceIndex: 3, TargetIndex: 4}}))
 
 	blockHash := bytes.Repeat([]byte{0xAB}, 32)
-	header := &enginev1.SilaPayloadHeaderDeneb{BlockHash: blockHash}
+	header := &silaenginev1.SilaPayloadHeaderDeneb{BlockHash: blockHash}
 	wrappedHeader, err := consensusblocks.WrappedSilaPayloadHeaderDeneb(header)
 	require.NoError(t, err)
 	require.NoError(t, st.SetLatestSilaPayloadHeader(wrappedHeader))

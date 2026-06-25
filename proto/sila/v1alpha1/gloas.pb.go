@@ -12,7 +12,7 @@ import (
 
 	github_com_sila_chain_go_bitfield "github.com/sila-chain/go-bitfield"
 	github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	_ "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/ext"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -2907,7 +2907,7 @@ var file_proto_sila_v1alpha1_gloas_proto_goTypes = []any{
 	(*SignedVoluntaryExit)(nil),                       // 30: sila.eth.v1alpha1.SignedVoluntaryExit
 	(*SyncAggregate)(nil),                             // 31: sila.eth.v1alpha1.SyncAggregate
 	(*SignedBLSToExecutionChange)(nil),                // 32: sila.eth.v1alpha1.SignedBLSToExecutionChange
-	(*v1.ExecutionRequests)(nil),                      // 33: sila.engine.v1.ExecutionRequests
+	(*v1.ExecutionRequests)(nil),                      // 33: sila.silaengine.v1.ExecutionRequests
 	(*Fork)(nil),                                      // 34: sila.eth.v1alpha1.Fork
 	(*BeaconBlockHeader)(nil),                         // 35: sila.eth.v1alpha1.BeaconBlockHeader
 	(*Validator)(nil),                                 // 36: sila.eth.v1alpha1.Validator
@@ -2917,8 +2917,8 @@ var file_proto_sila_v1alpha1_gloas_proto_goTypes = []any{
 	(*PendingDeposit)(nil),                            // 40: sila.eth.v1alpha1.PendingDeposit
 	(*PendingPartialWithdrawal)(nil),                  // 41: sila.eth.v1alpha1.PendingPartialWithdrawal
 	(*PendingConsolidation)(nil),                      // 42: sila.eth.v1alpha1.PendingConsolidation
-	(*v1.Withdrawal)(nil),                             // 43: sila.engine.v1.Withdrawal
-	(*v1.SilaPayloadGloas)(nil),                  // 44: sila.engine.v1.SilaPayloadGloas
+	(*v1.Withdrawal)(nil),                             // 43: sila.silaengine.v1.Withdrawal
+	(*v1.SilaPayloadGloas)(nil),                  // 44: sila.silaengine.v1.SilaPayloadGloas
 }
 var file_proto_sila_v1alpha1_gloas_proto_depIdxs = []int32{
 	0,  // 0: sila.eth.v1alpha1.SignedSilaPayloadBid.message:type_name -> sila.eth.v1alpha1.SilaPayloadBid
@@ -2937,7 +2937,7 @@ var file_proto_sila_v1alpha1_gloas_proto_depIdxs = []int32{
 	32, // 13: sila.eth.v1alpha1.BeaconBlockBodyGloas.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
 	1,  // 14: sila.eth.v1alpha1.BeaconBlockBodyGloas.signed_sila_payload_bid:type_name -> sila.eth.v1alpha1.SignedSilaPayloadBid
 	6,  // 15: sila.eth.v1alpha1.BeaconBlockBodyGloas.payload_attestations:type_name -> sila.eth.v1alpha1.PayloadAttestation
-	33, // 16: sila.eth.v1alpha1.BeaconBlockBodyGloas.parent_execution_requests:type_name -> sila.engine.v1.ExecutionRequests
+	33, // 16: sila.eth.v1alpha1.BeaconBlockBodyGloas.parent_execution_requests:type_name -> sila.silaengine.v1.ExecutionRequests
 	8,  // 17: sila.eth.v1alpha1.SignedBeaconBlockGloas.block:type_name -> sila.eth.v1alpha1.BeaconBlockGloas
 	34, // 18: sila.eth.v1alpha1.BeaconStateGloas.fork:type_name -> sila.eth.v1alpha1.Fork
 	35, // 19: sila.eth.v1alpha1.BeaconStateGloas.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
@@ -2957,18 +2957,18 @@ var file_proto_sila_v1alpha1_gloas_proto_depIdxs = []int32{
 	15, // 33: sila.eth.v1alpha1.BeaconStateGloas.builder_pending_payments:type_name -> sila.eth.v1alpha1.BuilderPendingPayment
 	16, // 34: sila.eth.v1alpha1.BeaconStateGloas.builder_pending_withdrawals:type_name -> sila.eth.v1alpha1.BuilderPendingWithdrawal
 	0,  // 35: sila.eth.v1alpha1.BeaconStateGloas.latest_sila_payload_bid:type_name -> sila.eth.v1alpha1.SilaPayloadBid
-	43, // 36: sila.eth.v1alpha1.BeaconStateGloas.payload_expected_withdrawals:type_name -> sila.engine.v1.Withdrawal
+	43, // 36: sila.eth.v1alpha1.BeaconStateGloas.payload_expected_withdrawals:type_name -> sila.silaengine.v1.Withdrawal
 	12, // 37: sila.eth.v1alpha1.BeaconStateGloas.ptc_window:type_name -> sila.eth.v1alpha1.PTCs
 	8,  // 38: sila.eth.v1alpha1.BeaconBlockContentsGloas.block:type_name -> sila.eth.v1alpha1.BeaconBlockGloas
 	18, // 39: sila.eth.v1alpha1.BeaconBlockContentsGloas.sila_payload_envelope:type_name -> sila.eth.v1alpha1.SilaPayloadEnvelope
 	19, // 40: sila.eth.v1alpha1.SignedSilaPayloadEnvelopeContents.signed_sila_payload_envelope:type_name -> sila.eth.v1alpha1.SignedSilaPayloadEnvelope
 	16, // 41: sila.eth.v1alpha1.BuilderPendingPayment.withdrawal:type_name -> sila.eth.v1alpha1.BuilderPendingWithdrawal
-	44, // 42: sila.eth.v1alpha1.SilaPayloadEnvelope.payload:type_name -> sila.engine.v1.SilaPayloadGloas
-	33, // 43: sila.eth.v1alpha1.SilaPayloadEnvelope.execution_requests:type_name -> sila.engine.v1.ExecutionRequests
+	44, // 42: sila.eth.v1alpha1.SilaPayloadEnvelope.payload:type_name -> sila.silaengine.v1.SilaPayloadGloas
+	33, // 43: sila.eth.v1alpha1.SilaPayloadEnvelope.execution_requests:type_name -> sila.silaengine.v1.ExecutionRequests
 	18, // 44: sila.eth.v1alpha1.SignedSilaPayloadEnvelope.message:type_name -> sila.eth.v1alpha1.SilaPayloadEnvelope
-	33, // 45: sila.eth.v1alpha1.BlindedSilaPayloadEnvelope.execution_requests:type_name -> sila.engine.v1.ExecutionRequests
+	33, // 45: sila.eth.v1alpha1.BlindedSilaPayloadEnvelope.execution_requests:type_name -> sila.silaengine.v1.ExecutionRequests
 	20, // 46: sila.eth.v1alpha1.SignedBlindedSilaPayloadEnvelope.message:type_name -> sila.eth.v1alpha1.BlindedSilaPayloadEnvelope
-	33, // 47: sila.eth.v1alpha1.WireBlindedSilaPayloadEnvelope.execution_requests:type_name -> sila.engine.v1.ExecutionRequests
+	33, // 47: sila.eth.v1alpha1.WireBlindedSilaPayloadEnvelope.execution_requests:type_name -> sila.silaengine.v1.ExecutionRequests
 	22, // 48: sila.eth.v1alpha1.SignedWireBlindedSilaPayloadEnvelope.message:type_name -> sila.eth.v1alpha1.WireBlindedSilaPayloadEnvelope
 	49, // [49:49] is the sub-list for method output_type
 	49, // [49:49] is the sub-list for method input_type

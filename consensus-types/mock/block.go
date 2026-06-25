@@ -6,7 +6,7 @@ import (
 	field_params "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
@@ -272,7 +272,7 @@ func (b *BeaconBlockBody) BlobKzgCommitments() ([][]byte, error) {
 	panic("implement me")
 }
 
-func (b *BeaconBlockBody) ExecutionRequests() (*enginev1.ExecutionRequests, error) {
+func (b *BeaconBlockBody) ExecutionRequests() (*silaenginev1.ExecutionRequests, error) {
 	panic("implement me")
 }
 
@@ -284,7 +284,7 @@ func (b *BeaconBlockBody) SignedSilaPayloadBid() (*eth.SignedSilaPayloadBid, err
 	panic("implement me")
 }
 
-func (b *BeaconBlockBody) ParentExecutionRequests() (*enginev1.ExecutionRequests, error) {
+func (b *BeaconBlockBody) ParentExecutionRequests() (*silaenginev1.ExecutionRequests, error) {
 	panic("implement me")
 }
 

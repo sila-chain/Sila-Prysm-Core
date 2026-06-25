@@ -6,7 +6,7 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -538,7 +538,7 @@ func TestBeaconStateGloasFromConsensus(t *testing.T) {
 			},
 		}
 		state.LatestBlockHash = bytes.Repeat([]byte{0x25}, 32)
-		state.PayloadExpectedWithdrawals = []*enginev1.Withdrawal{
+		state.PayloadExpectedWithdrawals = []*silaenginev1.Withdrawal{
 			{Index: 1, ValidatorIndex: 2, Address: bytes.Repeat([]byte{0x26}, 20), Amount: 10},
 		}
 		return nil

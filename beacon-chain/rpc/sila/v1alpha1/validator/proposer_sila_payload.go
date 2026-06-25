@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/pkg/errors"
@@ -92,7 +92,7 @@ func (vs *Server) getLocalPayloadFromEngine(
 		var pid primitives.PayloadID
 		copy(pid[:], payloadId[:])
 		payloadIDCacheHit.Inc()
-		res, err := vs.ExecutionEngineCaller.GetPayload(ctx, pid, slot)
+		res, err := vs.SilaEngineCaller.GetPayload(ctx, pid, slot)
 		if err == nil {
 			warnIfFeeRecipientDiffers(val.FeeRecipient[:], res.ExecutionData.FeeRecipient())
 			return res, nil
@@ -127,7 +127,7 @@ func (vs *Server) getLocalPayloadFromEngine(
 		justifiedBlockHash = vs.FinalizationFetcher.UnrealizedJustifiedPayloadBlockHash()
 	}
 
-	f := &enginev1.ForkchoiceState{
+	f := &silaenginev1.ForkchoiceState{
 		HeadBlockHash:      parentHash,
 		SafeBlockHash:      justifiedBlockHash[:],
 		FinalizedBlockHash: finalizedBlockHash[:],
@@ -148,7 +148,7 @@ func (vs *Server) getLocalPayloadFromEngine(
 		if targetGasLimit == 0 {
 			targetGasLimit = params.BeaconConfig().DefaultBuilderGasLimit
 		}
-		attr, err = payloadattribute.New(&enginev1.PayloadAttributesV4{
+		attr, err = payloadattribute.New(&silaenginev1.PayloadAttributesV4{
 			Timestamp:             uint64(t.Unix()),
 			PrevRandao:            random,
 			SuggestedFeeRecipient: val.FeeRecipient[:],
@@ -165,7 +165,7 @@ func (vs *Server) getLocalPayloadFromEngine(
 		if err != nil {
 			return nil, err
 		}
-		attr, err = payloadattribute.New(&enginev1.PayloadAttributesV3{
+		attr, err = payloadattribute.New(&silaenginev1.PayloadAttributesV3{
 			Timestamp:             uint64(t.Unix()),
 			PrevRandao:            random,
 			SuggestedFeeRecipient: val.FeeRecipient[:],
@@ -180,7 +180,7 @@ func (vs *Server) getLocalPayloadFromEngine(
 		if err != nil {
 			return nil, err
 		}
-		attr, err = payloadattribute.New(&enginev1.PayloadAttributesV2{
+		attr, err = payloadattribute.New(&silaenginev1.PayloadAttributesV2{
 			Timestamp:             uint64(t.Unix()),
 			PrevRandao:            random,
 			SuggestedFeeRecipient: val.FeeRecipient[:],
@@ -190,7 +190,7 @@ func (vs *Server) getLocalPayloadFromEngine(
 			return nil, err
 		}
 	case st.Version() == version.Bellatrix:
-		attr, err = payloadattribute.New(&enginev1.PayloadAttributes{
+		attr, err = payloadattribute.New(&silaenginev1.PayloadAttributes{
 			Timestamp:             uint64(t.Unix()),
 			PrevRandao:            random,
 			SuggestedFeeRecipient: val.FeeRecipient[:],
@@ -201,14 +201,14 @@ func (vs *Server) getLocalPayloadFromEngine(
 	default:
 		return nil, errors.New("unknown beacon state version")
 	}
-	payloadID, _, err := vs.ExecutionEngineCaller.ForkchoiceUpdated(ctx, f, attr)
+	payloadID, _, err := vs.SilaEngineCaller.ForkchoiceUpdated(ctx, f, attr)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not prepare payload")
 	}
 	if payloadID == nil {
 		return nil, fmt.Errorf("nil payload with block hash: %#x", parentHash)
 	}
-	res, err := vs.ExecutionEngineCaller.GetPayload(ctx, *payloadID, slot)
+	res, err := vs.SilaEngineCaller.GetPayload(ctx, *payloadID, slot)
 	if err != nil {
 		return nil, err
 	}
@@ -258,7 +258,7 @@ func (vs *Server) getTerminalBlockHashIfExists(ctx context.Context, transitionTi
 		return terminalBlockHash.Bytes(), true, nil
 	}
 
-	return vs.ExecutionEngineCaller.GetTerminalBlockHash(ctx, transitionTime)
+	return vs.SilaEngineCaller.GetTerminalBlockHash(ctx, transitionTime)
 }
 
 func (vs *Server) getBuilderPayloadAndBlobs(ctx context.Context,
@@ -290,7 +290,7 @@ var (
 )
 
 // computePayloadWithdrawals returns the withdrawals for the next payload.
-func (vs *Server) computePayloadWithdrawals(st state.BeaconState, parentFull bool) ([]*enginev1.Withdrawal, error) {
+func (vs *Server) computePayloadWithdrawals(st state.BeaconState, parentFull bool) ([]*silaenginev1.Withdrawal, error) {
 	if !parentFull {
 		return st.PayloadExpectedWithdrawals()
 	}
@@ -419,8 +419,8 @@ func activationEpochNotReached(slot primitives.Slot) bool {
 	return false
 }
 
-func emptyPayload() *enginev1.SilaPayload {
-	return &enginev1.SilaPayload{
+func emptyPayload() *silaenginev1.SilaPayload {
+	return &silaenginev1.SilaPayload{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     make([]byte, fieldparams.RootLength),
@@ -434,8 +434,8 @@ func emptyPayload() *enginev1.SilaPayload {
 	}
 }
 
-func emptyPayloadCapella() *enginev1.SilaPayloadCapella {
-	return &enginev1.SilaPayloadCapella{
+func emptyPayloadCapella() *silaenginev1.SilaPayloadCapella {
+	return &silaenginev1.SilaPayloadCapella{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     make([]byte, fieldparams.RootLength),
@@ -446,12 +446,12 @@ func emptyPayloadCapella() *enginev1.SilaPayloadCapella {
 		BaseFeePerGas: make([]byte, fieldparams.RootLength),
 		BlockHash:     make([]byte, fieldparams.RootLength),
 		Transactions:  make([][]byte, 0),
-		Withdrawals:   make([]*enginev1.Withdrawal, 0),
+		Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 	}
 }
 
-func emptyPayloadDeneb() *enginev1.SilaPayloadDeneb {
-	return &enginev1.SilaPayloadDeneb{
+func emptyPayloadDeneb() *silaenginev1.SilaPayloadDeneb {
+	return &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     make([]byte, fieldparams.RootLength),
@@ -462,6 +462,6 @@ func emptyPayloadDeneb() *enginev1.SilaPayloadDeneb {
 		BaseFeePerGas: make([]byte, fieldparams.RootLength),
 		BlockHash:     make([]byte, fieldparams.RootLength),
 		Transactions:  make([][]byte, 0),
-		Withdrawals:   make([]*enginev1.Withdrawal, 0),
+		Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 	}
 }

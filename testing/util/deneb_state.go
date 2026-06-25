@@ -11,7 +11,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/pkg/errors"
 )
@@ -80,7 +80,7 @@ func emptyGenesisStateDeneb() (state.BeaconState, error) {
 		SilaExecutionDataVotes:    []*silapb.SilaExecutionData{},
 		SilaExecutionDepositIndex: 0,
 
-		LatestSilaPayloadHeader: &enginev1.SilaPayloadHeaderDeneb{},
+		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{},
 	}
 	return state_native.InitializeFromProtoUnsafeDeneb(st)
 }
@@ -194,7 +194,7 @@ func buildGenesisBeaconStateDeneb(genesisTime uint64, preState state.BeaconState
 			SyncCommitteeBits:      scBits[:],
 			SyncCommitteeSignature: make([]byte, 96),
 		},
-		SilaPayload: &enginev1.SilaPayloadDeneb{
+		SilaPayload: &silaenginev1.SilaPayloadDeneb{
 			ParentHash:    make([]byte, 32),
 			FeeRecipient:  make([]byte, 20),
 			StateRoot:     make([]byte, 32),
@@ -205,7 +205,7 @@ func buildGenesisBeaconStateDeneb(genesisTime uint64, preState state.BeaconState
 			BaseFeePerGas: make([]byte, 32),
 			BlockHash:     make([]byte, 32),
 			Transactions:  make([][]byte, 0),
-			Withdrawals:   make([]*enginev1.Withdrawal, 0),
+			Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 		},
 	}).HashTreeRoot()
 	if err != nil {
@@ -237,7 +237,7 @@ func buildGenesisBeaconStateDeneb(genesisTime uint64, preState state.BeaconState
 		AggregatePubkey: aggregated.Marshal(),
 	}
 
-	st.LatestSilaPayloadHeader = &enginev1.SilaPayloadHeaderDeneb{
+	st.LatestSilaPayloadHeader = &silaenginev1.SilaPayloadHeaderDeneb{
 		ParentHash:       make([]byte, 32),
 		FeeRecipient:     make([]byte, 20),
 		StateRoot:        make([]byte, 32),

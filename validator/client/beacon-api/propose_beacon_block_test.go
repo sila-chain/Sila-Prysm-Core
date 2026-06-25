@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	rpctesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/shared/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	engine "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	engine "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"

@@ -27,7 +27,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	payloadattribute "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/payload-attribute"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -697,7 +697,7 @@ func TestFillEventData(t *testing.T) {
 	t.Run("AlreadyFilledData_ShouldShortCircuitWithoutError", func(t *testing.T) {
 		b, err := blocks.NewSignedBeaconBlock(util.HydrateSignedBeaconBlockBellatrix(&eth.SignedBeaconBlockBellatrix{}))
 		require.NoError(t, err)
-		attributor, err := payloadattribute.New(&enginev1.PayloadAttributes{
+		attributor, err := payloadattribute.New(&silaenginev1.PayloadAttributes{
 			Timestamp: uint64(time.Now().Unix()),
 		})
 		require.NoError(t, err)
@@ -724,7 +724,7 @@ func TestFillEventData(t *testing.T) {
 		require.NoError(t, st.SetInactivityScores(inactivityScores))
 		b, err := blocks.NewSignedBeaconBlock(util.HydrateSignedBeaconBlockElectra(&eth.SignedBeaconBlockElectra{}))
 		require.NoError(t, err)
-		attributor, err := payloadattribute.New(&enginev1.PayloadAttributes{
+		attributor, err := payloadattribute.New(&silaenginev1.PayloadAttributes{
 			Timestamp: uint64(time.Now().Unix()),
 		})
 		require.NoError(t, err)

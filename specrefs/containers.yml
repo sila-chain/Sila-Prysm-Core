@@ -810,7 +810,7 @@
 
 - name: ConsolidationRequest#electra
   sources:
-    - file: proto/engine/v1/electra.proto
+    - file: proto/silaengine/v1/electra.proto
       search: message ConsolidationRequest {
   spec: |
     <spec ssz_object="ConsolidationRequest" fork="electra" hash="269fdb77">
@@ -916,7 +916,7 @@
 
 - name: DepositRequest#electra
   sources:
-    - file: proto/engine/v1/electra.proto
+    - file: proto/silaengine/v1/electra.proto
       search: message DepositRequest {
   spec: |
     <spec ssz_object="DepositRequest" fork="electra" hash="3af9895d">
@@ -952,7 +952,7 @@
 
 - name: SilaPayload#bellatrix
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: message SilaPayload {
   spec: |
     <spec ssz_object="SilaPayload" fork="bellatrix" hash="da4d8580">
@@ -975,7 +975,7 @@
 
 - name: SilaPayload#capella
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: message SilaPayloadCapella {
   spec: |
     <spec ssz_object="SilaPayload" fork="capella" hash="5533cb47">
@@ -1000,7 +1000,7 @@
 
 - name: SilaPayload#deneb
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: message SilaPayloadDeneb {
   spec: |
     <spec ssz_object="SilaPayload" fork="deneb" hash="974f7cc9">
@@ -1108,7 +1108,7 @@
 
 - name: SilaPayloadHeader#bellatrix
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: message SilaPayloadHeader {
   spec: |
     <spec ssz_object="SilaPayloadHeader" fork="bellatrix" hash="08fc7165">
@@ -1131,7 +1131,7 @@
 
 - name: SilaPayloadHeader#capella
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: message SilaPayloadHeaderCapella {
   spec: |
     <spec ssz_object="SilaPayloadHeader" fork="capella" hash="5f481de3">
@@ -1156,7 +1156,7 @@
 
 - name: SilaPayloadHeader#deneb
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: message SilaPayloadHeaderDeneb {
   spec: |
     <spec ssz_object="SilaPayloadHeader" fork="deneb" hash="957fa918">
@@ -1184,7 +1184,7 @@
 
 - name: ExecutionRequests#electra
   sources:
-    - file: proto/engine/v1/electra.proto
+    - file: proto/silaengine/v1/electra.proto
       search: message ExecutionRequests {
   spec: |
     <spec ssz_object="ExecutionRequests" fork="electra" hash="048c4a44">
@@ -1871,7 +1871,7 @@
 
 - name: Withdrawal#capella
   sources:
-    - file: proto/engine/v1/execution_engine.proto
+    - file: proto/silaengine/v1/sila_engine.proto
       search: message Withdrawal {
   spec: |
     <spec ssz_object="Withdrawal" fork="capella" hash="ba17e57d">
@@ -1884,7 +1884,7 @@
 
 - name: WithdrawalRequest#electra
   sources:
-    - file: proto/engine/v1/electra.proto
+    - file: proto/silaengine/v1/electra.proto
       search: message WithdrawalRequest {
   spec: |
     <spec ssz_object="WithdrawalRequest" fork="electra" hash="05b4d2de">

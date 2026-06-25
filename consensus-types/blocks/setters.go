@@ -6,7 +6,7 @@ import (
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
@@ -175,7 +175,7 @@ func (b *SignedBeaconBlock) SetBlobKzgCommitments(c [][]byte) error {
 }
 
 // SetExecutionRequests sets the execution requests in the block.
-func (b *SignedBeaconBlock) SetExecutionRequests(req *enginev1.ExecutionRequests) error {
+func (b *SignedBeaconBlock) SetExecutionRequests(req *silaenginev1.ExecutionRequests) error {
 	if b.version < version.Electra || b.version >= version.Gloas {
 		return consensus_types.ErrNotSupported("SetExecutionRequests", b.version)
 	}
@@ -193,7 +193,7 @@ func (b *SignedBeaconBlock) SetPayloadAttestations(pa []*eth.PayloadAttestation)
 }
 
 // SetParentExecutionRequests sets the parent execution requests in the block.
-func (b *SignedBeaconBlock) SetParentExecutionRequests(r *enginev1.ExecutionRequests) error {
+func (b *SignedBeaconBlock) SetParentExecutionRequests(r *silaenginev1.ExecutionRequests) error {
 	if b.version < version.Gloas {
 		return consensus_types.ErrNotSupported("SetParentExecutionRequests", b.version)
 	}

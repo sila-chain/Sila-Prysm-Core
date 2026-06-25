@@ -6,7 +6,7 @@ import (
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -29,7 +29,7 @@ func TestConstructGenericBeaconBlock(t *testing.T) {
 		require.NoError(t, err)
 		r1, err := eb.Block.HashTreeRoot()
 		require.NoError(t, err)
-		bundle := &enginev1.BlobsBundleV2{
+		bundle := &silaenginev1.BlobsBundleV2{
 			KzgCommitments: [][]byte{{1, 2, 3}},
 			Proofs:         [][]byte{{4, 5, 6}},
 			Blobs:          [][]byte{{7, 8, 9}},
@@ -68,7 +68,7 @@ func TestConstructGenericBeaconBlock(t *testing.T) {
 		require.NoError(t, err)
 		proof, err := hexutil.Decode("0xb4021b0de10f743893d4f71e1bf830c019e832958efd6795baf2f83b8699a9eccc5dc99015d8d4d8ec370d0cc333c06a")
 		require.NoError(t, err)
-		bundle := &enginev1.BlobsBundle{
+		bundle := &silaenginev1.BlobsBundle{
 			KzgCommitments: [][]byte{
 				commitment,
 			},
@@ -96,7 +96,7 @@ func TestConstructGenericBeaconBlock(t *testing.T) {
 		require.NoError(t, err)
 		r1, err := b.Block().HashTreeRoot()
 		require.NoError(t, err)
-		scs := &enginev1.BlobsBundle{}
+		scs := &silaenginev1.BlobsBundle{}
 		result, err := vs.constructGenericBeaconBlock(b, scs, primitives.ZeroWei())
 		require.NoError(t, err)
 		r2, err := result.GetBlindedDeneb().HashTreeRoot()

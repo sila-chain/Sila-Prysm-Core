@@ -4,7 +4,7 @@ go_library(
     name = "go_default_library",
     testonly = True,
     srcs = [
-        "mock_engine_client.go",
+        "mock_silaengine_client.go",
         "mock_execution_chain.go",
         "mock_faulty_powchain.go",
     ],
@@ -26,7 +26,7 @@ go_library(
         "//consensus-types/payload-attribute:go_default_library",
         "//consensus-types/primitives:go_default_library",
         "//encoding/bytesutil:go_default_library",
-        "//proto/engine/v1:go_default_library",
+        "//proto/silaengine/v1:go_default_library",
         "//proto/sila/v1alpha1:go_default_library",
         "@com_github_sila_chain_sila//common:go_default_library",
         "@com_github_sila_chain_sila//common/hexutil:go_default_library",

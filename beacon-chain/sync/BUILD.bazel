@@ -302,7 +302,7 @@ go_test(
         "//encoding/bytesutil:go_default_library",
         "//encoding/ssz/equality:go_default_library",
         "//genesis:go_default_library",
-        "//proto/engine/v1:go_default_library",
+        "//proto/silaengine/v1:go_default_library",
         "//proto/sila/v1alpha1:go_default_library",
         "//proto/sila/v1alpha1/attestation:go_default_library",
         "//proto/sila/v1alpha1/metadata:go_default_library",

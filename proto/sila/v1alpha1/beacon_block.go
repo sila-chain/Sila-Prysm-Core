@@ -2,7 +2,7 @@ package eth
 
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 )
 
 // GenericConverter defines any struct that can be converted to a generic beacon block.
@@ -632,24 +632,24 @@ func (body *BeaconBlockBodyElectra) Copy() *BeaconBlockBodyElectra {
 }
 
 // CopyExecutionRequests copies the provided execution requests.
-func CopyExecutionRequests(e *enginev1.ExecutionRequests) *enginev1.ExecutionRequests {
+func CopyExecutionRequests(e *silaenginev1.ExecutionRequests) *silaenginev1.ExecutionRequests {
 	if e == nil {
 		return nil
 	}
-	dr := make([]*enginev1.DepositRequest, len(e.Deposits))
+	dr := make([]*silaenginev1.DepositRequest, len(e.Deposits))
 	for i, d := range e.Deposits {
 		dr[i] = d.Copy()
 	}
-	wr := make([]*enginev1.WithdrawalRequest, len(e.Withdrawals))
+	wr := make([]*silaenginev1.WithdrawalRequest, len(e.Withdrawals))
 	for i, w := range e.Withdrawals {
 		wr[i] = w.Copy()
 	}
-	cr := make([]*enginev1.ConsolidationRequest, len(e.Consolidations))
+	cr := make([]*silaenginev1.ConsolidationRequest, len(e.Consolidations))
 	for i, c := range e.Consolidations {
 		cr[i] = c.Copy()
 	}
 
-	return &enginev1.ExecutionRequests{
+	return &silaenginev1.ExecutionRequests{
 		Deposits:       dr,
 		Withdrawals:    wr,
 		Consolidations: cr,

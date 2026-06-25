@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -334,7 +334,7 @@ func TestRotateBuilderPendingPayments_UnsupportedVersion(t *testing.T) {
 func TestSetPayloadExpectedWithdrawals(t *testing.T) {
 	t.Run("previous fork returns expected error", func(t *testing.T) {
 		st := &BeaconState{version: version.Fulu}
-		err := st.SetPayloadExpectedWithdrawals([]*enginev1.Withdrawal{})
+		err := st.SetPayloadExpectedWithdrawals([]*silaenginev1.Withdrawal{})
 		require.ErrorContains(t, "SetPayloadExpectedWithdrawals", err)
 	})
 
@@ -353,10 +353,10 @@ func TestSetPayloadExpectedWithdrawals(t *testing.T) {
 		st := &BeaconState{
 			version:                    version.Gloas,
 			dirtyFields:                make(map[types.FieldIndex]bool),
-			payloadExpectedWithdrawals: []*enginev1.Withdrawal{{Index: 1}, {Index: 2}},
+			payloadExpectedWithdrawals: []*silaenginev1.Withdrawal{{Index: 1}, {Index: 2}},
 		}
 
-		withdrawals := []*enginev1.Withdrawal{{Index: 3}}
+		withdrawals := []*silaenginev1.Withdrawal{{Index: 3}}
 		require.NoError(t, st.SetPayloadExpectedWithdrawals(withdrawals))
 
 		require.DeepEqual(t, withdrawals, st.payloadExpectedWithdrawals)
@@ -367,13 +367,13 @@ func TestSetPayloadExpectedWithdrawals(t *testing.T) {
 func TestDecreaseWithdrawalBalances(t *testing.T) {
 	t.Run("previous fork returns expected error", func(t *testing.T) {
 		st := &BeaconState{version: version.Fulu}
-		err := st.DecreaseWithdrawalBalances([]*enginev1.Withdrawal{{}})
+		err := st.DecreaseWithdrawalBalances([]*silaenginev1.Withdrawal{{}})
 		require.ErrorContains(t, "DecreaseWithdrawalBalances", err)
 	})
 
 	t.Run("rejects nil withdrawal", func(t *testing.T) {
 		st := &BeaconState{version: version.Gloas}
-		err := st.DecreaseWithdrawalBalances([]*enginev1.Withdrawal{nil})
+		err := st.DecreaseWithdrawalBalances([]*silaenginev1.Withdrawal{nil})
 		require.ErrorContains(t, "withdrawal is nil", err)
 	})
 
@@ -406,7 +406,7 @@ func TestDecreaseWithdrawalBalances(t *testing.T) {
 			},
 		}
 
-		withdrawals := []*enginev1.Withdrawal{
+		withdrawals := []*silaenginev1.Withdrawal{
 			{ValidatorIndex: primitives.ValidatorIndex(1), Amount: 20},
 			{ValidatorIndex: primitives.BuilderIndex(1).ToValidatorIndex(), Amount: 30},
 			{ValidatorIndex: primitives.ValidatorIndex(2), Amount: 400},
@@ -438,7 +438,7 @@ func TestDecreaseWithdrawalBalances(t *testing.T) {
 			builders: []*silapb.Builder{{Balance: 5}},
 		}
 
-		err := st.DecreaseWithdrawalBalances([]*enginev1.Withdrawal{
+		err := st.DecreaseWithdrawalBalances([]*silaenginev1.Withdrawal{
 			{ValidatorIndex: primitives.BuilderIndex(2).ToValidatorIndex(), Amount: 1},
 		})
 		require.ErrorContains(t, "out of range", err)

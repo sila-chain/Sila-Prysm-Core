@@ -26,7 +26,7 @@ import (
 	payloadattribute "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/payload-attribute"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -46,7 +46,7 @@ var (
 	_ = Reconstructor(&Service{})
 	_ = EngineCaller(&Service{})
 	_ = Reconstructor(&Service{})
-	_ = EngineCaller(&mocks.EngineClient{})
+	_ = EngineCaller(&mocks.SilaEngineClient{})
 )
 
 type RPCClientBad struct {
@@ -1511,7 +1511,7 @@ func TestServer_getPowBlockHashAtTerminalTotalDifficulty(t *testing.T) {
 					tt.parentPowBlock.Hash: tt.parentPowBlock,
 				}
 			}
-			client := mocks.EngineClient{
+			client := mocks.SilaEngineClient{
 				ErrLatestExecBlock: tt.errLatestExecutionBlk,
 				ExecutionBlock:     tt.currentPowBlock,
 				BlockByHashMap:     m,

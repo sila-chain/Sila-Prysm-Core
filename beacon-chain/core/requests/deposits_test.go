@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -21,12 +21,12 @@ func TestProcessDepositRequests(t *testing.T) {
 	require.NoError(t, st.SetDepositRequestsStartIndex(1))
 
 	t.Run("empty requests continues", func(t *testing.T) {
-		newSt, err := requests.ProcessDepositRequests(t.Context(), st, []*enginev1.DepositRequest{})
+		newSt, err := requests.ProcessDepositRequests(t.Context(), st, []*silaenginev1.DepositRequest{})
 		require.NoError(t, err)
 		require.DeepEqual(t, newSt, st)
 	})
 	t.Run("nil request errors", func(t *testing.T) {
-		_, err = requests.ProcessDepositRequests(t.Context(), st, []*enginev1.DepositRequest{nil})
+		_, err = requests.ProcessDepositRequests(t.Context(), st, []*silaenginev1.DepositRequest{nil})
 		require.ErrorContains(t, "nil deposit request", err)
 	})
 
@@ -50,7 +50,7 @@ func TestProcessDepositRequests(t *testing.T) {
 	sr, err := signing.ComputeSigningRoot(depositMessage, domain)
 	require.NoError(t, err)
 	sig := sk.Sign(sr[:])
-	reqs := []*enginev1.DepositRequest{
+	reqs := []*silaenginev1.DepositRequest{
 		{
 			Pubkey:                depositMessage.PublicKey,
 			Index:                 0,

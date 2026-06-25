@@ -23,7 +23,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	leakybucket "github.com/sila-chain/Sila-Consensus-Core/v7/container/leaky-bucket"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -193,7 +193,7 @@ func TestRPCBeaconBlocksByRange_ReconstructsPayloads(t *testing.T) {
 	encodedBinaryTxs[0], err = txs[0].MarshalBinary()
 	require.NoError(t, err)
 	blockHash := bytesutil.ToBytes32([]byte("foo"))
-	payload := &enginev1.SilaPayload{
+	payload := &silaenginev1.SilaPayload{
 		ParentHash:    parent,
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 		StateRoot:     stateRoot,
@@ -209,8 +209,8 @@ func TestRPCBeaconBlocksByRange_ReconstructsPayloads(t *testing.T) {
 		BaseFeePerGas: bytesutil.PadTo([]byte("baseFeePerGas"), fieldparams.RootLength),
 		Transactions:  encodedBinaryTxs,
 	}
-	mockEngine := &mockExecution.EngineClient{
-		SilaPayloadByBlockHash: map[[32]byte]*enginev1.SilaPayload{
+	mockEngine := &mockExecution.SilaEngineClient{
+		SilaPayloadByBlockHash: map[[32]byte]*silaenginev1.SilaPayload{
 			blockHash: payload,
 		},
 	}
@@ -292,9 +292,9 @@ func TestWriteBlockBatchToStream_ReconstructedBlocksPreserveCanonicalOrder(t *te
 
 	clock := startup.NewClock(time.Unix(0, 0), [32]byte{})
 
-	makePayload := func(tag byte) *enginev1.SilaPayload {
+	makePayload := func(tag byte) *silaenginev1.SilaPayload {
 		blockHash := bytesutil.PadTo([]byte{tag}, fieldparams.RootLength)
-		return &enginev1.SilaPayload{
+		return &silaenginev1.SilaPayload{
 			ParentHash:    bytesutil.PadTo([]byte{'p', tag}, fieldparams.RootLength),
 			FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
 			StateRoot:     bytesutil.PadTo([]byte{'s', tag}, fieldparams.RootLength),
@@ -312,7 +312,7 @@ func TestWriteBlockBatchToStream_ReconstructedBlocksPreserveCanonicalOrder(t *te
 		}
 	}
 
-	makeBlindedROBlock := func(slot primitives.Slot, payload *enginev1.SilaPayload) blocks.ROBlock {
+	makeBlindedROBlock := func(slot primitives.Slot, payload *silaenginev1.SilaPayload) blocks.ROBlock {
 		blinded := util.NewBlindedBeaconBlockBellatrix()
 		blinded.Block.Slot = slot
 		wrappedPayload, err := blocks.WrappedSilaPayload(payload)
@@ -347,8 +347,8 @@ func TestWriteBlockBatchToStream_ReconstructedBlocksPreserveCanonicalOrder(t *te
 	block2 := makeFullROBlock(2)
 	block3 := makeBlindedROBlock(3, payload3)
 
-	mockEngine := &mockExecution.EngineClient{
-		SilaPayloadByBlockHash: map[[32]byte]*enginev1.SilaPayload{
+	mockEngine := &mockExecution.SilaEngineClient{
+		SilaPayloadByBlockHash: map[[32]byte]*silaenginev1.SilaPayload{
 			bytesutil.ToBytes32(payload1.BlockHash): payload1,
 			bytesutil.ToBytes32(payload3.BlockHash): payload3,
 		},

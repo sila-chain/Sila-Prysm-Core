@@ -3,7 +3,7 @@ package test_helpers
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
@@ -217,7 +217,7 @@ func GenerateProtoBellatrixBeaconBlock() *silapb.BeaconBlockBellatrix {
 				SyncCommitteeBits:      FillByteSlice(64, 110),
 				SyncCommitteeSignature: FillByteSlice(96, 111),
 			},
-			SilaPayload: &enginev1.SilaPayload{
+			SilaPayload: &silaenginev1.SilaPayload{
 				ParentHash:    FillByteSlice(32, 112),
 				FeeRecipient:  FillByteSlice(20, 113),
 				StateRoot:     FillByteSlice(32, 114),
@@ -450,7 +450,7 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *silapb.BlindedBeaconBlockBellat
 				SyncCommitteeBits:      FillByteSlice(64, 110),
 				SyncCommitteeSignature: FillByteSlice(96, 111),
 			},
-			SilaPayloadHeader: &enginev1.SilaPayloadHeader{
+			SilaPayloadHeader: &silaenginev1.SilaPayloadHeader{
 				ParentHash:       FillByteSlice(32, 112),
 				FeeRecipient:     FillByteSlice(20, 113),
 				StateRoot:        FillByteSlice(32, 114),

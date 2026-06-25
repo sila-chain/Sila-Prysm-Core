@@ -8,7 +8,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/transition"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
@@ -23,21 +23,21 @@ func TestProcessOperationsWithNilRequests(t *testing.T) {
 		{
 			name: "Nil deposit request",
 			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
-				blk.Block.Body.ExecutionRequests.Deposits = []*enginev1.DepositRequest{nil}
+				blk.Block.Body.ExecutionRequests.Deposits = []*silaenginev1.DepositRequest{nil}
 			},
 			errMsg: "nil deposit request",
 		},
 		{
 			name: "Nil withdrawal request",
 			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
-				blk.Block.Body.ExecutionRequests.Withdrawals = []*enginev1.WithdrawalRequest{nil}
+				blk.Block.Body.ExecutionRequests.Withdrawals = []*silaenginev1.WithdrawalRequest{nil}
 			},
 			errMsg: "nil withdrawal request",
 		},
 		{
 			name: "Nil consolidation request",
 			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
-				blk.Block.Body.ExecutionRequests.Consolidations = []*enginev1.ConsolidationRequest{nil}
+				blk.Block.Body.ExecutionRequests.Consolidations = []*silaenginev1.ConsolidationRequest{nil}
 			},
 			errMsg: "nil consolidation request",
 		},

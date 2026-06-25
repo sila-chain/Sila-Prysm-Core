@@ -11,7 +11,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/slice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/pkg/errors"
@@ -22,7 +22,7 @@ import (
 // Bellatrix
 // ----------------------------------------------------------------------------
 
-func SilaPayloadFromConsensus(payload *enginev1.SilaPayload) (*SilaPayload, error) {
+func SilaPayloadFromConsensus(payload *silaenginev1.SilaPayload) (*SilaPayload, error) {
 	baseFeePerGas, err := sszBytesToUint256String(payload.BaseFeePerGas)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func SilaPayloadFromConsensus(payload *enginev1.SilaPayload) (*SilaPayload, erro
 	}, nil
 }
 
-func (e *SilaPayload) ToConsensus() (*enginev1.SilaPayload, error) {
+func (e *SilaPayload) ToConsensus() (*silaenginev1.SilaPayload, error) {
 	if e == nil {
 		return nil, server.NewDecodeError(errNilValue, "SilaPayload")
 	}
@@ -117,7 +117,7 @@ func (e *SilaPayload) ToConsensus() (*enginev1.SilaPayload, error) {
 			return nil, server.NewDecodeError(err, fmt.Sprintf("SilaPayload.Transactions[%d]", i))
 		}
 	}
-	return &enginev1.SilaPayload{
+	return &silaenginev1.SilaPayload{
 		ParentHash:    payloadParentHash,
 		FeeRecipient:  payloadFeeRecipient,
 		StateRoot:     payloadStateRoot,
@@ -142,7 +142,7 @@ func (r *SilaPayload) PayloadProto() (proto.Message, error) {
 	return r.ToConsensus()
 }
 
-func SilaPayloadHeaderFromConsensus(payload *enginev1.SilaPayloadHeader) (*SilaPayloadHeader, error) {
+func SilaPayloadHeaderFromConsensus(payload *silaenginev1.SilaPayloadHeader) (*SilaPayloadHeader, error) {
 	baseFeePerGas, err := sszBytesToUint256String(payload.BaseFeePerGas)
 	if err != nil {
 		return nil, err
@@ -166,7 +166,7 @@ func SilaPayloadHeaderFromConsensus(payload *enginev1.SilaPayloadHeader) (*SilaP
 	}, nil
 }
 
-func (e *SilaPayloadHeader) ToConsensus() (*enginev1.SilaPayloadHeader, error) {
+func (e *SilaPayloadHeader) ToConsensus() (*silaenginev1.SilaPayloadHeader, error) {
 	if e == nil {
 		return nil, server.NewDecodeError(errNilValue, "SilaPayloadHeader")
 	}
@@ -227,7 +227,7 @@ func (e *SilaPayloadHeader) ToConsensus() (*enginev1.SilaPayloadHeader, error) {
 		return nil, server.NewDecodeError(err, "SilaPayloadHeader.TransactionsRoot")
 	}
 
-	return &enginev1.SilaPayloadHeader{
+	return &silaenginev1.SilaPayloadHeader{
 		ParentHash:       payloadParentHash,
 		FeeRecipient:     payloadFeeRecipient,
 		StateRoot:        payloadStateRoot,
@@ -249,7 +249,7 @@ func (e *SilaPayloadHeader) ToConsensus() (*enginev1.SilaPayloadHeader, error) {
 // Capella
 // ----------------------------------------------------------------------------
 
-func SilaPayloadCapellaFromConsensus(payload *enginev1.SilaPayloadCapella) (*SilaPayloadCapella, error) {
+func SilaPayloadCapellaFromConsensus(payload *silaenginev1.SilaPayloadCapella) (*SilaPayloadCapella, error) {
 	baseFeePerGas, err := sszBytesToUint256String(payload.BaseFeePerGas)
 	if err != nil {
 		return nil, err
@@ -278,7 +278,7 @@ func SilaPayloadCapellaFromConsensus(payload *enginev1.SilaPayloadCapella) (*Sil
 	}, nil
 }
 
-func (e *SilaPayloadCapella) ToConsensus() (*enginev1.SilaPayloadCapella, error) {
+func (e *SilaPayloadCapella) ToConsensus() (*silaenginev1.SilaPayloadCapella, error) {
 	if e == nil {
 		return nil, server.NewDecodeError(errNilValue, "SilaPayload")
 	}
@@ -349,7 +349,7 @@ func (e *SilaPayloadCapella) ToConsensus() (*enginev1.SilaPayloadCapella, error)
 	if err != nil {
 		return nil, server.NewDecodeError(err, "SilaPayload.Withdrawals")
 	}
-	withdrawals := make([]*enginev1.Withdrawal, len(e.Withdrawals))
+	withdrawals := make([]*silaenginev1.Withdrawal, len(e.Withdrawals))
 	for i, w := range e.Withdrawals {
 		withdrawalIndex, err := strconv.ParseUint(w.WithdrawalIndex, 10, 64)
 		if err != nil {
@@ -367,14 +367,14 @@ func (e *SilaPayloadCapella) ToConsensus() (*enginev1.SilaPayloadCapella, error)
 		if err != nil {
 			return nil, server.NewDecodeError(err, fmt.Sprintf("SilaPayload.Withdrawals[%d].Amount", i))
 		}
-		withdrawals[i] = &enginev1.Withdrawal{
+		withdrawals[i] = &silaenginev1.Withdrawal{
 			Index:          withdrawalIndex,
 			ValidatorIndex: primitives.ValidatorIndex(validatorIndex),
 			Address:        address,
 			Amount:         amount,
 		}
 	}
-	return &enginev1.SilaPayloadCapella{
+	return &silaenginev1.SilaPayloadCapella{
 		ParentHash:    payloadParentHash,
 		FeeRecipient:  payloadFeeRecipient,
 		StateRoot:     payloadStateRoot,
@@ -400,7 +400,7 @@ func (p *SilaPayloadCapella) PayloadProto() (proto.Message, error) {
 	return p.ToConsensus()
 }
 
-func SilaPayloadHeaderCapellaFromConsensus(payload *enginev1.SilaPayloadHeaderCapella) (*SilaPayloadHeaderCapella, error) {
+func SilaPayloadHeaderCapellaFromConsensus(payload *silaenginev1.SilaPayloadHeaderCapella) (*SilaPayloadHeaderCapella, error) {
 	baseFeePerGas, err := sszBytesToUint256String(payload.BaseFeePerGas)
 	if err != nil {
 		return nil, err
@@ -425,7 +425,7 @@ func SilaPayloadHeaderCapellaFromConsensus(payload *enginev1.SilaPayloadHeaderCa
 	}, nil
 }
 
-func (e *SilaPayloadHeaderCapella) ToConsensus() (*enginev1.SilaPayloadHeaderCapella, error) {
+func (e *SilaPayloadHeaderCapella) ToConsensus() (*silaenginev1.SilaPayloadHeaderCapella, error) {
 	if e == nil {
 		return nil, server.NewDecodeError(errNilValue, "SilaPayloadHeader")
 	}
@@ -489,7 +489,7 @@ func (e *SilaPayloadHeaderCapella) ToConsensus() (*enginev1.SilaPayloadHeaderCap
 	if err != nil {
 		return nil, server.NewDecodeError(err, "SilaPayloadHeader.WithdrawalsRoot")
 	}
-	return &enginev1.SilaPayloadHeaderCapella{
+	return &silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       payloadParentHash,
 		FeeRecipient:     payloadFeeRecipient,
 		StateRoot:        payloadStateRoot,
@@ -512,7 +512,7 @@ func (e *SilaPayloadHeaderCapella) ToConsensus() (*enginev1.SilaPayloadHeaderCap
 // Deneb
 // ----------------------------------------------------------------------------
 
-func SilaPayloadDenebFromConsensus(payload *enginev1.SilaPayloadDeneb) (*SilaPayloadDeneb, error) {
+func SilaPayloadDenebFromConsensus(payload *silaenginev1.SilaPayloadDeneb) (*SilaPayloadDeneb, error) {
 	baseFeePerGas, err := sszBytesToUint256String(payload.BaseFeePerGas)
 	if err != nil {
 		return nil, err
@@ -543,7 +543,7 @@ func SilaPayloadDenebFromConsensus(payload *enginev1.SilaPayloadDeneb) (*SilaPay
 	}, nil
 }
 
-func (e *SilaPayloadDeneb) ToConsensus() (*enginev1.SilaPayloadDeneb, error) {
+func (e *SilaPayloadDeneb) ToConsensus() (*silaenginev1.SilaPayloadDeneb, error) {
 	if e == nil {
 		return nil, server.NewDecodeError(errNilValue, "SilaPayload")
 	}
@@ -614,7 +614,7 @@ func (e *SilaPayloadDeneb) ToConsensus() (*enginev1.SilaPayloadDeneb, error) {
 	if err != nil {
 		return nil, server.NewDecodeError(err, "SilaPayload.Withdrawals")
 	}
-	withdrawals := make([]*enginev1.Withdrawal, len(e.Withdrawals))
+	withdrawals := make([]*silaenginev1.Withdrawal, len(e.Withdrawals))
 	for i, w := range e.Withdrawals {
 		withdrawalIndex, err := strconv.ParseUint(w.WithdrawalIndex, 10, 64)
 		if err != nil {
@@ -632,7 +632,7 @@ func (e *SilaPayloadDeneb) ToConsensus() (*enginev1.SilaPayloadDeneb, error) {
 		if err != nil {
 			return nil, server.NewDecodeError(err, fmt.Sprintf("SilaPayload.Withdrawals[%d].Amount", i))
 		}
-		withdrawals[i] = &enginev1.Withdrawal{
+		withdrawals[i] = &silaenginev1.Withdrawal{
 			Index:          withdrawalIndex,
 			ValidatorIndex: primitives.ValidatorIndex(validatorIndex),
 			Address:        address,
@@ -648,7 +648,7 @@ func (e *SilaPayloadDeneb) ToConsensus() (*enginev1.SilaPayloadDeneb, error) {
 	if err != nil {
 		return nil, server.NewDecodeError(err, "SilaPayload.ExcessBlobGas")
 	}
-	return &enginev1.SilaPayloadDeneb{
+	return &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    payloadParentHash,
 		FeeRecipient:  payloadFeeRecipient,
 		StateRoot:     payloadStateRoot,
@@ -669,7 +669,7 @@ func (e *SilaPayloadDeneb) ToConsensus() (*enginev1.SilaPayloadDeneb, error) {
 	}, nil
 }
 
-func SilaPayloadHeaderDenebFromConsensus(payload *enginev1.SilaPayloadHeaderDeneb) (*SilaPayloadHeaderDeneb, error) {
+func SilaPayloadHeaderDenebFromConsensus(payload *silaenginev1.SilaPayloadHeaderDeneb) (*SilaPayloadHeaderDeneb, error) {
 	baseFeePerGas, err := sszBytesToUint256String(payload.BaseFeePerGas)
 	if err != nil {
 		return nil, err
@@ -696,7 +696,7 @@ func SilaPayloadHeaderDenebFromConsensus(payload *enginev1.SilaPayloadHeaderDene
 	}, nil
 }
 
-func (e *SilaPayloadHeaderDeneb) ToConsensus() (*enginev1.SilaPayloadHeaderDeneb, error) {
+func (e *SilaPayloadHeaderDeneb) ToConsensus() (*silaenginev1.SilaPayloadHeaderDeneb, error) {
 	if e == nil {
 		return nil, server.NewDecodeError(errNilValue, "SilaPayloadHeader")
 	}
@@ -768,7 +768,7 @@ func (e *SilaPayloadHeaderDeneb) ToConsensus() (*enginev1.SilaPayloadHeaderDeneb
 	if err != nil {
 		return nil, server.NewDecodeError(err, "SilaPayload.ExcessBlobGas")
 	}
-	return &enginev1.SilaPayloadHeaderDeneb{
+	return &silaenginev1.SilaPayloadHeaderDeneb{
 		ParentHash:       payloadParentHash,
 		FeeRecipient:     payloadFeeRecipient,
 		StateRoot:        payloadStateRoot,
@@ -798,7 +798,7 @@ var (
 	SilaPayloadHeaderElectraFromConsensus = SilaPayloadHeaderDenebFromConsensus
 )
 
-func WithdrawalRequestsFromConsensus(ws []*enginev1.WithdrawalRequest) []*WithdrawalRequest {
+func WithdrawalRequestsFromConsensus(ws []*silaenginev1.WithdrawalRequest) []*WithdrawalRequest {
 	result := make([]*WithdrawalRequest, len(ws))
 	for i, w := range ws {
 		result[i] = WithdrawalRequestFromConsensus(w)
@@ -806,7 +806,7 @@ func WithdrawalRequestsFromConsensus(ws []*enginev1.WithdrawalRequest) []*Withdr
 	return result
 }
 
-func WithdrawalRequestFromConsensus(w *enginev1.WithdrawalRequest) *WithdrawalRequest {
+func WithdrawalRequestFromConsensus(w *silaenginev1.WithdrawalRequest) *WithdrawalRequest {
 	return &WithdrawalRequest{
 		SourceAddress:   hexutil.Encode(w.SourceAddress),
 		ValidatorPubkey: hexutil.Encode(w.ValidatorPubkey),
@@ -814,7 +814,7 @@ func WithdrawalRequestFromConsensus(w *enginev1.WithdrawalRequest) *WithdrawalRe
 	}
 }
 
-func (w *WithdrawalRequest) ToConsensus() (*enginev1.WithdrawalRequest, error) {
+func (w *WithdrawalRequest) ToConsensus() (*silaenginev1.WithdrawalRequest, error) {
 	if w == nil {
 		return nil, server.NewDecodeError(errNilValue, "WithdrawalRequest")
 	}
@@ -830,14 +830,14 @@ func (w *WithdrawalRequest) ToConsensus() (*enginev1.WithdrawalRequest, error) {
 	if err != nil {
 		return nil, server.NewDecodeError(err, "Amount")
 	}
-	return &enginev1.WithdrawalRequest{
+	return &silaenginev1.WithdrawalRequest{
 		SourceAddress:   src,
 		ValidatorPubkey: pubkey,
 		Amount:          amount,
 	}, nil
 }
 
-func ConsolidationRequestsFromConsensus(cs []*enginev1.ConsolidationRequest) []*ConsolidationRequest {
+func ConsolidationRequestsFromConsensus(cs []*silaenginev1.ConsolidationRequest) []*ConsolidationRequest {
 	result := make([]*ConsolidationRequest, len(cs))
 	for i, c := range cs {
 		result[i] = ConsolidationRequestFromConsensus(c)
@@ -845,7 +845,7 @@ func ConsolidationRequestsFromConsensus(cs []*enginev1.ConsolidationRequest) []*
 	return result
 }
 
-func ConsolidationRequestFromConsensus(c *enginev1.ConsolidationRequest) *ConsolidationRequest {
+func ConsolidationRequestFromConsensus(c *silaenginev1.ConsolidationRequest) *ConsolidationRequest {
 	return &ConsolidationRequest{
 		SourceAddress: hexutil.Encode(c.SourceAddress),
 		SourcePubkey:  hexutil.Encode(c.SourcePubkey),
@@ -853,7 +853,7 @@ func ConsolidationRequestFromConsensus(c *enginev1.ConsolidationRequest) *Consol
 	}
 }
 
-func (c *ConsolidationRequest) ToConsensus() (*enginev1.ConsolidationRequest, error) {
+func (c *ConsolidationRequest) ToConsensus() (*silaenginev1.ConsolidationRequest, error) {
 	if c == nil {
 		return nil, server.NewDecodeError(errNilValue, "ConsolidationRequest")
 	}
@@ -869,14 +869,14 @@ func (c *ConsolidationRequest) ToConsensus() (*enginev1.ConsolidationRequest, er
 	if err != nil {
 		return nil, server.NewDecodeError(err, "TargetPubkey")
 	}
-	return &enginev1.ConsolidationRequest{
+	return &silaenginev1.ConsolidationRequest{
 		SourceAddress: srcAddress,
 		SourcePubkey:  srcPubkey,
 		TargetPubkey:  targetPubkey,
 	}, nil
 }
 
-func DepositRequestsFromConsensus(ds []*enginev1.DepositRequest) []*DepositRequest {
+func DepositRequestsFromConsensus(ds []*silaenginev1.DepositRequest) []*DepositRequest {
 	result := make([]*DepositRequest, len(ds))
 	for i, d := range ds {
 		result[i] = DepositRequestFromConsensus(d)
@@ -884,7 +884,7 @@ func DepositRequestsFromConsensus(ds []*enginev1.DepositRequest) []*DepositReque
 	return result
 }
 
-func DepositRequestFromConsensus(d *enginev1.DepositRequest) *DepositRequest {
+func DepositRequestFromConsensus(d *silaenginev1.DepositRequest) *DepositRequest {
 	return &DepositRequest{
 		Pubkey:                hexutil.Encode(d.Pubkey),
 		WithdrawalCredentials: hexutil.Encode(d.WithdrawalCredentials),
@@ -894,7 +894,7 @@ func DepositRequestFromConsensus(d *enginev1.DepositRequest) *DepositRequest {
 	}
 }
 
-func (d *DepositRequest) ToConsensus() (*enginev1.DepositRequest, error) {
+func (d *DepositRequest) ToConsensus() (*silaenginev1.DepositRequest, error) {
 	if d == nil {
 		return nil, server.NewDecodeError(errNilValue, "DepositRequest")
 	}
@@ -918,7 +918,7 @@ func (d *DepositRequest) ToConsensus() (*enginev1.DepositRequest, error) {
 	if err != nil {
 		return nil, server.NewDecodeError(err, "Index")
 	}
-	return &enginev1.DepositRequest{
+	return &silaenginev1.DepositRequest{
 		Pubkey:                pubkey,
 		WithdrawalCredentials: withdrawalCredentials,
 		Amount:                amount,
@@ -927,7 +927,7 @@ func (d *DepositRequest) ToConsensus() (*enginev1.DepositRequest, error) {
 	}, nil
 }
 
-func ExecutionRequestsFromConsensus(er *enginev1.ExecutionRequests) *ExecutionRequests {
+func ExecutionRequestsFromConsensus(er *silaenginev1.ExecutionRequests) *ExecutionRequests {
 	return &ExecutionRequests{
 		Deposits:       DepositRequestsFromConsensus(er.Deposits),
 		Withdrawals:    WithdrawalRequestsFromConsensus(er.Withdrawals),
@@ -935,7 +935,7 @@ func ExecutionRequestsFromConsensus(er *enginev1.ExecutionRequests) *ExecutionRe
 	}
 }
 
-func (e *ExecutionRequests) ToConsensus() (*enginev1.ExecutionRequests, error) {
+func (e *ExecutionRequests) ToConsensus() (*silaenginev1.ExecutionRequests, error) {
 	if e == nil {
 		return nil, server.NewDecodeError(errNilValue, "ExecutionRequests")
 	}
@@ -943,7 +943,7 @@ func (e *ExecutionRequests) ToConsensus() (*enginev1.ExecutionRequests, error) {
 	if err = slice.VerifyMaxLength(e.Deposits, params.BeaconConfig().MaxDepositRequestsPerPayload); err != nil {
 		return nil, err
 	}
-	depositRequests := make([]*enginev1.DepositRequest, len(e.Deposits))
+	depositRequests := make([]*silaenginev1.DepositRequest, len(e.Deposits))
 	for i, d := range e.Deposits {
 		depositRequests[i], err = d.ToConsensus()
 		if err != nil {
@@ -954,7 +954,7 @@ func (e *ExecutionRequests) ToConsensus() (*enginev1.ExecutionRequests, error) {
 	if err = slice.VerifyMaxLength(e.Withdrawals, params.BeaconConfig().MaxWithdrawalRequestsPerPayload); err != nil {
 		return nil, err
 	}
-	withdrawalRequests := make([]*enginev1.WithdrawalRequest, len(e.Withdrawals))
+	withdrawalRequests := make([]*silaenginev1.WithdrawalRequest, len(e.Withdrawals))
 	for i, w := range e.Withdrawals {
 		withdrawalRequests[i], err = w.ToConsensus()
 		if err != nil {
@@ -965,14 +965,14 @@ func (e *ExecutionRequests) ToConsensus() (*enginev1.ExecutionRequests, error) {
 	if err = slice.VerifyMaxLength(e.Consolidations, params.BeaconConfig().MaxConsolidationsRequestsPerPayload); err != nil {
 		return nil, err
 	}
-	consolidationRequests := make([]*enginev1.ConsolidationRequest, len(e.Consolidations))
+	consolidationRequests := make([]*silaenginev1.ConsolidationRequest, len(e.Consolidations))
 	for i, c := range e.Consolidations {
 		consolidationRequests[i], err = c.ToConsensus()
 		if err != nil {
 			return nil, server.NewDecodeError(err, fmt.Sprintf("ExecutionRequests.Consolidations[%d]", i))
 		}
 	}
-	return &enginev1.ExecutionRequests{
+	return &silaenginev1.ExecutionRequests{
 		Deposits:       depositRequests,
 		Withdrawals:    withdrawalRequests,
 		Consolidations: consolidationRequests,
@@ -989,7 +989,7 @@ var (
 	BeaconBlockFuluFromConsensus            = BeaconBlockElectraFromConsensus
 )
 
-func SilaPayloadGloasFromConsensus(payload *enginev1.SilaPayloadGloas) (*SilaPayloadGloas, error) {
+func SilaPayloadGloasFromConsensus(payload *silaenginev1.SilaPayloadGloas) (*SilaPayloadGloas, error) {
 	baseFeePerGas, err := sszBytesToUint256String(payload.BaseFeePerGas)
 	if err != nil {
 		return nil, err
@@ -1022,7 +1022,7 @@ func SilaPayloadGloasFromConsensus(payload *enginev1.SilaPayloadGloas) (*SilaPay
 	}, nil
 }
 
-func (e *SilaPayloadGloas) ToConsensus() (*enginev1.SilaPayloadGloas, error) {
+func (e *SilaPayloadGloas) ToConsensus() (*silaenginev1.SilaPayloadGloas, error) {
 	if e == nil {
 		return nil, server.NewDecodeError(errNilValue, "SilaPayloadGloas")
 	}
@@ -1093,7 +1093,7 @@ func (e *SilaPayloadGloas) ToConsensus() (*enginev1.SilaPayloadGloas, error) {
 	if err != nil {
 		return nil, server.NewDecodeError(err, "Withdrawals")
 	}
-	withdrawals := make([]*enginev1.Withdrawal, len(e.Withdrawals))
+	withdrawals := make([]*silaenginev1.Withdrawal, len(e.Withdrawals))
 	for i, w := range e.Withdrawals {
 		withdrawalIndex, err := strconv.ParseUint(w.WithdrawalIndex, 10, 64)
 		if err != nil {
@@ -1111,7 +1111,7 @@ func (e *SilaPayloadGloas) ToConsensus() (*enginev1.SilaPayloadGloas, error) {
 		if err != nil {
 			return nil, server.NewDecodeError(err, fmt.Sprintf("Withdrawals[%d].Amount", i))
 		}
-		withdrawals[i] = &enginev1.Withdrawal{
+		withdrawals[i] = &silaenginev1.Withdrawal{
 			Index:          withdrawalIndex,
 			ValidatorIndex: primitives.ValidatorIndex(validatorIndex),
 			Address:        address,
@@ -1137,7 +1137,7 @@ func (e *SilaPayloadGloas) ToConsensus() (*enginev1.SilaPayloadGloas, error) {
 	if err != nil {
 		return nil, server.NewDecodeError(err, "SlotNumber")
 	}
-	return &enginev1.SilaPayloadGloas{
+	return &silaenginev1.SilaPayloadGloas{
 		ParentHash:      payloadParentHash,
 		FeeRecipient:    payloadFeeRecipient,
 		StateRoot:       payloadStateRoot,

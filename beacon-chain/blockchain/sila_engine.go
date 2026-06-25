@@ -22,7 +22,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
@@ -32,10 +32,10 @@ import (
 
 var defaultLatestValidHash = bytesutil.PadTo([]byte{0xff}, 32)
 
-// notifyForkchoiceUpdate signals execution engine the fork choice updates. Execution engine should:
+// notifyForkchoiceUpdate signals SilaEngine the fork choice updates. SilaEngine should:
 // 1. Re-organizes the sila payload chain and corresponding state to make head_block_hash the head.
 // 2. Applies finality to the execution state: it irreversibly persists the chain of all sila payloads and corresponding state, up to and including finalized_block_hash.
-func (s *Service) notifyForkchoiceUpdate(ctx context.Context, arg *fcuConfig) (*enginev1.PayloadIDBytes, error) {
+func (s *Service) notifyForkchoiceUpdate(ctx context.Context, arg *fcuConfig) (*silaenginev1.PayloadIDBytes, error) {
 	ctx, span := trace.StartSpan(ctx, "blockChain.notifyForkchoiceUpdate")
 	defer span.End()
 
@@ -64,7 +64,7 @@ func (s *Service) notifyForkchoiceUpdate(ctx context.Context, arg *fcuConfig) (*
 	}
 	finalizedHash := s.cfg.ForkChoiceStore.FinalizedPayloadBlockHash()
 	justifiedHash := s.cfg.ForkChoiceStore.UnrealizedJustifiedPayloadBlockHash()
-	fcs := &enginev1.ForkchoiceState{
+	fcs := &silaenginev1.ForkchoiceState{
 		HeadBlockHash:      headPayload.BlockHash(),
 		SafeBlockHash:      justifiedHash[:],
 		FinalizedBlockHash: finalizedHash[:],
@@ -73,7 +73,7 @@ func (s *Service) notifyForkchoiceUpdate(ctx context.Context, arg *fcuConfig) (*
 		// check if we are sending FCU at genesis
 		hash, err := s.hashForGenesisBlock(ctx, arg.headRoot)
 		if errors.Is(err, errNotGenesisRoot) {
-			log.Error("Sending nil head block hash to execution engine")
+			log.Error("Sending nil head block hash to SilaEngine")
 			return nil, nil
 		}
 		if err != nil {
@@ -84,7 +84,7 @@ func (s *Service) notifyForkchoiceUpdate(ctx context.Context, arg *fcuConfig) (*
 	if arg.attributes == nil {
 		arg.attributes = payloadattribute.EmptyWithVersion(headBlk.Version())
 	}
-	payloadID, lastValidHash, err := s.cfg.ExecutionEngineCaller.ForkchoiceUpdated(ctx, fcs, arg.attributes)
+	payloadID, lastValidHash, err := s.cfg.SilaEngineCaller.ForkchoiceUpdated(ctx, fcs, arg.attributes)
 	if err != nil {
 		switch {
 		case errors.Is(err, execution.ErrAcceptedSyncingPayloadStatus):
@@ -157,7 +157,7 @@ func (s *Service) notifyForkchoiceUpdate(ctx context.Context, arg *fcuConfig) (*
 			}).Warn("Pruned invalid blocks")
 			return pid, invalidBlock{error: ErrInvalidPayload, root: arg.headRoot, invalidAncestorRoots: invalidRoots}
 		default:
-			log.WithError(err).Error(ErrUndefinedExecutionEngineError)
+			log.WithError(err).Error(ErrUndefinedSilaEngineError)
 			return nil, nil
 		}
 	}
@@ -221,7 +221,7 @@ func (s *Service) getPayloadHash(ctx context.Context, root []byte) ([32]byte, er
 	return bytesutil.ToBytes32(payload.BlockHash()), nil
 }
 
-// notifyNewPayload signals execution engine on a new payload.
+// notifyNewPayload signals SilaEngine on a new payload.
 // It returns true if the EL has returned VALID for the block
 // stVersion should represent the version of the pre-state; header should also be from the pre-state.
 func (s *Service) notifyNewPayload(ctx context.Context, stVersion int, header interfaces.ExecutionData, blk blocktypes.ROBlock) (bool, error) {
@@ -252,7 +252,7 @@ func (s *Service) notifyNewPayload(ctx context.Context, stVersion int, header in
 	var lastValidHash []byte
 	var parentRoot *common.Hash
 	var versionedHashes []common.Hash
-	var requests *enginev1.ExecutionRequests
+	var requests *silaenginev1.ExecutionRequests
 	if blk.Version() >= version.Deneb {
 		versionedHashes, err = kzgCommitmentsToVersionedHashes(blk.Block().Body())
 		if err != nil {
@@ -271,7 +271,7 @@ func (s *Service) notifyNewPayload(ctx context.Context, stVersion int, header in
 		}
 	}
 
-	lastValidHash, err = s.cfg.ExecutionEngineCaller.NewPayload(ctx, payload, versionedHashes, parentRoot, requests)
+	lastValidHash, err = s.cfg.SilaEngineCaller.NewPayload(ctx, payload, versionedHashes, parentRoot, requests)
 	if err == nil {
 		newPayloadValidNodeCount.Inc()
 		return true, nil
@@ -294,8 +294,8 @@ func (s *Service) notifyNewPayload(ctx context.Context, stVersion int, header in
 			lastValidHash: bytesutil.ToBytes32(lastValidHash),
 		}
 	}
-	log.WithFields(logFields).WithError(err).Error("Unexpected execution engine error")
-	return false, errors.WithMessage(ErrUndefinedExecutionEngineError, err.Error())
+	log.WithFields(logFields).WithError(err).Error("Unexpected SilaEngine error")
+	return false, errors.WithMessage(ErrUndefinedSilaEngineError, err.Error())
 }
 
 // pruneInvalidBlock deals with the event that an invalid block was detected by the execution layer
@@ -395,8 +395,8 @@ func (s *Service) getPayloadAttribute(ctx context.Context, st state.BeaconState,
 	}
 }
 
-func payloadAttributesGloas(timestamp uint64, prevRandao, feeRecipient, parentBeaconBlockRoot []byte, withdrawals []*enginev1.Withdrawal, slot primitives.Slot, targetGasLimit uint64) payloadattribute.Attributer {
-	attr, err := payloadattribute.New(&enginev1.PayloadAttributesV4{
+func payloadAttributesGloas(timestamp uint64, prevRandao, feeRecipient, parentBeaconBlockRoot []byte, withdrawals []*silaenginev1.Withdrawal, slot primitives.Slot, targetGasLimit uint64) payloadattribute.Attributer {
+	attr, err := payloadattribute.New(&silaenginev1.PayloadAttributesV4{
 		Timestamp:             timestamp,
 		PrevRandao:            prevRandao,
 		SuggestedFeeRecipient: feeRecipient,
@@ -418,7 +418,7 @@ func payloadAttributesDeneb(st state.BeaconState, timestamp uint64, prevRandao, 
 		log.WithError(err).Error("Could not get expected withdrawals to get payload attribute")
 		return payloadattribute.EmptyWithVersion(st.Version())
 	}
-	attr, err := payloadattribute.New(&enginev1.PayloadAttributesV3{
+	attr, err := payloadattribute.New(&silaenginev1.PayloadAttributesV3{
 		Timestamp:             timestamp,
 		PrevRandao:            prevRandao,
 		SuggestedFeeRecipient: feeRecipient,
@@ -438,7 +438,7 @@ func payloadAttributesCapella(st state.BeaconState, timestamp uint64, prevRandao
 		log.WithError(err).Error("Could not get expected withdrawals to get payload attribute")
 		return payloadattribute.EmptyWithVersion(st.Version())
 	}
-	attr, err := payloadattribute.New(&enginev1.PayloadAttributesV2{
+	attr, err := payloadattribute.New(&silaenginev1.PayloadAttributesV2{
 		Timestamp:             timestamp,
 		PrevRandao:            prevRandao,
 		SuggestedFeeRecipient: feeRecipient,
@@ -452,7 +452,7 @@ func payloadAttributesCapella(st state.BeaconState, timestamp uint64, prevRandao
 }
 
 func payloadAttributesBellatrix(timestamp uint64, prevRandao, feeRecipient []byte) payloadattribute.Attributer {
-	attr, err := payloadattribute.New(&enginev1.PayloadAttributes{
+	attr, err := payloadattribute.New(&silaenginev1.PayloadAttributes{
 		Timestamp:             timestamp,
 		PrevRandao:            prevRandao,
 		SuggestedFeeRecipient: feeRecipient,

@@ -10,7 +10,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/container/slice"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
@@ -2217,7 +2217,7 @@ func (b *BlindedBeaconBlockElectra) ToConsensus() (*eth.BlindedBeaconBlockElectr
 				SyncCommitteeBits:      syncCommitteeBits,
 				SyncCommitteeSignature: syncCommitteeSig,
 			},
-			SilaPayloadHeader: &enginev1.SilaPayloadHeaderDeneb{
+			SilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{
 				ParentHash:       payloadParentHash,
 				FeeRecipient:     payloadFeeRecipient,
 				StateRoot:        payloadStateRoot,
@@ -2682,7 +2682,7 @@ func (b *BlindedBeaconBlockFulu) ToConsensus() (*eth.BlindedBeaconBlockFulu, err
 	if b.Body.ExecutionRequests == nil {
 		return nil, server.NewDecodeError(errors.New("nil execution requests"), "Body.ExecutionRequests")
 	}
-	depositRequests := make([]*enginev1.DepositRequest, len(b.Body.ExecutionRequests.Deposits))
+	depositRequests := make([]*silaenginev1.DepositRequest, len(b.Body.ExecutionRequests.Deposits))
 	for i, d := range b.Body.ExecutionRequests.Deposits {
 		depositRequests[i], err = d.ToConsensus()
 		if err != nil {
@@ -2690,7 +2690,7 @@ func (b *BlindedBeaconBlockFulu) ToConsensus() (*eth.BlindedBeaconBlockFulu, err
 		}
 	}
 
-	withdrawalRequests := make([]*enginev1.WithdrawalRequest, len(b.Body.ExecutionRequests.Withdrawals))
+	withdrawalRequests := make([]*silaenginev1.WithdrawalRequest, len(b.Body.ExecutionRequests.Withdrawals))
 	for i, w := range b.Body.ExecutionRequests.Withdrawals {
 		withdrawalRequests[i], err = w.ToConsensus()
 		if err != nil {
@@ -2698,7 +2698,7 @@ func (b *BlindedBeaconBlockFulu) ToConsensus() (*eth.BlindedBeaconBlockFulu, err
 		}
 	}
 
-	consolidationRequests := make([]*enginev1.ConsolidationRequest, len(b.Body.ExecutionRequests.Consolidations))
+	consolidationRequests := make([]*silaenginev1.ConsolidationRequest, len(b.Body.ExecutionRequests.Consolidations))
 	for i, c := range b.Body.ExecutionRequests.Consolidations {
 		consolidationRequests[i], err = c.ToConsensus()
 		if err != nil {
@@ -2745,7 +2745,7 @@ func (b *BlindedBeaconBlockFulu) ToConsensus() (*eth.BlindedBeaconBlockFulu, err
 				SyncCommitteeBits:      syncCommitteeBits,
 				SyncCommitteeSignature: syncCommitteeSig,
 			},
-			SilaPayloadHeader: &enginev1.SilaPayloadHeaderDeneb{
+			SilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{
 				ParentHash:       payloadParentHash,
 				FeeRecipient:     payloadFeeRecipient,
 				StateRoot:        payloadStateRoot,
@@ -2766,7 +2766,7 @@ func (b *BlindedBeaconBlockFulu) ToConsensus() (*eth.BlindedBeaconBlockFulu, err
 			},
 			BlsToExecutionChanges: blsChanges,
 			BlobKzgCommitments:    blobKzgCommitments,
-			ExecutionRequests: &enginev1.ExecutionRequests{
+			ExecutionRequests: &silaenginev1.ExecutionRequests{
 				Deposits:       depositRequests,
 				Withdrawals:    withdrawalRequests,
 				Consolidations: consolidationRequests,
@@ -3128,7 +3128,7 @@ func (b *BeaconBlockBodyGloas) ToConsensus() (*eth.BeaconBlockBodyGloas, error) 
 	if err != nil {
 		return nil, server.NewDecodeError(err, "PayloadAttestations")
 	}
-	var parentExecutionRequests *enginev1.ExecutionRequests
+	var parentExecutionRequests *silaenginev1.ExecutionRequests
 	if b.ParentExecutionRequests != nil {
 		parentExecutionRequests, err = b.ParentExecutionRequests.ToConsensus()
 		if err != nil {

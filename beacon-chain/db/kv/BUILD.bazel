@@ -135,7 +135,7 @@ go_test(
         "//genesis:go_default_library",
         "//math:go_default_library",
         "//proto/dbval:go_default_library",
-        "//proto/engine/v1:go_default_library",
+        "//proto/silaengine/v1:go_default_library",
         "//proto/sila/v1alpha1:go_default_library",
         "//proto/testing:go_default_library",
         "//runtime/version:go_default_library",

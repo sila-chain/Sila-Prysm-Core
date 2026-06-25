@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.3
 // 	protoc        v3.21.7
-// source: proto/engine/v1/electra.proto
+// source: proto/silaengine/v1/electra.proto
 
-package enginev1
+package silaenginev1
 
 import (
 	reflect "reflect"
@@ -457,20 +457,20 @@ func file_proto_engine_v1_electra_proto_rawDescGZIP() []byte {
 
 var file_proto_engine_v1_electra_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_proto_engine_v1_electra_proto_goTypes = []any{
-	(*WithdrawalRequest)(nil),      // 0: sila.engine.v1.WithdrawalRequest
-	(*DepositRequest)(nil),         // 1: sila.engine.v1.DepositRequest
-	(*ConsolidationRequest)(nil),   // 2: sila.engine.v1.ConsolidationRequest
-	(*ExecutionRequests)(nil),      // 3: sila.engine.v1.ExecutionRequests
-	(*ExecutionBundleElectra)(nil), // 4: sila.engine.v1.ExecutionBundleElectra
-	(*SilaPayloadDeneb)(nil),  // 5: sila.engine.v1.SilaPayloadDeneb
-	(*BlobsBundle)(nil),            // 6: sila.engine.v1.BlobsBundle
+	(*WithdrawalRequest)(nil),      // 0: sila.silaengine.v1.WithdrawalRequest
+	(*DepositRequest)(nil),         // 1: sila.silaengine.v1.DepositRequest
+	(*ConsolidationRequest)(nil),   // 2: sila.silaengine.v1.ConsolidationRequest
+	(*ExecutionRequests)(nil),      // 3: sila.silaengine.v1.ExecutionRequests
+	(*ExecutionBundleElectra)(nil), // 4: sila.silaengine.v1.ExecutionBundleElectra
+	(*SilaPayloadDeneb)(nil),  // 5: sila.silaengine.v1.SilaPayloadDeneb
+	(*BlobsBundle)(nil),            // 6: sila.silaengine.v1.BlobsBundle
 }
 var file_proto_engine_v1_electra_proto_depIdxs = []int32{
-	1, // 0: sila.engine.v1.ExecutionRequests.deposits:type_name -> sila.engine.v1.DepositRequest
-	0, // 1: sila.engine.v1.ExecutionRequests.withdrawals:type_name -> sila.engine.v1.WithdrawalRequest
-	2, // 2: sila.engine.v1.ExecutionRequests.consolidations:type_name -> sila.engine.v1.ConsolidationRequest
-	5, // 3: sila.engine.v1.ExecutionBundleElectra.payload:type_name -> sila.engine.v1.SilaPayloadDeneb
-	6, // 4: sila.engine.v1.ExecutionBundleElectra.blobs_bundle:type_name -> sila.engine.v1.BlobsBundle
+	1, // 0: sila.silaengine.v1.ExecutionRequests.deposits:type_name -> sila.silaengine.v1.DepositRequest
+	0, // 1: sila.silaengine.v1.ExecutionRequests.withdrawals:type_name -> sila.silaengine.v1.WithdrawalRequest
+	2, // 2: sila.silaengine.v1.ExecutionRequests.consolidations:type_name -> sila.silaengine.v1.ConsolidationRequest
+	5, // 3: sila.silaengine.v1.ExecutionBundleElectra.payload:type_name -> sila.silaengine.v1.SilaPayloadDeneb
+	6, // 4: sila.silaengine.v1.ExecutionBundleElectra.blobs_bundle:type_name -> sila.silaengine.v1.BlobsBundle
 	5, // [5:5] is the sub-list for method output_type
 	5, // [5:5] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name
@@ -483,7 +483,7 @@ func file_proto_engine_v1_electra_proto_init() {
 	if File_proto_engine_v1_electra_proto != nil {
 		return
 	}
-	file_proto_engine_v1_execution_engine_proto_init()
+	file_proto_engine_v1_sila_engine_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

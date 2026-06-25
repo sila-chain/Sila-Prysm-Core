@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -919,7 +919,7 @@ func TestBeaconBlockProtoHelpers_ConvertWithdrawalsToProto(t *testing.T) {
 	testCases := []struct {
 		name                 string
 		generateInput        func() []*structs.Withdrawal
-		expectedResult       []*enginev1.Withdrawal
+		expectedResult       []*silaenginev1.Withdrawal
 		expectedErrorMessage string
 	}{
 		{
@@ -970,7 +970,7 @@ func TestBeaconBlockProtoHelpers_ConvertWithdrawalsToProto(t *testing.T) {
 		{
 			name:          "valid",
 			generateInput: generateWithdrawals,
-			expectedResult: []*enginev1.Withdrawal{
+			expectedResult: []*silaenginev1.Withdrawal{
 				{
 					Index:          1,
 					ValidatorIndex: 2,

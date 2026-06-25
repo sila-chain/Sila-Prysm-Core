@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/math"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
@@ -69,7 +69,7 @@ func TestState_CanSaveRetrieve(t *testing.T) {
 				st, err := util.NewBeaconStateBellatrix()
 				require.NoError(t, err)
 				require.NoError(t, st.SetSlot(100))
-				p, err := blocks.WrappedSilaPayloadHeader(&enginev1.SilaPayloadHeader{
+				p, err := blocks.WrappedSilaPayloadHeader(&silaenginev1.SilaPayloadHeader{
 					ParentHash:       make([]byte, 32),
 					FeeRecipient:     make([]byte, 20),
 					StateRoot:        make([]byte, 32),
@@ -93,7 +93,7 @@ func TestState_CanSaveRetrieve(t *testing.T) {
 				st, err := util.NewBeaconStateCapella()
 				require.NoError(t, err)
 				require.NoError(t, st.SetSlot(100))
-				p, err := blocks.WrappedSilaPayloadHeaderCapella(&enginev1.SilaPayloadHeaderCapella{
+				p, err := blocks.WrappedSilaPayloadHeaderCapella(&silaenginev1.SilaPayloadHeaderCapella{
 					ParentHash:       make([]byte, 32),
 					FeeRecipient:     make([]byte, 20),
 					StateRoot:        make([]byte, 32),
@@ -118,7 +118,7 @@ func TestState_CanSaveRetrieve(t *testing.T) {
 				st, err := util.NewBeaconStateDeneb()
 				require.NoError(t, err)
 				require.NoError(t, st.SetSlot(100))
-				p, err := blocks.WrappedSilaPayloadHeaderDeneb(&enginev1.SilaPayloadHeaderDeneb{
+				p, err := blocks.WrappedSilaPayloadHeaderDeneb(&silaenginev1.SilaPayloadHeaderDeneb{
 					ParentHash:       make([]byte, 32),
 					FeeRecipient:     make([]byte, 20),
 					StateRoot:        make([]byte, 32),
@@ -143,7 +143,7 @@ func TestState_CanSaveRetrieve(t *testing.T) {
 				st, err := util.NewBeaconStateElectra()
 				require.NoError(t, err)
 				require.NoError(t, st.SetSlot(100))
-				p, err := blocks.WrappedSilaPayloadHeaderDeneb(&enginev1.SilaPayloadHeaderDeneb{
+				p, err := blocks.WrappedSilaPayloadHeaderDeneb(&silaenginev1.SilaPayloadHeaderDeneb{
 					ParentHash:       make([]byte, 32),
 					FeeRecipient:     make([]byte, 20),
 					StateRoot:        make([]byte, 32),

@@ -9,7 +9,7 @@ import (
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -29,7 +29,7 @@ func TestSetSelfBuildSilaPayloadBid(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	payload := &enginev1.SilaPayloadDeneb{
+	payload := &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    make([]byte, 32),
 		FeeRecipient:  make([]byte, 20),
 		StateRoot:     make([]byte, 32),
@@ -48,8 +48,8 @@ func TestSetSelfBuildSilaPayloadBid(t *testing.T) {
 	local := &consensusblocks.GetPayloadResponse{
 		ExecutionData:     ed,
 		Bid:               bidValue,
-		BlobsBundler:      &enginev1.BlobsBundle{},
-		ExecutionRequests: &enginev1.ExecutionRequests{},
+		BlobsBundler:      &silaenginev1.BlobsBundle{},
+		ExecutionRequests: &silaenginev1.ExecutionRequests{},
 	}
 
 	vs := &Server{}
@@ -90,7 +90,7 @@ func TestSetSelfBuildSilaPayloadBid_BlobCommitments(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	payload := &enginev1.SilaPayloadDeneb{
+	payload := &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    make([]byte, 32),
 		FeeRecipient:  make([]byte, 20),
 		StateRoot:     make([]byte, 32),
@@ -116,10 +116,10 @@ func TestSetSelfBuildSilaPayloadBid_BlobCommitments(t *testing.T) {
 
 	local := &consensusblocks.GetPayloadResponse{
 		ExecutionData: ed,
-		BlobsBundler: &enginev1.BlobsBundle{
+		BlobsBundler: &silaenginev1.BlobsBundle{
 			KzgCommitments: commitments,
 		},
-		ExecutionRequests: &enginev1.ExecutionRequests{},
+		ExecutionRequests: &silaenginev1.ExecutionRequests{},
 	}
 
 	vs := &Server{}
@@ -168,7 +168,7 @@ func TestSetSilaPayloadBid_PrefersP2PBid(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	payload := &enginev1.SilaPayloadDeneb{
+	payload := &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    parentHash[:],
 		FeeRecipient:  make([]byte, 20),
 		StateRoot:     make([]byte, 32),
@@ -185,8 +185,8 @@ func TestSetSilaPayloadBid_PrefersP2PBid(t *testing.T) {
 	local := &consensusblocks.GetPayloadResponse{
 		ExecutionData:     ed,
 		Bid:               big.NewInt(0),
-		BlobsBundler:      &enginev1.BlobsBundle{},
-		ExecutionRequests: &enginev1.ExecutionRequests{},
+		BlobsBundler:      &silaenginev1.BlobsBundle{},
+		ExecutionRequests: &silaenginev1.ExecutionRequests{},
 	}
 
 	// Populate the highest bid cache with a P2P bid.
@@ -241,7 +241,7 @@ func TestSetSilaPayloadBid_PrefersLocalWhenHigherValue(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	payload := &enginev1.SilaPayloadDeneb{
+	payload := &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    parentHash[:],
 		FeeRecipient:  make([]byte, 20),
 		StateRoot:     make([]byte, 32),
@@ -259,8 +259,8 @@ func TestSetSilaPayloadBid_PrefersLocalWhenHigherValue(t *testing.T) {
 	local := &consensusblocks.GetPayloadResponse{
 		ExecutionData:     ed,
 		Bid:               big.NewInt(2000_000_000_000),
-		BlobsBundler:      &enginev1.BlobsBundle{},
-		ExecutionRequests: &enginev1.ExecutionRequests{},
+		BlobsBundler:      &silaenginev1.BlobsBundle{},
+		ExecutionRequests: &silaenginev1.ExecutionRequests{},
 	}
 
 	// P2P bid is only 1000 Gwei — local should win.
@@ -315,7 +315,7 @@ func TestSetSilaPayloadBid_SelfBuildOnlyIgnoresCache(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	payload := &enginev1.SilaPayloadDeneb{
+	payload := &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    parentHash[:],
 		FeeRecipient:  make([]byte, 20),
 		StateRoot:     make([]byte, 32),
@@ -332,8 +332,8 @@ func TestSetSilaPayloadBid_SelfBuildOnlyIgnoresCache(t *testing.T) {
 	local := &consensusblocks.GetPayloadResponse{
 		ExecutionData:     ed,
 		Bid:               big.NewInt(0),
-		BlobsBundler:      &enginev1.BlobsBundle{},
-		ExecutionRequests: &enginev1.ExecutionRequests{},
+		BlobsBundler:      &silaenginev1.BlobsBundle{},
+		ExecutionRequests: &silaenginev1.ExecutionRequests{},
 	}
 
 	// P2P bid has higher value, but selfBuildOnly=true should force self-build.
@@ -387,7 +387,7 @@ func TestSetSilaPayloadBid_FallsBackToSelfBuildWhenNoCachedBid(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	payload := &enginev1.SilaPayloadDeneb{
+	payload := &silaenginev1.SilaPayloadDeneb{
 		ParentHash:    make([]byte, 32),
 		FeeRecipient:  make([]byte, 20),
 		StateRoot:     make([]byte, 32),
@@ -404,8 +404,8 @@ func TestSetSilaPayloadBid_FallsBackToSelfBuildWhenNoCachedBid(t *testing.T) {
 	local := &consensusblocks.GetPayloadResponse{
 		ExecutionData:     ed,
 		Bid:               big.NewInt(0),
-		BlobsBundler:      &enginev1.BlobsBundle{},
-		ExecutionRequests: &enginev1.ExecutionRequests{},
+		BlobsBundler:      &silaenginev1.BlobsBundle{},
+		ExecutionRequests: &silaenginev1.ExecutionRequests{},
 	}
 
 	// Empty cache — no P2P bids.

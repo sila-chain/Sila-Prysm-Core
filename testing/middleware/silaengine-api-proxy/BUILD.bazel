@@ -6,7 +6,7 @@ go_library(
         "options.go",
         "proxy.go",
     ],
-    importpath = "github.com/sila-chain/Sila-Consensus-Core/v7/testing/middleware/engine-api-proxy",
+    importpath = "github.com/sila-chain/Sila-Consensus-Core/v7/testing/middleware/silaengine-api-proxy",
     visibility = ["//visibility:public"],
     deps = [
         "//network:go_default_library",
@@ -21,7 +21,7 @@ go_test(
     embed = [":go_default_library"],
     deps = [
         "//crypto/rand:go_default_library",
-        "//proto/engine/v1:go_default_library",
+        "//proto/silaengine/v1:go_default_library",
         "//testing/require:go_default_library",
         "@com_github_sila_chain_sila//common:go_default_library",
         "@com_github_sila_chain_sila//rpc:go_default_library",

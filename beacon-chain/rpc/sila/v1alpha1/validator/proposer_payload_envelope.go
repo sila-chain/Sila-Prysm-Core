@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
-	enginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/engine/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -66,11 +66,11 @@ func (vs *Server) storeSilaPayloadEnvelope(
 	return nil
 }
 
-func extractSilaPayloadGloas(local *consensusblocks.GetPayloadResponse) *enginev1.SilaPayloadGloas {
+func extractSilaPayloadGloas(local *consensusblocks.GetPayloadResponse) *silaenginev1.SilaPayloadGloas {
 	if local == nil || local.ExecutionData == nil || local.ExecutionData.IsNil() {
 		return nil
 	}
-	if p, ok := local.ExecutionData.Proto().(*enginev1.SilaPayloadGloas); ok {
+	if p, ok := local.ExecutionData.Proto().(*silaenginev1.SilaPayloadGloas); ok {
 		return p
 	}
 	return nil
@@ -175,7 +175,7 @@ func (vs *Server) PublishSilaPayloadEnvelope(
 // in the block body based on the parent's sila payload envelope.
 func (vs *Server) setParentExecutionRequests(ctx context.Context, sBlk interfaces.SignedBeaconBlock, head state.BeaconState, parentFull bool) error {
 	if head.Version() < version.Gloas {
-		return sBlk.SetParentExecutionRequests(&enginev1.ExecutionRequests{})
+		return sBlk.SetParentExecutionRequests(&silaenginev1.ExecutionRequests{})
 	}
 
 	parentRoot := sBlk.Block().ParentRoot()
@@ -184,7 +184,7 @@ func (vs *Server) setParentExecutionRequests(ctx context.Context, sBlk interface
 		return errors.Wrap(err, "could not get parent block slot")
 	}
 	if slots.ToEpoch(parentSlot) < params.BeaconConfig().GloasForkEpoch || !parentFull {
-		return sBlk.SetParentExecutionRequests(&enginev1.ExecutionRequests{})
+		return sBlk.SetParentExecutionRequests(&silaenginev1.ExecutionRequests{})
 	}
 
 	// TODO: replace DB lookup with a single-entry cache (blockroot → envelope).
