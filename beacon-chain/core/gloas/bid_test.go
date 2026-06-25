@@ -40,7 +40,7 @@ func (s stubBlockBody) IsNil() bool                                  { return s.
 func (s stubBlockBody) HashTreeRoot() ([32]byte, error)              { return [32]byte{}, nil }
 func (s stubBlockBody) Proto() (proto.Message, error)                { return nil, nil }
 func (s stubBlockBody) Execution() (interfaces.ExecutionData, error) { return nil, nil }
-func (s stubBlockBody) BLSToExecutionChanges() ([]*silapb.SignedBLSToExecutionChange, error) {
+func (s stubBlockBody) BLSToSilaChanges() ([]*silapb.SignedBLSToSilaChange, error) {
 	return nil, nil
 }
 func (s stubBlockBody) BlobKzgCommitments() ([][]byte, error) { return nil, nil }

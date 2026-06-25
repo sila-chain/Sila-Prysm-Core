@@ -26,13 +26,13 @@ func TestPendingBLSToExecChanges(t *testing.T) {
 	})
 	t.Run("non-empty pool", func(t *testing.T) {
 		pool := NewPool()
-		pool.InsertBLSToExecChange(&eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		pool.InsertBLSToExecChange(&eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: 0,
 			},
 		})
-		pool.InsertBLSToExecChange(&eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		pool.InsertBLSToExecChange(&eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: 1,
 			},
 		})
@@ -49,9 +49,9 @@ func TestBLSToExecChangesForInclusion(t *testing.T) {
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 		},
 	}
-	numValidators := 2 * params.BeaconConfig().MaxBlsToExecutionChanges
+	numValidators := 2 * params.BeaconConfig().MaxBlsToSilaChanges
 	validators := make([]*eth.Validator, numValidators)
-	blsChanges := make([]*eth.BLSToExecutionChange, numValidators)
+	blsChanges := make([]*eth.BLSToSilaChange, numValidators)
 	spb.Balances = make([]uint64, numValidators)
 	privKeys := make([]common.SecretKey, numValidators)
 	maxEffectiveBalance := params.BeaconConfig().MaxEffectiveBalance
@@ -67,8 +67,8 @@ func TestBLSToExecChangesForInclusion(t *testing.T) {
 		privKeys[i] = priv
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &eth.BLSToExecutionChange{
-			ToExecutionAddress: executionAddress,
+		message := &eth.BLSToSilaChange{
+			ToSilaAddress: executionAddress,
 			ValidatorIndex:     primitives.ValidatorIndex(i),
 			FromBlsPubkey:      pubkey,
 		}
@@ -84,12 +84,12 @@ func TestBLSToExecChangesForInclusion(t *testing.T) {
 	st, err := state_native.InitializeFromProtoCapella(spb)
 	require.NoError(t, err)
 
-	signedChanges := make([]*eth.SignedBLSToExecutionChange, numValidators)
+	signedChanges := make([]*eth.SignedBLSToSilaChange, numValidators)
 	for i, message := range blsChanges {
-		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, privKeys[i])
+		signature, err := signing.ComputeDomainAndSign(st, time.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToSilaChange, privKeys[i])
 		require.NoError(t, err)
 
-		signed := &eth.SignedBLSToExecutionChange{
+		signed := &eth.SignedBLSToSilaChange{
 			Message:   message,
 			Signature: signature,
 		}
@@ -102,25 +102,25 @@ func TestBLSToExecChangesForInclusion(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 0, len(changes))
 	})
-	t.Run("Less than MaxBlsToExecutionChanges in pool", func(t *testing.T) {
+	t.Run("Less than MaxBlsToSilaChanges in pool", func(t *testing.T) {
 		pool := NewPool()
-		for i := uint64(0); i < params.BeaconConfig().MaxBlsToExecutionChanges-1; i++ {
+		for i := uint64(0); i < params.BeaconConfig().MaxBlsToSilaChanges-1; i++ {
 			pool.InsertBLSToExecChange(signedChanges[i])
 		}
 		changes, err := pool.BLSToExecChangesForInclusion(st)
 		require.NoError(t, err)
-		assert.Equal(t, int(params.BeaconConfig().MaxBlsToExecutionChanges)-1, len(changes))
+		assert.Equal(t, int(params.BeaconConfig().MaxBlsToSilaChanges)-1, len(changes))
 	})
-	t.Run("MaxBlsToExecutionChanges in pool", func(t *testing.T) {
+	t.Run("MaxBlsToSilaChanges in pool", func(t *testing.T) {
 		pool := NewPool()
-		for i := uint64(0); i < params.BeaconConfig().MaxBlsToExecutionChanges; i++ {
+		for i := uint64(0); i < params.BeaconConfig().MaxBlsToSilaChanges; i++ {
 			pool.InsertBLSToExecChange(signedChanges[i])
 		}
 		changes, err := pool.BLSToExecChangesForInclusion(st)
 		require.NoError(t, err)
-		assert.Equal(t, int(params.BeaconConfig().MaxBlsToExecutionChanges), len(changes))
+		assert.Equal(t, int(params.BeaconConfig().MaxBlsToSilaChanges), len(changes))
 	})
-	t.Run("more than MaxBlsToExecutionChanges in pool", func(t *testing.T) {
+	t.Run("more than MaxBlsToSilaChanges in pool", func(t *testing.T) {
 		pool := NewPool()
 		for i := range numValidators {
 			pool.InsertBLSToExecChange(signedChanges[i])
@@ -128,7 +128,7 @@ func TestBLSToExecChangesForInclusion(t *testing.T) {
 		changes, err := pool.BLSToExecChangesForInclusion(st)
 		require.NoError(t, err)
 		// We want FIFO semantics, which means validator with index 16 shouldn't be returned
-		assert.Equal(t, int(params.BeaconConfig().MaxBlsToExecutionChanges), len(changes))
+		assert.Equal(t, int(params.BeaconConfig().MaxBlsToSilaChanges), len(changes))
 		for _, ch := range changes {
 			assert.NotEqual(t, primitives.ValidatorIndex(15), ch.Message.ValidatorIndex)
 		}
@@ -142,7 +142,7 @@ func TestBLSToExecChangesForInclusion(t *testing.T) {
 		}
 		changes, err := pool.BLSToExecChangesForInclusion(st)
 		require.NoError(t, err)
-		assert.Equal(t, int(params.BeaconConfig().MaxBlsToExecutionChanges), len(changes))
+		assert.Equal(t, int(params.BeaconConfig().MaxBlsToSilaChanges), len(changes))
 		assert.Equal(t, primitives.ValidatorIndex(30), changes[1].Message.ValidatorIndex)
 		signedChanges[1].Message.FromBlsPubkey[5] = saveByte
 	})
@@ -154,7 +154,7 @@ func TestBLSToExecChangesForInclusion(t *testing.T) {
 		}
 		changes, err := pool.BLSToExecChangesForInclusion(st)
 		require.NoError(t, err)
-		assert.Equal(t, int(params.BeaconConfig().MaxBlsToExecutionChanges), len(changes))
+		assert.Equal(t, int(params.BeaconConfig().MaxBlsToSilaChanges), len(changes))
 		assert.Equal(t, primitives.ValidatorIndex(30), changes[1].Message.ValidatorIndex)
 	})
 	t.Run("invalid change not returned", func(t *testing.T) {
@@ -172,8 +172,8 @@ func TestBLSToExecChangesForInclusion(t *testing.T) {
 func TestInsertBLSToExecChange(t *testing.T) {
 	t.Run("empty pool", func(t *testing.T) {
 		pool := NewPool()
-		change := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		change := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			},
 		}
@@ -188,13 +188,13 @@ func TestInsertBLSToExecChange(t *testing.T) {
 	})
 	t.Run("item in pool", func(t *testing.T) {
 		pool := NewPool()
-		old := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		old := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			},
 		}
-		change := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		change := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(1),
 			},
 		}
@@ -215,14 +215,14 @@ func TestInsertBLSToExecChange(t *testing.T) {
 	})
 	t.Run("validator index already exists", func(t *testing.T) {
 		pool := NewPool()
-		old := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		old := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			},
 			Signature: []byte("old"),
 		}
-		change := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		change := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			},
 			Signature: []byte("change"),
@@ -242,8 +242,8 @@ func TestInsertBLSToExecChange(t *testing.T) {
 func TestMarkIncluded(t *testing.T) {
 	t.Run("one element in pool", func(t *testing.T) {
 		pool := NewPool()
-		change := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		change := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			}}
 		pool.InsertBLSToExecChange(change)
@@ -254,16 +254,16 @@ func TestMarkIncluded(t *testing.T) {
 	})
 	t.Run("first of multiple elements", func(t *testing.T) {
 		pool := NewPool()
-		first := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		first := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			}}
-		second := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		second := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(1),
 			}}
-		third := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		third := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(2),
 			}}
 		pool.InsertBLSToExecChange(first)
@@ -276,16 +276,16 @@ func TestMarkIncluded(t *testing.T) {
 	})
 	t.Run("last of multiple elements", func(t *testing.T) {
 		pool := NewPool()
-		first := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		first := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			}}
-		second := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		second := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(1),
 			}}
-		third := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		third := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(2),
 			}}
 		pool.InsertBLSToExecChange(first)
@@ -298,16 +298,16 @@ func TestMarkIncluded(t *testing.T) {
 	})
 	t.Run("in the middle of multiple elements", func(t *testing.T) {
 		pool := NewPool()
-		first := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		first := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			}}
-		second := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		second := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(1),
 			}}
-		third := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		third := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(2),
 			}}
 		pool.InsertBLSToExecChange(first)
@@ -320,16 +320,16 @@ func TestMarkIncluded(t *testing.T) {
 	})
 	t.Run("not in pool", func(t *testing.T) {
 		pool := NewPool()
-		first := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		first := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			}}
-		second := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		second := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(1),
 			}}
-		change := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		change := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(2),
 			}}
 		pool.InsertBLSToExecChange(first)
@@ -352,8 +352,8 @@ func TestValidatorExists(t *testing.T) {
 	})
 	t.Run("validator added to pool", func(t *testing.T) {
 		pool := NewPool()
-		change := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		change := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			}}
 		pool.InsertBLSToExecChange(change)
@@ -361,18 +361,18 @@ func TestValidatorExists(t *testing.T) {
 	})
 	t.Run("multiple validators added to pool", func(t *testing.T) {
 		pool := NewPool()
-		change := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		change := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			}}
 		pool.InsertBLSToExecChange(change)
-		change = &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		change = &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(10),
 			}}
 		pool.InsertBLSToExecChange(change)
-		change = &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		change = &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(30),
 			}}
 		pool.InsertBLSToExecChange(change)
@@ -383,8 +383,8 @@ func TestValidatorExists(t *testing.T) {
 	})
 	t.Run("validator added and then removed", func(t *testing.T) {
 		pool := NewPool()
-		change := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		change := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			}}
 		pool.InsertBLSToExecChange(change)
@@ -393,18 +393,18 @@ func TestValidatorExists(t *testing.T) {
 	})
 	t.Run("multiple validators added to pool and removed", func(t *testing.T) {
 		pool := NewPool()
-		firstChange := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		firstChange := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(0),
 			}}
 		pool.InsertBLSToExecChange(firstChange)
-		secondChange := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		secondChange := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(10),
 			}}
 		pool.InsertBLSToExecChange(secondChange)
-		thirdChange := &eth.SignedBLSToExecutionChange{
-			Message: &eth.BLSToExecutionChange{
+		thirdChange := &eth.SignedBLSToSilaChange{
+			Message: &eth.BLSToSilaChange{
 				ValidatorIndex: primitives.ValidatorIndex(30),
 			}}
 		pool.InsertBLSToExecChange(thirdChange)
@@ -420,18 +420,18 @@ func TestValidatorExists(t *testing.T) {
 
 func TestPoolCycleMap(t *testing.T) {
 	pool := NewPool()
-	firstChange := &eth.SignedBLSToExecutionChange{
-		Message: &eth.BLSToExecutionChange{
+	firstChange := &eth.SignedBLSToSilaChange{
+		Message: &eth.BLSToSilaChange{
 			ValidatorIndex: primitives.ValidatorIndex(0),
 		}}
 	pool.InsertBLSToExecChange(firstChange)
-	secondChange := &eth.SignedBLSToExecutionChange{
-		Message: &eth.BLSToExecutionChange{
+	secondChange := &eth.SignedBLSToSilaChange{
+		Message: &eth.BLSToSilaChange{
 			ValidatorIndex: primitives.ValidatorIndex(10),
 		}}
 	pool.InsertBLSToExecChange(secondChange)
-	thirdChange := &eth.SignedBLSToExecutionChange{
-		Message: &eth.BLSToExecutionChange{
+	thirdChange := &eth.SignedBLSToSilaChange{
+		Message: &eth.BLSToSilaChange{
 			ValidatorIndex: primitives.ValidatorIndex(30),
 		}}
 	pool.InsertBLSToExecChange(thirdChange)

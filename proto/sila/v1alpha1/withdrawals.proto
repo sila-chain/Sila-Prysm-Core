@@ -24,17 +24,17 @@ option java_outer_classname = "WithdrawalsProto";
 option java_package = "org.sila.eth.v1alpha1";
 option php_namespace = "Sila\\Eth\\v1alpha1";
 
-// The signed version of a BLSToExecutionChange
-message SignedBLSToExecutionChange {
-  // The BLSToExecutionChange message itself
-  BLSToExecutionChange message = 1;
+// The signed version of a BLSToSilaChange
+message SignedBLSToSilaChange {
+  // The BLSToSilaChange message itself
+  BLSToSilaChange message = 1;
 
   // The 96 byte BLS signature from the withdrawal address requesting the change
   bytes signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
 }
 
-// The message requesting a BLS to execution withdrawal credentials change
-message BLSToExecutionChange {
+// The message requesting a BLS to Sila withdrawal credentials change
+message BLSToSilaChange {
   // The validator index requesting the change
   uint64 validator_index = 1
       [ (sila.eth.ext.cast_type) =
@@ -45,5 +45,5 @@ message BLSToExecutionChange {
   bytes from_bls_pubkey = 2 [ (sila.eth.ext.ssz_size) = "48" ];
 
   // The new execution address to be the withdrawal credentials
-  bytes to_execution_address = 3 [ (sila.eth.ext.ssz_size) = "20" ];
+  bytes to_sila_address = 3 [ (sila.eth.ext.ssz_size) = "20" ];
 }

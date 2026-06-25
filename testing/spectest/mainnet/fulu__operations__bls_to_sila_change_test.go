@@ -6,6 +6,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/fulu/operations"
 )
 
-func TestMainnet_Fulu_Operations_BLSToExecutionChange(t *testing.T) {
-	operations.RunBLSToExecutionChangeTest(t, "mainnet")
+func TestMainnet_Fulu_Operations_BLSToSilaChange(t *testing.T) {
+	operations.RunBLSToSilaChangeTest(t, "mainnet")
 }

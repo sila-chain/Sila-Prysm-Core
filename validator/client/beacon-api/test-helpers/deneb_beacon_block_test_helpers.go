@@ -253,20 +253,20 @@ func GenerateProtoDenebBeaconBlockContents() *silapb.BeaconBlockContentsDeneb {
 					BlobGasUsed:   135,
 					ExcessBlobGas: 136,
 				},
-				BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{
+				BlsToSilaChanges: []*silapb.SignedBLSToSilaChange{
 					{
-						Message: &silapb.BLSToExecutionChange{
+						Message: &silapb.BLSToSilaChange{
 							ValidatorIndex:     137,
 							FromBlsPubkey:      FillByteSlice(48, 138),
-							ToExecutionAddress: FillByteSlice(20, 139),
+							ToSilaAddress: FillByteSlice(20, 139),
 						},
 						Signature: FillByteSlice(96, 140),
 					},
 					{
-						Message: &silapb.BLSToExecutionChange{
+						Message: &silapb.BLSToSilaChange{
 							ValidatorIndex:     141,
 							FromBlsPubkey:      FillByteSlice(48, 142),
-							ToExecutionAddress: FillByteSlice(20, 143),
+							ToSilaAddress: FillByteSlice(20, 143),
 						},
 						Signature: FillByteSlice(96, 144),
 					},
@@ -508,20 +508,20 @@ func GenerateProtoBlindedDenebBeaconBlock() *silapb.BlindedBeaconBlockDeneb {
 				BlobGasUsed:      127,
 				ExcessBlobGas:    128,
 			},
-			BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{
+			BlsToSilaChanges: []*silapb.SignedBLSToSilaChange{
 				{
-					Message: &silapb.BLSToExecutionChange{
+					Message: &silapb.BLSToSilaChange{
 						ValidatorIndex:     129,
 						FromBlsPubkey:      FillByteSlice(48, 130),
-						ToExecutionAddress: FillByteSlice(20, 131),
+						ToSilaAddress: FillByteSlice(20, 131),
 					},
 					Signature: FillByteSlice(96, 132),
 				},
 				{
-					Message: &silapb.BLSToExecutionChange{
+					Message: &silapb.BLSToSilaChange{
 						ValidatorIndex:     133,
 						FromBlsPubkey:      FillByteSlice(48, 134),
-						ToExecutionAddress: FillByteSlice(20, 135),
+						ToSilaAddress: FillByteSlice(20, 135),
 					},
 					Signature: FillByteSlice(96, 136),
 				},
@@ -777,20 +777,20 @@ func GenerateJsonDenebBeaconBlockContents() *structs.BeaconBlockContentsDeneb {
 					BlobGasUsed:   "135",
 					ExcessBlobGas: "136",
 				},
-				BLSToExecutionChanges: []*structs.SignedBLSToExecutionChange{
+				BLSToSilaChanges: []*structs.SignedBLSToSilaChange{
 					{
-						Message: &structs.BLSToExecutionChange{
+						Message: &structs.BLSToSilaChange{
 							ValidatorIndex:     "137",
 							FromBLSPubkey:      FillEncodedByteSlice(48, 138),
-							ToExecutionAddress: FillEncodedByteSlice(20, 139),
+							ToSilaAddress: FillEncodedByteSlice(20, 139),
 						},
 						Signature: FillEncodedByteSlice(96, 140),
 					},
 					{
-						Message: &structs.BLSToExecutionChange{
+						Message: &structs.BLSToSilaChange{
 							ValidatorIndex:     "141",
 							FromBLSPubkey:      FillEncodedByteSlice(48, 142),
-							ToExecutionAddress: FillEncodedByteSlice(20, 143),
+							ToSilaAddress: FillEncodedByteSlice(20, 143),
 						},
 						Signature: FillEncodedByteSlice(96, 144),
 					},
@@ -1032,20 +1032,20 @@ func GenerateJsonBlindedDenebBeaconBlock() *structs.BlindedBeaconBlockDeneb {
 				BlobGasUsed:      "127",
 				ExcessBlobGas:    "128",
 			},
-			BLSToExecutionChanges: []*structs.SignedBLSToExecutionChange{
+			BLSToSilaChanges: []*structs.SignedBLSToSilaChange{
 				{
-					Message: &structs.BLSToExecutionChange{
+					Message: &structs.BLSToSilaChange{
 						ValidatorIndex:     "129",
 						FromBLSPubkey:      FillEncodedByteSlice(48, 130),
-						ToExecutionAddress: FillEncodedByteSlice(20, 131),
+						ToSilaAddress: FillEncodedByteSlice(20, 131),
 					},
 					Signature: FillEncodedByteSlice(96, 132),
 				},
 				{
-					Message: &structs.BLSToExecutionChange{
+					Message: &structs.BLSToSilaChange{
 						ValidatorIndex:     "133",
 						FromBLSPubkey:      FillEncodedByteSlice(48, 134),
-						ToExecutionAddress: FillEncodedByteSlice(20, 135),
+						ToSilaAddress: FillEncodedByteSlice(20, 135),
 					},
 					Signature: FillEncodedByteSlice(96, 136),
 				},

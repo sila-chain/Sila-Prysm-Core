@@ -10,14 +10,14 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Service) blsToExecutionChangeSubscriber(_ context.Context, msg proto.Message) error {
-	blsMsg, ok := msg.(*silapb.SignedBLSToExecutionChange)
+func (s *Service) blsToSilaChangeSubscriber(_ context.Context, msg proto.Message) error {
+	blsMsg, ok := msg.(*silapb.SignedBLSToSilaChange)
 	if !ok {
-		return errors.Errorf("incorrect type of message received, wanted %T but got %T", &silapb.SignedBLSToExecutionChange{}, msg)
+		return errors.Errorf("incorrect type of message received, wanted %T but got %T", &silapb.SignedBLSToSilaChange{}, msg)
 	}
 	s.cfg.operationNotifier.OperationFeed().Send(&feed.Event{
-		Type: opfeed.BLSToExecutionChangeReceived,
-		Data: &opfeed.BLSToExecutionChangeReceivedData{
+		Type: opfeed.BLSToSilaChangeReceived,
+		Data: &opfeed.BLSToSilaChangeReceivedData{
 			Change: blsMsg,
 		},
 	})

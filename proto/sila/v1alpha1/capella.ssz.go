@@ -336,9 +336,9 @@ func (b *BeaconBlockBodyCapella) MarshalSSZTo(buf []byte) (dst []byte, err error
 	}
 	offset += b.SilaPayload.SizeSSZ()
 
-	// Offset (10) 'BlsToExecutionChanges'
+	// Offset (10) 'BlsToSilaChanges'
 	dst = ssz.WriteOffset(dst, offset)
-	offset += len(b.BlsToExecutionChanges) * 172
+	offset += len(b.BlsToSilaChanges) * 172
 
 	// Field (3) 'ProposerSlashings'
 	if size := len(b.ProposerSlashings); size > 16 {
@@ -414,13 +414,13 @@ func (b *BeaconBlockBodyCapella) MarshalSSZTo(buf []byte) (dst []byte, err error
 		return
 	}
 
-	// Field (10) 'BlsToExecutionChanges'
-	if size := len(b.BlsToExecutionChanges); size > 16 {
-		err = ssz.ErrListTooBigFn("--.BlsToExecutionChanges", size, 16)
+	// Field (10) 'BlsToSilaChanges'
+	if size := len(b.BlsToSilaChanges); size > 16 {
+		err = ssz.ErrListTooBigFn("--.BlsToSilaChanges", size, 16)
 		return
 	}
-	for ii := 0; ii < len(b.BlsToExecutionChanges); ii++ {
-		if dst, err = b.BlsToExecutionChanges[ii].MarshalSSZTo(dst); err != nil {
+	for ii := 0; ii < len(b.BlsToSilaChanges); ii++ {
+		if dst, err = b.BlsToSilaChanges[ii].MarshalSSZTo(dst); err != nil {
 			return
 		}
 	}
@@ -501,7 +501,7 @@ func (b *BeaconBlockBodyCapella) UnmarshalSSZ(buf []byte) error {
 		return ssz.ErrOffset
 	}
 
-	// Offset (10) 'BlsToExecutionChanges'
+	// Offset (10) 'BlsToSilaChanges'
 	if o10 = ssz.ReadOffset(buf[384:388]); o10 > size || o9 > o10 {
 		return ssz.ErrOffset
 	}
@@ -615,19 +615,19 @@ func (b *BeaconBlockBodyCapella) UnmarshalSSZ(buf []byte) error {
 		}
 	}
 
-	// Field (10) 'BlsToExecutionChanges'
+	// Field (10) 'BlsToSilaChanges'
 	{
 		buf = tail[o10:]
 		num, err := ssz.DivideInt2(len(buf), 172, 16)
 		if err != nil {
 			return err
 		}
-		b.BlsToExecutionChanges = make([]*SignedBLSToExecutionChange, num)
+		b.BlsToSilaChanges = make([]*SignedBLSToSilaChange, num)
 		for ii := 0; ii < num; ii++ {
-			if b.BlsToExecutionChanges[ii] == nil {
-				b.BlsToExecutionChanges[ii] = new(SignedBLSToExecutionChange)
+			if b.BlsToSilaChanges[ii] == nil {
+				b.BlsToSilaChanges[ii] = new(SignedBLSToSilaChange)
 			}
-			if err = b.BlsToExecutionChanges[ii].UnmarshalSSZ(buf[ii*172 : (ii+1)*172]); err != nil {
+			if err = b.BlsToSilaChanges[ii].UnmarshalSSZ(buf[ii*172 : (ii+1)*172]); err != nil {
 				return err
 			}
 		}
@@ -666,8 +666,8 @@ func (b *BeaconBlockBodyCapella) SizeSSZ() (size int) {
 	}
 	size += b.SilaPayload.SizeSSZ()
 
-	// Field (10) 'BlsToExecutionChanges'
-	size += len(b.BlsToExecutionChanges) * 172
+	// Field (10) 'BlsToSilaChanges'
+	size += len(b.BlsToSilaChanges) * 172
 
 	return
 }
@@ -790,15 +790,15 @@ func (b *BeaconBlockBodyCapella) HashTreeRootWith(hh *ssz.Hasher) (err error) {
 		return
 	}
 
-	// Field (10) 'BlsToExecutionChanges'
+	// Field (10) 'BlsToSilaChanges'
 	{
 		subIndx := hh.Index()
-		num := uint64(len(b.BlsToExecutionChanges))
+		num := uint64(len(b.BlsToSilaChanges))
 		if num > 16 {
 			err = ssz.ErrIncorrectListSize
 			return
 		}
-		for _, elem := range b.BlsToExecutionChanges {
+		for _, elem := range b.BlsToSilaChanges {
 			if err = elem.HashTreeRootWith(hh); err != nil {
 				return
 			}
@@ -1139,9 +1139,9 @@ func (b *BlindedBeaconBlockBodyCapella) MarshalSSZTo(buf []byte) (dst []byte, er
 	}
 	offset += b.SilaPayloadHeader.SizeSSZ()
 
-	// Offset (10) 'BlsToExecutionChanges'
+	// Offset (10) 'BlsToSilaChanges'
 	dst = ssz.WriteOffset(dst, offset)
-	offset += len(b.BlsToExecutionChanges) * 172
+	offset += len(b.BlsToSilaChanges) * 172
 
 	// Field (3) 'ProposerSlashings'
 	if size := len(b.ProposerSlashings); size > 16 {
@@ -1217,13 +1217,13 @@ func (b *BlindedBeaconBlockBodyCapella) MarshalSSZTo(buf []byte) (dst []byte, er
 		return
 	}
 
-	// Field (10) 'BlsToExecutionChanges'
-	if size := len(b.BlsToExecutionChanges); size > 16 {
-		err = ssz.ErrListTooBigFn("--.BlsToExecutionChanges", size, 16)
+	// Field (10) 'BlsToSilaChanges'
+	if size := len(b.BlsToSilaChanges); size > 16 {
+		err = ssz.ErrListTooBigFn("--.BlsToSilaChanges", size, 16)
 		return
 	}
-	for ii := 0; ii < len(b.BlsToExecutionChanges); ii++ {
-		if dst, err = b.BlsToExecutionChanges[ii].MarshalSSZTo(dst); err != nil {
+	for ii := 0; ii < len(b.BlsToSilaChanges); ii++ {
+		if dst, err = b.BlsToSilaChanges[ii].MarshalSSZTo(dst); err != nil {
 			return
 		}
 	}
@@ -1304,7 +1304,7 @@ func (b *BlindedBeaconBlockBodyCapella) UnmarshalSSZ(buf []byte) error {
 		return ssz.ErrOffset
 	}
 
-	// Offset (10) 'BlsToExecutionChanges'
+	// Offset (10) 'BlsToSilaChanges'
 	if o10 = ssz.ReadOffset(buf[384:388]); o10 > size || o9 > o10 {
 		return ssz.ErrOffset
 	}
@@ -1418,19 +1418,19 @@ func (b *BlindedBeaconBlockBodyCapella) UnmarshalSSZ(buf []byte) error {
 		}
 	}
 
-	// Field (10) 'BlsToExecutionChanges'
+	// Field (10) 'BlsToSilaChanges'
 	{
 		buf = tail[o10:]
 		num, err := ssz.DivideInt2(len(buf), 172, 16)
 		if err != nil {
 			return err
 		}
-		b.BlsToExecutionChanges = make([]*SignedBLSToExecutionChange, num)
+		b.BlsToSilaChanges = make([]*SignedBLSToSilaChange, num)
 		for ii := 0; ii < num; ii++ {
-			if b.BlsToExecutionChanges[ii] == nil {
-				b.BlsToExecutionChanges[ii] = new(SignedBLSToExecutionChange)
+			if b.BlsToSilaChanges[ii] == nil {
+				b.BlsToSilaChanges[ii] = new(SignedBLSToSilaChange)
 			}
-			if err = b.BlsToExecutionChanges[ii].UnmarshalSSZ(buf[ii*172 : (ii+1)*172]); err != nil {
+			if err = b.BlsToSilaChanges[ii].UnmarshalSSZ(buf[ii*172 : (ii+1)*172]); err != nil {
 				return err
 			}
 		}
@@ -1469,8 +1469,8 @@ func (b *BlindedBeaconBlockBodyCapella) SizeSSZ() (size int) {
 	}
 	size += b.SilaPayloadHeader.SizeSSZ()
 
-	// Field (10) 'BlsToExecutionChanges'
-	size += len(b.BlsToExecutionChanges) * 172
+	// Field (10) 'BlsToSilaChanges'
+	size += len(b.BlsToSilaChanges) * 172
 
 	return
 }
@@ -1593,15 +1593,15 @@ func (b *BlindedBeaconBlockBodyCapella) HashTreeRootWith(hh *ssz.Hasher) (err er
 		return
 	}
 
-	// Field (10) 'BlsToExecutionChanges'
+	// Field (10) 'BlsToSilaChanges'
 	{
 		subIndx := hh.Index()
-		num := uint64(len(b.BlsToExecutionChanges))
+		num := uint64(len(b.BlsToSilaChanges))
 		if num > 16 {
 			err = ssz.ErrIncorrectListSize
 			return
 		}
-		for _, elem := range b.BlsToExecutionChanges {
+		for _, elem := range b.BlsToSilaChanges {
 			if err = elem.HashTreeRootWith(hh); err != nil {
 				return
 			}
@@ -3708,18 +3708,18 @@ func (l *LightClientHeaderCapella) HashTreeRootWith(hh *ssz.Hasher) (err error) 
 	return
 }
 
-// MarshalSSZ ssz marshals the SignedBLSToExecutionChange object
-func (s *SignedBLSToExecutionChange) MarshalSSZ() ([]byte, error) {
+// MarshalSSZ ssz marshals the SignedBLSToSilaChange object
+func (s *SignedBLSToSilaChange) MarshalSSZ() ([]byte, error) {
 	return ssz.MarshalSSZ(s)
 }
 
-// MarshalSSZTo ssz marshals the SignedBLSToExecutionChange object to a target array
-func (s *SignedBLSToExecutionChange) MarshalSSZTo(buf []byte) (dst []byte, err error) {
+// MarshalSSZTo ssz marshals the SignedBLSToSilaChange object to a target array
+func (s *SignedBLSToSilaChange) MarshalSSZTo(buf []byte) (dst []byte, err error) {
 	dst = buf
 
 	// Field (0) 'Message'
 	if s.Message == nil {
-		s.Message = new(BLSToExecutionChange)
+		s.Message = new(BLSToSilaChange)
 	}
 	if dst, err = s.Message.MarshalSSZTo(dst); err != nil {
 		return
@@ -3735,8 +3735,8 @@ func (s *SignedBLSToExecutionChange) MarshalSSZTo(buf []byte) (dst []byte, err e
 	return
 }
 
-// UnmarshalSSZ ssz unmarshals the SignedBLSToExecutionChange object
-func (s *SignedBLSToExecutionChange) UnmarshalSSZ(buf []byte) error {
+// UnmarshalSSZ ssz unmarshals the SignedBLSToSilaChange object
+func (s *SignedBLSToSilaChange) UnmarshalSSZ(buf []byte) error {
 	var err error
 	size := uint64(len(buf))
 	if size != 172 {
@@ -3745,7 +3745,7 @@ func (s *SignedBLSToExecutionChange) UnmarshalSSZ(buf []byte) error {
 
 	// Field (0) 'Message'
 	if s.Message == nil {
-		s.Message = new(BLSToExecutionChange)
+		s.Message = new(BLSToSilaChange)
 	}
 	if err = s.Message.UnmarshalSSZ(buf[0:76]); err != nil {
 		return err
@@ -3760,19 +3760,19 @@ func (s *SignedBLSToExecutionChange) UnmarshalSSZ(buf []byte) error {
 	return err
 }
 
-// SizeSSZ returns the ssz encoded size in bytes for the SignedBLSToExecutionChange object
-func (s *SignedBLSToExecutionChange) SizeSSZ() (size int) {
+// SizeSSZ returns the ssz encoded size in bytes for the SignedBLSToSilaChange object
+func (s *SignedBLSToSilaChange) SizeSSZ() (size int) {
 	size = 172
 	return
 }
 
-// HashTreeRoot ssz hashes the SignedBLSToExecutionChange object
-func (s *SignedBLSToExecutionChange) HashTreeRoot() ([32]byte, error) {
+// HashTreeRoot ssz hashes the SignedBLSToSilaChange object
+func (s *SignedBLSToSilaChange) HashTreeRoot() ([32]byte, error) {
 	return ssz.HashWithDefaultHasher(s)
 }
 
-// HashTreeRootWith ssz hashes the SignedBLSToExecutionChange object with a hasher
-func (s *SignedBLSToExecutionChange) HashTreeRootWith(hh *ssz.Hasher) (err error) {
+// HashTreeRootWith ssz hashes the SignedBLSToSilaChange object with a hasher
+func (s *SignedBLSToSilaChange) HashTreeRootWith(hh *ssz.Hasher) (err error) {
 	indx := hh.Index()
 
 	// Field (0) 'Message'
@@ -3791,13 +3791,13 @@ func (s *SignedBLSToExecutionChange) HashTreeRootWith(hh *ssz.Hasher) (err error
 	return
 }
 
-// MarshalSSZ ssz marshals the BLSToExecutionChange object
-func (b *BLSToExecutionChange) MarshalSSZ() ([]byte, error) {
+// MarshalSSZ ssz marshals the BLSToSilaChange object
+func (b *BLSToSilaChange) MarshalSSZ() ([]byte, error) {
 	return ssz.MarshalSSZ(b)
 }
 
-// MarshalSSZTo ssz marshals the BLSToExecutionChange object to a target array
-func (b *BLSToExecutionChange) MarshalSSZTo(buf []byte) (dst []byte, err error) {
+// MarshalSSZTo ssz marshals the BLSToSilaChange object to a target array
+func (b *BLSToSilaChange) MarshalSSZTo(buf []byte) (dst []byte, err error) {
 	dst = buf
 
 	// Field (0) 'ValidatorIndex'
@@ -3810,18 +3810,18 @@ func (b *BLSToExecutionChange) MarshalSSZTo(buf []byte) (dst []byte, err error) 
 	}
 	dst = append(dst, b.FromBlsPubkey...)
 
-	// Field (2) 'ToExecutionAddress'
-	if size := len(b.ToExecutionAddress); size != 20 {
-		err = ssz.ErrBytesLengthFn("--.ToExecutionAddress", size, 20)
+	// Field (2) 'ToSilaAddress'
+	if size := len(b.ToSilaAddress); size != 20 {
+		err = ssz.ErrBytesLengthFn("--.ToSilaAddress", size, 20)
 		return
 	}
-	dst = append(dst, b.ToExecutionAddress...)
+	dst = append(dst, b.ToSilaAddress...)
 
 	return
 }
 
-// UnmarshalSSZ ssz unmarshals the BLSToExecutionChange object
-func (b *BLSToExecutionChange) UnmarshalSSZ(buf []byte) error {
+// UnmarshalSSZ ssz unmarshals the BLSToSilaChange object
+func (b *BLSToSilaChange) UnmarshalSSZ(buf []byte) error {
 	var err error
 	size := uint64(len(buf))
 	if size != 76 {
@@ -3837,28 +3837,28 @@ func (b *BLSToExecutionChange) UnmarshalSSZ(buf []byte) error {
 	}
 	b.FromBlsPubkey = append(b.FromBlsPubkey, buf[8:56]...)
 
-	// Field (2) 'ToExecutionAddress'
-	if cap(b.ToExecutionAddress) == 0 {
-		b.ToExecutionAddress = make([]byte, 0, len(buf[56:76]))
+	// Field (2) 'ToSilaAddress'
+	if cap(b.ToSilaAddress) == 0 {
+		b.ToSilaAddress = make([]byte, 0, len(buf[56:76]))
 	}
-	b.ToExecutionAddress = append(b.ToExecutionAddress, buf[56:76]...)
+	b.ToSilaAddress = append(b.ToSilaAddress, buf[56:76]...)
 
 	return err
 }
 
-// SizeSSZ returns the ssz encoded size in bytes for the BLSToExecutionChange object
-func (b *BLSToExecutionChange) SizeSSZ() (size int) {
+// SizeSSZ returns the ssz encoded size in bytes for the BLSToSilaChange object
+func (b *BLSToSilaChange) SizeSSZ() (size int) {
 	size = 76
 	return
 }
 
-// HashTreeRoot ssz hashes the BLSToExecutionChange object
-func (b *BLSToExecutionChange) HashTreeRoot() ([32]byte, error) {
+// HashTreeRoot ssz hashes the BLSToSilaChange object
+func (b *BLSToSilaChange) HashTreeRoot() ([32]byte, error) {
 	return ssz.HashWithDefaultHasher(b)
 }
 
-// HashTreeRootWith ssz hashes the BLSToExecutionChange object with a hasher
-func (b *BLSToExecutionChange) HashTreeRootWith(hh *ssz.Hasher) (err error) {
+// HashTreeRootWith ssz hashes the BLSToSilaChange object with a hasher
+func (b *BLSToSilaChange) HashTreeRootWith(hh *ssz.Hasher) (err error) {
 	indx := hh.Index()
 
 	// Field (0) 'ValidatorIndex'
@@ -3871,12 +3871,12 @@ func (b *BLSToExecutionChange) HashTreeRootWith(hh *ssz.Hasher) (err error) {
 	}
 	hh.PutBytes(b.FromBlsPubkey)
 
-	// Field (2) 'ToExecutionAddress'
-	if size := len(b.ToExecutionAddress); size != 20 {
-		err = ssz.ErrBytesLengthFn("--.ToExecutionAddress", size, 20)
+	// Field (2) 'ToSilaAddress'
+	if size := len(b.ToSilaAddress); size != 20 {
+		err = ssz.ErrBytesLengthFn("--.ToSilaAddress", size, 20)
 		return
 	}
-	hh.PutBytes(b.ToExecutionAddress)
+	hh.PutBytes(b.ToSilaAddress)
 
 	hh.Merkleize(indx)
 	return

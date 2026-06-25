@@ -378,7 +378,7 @@ exceptions:
     - upgrade_lc_store_to_capella#capella
     - upgrade_lc_update_to_capella#capella
     - validate_beacon_block_gossip#capella
-    - validate_bls_to_execution_change_gossip#capella
+    - validate_bls_to_sila_change_gossip#capella
     # deneb
     - compute_max_request_blob_sidecars#deneb
     - get_lc_execution_root#deneb

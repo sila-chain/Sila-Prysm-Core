@@ -88,16 +88,16 @@
         attestation_2: IndexedAttestation
     </spec>
 
-- name: BLSToExecutionChange#capella
+- name: BLSToSilaChange#capella
   sources:
     - file: proto/sila/v1alpha1/withdrawals.proto
-      search: message BLSToExecutionChange {
+      search: message BLSToSilaChange {
   spec: |
-    <spec ssz_object="BLSToExecutionChange" fork="capella" hash="9271c356">
-    class BLSToExecutionChange(Container):
+    <spec ssz_object="BLSToSilaChange" fork="capella" hash="9271c356">
+    class BLSToSilaChange(Container):
         validator_index: ValidatorIndex
         from_bls_pubkey: BLSPubkey
-        to_execution_address: ExecutionAddress
+        to_sila_address: ExecutionAddress
     </spec>
 
 - name: BeaconBlock#phase0
@@ -188,7 +188,7 @@
         sync_aggregate: SyncAggregate
         sila_payload: SilaPayload
         # [New in Capella]
-        bls_to_execution_changes: List[SignedBLSToExecutionChange, MAX_BLS_TO_EXECUTION_CHANGES]
+        bls_to_sila_changes: List[SignedBLSToSilaChange, MAX_BLS_TO_SILA_CHANGES]
     </spec>
 
 - name: BeaconBlockBody#deneb
@@ -209,7 +209,7 @@
         sync_aggregate: SyncAggregate
         # [Modified in Deneb:SIP4844]
         sila_payload: SilaPayload
-        bls_to_execution_changes: List[SignedBLSToExecutionChange, MAX_BLS_TO_EXECUTION_CHANGES]
+        bls_to_sila_changes: List[SignedBLSToSilaChange, MAX_BLS_TO_SILA_CHANGES]
         # [New in Deneb:SIP4844]
         blob_kzg_commitments: List[KZGCommitment, MAX_BLOB_COMMITMENTS_PER_BLOCK]
     </spec>
@@ -233,7 +233,7 @@
         voluntary_exits: List[SignedVoluntaryExit, MAX_VOLUNTARY_EXITS]
         sync_aggregate: SyncAggregate
         sila_payload: SilaPayload
-        bls_to_execution_changes: List[SignedBLSToExecutionChange, MAX_BLS_TO_EXECUTION_CHANGES]
+        bls_to_sila_changes: List[SignedBLSToSilaChange, MAX_BLS_TO_SILA_CHANGES]
         blob_kzg_commitments: List[KZGCommitment, MAX_BLOB_COMMITMENTS_PER_BLOCK]
         # [New in Electra]
         sila_requests: SilaRequests
@@ -255,7 +255,7 @@
         sync_aggregate: SyncAggregate
         # [Modified in Gloas:SIP7732]
         # Removed `sila_payload`
-        bls_to_execution_changes: List[SignedBLSToExecutionChange, MAX_BLS_TO_EXECUTION_CHANGES]
+        bls_to_sila_changes: List[SignedBLSToSilaChange, MAX_BLS_TO_SILA_CHANGES]
         # [Modified in Gloas:SIP7732]
         # Removed `blob_kzg_commitments`
         # [Modified in Gloas:SIP7732]
@@ -1656,14 +1656,14 @@
         signature: BLSSignature
     </spec>
 
-- name: SignedBLSToExecutionChange#capella
+- name: SignedBLSToSilaChange#capella
   sources:
     - file: proto/sila/v1alpha1/withdrawals.proto
-      search: message SignedBLSToExecutionChange {
+      search: message SignedBLSToSilaChange {
   spec: |
-    <spec ssz_object="SignedBLSToExecutionChange" fork="capella" hash="09a5e4b9">
-    class SignedBLSToExecutionChange(Container):
-        message: BLSToExecutionChange
+    <spec ssz_object="SignedBLSToSilaChange" fork="capella" hash="09a5e4b9">
+    class SignedBLSToSilaChange(Container):
+        message: BLSToSilaChange
         signature: BLSSignature
     </spec>
 

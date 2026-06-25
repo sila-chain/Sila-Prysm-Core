@@ -1086,9 +1086,9 @@ func (b *BeaconBlockBodyGloas) MarshalSSZTo(buf []byte) (dst []byte, err error) 
 		return
 	}
 
-	// Offset (9) 'BlsToExecutionChanges'
+	// Offset (9) 'BlsToSilaChanges'
 	dst = ssz.WriteOffset(dst, offset)
-	offset += len(b.BlsToExecutionChanges) * 172
+	offset += len(b.BlsToSilaChanges) * 172
 
 	// Offset (10) 'SignedSilaPayloadBid'
 	dst = ssz.WriteOffset(dst, offset)
@@ -1177,13 +1177,13 @@ func (b *BeaconBlockBodyGloas) MarshalSSZTo(buf []byte) (dst []byte, err error) 
 		}
 	}
 
-	// Field (9) 'BlsToExecutionChanges'
-	if size := len(b.BlsToExecutionChanges); size > 16 {
-		err = ssz.ErrListTooBigFn("--.BlsToExecutionChanges", size, 16)
+	// Field (9) 'BlsToSilaChanges'
+	if size := len(b.BlsToSilaChanges); size > 16 {
+		err = ssz.ErrListTooBigFn("--.BlsToSilaChanges", size, 16)
 		return
 	}
-	for ii := 0; ii < len(b.BlsToExecutionChanges); ii++ {
-		if dst, err = b.BlsToExecutionChanges[ii].MarshalSSZTo(dst); err != nil {
+	for ii := 0; ii < len(b.BlsToSilaChanges); ii++ {
+		if dst, err = b.BlsToSilaChanges[ii].MarshalSSZTo(dst); err != nil {
 			return
 		}
 	}
@@ -1280,7 +1280,7 @@ func (b *BeaconBlockBodyGloas) UnmarshalSSZ(buf []byte) error {
 		return err
 	}
 
-	// Offset (9) 'BlsToExecutionChanges'
+	// Offset (9) 'BlsToSilaChanges'
 	if o9 = ssz.ReadOffset(buf[380:384]); o9 > size || o7 > o9 {
 		return ssz.ErrOffset
 	}
@@ -1398,19 +1398,19 @@ func (b *BeaconBlockBodyGloas) UnmarshalSSZ(buf []byte) error {
 		}
 	}
 
-	// Field (9) 'BlsToExecutionChanges'
+	// Field (9) 'BlsToSilaChanges'
 	{
 		buf = tail[o9:o10]
 		num, err := ssz.DivideInt2(len(buf), 172, 16)
 		if err != nil {
 			return err
 		}
-		b.BlsToExecutionChanges = make([]*SignedBLSToExecutionChange, num)
+		b.BlsToSilaChanges = make([]*SignedBLSToSilaChange, num)
 		for ii := 0; ii < num; ii++ {
-			if b.BlsToExecutionChanges[ii] == nil {
-				b.BlsToExecutionChanges[ii] = new(SignedBLSToExecutionChange)
+			if b.BlsToSilaChanges[ii] == nil {
+				b.BlsToSilaChanges[ii] = new(SignedBLSToSilaChange)
 			}
-			if err = b.BlsToExecutionChanges[ii].UnmarshalSSZ(buf[ii*172 : (ii+1)*172]); err != nil {
+			if err = b.BlsToSilaChanges[ii].UnmarshalSSZ(buf[ii*172 : (ii+1)*172]); err != nil {
 				return err
 			}
 		}
@@ -1483,8 +1483,8 @@ func (b *BeaconBlockBodyGloas) SizeSSZ() (size int) {
 	// Field (7) 'VoluntaryExits'
 	size += len(b.VoluntaryExits) * 112
 
-	// Field (9) 'BlsToExecutionChanges'
-	size += len(b.BlsToExecutionChanges) * 172
+	// Field (9) 'BlsToSilaChanges'
+	size += len(b.BlsToSilaChanges) * 172
 
 	// Field (10) 'SignedSilaPayloadBid'
 	if b.SignedSilaPayloadBid == nil {
@@ -1617,15 +1617,15 @@ func (b *BeaconBlockBodyGloas) HashTreeRootWith(hh *ssz.Hasher) (err error) {
 		return
 	}
 
-	// Field (9) 'BlsToExecutionChanges'
+	// Field (9) 'BlsToSilaChanges'
 	{
 		subIndx := hh.Index()
-		num := uint64(len(b.BlsToExecutionChanges))
+		num := uint64(len(b.BlsToSilaChanges))
 		if num > 16 {
 			err = ssz.ErrIncorrectListSize
 			return
 		}
-		for _, elem := range b.BlsToExecutionChanges {
+		for _, elem := range b.BlsToSilaChanges {
 			if err = elem.HashTreeRootWith(hh); err != nil {
 				return
 			}

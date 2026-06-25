@@ -436,47 +436,47 @@ func convertWithdrawalsToProto(jsonWithdrawals []*structs.Withdrawal) ([]*silaen
 	return withdrawals, nil
 }
 
-func convertBlsToExecutionChangesToProto(jsonSignedBlsToExecutionChanges []*structs.SignedBLSToExecutionChange) ([]*silapb.SignedBLSToExecutionChange, error) {
-	signedBlsToExecutionChanges := make([]*silapb.SignedBLSToExecutionChange, len(jsonSignedBlsToExecutionChanges))
+func convertBlsToSilaChangesToProto(jsonSignedBlsToSilaChanges []*structs.SignedBLSToSilaChange) ([]*silapb.SignedBLSToSilaChange, error) {
+	signedBlsToSilaChanges := make([]*silapb.SignedBLSToSilaChange, len(jsonSignedBlsToSilaChanges))
 
-	for index, jsonBlsToExecutionChange := range jsonSignedBlsToExecutionChanges {
-		if jsonBlsToExecutionChange == nil {
-			return nil, errors.Errorf("bls to execution change at index `%d` is nil", index)
+	for index, jsonBlsToSilaChange := range jsonSignedBlsToSilaChanges {
+		if jsonBlsToSilaChange == nil {
+			return nil, errors.Errorf("bls to Sila change at index `%d` is nil", index)
 		}
 
-		if jsonBlsToExecutionChange.Message == nil {
-			return nil, errors.Errorf("bls to execution change message at index `%d` is nil", index)
+		if jsonBlsToSilaChange.Message == nil {
+			return nil, errors.Errorf("bls to Sila change message at index `%d` is nil", index)
 		}
 
-		validatorIndex, err := strconv.ParseUint(jsonBlsToExecutionChange.Message.ValidatorIndex, 10, 64)
+		validatorIndex, err := strconv.ParseUint(jsonBlsToSilaChange.Message.ValidatorIndex, 10, 64)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to decode validator index `%s`", jsonBlsToExecutionChange.Message.ValidatorIndex)
+			return nil, errors.Wrapf(err, "failed to decode validator index `%s`", jsonBlsToSilaChange.Message.ValidatorIndex)
 		}
 
-		fromBlsPubkey, err := hexutil.Decode(jsonBlsToExecutionChange.Message.FromBLSPubkey)
+		fromBlsPubkey, err := hexutil.Decode(jsonBlsToSilaChange.Message.FromBLSPubkey)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to decode bls pubkey `%s`", jsonBlsToExecutionChange.Message.FromBLSPubkey)
+			return nil, errors.Wrapf(err, "failed to decode bls pubkey `%s`", jsonBlsToSilaChange.Message.FromBLSPubkey)
 		}
 
-		toExecutionAddress, err := hexutil.Decode(jsonBlsToExecutionChange.Message.ToExecutionAddress)
+		toSilaAddress, err := hexutil.Decode(jsonBlsToSilaChange.Message.ToSilaAddress)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to decode execution address `%s`", jsonBlsToExecutionChange.Message.ToExecutionAddress)
+			return nil, errors.Wrapf(err, "failed to decode execution address `%s`", jsonBlsToSilaChange.Message.ToSilaAddress)
 		}
 
-		signature, err := hexutil.Decode(jsonBlsToExecutionChange.Signature)
+		signature, err := hexutil.Decode(jsonBlsToSilaChange.Signature)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to decode signature `%s`", jsonBlsToExecutionChange.Signature)
+			return nil, errors.Wrapf(err, "failed to decode signature `%s`", jsonBlsToSilaChange.Signature)
 		}
 
-		signedBlsToExecutionChanges[index] = &silapb.SignedBLSToExecutionChange{
-			Message: &silapb.BLSToExecutionChange{
+		signedBlsToSilaChanges[index] = &silapb.SignedBLSToSilaChange{
+			Message: &silapb.BLSToSilaChange{
 				ValidatorIndex:     primitives.ValidatorIndex(validatorIndex),
 				FromBlsPubkey:      fromBlsPubkey,
-				ToExecutionAddress: toExecutionAddress,
+				ToSilaAddress: toSilaAddress,
 			},
 			Signature: signature,
 		}
 	}
 
-	return signedBlsToExecutionChanges, nil
+	return signedBlsToSilaChanges, nil
 }

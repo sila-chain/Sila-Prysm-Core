@@ -537,8 +537,8 @@ message BeaconBlockBodyCapella {
   // Sila payload from the execution chain.
   sila.silaengine.v1.SilaPayloadCapella sila_payload = 10;
 
-  // At most MAX_BLS_TO_EXECUTION_CHANGES. New in Capella network upgrade.
-  repeated SignedBLSToExecutionChange bls_to_execution_changes = 11
+  // At most MAX_BLS_TO_SILA_CHANGES. New in Capella network upgrade.
+  repeated SignedBLSToSilaChange bls_to_sila_changes = 11
       [ (sila.eth.ext.ssz_max) = "16" ];
 }
 
@@ -608,8 +608,8 @@ message BlindedBeaconBlockBodyCapella {
   sila.silaengine.v1.SilaPayloadHeaderCapella sila_payload_header =
       10;
 
-  // At most MAX_BLS_TO_EXECUTION_CHANGES. New in Capella network upgrade.
-  repeated SignedBLSToExecutionChange bls_to_execution_changes = 11
+  // At most MAX_BLS_TO_SILA_CHANGES. New in Capella network upgrade.
+  repeated SignedBLSToSilaChange bls_to_sila_changes = 11
       [ (sila.eth.ext.ssz_max) = "16" ];
 }
 
@@ -721,8 +721,8 @@ message BeaconBlockBodyDeneb {
   // Sila payload from the execution chain.
   sila.silaengine.v1.SilaPayloadDeneb sila_payload = 10;
 
-  // At most MAX_BLS_TO_EXECUTION_CHANGES.
-  repeated SignedBLSToExecutionChange bls_to_execution_changes = 11
+  // At most MAX_BLS_TO_SILA_CHANGES.
+  repeated SignedBLSToSilaChange bls_to_sila_changes = 11
       [ (sila.eth.ext.ssz_max) = "16" ];
 
   repeated bytes blob_kzg_commitments = 12 [
@@ -796,8 +796,8 @@ message BlindedBeaconBlockBodyDeneb {
   // Sila payload header from the execution chain.
   sila.silaengine.v1.SilaPayloadHeaderDeneb sila_payload_header = 10;
 
-  // At most MAX_BLS_TO_EXECUTION_CHANGES.
-  repeated SignedBLSToExecutionChange bls_to_execution_changes = 11
+  // At most MAX_BLS_TO_SILA_CHANGES.
+  repeated SignedBLSToSilaChange bls_to_sila_changes = 11
       [ (sila.eth.ext.ssz_max) = "16" ];
 
   // Blob KZG commitments. New in Deneb network upgrade.
@@ -953,8 +953,8 @@ message BeaconBlockBodyElectra {
   // upgrade.
   sila.silaengine.v1.SilaPayloadDeneb sila_payload = 10;
 
-  // At most MAX_BLS_TO_EXECUTION_CHANGES. New in Capella network upgrade.
-  repeated SignedBLSToExecutionChange bls_to_execution_changes = 11
+  // At most MAX_BLS_TO_SILA_CHANGES. New in Capella network upgrade.
+  repeated SignedBLSToSilaChange bls_to_sila_changes = 11
       [ (sila.eth.ext.ssz_max) = "16" ];
 
   // Blob KZG commitments.
@@ -1033,8 +1033,8 @@ message BlindedBeaconBlockBodyElectra {
   // Sila payload header from the execution chain.
   sila.silaengine.v1.SilaPayloadHeaderDeneb sila_payload_header = 10;
 
-  // At most MAX_BLS_TO_EXECUTION_CHANGES.
-  repeated SignedBLSToExecutionChange bls_to_execution_changes = 11
+  // At most MAX_BLS_TO_SILA_CHANGES.
+  repeated SignedBLSToSilaChange bls_to_sila_changes = 11
       [ (sila.eth.ext.ssz_max) = "16" ];
 
   // Blob KZG commitments.

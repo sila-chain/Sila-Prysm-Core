@@ -26,7 +26,7 @@ var _ pubsub.SubscriptionFilter = (*Service)(nil)
 // -> 64 Beacon Attestation    * 2 = 128
 // -> SyncContributionAndProof * 2 = 2
 // -> 4 SyncCommitteeSubnets   * 2 = 8
-// -> BlsToExecutionChange     * 2 = 2
+// -> BlsToSilaChange     * 2 = 2
 // -> 128 DataColumnSidecar    * 2 = 256
 // -------------------------------------
 // TOTAL                           = 406

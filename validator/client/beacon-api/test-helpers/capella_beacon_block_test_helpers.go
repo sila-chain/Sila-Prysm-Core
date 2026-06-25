@@ -250,20 +250,20 @@ func GenerateProtoCapellaBeaconBlock() *silapb.BeaconBlockCapella {
 					},
 				},
 			},
-			BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{
+			BlsToSilaChanges: []*silapb.SignedBLSToSilaChange{
 				{
-					Message: &silapb.BLSToExecutionChange{
+					Message: &silapb.BLSToSilaChange{
 						ValidatorIndex:     135,
 						FromBlsPubkey:      FillByteSlice(48, 136),
-						ToExecutionAddress: FillByteSlice(20, 137),
+						ToSilaAddress: FillByteSlice(20, 137),
 					},
 					Signature: FillByteSlice(96, 138),
 				},
 				{
-					Message: &silapb.BLSToExecutionChange{
+					Message: &silapb.BLSToSilaChange{
 						ValidatorIndex:     139,
 						FromBlsPubkey:      FillByteSlice(48, 140),
-						ToExecutionAddress: FillByteSlice(20, 141),
+						ToSilaAddress: FillByteSlice(20, 141),
 					},
 					Signature: FillByteSlice(96, 142),
 				},
@@ -499,20 +499,20 @@ func GenerateProtoBlindedCapellaBeaconBlock() *silapb.BlindedBeaconBlockCapella 
 				TransactionsRoot: FillByteSlice(32, 125),
 				WithdrawalsRoot:  FillByteSlice(32, 126),
 			},
-			BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{
+			BlsToSilaChanges: []*silapb.SignedBLSToSilaChange{
 				{
-					Message: &silapb.BLSToExecutionChange{
+					Message: &silapb.BLSToSilaChange{
 						ValidatorIndex:     135,
 						FromBlsPubkey:      FillByteSlice(48, 136),
-						ToExecutionAddress: FillByteSlice(20, 137),
+						ToSilaAddress: FillByteSlice(20, 137),
 					},
 					Signature: FillByteSlice(96, 138),
 				},
 				{
-					Message: &silapb.BLSToExecutionChange{
+					Message: &silapb.BLSToSilaChange{
 						ValidatorIndex:     139,
 						FromBlsPubkey:      FillByteSlice(48, 140),
-						ToExecutionAddress: FillByteSlice(20, 141),
+						ToSilaAddress: FillByteSlice(20, 141),
 					},
 					Signature: FillByteSlice(96, 142),
 				},
@@ -764,20 +764,20 @@ func GenerateJsonCapellaBeaconBlock() *structs.BeaconBlockCapella {
 					},
 				},
 			},
-			BLSToExecutionChanges: []*structs.SignedBLSToExecutionChange{
+			BLSToSilaChanges: []*structs.SignedBLSToSilaChange{
 				{
-					Message: &structs.BLSToExecutionChange{
+					Message: &structs.BLSToSilaChange{
 						ValidatorIndex:     "135",
 						FromBLSPubkey:      FillEncodedByteSlice(48, 136),
-						ToExecutionAddress: FillEncodedByteSlice(20, 137),
+						ToSilaAddress: FillEncodedByteSlice(20, 137),
 					},
 					Signature: FillEncodedByteSlice(96, 138),
 				},
 				{
-					Message: &structs.BLSToExecutionChange{
+					Message: &structs.BLSToSilaChange{
 						ValidatorIndex:     "139",
 						FromBLSPubkey:      FillEncodedByteSlice(48, 140),
-						ToExecutionAddress: FillEncodedByteSlice(20, 141),
+						ToSilaAddress: FillEncodedByteSlice(20, 141),
 					},
 					Signature: FillEncodedByteSlice(96, 142),
 				},
@@ -1013,20 +1013,20 @@ func GenerateJsonBlindedCapellaBeaconBlock() *structs.BlindedBeaconBlockCapella 
 				TransactionsRoot: FillEncodedByteSlice(32, 125),
 				WithdrawalsRoot:  FillEncodedByteSlice(32, 126),
 			},
-			BLSToExecutionChanges: []*structs.SignedBLSToExecutionChange{
+			BLSToSilaChanges: []*structs.SignedBLSToSilaChange{
 				{
-					Message: &structs.BLSToExecutionChange{
+					Message: &structs.BLSToSilaChange{
 						ValidatorIndex:     "135",
 						FromBLSPubkey:      FillEncodedByteSlice(48, 136),
-						ToExecutionAddress: FillEncodedByteSlice(20, 137),
+						ToSilaAddress: FillEncodedByteSlice(20, 137),
 					},
 					Signature: FillEncodedByteSlice(96, 138),
 				},
 				{
-					Message: &structs.BLSToExecutionChange{
+					Message: &structs.BLSToSilaChange{
 						ValidatorIndex:     "139",
 						FromBLSPubkey:      FillEncodedByteSlice(48, 140),
-						ToExecutionAddress: FillEncodedByteSlice(20, 141),
+						ToSilaAddress: FillEncodedByteSlice(20, 141),
 					},
 					Signature: FillEncodedByteSlice(96, 142),
 				},

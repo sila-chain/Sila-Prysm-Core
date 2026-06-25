@@ -150,15 +150,15 @@ type Fork struct {
 	Epoch           string `json:"epoch"`
 }
 
-type SignedBLSToExecutionChange struct {
-	Message   *BLSToExecutionChange `json:"message"`
+type SignedBLSToSilaChange struct {
+	Message   *BLSToSilaChange `json:"message"`
 	Signature string                `json:"signature"`
 }
 
-type BLSToExecutionChange struct {
+type BLSToSilaChange struct {
 	ValidatorIndex     string `json:"validator_index"`
 	FromBLSPubkey      string `json:"from_bls_pubkey"`
-	ToExecutionAddress string `json:"to_execution_address"`
+	ToSilaAddress string `json:"to_sila_address"`
 }
 
 type SyncCommitteeMessage struct {

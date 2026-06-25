@@ -35,7 +35,7 @@ import (
 //	    for_ops(body.attestations, process_attestation)
 //	    # [Modified in Gloas:SIP7732]
 //	    for_ops(body.voluntary_exits, process_voluntary_exit)
-//	    for_ops(body.bls_to_execution_changes, process_bls_to_execution_change)
+//	    for_ops(body.bls_to_sila_changes, process_bls_to_sila_change)
 //	    # [Modified in Gloas:SIP7732]
 //	    # Removed `process_deposit_request`
 //	    # [Modified in Gloas:SIP7732]
@@ -81,7 +81,7 @@ func gloasOperations(ctx context.Context, st state.BeaconState, block interfaces
 	if err != nil {
 		return nil, errors.Wrap(ErrProcessVoluntaryExitsFailed, err.Error())
 	}
-	st, err = blocks.ProcessBLSToExecutionChanges(st, block)
+	st, err = blocks.ProcessBLSToSilaChanges(st, block)
 	if err != nil {
 		return nil, errors.Wrap(ErrProcessBLSChangesFailed, err.Error())
 	}

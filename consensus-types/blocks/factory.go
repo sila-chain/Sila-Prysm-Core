@@ -409,7 +409,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 		if !ok {
 			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &silaenginev1.SilaPayloadCapella{}, payload)
 		}
-		blsToExecutionChanges, err := b.Body().BLSToExecutionChanges()
+		blsToSilaChanges, err := b.Body().BLSToSilaChanges()
 		if err != nil {
 			return nil, err
 		}
@@ -452,7 +452,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 					VoluntaryExits:        b.Body().VoluntaryExits(),
 					SyncAggregate:         syncAgg,
 					SilaPayload:      p,
-					BlsToExecutionChanges: blsToExecutionChanges,
+					BlsToSilaChanges: blsToSilaChanges,
 				},
 			},
 			Signature: sig[:],
@@ -462,7 +462,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 		if !ok {
 			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &silaenginev1.SilaPayloadDeneb{}, payload)
 		}
-		blsToExecutionChanges, err := b.Body().BLSToExecutionChanges()
+		blsToSilaChanges, err := b.Body().BLSToSilaChanges()
 		if err != nil {
 			return nil, err
 		}
@@ -509,7 +509,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 					VoluntaryExits:        b.Body().VoluntaryExits(),
 					SyncAggregate:         syncAgg,
 					SilaPayload:      p,
-					BlsToExecutionChanges: blsToExecutionChanges,
+					BlsToSilaChanges: blsToSilaChanges,
 					BlobKzgCommitments:    commitments,
 				},
 			},
@@ -520,7 +520,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 		if !ok {
 			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &silaenginev1.SilaPayloadDeneb{}, payload)
 		}
-		blsToExecutionChanges, err := b.Body().BLSToExecutionChanges()
+		blsToSilaChanges, err := b.Body().BLSToSilaChanges()
 		if err != nil {
 			return nil, err
 		}
@@ -573,7 +573,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 					VoluntaryExits:        b.Body().VoluntaryExits(),
 					SyncAggregate:         syncAgg,
 					SilaPayload:      p,
-					BlsToExecutionChanges: blsToExecutionChanges,
+					BlsToSilaChanges: blsToSilaChanges,
 					BlobKzgCommitments:    commitments,
 					SilaRequests:     er,
 				},
@@ -585,7 +585,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 		if !ok {
 			return nil, fmt.Errorf("payload has wrong type (expected %T, got %T)", &silaenginev1.SilaPayloadDeneb{}, payload)
 		}
-		blsToExecutionChanges, err := b.Body().BLSToExecutionChanges()
+		blsToSilaChanges, err := b.Body().BLSToSilaChanges()
 		if err != nil {
 			return nil, err
 		}
@@ -638,7 +638,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 					VoluntaryExits:        b.Body().VoluntaryExits(),
 					SyncAggregate:         syncAgg,
 					SilaPayload:      p,
-					BlsToExecutionChanges: blsToExecutionChanges,
+					BlsToSilaChanges: blsToSilaChanges,
 					BlobKzgCommitments:    commitments,
 					SilaRequests:     er,
 				},

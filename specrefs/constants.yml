@@ -189,14 +189,14 @@
     DOMAIN_BEACON_PROPOSER: DomainType = '0x00000000'
     </spec>
 
-- name: DOMAIN_BLS_TO_EXECUTION_CHANGE#capella
+- name: DOMAIN_BLS_TO_SILA_CHANGE#capella
   sources:
     - file: config/params/config.go
-      search: DomainBLSToExecutionChange\s+.*yaml:"DOMAIN_BLS_TO_EXECUTION_CHANGE"
+      search: DomainBLSToSilaChange\s+.*yaml:"DOMAIN_BLS_TO_SILA_CHANGE"
       regex: true
   spec: |
-    <spec constant_var="DOMAIN_BLS_TO_EXECUTION_CHANGE" fork="capella" hash="08a623ec">
-    DOMAIN_BLS_TO_EXECUTION_CHANGE: DomainType = '0x0A000000'
+    <spec constant_var="DOMAIN_BLS_TO_SILA_CHANGE" fork="capella" hash="08a623ec">
+    DOMAIN_BLS_TO_SILA_CHANGE: DomainType = '0x0A000000'
     </spec>
 
 - name: DOMAIN_CONTRIBUTION_AND_PROOF#altair

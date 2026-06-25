@@ -20,7 +20,7 @@ var gossipTopicMappings = map[string]func() proto.Message{
 	AggregateAndProofSubnetTopicFormat:        func() proto.Message { return &silapb.SignedAggregateAttestationAndProof{} },
 	SyncContributionAndProofSubnetTopicFormat: func() proto.Message { return &silapb.SignedContributionAndProof{} },
 	SyncCommitteeSubnetTopicFormat:            func() proto.Message { return &silapb.SyncCommitteeMessage{} },
-	BlsToExecutionChangeSubnetTopicFormat:     func() proto.Message { return &silapb.SignedBLSToExecutionChange{} },
+	BlsToSilaChangeSubnetTopicFormat:     func() proto.Message { return &silapb.SignedBLSToSilaChange{} },
 	BlobSubnetTopicFormat:                     func() proto.Message { return &silapb.BlobSidecar{} },
 	LightClientOptimisticUpdateTopicFormat:    func() proto.Message { return &silapb.LightClientOptimisticUpdateAltair{} },
 	LightClientFinalityUpdateTopicFormat:      func() proto.Message { return &silapb.LightClientFinalityUpdateAltair{} },

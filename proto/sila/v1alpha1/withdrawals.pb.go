@@ -23,28 +23,28 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type SignedBLSToExecutionChange struct {
+type SignedBLSToSilaChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Message       *BLSToExecutionChange  `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Message       *BLSToSilaChange  `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	Signature     []byte                 `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty" ssz-size:"96"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SignedBLSToExecutionChange) Reset() {
-	*x = SignedBLSToExecutionChange{}
+func (x *SignedBLSToSilaChange) Reset() {
+	*x = SignedBLSToSilaChange{}
 	mi := &file_proto_sila_v1alpha1_withdrawals_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SignedBLSToExecutionChange) String() string {
+func (x *SignedBLSToSilaChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SignedBLSToExecutionChange) ProtoMessage() {}
+func (*SignedBLSToSilaChange) ProtoMessage() {}
 
-func (x *SignedBLSToExecutionChange) ProtoReflect() protoreflect.Message {
+func (x *SignedBLSToSilaChange) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_sila_v1alpha1_withdrawals_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -56,48 +56,48 @@ func (x *SignedBLSToExecutionChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SignedBLSToExecutionChange.ProtoReflect.Descriptor instead.
-func (*SignedBLSToExecutionChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use SignedBLSToSilaChange.ProtoReflect.Descriptor instead.
+func (*SignedBLSToSilaChange) Descriptor() ([]byte, []int) {
 	return file_proto_sila_v1alpha1_withdrawals_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *SignedBLSToExecutionChange) GetMessage() *BLSToExecutionChange {
+func (x *SignedBLSToSilaChange) GetMessage() *BLSToSilaChange {
 	if x != nil {
 		return x.Message
 	}
 	return nil
 }
 
-func (x *SignedBLSToExecutionChange) GetSignature() []byte {
+func (x *SignedBLSToSilaChange) GetSignature() []byte {
 	if x != nil {
 		return x.Signature
 	}
 	return nil
 }
 
-type BLSToExecutionChange struct {
+type BLSToSilaChange struct {
 	state              protoimpl.MessageState                                                     `protogen:"open.v1"`
 	ValidatorIndex     github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives.ValidatorIndex `protobuf:"varint,1,opt,name=validator_index,json=validatorIndex,proto3" json:"validator_index,omitempty" cast-type:"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.ValidatorIndex"`
 	FromBlsPubkey      []byte                                                                     `protobuf:"bytes,2,opt,name=from_bls_pubkey,json=fromBlsPubkey,proto3" json:"from_bls_pubkey,omitempty" ssz-size:"48"`
-	ToExecutionAddress []byte                                                                     `protobuf:"bytes,3,opt,name=to_execution_address,json=toExecutionAddress,proto3" json:"to_execution_address,omitempty" ssz-size:"20"`
+	ToSilaAddress []byte                                                                     `protobuf:"bytes,3,opt,name=to_sila_address,json=toSilaAddress,proto3" json:"to_sila_address,omitempty" ssz-size:"20"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
 
-func (x *BLSToExecutionChange) Reset() {
-	*x = BLSToExecutionChange{}
+func (x *BLSToSilaChange) Reset() {
+	*x = BLSToSilaChange{}
 	mi := &file_proto_sila_v1alpha1_withdrawals_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *BLSToExecutionChange) String() string {
+func (x *BLSToSilaChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*BLSToExecutionChange) ProtoMessage() {}
+func (*BLSToSilaChange) ProtoMessage() {}
 
-func (x *BLSToExecutionChange) ProtoReflect() protoreflect.Message {
+func (x *BLSToSilaChange) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_sila_v1alpha1_withdrawals_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -109,28 +109,28 @@ func (x *BLSToExecutionChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use BLSToExecutionChange.ProtoReflect.Descriptor instead.
-func (*BLSToExecutionChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use BLSToSilaChange.ProtoReflect.Descriptor instead.
+func (*BLSToSilaChange) Descriptor() ([]byte, []int) {
 	return file_proto_sila_v1alpha1_withdrawals_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *BLSToExecutionChange) GetValidatorIndex() github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives.ValidatorIndex {
+func (x *BLSToSilaChange) GetValidatorIndex() github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives.ValidatorIndex {
 	if x != nil {
 		return x.ValidatorIndex
 	}
 	return github_com_sila_chain_Sila_Sila_Core_v7_consensus_types_primitives.ValidatorIndex(0)
 }
 
-func (x *BLSToExecutionChange) GetFromBlsPubkey() []byte {
+func (x *BLSToSilaChange) GetFromBlsPubkey() []byte {
 	if x != nil {
 		return x.FromBlsPubkey
 	}
 	return nil
 }
 
-func (x *BLSToExecutionChange) GetToExecutionAddress() []byte {
+func (x *BLSToSilaChange) GetToSilaAddress() []byte {
 	if x != nil {
-		return x.ToExecutionAddress
+		return x.ToSilaAddress
 	}
 	return nil
 }
@@ -195,11 +195,11 @@ func file_proto_sila_v1alpha1_withdrawals_proto_rawDescGZIP() []byte {
 
 var file_proto_sila_v1alpha1_withdrawals_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_proto_sila_v1alpha1_withdrawals_proto_goTypes = []any{
-	(*SignedBLSToExecutionChange)(nil), // 0: sila.eth.v1alpha1.SignedBLSToExecutionChange
-	(*BLSToExecutionChange)(nil),       // 1: sila.eth.v1alpha1.BLSToExecutionChange
+	(*SignedBLSToSilaChange)(nil), // 0: sila.eth.v1alpha1.SignedBLSToSilaChange
+	(*BLSToSilaChange)(nil),       // 1: sila.eth.v1alpha1.BLSToSilaChange
 }
 var file_proto_sila_v1alpha1_withdrawals_proto_depIdxs = []int32{
-	1, // 0: sila.eth.v1alpha1.SignedBLSToExecutionChange.message:type_name -> sila.eth.v1alpha1.BLSToExecutionChange
+	1, // 0: sila.eth.v1alpha1.SignedBLSToSilaChange.message:type_name -> sila.eth.v1alpha1.BLSToSilaChange
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name

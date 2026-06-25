@@ -777,24 +777,24 @@ func (s *Service) beaconEndpoints(
 			methods: []string{http.MethodPost},
 		},
 		{
-			template: "/sila/v1/beacon/pool/bls_to_execution_changes",
-			name:     namespace + ".ListBLSToExecutionChanges",
+			template: "/sila/v1/beacon/pool/bls_to_sila_changes",
+			name:     namespace + ".ListBLSToSilaChanges",
 			middleware: []middleware.Middleware{
 				middleware.AcceptHeaderHandler([]string{api.JsonMediaType}),
 				middleware.AcceptEncodingHeaderHandler(),
 			},
-			handler: server.ListBLSToExecutionChanges,
+			handler: server.ListBLSToSilaChanges,
 			methods: []string{http.MethodGet},
 		},
 		{
-			template: "/sila/v1/beacon/pool/bls_to_execution_changes",
-			name:     namespace + ".SubmitBLSToExecutionChanges",
+			template: "/sila/v1/beacon/pool/bls_to_sila_changes",
+			name:     namespace + ".SubmitBLSToSilaChanges",
 			middleware: []middleware.Middleware{
 				middleware.ContentTypeHandler([]string{api.JsonMediaType}),
 				middleware.AcceptHeaderHandler([]string{api.JsonMediaType}),
 				middleware.AcceptEncodingHeaderHandler(),
 			},
-			handler: server.SubmitBLSToExecutionChanges,
+			handler: server.SubmitBLSToSilaChanges,
 			methods: []string{http.MethodPost},
 		},
 		{

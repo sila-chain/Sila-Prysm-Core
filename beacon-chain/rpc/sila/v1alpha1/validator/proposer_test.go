@@ -442,14 +442,14 @@ func TestServer_GetBeaconBlock_Capella(t *testing.T) {
 	copiedState := beaconState.Copy()
 	copiedState, err = transition.ProcessSlots(ctx, copiedState, capellaSlot+1)
 	require.NoError(t, err)
-	change, err := util.GenerateBLSToExecutionChange(copiedState, privKeys[1], 0)
+	change, err := util.GenerateBLSToSilaChange(copiedState, privKeys[1], 0)
 	require.NoError(t, err)
 	proposerServer.BLSChangesPool.InsertBLSToExecChange(change)
 
 	got, err := proposerServer.GetBeaconBlock(ctx, req)
 	require.NoError(t, err)
-	require.Equal(t, 1, len(got.GetCapella().Body.BlsToExecutionChanges))
-	require.DeepEqual(t, change, got.GetCapella().Body.BlsToExecutionChanges[0])
+	require.Equal(t, 1, len(got.GetCapella().Body.BlsToSilaChanges))
+	require.DeepEqual(t, change, got.GetCapella().Body.BlsToSilaChanges[0])
 }
 
 func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
@@ -574,7 +574,7 @@ func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
 	copiedState := beaconState.Copy()
 	copiedState, err = transition.ProcessSlots(ctx, copiedState, denebSlot+1)
 	require.NoError(t, err)
-	change, err := util.GenerateBLSToExecutionChange(copiedState, privKeys[1], 0)
+	change, err := util.GenerateBLSToSilaChange(copiedState, privKeys[1], 0)
 	require.NoError(t, err)
 	proposerServer.BLSChangesPool.InsertBLSToExecChange(change)
 

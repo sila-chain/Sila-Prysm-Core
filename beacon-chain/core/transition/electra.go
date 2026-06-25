@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	ProcessBLSToExecutionChanges = blocks.ProcessBLSToExecutionChanges
+	ProcessBLSToSilaChanges = blocks.ProcessBLSToSilaChanges
 	ProcessVoluntaryExits        = blocks.ProcessVoluntaryExits
 	ProcessAttesterSlashings     = blocks.ProcessAttesterSlashings
 	ProcessProposerSlashings     = blocks.ProcessProposerSlashings
@@ -43,7 +43,7 @@ var (
 //      for_ops(body.attestations, process_attestation)  # [Modified in Electra:SIP7549]
 //      for_ops(body.deposits, process_deposit)  # [Modified in Electra:SIP7251]
 //      for_ops(body.voluntary_exits, process_voluntary_exit)  # [Modified in Electra:SIP7251]
-//      for_ops(body.bls_to_execution_changes, process_bls_to_execution_change)
+//      for_ops(body.bls_to_sila_changes, process_bls_to_sila_change)
 //      for_ops(body.sila_payload.deposit_requests, process_deposit_request)  # [New in Electra:SIP6110]
 //      # [New in Electra:SIP7002:SIP7251]
 //      for_ops(body.sila_payload.withdrawal_requests, process_withdrawal_request)
@@ -88,7 +88,7 @@ func electraOperations(ctx context.Context, st state.BeaconState, block interfac
 	if err != nil {
 		return nil, errors.Wrap(ErrProcessVoluntaryExitsFailed, err.Error())
 	}
-	st, err = blocks.ProcessBLSToExecutionChanges(st, block)
+	st, err = blocks.ProcessBLSToSilaChanges(st, block)
 	if err != nil {
 		return nil, errors.Wrap(ErrProcessBLSChangesFailed, err.Error())
 	}

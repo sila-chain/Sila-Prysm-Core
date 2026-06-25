@@ -116,7 +116,7 @@ func createMockBlockBodyWithPayloadAttestation(att *eth.PayloadAttestation) (*et
 		Deposits:              []*eth.Deposit{},
 		VoluntaryExits:        []*eth.SignedVoluntaryExit{},
 		SyncAggregate:         &eth.SyncAggregate{},
-		BlsToExecutionChanges: []*eth.SignedBLSToExecutionChange{},
+		BlsToSilaChanges: []*eth.SignedBLSToSilaChange{},
 	}
 	return body, nil
 }

@@ -152,7 +152,7 @@ func TestGetSpec(t *testing.T) {
 	config.TerminalTotalDifficulty = "73"
 	config.DefaultFeeRecipient = common.HexToAddress("DefaultFeeRecipient")
 	config.MaxWithdrawalsPerPayload = 74
-	config.MaxBlsToExecutionChanges = 75
+	config.MaxBlsToSilaChanges = 75
 	config.MaxValidatorsPerWithdrawalsSweep = 76
 	config.MinSlashingPenaltyQuotientElectra = 77
 	config.MaxEffectiveBalanceElectra = 78
@@ -457,7 +457,7 @@ func TestGetSpec(t *testing.T) {
 				assert.Equal(t, "0x08000000", v)
 			case "DOMAIN_CONTRIBUTION_AND_PROOF":
 				assert.Equal(t, "0x09000000", v)
-			case "DOMAIN_BLS_TO_EXECUTION_CHANGE":
+			case "DOMAIN_BLS_TO_SILA_CHANGE":
 				assert.Equal(t, "0x0a000000", v)
 			case "DOMAIN_APPLICATION_BUILDER":
 				assert.Equal(t, "0x00000001", v)
@@ -491,7 +491,7 @@ func TestGetSpec(t *testing.T) {
 				assert.Equal(t, "40", v)
 			case "MAX_WITHDRAWALS_PER_PAYLOAD":
 				assert.Equal(t, "74", v)
-			case "MAX_BLS_TO_EXECUTION_CHANGES":
+			case "MAX_BLS_TO_SILA_CHANGES":
 				assert.Equal(t, "75", v)
 			case "MAX_VALIDATORS_PER_WITHDRAWALS_SWEEP":
 				assert.Equal(t, "76", v)

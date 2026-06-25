@@ -125,8 +125,8 @@ type SyncCommitteeContributionCreator struct{}
 type ContributionAndProofCreator struct{}
 type SignedContributionAndProofCreator struct{}
 type ValidatorCreator struct{}
-type BLSToExecutionChangeCreator struct{}
-type SignedBLSToExecutionChangeCreator struct{}
+type BLSToSilaChangeCreator struct{}
+type SignedBLSToSilaChangeCreator struct{}
 
 func (AttestationCreator) Create() MarshalerProtoMessage        { return &silapb.Attestation{} }
 func (AttestationElectraCreator) Create() MarshalerProtoMessage { return &silapb.AttestationElectra{} }
@@ -312,11 +312,11 @@ func (SignedContributionAndProofCreator) Create() MarshalerProtoMessage {
 	return &silapb.SignedContributionAndProof{}
 }
 func (ValidatorCreator) Create() MarshalerProtoMessage { return &silapb.Validator{} }
-func (BLSToExecutionChangeCreator) Create() MarshalerProtoMessage {
-	return &silapb.BLSToExecutionChange{}
+func (BLSToSilaChangeCreator) Create() MarshalerProtoMessage {
+	return &silapb.BLSToSilaChange{}
 }
-func (SignedBLSToExecutionChangeCreator) Create() MarshalerProtoMessage {
-	return &silapb.SignedBLSToExecutionChange{}
+func (SignedBLSToSilaChangeCreator) Create() MarshalerProtoMessage {
+	return &silapb.SignedBLSToSilaChange{}
 }
 
 var creators = []MarshalerProtoCreator{
@@ -412,8 +412,8 @@ var creators = []MarshalerProtoCreator{
 	ContributionAndProofCreator{},
 	SignedContributionAndProofCreator{},
 	ValidatorCreator{},
-	BLSToExecutionChangeCreator{},
-	SignedBLSToExecutionChangeCreator{},
+	BLSToSilaChangeCreator{},
+	SignedBLSToSilaChangeCreator{},
 }
 
 func assertProtoMessagesEqual(t *testing.T, decoded, msg proto.Message) {

@@ -315,11 +315,11 @@ func topLevelRoots(body interfaces.ReadOnlyBeaconBlockBody) ([][]byte, error) {
 	copy(layer[9], root[:])
 
 	// BLS Changes
-	bls, err := body.BLSToExecutionChanges()
+	bls, err := body.BLSToSilaChanges()
 	if err != nil {
 		return nil, err
 	}
-	root, err = ssz.MerkleizeListSSZ(bls, params.BeaconConfig().MaxBlsToExecutionChanges)
+	root, err = ssz.MerkleizeListSSZ(bls, params.BeaconConfig().MaxBlsToSilaChanges)
 	if err != nil {
 		return nil, err
 	}

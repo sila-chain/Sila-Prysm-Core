@@ -27,44 +27,44 @@ var (
 	})
 )
 
-// PoolManager maintains pending and seen BLS-to-execution-change objects.
-// This pool is used by proposers to insert BLS-to-execution-change objects into new blocks.
+// PoolManager maintains pending and seen BLS-to-Sila-change objects.
+// This pool is used by proposers to insert BLS-to-Sila-change objects into new blocks.
 type PoolManager interface {
-	PendingBLSToExecChanges() ([]*silapb.SignedBLSToExecutionChange, error)
-	BLSToExecChangesForInclusion(beaconState state.ReadOnlyBeaconState) ([]*silapb.SignedBLSToExecutionChange, error)
-	InsertBLSToExecChange(change *silapb.SignedBLSToExecutionChange)
-	MarkIncluded(change *silapb.SignedBLSToExecutionChange)
+	PendingBLSToExecChanges() ([]*silapb.SignedBLSToSilaChange, error)
+	BLSToExecChangesForInclusion(beaconState state.ReadOnlyBeaconState) ([]*silapb.SignedBLSToSilaChange, error)
+	InsertBLSToExecChange(change *silapb.SignedBLSToSilaChange)
+	MarkIncluded(change *silapb.SignedBLSToSilaChange)
 	ValidatorExists(idx primitives.ValidatorIndex) bool
 }
 
 // Pool is a concrete implementation of PoolManager.
 type Pool struct {
 	lock    sync.RWMutex
-	pending doublylinkedlist.List[*silapb.SignedBLSToExecutionChange]
-	m       map[primitives.ValidatorIndex]*doublylinkedlist.Node[*silapb.SignedBLSToExecutionChange]
+	pending doublylinkedlist.List[*silapb.SignedBLSToSilaChange]
+	m       map[primitives.ValidatorIndex]*doublylinkedlist.Node[*silapb.SignedBLSToSilaChange]
 }
 
 // NewPool returns an initialized pool.
 func NewPool() *Pool {
 	return &Pool{
-		pending: doublylinkedlist.List[*silapb.SignedBLSToExecutionChange]{},
-		m:       make(map[primitives.ValidatorIndex]*doublylinkedlist.Node[*silapb.SignedBLSToExecutionChange]),
+		pending: doublylinkedlist.List[*silapb.SignedBLSToSilaChange]{},
+		m:       make(map[primitives.ValidatorIndex]*doublylinkedlist.Node[*silapb.SignedBLSToSilaChange]),
 	}
 }
 
 // Copies the internal map and returns a new one.
 func (p *Pool) cycleMap() {
-	newMap := make(map[primitives.ValidatorIndex]*doublylinkedlist.Node[*silapb.SignedBLSToExecutionChange])
+	newMap := make(map[primitives.ValidatorIndex]*doublylinkedlist.Node[*silapb.SignedBLSToSilaChange])
 	maps.Copy(newMap, p.m)
 	p.m = newMap
 }
 
 // PendingBLSToExecChanges returns all objects from the pool.
-func (p *Pool) PendingBLSToExecChanges() ([]*silapb.SignedBLSToExecutionChange, error) {
+func (p *Pool) PendingBLSToExecChanges() ([]*silapb.SignedBLSToSilaChange, error) {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
 
-	result := make([]*silapb.SignedBLSToExecutionChange, p.pending.Len())
+	result := make([]*silapb.SignedBLSToSilaChange, p.pending.Len())
 	node := p.pending.First()
 	var err error
 	for i := 0; node != nil; i++ {
@@ -81,21 +81,21 @@ func (p *Pool) PendingBLSToExecChanges() ([]*silapb.SignedBLSToExecutionChange, 
 }
 
 // BLSToExecChangesForInclusion returns objects that are ready for inclusion.
-// This method will not return more than the block enforced MaxBlsToExecutionChanges.
-func (p *Pool) BLSToExecChangesForInclusion(st state.ReadOnlyBeaconState) ([]*silapb.SignedBLSToExecutionChange, error) {
+// This method will not return more than the block enforced MaxBlsToSilaChanges.
+func (p *Pool) BLSToExecChangesForInclusion(st state.ReadOnlyBeaconState) ([]*silapb.SignedBLSToSilaChange, error) {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
-	length := int(min(float64(params.BeaconConfig().MaxBlsToExecutionChanges), float64(p.pending.Len())))
-	result := make([]*silapb.SignedBLSToExecutionChange, 0, length)
+	length := int(min(float64(params.BeaconConfig().MaxBlsToSilaChanges), float64(p.pending.Len())))
+	result := make([]*silapb.SignedBLSToSilaChange, 0, length)
 	node := p.pending.Last()
 	for node != nil && len(result) < length {
 		change, err := node.Value()
 		if err != nil {
 			return nil, err
 		}
-		_, err = blocks.ValidateBLSToExecutionChange(st, change)
+		_, err = blocks.ValidateBLSToSilaChange(st, change)
 		if err != nil {
-			logrus.WithError(err).Warning("removing invalid BLSToExecutionChange from pool")
+			logrus.WithError(err).Warning("removing invalid BLSToSilaChange from pool")
 			// MarkIncluded removes the invalid change from the pool
 			p.lock.RUnlock()
 			p.MarkIncluded(change)
@@ -112,7 +112,7 @@ func (p *Pool) BLSToExecChangesForInclusion(st state.ReadOnlyBeaconState) ([]*si
 }
 
 // InsertBLSToExecChange inserts an object into the pool.
-func (p *Pool) InsertBLSToExecChange(change *silapb.SignedBLSToExecutionChange) {
+func (p *Pool) InsertBLSToExecChange(change *silapb.SignedBLSToSilaChange) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
@@ -129,7 +129,7 @@ func (p *Pool) InsertBLSToExecChange(change *silapb.SignedBLSToExecutionChange) 
 
 // MarkIncluded is used when an object has been included in a beacon block. Every block seen by this
 // node should call this method to include the object. This will remove the object from the pool.
-func (p *Pool) MarkIncluded(change *silapb.SignedBLSToExecutionChange) {
+func (p *Pool) MarkIncluded(change *silapb.SignedBLSToSilaChange) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
@@ -147,7 +147,7 @@ func (p *Pool) MarkIncluded(change *silapb.SignedBLSToExecutionChange) {
 	blsToExecMessageInPoolTotal.Dec()
 }
 
-// ValidatorExists checks if the bls to execution change object exists
+// ValidatorExists checks if the bls to Sila change object exists
 // for that particular validator.
 func (p *Pool) ValidatorExists(idx primitives.ValidatorIndex) bool {
 	p.lock.RLock()
@@ -158,7 +158,7 @@ func (p *Pool) ValidatorExists(idx primitives.ValidatorIndex) bool {
 	return node != nil
 }
 
-// numPending returns the number of pending bls to execution changes in the pool
+// numPending returns the number of pending bls to Sila changes in the pool
 func (p *Pool) numPending() int {
 	return p.pending.Len()
 }

@@ -149,11 +149,11 @@ func ComputeBlockBodyFieldRoots(ctx context.Context, blockBody *BeaconBlockBody)
 
 	if blockBody.version >= version.Capella {
 		// BLS Changes
-		bls, err := blockBody.BLSToExecutionChanges()
+		bls, err := blockBody.BLSToSilaChanges()
 		if err != nil {
 			return nil, err
 		}
-		root, err = ssz.MerkleizeListSSZ(bls, params.BeaconConfig().MaxBlsToExecutionChanges)
+		root, err = ssz.MerkleizeListSSZ(bls, params.BeaconConfig().MaxBlsToSilaChanges)
 		if err != nil {
 			return nil, err
 		}

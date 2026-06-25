@@ -168,19 +168,19 @@ func TestGloasOperations_ProcessingErrors(t *testing.T) {
 		{
 			name: "ErrProcessBLSChangesFailed – out-of-bounds validator index",
 			modifyBlk: func(b *silapb.BeaconBlockBodyGloas) {
-				b.BlsToExecutionChanges = []*silapb.SignedBLSToExecutionChange{
+				b.BlsToSilaChanges = []*silapb.SignedBLSToSilaChange{
 					{
-						Message: &silapb.BLSToExecutionChange{
+						Message: &silapb.BLSToSilaChange{
 							ValidatorIndex:     999999,
 							FromBlsPubkey:      make([]byte, 48),
-							ToExecutionAddress: make([]byte, 20),
+							ToSilaAddress: make([]byte, 20),
 						},
 						Signature: make([]byte, 96),
 					},
 				}
 			},
 			errSentinel: transition.ErrProcessBLSChangesFailed,
-			errSubstr:   "process BLS to execution changes failed",
+			errSubstr:   "process BLS to Sila changes failed",
 		},
 
 		{

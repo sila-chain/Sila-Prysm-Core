@@ -180,12 +180,12 @@ func logPayload(block interfaces.ReadOnlyBeaconBlock) error {
 			return errors.Wrap(err, "could not get withdrawals")
 		}
 		fields["withdrawals"] = len(withdrawals)
-		changes, err := block.Body().BLSToExecutionChanges()
+		changes, err := block.Body().BLSToSilaChanges()
 		if err != nil {
-			return errors.Wrap(err, "could not get BLSToExecutionChanges")
+			return errors.Wrap(err, "could not get BLSToSilaChanges")
 		}
 		if len(changes) > 0 {
-			fields["blsToExecutionChanges"] = len(changes)
+			fields["blsToSilaChanges"] = len(changes)
 		}
 	}
 	log.WithFields(fields).Debug("Synced new payload")

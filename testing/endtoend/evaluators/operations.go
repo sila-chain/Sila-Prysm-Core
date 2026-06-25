@@ -693,7 +693,7 @@ func submitWithdrawal(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn)
 	if err != nil {
 		return err
 	}
-	changes := make([]*structs.SignedBLSToExecutionChange, 0)
+	changes := make([]*structs.SignedBLSToSilaChange, 0)
 	// Only send half the number of changes each time, to allow us to test
 	// at the fork boundary. When starting from Deneb+ at genesis, there's no
 	// fork boundary to test so we send all changes.
@@ -716,12 +716,12 @@ func submitWithdrawal(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn)
 		if !bytes.Equal(val.PublicKey, privKeys[idx].PublicKey().Marshal()) {
 			return errors.Errorf("pubkey is not equal, wanted %#x but received %#x", val.PublicKey, privKeys[idx].PublicKey().Marshal())
 		}
-		message := &silapb.BLSToExecutionChange{
+		message := &silapb.BLSToSilaChange{
 			ValidatorIndex:     idx,
 			FromBlsPubkey:      privKeys[idx].PublicKey().Marshal(),
-			ToExecutionAddress: bytesutil.ToBytes(uint64(idx), 20),
+			ToSilaAddress: bytesutil.ToBytes(uint64(idx), 20),
 		}
-		domain, err := signing.ComputeDomain(params.BeaconConfig().DomainBLSToExecutionChange, params.BeaconConfig().GenesisForkVersion, st.GenesisValidatorsRoot())
+		domain, err := signing.ComputeDomain(params.BeaconConfig().DomainBLSToSilaChange, params.BeaconConfig().GenesisForkVersion, st.GenesisValidatorsRoot())
 		if err != nil {
 			return err
 		}
@@ -731,7 +731,7 @@ func submitWithdrawal(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn)
 		}
 		signature := privKeys[idx].Sign(sigRoot[:]).Marshal()
 
-		changes = append(changes, &structs.SignedBLSToExecutionChange{
+		changes = append(changes, &structs.SignedBLSToSilaChange{
 			Message:   structs.BLSChangeFromConsensus(message),
 			Signature: hexutil.Encode(signature),
 		})

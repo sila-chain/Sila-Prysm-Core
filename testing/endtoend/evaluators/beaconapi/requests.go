@@ -144,7 +144,7 @@ var getRequests = map[string]endpoint{
 	"/beacon/pool/voluntary_exits": newMetadata[structs.ListVoluntaryExitsResponse](
 		v1PathTemplate,
 		withSanityCheckOnly()),
-	"/beacon/pool/bls_to_execution_changes": newMetadata[structs.BLSToExecutionChangesPoolResponse](
+	"/beacon/pool/bls_to_sila_changes": newMetadata[structs.BLSToSilaChangesPoolResponse](
 		v1PathTemplate,
 		withSanityCheckOnly()),
 	"/config/fork_schedule": newMetadata[structs.GetForkScheduleResponse](

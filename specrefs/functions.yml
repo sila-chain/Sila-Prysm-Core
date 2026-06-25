@@ -8927,14 +8927,14 @@
         assert not proposer.slashed
     </spec>
 
-- name: process_bls_to_execution_change#capella
+- name: process_bls_to_sila_change#capella
   sources:
     - file: beacon-chain/core/blocks/withdrawals.go
-      search: func ProcessBLSToExecutionChanges(
+      search: func ProcessBLSToSilaChanges(
   spec: |
-    <spec fn="process_bls_to_execution_change" fork="capella" hash="1fade4f1">
-    def process_bls_to_execution_change(
-        state: BeaconState, signed_address_change: SignedBLSToExecutionChange
+    <spec fn="process_bls_to_sila_change" fork="capella" hash="1fade4f1">
+    def process_bls_to_sila_change(
+        state: BeaconState, signed_address_change: SignedBLSToSilaChange
     ) -> None:
         address_change = signed_address_change.message
 
@@ -8947,13 +8947,13 @@
 
         # Fork-agnostic domain since address changes are valid across forks
         domain = compute_domain(
-            DOMAIN_BLS_TO_EXECUTION_CHANGE, genesis_validators_root=state.genesis_validators_root
+            DOMAIN_BLS_TO_SILA_CHANGE, genesis_validators_root=state.genesis_validators_root
         )
         signing_root = compute_signing_root(address_change, domain)
         assert bls.Verify(address_change.from_bls_pubkey, signing_root, signed_address_change.signature)
 
         validator.withdrawal_credentials = (
-            SilaExecution_ADDRESS_WITHDRAWAL_PREFIX + b"\x00" * 11 + address_change.to_execution_address
+            SilaExecution_ADDRESS_WITHDRAWAL_PREFIX + b"\x00" * 11 + address_change.to_sila_address
         )
     </spec>
 
@@ -10108,7 +10108,7 @@
         for_ops(body.deposits, process_deposit)
         for_ops(body.voluntary_exits, process_voluntary_exit)
         # [New in Capella]
-        for_ops(body.bls_to_execution_changes, process_bls_to_execution_change)
+        for_ops(body.bls_to_sila_changes, process_bls_to_sila_change)
     </spec>
 
 - name: process_operations#electra
@@ -10141,7 +10141,7 @@
         for_ops(body.deposits, process_deposit)
         # [Modified in Electra:SIP7251]
         for_ops(body.voluntary_exits, process_voluntary_exit)
-        for_ops(body.bls_to_execution_changes, process_bls_to_execution_change)
+        for_ops(body.bls_to_sila_changes, process_bls_to_sila_change)
         # [New in Electra:SIP6110]
         for_ops(body.sila_requests.deposits, process_deposit_request)
         # [New in Electra:SIP7002:SIP7251]
@@ -10168,7 +10168,7 @@
         # [Modified in Fulu]
         # Removed `process_deposit`
         for_ops(body.voluntary_exits, process_voluntary_exit)
-        for_ops(body.bls_to_execution_changes, process_bls_to_execution_change)
+        for_ops(body.bls_to_sila_changes, process_bls_to_sila_change)
         for_ops(body.sila_requests.deposits, process_deposit_request)
         for_ops(body.sila_requests.withdrawals, process_withdrawal_request)
         for_ops(body.sila_requests.consolidations, process_consolidation_request)
@@ -10192,7 +10192,7 @@
         for_ops(body.attestations, process_attestation)
         # [Modified in Gloas:SIP7732]
         for_ops(body.voluntary_exits, process_voluntary_exit)
-        for_ops(body.bls_to_execution_changes, process_bls_to_execution_change)
+        for_ops(body.bls_to_sila_changes, process_bls_to_sila_change)
         # [Modified in Gloas:SIP7732]
         # Removed `process_deposit_request`
         # [Modified in Gloas:SIP7732]
@@ -14506,22 +14506,22 @@
         seen.blob_sidecar_tuples.add(sidecar_tuple)
     </spec>
 
-- name: validate_bls_to_execution_change_gossip#capella
+- name: validate_bls_to_sila_change_gossip#capella
   sources: []
   spec: |
-    <spec fn="validate_bls_to_execution_change_gossip" fork="capella" hash="dc7d042d">
-    def validate_bls_to_execution_change_gossip(
+    <spec fn="validate_bls_to_sila_change_gossip" fork="capella" hash="dc7d042d">
+    def validate_bls_to_sila_change_gossip(
         seen: Seen,
         state: BeaconState,
-        signed_bls_to_execution_change: SignedBLSToExecutionChange,
+        signed_bls_to_sila_change: SignedBLSToSilaChange,
         current_time_ms: uint64,
     ) -> None:
         """
-        Validate a SignedBLSToExecutionChange for gossip propagation.
+        Validate a SignedBLSToSilaChange for gossip propagation.
         Raises GossipIgnore or GossipReject on validation failure.
         """
-        bls_to_execution_change = signed_bls_to_execution_change.message
-        validator_index = bls_to_execution_change.validator_index
+        bls_to_sila_change = signed_bls_to_sila_change.message
+        validator_index = bls_to_sila_change.validator_index
 
         # [IGNORE] The current epoch is at or after the Capella fork epoch
         # (where current_epoch is defined by the current wall-clock time)
@@ -14531,9 +14531,9 @@
         if current_epoch < CAPELLA_FORK_EPOCH:
             raise GossipIgnore("current epoch is pre-capella")
 
-        # [IGNORE] This is the first valid bls_to_execution_change received for the validator
-        if validator_index in seen.bls_to_execution_change_indices:
-            raise GossipIgnore("already seen BLS to execution change for this validator")
+        # [IGNORE] This is the first valid bls_to_sila_change received for the validator
+        if validator_index in seen.bls_to_sila_change_indices:
+            raise GossipIgnore("already seen BLS to Sila change for this validator")
 
         # [REJECT] The validator index is valid
         if validator_index >= len(state.validators):
@@ -14545,24 +14545,24 @@
         if validator.withdrawal_credentials[:1] != BLS_WITHDRAWAL_PREFIX:
             raise GossipReject("validator does not have BLS withdrawal credentials")
 
-        # [REJECT] The bls_to_execution_change is for the validator's withdrawal pubkey
-        if validator.withdrawal_credentials[1:] != hash(bls_to_execution_change.from_bls_pubkey)[1:]:
+        # [REJECT] The bls_to_sila_change is for the validator's withdrawal pubkey
+        if validator.withdrawal_credentials[1:] != hash(bls_to_sila_change.from_bls_pubkey)[1:]:
             raise GossipReject("pubkey does not match validator withdrawal credentials")
 
         # [REJECT] The signature is valid
         domain = compute_domain(
-            DOMAIN_BLS_TO_EXECUTION_CHANGE, genesis_validators_root=state.genesis_validators_root
+            DOMAIN_BLS_TO_SILA_CHANGE, genesis_validators_root=state.genesis_validators_root
         )
-        signing_root = compute_signing_root(bls_to_execution_change, domain)
+        signing_root = compute_signing_root(bls_to_sila_change, domain)
         if not bls.Verify(
-            bls_to_execution_change.from_bls_pubkey,
+            bls_to_sila_change.from_bls_pubkey,
             signing_root,
-            signed_bls_to_execution_change.signature,
+            signed_bls_to_sila_change.signature,
         ):
-            raise GossipReject("invalid BLS to execution change signature")
+            raise GossipReject("invalid BLS to Sila change signature")
 
-        # Mark this bls_to_execution_change as seen
-        seen.bls_to_execution_change_indices.add(validator_index)
+        # Mark this bls_to_sila_change as seen
+        seen.bls_to_sila_change_indices.add(validator_index)
     </spec>
 
 - name: validate_data_column_sidecar_gossip#fulu

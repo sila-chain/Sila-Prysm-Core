@@ -54,7 +54,7 @@ type BeaconBlockBody struct {
 	syncAggregate             *eth.SyncAggregate
 	silaPayload          interfaces.ExecutionData
 	silaPayloadHeader    interfaces.ExecutionData
-	blsToExecutionChanges     []*eth.SignedBLSToExecutionChange
+	blsToSilaChanges     []*eth.SignedBLSToSilaChange
 	blobKzgCommitments        [][]byte
 	silaRequests         *silaenginev1.SilaRequests
 	signedSilaPayloadBid *eth.SignedSilaPayloadBid

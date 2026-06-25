@@ -11,19 +11,19 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 )
 
-func (s *Service) validateBlsToExecutionChange(ctx context.Context, pid peer.ID, msg *pubsub.Message) (pubsub.ValidationResult, error) {
+func (s *Service) validateBlsToSilaChange(ctx context.Context, pid peer.ID, msg *pubsub.Message) (pubsub.ValidationResult, error) {
 	// Validation runs on publish (not just subscriptions), so we should approve any message from
 	// ourselves.
 	if pid == s.cfg.p2p.PeerID() {
 		return pubsub.ValidationAccept, nil
 	}
 
-	// The head state will be too far away to validate any execution change.
+	// The head state will be too far away to validate any Sila change.
 	if s.cfg.initialSync.Syncing() {
 		return pubsub.ValidationIgnore, nil
 	}
 
-	ctx, span := trace.StartSpan(ctx, "sync.validateBlsToExecutionChange")
+	ctx, span := trace.StartSpan(ctx, "sync.validateBlsToSilaChange")
 	defer span.End()
 
 	m, err := s.decodePubsubMessage(msg)
@@ -32,12 +32,12 @@ func (s *Service) validateBlsToExecutionChange(ctx context.Context, pid peer.ID,
 		return pubsub.ValidationReject, err
 	}
 
-	blsChange, ok := m.(*silapb.SignedBLSToExecutionChange)
+	blsChange, ok := m.(*silapb.SignedBLSToSilaChange)
 	if !ok {
 		return pubsub.ValidationReject, errWrongMessage
 	}
 
-	// Check that the validator hasn't submitted a previous execution change.
+	// Check that the validator hasn't submitted a previous Sila change.
 	if blsChange.Message == nil {
 		return pubsub.ValidationReject, errNilMessage
 	}
@@ -48,17 +48,17 @@ func (s *Service) validateBlsToExecutionChange(ctx context.Context, pid peer.ID,
 	if err != nil {
 		return pubsub.ValidationIgnore, err
 	}
-	// Validate that the execution change object is valid.
-	_, err = blocks.ValidateBLSToExecutionChange(st, blsChange)
+	// Validate that the Sila change object is valid.
+	_, err = blocks.ValidateBLSToSilaChange(st, blsChange)
 	if err != nil {
 		return pubsub.ValidationReject, err
 	}
 	// Validate the signature of the message using our batch gossip verifier.
-	sigBatch, err := blocks.BLSChangesSignatureBatch(st, []*silapb.SignedBLSToExecutionChange{blsChange})
+	sigBatch, err := blocks.BLSChangesSignatureBatch(st, []*silapb.SignedBLSToSilaChange{blsChange})
 	if err != nil {
 		return pubsub.ValidationReject, err
 	}
-	res, err := s.validateWithBatchVerifier(ctx, "bls to execution change", sigBatch)
+	res, err := s.validateWithBatchVerifier(ctx, "bls to Sila change", sigBatch)
 	if res != pubsub.ValidationAccept {
 		return res, err
 	}

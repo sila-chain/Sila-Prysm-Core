@@ -29,7 +29,7 @@ const (
 	getForkSchedulePath      = "/sila/v1/config/fork_schedule"
 	getConfigSpecPath        = "/sila/v1/config/spec"
 	getStatePath             = "/sila/v2/debug/beacon/states"
-	changeBLStoExecutionPath = "/sila/v1/beacon/pool/bls_to_execution_changes"
+	changeBLStoExecutionPath = "/sila/v1/beacon/pool/bls_to_sila_changes"
 
 	GetNodeVersionPath      = "/sila/v1/node/version"
 	GetWeakSubjectivityPath = "/sila/v1/beacon/weak_subjectivity"
@@ -263,7 +263,7 @@ func (c *Client) GetWeakSubjectivity(ctx context.Context) (*WeakSubjectivityData
 
 // SubmitChangeBLStoExecution calls a beacon API endpoint to set the withdrawal addresses based on the given signed messages.
 // If the API responds with something other than OK there will be failure messages associated to the corresponding request message.
-func (c *Client) SubmitChangeBLStoExecution(ctx context.Context, request []*structs.SignedBLSToExecutionChange) error {
+func (c *Client) SubmitChangeBLStoExecution(ctx context.Context, request []*structs.SignedBLSToSilaChange) error {
 	u := c.BaseURL().ResolveReference(&url.URL{Path: changeBLStoExecutionPath})
 	body, err := json.Marshal(request)
 	if err != nil {
@@ -292,7 +292,7 @@ func (c *Client) SubmitChangeBLStoExecution(ctx context.Context, request []*stru
 			w := request[failure.Index].Message
 			log.WithFields(logrus.Fields{
 				"validatorIndex":    w.ValidatorIndex,
-				"withdrawalAddress": w.ToExecutionAddress,
+				"withdrawalAddress": w.ToSilaAddress,
 			}).Error(failure.Message)
 		}
 		return errors.Errorf("POST error %d: %s", errorJson.Code, errorJson.Message)
@@ -300,14 +300,14 @@ func (c *Client) SubmitChangeBLStoExecution(ctx context.Context, request []*stru
 	return nil
 }
 
-// GetBLStoExecutionChanges gets all the set withdrawal messages in the node's operation pool.
+// GetBLStoSilaChanges gets all the set withdrawal messages in the node's operation pool.
 // Returns a struct representation of json response.
-func (c *Client) GetBLStoExecutionChanges(ctx context.Context) (*structs.BLSToExecutionChangesPoolResponse, error) {
+func (c *Client) GetBLStoSilaChanges(ctx context.Context) (*structs.BLSToSilaChangesPoolResponse, error) {
 	body, err := c.Get(ctx, changeBLStoExecutionPath)
 	if err != nil {
 		return nil, err
 	}
-	poolResponse := &structs.BLSToExecutionChangesPoolResponse{}
+	poolResponse := &structs.BLSToSilaChangesPoolResponse{}
 	err = json.Unmarshal(body, poolResponse)
 	if err != nil {
 		return nil, err

@@ -360,7 +360,7 @@ func (body *BeaconBlockBodyCapella) Copy() *BeaconBlockBodyCapella {
 		VoluntaryExits:        CopySlice(body.VoluntaryExits),
 		SyncAggregate:         body.SyncAggregate.Copy(),
 		SilaPayload:      body.SilaPayload.Copy(),
-		BlsToExecutionChanges: CopySlice(body.BlsToExecutionChanges),
+		BlsToSilaChanges: CopySlice(body.BlsToSilaChanges),
 	}
 }
 
@@ -405,30 +405,30 @@ func (body *BlindedBeaconBlockBodyCapella) Copy() *BlindedBeaconBlockBodyCapella
 		VoluntaryExits:         CopySlice(body.VoluntaryExits),
 		SyncAggregate:          body.SyncAggregate.Copy(),
 		SilaPayloadHeader: body.SilaPayloadHeader.Copy(),
-		BlsToExecutionChanges:  CopySlice(body.BlsToExecutionChanges),
+		BlsToSilaChanges:  CopySlice(body.BlsToSilaChanges),
 	}
 }
 
 // Copy --
-func (change *SignedBLSToExecutionChange) Copy() *SignedBLSToExecutionChange {
+func (change *SignedBLSToSilaChange) Copy() *SignedBLSToSilaChange {
 	if change == nil {
 		return nil
 	}
-	return &SignedBLSToExecutionChange{
+	return &SignedBLSToSilaChange{
 		Message:   change.Message.Copy(),
 		Signature: bytesutil.SafeCopyBytes(change.Signature),
 	}
 }
 
 // Copy --
-func (change *BLSToExecutionChange) Copy() *BLSToExecutionChange {
+func (change *BLSToSilaChange) Copy() *BLSToSilaChange {
 	if change == nil {
 		return nil
 	}
-	return &BLSToExecutionChange{
+	return &BLSToSilaChange{
 		ValidatorIndex:     change.ValidatorIndex,
 		FromBlsPubkey:      bytesutil.SafeCopyBytes(change.FromBlsPubkey),
-		ToExecutionAddress: bytesutil.SafeCopyBytes(change.ToExecutionAddress),
+		ToSilaAddress: bytesutil.SafeCopyBytes(change.ToSilaAddress),
 	}
 }
 
@@ -477,7 +477,7 @@ func (body *BlindedBeaconBlockBodyDeneb) Copy() *BlindedBeaconBlockBodyDeneb {
 		VoluntaryExits:         CopySlice(body.VoluntaryExits),
 		SyncAggregate:          body.SyncAggregate.Copy(),
 		SilaPayloadHeader: body.SilaPayloadHeader.Copy(),
-		BlsToExecutionChanges:  CopySlice(body.BlsToExecutionChanges),
+		BlsToSilaChanges:  CopySlice(body.BlsToSilaChanges),
 		BlobKzgCommitments:     CopyBlobKZGs(body.BlobKzgCommitments),
 	}
 }
@@ -523,7 +523,7 @@ func (body *BeaconBlockBodyDeneb) Copy() *BeaconBlockBodyDeneb {
 		VoluntaryExits:        CopySlice(body.VoluntaryExits),
 		SyncAggregate:         body.SyncAggregate.Copy(),
 		SilaPayload:      body.SilaPayload.Copy(),
-		BlsToExecutionChanges: CopySlice(body.BlsToExecutionChanges),
+		BlsToSilaChanges: CopySlice(body.BlsToSilaChanges),
 		BlobKzgCommitments:    CopyBlobKZGs(body.BlobKzgCommitments),
 	}
 }
@@ -578,7 +578,7 @@ func (body *BlindedBeaconBlockBodyElectra) Copy() *BlindedBeaconBlockBodyElectra
 		VoluntaryExits:         CopySlice(body.VoluntaryExits),
 		SyncAggregate:          body.SyncAggregate.Copy(),
 		SilaPayloadHeader: body.SilaPayloadHeader.Copy(),
-		BlsToExecutionChanges:  CopySlice(body.BlsToExecutionChanges),
+		BlsToSilaChanges:  CopySlice(body.BlsToSilaChanges),
 		BlobKzgCommitments:     CopyBlobKZGs(body.BlobKzgCommitments),
 		SilaRequests:      CopySilaRequests(body.SilaRequests),
 	}
@@ -625,7 +625,7 @@ func (body *BeaconBlockBodyElectra) Copy() *BeaconBlockBodyElectra {
 		VoluntaryExits:        CopySlice(body.VoluntaryExits),
 		SyncAggregate:         body.SyncAggregate.Copy(),
 		SilaPayload:      body.SilaPayload.Copy(),
-		BlsToExecutionChanges: CopySlice(body.BlsToExecutionChanges),
+		BlsToSilaChanges: CopySlice(body.BlsToSilaChanges),
 		BlobKzgCommitments:    CopyBlobKZGs(body.BlobKzgCommitments),
 		SilaRequests:     CopySilaRequests(body.SilaRequests),
 	}

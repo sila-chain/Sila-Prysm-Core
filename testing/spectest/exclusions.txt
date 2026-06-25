@@ -23,7 +23,7 @@ tests/mainnet/whisk/ssz_static/AggregateAndProof
 tests/mainnet/whisk/ssz_static/Attestation
 tests/mainnet/whisk/ssz_static/AttestationData
 tests/mainnet/whisk/ssz_static/AttesterSlashing
-tests/mainnet/whisk/ssz_static/BLSToExecutionChange
+tests/mainnet/whisk/ssz_static/BLSToSilaChange
 tests/mainnet/whisk/ssz_static/BeaconBlock
 tests/mainnet/whisk/ssz_static/BeaconBlockBody
 tests/mainnet/whisk/ssz_static/BeaconBlockHeader
@@ -51,7 +51,7 @@ tests/mainnet/whisk/ssz_static/PendingAttestation
 tests/mainnet/whisk/ssz_static/PowBlock
 tests/mainnet/whisk/ssz_static/ProposerSlashing
 tests/mainnet/whisk/ssz_static/SignedAggregateAndProof
-tests/mainnet/whisk/ssz_static/SignedBLSToExecutionChange
+tests/mainnet/whisk/ssz_static/SignedBLSToSilaChange
 tests/mainnet/whisk/ssz_static/SignedBeaconBlock
 tests/mainnet/whisk/ssz_static/SignedBeaconBlockHeader
 tests/mainnet/whisk/ssz_static/SignedContributionAndProof
@@ -70,7 +70,7 @@ tests/minimal/whisk/ssz_static/AggregateAndProof
 tests/minimal/whisk/ssz_static/Attestation
 tests/minimal/whisk/ssz_static/AttestationData
 tests/minimal/whisk/ssz_static/AttesterSlashing
-tests/minimal/whisk/ssz_static/BLSToExecutionChange
+tests/minimal/whisk/ssz_static/BLSToSilaChange
 tests/minimal/whisk/ssz_static/BeaconBlock
 tests/minimal/whisk/ssz_static/BeaconBlockBody
 tests/minimal/whisk/ssz_static/BeaconBlockHeader
@@ -98,7 +98,7 @@ tests/minimal/whisk/ssz_static/PendingAttestation
 tests/minimal/whisk/ssz_static/PowBlock
 tests/minimal/whisk/ssz_static/ProposerSlashing
 tests/minimal/whisk/ssz_static/SignedAggregateAndProof
-tests/minimal/whisk/ssz_static/SignedBLSToExecutionChange
+tests/minimal/whisk/ssz_static/SignedBLSToSilaChange
 tests/minimal/whisk/ssz_static/SignedBeaconBlock
 tests/minimal/whisk/ssz_static/SignedBeaconBlockHeader
 tests/minimal/whisk/ssz_static/SignedContributionAndProof

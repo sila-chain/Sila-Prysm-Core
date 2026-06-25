@@ -374,7 +374,7 @@ func TestHandleCaches_DisablingLargeSize(t *testing.T) {
 	assert.LogsContain(t, hook, "Reducing committee cache size")
 }
 
-func TestHandleBlockBLSToExecutionChanges(t *testing.T) {
+func TestHandleBlockBLSToSilaChanges(t *testing.T) {
 	service, tr := minimalTestService(t)
 	pool := tr.blsPool
 
@@ -400,14 +400,14 @@ func TestHandleBlockBLSToExecutionChanges(t *testing.T) {
 
 	t.Run("Post Capella some changes", func(t *testing.T) {
 		idx := primitives.ValidatorIndex(123)
-		change := &silapb.BLSToExecutionChange{
+		change := &silapb.BLSToSilaChange{
 			ValidatorIndex: idx,
 		}
-		signedChange := &silapb.SignedBLSToExecutionChange{
+		signedChange := &silapb.SignedBLSToSilaChange{
 			Message: change,
 		}
 		body := &silapb.BeaconBlockBodyCapella{
-			BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{signedChange},
+			BlsToSilaChanges: []*silapb.SignedBLSToSilaChange{signedChange},
 		}
 		pbb := &silapb.BeaconBlockCapella{
 			Body: body,

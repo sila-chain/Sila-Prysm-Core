@@ -216,17 +216,17 @@ func processBlockForProposing(ctx context.Context, st state.BeaconState, signed 
 		//This should not happen as we must have failed one of the above signatures.
 		return st, nil
 	}
-	// Verify BLS to execution changes signatures
+	// Verify BLS to Sila changes signatures
 	blsChangeSigs := set.BLSChangeSignatures
 	if blsChangeSigs == nil {
-		return nil, ErrBLSToExecutionChangesSignatureInvalid
+		return nil, ErrBLSToSilaChangesSignatureInvalid
 	}
 	valid, err = blsChangeSigs.Verify()
 	if err != nil {
 		return nil, err
 	}
 	if !valid {
-		return nil, ErrBLSToExecutionChangesSignatureInvalid
+		return nil, ErrBLSToSilaChangesSignatureInvalid
 	}
 	// We should not reach this point as one of the above signatures must have failed.
 	return st, nil
@@ -303,13 +303,13 @@ func ProcessBlockNoVerifyAnySig(
 
 	// Merge beacon block, randao and attestations signatures into a set.
 	if blk.Version() >= version.Capella {
-		changes, err := signed.Block().Body().BLSToExecutionChanges()
+		changes, err := signed.Block().Body().BLSToSilaChanges()
 		if err != nil {
-			return set, nil, errors.Wrap(err, "could not get BLSToExecutionChanges")
+			return set, nil, errors.Wrap(err, "could not get BLSToSilaChanges")
 		}
 		cSet, err := b.BLSChangesSignatureBatch(st, changes)
 		if err != nil {
-			return set, nil, errors.Wrap(err, "could not get BLSToExecutionChanges signatures")
+			return set, nil, errors.Wrap(err, "could not get BLSToSilaChanges signatures")
 		}
 		set.BLSChangeSignatures = cSet
 	}
@@ -342,7 +342,7 @@ func ProcessBlockNoVerifyAnySig(
 //	    for_ops(body.attestations, process_attestation)  # [Modified in Electra:SIP7549]
 //	    for_ops(body.deposits, process_deposit)  # [Modified in Electra:SIP7251]
 //	    for_ops(body.voluntary_exits, process_voluntary_exit)  # [Modified in Electra:SIP7251]
-//	    for_ops(body.bls_to_execution_changes, process_bls_to_execution_change)
+//	    for_ops(body.bls_to_sila_changes, process_bls_to_sila_change)
 //	    # [New in Electra:SIP7002:SIP7251]
 //	    for_ops(body.sila_payload.withdrawal_requests, process_execution_layer_withdrawal_request)
 //	    for_ops(body.sila_payload.deposit_requests, process_deposit_requests)  # [New in Electra:SIP6110]
@@ -559,7 +559,7 @@ func altairOperations(ctx context.Context, st state.BeaconState, beaconBlock int
 	if err != nil {
 		return nil, errors.Wrap(ErrProcessVoluntaryExitsFailed, err.Error())
 	}
-	st, err = b.ProcessBLSToExecutionChanges(st, beaconBlock)
+	st, err = b.ProcessBLSToSilaChanges(st, beaconBlock)
 	if err != nil {
 		return nil, errors.Wrap(ErrProcessBLSChangesFailed, err.Error())
 	}

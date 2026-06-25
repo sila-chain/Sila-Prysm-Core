@@ -175,20 +175,20 @@ func TestElectraOperations_ProcessingErrors(t *testing.T) {
 		{
 			name: "ErrProcessBLSChangesFailed",
 			modifyBlk: func(blk *silapb.SignedBeaconBlockElectra) {
-				// Create BLS to execution change with invalid validator index
-				blk.Block.Body.BlsToExecutionChanges = []*silapb.SignedBLSToExecutionChange{
+				// Create BLS to Sila change with invalid validator index
+				blk.Block.Body.BlsToSilaChanges = []*silapb.SignedBLSToSilaChange{
 					{
-						Message: &silapb.BLSToExecutionChange{
+						Message: &silapb.BLSToSilaChange{
 							ValidatorIndex:     999999, // Invalid index (out of bounds)
 							FromBlsPubkey:      make([]byte, 48),
-							ToExecutionAddress: make([]byte, 20),
+							ToSilaAddress: make([]byte, 20),
 						},
 						Signature: make([]byte, 96),
 					},
 				}
 			},
 			errCheck: func(t *testing.T, err error) {
-				require.ErrorContains(t, "process BLS to execution changes failed", err)
+				require.ErrorContains(t, "process BLS to Sila changes failed", err)
 				require.Equal(t, true, errors.Is(err, transition.ErrProcessBLSChangesFailed))
 			},
 		},

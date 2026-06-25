@@ -58,8 +58,8 @@ const (
 	ChainReorgTopic = "chain_reorg"
 	// SyncCommitteeContributionTopic represents a new sync committee contribution event topic.
 	SyncCommitteeContributionTopic = "contribution_and_proof"
-	// BLSToExecutionChangeTopic represents a new received BLS to execution change event topic.
-	BLSToExecutionChangeTopic = "bls_to_execution_change"
+	// BLSToSilaChangeTopic represents a new received BLS to Sila change event topic.
+	BLSToSilaChangeTopic = "bls_to_sila_change"
 	// PayloadAttributesTopic represents a new payload attributes for sila payload building event topic.
 	PayloadAttributesTopic = "payload_attributes"
 	// BlobSidecarTopic represents a new blob sidecar event topic
@@ -119,7 +119,7 @@ var opsFeedEventTopics = map[feed.EventType]string{
 	operation.SingleAttReceived:                 SingleAttestationTopic,
 	operation.ExitReceived:                      VoluntaryExitTopic,
 	operation.SyncCommitteeContributionReceived: SyncCommitteeContributionTopic,
-	operation.BLSToExecutionChangeReceived:      BLSToExecutionChangeTopic,
+	operation.BLSToSilaChangeReceived:      BLSToSilaChangeTopic,
 	operation.BlobSidecarReceived:               BlobSidecarTopic,
 	operation.AttesterSlashingReceived:          AttesterSlashingTopic,
 	operation.ProposerSlashingReceived:          ProposerSlashingTopic,
@@ -466,8 +466,8 @@ func topicForEvent(event *feed.Event) string {
 		return VoluntaryExitTopic
 	case *operation.SyncCommitteeContributionReceivedData:
 		return SyncCommitteeContributionTopic
-	case *operation.BLSToExecutionChangeReceivedData:
-		return BLSToExecutionChangeTopic
+	case *operation.BLSToSilaChangeReceivedData:
+		return BLSToSilaChangeTopic
 	case *operation.BlobSidecarReceivedData:
 		return BlobSidecarTopic
 	case *operation.AttesterSlashingReceivedData:
@@ -597,7 +597,7 @@ func (s *Server) lazyReaderForEvent(ctx context.Context, event *feed.Event, topi
 		return func() io.Reader {
 			return jsonMarshalReader(eventName, structs.SignedContributionAndProofFromConsensus(v.Contribution))
 		}, nil
-	case *operation.BLSToExecutionChangeReceivedData:
+	case *operation.BLSToSilaChangeReceivedData:
 		return func() io.Reader {
 			return jsonMarshalReader(eventName, structs.SignedBLSChangeFromConsensus(v.Change))
 		}, nil

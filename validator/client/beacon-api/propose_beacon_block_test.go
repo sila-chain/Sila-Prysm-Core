@@ -557,7 +557,7 @@ func generateSignedBlindedCapellaBlock() *silapb.GenericSignedBeaconBlock_Blinde
 						TransactionsRoot: testhelpers.FillByteSlice(32, 52),
 						WithdrawalsRoot:  testhelpers.FillByteSlice(32, 53),
 					},
-					BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{},
+					BlsToSilaChanges: []*silapb.SignedBLSToSilaChange{},
 				},
 			},
 			Signature: testhelpers.FillByteSlice(96, 54),

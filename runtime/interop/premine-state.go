@@ -513,7 +513,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				Transactions:  make([][]byte, 0),
 				Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			},
-			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
+			BlsToSilaChanges: make([]*silapb.SignedBLSToSilaChange, 0),
 		}
 	case version.Deneb:
 		body = &silapb.BeaconBlockBodyDeneb{
@@ -540,7 +540,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				Transactions:  make([][]byte, 0),
 				Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			},
-			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
+			BlsToSilaChanges: make([]*silapb.SignedBLSToSilaChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
 		}
 	case version.Electra:
@@ -568,7 +568,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				Transactions:  make([][]byte, 0),
 				Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			},
-			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
+			BlsToSilaChanges: make([]*silapb.SignedBLSToSilaChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
 			SilaRequests: &silaenginev1.SilaRequests{
 				Deposits:       make([]*silaenginev1.DepositRequest, 0),
@@ -601,7 +601,7 @@ func (s *PremineGenesisConfig) setLatestBlockHeader(g state.BeaconState) error {
 				Transactions:  make([][]byte, 0),
 				Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			},
-			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
+			BlsToSilaChanges: make([]*silapb.SignedBLSToSilaChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
 			SilaRequests: &silaenginev1.SilaRequests{
 				Deposits:       make([]*silaenginev1.DepositRequest, 0),

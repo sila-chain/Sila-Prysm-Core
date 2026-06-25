@@ -50,7 +50,7 @@ func Test_endpoints(t *testing.T) {
 		"/sila/v1/beacon/pool/proposer_slashings":                       {http.MethodGet, http.MethodPost},
 		"/sila/v1/beacon/pool/sync_committees":                          {http.MethodPost},
 		"/sila/v1/beacon/pool/voluntary_exits":                          {http.MethodGet, http.MethodPost},
-		"/sila/v1/beacon/pool/bls_to_execution_changes":                 {http.MethodGet, http.MethodPost},
+		"/sila/v1/beacon/pool/bls_to_sila_changes":                 {http.MethodGet, http.MethodPost},
 		"/sila/v1/beacon/pool/payload_attestations":                     {http.MethodGet, http.MethodPost},
 		"/sila/v1/beacon/individual_votes":                             {http.MethodPost},
 	}

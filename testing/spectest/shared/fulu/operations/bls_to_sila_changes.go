@@ -12,15 +12,15 @@ import (
 )
 
 func blockWithBlsChange(ssz []byte) (interfaces.SignedBeaconBlock, error) {
-	c := &silapb.SignedBLSToExecutionChange{}
+	c := &silapb.SignedBLSToSilaChange{}
 	if err := c.UnmarshalSSZ(ssz); err != nil {
 		return nil, err
 	}
 	b := util.NewBeaconBlockElectra()
-	b.Block.Body = &silapb.BeaconBlockBodyElectra{BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{c}}
+	b.Block.Body = &silapb.BeaconBlockBodyElectra{BlsToSilaChanges: []*silapb.SignedBLSToSilaChange{c}}
 	return blocks.NewSignedBeaconBlock(b)
 }
 
-func RunBLSToExecutionChangeTest(t *testing.T, config string) {
-	common.RunBLSToExecutionChangeTest(t, config, version.String(version.Fulu), blockWithBlsChange, sszToState)
+func RunBLSToSilaChangeTest(t *testing.T, config string) {
+	common.RunBLSToSilaChangeTest(t, config, version.String(version.Fulu), blockWithBlsChange, sszToState)
 }

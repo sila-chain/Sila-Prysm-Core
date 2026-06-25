@@ -31,7 +31,7 @@ type fields struct {
 	execPayloadHeaderCapella *silaenginev1.SilaPayloadHeaderCapella
 	execPayloadDeneb         *silaenginev1.SilaPayloadDeneb
 	execPayloadHeaderDeneb   *silaenginev1.SilaPayloadHeaderDeneb
-	blsToExecutionChanges    []*eth.SignedBLSToExecutionChange
+	blsToSilaChanges    []*eth.SignedBLSToSilaChange
 	kzgCommitments           [][]byte
 	execRequests             *silaenginev1.SilaRequests
 }
@@ -1442,7 +1442,7 @@ func bodyPbCapella() *eth.BeaconBlockBodyCapella {
 		VoluntaryExits:        f.voluntaryExits,
 		SyncAggregate:         f.syncAggregate,
 		SilaPayload:      f.execPayloadCapella,
-		BlsToExecutionChanges: f.blsToExecutionChanges,
+		BlsToSilaChanges: f.blsToSilaChanges,
 	}
 }
 
@@ -1463,7 +1463,7 @@ func bodyPbBlindedCapella() *eth.BlindedBeaconBlockBodyCapella {
 		VoluntaryExits:         f.voluntaryExits,
 		SyncAggregate:          f.syncAggregate,
 		SilaPayloadHeader: f.execPayloadHeaderCapella,
-		BlsToExecutionChanges:  f.blsToExecutionChanges,
+		BlsToSilaChanges:  f.blsToSilaChanges,
 	}
 }
 
@@ -1484,7 +1484,7 @@ func bodyPbDeneb() *eth.BeaconBlockBodyDeneb {
 		VoluntaryExits:        f.voluntaryExits,
 		SyncAggregate:         f.syncAggregate,
 		SilaPayload:      f.execPayloadDeneb,
-		BlsToExecutionChanges: f.blsToExecutionChanges,
+		BlsToSilaChanges: f.blsToSilaChanges,
 		BlobKzgCommitments:    f.kzgCommitments,
 	}
 }
@@ -1506,7 +1506,7 @@ func bodyPbBlindedDeneb() *eth.BlindedBeaconBlockBodyDeneb {
 		VoluntaryExits:         f.voluntaryExits,
 		SyncAggregate:          f.syncAggregate,
 		SilaPayloadHeader: f.execPayloadHeaderDeneb,
-		BlsToExecutionChanges:  f.blsToExecutionChanges,
+		BlsToSilaChanges:  f.blsToSilaChanges,
 		BlobKzgCommitments:     f.kzgCommitments,
 	}
 }
@@ -1528,7 +1528,7 @@ func bodyPbElectra() *eth.BeaconBlockBodyElectra {
 		VoluntaryExits:        f.voluntaryExits,
 		SyncAggregate:         f.syncAggregate,
 		SilaPayload:      f.execPayloadDeneb,
-		BlsToExecutionChanges: f.blsToExecutionChanges,
+		BlsToSilaChanges: f.blsToSilaChanges,
 		BlobKzgCommitments:    f.kzgCommitments,
 		SilaRequests:     f.execRequests,
 	}
@@ -1551,7 +1551,7 @@ func bodyPbBlindedElectra() *eth.BlindedBeaconBlockBodyElectra {
 		VoluntaryExits:         f.voluntaryExits,
 		SyncAggregate:          f.syncAggregate,
 		SilaPayloadHeader: f.execPayloadHeaderDeneb,
-		BlsToExecutionChanges:  f.blsToExecutionChanges,
+		BlsToSilaChanges:  f.blsToSilaChanges,
 		BlobKzgCommitments:     f.kzgCommitments,
 		SilaRequests:      f.execRequests,
 	}
@@ -1662,7 +1662,7 @@ func bodyCapella(t *testing.T) *BeaconBlockBody {
 		voluntaryExits:        f.voluntaryExits,
 		syncAggregate:         f.syncAggregate,
 		silaPayload:      p,
-		blsToExecutionChanges: f.blsToExecutionChanges,
+		blsToSilaChanges: f.blsToSilaChanges,
 	}
 }
 
@@ -1686,7 +1686,7 @@ func bodyBlindedCapella(t *testing.T) *BeaconBlockBody {
 		voluntaryExits:         f.voluntaryExits,
 		syncAggregate:          f.syncAggregate,
 		silaPayloadHeader: ph,
-		blsToExecutionChanges:  f.blsToExecutionChanges,
+		blsToSilaChanges:  f.blsToSilaChanges,
 	}
 }
 
@@ -1710,7 +1710,7 @@ func bodyDeneb(t *testing.T) *BeaconBlockBody {
 		voluntaryExits:        f.voluntaryExits,
 		syncAggregate:         f.syncAggregate,
 		silaPayload:      p,
-		blsToExecutionChanges: f.blsToExecutionChanges,
+		blsToSilaChanges: f.blsToSilaChanges,
 		blobKzgCommitments:    f.kzgCommitments,
 	}
 }
@@ -1735,7 +1735,7 @@ func bodyBlindedDeneb(t *testing.T) *BeaconBlockBody {
 		voluntaryExits:         f.voluntaryExits,
 		syncAggregate:          f.syncAggregate,
 		silaPayloadHeader: ph,
-		blsToExecutionChanges:  f.blsToExecutionChanges,
+		blsToSilaChanges:  f.blsToSilaChanges,
 		blobKzgCommitments:     f.kzgCommitments,
 	}
 }
@@ -1760,7 +1760,7 @@ func bodyElectra(t *testing.T) *BeaconBlockBody {
 		voluntaryExits:           f.voluntaryExits,
 		syncAggregate:            f.syncAggregate,
 		silaPayload:         p,
-		blsToExecutionChanges:    f.blsToExecutionChanges,
+		blsToSilaChanges:    f.blsToSilaChanges,
 		blobKzgCommitments:       f.kzgCommitments,
 		silaRequests:        f.execRequests,
 	}
@@ -1786,7 +1786,7 @@ func bodyBlindedElectra(t *testing.T) *BeaconBlockBody {
 		voluntaryExits:           f.voluntaryExits,
 		syncAggregate:            f.syncAggregate,
 		silaPayloadHeader:   ph,
-		blsToExecutionChanges:    f.blsToExecutionChanges,
+		blsToSilaChanges:    f.blsToSilaChanges,
 		blobKzgCommitments:       f.kzgCommitments,
 		silaRequests:        f.execRequests,
 	}
@@ -2104,11 +2104,11 @@ func getFields() fields {
 		TransactionsRoot: root[:],
 		WithdrawalsRoot:  root[:],
 	}
-	blsToExecutionChanges := []*eth.SignedBLSToExecutionChange{{
-		Message: &eth.BLSToExecutionChange{
+	blsToSilaChanges := []*eth.SignedBLSToSilaChange{{
+		Message: &eth.BLSToSilaChange{
 			ValidatorIndex:     128,
 			FromBlsPubkey:      b48,
-			ToExecutionAddress: b20,
+			ToSilaAddress: b20,
 		},
 		Signature: sig[:],
 	}}
@@ -2206,7 +2206,7 @@ func getFields() fields {
 		execPayloadHeaderCapella: execPayloadHeaderCapella,
 		execPayloadDeneb:         execPayloadDeneb,
 		execPayloadHeaderDeneb:   execPayloadHeaderDeneb,
-		blsToExecutionChanges:    blsToExecutionChanges,
+		blsToSilaChanges:    blsToSilaChanges,
 		kzgCommitments:           kzgCommitments,
 		execRequests:             execRequests,
 	}

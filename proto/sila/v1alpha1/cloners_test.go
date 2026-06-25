@@ -133,7 +133,7 @@ func TestCopySignedBeaconBlockGloasDeepCopy(t *testing.T) {
 	original.Block.Body.PayloadAttestations[0].Signature[0] ^= 0xFF
 	original.Block.Body.PayloadAttestations[0].Data.BeaconBlockRoot[0] ^= 0xFF
 	original.Block.Body.PayloadAttestations = append(original.Block.Body.PayloadAttestations, &v1alpha1.PayloadAttestation{})
-	original.Block.Body.BlsToExecutionChanges[0].Message.ValidatorIndex++
+	original.Block.Body.BlsToSilaChanges[0].Message.ValidatorIndex++
 
 	if !reflect.DeepEqual(want, copied) {
 		t.Fatalf("copy mutated after modifying source: got %v, want %v", copied, want)
@@ -704,7 +704,7 @@ func genBeaconBlockBodyCapella() *v1alpha1.BeaconBlockBodyCapella {
 		VoluntaryExits:        genSignedVoluntaryExits(12),
 		SyncAggregate:         genSyncAggregate(),
 		SilaPayload:      genPayloadCapella(),
-		BlsToExecutionChanges: genBLSToExecutionChanges(10),
+		BlsToSilaChanges: genBLSToSilaChanges(10),
 	}
 }
 
@@ -737,7 +737,7 @@ func genBlindedBeaconBlockBodyCapella() *v1alpha1.BlindedBeaconBlockBodyCapella 
 		VoluntaryExits:         genSignedVoluntaryExits(12),
 		SyncAggregate:          genSyncAggregate(),
 		SilaPayloadHeader: genPayloadHeaderCapella(),
-		BlsToExecutionChanges:  genBLSToExecutionChanges(10),
+		BlsToSilaChanges:  genBLSToSilaChanges(10),
 	}
 }
 
@@ -770,7 +770,7 @@ func genBeaconBlockBodyDeneb() *v1alpha1.BeaconBlockBodyDeneb {
 		VoluntaryExits:        genSignedVoluntaryExits(12),
 		SyncAggregate:         genSyncAggregate(),
 		SilaPayload:      genPayloadDeneb(),
-		BlsToExecutionChanges: genBLSToExecutionChanges(10),
+		BlsToSilaChanges: genBLSToSilaChanges(10),
 		BlobKzgCommitments:    getKZGCommitments(4),
 	}
 }
@@ -804,7 +804,7 @@ func genBlindedBeaconBlockBodyDeneb() *v1alpha1.BlindedBeaconBlockBodyDeneb {
 		VoluntaryExits:         genSignedVoluntaryExits(12),
 		SyncAggregate:          genSyncAggregate(),
 		SilaPayloadHeader: genPayloadHeaderDeneb(),
-		BlsToExecutionChanges:  genBLSToExecutionChanges(10),
+		BlsToSilaChanges:  genBLSToSilaChanges(10),
 		BlobKzgCommitments:     getKZGCommitments(4),
 	}
 }
@@ -985,20 +985,20 @@ func genWithdrawal() *silaenginev1.Withdrawal {
 	}
 }
 
-func genBLSToExecutionChanges(num int) []*v1alpha1.SignedBLSToExecutionChange {
-	changes := make([]*v1alpha1.SignedBLSToExecutionChange, num)
+func genBLSToSilaChanges(num int) []*v1alpha1.SignedBLSToSilaChange {
+	changes := make([]*v1alpha1.SignedBLSToSilaChange, num)
 	for i := range num {
-		changes[i] = genBLSToExecutionChange()
+		changes[i] = genBLSToSilaChange()
 	}
 	return changes
 }
 
-func genBLSToExecutionChange() *v1alpha1.SignedBLSToExecutionChange {
-	return &v1alpha1.SignedBLSToExecutionChange{
-		Message: &v1alpha1.BLSToExecutionChange{
+func genBLSToSilaChange() *v1alpha1.SignedBLSToSilaChange {
+	return &v1alpha1.SignedBLSToSilaChange{
+		Message: &v1alpha1.BLSToSilaChange{
 			ValidatorIndex:     123456,
 			FromBlsPubkey:      bytes(48),
-			ToExecutionAddress: bytes(20),
+			ToSilaAddress: bytes(20),
 		},
 		Signature: bytes(96),
 	}
@@ -1073,7 +1073,7 @@ func genBlindedBeaconBlockBodyElectra() *v1alpha1.BlindedBeaconBlockBodyElectra 
 		VoluntaryExits:         genSignedVoluntaryExits(12),
 		SyncAggregate:          genSyncAggregate(),
 		SilaPayloadHeader: genPayloadHeaderElectra(),
-		BlsToExecutionChanges:  genBLSToExecutionChanges(10),
+		BlsToSilaChanges:  genBLSToSilaChanges(10),
 		BlobKzgCommitments:     getKZGCommitments(4),
 		SilaRequests:      genSilaRequests(),
 	}
@@ -1108,7 +1108,7 @@ func genBeaconBlockBodyElectra() *v1alpha1.BeaconBlockBodyElectra {
 		VoluntaryExits:        genSignedVoluntaryExits(12),
 		SyncAggregate:         genSyncAggregate(),
 		SilaPayload:      genPayloadElectra(),
-		BlsToExecutionChanges: genBLSToExecutionChanges(10),
+		BlsToSilaChanges: genBLSToSilaChanges(10),
 		BlobKzgCommitments:    getKZGCommitments(4),
 		SilaRequests:     genSilaRequests(),
 	}
@@ -1200,7 +1200,7 @@ func genBeaconBlockBodyGloas() *v1alpha1.BeaconBlockBodyGloas {
 		Deposits:                  genDeposits(3),
 		VoluntaryExits:            genSignedVoluntaryExits(3),
 		SyncAggregate:             genSyncAggregate(),
-		BlsToExecutionChanges:     genBLSToExecutionChanges(2),
+		BlsToSilaChanges:     genBLSToSilaChanges(2),
 		SignedSilaPayloadBid: genSignedSilaPayloadBidGloas(),
 		PayloadAttestations:       genPayloadAttestations(2),
 	}

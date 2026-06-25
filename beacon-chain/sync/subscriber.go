@@ -280,9 +280,9 @@ func (s *Service) registerSubscribers(nse params.NetworkScheduleEntry) bool {
 	if params.BeaconConfig().CapellaForkEpoch <= nse.Epoch {
 		s.spawn(func() {
 			s.subscribe(
-				p2p.BlsToExecutionChangeSubnetTopicFormat,
-				s.validateBlsToExecutionChange,
-				s.blsToExecutionChangeSubscriber,
+				p2p.BlsToSilaChangeSubnetTopicFormat,
+				s.validateBlsToSilaChange,
+				s.blsToSilaChangeSubscriber,
 				nse,
 			)
 		})

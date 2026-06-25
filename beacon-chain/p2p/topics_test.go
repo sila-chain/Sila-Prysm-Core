@@ -25,7 +25,7 @@ func TestAllTopics(t *testing.T) {
 		"/sila/ad532ceb/sync_committee_contribution_and_proof/ssz_snappy",
 		"/sila/ad532ceb/beacon_aggregate_and_proof/ssz_snappy",
 		"/sila/ad532ceb/beacon_block/ssz_snappy",
-		"/sila/ad532ceb/bls_to_execution_change/ssz_snappy",
+		"/sila/ad532ceb/bls_to_sila_change/ssz_snappy",
 		"/sila/afcaaba0/beacon_attestation_19/ssz_snappy",
 		"/sila/cc2c5cdb/data_column_sidecar_0/ssz_snappy",
 		"/sila/cc2c5cdb/data_column_sidecar_127/ssz_snappy",

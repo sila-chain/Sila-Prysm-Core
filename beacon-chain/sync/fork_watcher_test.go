@@ -135,7 +135,7 @@ func TestService_CheckForNextEpochFork(t *testing.T) {
 					rpcMap[string(p)] = true
 				}
 
-				expected := fmt.Sprintf(p2p.BlsToExecutionChangeSubnetTopicFormat+s.cfg.p2p.Encoding().ProtocolSuffix(), digest)
+				expected := fmt.Sprintf(p2p.BlsToSilaChangeSubnetTopicFormat+s.cfg.p2p.Encoding().ProtocolSuffix(), digest)
 				assert.Equal(t, true, s.subHandler.topicExists(expected), "subnet topic doesn't exist")
 			},
 			forkEpoch:           params.BeaconConfig().CapellaForkEpoch,

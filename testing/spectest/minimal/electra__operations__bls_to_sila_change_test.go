@@ -6,6 +6,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/electra/operations"
 )
 
-func TestMinimal_Electra_Operations_BLSToExecutionChange(t *testing.T) {
-	operations.RunBLSToExecutionChangeTest(t, "minimal")
+func TestMinimal_Electra_Operations_BLSToSilaChange(t *testing.T) {
+	operations.RunBLSToSilaChangeTest(t, "minimal")
 }

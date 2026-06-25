@@ -66,7 +66,7 @@ type ReadOnlyBeaconBlockBody interface {
 	HashTreeRoot() ([field_params.RootLength]byte, error)
 	Proto() (proto.Message, error)
 	Execution() (ExecutionData, error)
-	BLSToExecutionChanges() ([]*silapb.SignedBLSToExecutionChange, error)
+	BLSToSilaChanges() ([]*silapb.SignedBLSToSilaChange, error)
 	BlobKzgCommitments() ([][]byte, error)
 	SilaRequests() (*silaenginev1.SilaRequests, error)
 	PayloadAttestations() ([]*silapb.PayloadAttestation, error)
@@ -77,7 +77,7 @@ type ReadOnlyBeaconBlockBody interface {
 type SignedBeaconBlock interface {
 	ReadOnlySignedBeaconBlock
 	SetExecution(ExecutionData) error
-	SetBLSToExecutionChanges([]*silapb.SignedBLSToExecutionChange) error
+	SetBLSToSilaChanges([]*silapb.SignedBLSToSilaChange) error
 	SetBlobKzgCommitments(c [][]byte) error
 	SetSyncAggregate(*silapb.SyncAggregate) error
 	SetVoluntaryExits([]*silapb.SignedVoluntaryExit)

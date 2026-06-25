@@ -442,9 +442,9 @@ func (s *Service) saveOrphanedOperations(ctx context.Context, orphanedRoot [32]b
 			s.cfg.ExitPool.InsertVoluntaryExit(v)
 		}
 		if orphanedBlk.Version() >= version.Capella {
-			changes, err := orphanedBlk.Block().Body().BLSToExecutionChanges()
+			changes, err := orphanedBlk.Block().Body().BLSToSilaChanges()
 			if err != nil {
-				return errors.Wrap(err, "could not get BLSToExecutionChanges")
+				return errors.Wrap(err, "could not get BLSToSilaChanges")
 			}
 			for _, c := range changes {
 				s.cfg.BLSToExecPool.InsertBLSToExecChange(c)

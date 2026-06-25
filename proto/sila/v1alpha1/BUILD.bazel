@@ -108,7 +108,7 @@ ssz_bellatrix_objs = [
 ]
 
 ssz_capella_objs = [
-    "BLSToExecutionChange",
+    "BLSToSilaChange",
     "BeaconBlockBodyCapella",
     "BeaconBlockCapella",
     "BeaconStateCapella",
@@ -121,7 +121,7 @@ ssz_capella_objs = [
     "LightClientUpdateCapella",
     "LightClientFinalityUpdateCapella",
     "LightClientOptimisticUpdateCapella",
-    "SignedBLSToExecutionChange",
+    "SignedBLSToSilaChange",
     "SignedBeaconBlockCapella",
     "SignedBlindedBeaconBlockCapella",
     "Withdrawal",

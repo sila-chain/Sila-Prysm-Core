@@ -528,7 +528,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 				VoluntaryExits:         b.voluntaryExits,
 				SyncAggregate:          b.syncAggregate,
 				SilaPayloadHeader: ph,
-				BlsToExecutionChanges:  b.blsToExecutionChanges,
+				BlsToSilaChanges:  b.blsToSilaChanges,
 			}, nil
 		}
 		var p *silaenginev1.SilaPayloadCapella
@@ -550,7 +550,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 			VoluntaryExits:        b.voluntaryExits,
 			SyncAggregate:         b.syncAggregate,
 			SilaPayload:      p,
-			BlsToExecutionChanges: b.blsToExecutionChanges,
+			BlsToSilaChanges: b.blsToSilaChanges,
 		}, nil
 	case version.Deneb:
 		if b.IsBlinded() {
@@ -573,7 +573,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 				VoluntaryExits:         b.voluntaryExits,
 				SyncAggregate:          b.syncAggregate,
 				SilaPayloadHeader: ph,
-				BlsToExecutionChanges:  b.blsToExecutionChanges,
+				BlsToSilaChanges:  b.blsToSilaChanges,
 				BlobKzgCommitments:     b.blobKzgCommitments,
 			}, nil
 		}
@@ -596,7 +596,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 			VoluntaryExits:        b.voluntaryExits,
 			SyncAggregate:         b.syncAggregate,
 			SilaPayload:      p,
-			BlsToExecutionChanges: b.blsToExecutionChanges,
+			BlsToSilaChanges: b.blsToSilaChanges,
 			BlobKzgCommitments:    b.blobKzgCommitments,
 		}, nil
 	case version.Electra:
@@ -620,7 +620,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 				VoluntaryExits:         b.voluntaryExits,
 				SyncAggregate:          b.syncAggregate,
 				SilaPayloadHeader: ph,
-				BlsToExecutionChanges:  b.blsToExecutionChanges,
+				BlsToSilaChanges:  b.blsToSilaChanges,
 				BlobKzgCommitments:     b.blobKzgCommitments,
 				SilaRequests:      b.silaRequests,
 			}, nil
@@ -644,7 +644,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 			VoluntaryExits:        b.voluntaryExits,
 			SyncAggregate:         b.syncAggregate,
 			SilaPayload:      p,
-			BlsToExecutionChanges: b.blsToExecutionChanges,
+			BlsToSilaChanges: b.blsToSilaChanges,
 			BlobKzgCommitments:    b.blobKzgCommitments,
 			SilaRequests:     b.silaRequests,
 		}, nil
@@ -669,7 +669,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 				VoluntaryExits:         b.voluntaryExits,
 				SyncAggregate:          b.syncAggregate,
 				SilaPayloadHeader: ph,
-				BlsToExecutionChanges:  b.blsToExecutionChanges,
+				BlsToSilaChanges:  b.blsToSilaChanges,
 				BlobKzgCommitments:     b.blobKzgCommitments,
 				SilaRequests:      b.silaRequests,
 			}, nil
@@ -693,7 +693,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 			VoluntaryExits:        b.voluntaryExits,
 			SyncAggregate:         b.syncAggregate,
 			SilaPayload:      p,
-			BlsToExecutionChanges: b.blsToExecutionChanges,
+			BlsToSilaChanges: b.blsToSilaChanges,
 			BlobKzgCommitments:    b.blobKzgCommitments,
 			SilaRequests:     b.silaRequests,
 		}, nil
@@ -708,7 +708,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 			Deposits:                  b.deposits,
 			VoluntaryExits:            b.voluntaryExits,
 			SyncAggregate:             b.syncAggregate,
-			BlsToExecutionChanges:     b.blsToExecutionChanges,
+			BlsToSilaChanges:     b.blsToSilaChanges,
 			SignedSilaPayloadBid: b.signedSilaPayloadBid,
 			PayloadAttestations:       b.payloadAttestations,
 			ParentSilaRequests:   b.parentSilaRequests,
@@ -1069,7 +1069,7 @@ func initBlockBodyFromProtoCapella(pb *eth.BeaconBlockBodyCapella) (*BeaconBlock
 		voluntaryExits:        pb.VoluntaryExits,
 		syncAggregate:         pb.SyncAggregate,
 		silaPayload:      p,
-		blsToExecutionChanges: pb.BlsToExecutionChanges,
+		blsToSilaChanges: pb.BlsToSilaChanges,
 	}
 	return b, nil
 }
@@ -1096,7 +1096,7 @@ func initBlindedBlockBodyFromProtoCapella(pb *eth.BlindedBeaconBlockBodyCapella)
 		voluntaryExits:         pb.VoluntaryExits,
 		syncAggregate:          pb.SyncAggregate,
 		silaPayloadHeader: ph,
-		blsToExecutionChanges:  pb.BlsToExecutionChanges,
+		blsToSilaChanges:  pb.BlsToSilaChanges,
 	}
 	return b, nil
 }
@@ -1201,7 +1201,7 @@ func initBlockBodyFromProtoDeneb(pb *eth.BeaconBlockBodyDeneb) (*BeaconBlockBody
 		voluntaryExits:        pb.VoluntaryExits,
 		syncAggregate:         pb.SyncAggregate,
 		silaPayload:      p,
-		blsToExecutionChanges: pb.BlsToExecutionChanges,
+		blsToSilaChanges: pb.BlsToSilaChanges,
 		blobKzgCommitments:    pb.BlobKzgCommitments,
 	}
 	return b, nil
@@ -1229,7 +1229,7 @@ func initBlindedBlockBodyFromProtoDeneb(pb *eth.BlindedBeaconBlockBodyDeneb) (*B
 		voluntaryExits:         pb.VoluntaryExits,
 		syncAggregate:          pb.SyncAggregate,
 		silaPayloadHeader: ph,
-		blsToExecutionChanges:  pb.BlsToExecutionChanges,
+		blsToSilaChanges:  pb.BlsToSilaChanges,
 		blobKzgCommitments:     pb.BlobKzgCommitments,
 	}
 	return b, nil
@@ -1339,7 +1339,7 @@ func initBlockBodyFromProtoElectra(pb *eth.BeaconBlockBodyElectra) (*BeaconBlock
 		voluntaryExits:           pb.VoluntaryExits,
 		syncAggregate:            pb.SyncAggregate,
 		silaPayload:         p,
-		blsToExecutionChanges:    pb.BlsToExecutionChanges,
+		blsToSilaChanges:    pb.BlsToSilaChanges,
 		blobKzgCommitments:       pb.BlobKzgCommitments,
 		silaRequests:        er,
 	}
@@ -1372,7 +1372,7 @@ func initBlindedBlockBodyFromProtoElectra(pb *eth.BlindedBeaconBlockBodyElectra)
 		voluntaryExits:           pb.VoluntaryExits,
 		syncAggregate:            pb.SyncAggregate,
 		silaPayloadHeader:   ph,
-		blsToExecutionChanges:    pb.BlsToExecutionChanges,
+		blsToSilaChanges:    pb.BlsToSilaChanges,
 		blobKzgCommitments:       pb.BlobKzgCommitments,
 		silaRequests:        er,
 	}
@@ -1483,7 +1483,7 @@ func initBlockBodyFromProtoFulu(pb *eth.BeaconBlockBodyElectra) (*BeaconBlockBod
 		voluntaryExits:           pb.VoluntaryExits,
 		syncAggregate:            pb.SyncAggregate,
 		silaPayload:         p,
-		blsToExecutionChanges:    pb.BlsToExecutionChanges,
+		blsToSilaChanges:    pb.BlsToSilaChanges,
 		blobKzgCommitments:       pb.BlobKzgCommitments,
 		silaRequests:        er,
 	}
@@ -1516,7 +1516,7 @@ func initBlindedBlockBodyFromProtoFulu(pb *eth.BlindedBeaconBlockBodyElectra) (*
 		voluntaryExits:           pb.VoluntaryExits,
 		syncAggregate:            pb.SyncAggregate,
 		silaPayloadHeader:   ph,
-		blsToExecutionChanges:    pb.BlsToExecutionChanges,
+		blsToSilaChanges:    pb.BlsToSilaChanges,
 		blobKzgCommitments:       pb.BlobKzgCommitments,
 		silaRequests:        er,
 	}
@@ -1584,7 +1584,7 @@ func initBlockBodyFromProtoGloas(pb *eth.BeaconBlockBodyGloas) (*BeaconBlockBody
 		deposits:                  pb.Deposits,
 		voluntaryExits:            pb.VoluntaryExits,
 		syncAggregate:             pb.SyncAggregate,
-		blsToExecutionChanges:     pb.BlsToExecutionChanges,
+		blsToSilaChanges:     pb.BlsToSilaChanges,
 		signedSilaPayloadBid: pb.SignedSilaPayloadBid,
 		payloadAttestations:       pb.PayloadAttestations,
 		parentSilaRequests:   per,

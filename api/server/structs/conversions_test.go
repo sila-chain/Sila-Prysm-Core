@@ -14,8 +14,8 @@ import (
 	"github.com/sila-chain/Sila/common/hexutil"
 )
 
-func TestSignedBLSToExecutionChange_ToConsensus(t *testing.T) {
-	s := &SignedBLSToExecutionChange{Message: nil, Signature: ""}
+func TestSignedBLSToSilaChange_ToConsensus(t *testing.T) {
+	s := &SignedBLSToSilaChange{Message: nil, Signature: ""}
 	_, err := s.ToConsensus()
 	require.ErrorContains(t, errNilValue.Error(), err)
 }

@@ -99,7 +99,7 @@ func (mb *mockBroadcaster) BroadcastForEpoch(_ context.Context, _ proto.Message,
 	return nil
 }
 
-func (mb *mockBroadcaster) BroadcastBLSChanges(_ context.Context, _ []*silapb.SignedBLSToExecutionChange) {
+func (mb *mockBroadcaster) BroadcastBLSChanges(_ context.Context, _ []*silapb.SignedBLSToSilaChange) {
 }
 
 var _ p2p.Broadcaster = (*mockBroadcaster)(nil)

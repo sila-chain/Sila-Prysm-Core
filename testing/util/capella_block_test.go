@@ -11,9 +11,9 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
-func TestGenerateBLSToExecutionChange(t *testing.T) {
+func TestGenerateBLSToSilaChange(t *testing.T) {
 	st, keys := DeterministicGenesisStateCapella(t, 64)
-	change, err := GenerateBLSToExecutionChange(st, keys[0], 0)
+	change, err := GenerateBLSToSilaChange(st, keys[0], 0)
 	require.NoError(t, err)
 
 	message := change.Message
@@ -28,7 +28,7 @@ func TestGenerateBLSToExecutionChange(t *testing.T) {
 	digest := hashFn.Hash(fromPubkey)
 	require.DeepEqual(t, digest[1:], digest[1:])
 
-	domain, err := signing.Domain(st.Fork(), time.CurrentEpoch(st), params.BeaconConfig().DomainBLSToExecutionChange, st.GenesisValidatorsRoot())
+	domain, err := signing.Domain(st.Fork(), time.CurrentEpoch(st), params.BeaconConfig().DomainBLSToSilaChange, st.GenesisValidatorsRoot())
 	require.NoError(t, err)
 
 	require.NoError(t, signing.VerifySigningRoot(message, fromPubkey, change.Signature, domain))

@@ -215,7 +215,7 @@ func (BeaconBlockBody) Execution() (interfaces.ExecutionData, error) {
 	panic("implement me")
 }
 
-func (BeaconBlockBody) BLSToExecutionChanges() ([]*eth.SignedBLSToExecutionChange, error) {
+func (BeaconBlockBody) BLSToSilaChanges() ([]*eth.SignedBLSToSilaChange, error) {
 	panic("implement me")
 }
 
@@ -263,7 +263,7 @@ func (b *BeaconBlockBody) SetExecution(interfaces.ExecutionData) error {
 	panic("implement me")
 }
 
-func (b *BeaconBlockBody) SetBLSToExecutionChanges([]*eth.SignedBLSToExecutionChange) error {
+func (b *BeaconBlockBody) SetBLSToSilaChanges([]*eth.SignedBLSToSilaChange) error {
 	panic("implement me")
 }
 

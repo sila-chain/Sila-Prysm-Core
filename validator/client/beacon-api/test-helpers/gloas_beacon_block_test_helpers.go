@@ -53,7 +53,7 @@ func GenerateProtoGloasBeaconBlock() *silapb.BeaconBlockGloas {
 				SyncCommitteeBits:      FillByteSlice(64, 100),
 				SyncCommitteeSignature: FillByteSlice(96, 101),
 			},
-			BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{},
+			BlsToSilaChanges: []*silapb.SignedBLSToSilaChange{},
 			SignedSilaPayloadBid: &silapb.SignedSilaPayloadBid{
 				Message: &silapb.SilaPayloadBid{
 					ParentBlockHash:       FillByteSlice(32, 110),
@@ -122,7 +122,7 @@ func GenerateJsonGloasBeaconBlock() *structs.BeaconBlockGloas {
 				SyncCommitteeBits:      hexutil.Encode(FillByteSlice(64, 100)),
 				SyncCommitteeSignature: hexutil.Encode(FillByteSlice(96, 101)),
 			},
-			BLSToExecutionChanges: []*structs.SignedBLSToExecutionChange{},
+			BLSToSilaChanges: []*structs.SignedBLSToSilaChange{},
 			SignedSilaPayloadBid: &structs.SignedSilaPayloadBid{
 				Message: &structs.SilaPayloadBid{
 					ParentBlockHash:       hexutil.Encode(FillByteSlice(32, 110)),

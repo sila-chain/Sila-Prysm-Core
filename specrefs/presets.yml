@@ -269,14 +269,14 @@
     MAX_BLOB_COMMITMENTS_PER_BLOCK: uint64 = 4096
     </spec>
 
-- name: MAX_BLS_TO_EXECUTION_CHANGES#capella
+- name: MAX_BLS_TO_SILA_CHANGES#capella
   sources:
     - file: config/params/config.go
-      search: MaxBlsToExecutionChanges\s+.*yaml:"MAX_BLS_TO_EXECUTION_CHANGES"
+      search: MaxBlsToSilaChanges\s+.*yaml:"MAX_BLS_TO_SILA_CHANGES"
       regex: true
   spec: |
-    <spec preset_var="MAX_BLS_TO_EXECUTION_CHANGES" fork="capella" hash="1eee2f2f">
-    MAX_BLS_TO_EXECUTION_CHANGES = 16
+    <spec preset_var="MAX_BLS_TO_SILA_CHANGES" fork="capella" hash="1eee2f2f">
+    MAX_BLS_TO_SILA_CHANGES = 16
     </spec>
 
 - name: MAX_BUILDERS_PER_WITHDRAWALS_SWEEP#gloas

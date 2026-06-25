@@ -380,9 +380,9 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTCapellaBlockToProto(block *str
 		return nil, errors.Wrap(err, "failed to get withdrawals")
 	}
 
-	blsToExecutionChanges, err := convertBlsToExecutionChangesToProto(block.Body.BLSToExecutionChanges)
+	blsToSilaChanges, err := convertBlsToSilaChangesToProto(block.Body.BLSToSilaChanges)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get bls to execution changes")
+		return nil, errors.Wrap(err, "failed to get bls to Sila changes")
 	}
 
 	return &silapb.BeaconBlockCapella{
@@ -417,7 +417,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTCapellaBlockToProto(block *str
 				Transactions:  bellatrixBlock.Body.SilaPayload.Transactions,
 				Withdrawals:   withdrawals,
 			},
-			BlsToExecutionChanges: blsToExecutionChanges,
+			BlsToSilaChanges: blsToSilaChanges,
 		},
 	}, nil
 }

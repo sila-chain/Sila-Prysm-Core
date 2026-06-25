@@ -36,8 +36,8 @@ const (
 	GossipAggregateAndProofMessage = "beacon_aggregate_and_proof"
 	// GossipContributionAndProofMessage is the name for the sync contribution and proof message type.
 	GossipContributionAndProofMessage = "sync_committee_contribution_and_proof"
-	// GossipBlsToExecutionChangeMessage is the name for the bls to execution change message type.
-	GossipBlsToExecutionChangeMessage = "bls_to_execution_change"
+	// GossipBlsToSilaChangeMessage is the name for the bls to Sila change message type.
+	GossipBlsToSilaChangeMessage = "bls_to_sila_change"
 	// GossipBlobSidecarMessage is the name for the blob sidecar message type.
 	GossipBlobSidecarMessage = "blob_sidecar"
 	// GossipLightClientFinalityUpdateMessage is the name for the light client finality update message type.
@@ -73,8 +73,8 @@ const (
 	AggregateAndProofSubnetTopicFormat = GossipProtocolAndDigest + GossipAggregateAndProofMessage
 	// SyncContributionAndProofSubnetTopicFormat is the topic format for the sync aggregate and proof subnet.
 	SyncContributionAndProofSubnetTopicFormat = GossipProtocolAndDigest + GossipContributionAndProofMessage
-	// BlsToExecutionChangeSubnetTopicFormat is the topic format for the bls to execution change subnet.
-	BlsToExecutionChangeSubnetTopicFormat = GossipProtocolAndDigest + GossipBlsToExecutionChangeMessage
+	// BlsToSilaChangeSubnetTopicFormat is the topic format for the bls to Sila change subnet.
+	BlsToSilaChangeSubnetTopicFormat = GossipProtocolAndDigest + GossipBlsToSilaChangeMessage
 	// BlobSubnetTopicFormat is the topic format for the blob subnet.
 	BlobSubnetTopicFormat = GossipProtocolAndDigest + GossipBlobSidecarMessage + "_%d"
 	// LightClientFinalityUpdateTopicFormat is the topic format for the light client finality update subnet.
@@ -173,7 +173,7 @@ func (s *Service) allTopics() []topic {
 		newTopic(altair, future, empty, GossipContributionAndProofMessage),
 		newTopic(altair, future, empty, GossipLightClientOptimisticUpdateMessage),
 		newTopic(altair, future, empty, GossipLightClientFinalityUpdateMessage),
-		newTopic(capella, future, empty, GossipBlsToExecutionChangeMessage),
+		newTopic(capella, future, empty, GossipBlsToSilaChangeMessage),
 		newTopic(gloas, future, empty, GossipPayloadAttestationMessageMessage),
 		newTopic(gloas, future, empty, GossipSilaPayloadEnvelopeMessage),
 		newTopic(gloas, future, empty, GossipSilaPayloadBidMessage),

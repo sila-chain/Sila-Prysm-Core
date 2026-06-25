@@ -119,7 +119,7 @@ func operationEventsFixtures(t *testing.T) (*topicRequest, []*feed.Event) {
 		SingleAttestationTopic,
 		VoluntaryExitTopic,
 		SyncCommitteeContributionTopic,
-		BLSToExecutionChangeTopic,
+		BLSToSilaChangeTopic,
 		BlobSidecarTopic,
 		AttesterSlashingTopic,
 		ProposerSlashingTopic,
@@ -195,13 +195,13 @@ func operationEventsFixtures(t *testing.T) (*topicRequest, []*feed.Event) {
 			},
 		},
 		{
-			Type: operation.BLSToExecutionChangeReceived,
-			Data: &operation.BLSToExecutionChangeReceivedData{
-				Change: &eth.SignedBLSToExecutionChange{
-					Message: &eth.BLSToExecutionChange{
+			Type: operation.BLSToSilaChangeReceived,
+			Data: &operation.BLSToSilaChangeReceivedData{
+				Change: &eth.SignedBLSToSilaChange{
+					Message: &eth.BLSToSilaChange{
 						ValidatorIndex:     0,
 						FromBlsPubkey:      make([]byte, 48),
-						ToExecutionAddress: make([]byte, 20),
+						ToSilaAddress: make([]byte, 20),
 					},
 					Signature: make([]byte, 96),
 				},

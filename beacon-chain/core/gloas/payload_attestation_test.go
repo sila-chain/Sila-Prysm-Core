@@ -283,7 +283,7 @@ func buildBody(t *testing.T, atts ...*eth.PayloadAttestation) interfaces.ReadOnl
 		Deposits:              []*eth.Deposit{},
 		VoluntaryExits:        []*eth.SignedVoluntaryExit{},
 		SyncAggregate:         &eth.SyncAggregate{},
-		BlsToExecutionChanges: []*eth.SignedBLSToExecutionChange{},
+		BlsToSilaChanges: []*eth.SignedBLSToSilaChange{},
 	}
 	wrapped, err := blocks.NewBeaconBlockBody(body)
 	require.NoError(t, err)

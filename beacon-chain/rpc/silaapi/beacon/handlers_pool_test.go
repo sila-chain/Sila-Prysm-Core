@@ -1373,42 +1373,42 @@ func TestSubmitSyncCommitteeSignatures(t *testing.T) {
 	})
 }
 
-func TestListBLSToExecutionChanges(t *testing.T) {
-	change1 := &silapbv1alpha1.SignedBLSToExecutionChange{
-		Message: &silapbv1alpha1.BLSToExecutionChange{
+func TestListBLSToSilaChanges(t *testing.T) {
+	change1 := &silapbv1alpha1.SignedBLSToSilaChange{
+		Message: &silapbv1alpha1.BLSToSilaChange{
 			ValidatorIndex:     1,
 			FromBlsPubkey:      bytesutil.PadTo([]byte("pubkey1"), 48),
-			ToExecutionAddress: bytesutil.PadTo([]byte("address1"), 20),
+			ToSilaAddress: bytesutil.PadTo([]byte("address1"), 20),
 		},
 		Signature: bytesutil.PadTo([]byte("signature1"), 96),
 	}
-	change2 := &silapbv1alpha1.SignedBLSToExecutionChange{
-		Message: &silapbv1alpha1.BLSToExecutionChange{
+	change2 := &silapbv1alpha1.SignedBLSToSilaChange{
+		Message: &silapbv1alpha1.BLSToSilaChange{
 			ValidatorIndex:     2,
 			FromBlsPubkey:      bytesutil.PadTo([]byte("pubkey2"), 48),
-			ToExecutionAddress: bytesutil.PadTo([]byte("address2"), 20),
+			ToSilaAddress: bytesutil.PadTo([]byte("address2"), 20),
 		},
 		Signature: bytesutil.PadTo([]byte("signature2"), 96),
 	}
 
 	s := &Server{
-		BLSChangesPool: &blstoexecmock.PoolMock{Changes: []*silapbv1alpha1.SignedBLSToExecutionChange{change1, change2}},
+		BLSChangesPool: &blstoexecmock.PoolMock{Changes: []*silapbv1alpha1.SignedBLSToSilaChange{change1, change2}},
 	}
-	request := httptest.NewRequest(http.MethodGet, "http://foo.example/sila/v1/beacon/pool/bls_to_execution_changes", nil)
+	request := httptest.NewRequest(http.MethodGet, "http://foo.example/sila/v1/beacon/pool/bls_to_sila_changes", nil)
 	writer := httptest.NewRecorder()
 	writer.Body = &bytes.Buffer{}
 
-	s.ListBLSToExecutionChanges(writer, request)
+	s.ListBLSToSilaChanges(writer, request)
 	assert.Equal(t, http.StatusOK, writer.Code)
 
-	resp := &structs.BLSToExecutionChangesPoolResponse{}
+	resp := &structs.BLSToSilaChangesPoolResponse{}
 	require.NoError(t, json.Unmarshal(writer.Body.Bytes(), resp))
 	require.Equal(t, 2, len(resp.Data))
 	assert.DeepEqual(t, structs.SignedBLSChangeFromConsensus(change1), resp.Data[0])
 	assert.DeepEqual(t, structs.SignedBLSChangeFromConsensus(change2), resp.Data[1])
 }
 
-func TestSubmitSignedBLSToExecutionChanges_Ok(t *testing.T) {
+func TestSubmitSignedBLSToSilaChanges_Ok(t *testing.T) {
 	transition.SkipSlotCache.Disable()
 	defer transition.SkipSlotCache.Enable()
 
@@ -1427,7 +1427,7 @@ func TestSubmitSignedBLSToExecutionChanges_Ok(t *testing.T) {
 	}
 	numValidators := 10
 	validators := make([]*silapbv1alpha1.Validator, numValidators)
-	blsChanges := make([]*silapbv1alpha1.BLSToExecutionChange, numValidators)
+	blsChanges := make([]*silapbv1alpha1.BLSToSilaChange, numValidators)
 	spb.Balances = make([]uint64, numValidators)
 	privKeys := make([]common.SecretKey, numValidators)
 	maxEffectiveBalance := params.BeaconConfig().MaxEffectiveBalance
@@ -1443,8 +1443,8 @@ func TestSubmitSignedBLSToExecutionChanges_Ok(t *testing.T) {
 		privKeys[i] = priv
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &silapbv1alpha1.BLSToExecutionChange{
-			ToExecutionAddress: executionAddress,
+		message := &silapbv1alpha1.BLSToSilaChange{
+			ToSilaAddress: executionAddress,
 			ValidatorIndex:     primitives.ValidatorIndex(i),
 			FromBlsPubkey:      pubkey,
 		}
@@ -1463,11 +1463,11 @@ func TestSubmitSignedBLSToExecutionChanges_Ok(t *testing.T) {
 	st, err := state_native.InitializeFromProtoCapella(spb)
 	require.NoError(t, err)
 
-	signedChanges := make([]*structs.SignedBLSToExecutionChange, numValidators)
+	signedChanges := make([]*structs.SignedBLSToSilaChange, numValidators)
 	for i, message := range blsChanges {
-		signature, err := signing.ComputeDomainAndSign(st, silatime.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, privKeys[i])
+		signature, err := signing.ComputeDomainAndSign(st, silatime.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToSilaChange, privKeys[i])
 		require.NoError(t, err)
-		signed := &structs.SignedBLSToExecutionChange{
+		signed := &structs.SignedBLSToSilaChange{
 			Message:   structs.BLSChangeFromConsensus(message),
 			Signature: hexutil.Encode(signature),
 		}
@@ -1487,10 +1487,10 @@ func TestSubmitSignedBLSToExecutionChanges_Ok(t *testing.T) {
 	jsonBytes, err := json.Marshal(signedChanges)
 	require.NoError(t, err)
 
-	request := httptest.NewRequest(http.MethodPost, "http://foo.example/sila/v1/beacon/pool/bls_to_execution_changes", bytes.NewReader(jsonBytes))
+	request := httptest.NewRequest(http.MethodPost, "http://foo.example/sila/v1/beacon/pool/bls_to_sila_changes", bytes.NewReader(jsonBytes))
 	writer := httptest.NewRecorder()
 	writer.Body = &bytes.Buffer{}
-	s.SubmitBLSToExecutionChanges(writer, request)
+	s.SubmitBLSToSilaChanges(writer, request)
 	assert.Equal(t, http.StatusOK, writer.Code)
 	require.Eventually(t, func() bool {
 		return broadcaster.BroadcastCalled.Load() && len(broadcaster.BroadcastMessages) == numValidators
@@ -1506,7 +1506,7 @@ func TestSubmitSignedBLSToExecutionChanges_Ok(t *testing.T) {
 	}
 }
 
-func TestSubmitSignedBLSToExecutionChanges_Bellatrix(t *testing.T) {
+func TestSubmitSignedBLSToSilaChanges_Bellatrix(t *testing.T) {
 	transition.SkipSlotCache.Disable()
 	defer transition.SkipSlotCache.Enable()
 
@@ -1525,7 +1525,7 @@ func TestSubmitSignedBLSToExecutionChanges_Bellatrix(t *testing.T) {
 	}
 	numValidators := 10
 	validators := make([]*silapbv1alpha1.Validator, numValidators)
-	blsChanges := make([]*silapbv1alpha1.BLSToExecutionChange, numValidators)
+	blsChanges := make([]*silapbv1alpha1.BLSToSilaChange, numValidators)
 	spb.Balances = make([]uint64, numValidators)
 	privKeys := make([]common.SecretKey, numValidators)
 	maxEffectiveBalance := params.BeaconConfig().MaxEffectiveBalance
@@ -1541,8 +1541,8 @@ func TestSubmitSignedBLSToExecutionChanges_Bellatrix(t *testing.T) {
 		privKeys[i] = priv
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &silapbv1alpha1.BLSToExecutionChange{
-			ToExecutionAddress: executionAddress,
+		message := &silapbv1alpha1.BLSToSilaChange{
+			ToSilaAddress: executionAddress,
 			ValidatorIndex:     primitives.ValidatorIndex(i),
 			FromBlsPubkey:      pubkey,
 		}
@@ -1575,12 +1575,12 @@ func TestSubmitSignedBLSToExecutionChanges_Bellatrix(t *testing.T) {
 	stc, err := state_native.InitializeFromProtoCapella(spc)
 	require.NoError(t, err)
 
-	signedChanges := make([]*structs.SignedBLSToExecutionChange, numValidators)
+	signedChanges := make([]*structs.SignedBLSToSilaChange, numValidators)
 	for i, message := range blsChanges {
-		signature, err := signing.ComputeDomainAndSign(stc, silatime.CurrentEpoch(stc), message, params.BeaconConfig().DomainBLSToExecutionChange, privKeys[i])
+		signature, err := signing.ComputeDomainAndSign(stc, silatime.CurrentEpoch(stc), message, params.BeaconConfig().DomainBLSToSilaChange, privKeys[i])
 		require.NoError(t, err)
 
-		signedChanges[i] = &structs.SignedBLSToExecutionChange{
+		signedChanges[i] = &structs.SignedBLSToSilaChange{
 			Message:   structs.BLSChangeFromConsensus(message),
 			Signature: hexutil.Encode(signature),
 		}
@@ -1600,11 +1600,11 @@ func TestSubmitSignedBLSToExecutionChanges_Bellatrix(t *testing.T) {
 	jsonBytes, err := json.Marshal(signedChanges)
 	require.NoError(t, err)
 
-	request := httptest.NewRequest(http.MethodPost, "http://foo.example/sila/v1/beacon/pool/bls_to_execution_changes", bytes.NewReader(jsonBytes))
+	request := httptest.NewRequest(http.MethodPost, "http://foo.example/sila/v1/beacon/pool/bls_to_sila_changes", bytes.NewReader(jsonBytes))
 	writer := httptest.NewRecorder()
 	writer.Body = &bytes.Buffer{}
 
-	s.SubmitBLSToExecutionChanges(writer, request)
+	s.SubmitBLSToSilaChanges(writer, request)
 	assert.Equal(t, http.StatusOK, writer.Code)
 	// Check that we didn't broadcast the messages but did in fact fill in
 	// the pool
@@ -1620,7 +1620,7 @@ func TestSubmitSignedBLSToExecutionChanges_Bellatrix(t *testing.T) {
 	}
 }
 
-func TestSubmitSignedBLSToExecutionChanges_Failures(t *testing.T) {
+func TestSubmitSignedBLSToSilaChanges_Failures(t *testing.T) {
 	transition.SkipSlotCache.Disable()
 	defer transition.SkipSlotCache.Enable()
 
@@ -1639,7 +1639,7 @@ func TestSubmitSignedBLSToExecutionChanges_Failures(t *testing.T) {
 	}
 	numValidators := 10
 	validators := make([]*silapbv1alpha1.Validator, numValidators)
-	blsChanges := make([]*silapbv1alpha1.BLSToExecutionChange, numValidators)
+	blsChanges := make([]*silapbv1alpha1.BLSToSilaChange, numValidators)
 	spb.Balances = make([]uint64, numValidators)
 	privKeys := make([]common.SecretKey, numValidators)
 	maxEffectiveBalance := params.BeaconConfig().MaxEffectiveBalance
@@ -1655,8 +1655,8 @@ func TestSubmitSignedBLSToExecutionChanges_Failures(t *testing.T) {
 		privKeys[i] = priv
 		pubkey := priv.PublicKey().Marshal()
 
-		message := &silapbv1alpha1.BLSToExecutionChange{
-			ToExecutionAddress: executionAddress,
+		message := &silapbv1alpha1.BLSToSilaChange{
+			ToSilaAddress: executionAddress,
 			ValidatorIndex:     primitives.ValidatorIndex(i),
 			FromBlsPubkey:      pubkey,
 		}
@@ -1675,14 +1675,14 @@ func TestSubmitSignedBLSToExecutionChanges_Failures(t *testing.T) {
 	st, err := state_native.InitializeFromProtoCapella(spb)
 	require.NoError(t, err)
 
-	signedChanges := make([]*structs.SignedBLSToExecutionChange, numValidators)
+	signedChanges := make([]*structs.SignedBLSToSilaChange, numValidators)
 	for i, message := range blsChanges {
-		signature, err := signing.ComputeDomainAndSign(st, silatime.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToExecutionChange, privKeys[i])
+		signature, err := signing.ComputeDomainAndSign(st, silatime.CurrentEpoch(st), message, params.BeaconConfig().DomainBLSToSilaChange, privKeys[i])
 		require.NoError(t, err)
 		if i == 1 {
 			signature[0] = 0x00
 		}
-		signedChanges[i] = &structs.SignedBLSToExecutionChange{
+		signedChanges[i] = &structs.SignedBLSToSilaChange{
 			Message:   structs.BLSChangeFromConsensus(message),
 			Signature: hexutil.Encode(signature),
 		}
@@ -1702,11 +1702,11 @@ func TestSubmitSignedBLSToExecutionChanges_Failures(t *testing.T) {
 	jsonBytes, err := json.Marshal(signedChanges)
 	require.NoError(t, err)
 
-	request := httptest.NewRequest(http.MethodPost, "http://foo.example/sila/v1/beacon/pool/bls_to_execution_changes", bytes.NewReader(jsonBytes))
+	request := httptest.NewRequest(http.MethodPost, "http://foo.example/sila/v1/beacon/pool/bls_to_sila_changes", bytes.NewReader(jsonBytes))
 	writer := httptest.NewRecorder()
 	writer.Body = &bytes.Buffer{}
 
-	s.SubmitBLSToExecutionChanges(writer, request)
+	s.SubmitBLSToSilaChanges(writer, request)
 	assert.Equal(t, http.StatusBadRequest, writer.Code)
 	require.StringContains(t, "One or more messages failed validation", writer.Body.String())
 	require.Eventually(t, func() bool {

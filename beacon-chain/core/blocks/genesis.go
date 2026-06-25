@@ -176,7 +176,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 						Transactions:  make([][]byte, 0),
 						Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 					},
-					BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
+					BlsToSilaChanges: make([]*silapb.SignedBLSToSilaChange, 0),
 					BlobKzgCommitments:    make([][]byte, 0),
 				},
 			},
@@ -277,7 +277,7 @@ func electraGenesisBlock(root [fieldparams.RootLength]byte) *silapb.BeaconBlockE
 				Transactions:  make([][]byte, 0),
 				Withdrawals:   make([]*silaenginev1.Withdrawal, 0),
 			},
-			BlsToExecutionChanges: make([]*silapb.SignedBLSToExecutionChange, 0),
+			BlsToSilaChanges: make([]*silapb.SignedBLSToSilaChange, 0),
 			BlobKzgCommitments:    make([][]byte, 0),
 			SilaRequests: &silaenginev1.SilaRequests{
 				Withdrawals:    make([]*silaenginev1.WithdrawalRequest, 0),

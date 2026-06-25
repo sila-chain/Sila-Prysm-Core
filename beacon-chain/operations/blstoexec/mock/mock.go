@@ -8,26 +8,26 @@ import (
 
 // PoolMock is a fake implementation of PoolManager.
 type PoolMock struct {
-	Changes []*eth.SignedBLSToExecutionChange
+	Changes []*eth.SignedBLSToSilaChange
 }
 
 // PendingBLSToExecChanges --
-func (m *PoolMock) PendingBLSToExecChanges() ([]*eth.SignedBLSToExecutionChange, error) {
+func (m *PoolMock) PendingBLSToExecChanges() ([]*eth.SignedBLSToSilaChange, error) {
 	return m.Changes, nil
 }
 
 // BLSToExecChangesForInclusion --
-func (m *PoolMock) BLSToExecChangesForInclusion(_ state.ReadOnlyBeaconState) ([]*eth.SignedBLSToExecutionChange, error) {
+func (m *PoolMock) BLSToExecChangesForInclusion(_ state.ReadOnlyBeaconState) ([]*eth.SignedBLSToSilaChange, error) {
 	return m.Changes, nil
 }
 
 // InsertBLSToExecChange --
-func (m *PoolMock) InsertBLSToExecChange(change *eth.SignedBLSToExecutionChange) {
+func (m *PoolMock) InsertBLSToExecChange(change *eth.SignedBLSToSilaChange) {
 	m.Changes = append(m.Changes, change)
 }
 
 // MarkIncluded --
-func (*PoolMock) MarkIncluded(_ *eth.SignedBLSToExecutionChange) {
+func (*PoolMock) MarkIncluded(_ *eth.SignedBLSToSilaChange) {
 	panic("implement me") // lint:nopanic -- mock / test code.
 }
 

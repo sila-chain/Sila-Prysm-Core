@@ -43,9 +43,9 @@ const (
 	// voluntaryExitWeight specifies the scoring weight that we apply to
 	// our voluntary exit topic.
 	voluntaryExitWeight = 0.05
-	// blsToExecutionChangeWeight specifies the scoring weight that we apply to
-	// our bls to execution topic.
-	blsToExecutionChangeWeight = 0.05
+	// blsToSilaChangeWeight specifies the scoring weight that we apply to
+	// our bls to Sila topic.
+	blsToSilaChangeWeight = 0.05
 	// lightClientOptimisticUpdateWeight specifies the scoring weight that we apply to
 	// our light client optimistic update topic.
 	lightClientOptimisticUpdateWeight = 0.05
@@ -138,8 +138,8 @@ func (s *Service) topicScoreParams(topic string) (*pubsub.TopicScoreParams, erro
 		return defaultProposerSlashingTopicParams(), nil
 	case strings.Contains(topic, GossipAttesterSlashingMessage):
 		return defaultAttesterSlashingTopicParams(), nil
-	case strings.Contains(topic, GossipBlsToExecutionChangeMessage):
-		return defaultBlsToExecutionChangeTopicParams(), nil
+	case strings.Contains(topic, GossipBlsToSilaChangeMessage):
+		return defaultBlsToSilaChangeTopicParams(), nil
 	case strings.Contains(topic, GossipBlobSidecarMessage), strings.Contains(topic, GossipDataColumnSidecarMessage):
 		// TODO(Deneb): Using the default block scoring. But this should be updated.
 		return defaultBlockTopicParams(), nil
@@ -499,9 +499,9 @@ func defaultVoluntaryExitTopicParams() *pubsub.TopicScoreParams {
 	}
 }
 
-func defaultBlsToExecutionChangeTopicParams() *pubsub.TopicScoreParams {
+func defaultBlsToSilaChangeTopicParams() *pubsub.TopicScoreParams {
 	return &pubsub.TopicScoreParams{
-		TopicWeight:                     blsToExecutionChangeWeight,
+		TopicWeight:                     blsToSilaChangeWeight,
 		TimeInMeshWeight:                maxInMeshScore / inMeshCap(),
 		TimeInMeshQuantum:               inMeshTime(),
 		TimeInMeshCap:                   inMeshCap(),
@@ -623,7 +623,7 @@ func scoreByWeight(weight, threshold float64) float64 {
 func maxScore() float64 {
 	totalWeight := beaconBlockWeight + aggregateWeight + syncContributionWeight +
 		attestationTotalWeight + syncCommitteesTotalWeight + attesterSlashingWeight +
-		proposerSlashingWeight + voluntaryExitWeight + blsToExecutionChangeWeight
+		proposerSlashingWeight + voluntaryExitWeight + blsToSilaChangeWeight
 	return (maxInMeshScore + maxFirstDeliveryScore) * totalWeight
 }
 

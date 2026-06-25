@@ -186,7 +186,7 @@ func copyBeaconBlockBodyGloas(body *BeaconBlockBodyGloas) *BeaconBlockBodyGloas 
 	copied.Attestations = CopySlice(body.Attestations)
 	copied.Deposits = CopySlice(body.Deposits)
 	copied.VoluntaryExits = CopySlice(body.VoluntaryExits)
-	copied.BlsToExecutionChanges = CopySlice(body.BlsToExecutionChanges)
+	copied.BlsToSilaChanges = CopySlice(body.BlsToSilaChanges)
 
 	copied.SignedSilaPayloadBid = copySignedSilaPayloadBid(body.SignedSilaPayloadBid)
 	copied.PayloadAttestations = copyPayloadAttestations(body.PayloadAttestations)

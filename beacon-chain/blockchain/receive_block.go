@@ -489,7 +489,7 @@ func (s *Service) prunePostBlockOperationPools(ctx context.Context, blk interfac
 
 	// Mark block BLS changes as seen so we don't include same ones in future blocks.
 	if err := s.markIncludedBlockBLSToExecChanges(blk.Block()); err != nil {
-		return errors.Wrap(err, "could not process BLSToExecutionChanges")
+		return errors.Wrap(err, "could not process BLSToSilaChanges")
 	}
 
 	// Mark slashings as seen so we don't include same ones in future blocks.
@@ -507,9 +507,9 @@ func (s *Service) markIncludedBlockBLSToExecChanges(headBlock interfaces.ReadOnl
 	if headBlock.Version() < version.Capella {
 		return nil
 	}
-	changes, err := headBlock.Body().BLSToExecutionChanges()
+	changes, err := headBlock.Body().BLSToSilaChanges()
 	if err != nil {
-		return errors.Wrap(err, "could not get BLSToExecutionChanges")
+		return errors.Wrap(err, "could not get BLSToSilaChanges")
 	}
 	for _, change := range changes {
 		s.cfg.BLSToExecPool.MarkIncluded(change)

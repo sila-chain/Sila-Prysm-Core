@@ -187,9 +187,9 @@ func GenerateFullBlockCapella(
 		return nil, errors.Wrap(err, "could not compute beacon proposer index")
 	}
 
-	changes := make([]*silapb.SignedBLSToExecutionChange, conf.NumBLSChanges)
+	changes := make([]*silapb.SignedBLSToSilaChange, conf.NumBLSChanges)
 	for i := uint64(0); i < conf.NumBLSChanges; i++ {
-		changes[i], err = GenerateBLSToExecutionChange(bState, privs[i+1], primitives.ValidatorIndex(i))
+		changes[i], err = GenerateBLSToSilaChange(bState, privs[i+1], primitives.ValidatorIndex(i))
 		if err != nil {
 			return nil, err
 		}
@@ -210,7 +210,7 @@ func GenerateFullBlockCapella(
 			Graffiti:              make([]byte, fieldparams.RootLength),
 			SyncAggregate:         newSyncAggregate,
 			SilaPayload:      newSilaPayloadCapella,
-			BlsToExecutionChanges: changes,
+			BlsToSilaChanges: changes,
 		},
 	}
 
@@ -223,17 +223,17 @@ func GenerateFullBlockCapella(
 	return &silapb.SignedBeaconBlockCapella{Block: block, Signature: signature.Marshal()}, nil
 }
 
-// GenerateBLSToExecutionChange generates a valid bls to exec change for validator `val` and its private key `priv` with the given beacon state `st`.
-func GenerateBLSToExecutionChange(st state.BeaconState, priv bls.SecretKey, val primitives.ValidatorIndex) (*silapb.SignedBLSToExecutionChange, error) {
+// GenerateBLSToSilaChange generates a valid bls to exec change for validator `val` and its private key `priv` with the given beacon state `st`.
+func GenerateBLSToSilaChange(st state.BeaconState, priv bls.SecretKey, val primitives.ValidatorIndex) (*silapb.SignedBLSToSilaChange, error) {
 	cred := indexToHash(uint64(val))
 	pubkey := priv.PublicKey().Marshal()
-	message := &silapb.BLSToExecutionChange{
-		ToExecutionAddress: cred[12:],
+	message := &silapb.BLSToSilaChange{
+		ToSilaAddress: cred[12:],
 		ValidatorIndex:     val,
 		FromBlsPubkey:      pubkey,
 	}
 	c := params.BeaconConfig()
-	domain, err := signing.ComputeDomain(c.DomainBLSToExecutionChange, c.GenesisForkVersion, st.GenesisValidatorsRoot())
+	domain, err := signing.ComputeDomain(c.DomainBLSToSilaChange, c.GenesisForkVersion, st.GenesisValidatorsRoot())
 	if err != nil {
 		return nil, err
 	}
@@ -242,7 +242,7 @@ func GenerateBLSToExecutionChange(st state.BeaconState, priv bls.SecretKey, val 
 		return nil, err
 	}
 	signature := priv.Sign(sr[:]).Marshal()
-	return &silapb.SignedBLSToExecutionChange{
+	return &silapb.SignedBLSToSilaChange{
 		Message:   message,
 		Signature: signature,
 	}, nil

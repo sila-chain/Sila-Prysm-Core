@@ -212,7 +212,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 						VoluntaryExits:         b.block.body.voluntaryExits,
 						SyncAggregate:          b.block.body.syncAggregate,
 						SilaPayloadHeader: header,
-						BlsToExecutionChanges:  b.block.body.blsToExecutionChanges,
+						BlsToSilaChanges:  b.block.body.blsToSilaChanges,
 						BlobKzgCommitments:     b.block.body.blobKzgCommitments,
 						SilaRequests:      b.block.body.silaRequests,
 					},
@@ -248,7 +248,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 						VoluntaryExits:         b.block.body.voluntaryExits,
 						SyncAggregate:          b.block.body.syncAggregate,
 						SilaPayloadHeader: header,
-						BlsToExecutionChanges:  b.block.body.blsToExecutionChanges,
+						BlsToSilaChanges:  b.block.body.blsToSilaChanges,
 						BlobKzgCommitments:     b.block.body.blobKzgCommitments,
 						SilaRequests:      b.block.body.silaRequests,
 					},
@@ -308,7 +308,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 						VoluntaryExits:         b.block.body.voluntaryExits,
 						SyncAggregate:          b.block.body.syncAggregate,
 						SilaPayloadHeader: header,
-						BlsToExecutionChanges:  b.block.body.blsToExecutionChanges,
+						BlsToSilaChanges:  b.block.body.blsToSilaChanges,
 					},
 				},
 				Signature: b.signature[:],
@@ -336,7 +336,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 						VoluntaryExits:         b.block.body.voluntaryExits,
 						SyncAggregate:          b.block.body.syncAggregate,
 						SilaPayloadHeader: header,
-						BlsToExecutionChanges:  b.block.body.blsToExecutionChanges,
+						BlsToSilaChanges:  b.block.body.blsToSilaChanges,
 						BlobKzgCommitments:     b.block.body.blobKzgCommitments,
 					},
 				},
@@ -1254,11 +1254,11 @@ func (b *BeaconBlockBody) Execution() (interfaces.ExecutionData, error) {
 	return b.silaPayload, nil
 }
 
-func (b *BeaconBlockBody) BLSToExecutionChanges() ([]*eth.SignedBLSToExecutionChange, error) {
+func (b *BeaconBlockBody) BLSToSilaChanges() ([]*eth.SignedBLSToSilaChange, error) {
 	if b.version < version.Capella {
-		return nil, consensus_types.ErrNotSupported("BLSToExecutionChanges", b.version)
+		return nil, consensus_types.ErrNotSupported("BLSToSilaChanges", b.version)
 	}
-	return b.blsToExecutionChanges, nil
+	return b.blsToSilaChanges, nil
 }
 
 // BlobKzgCommitments returns the blob kzg commitments in the block.

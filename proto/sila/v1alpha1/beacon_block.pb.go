@@ -2047,7 +2047,7 @@ type BeaconBlockBodyCapella struct {
 	VoluntaryExits        []*SignedVoluntaryExit        `protobuf:"bytes,8,rep,name=voluntary_exits,json=voluntaryExits,proto3" json:"voluntary_exits,omitempty" ssz-max:"16"`
 	SyncAggregate         *SyncAggregate                `protobuf:"bytes,9,opt,name=sync_aggregate,json=syncAggregate,proto3" json:"sync_aggregate,omitempty"`
 	SilaPayload      *v1.SilaPayloadCapella   `protobuf:"bytes,10,opt,name=sila_payload,json=silaPayload,proto3" json:"sila_payload,omitempty"`
-	BlsToExecutionChanges []*SignedBLSToExecutionChange `protobuf:"bytes,11,rep,name=bls_to_execution_changes,json=blsToExecutionChanges,proto3" json:"bls_to_execution_changes,omitempty" ssz-max:"16"`
+	BlsToSilaChanges []*SignedBLSToSilaChange `protobuf:"bytes,11,rep,name=bls_to_sila_changes,json=blsToSilaChanges,proto3" json:"bls_to_sila_changes,omitempty" ssz-max:"16"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -2152,9 +2152,9 @@ func (x *BeaconBlockBodyCapella) GetSilaPayload() *v1.SilaPayloadCapella {
 	return nil
 }
 
-func (x *BeaconBlockBodyCapella) GetBlsToExecutionChanges() []*SignedBLSToExecutionChange {
+func (x *BeaconBlockBodyCapella) GetBlsToSilaChanges() []*SignedBLSToSilaChange {
 	if x != nil {
-		return x.BlsToExecutionChanges
+		return x.BlsToSilaChanges
 	}
 	return nil
 }
@@ -2299,7 +2299,7 @@ type BlindedBeaconBlockBodyCapella struct {
 	VoluntaryExits         []*SignedVoluntaryExit            `protobuf:"bytes,8,rep,name=voluntary_exits,json=voluntaryExits,proto3" json:"voluntary_exits,omitempty" ssz-max:"16"`
 	SyncAggregate          *SyncAggregate                    `protobuf:"bytes,9,opt,name=sync_aggregate,json=syncAggregate,proto3" json:"sync_aggregate,omitempty"`
 	SilaPayloadHeader *v1.SilaPayloadHeaderCapella `protobuf:"bytes,10,opt,name=sila_payload_header,json=silaPayloadHeader,proto3" json:"sila_payload_header,omitempty"`
-	BlsToExecutionChanges  []*SignedBLSToExecutionChange     `protobuf:"bytes,11,rep,name=bls_to_execution_changes,json=blsToExecutionChanges,proto3" json:"bls_to_execution_changes,omitempty" ssz-max:"16"`
+	BlsToSilaChanges  []*SignedBLSToSilaChange     `protobuf:"bytes,11,rep,name=bls_to_sila_changes,json=blsToSilaChanges,proto3" json:"bls_to_sila_changes,omitempty" ssz-max:"16"`
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
 }
@@ -2404,9 +2404,9 @@ func (x *BlindedBeaconBlockBodyCapella) GetSilaPayloadHeader() *v1.SilaPayloadHe
 	return nil
 }
 
-func (x *BlindedBeaconBlockBodyCapella) GetBlsToExecutionChanges() []*SignedBLSToExecutionChange {
+func (x *BlindedBeaconBlockBodyCapella) GetBlsToSilaChanges() []*SignedBLSToSilaChange {
 	if x != nil {
-		return x.BlsToExecutionChanges
+		return x.BlsToSilaChanges
 	}
 	return nil
 }
@@ -2783,7 +2783,7 @@ type BeaconBlockBodyDeneb struct {
 	VoluntaryExits        []*SignedVoluntaryExit        `protobuf:"bytes,8,rep,name=voluntary_exits,json=voluntaryExits,proto3" json:"voluntary_exits,omitempty" ssz-max:"16"`
 	SyncAggregate         *SyncAggregate                `protobuf:"bytes,9,opt,name=sync_aggregate,json=syncAggregate,proto3" json:"sync_aggregate,omitempty"`
 	SilaPayload      *v1.SilaPayloadDeneb     `protobuf:"bytes,10,opt,name=sila_payload,json=silaPayload,proto3" json:"sila_payload,omitempty"`
-	BlsToExecutionChanges []*SignedBLSToExecutionChange `protobuf:"bytes,11,rep,name=bls_to_execution_changes,json=blsToExecutionChanges,proto3" json:"bls_to_execution_changes,omitempty" ssz-max:"16"`
+	BlsToSilaChanges []*SignedBLSToSilaChange `protobuf:"bytes,11,rep,name=bls_to_sila_changes,json=blsToSilaChanges,proto3" json:"bls_to_sila_changes,omitempty" ssz-max:"16"`
 	BlobKzgCommitments    [][]byte                      `protobuf:"bytes,12,rep,name=blob_kzg_commitments,json=blobKzgCommitments,proto3" json:"blob_kzg_commitments,omitempty" ssz-max:"4096" ssz-size:"?,48"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
@@ -2889,9 +2889,9 @@ func (x *BeaconBlockBodyDeneb) GetSilaPayload() *v1.SilaPayloadDeneb {
 	return nil
 }
 
-func (x *BeaconBlockBodyDeneb) GetBlsToExecutionChanges() []*SignedBLSToExecutionChange {
+func (x *BeaconBlockBodyDeneb) GetBlsToSilaChanges() []*SignedBLSToSilaChange {
 	if x != nil {
-		return x.BlsToExecutionChanges
+		return x.BlsToSilaChanges
 	}
 	return nil
 }
@@ -3043,7 +3043,7 @@ type BlindedBeaconBlockBodyDeneb struct {
 	VoluntaryExits         []*SignedVoluntaryExit          `protobuf:"bytes,8,rep,name=voluntary_exits,json=voluntaryExits,proto3" json:"voluntary_exits,omitempty" ssz-max:"16"`
 	SyncAggregate          *SyncAggregate                  `protobuf:"bytes,9,opt,name=sync_aggregate,json=syncAggregate,proto3" json:"sync_aggregate,omitempty"`
 	SilaPayloadHeader *v1.SilaPayloadHeaderDeneb `protobuf:"bytes,10,opt,name=sila_payload_header,json=silaPayloadHeader,proto3" json:"sila_payload_header,omitempty"`
-	BlsToExecutionChanges  []*SignedBLSToExecutionChange   `protobuf:"bytes,11,rep,name=bls_to_execution_changes,json=blsToExecutionChanges,proto3" json:"bls_to_execution_changes,omitempty" ssz-max:"16"`
+	BlsToSilaChanges  []*SignedBLSToSilaChange   `protobuf:"bytes,11,rep,name=bls_to_sila_changes,json=blsToSilaChanges,proto3" json:"bls_to_sila_changes,omitempty" ssz-max:"16"`
 	BlobKzgCommitments     [][]byte                        `protobuf:"bytes,12,rep,name=blob_kzg_commitments,json=blobKzgCommitments,proto3" json:"blob_kzg_commitments,omitempty" ssz-max:"4096" ssz-size:"?,48"`
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
@@ -3149,9 +3149,9 @@ func (x *BlindedBeaconBlockBodyDeneb) GetSilaPayloadHeader() *v1.SilaPayloadHead
 	return nil
 }
 
-func (x *BlindedBeaconBlockBodyDeneb) GetBlsToExecutionChanges() []*SignedBLSToExecutionChange {
+func (x *BlindedBeaconBlockBodyDeneb) GetBlsToSilaChanges() []*SignedBLSToSilaChange {
 	if x != nil {
-		return x.BlsToExecutionChanges
+		return x.BlsToSilaChanges
 	}
 	return nil
 }
@@ -3799,7 +3799,7 @@ type BeaconBlockBodyElectra struct {
 	VoluntaryExits        []*SignedVoluntaryExit        `protobuf:"bytes,8,rep,name=voluntary_exits,json=voluntaryExits,proto3" json:"voluntary_exits,omitempty" ssz-max:"16"`
 	SyncAggregate         *SyncAggregate                `protobuf:"bytes,9,opt,name=sync_aggregate,json=syncAggregate,proto3" json:"sync_aggregate,omitempty"`
 	SilaPayload      *v1.SilaPayloadDeneb     `protobuf:"bytes,10,opt,name=sila_payload,json=silaPayload,proto3" json:"sila_payload,omitempty"`
-	BlsToExecutionChanges []*SignedBLSToExecutionChange `protobuf:"bytes,11,rep,name=bls_to_execution_changes,json=blsToExecutionChanges,proto3" json:"bls_to_execution_changes,omitempty" ssz-max:"16"`
+	BlsToSilaChanges []*SignedBLSToSilaChange `protobuf:"bytes,11,rep,name=bls_to_sila_changes,json=blsToSilaChanges,proto3" json:"bls_to_sila_changes,omitempty" ssz-max:"16"`
 	BlobKzgCommitments    [][]byte                      `protobuf:"bytes,12,rep,name=blob_kzg_commitments,json=blobKzgCommitments,proto3" json:"blob_kzg_commitments,omitempty" ssz-max:"4096" ssz-size:"?,48"`
 	SilaRequests     *v1.SilaRequests         `protobuf:"bytes,13,opt,name=sila_requests,json=silaRequests,proto3" json:"sila_requests,omitempty"`
 	unknownFields         protoimpl.UnknownFields
@@ -3906,9 +3906,9 @@ func (x *BeaconBlockBodyElectra) GetSilaPayload() *v1.SilaPayloadDeneb {
 	return nil
 }
 
-func (x *BeaconBlockBodyElectra) GetBlsToExecutionChanges() []*SignedBLSToExecutionChange {
+func (x *BeaconBlockBodyElectra) GetBlsToSilaChanges() []*SignedBLSToSilaChange {
 	if x != nil {
-		return x.BlsToExecutionChanges
+		return x.BlsToSilaChanges
 	}
 	return nil
 }
@@ -4067,7 +4067,7 @@ type BlindedBeaconBlockBodyElectra struct {
 	VoluntaryExits         []*SignedVoluntaryExit          `protobuf:"bytes,8,rep,name=voluntary_exits,json=voluntaryExits,proto3" json:"voluntary_exits,omitempty" ssz-max:"16"`
 	SyncAggregate          *SyncAggregate                  `protobuf:"bytes,9,opt,name=sync_aggregate,json=syncAggregate,proto3" json:"sync_aggregate,omitempty"`
 	SilaPayloadHeader *v1.SilaPayloadHeaderDeneb `protobuf:"bytes,10,opt,name=sila_payload_header,json=silaPayloadHeader,proto3" json:"sila_payload_header,omitempty"`
-	BlsToExecutionChanges  []*SignedBLSToExecutionChange   `protobuf:"bytes,11,rep,name=bls_to_execution_changes,json=blsToExecutionChanges,proto3" json:"bls_to_execution_changes,omitempty" ssz-max:"16"`
+	BlsToSilaChanges  []*SignedBLSToSilaChange   `protobuf:"bytes,11,rep,name=bls_to_sila_changes,json=blsToSilaChanges,proto3" json:"bls_to_sila_changes,omitempty" ssz-max:"16"`
 	BlobKzgCommitments     [][]byte                        `protobuf:"bytes,12,rep,name=blob_kzg_commitments,json=blobKzgCommitments,proto3" json:"blob_kzg_commitments,omitempty" ssz-max:"4096" ssz-size:"?,48"`
 	SilaRequests      *v1.SilaRequests           `protobuf:"bytes,13,opt,name=sila_requests,json=silaRequests,proto3" json:"sila_requests,omitempty"`
 	unknownFields          protoimpl.UnknownFields
@@ -4174,9 +4174,9 @@ func (x *BlindedBeaconBlockBodyElectra) GetSilaPayloadHeader() *v1.SilaPayloadHe
 	return nil
 }
 
-func (x *BlindedBeaconBlockBodyElectra) GetBlsToExecutionChanges() []*SignedBLSToExecutionChange {
+func (x *BlindedBeaconBlockBodyElectra) GetBlsToSilaChanges() []*SignedBLSToSilaChange {
 	if x != nil {
-		return x.BlsToExecutionChanges
+		return x.BlsToSilaChanges
 	}
 	return nil
 }
@@ -5898,7 +5898,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_goTypes = []any{
 	(*SyncAggregate)(nil),                     // 65: sila.eth.v1alpha1.SyncAggregate
 	(*v1.SilaPayload)(nil),               // 66: sila.silaengine.v1.SilaPayload
 	(*v1.SilaPayloadCapella)(nil),        // 67: sila.silaengine.v1.SilaPayloadCapella
-	(*SignedBLSToExecutionChange)(nil),        // 68: sila.eth.v1alpha1.SignedBLSToExecutionChange
+	(*SignedBLSToSilaChange)(nil),        // 68: sila.eth.v1alpha1.SignedBLSToSilaChange
 	(*v1.SilaPayloadHeaderCapella)(nil),  // 69: sila.silaengine.v1.SilaPayloadHeaderCapella
 	(*v1.SilaPayloadDeneb)(nil),          // 70: sila.silaengine.v1.SilaPayloadDeneb
 	(*v1.SilaPayloadHeaderDeneb)(nil),    // 71: sila.silaengine.v1.SilaPayloadHeaderDeneb
@@ -5988,7 +5988,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	62,  // 77: sila.eth.v1alpha1.BeaconBlockBodyCapella.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 78: sila.eth.v1alpha1.BeaconBlockBodyCapella.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
 	67,  // 79: sila.eth.v1alpha1.BeaconBlockBodyCapella.sila_payload:type_name -> sila.silaengine.v1.SilaPayloadCapella
-	68,  // 80: sila.eth.v1alpha1.BeaconBlockBodyCapella.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
+	68,  // 80: sila.eth.v1alpha1.BeaconBlockBodyCapella.bls_to_sila_changes:type_name -> sila.eth.v1alpha1.SignedBLSToSilaChange
 	25,  // 81: sila.eth.v1alpha1.SignedBlindedBeaconBlockCapella.block:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockCapella
 	26,  // 82: sila.eth.v1alpha1.BlindedBeaconBlockCapella.body:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella
 	58,  // 83: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
@@ -5999,7 +5999,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	62,  // 88: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 89: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
 	69,  // 90: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeaderCapella
-	68,  // 91: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
+	68,  // 91: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.bls_to_sila_changes:type_name -> sila.eth.v1alpha1.SignedBLSToSilaChange
 	28,  // 92: sila.eth.v1alpha1.SignedBuilderBidCapella.message:type_name -> sila.eth.v1alpha1.BuilderBidCapella
 	69,  // 93: sila.eth.v1alpha1.BuilderBidCapella.header:type_name -> sila.silaengine.v1.SilaPayloadHeaderCapella
 	30,  // 94: sila.eth.v1alpha1.SignedBeaconBlockContentsDeneb.block:type_name -> sila.eth.v1alpha1.SignedBeaconBlockDeneb
@@ -6014,7 +6014,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	62,  // 103: sila.eth.v1alpha1.BeaconBlockBodyDeneb.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 104: sila.eth.v1alpha1.BeaconBlockBodyDeneb.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
 	70,  // 105: sila.eth.v1alpha1.BeaconBlockBodyDeneb.sila_payload:type_name -> sila.silaengine.v1.SilaPayloadDeneb
-	68,  // 106: sila.eth.v1alpha1.BeaconBlockBodyDeneb.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
+	68,  // 106: sila.eth.v1alpha1.BeaconBlockBodyDeneb.bls_to_sila_changes:type_name -> sila.eth.v1alpha1.SignedBLSToSilaChange
 	35,  // 107: sila.eth.v1alpha1.SignedBlindedBeaconBlockDeneb.message:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockDeneb
 	36,  // 108: sila.eth.v1alpha1.BlindedBeaconBlockDeneb.body:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb
 	58,  // 109: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
@@ -6025,7 +6025,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	62,  // 114: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 115: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
 	71,  // 116: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeaderDeneb
-	68,  // 117: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
+	68,  // 117: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.bls_to_sila_changes:type_name -> sila.eth.v1alpha1.SignedBLSToSilaChange
 	38,  // 118: sila.eth.v1alpha1.SignedBuilderBidDeneb.message:type_name -> sila.eth.v1alpha1.BuilderBidDeneb
 	71,  // 119: sila.eth.v1alpha1.BuilderBidDeneb.header:type_name -> sila.silaengine.v1.SilaPayloadHeaderDeneb
 	71,  // 120: sila.eth.v1alpha1.BuilderBidElectra.header:type_name -> sila.silaengine.v1.SilaPayloadHeaderDeneb
@@ -6045,7 +6045,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	62,  // 134: sila.eth.v1alpha1.BeaconBlockBodyElectra.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 135: sila.eth.v1alpha1.BeaconBlockBodyElectra.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
 	70,  // 136: sila.eth.v1alpha1.BeaconBlockBodyElectra.sila_payload:type_name -> sila.silaengine.v1.SilaPayloadDeneb
-	68,  // 137: sila.eth.v1alpha1.BeaconBlockBodyElectra.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
+	68,  // 137: sila.eth.v1alpha1.BeaconBlockBodyElectra.bls_to_sila_changes:type_name -> sila.eth.v1alpha1.SignedBLSToSilaChange
 	72,  // 138: sila.eth.v1alpha1.BeaconBlockBodyElectra.sila_requests:type_name -> sila.silaengine.v1.SilaRequests
 	49,  // 139: sila.eth.v1alpha1.SignedBlindedBeaconBlockElectra.message:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockElectra
 	50,  // 140: sila.eth.v1alpha1.BlindedBeaconBlockElectra.body:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra
@@ -6057,7 +6057,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	62,  // 146: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	65,  // 147: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
 	71,  // 148: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeaderDeneb
-	68,  // 149: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
+	68,  // 149: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.bls_to_sila_changes:type_name -> sila.eth.v1alpha1.SignedBLSToSilaChange
 	72,  // 150: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.sila_requests:type_name -> sila.silaengine.v1.SilaRequests
 	52,  // 151: sila.eth.v1alpha1.SignedBeaconBlockContentsFulu.block:type_name -> sila.eth.v1alpha1.SignedBeaconBlockFulu
 	46,  // 152: sila.eth.v1alpha1.SignedBeaconBlockFulu.block:type_name -> sila.eth.v1alpha1.BeaconBlockElectra

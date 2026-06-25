@@ -12,17 +12,17 @@ func (vs *Server) setBlsToExecData(blk interfaces.SignedBeaconBlock, headState s
 	if blk.Version() < version.Capella {
 		return
 	}
-	if err := blk.SetBLSToExecutionChanges([]*silapb.SignedBLSToExecutionChange{}); err != nil {
-		log.WithError(err).Error("Could not set bls to execution data in block")
+	if err := blk.SetBLSToSilaChanges([]*silapb.SignedBLSToSilaChange{}); err != nil {
+		log.WithError(err).Error("Could not set bls to Sila data in block")
 		return
 	}
 	changes, err := vs.BLSChangesPool.BLSToExecChangesForInclusion(headState)
 	if err != nil {
-		log.WithError(err).Error("Could not get bls to execution changes")
+		log.WithError(err).Error("Could not get bls to Sila changes")
 		return
 	} else {
-		if err := blk.SetBLSToExecutionChanges(changes); err != nil {
-			log.WithError(err).Error("Could not set bls to execution changes")
+		if err := blk.SetBLSToSilaChanges(changes); err != nil {
+			log.WithError(err).Error("Could not set bls to Sila changes")
 			return
 		}
 	}

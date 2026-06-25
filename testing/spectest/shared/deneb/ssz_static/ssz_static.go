@@ -129,10 +129,10 @@ func UnmarshalledSSZ(t *testing.T, serializedBytes []byte, folderName string) (a
 		obj = &silaenginev1.Withdrawal{}
 	case "HistoricalSummary":
 		obj = &silapb.HistoricalSummary{}
-	case "BLSToExecutionChange":
-		obj = &silapb.BLSToExecutionChange{}
-	case "SignedBLSToExecutionChange":
-		obj = &silapb.SignedBLSToExecutionChange{}
+	case "BLSToSilaChange":
+		obj = &silapb.BLSToSilaChange{}
+	case "SignedBLSToSilaChange":
+		obj = &silapb.SignedBLSToSilaChange{}
 	default:
 		return nil, errors.New("type not found")
 	}

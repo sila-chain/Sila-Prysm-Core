@@ -224,7 +224,7 @@ type BeaconBlockBodyCapella struct {
 	VoluntaryExits        []*SignedVoluntaryExit        `json:"voluntary_exits"`
 	SyncAggregate         *SyncAggregate                `json:"sync_aggregate"`
 	SilaPayload      *SilaPayloadCapella      `json:"sila_payload"`
-	BLSToExecutionChanges []*SignedBLSToExecutionChange `json:"bls_to_execution_changes"`
+	BLSToSilaChanges []*SignedBLSToSilaChange `json:"bls_to_sila_changes"`
 }
 
 type SignedBlindedBeaconBlockCapella struct {
@@ -261,7 +261,7 @@ type BlindedBeaconBlockBodyCapella struct {
 	VoluntaryExits         []*SignedVoluntaryExit         `json:"voluntary_exits"`
 	SyncAggregate          *SyncAggregate                 `json:"sync_aggregate"`
 	SilaPayloadHeader *SilaPayloadHeaderCapella `json:"sila_payload_header"`
-	BLSToExecutionChanges  []*SignedBLSToExecutionChange  `json:"bls_to_execution_changes"`
+	BLSToSilaChanges  []*SignedBLSToSilaChange  `json:"bls_to_sila_changes"`
 }
 
 // ----------------------------------------------------------------------------
@@ -314,7 +314,7 @@ type BeaconBlockBodyDeneb struct {
 	VoluntaryExits        []*SignedVoluntaryExit        `json:"voluntary_exits"`
 	SyncAggregate         *SyncAggregate                `json:"sync_aggregate"`
 	SilaPayload      *SilaPayloadDeneb        `json:"sila_payload"`
-	BLSToExecutionChanges []*SignedBLSToExecutionChange `json:"bls_to_execution_changes"`
+	BLSToSilaChanges []*SignedBLSToSilaChange `json:"bls_to_sila_changes"`
 	BlobKzgCommitments    []string                      `json:"blob_kzg_commitments"`
 }
 
@@ -352,7 +352,7 @@ type BlindedBeaconBlockBodyDeneb struct {
 	VoluntaryExits         []*SignedVoluntaryExit        `json:"voluntary_exits"`
 	SyncAggregate          *SyncAggregate                `json:"sync_aggregate"`
 	SilaPayloadHeader *SilaPayloadHeaderDeneb  `json:"sila_payload_header"`
-	BLSToExecutionChanges  []*SignedBLSToExecutionChange `json:"bls_to_execution_changes"`
+	BLSToSilaChanges  []*SignedBLSToSilaChange `json:"bls_to_sila_changes"`
 	BlobKzgCommitments     []string                      `json:"blob_kzg_commitments"`
 }
 
@@ -406,7 +406,7 @@ type BeaconBlockBodyElectra struct {
 	VoluntaryExits        []*SignedVoluntaryExit        `json:"voluntary_exits"`
 	SyncAggregate         *SyncAggregate                `json:"sync_aggregate"`
 	SilaPayload      *SilaPayloadDeneb        `json:"sila_payload"`
-	BLSToExecutionChanges []*SignedBLSToExecutionChange `json:"bls_to_execution_changes"`
+	BLSToSilaChanges []*SignedBLSToSilaChange `json:"bls_to_sila_changes"`
 	BlobKzgCommitments    []string                      `json:"blob_kzg_commitments"`
 	SilaRequests     *SilaRequests            `json:"sila_requests"`
 }
@@ -445,7 +445,7 @@ type BlindedBeaconBlockBodyElectra struct {
 	VoluntaryExits         []*SignedVoluntaryExit        `json:"voluntary_exits"`
 	SyncAggregate          *SyncAggregate                `json:"sync_aggregate"`
 	SilaPayloadHeader *SilaPayloadHeaderDeneb  `json:"sila_payload_header"`
-	BLSToExecutionChanges  []*SignedBLSToExecutionChange `json:"bls_to_execution_changes"`
+	BLSToSilaChanges  []*SignedBLSToSilaChange `json:"bls_to_sila_changes"`
 	BlobKzgCommitments     []string                      `json:"blob_kzg_commitments"`
 	SilaRequests      *SilaRequests            `json:"sila_requests"`
 }
@@ -557,7 +557,7 @@ type BeaconBlockBodyGloas struct {
 	Deposits                  []*Deposit                    `json:"deposits"`
 	VoluntaryExits            []*SignedVoluntaryExit        `json:"voluntary_exits"`
 	SyncAggregate             *SyncAggregate                `json:"sync_aggregate"`
-	BLSToExecutionChanges     []*SignedBLSToExecutionChange `json:"bls_to_execution_changes"`
+	BLSToSilaChanges     []*SignedBLSToSilaChange `json:"bls_to_sila_changes"`
 	SignedSilaPayloadBid *SignedSilaPayloadBid    `json:"signed_sila_payload_bid"`
 	PayloadAttestations       []*PayloadAttestation         `json:"payload_attestations"`
 	ParentSilaRequests   *SilaRequests            `json:"parent_sila_requests"`

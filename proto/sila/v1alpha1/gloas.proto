@@ -200,7 +200,7 @@ message BeaconBlockGloas {
 //     deposits: List[Deposit, MAX_DEPOSITS]
 //     voluntary_exits: List[SignedVoluntaryExit, MAX_VOLUNTARY_EXITS]
 //     sync_aggregate: SyncAggregate
-//     bls_to_execution_changes: List[SignedBLSToExecutionChange, MAX_BLS_TO_EXECUTION_CHANGES]
+//     bls_to_sila_changes: List[SignedBLSToSilaChange, MAX_BLS_TO_SILA_CHANGES]
 //     signed_sila_payload_bid: SignedSilaPayloadBid
 //     payload_attestations: List[PayloadAttestation, MAX_PAYLOAD_ATTESTATIONS]
 //     parent_sila_requests: SilaRequests
@@ -218,7 +218,7 @@ message BeaconBlockBodyGloas {
   repeated SignedVoluntaryExit voluntary_exits = 8
       [ (sila.eth.ext.ssz_max) = "16" ];
   SyncAggregate sync_aggregate = 9;
-  repeated SignedBLSToExecutionChange bls_to_execution_changes = 10
+  repeated SignedBLSToSilaChange bls_to_sila_changes = 10
       [ (sila.eth.ext.ssz_max) = "16" ];
 
   // New in Gloas

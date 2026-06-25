@@ -656,7 +656,7 @@ type BeaconBlockBodyGloas struct {
 	Deposits                  []*Deposit                    `protobuf:"bytes,7,rep,name=deposits,proto3" json:"deposits,omitempty" ssz-max:"16"`
 	VoluntaryExits            []*SignedVoluntaryExit        `protobuf:"bytes,8,rep,name=voluntary_exits,json=voluntaryExits,proto3" json:"voluntary_exits,omitempty" ssz-max:"16"`
 	SyncAggregate             *SyncAggregate                `protobuf:"bytes,9,opt,name=sync_aggregate,json=syncAggregate,proto3" json:"sync_aggregate,omitempty"`
-	BlsToExecutionChanges     []*SignedBLSToExecutionChange `protobuf:"bytes,10,rep,name=bls_to_execution_changes,json=blsToExecutionChanges,proto3" json:"bls_to_execution_changes,omitempty" ssz-max:"16"`
+	BlsToSilaChanges     []*SignedBLSToSilaChange `protobuf:"bytes,10,rep,name=bls_to_sila_changes,json=blsToSilaChanges,proto3" json:"bls_to_sila_changes,omitempty" ssz-max:"16"`
 	SignedSilaPayloadBid *SignedSilaPayloadBid    `protobuf:"bytes,11,opt,name=signed_sila_payload_bid,json=signedSilaPayloadBid,proto3" json:"signed_sila_payload_bid,omitempty"`
 	PayloadAttestations       []*PayloadAttestation         `protobuf:"bytes,12,rep,name=payload_attestations,json=payloadAttestations,proto3" json:"payload_attestations,omitempty" ssz-max:"4"`
 	ParentSilaRequests   *v1.SilaRequests         `protobuf:"bytes,13,opt,name=parent_sila_requests,json=parentSilaRequests,proto3" json:"parent_sila_requests,omitempty"`
@@ -757,9 +757,9 @@ func (x *BeaconBlockBodyGloas) GetSyncAggregate() *SyncAggregate {
 	return nil
 }
 
-func (x *BeaconBlockBodyGloas) GetBlsToExecutionChanges() []*SignedBLSToExecutionChange {
+func (x *BeaconBlockBodyGloas) GetBlsToSilaChanges() []*SignedBLSToSilaChange {
 	if x != nil {
-		return x.BlsToExecutionChanges
+		return x.BlsToSilaChanges
 	}
 	return nil
 }
@@ -2906,7 +2906,7 @@ var file_proto_sila_v1alpha1_gloas_proto_goTypes = []any{
 	(*Deposit)(nil),                                   // 29: sila.eth.v1alpha1.Deposit
 	(*SignedVoluntaryExit)(nil),                       // 30: sila.eth.v1alpha1.SignedVoluntaryExit
 	(*SyncAggregate)(nil),                             // 31: sila.eth.v1alpha1.SyncAggregate
-	(*SignedBLSToExecutionChange)(nil),                // 32: sila.eth.v1alpha1.SignedBLSToExecutionChange
+	(*SignedBLSToSilaChange)(nil),                // 32: sila.eth.v1alpha1.SignedBLSToSilaChange
 	(*v1.SilaRequests)(nil),                      // 33: sila.silaengine.v1.SilaRequests
 	(*Fork)(nil),                                      // 34: sila.eth.v1alpha1.Fork
 	(*BeaconBlockHeader)(nil),                         // 35: sila.eth.v1alpha1.BeaconBlockHeader
@@ -2934,7 +2934,7 @@ var file_proto_sila_v1alpha1_gloas_proto_depIdxs = []int32{
 	29, // 10: sila.eth.v1alpha1.BeaconBlockBodyGloas.deposits:type_name -> sila.eth.v1alpha1.Deposit
 	30, // 11: sila.eth.v1alpha1.BeaconBlockBodyGloas.voluntary_exits:type_name -> sila.eth.v1alpha1.SignedVoluntaryExit
 	31, // 12: sila.eth.v1alpha1.BeaconBlockBodyGloas.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
-	32, // 13: sila.eth.v1alpha1.BeaconBlockBodyGloas.bls_to_execution_changes:type_name -> sila.eth.v1alpha1.SignedBLSToExecutionChange
+	32, // 13: sila.eth.v1alpha1.BeaconBlockBodyGloas.bls_to_sila_changes:type_name -> sila.eth.v1alpha1.SignedBLSToSilaChange
 	1,  // 14: sila.eth.v1alpha1.BeaconBlockBodyGloas.signed_sila_payload_bid:type_name -> sila.eth.v1alpha1.SignedSilaPayloadBid
 	6,  // 15: sila.eth.v1alpha1.BeaconBlockBodyGloas.payload_attestations:type_name -> sila.eth.v1alpha1.PayloadAttestation
 	33, // 16: sila.eth.v1alpha1.BeaconBlockBodyGloas.parent_sila_requests:type_name -> sila.silaengine.v1.SilaRequests

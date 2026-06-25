@@ -23,8 +23,8 @@ const (
 	// SyncCommitteeContributionReceived is sent after a sync committee contribution object has been received.
 	SyncCommitteeContributionReceived
 
-	// BLSToExecutionChangeReceived is sent after a BLS to execution change object has been received from gossip or rpc.
-	BLSToExecutionChangeReceived
+	// BLSToSilaChangeReceived is sent after a BLS to Sila change object has been received from gossip or rpc.
+	BLSToSilaChangeReceived
 
 	// BlobSidecarReceived is sent after a blob sidecar is received from gossip or rpc.
 	BlobSidecarReceived = 6
@@ -82,9 +82,9 @@ type SyncCommitteeContributionReceivedData struct {
 	Contribution *silapb.SignedContributionAndProof
 }
 
-// BLSToExecutionChangeReceivedData is the data sent with BLSToExecutionChangeReceived events.
-type BLSToExecutionChangeReceivedData struct {
-	Change *silapb.SignedBLSToExecutionChange
+// BLSToSilaChangeReceivedData is the data sent with BLSToSilaChangeReceived events.
+type BLSToSilaChangeReceivedData struct {
+	Change *silapb.SignedBLSToSilaChange
 }
 
 // BlobSidecarReceivedData is the data sent with BlobSidecarReceived events.

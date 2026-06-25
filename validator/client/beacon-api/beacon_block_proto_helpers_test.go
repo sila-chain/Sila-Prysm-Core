@@ -1001,27 +1001,27 @@ func TestBeaconBlockProtoHelpers_ConvertWithdrawalsToProto(t *testing.T) {
 	}
 }
 
-func TestBeaconBlockProtoHelpers_ConvertBlsToExecutionChangesToProto(t *testing.T) {
+func TestBeaconBlockProtoHelpers_ConvertBlsToSilaChangesToProto(t *testing.T) {
 	testCases := []struct {
 		name                 string
-		generateInput        func() []*structs.SignedBLSToExecutionChange
-		expectedResult       []*silapb.SignedBLSToExecutionChange
+		generateInput        func() []*structs.SignedBLSToSilaChange
+		expectedResult       []*silapb.SignedBLSToSilaChange
 		expectedErrorMessage string
 	}{
 		{
-			name:                 "nil bls to execution change",
-			expectedErrorMessage: "bls to execution change at index `0` is nil",
-			generateInput: func() []*structs.SignedBLSToExecutionChange {
-				input := generateBlsToExecutionChanges()
+			name:                 "nil bls to Sila change",
+			expectedErrorMessage: "bls to Sila change at index `0` is nil",
+			generateInput: func() []*structs.SignedBLSToSilaChange {
+				input := generateBlsToSilaChanges()
 				input[0] = nil
 				return input
 			},
 		},
 		{
-			name:                 "nil bls to execution change message",
-			expectedErrorMessage: "bls to execution change message at index `0` is nil",
-			generateInput: func() []*structs.SignedBLSToExecutionChange {
-				input := generateBlsToExecutionChanges()
+			name:                 "nil bls to Sila change message",
+			expectedErrorMessage: "bls to Sila change message at index `0` is nil",
+			generateInput: func() []*structs.SignedBLSToSilaChange {
+				input := generateBlsToSilaChanges()
 				input[0].Message = nil
 				return input
 			},
@@ -1029,8 +1029,8 @@ func TestBeaconBlockProtoHelpers_ConvertBlsToExecutionChangesToProto(t *testing.
 		{
 			name:                 "bad validator index",
 			expectedErrorMessage: "failed to decode validator index `foo`",
-			generateInput: func() []*structs.SignedBLSToExecutionChange {
-				input := generateBlsToExecutionChanges()
+			generateInput: func() []*structs.SignedBLSToSilaChange {
+				input := generateBlsToSilaChanges()
 				input[0].Message.ValidatorIndex = "foo"
 				return input
 			},
@@ -1038,8 +1038,8 @@ func TestBeaconBlockProtoHelpers_ConvertBlsToExecutionChangesToProto(t *testing.
 		{
 			name:                 "bad from bls pubkey",
 			expectedErrorMessage: "failed to decode bls pubkey `bar`",
-			generateInput: func() []*structs.SignedBLSToExecutionChange {
-				input := generateBlsToExecutionChanges()
+			generateInput: func() []*structs.SignedBLSToSilaChange {
+				input := generateBlsToSilaChanges()
 				input[0].Message.FromBLSPubkey = "bar"
 				return input
 			},
@@ -1047,17 +1047,17 @@ func TestBeaconBlockProtoHelpers_ConvertBlsToExecutionChangesToProto(t *testing.
 		{
 			name:                 "bad to execution address",
 			expectedErrorMessage: "failed to decode execution address `foo`",
-			generateInput: func() []*structs.SignedBLSToExecutionChange {
-				input := generateBlsToExecutionChanges()
-				input[0].Message.ToExecutionAddress = "foo"
+			generateInput: func() []*structs.SignedBLSToSilaChange {
+				input := generateBlsToSilaChanges()
+				input[0].Message.ToSilaAddress = "foo"
 				return input
 			},
 		},
 		{
 			name:                 "bad signature",
 			expectedErrorMessage: "failed to decode signature `bar`",
-			generateInput: func() []*structs.SignedBLSToExecutionChange {
-				input := generateBlsToExecutionChanges()
+			generateInput: func() []*structs.SignedBLSToSilaChange {
+				input := generateBlsToSilaChanges()
 				input[0].Signature = "bar"
 				return input
 			},
@@ -1066,7 +1066,7 @@ func TestBeaconBlockProtoHelpers_ConvertBlsToExecutionChangesToProto(t *testing.
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			result, err := convertBlsToExecutionChangesToProto(testCase.generateInput())
+			result, err := convertBlsToSilaChangesToProto(testCase.generateInput())
 
 			if testCase.expectedResult != nil {
 				require.NoError(t, err)
@@ -1364,21 +1364,21 @@ func generateWithdrawals() []*structs.Withdrawal {
 	}
 }
 
-func generateBlsToExecutionChanges() []*structs.SignedBLSToExecutionChange {
-	return []*structs.SignedBLSToExecutionChange{
+func generateBlsToSilaChanges() []*structs.SignedBLSToSilaChange {
+	return []*structs.SignedBLSToSilaChange{
 		{
-			Message: &structs.BLSToExecutionChange{
+			Message: &structs.BLSToSilaChange{
 				ValidatorIndex:     "1",
 				FromBLSPubkey:      hexutil.Encode([]byte{2}),
-				ToExecutionAddress: hexutil.Encode([]byte{3}),
+				ToSilaAddress: hexutil.Encode([]byte{3}),
 			},
 			Signature: hexutil.Encode([]byte{4}),
 		},
 		{
-			Message: &structs.BLSToExecutionChange{
+			Message: &structs.BLSToSilaChange{
 				ValidatorIndex:     "5",
 				FromBLSPubkey:      hexutil.Encode([]byte{6}),
-				ToExecutionAddress: hexutil.Encode([]byte{7}),
+				ToSilaAddress: hexutil.Encode([]byte{7}),
 			},
 			Signature: hexutil.Encode([]byte{8}),
 		},

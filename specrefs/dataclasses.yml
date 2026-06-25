@@ -426,7 +426,7 @@
         sync_contribution_data: Dict[Tuple[Slot, Root, uint64], Set[Tuple[boolean, ...]]]
         sync_message_validator_slots: Set[Tuple[Slot, ValidatorIndex, uint64]]
         # [New in Capella]
-        bls_to_execution_change_indices: Set[ValidatorIndex]
+        bls_to_sila_change_indices: Set[ValidatorIndex]
     </spec>
 
 - name: Seen#deneb
@@ -444,7 +444,7 @@
         sync_contribution_aggregator_slots: Set[Tuple[ValidatorIndex, Slot, uint64]]
         sync_contribution_data: Dict[Tuple[Slot, Root, uint64], Set[Tuple[boolean, ...]]]
         sync_message_validator_slots: Set[Tuple[Slot, ValidatorIndex, uint64]]
-        bls_to_execution_change_indices: Set[ValidatorIndex]
+        bls_to_sila_change_indices: Set[ValidatorIndex]
         # [New in Deneb]
         blob_sidecar_tuples: Set[Tuple[Slot, ValidatorIndex, BlobIndex]]
     </spec>
@@ -465,7 +465,7 @@
         sync_contribution_aggregator_slots: Set[Tuple[ValidatorIndex, Slot, uint64]]
         sync_contribution_data: Dict[Tuple[Slot, Root, uint64], Set[Tuple[boolean, ...]]]
         sync_message_validator_slots: Set[Tuple[Slot, ValidatorIndex, uint64]]
-        bls_to_execution_change_indices: Set[ValidatorIndex]
+        bls_to_sila_change_indices: Set[ValidatorIndex]
         blob_sidecar_tuples: Set[Tuple[Slot, ValidatorIndex, BlobIndex]]
     </spec>
 
@@ -484,7 +484,7 @@
         sync_contribution_aggregator_slots: Set[Tuple[ValidatorIndex, Slot, uint64]]
         sync_contribution_data: Dict[Tuple[Slot, Root, uint64], Set[Tuple[boolean, ...]]]
         sync_message_validator_slots: Set[Tuple[Slot, ValidatorIndex, uint64]]
-        bls_to_execution_change_indices: Set[ValidatorIndex]
+        bls_to_sila_change_indices: Set[ValidatorIndex]
         # [Modified in Fulu:SIP7594]
         # Removed `blob_sidecar_tuples`
         # [New in Fulu:SIP7594]
@@ -508,7 +508,7 @@
         sync_contribution_aggregator_slots: Set[Tuple[ValidatorIndex, Slot, uint64]]
         sync_contribution_data: Dict[Tuple[Slot, Root, uint64], Set[Tuple[boolean, ...]]]
         sync_message_validator_slots: Set[Tuple[Slot, ValidatorIndex, uint64]]
-        bls_to_execution_change_indices: Set[ValidatorIndex]
+        bls_to_sila_change_indices: Set[ValidatorIndex]
         data_column_sidecar_tuples: Set[Tuple[Slot, ValidatorIndex, ColumnIndex]]
     </spec>
 

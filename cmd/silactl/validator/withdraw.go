@@ -35,13 +35,13 @@ func setWithdrawalAddresses(c *cli.Context) error {
 		return err
 	}
 	for _, request := range setWithdrawalAddressJsons {
-		fmt.Println("SETTING VALIDATOR INDEX " + au.Red(request.Message.ValidatorIndex).String() + " TO WITHDRAWAL ADDRESS " + au.Red(request.Message.ToExecutionAddress).String())
+		fmt.Println("SETTING VALIDATOR INDEX " + au.Red(request.Message.ValidatorIndex).String() + " TO WITHDRAWAL ADDRESS " + au.Red(request.Message.ToSilaAddress).String())
 	}
 	return callWithdrawalEndpoints(ctx, beaconNodeHost, setWithdrawalAddressJsons)
 }
 
-func getWithdrawalMessagesFromPathFlag(c *cli.Context) ([]*structs.SignedBLSToExecutionChange, error) {
-	setWithdrawalAddressJsons := make([]*structs.SignedBLSToExecutionChange, 0)
+func getWithdrawalMessagesFromPathFlag(c *cli.Context) ([]*structs.SignedBLSToSilaChange, error) {
+	setWithdrawalAddressJsons := make([]*structs.SignedBLSToSilaChange, 0)
 	foundFilePaths, err := findWithdrawalFiles(c.String(PathFlag.Name))
 	if err != nil {
 		return setWithdrawalAddressJsons, errors.Wrap(err, "failed to find withdrawal files")
@@ -51,7 +51,7 @@ func getWithdrawalMessagesFromPathFlag(c *cli.Context) ([]*structs.SignedBLSToEx
 		if err != nil {
 			return setWithdrawalAddressJsons, errors.Wrap(err, "failed to open file")
 		}
-		var to []*structs.SignedBLSToExecutionChange
+		var to []*structs.SignedBLSToSilaChange
 		if err := json.Unmarshal(b, &to); err != nil {
 			log.Warnf("provided file: %s, is not a list of signed withdrawal messages. Error:%s", foundFilePath, err.Error())
 			continue
@@ -61,17 +61,17 @@ func getWithdrawalMessagesFromPathFlag(c *cli.Context) ([]*structs.SignedBLSToEx
 			if len(obj.Message.FromBLSPubkey) == fieldparams.BLSPubkeyLength*2 {
 				to[i].Message.FromBLSPubkey = fmt.Sprintf("0x%s", obj.Message.FromBLSPubkey)
 			}
-			if len(obj.Message.ToExecutionAddress) == common.AddressLength*2 {
-				to[i].Message.ToExecutionAddress = fmt.Sprintf("0x%s", obj.Message.ToExecutionAddress)
+			if len(obj.Message.ToSilaAddress) == common.AddressLength*2 {
+				to[i].Message.ToSilaAddress = fmt.Sprintf("0x%s", obj.Message.ToSilaAddress)
 			}
 			if len(obj.Signature) == fieldparams.BLSSignatureLength*2 {
 				to[i].Signature = fmt.Sprintf("0x%s", obj.Signature)
 			}
-			setWithdrawalAddressJsons = append(setWithdrawalAddressJsons, &structs.SignedBLSToExecutionChange{
-				Message: &structs.BLSToExecutionChange{
+			setWithdrawalAddressJsons = append(setWithdrawalAddressJsons, &structs.SignedBLSToSilaChange{
+				Message: &structs.BLSToSilaChange{
 					ValidatorIndex:     to[i].Message.ValidatorIndex,
 					FromBLSPubkey:      to[i].Message.FromBLSPubkey,
-					ToExecutionAddress: to[i].Message.ToExecutionAddress,
+					ToSilaAddress: to[i].Message.ToSilaAddress,
 				},
 				Signature: to[i].Signature,
 			})
@@ -83,7 +83,7 @@ func getWithdrawalMessagesFromPathFlag(c *cli.Context) ([]*structs.SignedBLSToEx
 	return setWithdrawalAddressJsons, nil
 }
 
-func callWithdrawalEndpoints(ctx context.Context, host string, request []*structs.SignedBLSToExecutionChange) error {
+func callWithdrawalEndpoints(ctx context.Context, host string, request []*structs.SignedBLSToSilaChange) error {
 	client, err := beacon.NewClient(host)
 	if err != nil {
 		return err
@@ -109,7 +109,7 @@ func callWithdrawalEndpoints(ctx context.Context, host string, request []*struct
 		return errors.New("could not convert CAPELLA_FORK_EPOCH to a number")
 	}
 	if fork.Epoch < primitives.Epoch(capellaForkEpoch) {
-		return errors.New("setting withdrawals using the BLStoExecutionChange endpoint is only available after the Capella/Shanghai hard fork")
+		return errors.New("setting withdrawals using the BLStoSilaChange endpoint is only available after the Capella/Shanghai hard fork")
 	}
 	err = client.SubmitChangeBLStoExecution(ctx, request)
 	if err != nil && strings.Contains(err.Error(), "POST error") {
@@ -123,21 +123,21 @@ func callWithdrawalEndpoints(ctx context.Context, host string, request []*struct
 	return checkIfWithdrawsAreInPool(ctx, client, request)
 }
 
-func checkIfWithdrawsAreInPool(ctx context.Context, client *beacon.Client, request []*structs.SignedBLSToExecutionChange) error {
+func checkIfWithdrawsAreInPool(ctx context.Context, client *beacon.Client, request []*structs.SignedBLSToSilaChange) error {
 	log.Info("Verifying requested withdrawal messages known to node...")
-	poolResponse, err := client.GetBLStoExecutionChanges(ctx)
+	poolResponse, err := client.GetBLStoSilaChanges(ctx)
 	if err != nil {
 		return err
 	}
 	requestMap := make(map[string]string)
 	for _, w := range request {
-		requestMap[w.Message.ValidatorIndex] = w.Message.ToExecutionAddress
+		requestMap[w.Message.ValidatorIndex] = w.Message.ToSilaAddress
 	}
 	totalMessages := len(requestMap)
 	log.Infof("There are a total of %d messages known to the node's pool.", len(poolResponse.Data))
 	for _, resp := range poolResponse.Data {
 		value, found := requestMap[resp.Message.ValidatorIndex]
-		if found && value == resp.Message.ToExecutionAddress {
+		if found && value == resp.Message.ToSilaAddress {
 			delete(requestMap, resp.Message.ValidatorIndex)
 		}
 	}

@@ -155,13 +155,13 @@ func (b *SignedBeaconBlock) SetExecution(e interfaces.ExecutionData) error {
 	return nil
 }
 
-// SetBLSToExecutionChanges sets the BLS to execution changes in the block.
+// SetBLSToSilaChanges sets the BLS to Sila changes in the block.
 // This function is not thread safe, it is only used during block creation.
-func (b *SignedBeaconBlock) SetBLSToExecutionChanges(blsToExecutionChanges []*eth.SignedBLSToExecutionChange) error {
+func (b *SignedBeaconBlock) SetBLSToSilaChanges(blsToSilaChanges []*eth.SignedBLSToSilaChange) error {
 	if b.version < version.Capella {
-		return consensus_types.ErrNotSupported("BLSToExecutionChanges", b.version)
+		return consensus_types.ErrNotSupported("BLSToSilaChanges", b.version)
 	}
-	b.block.body.blsToExecutionChanges = blsToExecutionChanges
+	b.block.body.blsToSilaChanges = blsToSilaChanges
 	return nil
 }
 

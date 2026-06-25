@@ -237,7 +237,7 @@ func (vs *Server) BuildBlockParallel(ctx context.Context, sBlk interfaces.Signed
 		// Set sync aggregate. New in Altair.
 		vs.setSyncAggregate(ctx, sBlk, head)
 
-		// Set bls to execution change. New in Capella.
+		// Set bls to Sila change. New in Capella.
 		vs.setBlsToExecData(sBlk, head)
 
 		// Set payload attestations. New in Gloas.
@@ -691,10 +691,10 @@ func (vs *Server) handlePostBlockStateError(ctx context.Context, block interface
 		if err := block.SetAttestations([]silapb.Att{}); err != nil {
 			return nil, errors.Wrap(err, "could not set attestations")
 		}
-	case errors.Is(err, transition.ErrProcessBLSChangesFailed), errors.Is(err, transition.ErrBLSToExecutionChangesSignatureInvalid):
-		log.WithError(err).Warn("Retrying block construction without BLS to execution changes")
-		if err := block.SetBLSToExecutionChanges([]*silapb.SignedBLSToExecutionChange{}); err != nil {
-			return nil, errors.Wrap(err, "could not set BLS to execution changes")
+	case errors.Is(err, transition.ErrProcessBLSChangesFailed), errors.Is(err, transition.ErrBLSToSilaChangesSignatureInvalid):
+		log.WithError(err).Warn("Retrying block construction without BLS to Sila changes")
+		if err := block.SetBLSToSilaChanges([]*silapb.SignedBLSToSilaChange{}); err != nil {
+			return nil, errors.Wrap(err, "could not set BLS to Sila changes")
 		}
 	case errors.Is(err, transition.ErrProcessProposerSlashingsFailed):
 		log.WithError(err).Warn("Retrying block construction without proposer slashings")

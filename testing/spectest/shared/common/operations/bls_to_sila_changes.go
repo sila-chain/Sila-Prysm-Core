@@ -15,11 +15,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-func RunBLSToExecutionChangeTest(t *testing.T, config string, fork string, block blockWithSSZObject, sszToState SSZToState) {
+func RunBLSToSilaChangeTest(t *testing.T, config string, fork string, block blockWithSSZObject, sszToState SSZToState) {
 	require.NoError(t, utils.SetConfig(t, config))
-	testFolders, testsFolderPath := utils.TestFolders(t, config, fork, "operations/bls_to_execution_change/pyspec_tests")
+	testFolders, testsFolderPath := utils.TestFolders(t, config, fork, "operations/bls_to_sila_change/pyspec_tests")
 	if len(testFolders) == 0 {
-		t.Fatalf("No test folders found for %s/%s/%s", config, fork, "operations/bls_to_execution_change/pyspec_tests")
+		t.Fatalf("No test folders found for %s/%s/%s", config, fork, "operations/bls_to_sila_change/pyspec_tests")
 	}
 	for _, folder := range testFolders {
 		t.Run(folder.Name(), func(t *testing.T) {
@@ -31,11 +31,11 @@ func RunBLSToExecutionChangeTest(t *testing.T, config string, fork string, block
 			blk, err := block(changeSSZ)
 			require.NoError(t, err)
 			RunBlockOperationTest(t, folderPath, blk, sszToState, func(ctx context.Context, s state.BeaconState, b interfaces.ReadOnlySignedBeaconBlock) (state.BeaconState, error) {
-				st, err := blocks.ProcessBLSToExecutionChanges(s, b.Block())
+				st, err := blocks.ProcessBLSToSilaChanges(s, b.Block())
 				if err != nil {
 					return nil, err
 				}
-				changes, err := b.Block().Body().BLSToExecutionChanges()
+				changes, err := b.Block().Body().BLSToSilaChanges()
 				if err != nil {
 					return nil, err
 				}

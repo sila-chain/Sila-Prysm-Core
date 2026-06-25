@@ -455,11 +455,11 @@ func Test_BeaconBlockBody_SyncAggregate(t *testing.T) {
 	assert.DeepEqual(t, result, sa)
 }
 
-func Test_BeaconBlockBody_BLSToExecutionChanges(t *testing.T) {
-	changes := []*eth.SignedBLSToExecutionChange{{Message: &eth.BLSToExecutionChange{ToExecutionAddress: []byte("address")}}}
+func Test_BeaconBlockBody_BLSToSilaChanges(t *testing.T) {
+	changes := []*eth.SignedBLSToSilaChange{{Message: &eth.BLSToSilaChange{ToSilaAddress: []byte("address")}}}
 	bb := &SignedBeaconBlock{version: version.Capella, block: &BeaconBlock{body: &BeaconBlockBody{version: version.Capella}}}
-	require.NoError(t, bb.SetBLSToExecutionChanges(changes))
-	result, err := bb.Block().Body().BLSToExecutionChanges()
+	require.NoError(t, bb.SetBLSToSilaChanges(changes))
+	result, err := bb.Block().Body().BLSToSilaChanges()
 	require.NoError(t, err)
 	assert.DeepSSZEqual(t, result, changes)
 }

@@ -218,9 +218,9 @@ func GenerateFullBlockFulu(bState state.BeaconState, privs []bls.SecretKey, conf
 		return nil, errors.Wrap(err, "could not compute beacon proposer index")
 	}
 
-	changes := make([]*silapb.SignedBLSToExecutionChange, conf.NumBLSChanges)
+	changes := make([]*silapb.SignedBLSToSilaChange, conf.NumBLSChanges)
 	for i := uint64(0); i < conf.NumBLSChanges; i++ {
-		changes[i], err = GenerateBLSToExecutionChange(bState, privs[i+1], primitives.ValidatorIndex(i))
+		changes[i], err = GenerateBLSToSilaChange(bState, privs[i+1], primitives.ValidatorIndex(i))
 		if err != nil {
 			return nil, err
 		}
@@ -246,7 +246,7 @@ func GenerateFullBlockFulu(bState state.BeaconState, privs []bls.SecretKey, conf
 			Graffiti:              make([]byte, fieldparams.RootLength),
 			SyncAggregate:         newSyncAggregate,
 			SilaPayload:      newSilaPayloadElectra,
-			BlsToExecutionChanges: changes,
+			BlsToSilaChanges: changes,
 			SilaRequests:     silaRequests,
 			BlobKzgCommitments:    blobKzgCommitments,
 		},

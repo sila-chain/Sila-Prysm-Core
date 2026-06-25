@@ -223,7 +223,7 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	MaxDeposits:                      16,
 	MaxVoluntaryExits:                16,
 	MaxWithdrawalsPerPayload:         16,
-	MaxBlsToExecutionChanges:         16,
+	MaxBlsToSilaChanges:         16,
 	MaxValidatorsPerWithdrawalsSweep: 16384,
 	MaxBuildersPerWithdrawalsSweep:   16384,
 
@@ -240,7 +240,7 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	DomainContributionAndProof:        bytesutil.Uint32ToBytes4(0x09000000),
 	DomainApplicationMask:             bytesutil.Uint32ToBytes4(0x00000001),
 	DomainApplicationBuilder:          bytesutil.Uint32ToBytes4(0x00000001),
-	DomainBLSToExecutionChange:        bytesutil.Uint32ToBytes4(0x0A000000),
+	DomainBLSToSilaChange:        bytesutil.Uint32ToBytes4(0x0A000000),
 	DomainBeaconBuilder:               bytesutil.Uint32ToBytes4(0x0B000000),
 	DomainPTCAttester:                 bytesutil.Uint32ToBytes4(0x0C000000),
 	DomainProposerPreferences:         bytesutil.Uint32ToBytes4(0x0D000000),

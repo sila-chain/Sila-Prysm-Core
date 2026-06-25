@@ -8,21 +8,19 @@ import (
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	common "github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/shared/common/operations"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 )
 
 func blockWithBlsChange(ssz []byte) (interfaces.SignedBeaconBlock, error) {
-	c := &silapb.SignedBLSToExecutionChange{}
+	c := &silapb.SignedBLSToSilaChange{}
 	if err := c.UnmarshalSSZ(ssz); err != nil {
 		return nil, err
 	}
-	b := &silapb.SignedBeaconBlockGloas{
-		Block: &silapb.BeaconBlockGloas{
-			Body: &silapb.BeaconBlockBodyGloas{BlsToExecutionChanges: []*silapb.SignedBLSToExecutionChange{c}},
-		},
-	}
+	b := util.NewBeaconBlockDeneb()
+	b.Block.Body = &silapb.BeaconBlockBodyDeneb{BlsToSilaChanges: []*silapb.SignedBLSToSilaChange{c}}
 	return blocks.NewSignedBeaconBlock(b)
 }
 
-func RunBLSToExecutionChangeTest(t *testing.T, config string) {
-	common.RunBLSToExecutionChangeTest(t, config, version.String(version.Gloas), blockWithBlsChange, sszToState)
+func RunBLSToSilaChangeTest(t *testing.T, config string) {
+	common.RunBLSToSilaChangeTest(t, config, version.String(version.Deneb), blockWithBlsChange, sszToState)
 }

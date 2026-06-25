@@ -593,10 +593,10 @@ func (s *Server) SubmitSyncCommitteeSignatures(w http.ResponseWriter, r *http.Re
 	}
 }
 
-// SubmitBLSToExecutionChanges submits said object to the node's pool
+// SubmitBLSToSilaChanges submits said object to the node's pool
 // if it passes validation the node must broadcast it to the network.
-func (s *Server) SubmitBLSToExecutionChanges(w http.ResponseWriter, r *http.Request) {
-	ctx, span := trace.StartSpan(r.Context(), "beacon.SubmitBLSToExecutionChanges")
+func (s *Server) SubmitBLSToSilaChanges(w http.ResponseWriter, r *http.Request) {
+	ctx, span := trace.StartSpan(r.Context(), "beacon.SubmitBLSToSilaChanges")
 	defer span.End()
 	st, err := s.ChainInfoFetcher.HeadStateReadOnly(ctx)
 	if err != nil {
@@ -604,9 +604,9 @@ func (s *Server) SubmitBLSToExecutionChanges(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	var failures []*server.IndexedError
-	var toBroadcast []*eth.SignedBLSToExecutionChange
+	var toBroadcast []*eth.SignedBLSToSilaChange
 
-	var req []*structs.SignedBLSToExecutionChange
+	var req []*structs.SignedBLSToSilaChange
 	err = json.NewDecoder(r.Body).Decode(&req)
 	switch {
 	case errors.Is(err, io.EOF):
@@ -626,15 +626,15 @@ func (s *Server) SubmitBLSToExecutionChanges(w http.ResponseWriter, r *http.Requ
 		if err != nil {
 			failures = append(failures, &server.IndexedError{
 				Index:   i,
-				Message: "Unable to decode SignedBLSToExecutionChange: " + err.Error(),
+				Message: "Unable to decode SignedBLSToSilaChange: " + err.Error(),
 			})
 			continue
 		}
-		_, err = blocks.ValidateBLSToExecutionChange(st, sbls)
+		_, err = blocks.ValidateBLSToSilaChange(st, sbls)
 		if err != nil {
 			failures = append(failures, &server.IndexedError{
 				Index:   i,
-				Message: "Could not validate SignedBLSToExecutionChange: " + err.Error(),
+				Message: "Could not validate SignedBLSToSilaChange: " + err.Error(),
 			})
 			continue
 		}
@@ -646,8 +646,8 @@ func (s *Server) SubmitBLSToExecutionChanges(w http.ResponseWriter, r *http.Requ
 			continue
 		}
 		s.OperationNotifier.OperationFeed().Send(&feed.Event{
-			Type: operation.BLSToExecutionChangeReceived,
-			Data: &operation.BLSToExecutionChangeReceivedData{
+			Type: operation.BLSToSilaChangeReceived,
+			Data: &operation.BLSToSilaChangeReceivedData{
 				Change: sbls,
 			},
 		})
@@ -670,7 +670,7 @@ func (s *Server) SubmitBLSToExecutionChanges(w http.ResponseWriter, r *http.Requ
 // broadcastBLSBatch broadcasts the first `broadcastBLSChangesRateLimit` messages from the slice pointed to by ptr.
 // It validates the messages again because they could have been invalidated by being included in blocks since the last validation.
 // It removes the messages from the slice and modifies it in place.
-func (s *Server) broadcastBLSBatch(ctx context.Context, ptr *[]*eth.SignedBLSToExecutionChange) {
+func (s *Server) broadcastBLSBatch(ctx context.Context, ptr *[]*eth.SignedBLSToSilaChange) {
 	limit := min(len(*ptr), broadcastBLSChangesRateLimit)
 	st, err := s.ChainInfoFetcher.HeadStateReadOnly(ctx)
 	if err != nil {
@@ -679,20 +679,20 @@ func (s *Server) broadcastBLSBatch(ctx context.Context, ptr *[]*eth.SignedBLSToE
 	}
 	for _, ch := range (*ptr)[:limit] {
 		if ch != nil {
-			_, err := blocks.ValidateBLSToExecutionChange(st, ch)
+			_, err := blocks.ValidateBLSToSilaChange(st, ch)
 			if err != nil {
-				log.WithError(err).Error("Could not validate BLS to execution change")
+				log.WithError(err).Error("Could not validate BLS to Sila change")
 				continue
 			}
 			if err := s.Broadcaster.Broadcast(ctx, ch); err != nil {
-				log.WithError(err).Error("Could not broadcast BLS to execution changes.")
+				log.WithError(err).Error("Could not broadcast BLS to Sila changes.")
 			}
 		}
 	}
 	*ptr = (*ptr)[limit:]
 }
 
-func (s *Server) broadcastBLSChanges(ctx context.Context, changes []*eth.SignedBLSToExecutionChange) {
+func (s *Server) broadcastBLSChanges(ctx context.Context, changes []*eth.SignedBLSToSilaChange) {
 	s.broadcastBLSBatch(ctx, &changes)
 	if len(changes) == 0 {
 		return
@@ -712,18 +712,18 @@ func (s *Server) broadcastBLSChanges(ctx context.Context, changes []*eth.SignedB
 	}
 }
 
-// ListBLSToExecutionChanges retrieves BLS to execution changes known by the node but not necessarily incorporated into any block
-func (s *Server) ListBLSToExecutionChanges(w http.ResponseWriter, r *http.Request) {
-	_, span := trace.StartSpan(r.Context(), "beacon.ListBLSToExecutionChanges")
+// ListBLSToSilaChanges retrieves BLS to Sila changes known by the node but not necessarily incorporated into any block
+func (s *Server) ListBLSToSilaChanges(w http.ResponseWriter, r *http.Request) {
+	_, span := trace.StartSpan(r.Context(), "beacon.ListBLSToSilaChanges")
 	defer span.End()
 
 	sourceChanges, err := s.BLSChangesPool.PendingBLSToExecChanges()
 	if err != nil {
-		httputil.HandleError(w, fmt.Sprintf("Could not get BLS to execution changes: %v", err), http.StatusInternalServerError)
+		httputil.HandleError(w, fmt.Sprintf("Could not get BLS to Sila changes: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	httputil.WriteJson(w, &structs.BLSToExecutionChangesPoolResponse{
+	httputil.WriteJson(w, &structs.BLSToSilaChangesPoolResponse{
 		Data: structs.SignedBLSChangesFromConsensus(sourceChanges),
 	})
 }

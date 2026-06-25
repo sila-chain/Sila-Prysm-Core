@@ -52,7 +52,7 @@ func HistoricalSummaryFromConsensus(s *eth.HistoricalSummary) *HistoricalSummary
 	}
 }
 
-func (s *SignedBLSToExecutionChange) ToConsensus() (*eth.SignedBLSToExecutionChange, error) {
+func (s *SignedBLSToSilaChange) ToConsensus() (*eth.SignedBLSToSilaChange, error) {
 	if s.Message == nil {
 		return nil, server.NewDecodeError(errNilValue, "Message")
 	}
@@ -64,13 +64,13 @@ func (s *SignedBLSToExecutionChange) ToConsensus() (*eth.SignedBLSToExecutionCha
 	if err != nil {
 		return nil, server.NewDecodeError(err, "Signature")
 	}
-	return &eth.SignedBLSToExecutionChange{
+	return &eth.SignedBLSToSilaChange{
 		Message:   change,
 		Signature: sig,
 	}, nil
 }
 
-func (b *BLSToExecutionChange) ToConsensus() (*eth.BLSToExecutionChange, error) {
+func (b *BLSToSilaChange) ToConsensus() (*eth.BLSToSilaChange, error) {
 	index, err := strconv.ParseUint(b.ValidatorIndex, 10, 64)
 	if err != nil {
 		return nil, server.NewDecodeError(err, "ValidatorIndex")
@@ -79,41 +79,41 @@ func (b *BLSToExecutionChange) ToConsensus() (*eth.BLSToExecutionChange, error) 
 	if err != nil {
 		return nil, server.NewDecodeError(err, "FromBLSPubkey")
 	}
-	executionAddress, err := bytesutil.DecodeHexWithLength(b.ToExecutionAddress, common.AddressLength)
+	executionAddress, err := bytesutil.DecodeHexWithLength(b.ToSilaAddress, common.AddressLength)
 	if err != nil {
-		return nil, server.NewDecodeError(err, "ToExecutionAddress")
+		return nil, server.NewDecodeError(err, "ToSilaAddress")
 	}
-	return &eth.BLSToExecutionChange{
+	return &eth.BLSToSilaChange{
 		ValidatorIndex:     primitives.ValidatorIndex(index),
 		FromBlsPubkey:      pubkey,
-		ToExecutionAddress: executionAddress,
+		ToSilaAddress: executionAddress,
 	}, nil
 }
 
-func BLSChangeFromConsensus(ch *eth.BLSToExecutionChange) *BLSToExecutionChange {
-	return &BLSToExecutionChange{
+func BLSChangeFromConsensus(ch *eth.BLSToSilaChange) *BLSToSilaChange {
+	return &BLSToSilaChange{
 		ValidatorIndex:     fmt.Sprintf("%d", ch.ValidatorIndex),
 		FromBLSPubkey:      hexutil.Encode(ch.FromBlsPubkey),
-		ToExecutionAddress: hexutil.Encode(ch.ToExecutionAddress),
+		ToSilaAddress: hexutil.Encode(ch.ToSilaAddress),
 	}
 }
 
-func SignedBLSChangeFromConsensus(ch *eth.SignedBLSToExecutionChange) *SignedBLSToExecutionChange {
-	return &SignedBLSToExecutionChange{
+func SignedBLSChangeFromConsensus(ch *eth.SignedBLSToSilaChange) *SignedBLSToSilaChange {
+	return &SignedBLSToSilaChange{
 		Message:   BLSChangeFromConsensus(ch.Message),
 		Signature: hexutil.Encode(ch.Signature),
 	}
 }
 
-func SignedBLSChangesToConsensus(src []*SignedBLSToExecutionChange) ([]*eth.SignedBLSToExecutionChange, error) {
+func SignedBLSChangesToConsensus(src []*SignedBLSToSilaChange) ([]*eth.SignedBLSToSilaChange, error) {
 	if src == nil {
-		return nil, server.NewDecodeError(errNilValue, "SignedBLSToExecutionChanges")
+		return nil, server.NewDecodeError(errNilValue, "SignedBLSToSilaChanges")
 	}
 	err := slice.VerifyMaxLength(src, 16)
 	if err != nil {
-		return nil, server.NewDecodeError(err, "SignedBLSToExecutionChanges")
+		return nil, server.NewDecodeError(err, "SignedBLSToSilaChanges")
 	}
-	changes := make([]*eth.SignedBLSToExecutionChange, len(src))
+	changes := make([]*eth.SignedBLSToSilaChange, len(src))
 	for i, ch := range src {
 		if ch == nil {
 			return nil, server.NewDecodeError(errNilValue, fmt.Sprintf("[%d]", i))
@@ -126,8 +126,8 @@ func SignedBLSChangesToConsensus(src []*SignedBLSToExecutionChange) ([]*eth.Sign
 	return changes, nil
 }
 
-func SignedBLSChangesFromConsensus(src []*eth.SignedBLSToExecutionChange) []*SignedBLSToExecutionChange {
-	changes := make([]*SignedBLSToExecutionChange, len(src))
+func SignedBLSChangesFromConsensus(src []*eth.SignedBLSToSilaChange) []*SignedBLSToSilaChange {
+	changes := make([]*SignedBLSToSilaChange, len(src))
 	for i, ch := range src {
 		changes[i] = SignedBLSChangeFromConsensus(ch)
 	}
