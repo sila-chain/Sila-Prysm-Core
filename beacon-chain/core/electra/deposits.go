@@ -64,7 +64,7 @@ func ProcessDeposits(
 //	assert is_valid_merkle_branch(
 //		leaf=hash_tree_root(deposit.data),
 //		branch=deposit.proof,
-//		depth=DEPOSIT_CONTRACT_TREE_DEPTH + 1,  # Add 1 for the List length mix-in
+//		depth=SILA_DEPOSIT_TREE_DEPTH + 1,  # Add 1 for the List length mix-in
 //		index=state.silaexec_deposit_index,
 //		root=state.sila_execution_data.deposit_root,
 //	)
@@ -103,7 +103,7 @@ func ProcessDeposit(beaconState state.BeaconState, deposit *silapb.Deposit, allS
 //	              signature: BLSSignature) -> None:
 //	validator_pubkeys = [v.pubkey for v in state.validators]
 //	if pubkey not in validator_pubkeys:
-//	    # Verify the deposit signature (proof of possession) which is not checked by the deposit contract
+//	    # Verify the deposit signature (proof of possession) which is not checked by the sila deposit
 //	    if is_valid_deposit_signature(pubkey, withdrawal_credentials, amount, signature):
 //	        add_validator_to_registry(state, pubkey, withdrawal_credentials, Gwei(0))  # [Modified in Electra:SIP7251]
 //	        # [New in Electra:SIP7251]
@@ -422,7 +422,7 @@ func batchProcessNewPendingDeposits(ctx context.Context, state state.BeaconState
 //	"""
 //	validator_pubkeys = [v.pubkey for v in state.validators]
 //	if deposit.pubkey not in validator_pubkeys:
-//	    # Verify the deposit signature (proof of possession) which is not checked by the deposit contract
+//	    # Verify the deposit signature (proof of possession) which is not checked by the sila deposit
 //	    if is_valid_deposit_signature(
 //	        deposit.pubkey,
 //	        deposit.withdrawal_credentials,

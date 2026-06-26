@@ -60,17 +60,17 @@ func TestConfigureProofOfWork(t *testing.T) {
 	set := flag.NewFlagSet("test", 0)
 	set.Uint64(flags.ChainID.Name, 0, "")
 	set.Uint64(flags.NetworkID.Name, 0, "")
-	set.String(flags.DepositContractFlag.Name, "", "")
+	set.String(flags.SilaDepositFlag.Name, "", "")
 	require.NoError(t, set.Set(flags.ChainID.Name, strconv.Itoa(100)))
 	require.NoError(t, set.Set(flags.NetworkID.Name, strconv.Itoa(200)))
-	require.NoError(t, set.Set(flags.DepositContractFlag.Name, "deposit-contract"))
+	require.NoError(t, set.Set(flags.SilaDepositFlag.Name, "deposit-contract"))
 	cliCtx := cli.NewContext(&app, set, nil)
 
 	require.NoError(t, configureSilaExecutionConfig(cliCtx))
 
 	assert.Equal(t, uint64(100), params.BeaconConfig().DepositChainID)
 	assert.Equal(t, uint64(200), params.BeaconConfig().DepositNetworkID)
-	assert.Equal(t, "deposit-contract", params.BeaconConfig().DepositContractAddress)
+	assert.Equal(t, "deposit-contract", params.BeaconConfig().SilaDepositAddress)
 }
 
 func TestConfigureExecutionSetting(t *testing.T) {

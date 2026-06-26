@@ -19,7 +19,7 @@ func TestGenerateGenesisState(t *testing.T) {
 	require.NoError(t, err)
 	depositDataItems, depositDataRoots, err := interop.DepositDataFromKeys(privKeys, pubKeys)
 	require.NoError(t, err)
-	tr, err := trie.GenerateTrieFromItems(depositDataRoots, params.BeaconConfig().DepositContractTreeDepth)
+	tr, err := trie.GenerateTrieFromItems(depositDataRoots, params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err)
 	deposits, err := interop.GenerateDepositsFromData(depositDataItems, tr)
 	require.NoError(t, err)

@@ -45,7 +45,7 @@ func GenerateGenesisState(ctx context.Context, genesisTime, numValidators uint64
 func GenerateGenesisStateFromDepositData(
 	ctx context.Context, genesisTime uint64, depositData []*silapb.Deposit_Data, depositDataRoots [][]byte,
 ) (*silapb.BeaconState, []*silapb.Deposit, error) {
-	t, err := trie.GenerateTrieFromItems(depositDataRoots, params.BeaconConfig().DepositContractTreeDepth)
+	t, err := trie.GenerateTrieFromItems(depositDataRoots, params.BeaconConfig().SilaDepositTreeDepth)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "could not generate Merkle trie for deposit proofs")
 	}

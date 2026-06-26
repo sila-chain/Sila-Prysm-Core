@@ -30,12 +30,12 @@ func UpdateGenesisSilaExecutionData(state state.BeaconState, deposits []*silapb.
 	var t *trie.SparseMerkleTrie
 	var err error
 	if len(leaves) > 0 {
-		t, err = trie.GenerateTrieFromItems(leaves, params.BeaconConfig().DepositContractTreeDepth)
+		t, err = trie.GenerateTrieFromItems(leaves, params.BeaconConfig().SilaDepositTreeDepth)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		t, err = trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+		t, err = trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 		if err != nil {
 			return nil, err
 		}

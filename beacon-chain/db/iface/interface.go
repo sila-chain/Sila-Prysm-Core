@@ -52,8 +52,8 @@ type ReadOnlyDatabase interface {
 	LastArchivedRoot(ctx context.Context) [32]byte
 	LastArchivedSlot(ctx context.Context) (primitives.Slot, error)
 	LastValidatedCheckpoint(ctx context.Context) (*silapb.Checkpoint, error)
-	// Deposit contract related handlers.
-	DepositContractAddress(ctx context.Context) ([]byte, error)
+	// Sila deposit related handlers.
+	SilaDepositAddress(ctx context.Context) ([]byte, error)
 	// ExecutionChainData operations.
 	ExecutionChainData(ctx context.Context) (*silapb.SilaExecutionChainData, error)
 	// Fee recipients operations.
@@ -108,8 +108,8 @@ type NoHeadAccessDatabase interface {
 	SaveJustifiedCheckpoint(ctx context.Context, checkpoint *silapb.Checkpoint) error
 	SaveFinalizedCheckpoint(ctx context.Context, checkpoint *silapb.Checkpoint) error
 	SaveLastValidatedCheckpoint(ctx context.Context, checkpoint *silapb.Checkpoint) error
-	// Deposit contract related handlers.
-	SaveDepositContractAddress(ctx context.Context, addr common.Address) error
+	// Sila deposit related handlers.
+	SaveSilaDepositAddress(ctx context.Context, addr common.Address) error
 	// SaveExecutionChainData operations.
 	SaveExecutionChainData(ctx context.Context, data *silapb.SilaExecutionChainData) error
 	// Run any required database migrations.

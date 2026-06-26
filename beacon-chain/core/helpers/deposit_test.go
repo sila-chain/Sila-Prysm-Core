@@ -39,7 +39,7 @@ func TestBatchVerifyDepositsSignatures_Ok(t *testing.T) {
 	leaf, err := deposit.Data.HashTreeRoot()
 	require.NoError(t, err)
 	// We then create a merkle branch for the test.
-	depositTrie, err := trie.GenerateTrieFromItems([][]byte{leaf[:]}, params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.GenerateTrieFromItems([][]byte{leaf[:]}, params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not generate trie")
 	proof, err := depositTrie.MerkleProof(0)
 	require.NoError(t, err, "Could not generate proof")
@@ -62,7 +62,7 @@ func TestBatchVerifyDepositsSignatures_InvalidSignature(t *testing.T) {
 	leaf, err := deposit.Data.HashTreeRoot()
 	require.NoError(t, err)
 	// We then create a merkle branch for the test.
-	depositTrie, err := trie.GenerateTrieFromItems([][]byte{leaf[:]}, params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.GenerateTrieFromItems([][]byte{leaf[:]}, params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not generate trie")
 	proof, err := depositTrie.MerkleProof(0)
 	require.NoError(t, err, "Could not generate proof")
@@ -86,7 +86,7 @@ func TestVerifyDeposit_MerkleBranchFailsVerification(t *testing.T) {
 	require.NoError(t, err)
 
 	// We then create a merkle branch for the test.
-	depositTrie, err := trie.GenerateTrieFromItems([][]byte{leaf[:]}, params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.GenerateTrieFromItems([][]byte{leaf[:]}, params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not generate trie")
 	proof, err := depositTrie.MerkleProof(0)
 	require.NoError(t, err, "Could not generate proof")

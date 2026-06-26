@@ -23,31 +23,31 @@ import (
 
 const pubKeyErr = "could not convert bytes to public key"
 
-func TestDepositContractAddress_EmptyAddress(t *testing.T) {
+func TestSilaDepositAddress_EmptyAddress(t *testing.T) {
 	params.SetupTestConfigCleanup(t)
 	config := params.BeaconConfig().Copy()
-	config.DepositContractAddress = ""
+	config.SilaDepositAddress = ""
 	params.OverrideBeaconConfig(config)
 
-	_, err := DepositContractAddress()
-	assert.ErrorContains(t, "valid deposit contract is required", err)
+	_, err := SilaDepositAddress()
+	assert.ErrorContains(t, "valid sila deposit is required", err)
 }
 
-func TestDepositContractAddress_NotHexAddress(t *testing.T) {
+func TestSilaDepositAddress_NotHexAddress(t *testing.T) {
 	params.SetupTestConfigCleanup(t)
 	config := params.BeaconConfig().Copy()
-	config.DepositContractAddress = "abc?!"
+	config.SilaDepositAddress = "abc?!"
 	params.OverrideBeaconConfig(config)
 
-	_, err := DepositContractAddress()
-	assert.ErrorContains(t, "invalid deposit contract address given", err)
+	_, err := SilaDepositAddress()
+	assert.ErrorContains(t, "invalid sila deposit address given", err)
 }
 
-func TestDepositContractAddress_OK(t *testing.T) {
+func TestSilaDepositAddress_OK(t *testing.T) {
 	params.SetupTestConfigCleanup(t)
-	addr, err := DepositContractAddress()
+	addr, err := SilaDepositAddress()
 	require.NoError(t, err)
-	assert.Equal(t, params.BeaconConfig().DepositContractAddress, addr)
+	assert.Equal(t, params.BeaconConfig().SilaDepositAddress, addr)
 }
 
 func TestProcessDeposit_OK(t *testing.T) {
@@ -131,7 +131,7 @@ func TestProcessDeposit_InvalidPublicKey(t *testing.T) {
 	leaf, err := deposits[0].Data.HashTreeRoot()
 	require.NoError(t, err, "Could not hash deposit")
 
-	generatedTrie, err := trie.GenerateTrieFromItems([][]byte{leaf[:]}, params.BeaconConfig().DepositContractTreeDepth)
+	generatedTrie, err := trie.GenerateTrieFromItems([][]byte{leaf[:]}, params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err)
 
 	deposits[0].Proof, err = generatedTrie.MerkleProof(0)
@@ -175,7 +175,7 @@ func TestProcessDeposit_InvalidSignature(t *testing.T) {
 	leaf, err := deposits[0].Data.HashTreeRoot()
 	require.NoError(t, err, "Could not hash deposit")
 
-	generatedTrie, err := trie.GenerateTrieFromItems([][]byte{leaf[:]}, params.BeaconConfig().DepositContractTreeDepth)
+	generatedTrie, err := trie.GenerateTrieFromItems([][]byte{leaf[:]}, params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err)
 
 	root, err := generatedTrie.HashTreeRoot()
@@ -266,7 +266,7 @@ func TestProcessDeposit_IncompleteDeposit(t *testing.T) {
 	sig := priv.Sign(signedRoot[:])
 	deposit.Data.Signature = sig.Marshal()
 
-	generatedTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	generatedTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err)
 	root, err := generatedTrie.HashTreeRoot()
 	require.NoError(t, err)

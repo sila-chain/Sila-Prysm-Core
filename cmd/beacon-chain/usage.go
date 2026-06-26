@@ -162,7 +162,7 @@ var appHelpFlagGroups = []flagGroup{
 		Name: "execution layer",
 		Flags: []cli.Flag{
 			flags.ContractDeploymentBlock,
-			flags.DepositContractFlag,
+			flags.SilaDepositFlag,
 			flags.EngineEndpointTimeoutSeconds,
 			flags.SilaExecutionHeaderReqLimit,
 			flags.ExecutionEngineEndpoint,

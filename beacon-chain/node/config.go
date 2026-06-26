@@ -123,8 +123,8 @@ func configureSilaExecutionConfig(cliCtx *cli.Context) error {
 			return err
 		}
 	}
-	if cliCtx.IsSet(flags.DepositContractFlag.Name) {
-		c.DepositContractAddress = cliCtx.String(flags.DepositContractFlag.Name)
+	if cliCtx.IsSet(flags.SilaDepositFlag.Name) {
+		c.SilaDepositAddress = cliCtx.String(flags.SilaDepositFlag.Name)
 		if err := params.SetActive(c); err != nil {
 			return err
 		}

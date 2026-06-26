@@ -70,7 +70,7 @@ func Test_endpoints(t *testing.T) {
 	configRoutes := map[string][]string{
 		"/sila/v1/config/fork_schedule":    {http.MethodGet},
 		"/sila/v1/config/spec":             {http.MethodGet},
-		"/sila/v1/config/deposit_contract": {http.MethodGet},
+		"/sila/v1/config/sila_deposit": {http.MethodGet},
 	}
 
 	debugRoutes := map[string][]string{

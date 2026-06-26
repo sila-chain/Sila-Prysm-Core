@@ -105,7 +105,7 @@ func (m *SparseMerkleTrie) Items() [][]byte {
 	return m.originalItems
 }
 
-// HashTreeRoot of the Merkle trie as defined in the deposit contract.
+// HashTreeRoot of the Merkle trie as defined in the sila deposit.
 //
 //	Spec Definition:
 //	 sha256(concat(node, self.to_little_endian_64(self.deposit_count), slice(zero_bytes32, start=0, len=24)))

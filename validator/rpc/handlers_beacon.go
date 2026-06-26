@@ -21,7 +21,7 @@ import (
 
 // GetBeaconStatus retrieves information about the beacon node gRPC connection
 // and certain chain metadata, such as the genesis time, the chain head, and the
-// deposit contract address.
+// sila deposit address.
 func (s *Server) GetBeaconStatus(w http.ResponseWriter, r *http.Request) {
 	ctx, span := trace.StartSpan(r.Context(), "validator.web.beacon.GetBeaconStatus")
 	defer span.End()
@@ -41,7 +41,7 @@ func (s *Server) GetBeaconStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	genesisTime := uint64(time.Unix(genesis.GenesisTime.Seconds, 0).Unix())
-	address := genesis.DepositContractAddress
+	address := genesis.SilaDepositAddress
 
 	chainHead, err := s.chainClient.ChainHead(ctx, &emptypb.Empty{})
 	if err != nil {
@@ -53,7 +53,7 @@ func (s *Server) GetBeaconStatus(w http.ResponseWriter, r *http.Request) {
 		Connected:              true,
 		Syncing:                syncStatus.Syncing,
 		GenesisTime:            fmt.Sprintf("%d", genesisTime),
-		DepositContractAddress: hexutil.Encode(address),
+		SilaDepositAddress: hexutil.Encode(address),
 		ChainHead:              ChainHeadResponseFromConsensus(chainHead),
 	})
 }

@@ -40,7 +40,7 @@ type silaBlock struct {
 // NewDepositTree creates an empty deposit tree.
 func NewDepositTree() *DepositTree {
 	var leaves [][32]byte
-	merkle := create(leaves, DepositContractDepth)
+	merkle := create(leaves, SilaDepositDepth)
 	return &DepositTree{
 		tree:                    merkle,
 		depositCount:            0,
@@ -64,10 +64,10 @@ func fromSnapshot(snapshot DepositTreeSnapshot) (*DepositTree, error) {
 	if snapshot.depositRoot != root {
 		return nil, ErrInvalidSnapshotRoot
 	}
-	if snapshot.depositCount >= math.PowerOf2(uint64(DepositContractDepth)) {
+	if snapshot.depositCount >= math.PowerOf2(uint64(SilaDepositDepth)) {
 		return nil, ErrTooManyDeposits
 	}
-	tree, err := fromSnapshotParts(snapshot.finalized, snapshot.depositCount, DepositContractDepth)
+	tree, err := fromSnapshotParts(snapshot.finalized, snapshot.depositCount, SilaDepositDepth)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (d *DepositTree) Finalize(silaExecutionDepositIndex int64, executionHash co
 		Depth: executionNumber,
 	}
 	depositCount := uint64(silaExecutionDepositIndex + 1)
-	_, err := d.tree.Finalize(depositCount, DepositContractDepth)
+	_, err := d.tree.Finalize(depositCount, SilaDepositDepth)
 	if err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func (d *DepositTree) getProof(index uint64) ([32]byte, [][32]byte, error) {
 	if finalizedDeposits > 0 && i <= finalizedIdx {
 		return [32]byte{}, nil, ErrInvalidIndex
 	}
-	leaf, proof := generateProof(d.tree, index, DepositContractDepth)
+	leaf, proof := generateProof(d.tree, index, SilaDepositDepth)
 	var mixInLength [32]byte
 	copy(mixInLength[:], bytesutil.Uint64ToBytesLittleEndian32(d.depositCount))
 	proof = append(proof, mixInLength)
@@ -137,7 +137,7 @@ func (d *DepositTree) getRoot() [32]byte {
 // pushLeaf adds a new leaf to the tree.
 func (d *DepositTree) pushLeaf(leaf [32]byte) error {
 	var err error
-	d.tree, err = d.tree.PushLeaf(leaf, DepositContractDepth)
+	d.tree, err = d.tree.PushLeaf(leaf, SilaDepositDepth)
 	if err != nil {
 		return err
 	}

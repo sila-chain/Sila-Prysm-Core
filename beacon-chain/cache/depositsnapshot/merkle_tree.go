@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	// DepositContractDepth is the maximum tree depth as defined by SIP-4881.
-	DepositContractDepth = 32
+	// SilaDepositDepth is the maximum tree depth as defined by SIP-4881.
+	SilaDepositDepth = 32
 )
 
 var (
@@ -284,7 +284,7 @@ type ZeroNode struct {
 
 // GetRoot returns the root of the Merkle tree.
 func (z *ZeroNode) GetRoot() [32]byte {
-	if z.depth == DepositContractDepth {
+	if z.depth == SilaDepositDepth {
 		return hash.Hash(append(trie.ZeroHashes[z.depth-1][:], trie.ZeroHashes[z.depth-1][:]...))
 	}
 	return trie.ZeroHashes[z.depth]

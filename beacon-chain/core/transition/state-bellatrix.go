@@ -17,7 +17,7 @@ import (
 )
 
 // GenesisBeaconStateBellatrix gets called when MinGenesisActiveValidatorCount count of
-// full deposits were made to the deposit contract and the ChainStart log gets emitted.
+// full deposits were made to the sila deposit and the ChainStart log gets emitted.
 //
 // Spec pseudocode definition:
 //
@@ -40,7 +40,7 @@ import (
 //	  # Process deposits
 //	  leaves = list(map(lambda deposit: deposit.data, deposits))
 //	  for index, deposit in enumerate(deposits):
-//	      deposit_data_list = List[DepositData, 2**DEPOSIT_CONTRACT_TREE_DEPTH](*leaves[:index + 1])
+//	      deposit_data_list = List[DepositData, 2**SILA_DEPOSIT_TREE_DEPTH](*leaves[:index + 1])
 //	      state.sila_execution_data.deposit_root = hash_tree_root(deposit_data_list)
 //	      process_deposit(state, deposit)
 //
@@ -76,7 +76,7 @@ func GenesisBeaconStateBellatrix(ctx context.Context, deposits []*silapb.Deposit
 	}
 
 	// After deposits have been processed, overwrite silaExecutionData to what is passed in. This allows us to "pre-mine" validators
-	// without the deposit root and count mismatching the real deposit contract.
+	// without the deposit root and count mismatching the real sila deposit.
 	if err := st.SetSilaExecutionData(silaexecData); err != nil {
 		return nil, err
 	}

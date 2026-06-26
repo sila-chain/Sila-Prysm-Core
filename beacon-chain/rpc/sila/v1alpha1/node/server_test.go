@@ -46,7 +46,7 @@ func TestNodeServer_GetGenesis(t *testing.T) {
 	db := dbutil.SetupDB(t)
 	ctx := t.Context()
 	addr := common.Address{1, 2, 3}
-	require.NoError(t, db.SaveDepositContractAddress(ctx, addr))
+	require.NoError(t, db.SaveSilaDepositAddress(ctx, addr))
 	st, err := util.NewBeaconState()
 	require.NoError(t, err)
 	genValRoot := bytesutil.ToBytes32([]byte("I am root"))
@@ -60,7 +60,7 @@ func TestNodeServer_GetGenesis(t *testing.T) {
 	}
 	res, err := ns.GetGenesis(t.Context(), &emptypb.Empty{})
 	require.NoError(t, err)
-	assert.DeepEqual(t, addr.Bytes(), res.DepositContractAddress)
+	assert.DeepEqual(t, addr.Bytes(), res.SilaDepositAddress)
 	pUnix := timestamppb.New(time.Unix(0, 0))
 	assert.Equal(t, res.GenesisTime.Seconds, pUnix.Seconds)
 	assert.DeepEqual(t, genValRoot[:], res.GenesisValidatorsRoot)

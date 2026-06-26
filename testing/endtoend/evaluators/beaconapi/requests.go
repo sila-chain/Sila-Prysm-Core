@@ -174,7 +174,7 @@ var getRequests = map[string]endpoint{
 	"/config/spec": newMetadata[structs.GetSpecResponse](
 		v1PathTemplate,
 		withSanityCheckOnly()),
-	"/config/deposit_contract": newMetadata[structs.GetDepositContractResponse](v1PathTemplate),
+	"/config/sila_deposit": newMetadata[structs.GetSilaDepositResponse](v1PathTemplate),
 	"/debug/beacon/states/{param1}": newMetadata[structs.GetBeaconStateV2Response](
 		v2PathTemplate,
 		withSanityCheckOnly(),

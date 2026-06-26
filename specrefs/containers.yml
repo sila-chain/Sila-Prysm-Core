@@ -885,7 +885,7 @@
   spec: |
     <spec ssz_object="Deposit" fork="phase0" hash="cc281399">
     class Deposit(Container):
-        proof: Vector[Bytes32, DEPOSIT_CONTRACT_TREE_DEPTH + 1]
+        proof: Vector[Bytes32, SILA_DEPOSIT_TREE_DEPTH + 1]
         data: DepositData
     </spec>
 

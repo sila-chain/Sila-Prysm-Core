@@ -71,7 +71,7 @@ func ProcessDeposits(
 //	assert is_valid_merkle_branch(
 //		leaf=hash_tree_root(deposit.data),
 //		branch=deposit.proof,
-//		depth=DEPOSIT_CONTRACT_TREE_DEPTH + 1,  # Add 1 for the List length mix-in
+//		depth=SILA_DEPOSIT_TREE_DEPTH + 1,  # Add 1 for the List length mix-in
 //		index=state.silaexec_deposit_index,
 //		root=state.sila_execution_data.deposit_root,
 //	)
@@ -106,7 +106,7 @@ func ProcessDeposit(beaconState state.BeaconState, deposit *silapb.Deposit, allS
 //
 //	validator_pubkeys = [v.pubkey for v in state.validators]
 //	if pubkey not in validator_pubkeys:
-//	    # Verify the deposit signature (proof of possession) which is not checked by the deposit contract
+//	    # Verify the deposit signature (proof of possession) which is not checked by the sila deposit
 //	    deposit_message = DepositMessage(
 //	        pubkey=pubkey,
 //	        withdrawal_credentials=withdrawal_credentials,

@@ -36,7 +36,7 @@ func TestGenerateGenesisStateBellatrix(t *testing.T) {
 	g, _, err := GenerateGenesisStateBellatrix(t.Context(), 0, params.BeaconConfig().MinGenesisActiveValidatorCount, ep, e1d)
 	require.NoError(t, err)
 
-	tr, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	tr, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err)
 	dr, err := tr.HashTreeRoot()
 	require.NoError(t, err)

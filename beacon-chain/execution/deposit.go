@@ -10,15 +10,15 @@ import (
 	"github.com/pkg/errors"
 )
 
-// DepositContractAddress returns the deposit contract address for the given chain.
-func DepositContractAddress() (string, error) {
-	address := params.BeaconConfig().DepositContractAddress
+// SilaDepositAddress returns the sila deposit address for the given chain.
+func SilaDepositAddress() (string, error) {
+	address := params.BeaconConfig().SilaDepositAddress
 	if address == "" {
-		return "", errors.New("valid deposit contract is required")
+		return "", errors.New("valid sila deposit is required")
 	}
 
 	if !common.IsHexAddress(address) {
-		return "", errors.New("invalid deposit contract address given: " + address)
+		return "", errors.New("invalid sila deposit address given: " + address)
 	}
 	return address, nil
 }

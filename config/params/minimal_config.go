@@ -92,7 +92,7 @@ func MinimalSpecConfig() *BeaconChainConfig {
 	minimalConfig.DomainVoluntaryExit = bytesutil.ToBytes4(bytesutil.Bytes4(4))
 	minimalConfig.GenesisForkVersion = []byte{0, 0, 0, 1}
 
-	minimalConfig.DepositContractTreeDepth = 32
+	minimalConfig.SilaDepositTreeDepth = 32
 	minimalConfig.FarFutureEpoch = math.MaxUint64
 	minimalConfig.FarFutureSlot = math.MaxUint64
 
@@ -137,7 +137,7 @@ func MinimalSpecConfig() *BeaconChainConfig {
 	// Sila execution-layer PoW compatibility parameters.
 	minimalConfig.DepositChainID = 5   // Chain ID of silaexec goerli.
 	minimalConfig.DepositNetworkID = 5 // Network ID of silaexec goerli.
-	minimalConfig.DepositContractAddress = "0x1234567890123456789012345678901234567890"
+	minimalConfig.SilaDepositAddress = "0x1234567890123456789012345678901234567890"
 	// 2**256-2**10 for fake minimal network
 	minimalConfig.TerminalTotalDifficulty = "115792089237316195423570985008687907853269984665640564039457584007913129638912"
 

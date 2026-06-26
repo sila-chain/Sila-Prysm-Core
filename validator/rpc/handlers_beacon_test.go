@@ -58,7 +58,7 @@ func TestGetBeaconStatus_OK(t *testing.T) {
 		gomock.Any(),
 	).Return(&silapb.Genesis{
 		GenesisTime:            timeStamp,
-		DepositContractAddress: []byte("hello"),
+		SilaDepositAddress: []byte("hello"),
 	}, nil)
 	chainClient.EXPECT().ChainHead(
 		gomock.Any(), // ctx
@@ -84,7 +84,7 @@ func TestGetBeaconStatus_OK(t *testing.T) {
 		Connected:              true,
 		Syncing:                true,
 		GenesisTime:            fmt.Sprintf("%d", time.Unix(0, 0).Unix()),
-		DepositContractAddress: "0x68656c6c6f",
+		SilaDepositAddress: "0x68656c6c6f",
 		ChainHead: &ChainHead{
 			HeadSlot:                   "0",
 			HeadEpoch:                  "1",

@@ -46,10 +46,10 @@ func WithHeaders(headers []string) Option {
 	}
 }
 
-// WithDepositContractAddress for the deposit contract.
-func WithDepositContractAddress(addr common.Address) Option {
+// WithSilaDepositAddress for the sila deposit.
+func WithSilaDepositAddress(addr common.Address) Option {
 	return func(s *Service) error {
-		s.cfg.depositContractAddr = addr
+		s.cfg.silaDepositAddr = addr
 		return nil
 	}
 }

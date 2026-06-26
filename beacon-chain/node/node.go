@@ -218,7 +218,7 @@ func New(cliCtx *cli.Context, cancel context.CancelFunc, optFuncs []func(*cli.Co
 	beacon.ClockWaiter = synchronizer
 	beacon.forkChoicer = doublylinkedtree.New()
 
-	depositAddress, err := execution.DepositContractAddress()
+	depositAddress, err := execution.SilaDepositAddress()
 	if err != nil {
 		return nil, err
 	}
@@ -529,16 +529,16 @@ func (b *BeaconNode) Close() {
 	close(b.stop)
 }
 
-func (b *BeaconNode) checkAndSaveDepositContract(depositAddress string) error {
-	knownContract, err := b.db.DepositContractAddress(b.ctx)
+func (b *BeaconNode) checkAndSaveSilaDeposit(depositAddress string) error {
+	knownContract, err := b.db.SilaDepositAddress(b.ctx)
 	if err != nil {
-		return errors.Wrap(err, "could not get deposit contract address")
+		return errors.Wrap(err, "could not get sila deposit address")
 	}
 
 	addr := common.HexToAddress(depositAddress)
 	if len(knownContract) == 0 {
-		if err := b.db.SaveDepositContractAddress(b.ctx, addr); err != nil {
-			return errors.Wrap(err, "could not save deposit contract")
+		if err := b.db.SaveSilaDepositAddress(b.ctx, addr); err != nil {
+			return errors.Wrap(err, "could not save sila deposit")
 		}
 	}
 
@@ -597,11 +597,11 @@ func (b *BeaconNode) startDB(cliCtx *cli.Context, depositAddress string) error {
 		}
 	}
 
-	if err := b.checkAndSaveDepositContract(depositAddress); err != nil {
-		return errors.Wrap(err, "could not check and save deposit contract")
+	if err := b.checkAndSaveSilaDeposit(depositAddress); err != nil {
+		return errors.Wrap(err, "could not check and save sila deposit")
 	}
 
-	log.WithField("address", depositAddress).Info("Deposit contract")
+	log.WithField("address", depositAddress).Info("Sila deposit")
 	return nil
 }
 func (b *BeaconNode) startSlasherDB(cliCtx *cli.Context, clearer *dbClearer) error {
@@ -798,7 +798,7 @@ func (b *BeaconNode) registerPOWChainService() error {
 	if err != nil {
 		return err
 	}
-	depositContractAddr, err := execution.DepositContractAddress()
+	silaDepositAddr, err := execution.SilaDepositAddress()
 	if err != nil {
 		return err
 	}
@@ -809,7 +809,7 @@ func (b *BeaconNode) registerPOWChainService() error {
 	// skipcq: CRT-D0001
 	opts := append(
 		b.serviceFlagOpts.executionChainFlagOpts,
-		execution.WithDepositContractAddress(common.HexToAddress(depositContractAddr)),
+		execution.WithSilaDepositAddress(common.HexToAddress(silaDepositAddr)),
 		execution.WithDatabase(b.db),
 		execution.WithDepositCache(b.depositCache),
 		execution.WithStateNotifier(b),

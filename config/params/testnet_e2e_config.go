@@ -30,7 +30,7 @@ func E2ETestConfig() *BeaconChainConfig {
 
 func E2EMainnetTestConfig() *BeaconChainConfig {
 	e2eConfig := MainnetConfig()
-	e2eConfig.DepositContractAddress = "0x4242424242424242424242424242424242424242"
+	e2eConfig.SilaDepositAddress = "0x4242424242424242424242424242424242424242"
 	e2eConfig.SilaExecutionFollowDistance = 8
 
 	// Misc.

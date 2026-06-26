@@ -34,7 +34,7 @@ func GenerateGenesisStateBellatrix(ctx context.Context, genesisTime, numValidato
 func GenerateGenesisStateBellatrixFromDepositData(
 	ctx context.Context, genesisTime uint64, depositData []*silapb.Deposit_Data, depositDataRoots [][]byte, ep *silaenginev1.SilaPayload, e1d *silapb.SilaExecutionData,
 ) (*silapb.BeaconStateBellatrix, []*silapb.Deposit, error) {
-	t, err := trie.GenerateTrieFromItems(depositDataRoots, params.BeaconConfig().DepositContractTreeDepth)
+	t, err := trie.GenerateTrieFromItems(depositDataRoots, params.BeaconConfig().SilaDepositTreeDepth)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "could not generate Merkle trie for deposit proofs")
 	}

@@ -53,7 +53,7 @@ func clientTimedOutError(err error) bool {
 }
 
 // GenesisExecutionChainInfo retrieves the genesis time and sila block number of the beacon chain
-// from the deposit contract.
+// from the sila deposit.
 func (s *Service) GenesisExecutionChainInfo() (uint64, *big.Int) {
 	return s.chainStartData.GenesisTime, big.NewInt(int64(s.chainStartData.GenesisBlock))
 }
@@ -62,7 +62,7 @@ func (s *Service) GenesisExecutionChainInfo() (uint64, *big.Int) {
 func (s *Service) ProcessSilaBlock(ctx context.Context, blkNum *big.Int) error {
 	query := sila.FilterQuery{
 		Addresses: []common.Address{
-			s.cfg.depositContractAddr,
+			s.cfg.silaDepositAddr,
 		},
 		FromBlock: blkNum,
 		ToBlock:   blkNum,
@@ -89,7 +89,7 @@ func (s *Service) ProcessSilaBlock(ctx context.Context, blkNum *big.Int) error {
 }
 
 // ProcessLog is the main method which handles the processing of all
-// logs from the deposit contract on the silaexec chain.
+// logs from the sila deposit on the silaexec chain.
 func (s *Service) ProcessLog(ctx context.Context, depositLog *gethtypes.Log) error {
 	s.processingLock.RLock()
 	defer s.processingLock.RUnlock()
@@ -200,7 +200,7 @@ func (s *Service) ProcessDepositLog(ctx context.Context, depositLog *gethtypes.L
 				"silaexecBlock":       depositLog.BlockNumber,
 				"publicKey":       fmt.Sprintf("%#x", depositData.PublicKey),
 				"merkleTreeIndex": index,
-			}).Debug("Deposit registered from deposit contract")
+			}).Debug("Deposit registered from sila deposit")
 		}
 		validDepositsCount.Inc()
 		// Notify users what is going on, from time to time.
@@ -222,7 +222,7 @@ func (s *Service) ProcessDepositLog(ctx context.Context, depositLog *gethtypes.L
 			"silaexecBlock":       depositLog.BlockHash.Hex(),
 			"silaexecTx":          depositLog.TxHash.Hex(),
 			"merkleTreeIndex": index,
-		}).Info("Invalid deposit registered in deposit contract")
+		}).Info("Invalid deposit registered in sila deposit")
 	}
 	// We finalize the trie here so that old deposits are not kept around, as they make
 	// deposit tree htr computation expensive.
@@ -286,18 +286,18 @@ func createGenesisTime(timeStamp uint64) uint64 {
 	return timeStamp + params.BeaconConfig().GenesisDelay
 }
 
-// processPastLogs processes all the past logs from the deposit contract and
+// processPastLogs processes all the past logs from the sila deposit and
 // updates the deposit trie with the data from each individual log.
 func (s *Service) processPastLogs(ctx context.Context) error {
 	currentBlockNum := s.latestSilaExecutionData.LastRequestedBlock
 	deploymentBlock := params.BeaconNetworkConfig().ContractDeploymentBlock
 	// Start from the deployment block if our last requested block
 	// is behind it. This is as the deposit logs can only start from the
-	// block of the deployment of the deposit contract.
+	// block of the deployment of the sila deposit.
 	currentBlockNum = max(currentBlockNum, deploymentBlock)
 	// To store all blocks.
 	headersMap := make(map[uint64]*types.HeaderInfo)
-	rawLogCount, err := s.depositContractCaller.GetDepositCount(&bind.CallOpts{})
+	rawLogCount, err := s.silaDepositCaller.GetDepositCount(&bind.CallOpts{})
 	if err != nil {
 		return err
 	}
@@ -381,7 +381,7 @@ func (s *Service) processBlockInBatch(ctx context.Context, currentBlockNum uint6
 	end = min(end, latestFollowHeight)
 	query := sila.FilterQuery{
 		Addresses: []common.Address{
-			s.cfg.depositContractAddr,
+			s.cfg.silaDepositAddr,
 		},
 		FromBlock: new(big.Int).SetUint64(start),
 		ToBlock:   new(big.Int).SetUint64(end),

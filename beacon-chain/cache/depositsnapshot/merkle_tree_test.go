@@ -142,7 +142,7 @@ func Test_generateProof(t *testing.T) {
 				require.NoError(t, err)
 			}
 			for i := uint64(0); i < tt.leaves; i++ {
-				leaf, proof := generateProof(tree.tree, i, DepositContractDepth)
+				leaf, proof := generateProof(tree.tree, i, SilaDepositDepth)
 				require.Equal(t, leaf, testCases[i].DepositDataRoot)
 				calcRoot := merkleRootFromBranch(leaf, proof, i)
 				require.Equal(t, tree.tree.GetRoot(), calcRoot)

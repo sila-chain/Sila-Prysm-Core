@@ -47,7 +47,7 @@ import (
 var (
 	validDepositsCount = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "powchain_valid_deposits_received",
-		Help: "The number of valid deposits received in the deposit contract",
+		Help: "The number of valid deposits received in the sila deposit",
 	})
 	blockNumberGauge = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "powchain_block_number",
@@ -120,7 +120,7 @@ func (RPCClientEmpty) CallContext(context.Context, any, string, ...any) error {
 
 // config defines a config struct for dependencies into the service.
 type config struct {
-	depositContractAddr     common.Address
+	silaDepositAddr     common.Address
 	beaconDB                db.HeadAccessDatabase
 	depositCache            cache.DepositCache
 	stateNotifier           statefeed.Notifier
@@ -153,7 +153,7 @@ type Service struct {
 	rpcClient               RPCClient
 	headerCache             *headerCache // cache to store block hash/block height.
 	latestSilaExecutionData          *silapb.LatestSilaExecutionData
-	depositContractCaller   *contracts.DepositContractCaller
+	silaDepositCaller   *contracts.SilaDepositCaller
 	depositTrie             cache.MerkleTree
 	chainStartData          *silapb.ChainStartData
 	lastReceivedMerkleIndex int64 // Keeps track of the last received index to prevent log spam.
@@ -563,7 +563,7 @@ func (s *Service) initPOWService() {
 					s.retryExecutionClientConnection(ctx, err)
 					errorLogger(
 						err,
-						"Unable to process past deposit contract logs, perhaps your execution client is not fully synced",
+						"Unable to process past sila deposit logs, perhaps your execution client is not fully synced",
 					)
 					continue
 				}

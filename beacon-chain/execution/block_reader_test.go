@@ -37,7 +37,7 @@ func TestLatestMainchainInfo_OK(t *testing.T) {
 	})
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 	)
 	require.NoError(t, err, "Unable to setup web3 SILAEXEC.0 chain service")
@@ -45,7 +45,7 @@ func TestLatestMainchainInfo_OK(t *testing.T) {
 	web3Service = setDefaultMocks(web3Service)
 	web3Service.rpcClient = &mockExecution.RPCClient{Backend: testAcc.Backend}
 
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 	testAcc.Backend.Commit()
 

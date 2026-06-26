@@ -227,7 +227,7 @@ func (vs *Server) rebuildDepositTrie(ctx context.Context, canonicalSilaExecution
 		}
 		trieItems = append(trieItems, depHash[:])
 	}
-	depositTrie, err := trie.GenerateTrieFromItems(trieItems, params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.GenerateTrieFromItems(trieItems, params.BeaconConfig().SilaDepositTreeDepth)
 	if err != nil {
 		return nil, err
 	}
@@ -284,6 +284,6 @@ func shouldRebuildTrie(totalDepCount, unFinalizedDeps uint64) bool {
 	// depth = log(x) + k. We can then find the total number of nodes to be hashed by
 	// calculating  y (log(x) + k) , where y is the number of unfinalized deposits. For
 	// the deposit trie, the value of log(x) + k is fixed at 32.
-	unFinalizedCompute := unFinalizedDeps * params.BeaconConfig().DepositContractTreeDepth
+	unFinalizedCompute := unFinalizedDeps * params.BeaconConfig().SilaDepositTreeDepth
 	return unFinalizedCompute > totalDepCount
 }

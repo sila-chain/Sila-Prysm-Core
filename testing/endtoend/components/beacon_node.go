@@ -171,7 +171,7 @@ func NewBeaconNode(config *e2etypes.E2EConfig, index int, enr string) *BeaconNod
 }
 
 func (node *BeaconNode) saveGenesis(ctx context.Context) (string, error) {
-	// The deposit contract starts with an empty trie, we use the BeaconState to "pre-mine" the validator registry,
+	// The sila deposit starts with an empty trie, we use the BeaconState to "pre-mine" the validator registry,
 	g, err := GenerateGenesis(ctx)
 	if err != nil {
 		return "", err
@@ -251,7 +251,7 @@ func (node *BeaconNode) Start(ctx context.Context) error {
 		fmt.Sprintf("--%s=%s", genesis.StatePath.Name, genesisPath),
 		fmt.Sprintf("--%s=%s/sila-beacon-node-%d", cmdshared.DataDirFlag.Name, e2e.TestParams.TestPath, index),
 		fmt.Sprintf("--%s=%s", cmdshared.LogFileName.Name, stdOutFile.Name()),
-		fmt.Sprintf("--%s=%s", flags.DepositContractFlag.Name, params.BeaconConfig().DepositContractAddress),
+		fmt.Sprintf("--%s=%s", flags.SilaDepositFlag.Name, params.BeaconConfig().SilaDepositAddress),
 		fmt.Sprintf("--%s=%d", flags.RPCPort.Name, e2e.TestParams.Ports.SilaBeaconNodeRPCPort+index),
 		fmt.Sprintf("--%s=http://127.0.0.1:%d", flags.ExecutionEngineEndpoint.Name, e2e.TestParams.Ports.SilaExecutionProxyPort+index),
 		fmt.Sprintf("--%s=%s", flags.ExecutionJWTSecretFlag.Name, jwtPath),

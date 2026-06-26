@@ -1565,7 +1565,7 @@ func TestProposer_PendingDeposits_OutsideSilaExecutionFollowWindow(t *testing.T)
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
 
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	for _, dp := range append(readyDeposits, recentDeposits...) {
 		depositHash, err := dp.Deposit.Data.HashTreeRoot()
@@ -1704,7 +1704,7 @@ func TestProposer_PendingDeposits_FollowsCorrectSilaBlock(t *testing.T) {
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
 
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	for _, dp := range append(readyDeposits, recentDeposits...) {
 		depositHash, err := dp.Deposit.Data.HashTreeRoot()
@@ -1803,7 +1803,7 @@ func TestProposer_PendingDeposits_CantReturnBelowStateSilaExecutionDepositIndex(
 				}},
 		})
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 
 	depositCache, err := depositsnapshot.New()
@@ -1903,7 +1903,7 @@ func TestProposer_PendingDeposits_CantReturnMoreThanMax(t *testing.T) {
 				}},
 		})
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 
 	depositCache, err := depositsnapshot.New()
@@ -2001,7 +2001,7 @@ func TestProposer_PendingDeposits_CantReturnMoreThanDepositCount(t *testing.T) {
 				}},
 		})
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 
 	depositCache, err := depositsnapshot.New()
@@ -2118,7 +2118,7 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
 
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	for _, dp := range append(finalizedDeposits, recentDeposits...) {
 		depositHash, err := dp.Deposit.Data.HashTreeRoot()
@@ -2234,7 +2234,7 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
 
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	for _, dp := range append(finalizedDeposits, recentDeposits...) {
 		depositHash, err := dp.Deposit.Data.HashTreeRoot()
@@ -2298,7 +2298,7 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 				return &silapb.SilaExecutionData{DepositRoot: []byte{}, DepositCount: 10, BlockHash: []byte{}}
 			},
 			trieCreator: func() *trie.SparseMerkleTrie {
-				newTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+				newTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 				assert.NoError(t, err)
 				return newTrie
 			},
@@ -2307,7 +2307,7 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 		{
 			name: "invalid deposit root",
 			silaExecutionDataCreator: func() *silapb.SilaExecutionData {
-				newTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+				newTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 				assert.NoError(t, err)
 				assert.NoError(t, newTrie.Insert([]byte{'a'}, 0))
 				assert.NoError(t, newTrie.Insert([]byte{'b'}, 1))
@@ -2315,7 +2315,7 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 				return &silapb.SilaExecutionData{DepositRoot: []byte{'B'}, DepositCount: 3, BlockHash: []byte{}}
 			},
 			trieCreator: func() *trie.SparseMerkleTrie {
-				newTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+				newTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 				assert.NoError(t, err)
 				assert.NoError(t, newTrie.Insert([]byte{'a'}, 0))
 				assert.NoError(t, newTrie.Insert([]byte{'b'}, 1))
@@ -2327,7 +2327,7 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 		{
 			name: "valid deposit trie",
 			silaExecutionDataCreator: func() *silapb.SilaExecutionData {
-				newTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+				newTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 				assert.NoError(t, err)
 				assert.NoError(t, newTrie.Insert([]byte{'a'}, 0))
 				assert.NoError(t, newTrie.Insert([]byte{'b'}, 1))
@@ -2337,7 +2337,7 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 				return &silapb.SilaExecutionData{DepositRoot: rt[:], DepositCount: 3, BlockHash: []byte{}}
 			},
 			trieCreator: func() *trie.SparseMerkleTrie {
-				newTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+				newTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 				assert.NoError(t, err)
 				assert.NoError(t, newTrie.Insert([]byte{'a'}, 0))
 				assert.NoError(t, newTrie.Insert([]byte{'b'}, 1))
@@ -2411,7 +2411,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 				WithdrawalCredentials: make([]byte, 32),
 			}},
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err)
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -3134,7 +3134,7 @@ func TestProposer_Deposits_ReturnsEmptyList_IfLatestSilaExecutionDataEqGenesisSi
 				}},
 		})
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 
 	depositCache, err := depositsnapshot.New()

@@ -24,20 +24,20 @@ import (
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
 
-func TestGetDepositContract(t *testing.T) {
+func TestGetSilaDeposit(t *testing.T) {
 	params.SetupTestConfigCleanup(t)
 	config := params.BeaconConfig().Copy()
 	config.DepositChainID = uint64(10)
-	config.DepositContractAddress = "0x4242424242424242424242424242424242424242"
+	config.SilaDepositAddress = "0x4242424242424242424242424242424242424242"
 	params.OverrideBeaconConfig(config)
 
-	request := httptest.NewRequest(http.MethodGet, "http://example.com/sila/v1/config/deposit_contract", nil)
+	request := httptest.NewRequest(http.MethodGet, "http://example.com/sila/v1/config/sila_deposit", nil)
 	writer := httptest.NewRecorder()
 	writer.Body = &bytes.Buffer{}
 
-	GetDepositContract(writer, request)
+	GetSilaDeposit(writer, request)
 	require.Equal(t, http.StatusOK, writer.Code)
-	response := structs.GetDepositContractResponse{}
+	response := structs.GetSilaDepositResponse{}
 	require.NoError(t, json.Unmarshal(writer.Body.Bytes(), &response))
 	assert.Equal(t, "10", response.Data.ChainId)
 	assert.Equal(t, "0x4242424242424242424242424242424242424242", response.Data.Address)
@@ -67,7 +67,7 @@ func TestGetSpec(t *testing.T) {
 	config.SecondsPerSilaBlock = 17
 	config.DepositChainID = 18
 	config.DepositNetworkID = 19
-	config.DepositContractAddress = "DepositContractAddress"
+	config.SilaDepositAddress = "SilaDepositAddress"
 	config.MinDepositAmount = 20
 	config.MaxEffectiveBalance = 21
 	config.EjectionBalance = 22
@@ -279,8 +279,8 @@ func TestGetSpec(t *testing.T) {
 				assert.Equal(t, "18", v)
 			case "DEPOSIT_NETWORK_ID":
 				assert.Equal(t, "19", v)
-			case "DEPOSIT_CONTRACT_ADDRESS":
-				assert.Equal(t, "DepositContractAddress", v)
+			case "SILA_DEPOSIT_ADDRESS":
+				assert.Equal(t, "SilaDepositAddress", v)
 			case "MIN_DEPOSIT_AMOUNT":
 				assert.Equal(t, "20", v)
 			case "MAX_EFFECTIVE_BALANCE":
@@ -839,7 +839,7 @@ func TestConvertValueForJSON_NoErrorLogsForStrings(t *testing.T) {
 	}{
 		{"CONFIG_NAME", "mainnet"},
 		{"PRESET_BASE", "mainnet"},
-		{"DEPOSIT_CONTRACT_ADDRESS", "0x00000000219ab540356cBB839Cbe05303d7705Fa"},
+		{"SILA_DEPOSIT_ADDRESS", "0x00000000219ab540356cBB839Cbe05303d7705Fa"},
 		{"TERMINAL_TOTAL_DIFFICULTY", "58750000000000000000000"},
 	}
 

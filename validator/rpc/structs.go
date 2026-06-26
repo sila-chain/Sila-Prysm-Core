@@ -114,7 +114,7 @@ type BeaconStatusResponse struct {
 	Connected              bool       `json:"connected"`
 	Syncing                bool       `json:"syncing"`
 	GenesisTime            string     `json:"genesis_time"`
-	DepositContractAddress string     `json:"deposit_contract_address"`
+	SilaDepositAddress string     `json:"sila_deposit_address"`
 	ChainHead              *ChainHead `json:"chain_head"`
 }
 

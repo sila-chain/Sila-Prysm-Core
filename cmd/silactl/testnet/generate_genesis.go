@@ -349,7 +349,7 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "could not get header by number")
 		}
-		t, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+		t, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 		if err != nil {
 			return nil, errors.Wrap(err, "could not create deposit tree")
 		}

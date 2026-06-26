@@ -40,13 +40,13 @@ func TestProcessDepositLog_OK(t *testing.T) {
 	})
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 		WithDepositCache(depositCache),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 
 	testAcc.Backend.Commit()
@@ -61,13 +61,13 @@ func TestProcessDepositLog_OK(t *testing.T) {
 	testAcc.TxOpts.Value = mock.Amount32Eth()
 	testAcc.TxOpts.GasLimit = 1000000
 	_, err = testAcc.Contract.Deposit(testAcc.TxOpts, data.PublicKey, data.WithdrawalCredentials, data.Signature, depositRoots[0])
-	require.NoError(t, err, "Could not deposit to deposit contract")
+	require.NoError(t, err, "Could not deposit to sila deposit")
 
 	testAcc.Backend.Commit()
 
 	query := sila.FilterQuery{
 		Addresses: []common.Address{
-			web3Service.cfg.depositContractAddr,
+			web3Service.cfg.silaDepositAddr,
 		},
 	}
 
@@ -89,7 +89,7 @@ func TestProcessDepositLog_OK(t *testing.T) {
 	require.LogsDoNotContain(t, hook, "deposit signature did not verify")
 	require.LogsDoNotContain(t, hook, "could not tree hash deposit data")
 	require.LogsDoNotContain(t, hook, "deposit merkle branch of deposit root did not verify for root")
-	require.LogsContain(t, hook, "Deposit registered from deposit contract")
+	require.LogsContain(t, hook, "Deposit registered from sila deposit")
 
 	hook.Reset()
 }
@@ -109,13 +109,13 @@ func TestProcessDepositLog_InsertsPendingDeposit(t *testing.T) {
 
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 		WithDepositCache(depositCache),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 
 	testAcc.Backend.Commit()
@@ -130,16 +130,16 @@ func TestProcessDepositLog_InsertsPendingDeposit(t *testing.T) {
 	testAcc.TxOpts.GasLimit = 1000000
 
 	_, err = testAcc.Contract.Deposit(testAcc.TxOpts, data.PublicKey, data.WithdrawalCredentials, data.Signature, depositRoots[0])
-	require.NoError(t, err, "Could not deposit to deposit contract")
+	require.NoError(t, err, "Could not deposit to sila deposit")
 
 	_, err = testAcc.Contract.Deposit(testAcc.TxOpts, data.PublicKey, data.WithdrawalCredentials, data.Signature, depositRoots[0])
-	require.NoError(t, err, "Could not deposit to deposit contract")
+	require.NoError(t, err, "Could not deposit to sila deposit")
 
 	testAcc.Backend.Commit()
 
 	query := sila.FilterQuery{
 		Addresses: []common.Address{
-			web3Service.cfg.depositContractAddr,
+			web3Service.cfg.silaDepositAddr,
 		},
 	}
 
@@ -170,12 +170,12 @@ func TestUnpackDepositLogData_OK(t *testing.T) {
 	})
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 
 	testAcc.Backend.Commit()
@@ -189,12 +189,12 @@ func TestUnpackDepositLogData_OK(t *testing.T) {
 	testAcc.TxOpts.Value = mock.Amount32Eth()
 	testAcc.TxOpts.GasLimit = 1000000
 	_, err = testAcc.Contract.Deposit(testAcc.TxOpts, data.PublicKey, data.WithdrawalCredentials, data.Signature, depositRoots[0])
-	require.NoError(t, err, "Could not deposit to deposit contract")
+	require.NoError(t, err, "Could not deposit to sila deposit")
 	testAcc.Backend.Commit()
 
 	query := sila.FilterQuery{
 		Addresses: []common.Address{
-			web3Service.cfg.depositContractAddr,
+			web3Service.cfg.silaDepositAddr,
 		},
 	}
 
@@ -225,13 +225,13 @@ func TestProcessSilaGenesisLog_8DuplicatePubkeys(t *testing.T) {
 
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 		WithDepositCache(depositCache),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 
 	params.SetupTestConfigCleanup(t)
@@ -252,19 +252,19 @@ func TestProcessSilaGenesisLog_8DuplicatePubkeys(t *testing.T) {
 	testAcc.TxOpts.GasLimit = 1000000
 
 	// 64 Validators are used as size required for beacon-chain to start. This number
-	// is defined in the deposit contract as the number required for the testnet. The actual number
+	// is defined in the sila deposit as the number required for the testnet. The actual number
 	// is 2**14
 	for range depositsReqForChainStart {
 		testAcc.TxOpts.Value = mock.Amount32Eth()
 		_, err = testAcc.Contract.Deposit(testAcc.TxOpts, data.PublicKey, data.WithdrawalCredentials, data.Signature, depositRoots[0])
-		require.NoError(t, err, "Could not deposit to deposit contract")
+		require.NoError(t, err, "Could not deposit to sila deposit")
 
 		testAcc.Backend.Commit()
 	}
 
 	query := sila.FilterQuery{
 		Addresses: []common.Address{
-			web3Service.cfg.depositContractAddr,
+			web3Service.cfg.silaDepositAddr,
 		},
 	}
 
@@ -300,13 +300,13 @@ func TestProcessSilaGenesisLog(t *testing.T) {
 	})
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 		WithDepositCache(depositCache),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	web3Service.rpcClient = &mockExecution.RPCClient{Backend: testAcc.Backend}
 	require.NoError(t, err)
 	params.SetupTestConfigCleanup(t)
@@ -323,21 +323,21 @@ func TestProcessSilaGenesisLog(t *testing.T) {
 	require.NoError(t, err)
 
 	// 64 Validators are used as size required for beacon-chain to start. This number
-	// is defined in the deposit contract as the number required for the testnet. The actual number
+	// is defined in the sila deposit as the number required for the testnet. The actual number
 	// is 2**14
 	for i := range depositsReqForChainStart {
 		data := deposits[i].Data
 		testAcc.TxOpts.Value = mock.Amount32Eth()
 		testAcc.TxOpts.GasLimit = 1000000
 		_, err = testAcc.Contract.Deposit(testAcc.TxOpts, data.PublicKey, data.WithdrawalCredentials, data.Signature, roots[i])
-		require.NoError(t, err, "Could not deposit to deposit contract")
+		require.NoError(t, err, "Could not deposit to sila deposit")
 
 		testAcc.Backend.Commit()
 	}
 
 	query := sila.FilterQuery{
 		Addresses: []common.Address{
-			web3Service.cfg.depositContractAddr,
+			web3Service.cfg.silaDepositAddr,
 		},
 	}
 
@@ -393,13 +393,13 @@ func TestProcessSilaGenesisLog_CorrectNumOfDeposits(t *testing.T) {
 
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(kvStore),
 		WithDepositCache(depositCache),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 	web3Service.rpcClient = &mockExecution.RPCClient{Backend: testAcc.Backend}
 	web3Service.httpLogger = testAcc.Backend.Client()
@@ -427,14 +427,14 @@ func TestProcessSilaGenesisLog_CorrectNumOfDeposits(t *testing.T) {
 	depositOffset := 5
 
 	// 64 Validators are used as size required for beacon-chain to start. This number
-	// is defined in the deposit contract as the number required for the testnet. The actual number
+	// is defined in the sila deposit as the number required for the testnet. The actual number
 	// is 2**14
 	for i := range totalNumOfDeposits {
 		data := deposits[i].Data
 		testAcc.TxOpts.Value = mock.Amount32Eth()
 		testAcc.TxOpts.GasLimit = 1000000
 		_, err = testAcc.Contract.Deposit(testAcc.TxOpts, data.PublicKey, data.WithdrawalCredentials, data.Signature, depositRoots[i])
-		require.NoError(t, err, "Could not deposit to deposit contract")
+		require.NoError(t, err, "Could not deposit to sila deposit")
 		// pack 8 deposits into a block with an offset of
 		// 5
 		if (i+1)%8 == depositOffset {
@@ -494,13 +494,13 @@ func TestProcessLogs_DepositRequestsStarted(t *testing.T) {
 
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(kvStore),
 		WithDepositCache(depositCache),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 	web3Service.rpcClient = &mockExecution.RPCClient{Backend: testAcc.Backend}
 	web3Service.httpLogger = testAcc.Backend.Client()
@@ -528,14 +528,14 @@ func TestProcessLogs_DepositRequestsStarted(t *testing.T) {
 	depositOffset := 5
 
 	// 64 Validators are used as size required for beacon-chain to start. This number
-	// is defined in the deposit contract as the number required for the testnet. The actual number
+	// is defined in the sila deposit as the number required for the testnet. The actual number
 	// is 2**14
 	for i := range totalNumOfDeposits {
 		data := deposits[i].Data
 		testAcc.TxOpts.Value = mock.Amount32Eth()
 		testAcc.TxOpts.GasLimit = 1000000
 		_, err = testAcc.Contract.Deposit(testAcc.TxOpts, data.PublicKey, data.WithdrawalCredentials, data.Signature, depositRoots[i])
-		require.NoError(t, err, "Could not deposit to deposit contract")
+		require.NoError(t, err, "Could not deposit to sila deposit")
 		// pack 8 deposits into a block with an offset of
 		// 5
 		if (i+1)%8 == depositOffset {
@@ -581,13 +581,13 @@ func TestProcessSilaGenesisLog_LargePeriodOfNoLogs(t *testing.T) {
 
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(kvStore),
 		WithDepositCache(depositCache),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 	web3Service.rpcClient = &mockExecution.RPCClient{Backend: testAcc.Backend}
 	web3Service.httpLogger = testAcc.Backend.Client()
@@ -614,14 +614,14 @@ func TestProcessSilaGenesisLog_LargePeriodOfNoLogs(t *testing.T) {
 	depositOffset := 5
 
 	// 64 Validators are used as size required for beacon-chain to start. This number
-	// is defined in the deposit contract as the number required for the testnet. The actual number
+	// is defined in the sila deposit as the number required for the testnet. The actual number
 	// is 2**14
 	for i := range totalNumOfDeposits {
 		data := deposits[i].Data
 		testAcc.TxOpts.Value = mock.Amount32Eth()
 		testAcc.TxOpts.GasLimit = 1000000
 		_, err = testAcc.Contract.Deposit(testAcc.TxOpts, data.PublicKey, data.WithdrawalCredentials, data.Signature, depositRoots[i])
-		require.NoError(t, err, "Could not deposit to deposit contract")
+		require.NoError(t, err, "Could not deposit to sila deposit")
 		// pack 8 deposits into a block with an offset of
 		// 5
 		if (i+1)%8 == depositOffset {
@@ -699,13 +699,13 @@ func newPowchainService(t *testing.T, silaexecBackend *mock.TestAccount, beaconD
 	})
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(silaexecBackend.ContractAddr),
+		WithSilaDepositAddress(silaexecBackend.ContractAddr),
 		WithDatabase(beaconDB),
 		WithDepositCache(depositCache),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(silaexecBackend.ContractAddr, silaexecBackend.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(silaexecBackend.ContractAddr, silaexecBackend.Backend.Client())
 	require.NoError(t, err)
 
 	web3Service.rpcClient = &mockExecution.RPCClient{Backend: silaexecBackend.Backend}

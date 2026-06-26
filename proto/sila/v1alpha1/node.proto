@@ -130,11 +130,11 @@ message SyncStatus {
 message Genesis {
   option deprecated = true;
 
-  // UTC time specified in the chain start event in the deposit contract.
+  // UTC time specified in the chain start event in the sila deposit.
   google.protobuf.Timestamp genesis_time = 1;
 
-  // Address of the deposit contract in the Sila 1 chain.
-  bytes deposit_contract_address = 2;
+  // Address of the sila deposit in the Sila 1 chain.
+  bytes sila_deposit_address = 2;
 
   // Root of the genesis validators deposits; used for domain separation
   // when signing data structures for this chain.

@@ -116,7 +116,7 @@
     ) -> None:
         validator_pubkeys = [v.pubkey for v in state.validators]
         if pubkey not in validator_pubkeys:
-            # Verify the deposit signature (proof of possession) which is not checked by the deposit contract
+            # Verify the deposit signature (proof of possession) which is not checked by the sila deposit
             deposit_message = DepositMessage(
                 pubkey=pubkey,
                 withdrawal_credentials=withdrawal_credentials,
@@ -148,7 +148,7 @@
     ) -> None:
         validator_pubkeys = [v.pubkey for v in state.validators]
         if pubkey not in validator_pubkeys:
-            # Verify the deposit signature (proof of possession) which is not checked by the deposit contract
+            # Verify the deposit signature (proof of possession) which is not checked by the sila deposit
             if is_valid_deposit_signature(pubkey, withdrawal_credentials, amount, signature):
                 # [Modified in Electra:SIP7251]
                 add_validator_to_registry(state, pubkey, withdrawal_credentials, Gwei(0))
@@ -182,7 +182,7 @@
     ) -> None:
         builder_pubkeys = [b.pubkey for b in state.builders]
         if pubkey not in builder_pubkeys:
-            # Verify the deposit signature (proof of possession) which is not checked by the deposit contract
+            # Verify the deposit signature (proof of possession) which is not checked by the sila deposit
             if is_valid_deposit_signature(pubkey, withdrawal_credentials, amount, signature):
                 add_builder_to_registry(state, pubkey, withdrawal_credentials, amount, slot)
         else:
@@ -275,7 +275,7 @@
         """
         validator_pubkeys = [v.pubkey for v in state.validators]
         if deposit.pubkey not in validator_pubkeys:
-            # Verify the deposit signature (proof of possession) which is not checked by the deposit contract
+            # Verify the deposit signature (proof of possession) which is not checked by the sila deposit
             if is_valid_deposit_signature(
                 deposit.pubkey, deposit.withdrawal_credentials, deposit.amount, deposit.signature
             ):
@@ -3739,7 +3739,7 @@
             for block in silaexec_chain
             if (
                 is_candidate_block(block, period_start)
-                # Ensure cannot move back to earlier deposit contract states
+                # Ensure cannot move back to earlier sila deposit states
                 and get_sila_execution_data(block).deposit_count >= state.sila_execution_data.deposit_count
             )
         ]
@@ -3781,7 +3781,7 @@
             for block in silaexec_chain
             if (
                 is_candidate_block(block, period_start)
-                # Ensure cannot move back to earlier deposit contract states
+                # Ensure cannot move back to earlier sila deposit states
                 and get_sila_execution_data(block).deposit_count >= state.sila_execution_data.deposit_count
             )
         ]
@@ -6093,7 +6093,7 @@
         # Process deposits
         leaves = [deposit.data for deposit in deposits]
         for index, deposit in enumerate(deposits):
-            deposit_data_list = List[DepositData, 2**DEPOSIT_CONTRACT_TREE_DEPTH](*leaves[: index + 1])
+            deposit_data_list = List[DepositData, 2**SILA_DEPOSIT_TREE_DEPTH](*leaves[: index + 1])
             state.sila_execution_data.deposit_root = hash_tree_root(deposit_data_list)
             process_deposit(state, deposit)
 
@@ -9068,7 +9068,7 @@
             leaf=hash_tree_root(deposit.data),
             branch=deposit.proof,
             # Add 1 for the List length mix-in
-            depth=DEPOSIT_CONTRACT_TREE_DEPTH + 1,
+            depth=SILA_DEPOSIT_TREE_DEPTH + 1,
             index=state.silaexec_deposit_index,
             root=state.sila_execution_data.deposit_root,
         )
@@ -9097,7 +9097,7 @@
             leaf=hash_tree_root(deposit.data),
             branch=deposit.proof,
             # Add 1 for the List length mix-in
-            depth=DEPOSIT_CONTRACT_TREE_DEPTH + 1,
+            depth=SILA_DEPOSIT_TREE_DEPTH + 1,
             index=state.silaexec_deposit_index,
             root=state.sila_execution_data.deposit_root,
         )

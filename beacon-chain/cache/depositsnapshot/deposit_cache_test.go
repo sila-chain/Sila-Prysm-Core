@@ -372,7 +372,7 @@ func TestFinalizedDeposits_DepositsCachedCorrectly(t *testing.T) {
 		require.NoError(t, err, "Could not hash deposit data")
 		deps = append(deps, hash[:])
 	}
-	generatedTrie, err := trie.GenerateTrieFromItems(deps, params.BeaconConfig().DepositContractTreeDepth)
+	generatedTrie, err := trie.GenerateTrieFromItems(deps, params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not generate deposit trie")
 	rootA, err := generatedTrie.HashTreeRoot()
 	require.NoError(t, err)
@@ -444,7 +444,7 @@ func TestFinalizedDeposits_UtilizesPreviouslyCachedDeposits(t *testing.T) {
 		require.NoError(t, err, "Could not hash deposit data")
 		deps = append(deps, hash[:])
 	}
-	generatedTrie, err := trie.GenerateTrieFromItems(deps, params.BeaconConfig().DepositContractTreeDepth)
+	generatedTrie, err := trie.GenerateTrieFromItems(deps, params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not generate deposit trie")
 	rootA, err := generatedTrie.HashTreeRoot()
 	require.NoError(t, err)
@@ -780,7 +780,7 @@ func TestFinalizedDeposits_ReturnsTrieCorrectly(t *testing.T) {
 		assert.NoError(t, err)
 		trieItems = append(trieItems, depHash[:])
 	}
-	depositTrie, err := trie.GenerateTrieFromItems(trieItems, params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.GenerateTrieFromItems(trieItems, params.BeaconConfig().SilaDepositTreeDepth)
 	assert.NoError(t, err)
 
 	// Perform this in a nonsensical ordering
@@ -933,7 +933,7 @@ func TestDepositMap_WorksCorrectly(t *testing.T) {
 }
 
 func makeDepositProof() [][]byte {
-	proof := make([][]byte, int(params.BeaconConfig().DepositContractTreeDepth)+1)
+	proof := make([][]byte, int(params.BeaconConfig().SilaDepositTreeDepth)+1)
 	for i := range proof {
 		proof[i] = make([]byte, 32)
 	}

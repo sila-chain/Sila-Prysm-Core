@@ -438,7 +438,7 @@ def initialize_beacon_state_from_silaexec(silaexec_block_hash: Bytes32,
     # Process deposits
     leaves = list(map(lambda deposit: deposit.data, deposits))
     for index, deposit in enumerate(deposits):
-        deposit_data_list = List[DepositData, 2**DEPOSIT_CONTRACT_TREE_DEPTH](*leaves[:index + 1])
+        deposit_data_list = List[DepositData, 2**SILA_DEPOSIT_TREE_DEPTH](*leaves[:index + 1])
         state.sila_execution_data.deposit_root = hash_tree_root(deposit_data_list)
         process_deposit(state, deposit)
 
@@ -985,7 +985,7 @@ def process_deposit(state: BeaconState, deposit: Deposit) -> None:
     assert is_valid_merkle_branch(
         leaf=hash_tree_root(deposit.data),
         branch=deposit.proof,
-        depth=DEPOSIT_CONTRACT_TREE_DEPTH + 1,  # Add 1 for the List length mix-in
+        depth=SILA_DEPOSIT_TREE_DEPTH + 1,  # Add 1 for the List length mix-in
         index=state.silaexec_deposit_index,
         root=state.sila_execution_data.deposit_root,
     )
@@ -997,7 +997,7 @@ def process_deposit(state: BeaconState, deposit: Deposit) -> None:
     amount = deposit.data.amount
     validator_pubkeys = [v.pubkey for v in state.validators]
     if pubkey not in validator_pubkeys:
-        # Verify the deposit signature (proof of possession) which is not checked by the deposit contract
+        # Verify the deposit signature (proof of possession) which is not checked by the sila deposit
         deposit_message = DepositMessage(
             pubkey=deposit.data.pubkey,
             withdrawal_credentials=deposit.data.withdrawal_credentials,

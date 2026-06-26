@@ -269,7 +269,7 @@ func (node *LighthouseBeaconNode) createTestnetDir(ctx context.Context, index in
 	if err := file.WriteFile(bootPath, enrYaml); err != nil {
 		return "", err
 	}
-	deployPath := filepath.Join(testNetDir, "deposit_contract_block.txt")
+	deployPath := filepath.Join(testNetDir, "sila_deposit_block.txt")
 	deployYaml := []byte("0")
 	if err := file.WriteFile(deployPath, deployYaml); err != nil {
 		return "", err
@@ -279,7 +279,7 @@ func (node *LighthouseBeaconNode) createTestnetDir(ctx context.Context, index in
 }
 
 func (node *LighthouseBeaconNode) saveGenesis(ctx context.Context, testNetDir string) error {
-	// The deposit contract starts with an empty trie, we use the BeaconState to "pre-mine" the validator registry,
+	// The sila deposit starts with an empty trie, we use the BeaconState to "pre-mine" the validator registry,
 	g, err := GenerateGenesis(ctx)
 	if err != nil {
 		return err

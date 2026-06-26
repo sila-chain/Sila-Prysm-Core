@@ -40,7 +40,7 @@ var (
 	// Specific item keys.
 	headBlockRootKey           = []byte("head-root")
 	genesisBlockRootKey        = []byte("genesis-root")
-	depositContractAddressKey  = []byte("deposit-contract")
+	silaDepositAddressKey  = []byte("deposit-contract")
 	justifiedCheckpointKey     = []byte("justified-checkpoint")
 	finalizedCheckpointKey     = []byte("finalized-checkpoint")
 	powchainDataKey            = []byte("powchain-data")

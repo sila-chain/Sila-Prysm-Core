@@ -62,7 +62,7 @@ func TestWaitForActivation_ValidatorOriginallyExists(t *testing.T) {
 	deposit := &silapb.Deposit{
 		Data: depData,
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)

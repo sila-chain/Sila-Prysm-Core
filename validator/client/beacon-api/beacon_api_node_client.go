@@ -56,25 +56,25 @@ func (c *beaconApiNodeClient) Genesis(ctx context.Context, _ *empty.Empty) (*sil
 		return nil, errors.Wrapf(err, "failed to parse genesis time `%s`", genesisJson.GenesisTime)
 	}
 
-	depositContractJson := structs.GetDepositContractResponse{}
-	if err = c.handler.Get(ctx, "/sila/v1/config/deposit_contract", &depositContractJson); err != nil {
+	silaDepositJson := structs.GetSilaDepositResponse{}
+	if err = c.handler.Get(ctx, "/sila/v1/config/sila_deposit", &silaDepositJson); err != nil {
 		return nil, err
 	}
 
-	if depositContractJson.Data == nil {
-		return nil, errors.New("deposit contract data is nil")
+	if silaDepositJson.Data == nil {
+		return nil, errors.New("sila deposit data is nil")
 	}
 
-	depositContactAddress, err := hexutil.Decode(depositContractJson.Data.Address)
+	depositContactAddress, err := hexutil.Decode(silaDepositJson.Data.Address)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to decode deposit contract address `%s`", depositContractJson.Data.Address)
+		return nil, errors.Wrapf(err, "failed to decode sila deposit address `%s`", silaDepositJson.Data.Address)
 	}
 
 	return &silapb.Genesis{
 		GenesisTime: &timestamppb.Timestamp{
 			Seconds: genesisTime,
 		},
-		DepositContractAddress: depositContactAddress,
+		SilaDepositAddress: depositContactAddress,
 		GenesisValidatorsRoot:  genesisValidatorRoot,
 	}, nil
 }

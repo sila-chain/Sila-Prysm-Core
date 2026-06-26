@@ -328,10 +328,10 @@ var (
 		Usage: "Kind of keymanager, either imported, derived, or remote, specified during wallet creation.",
 		Value: "",
 	}
-	// SkipDepositConfirmationFlag skips the y/n confirmation userprompt for sending a deposit to the deposit contract.
+	// SkipDepositConfirmationFlag skips the y/n confirmation userprompt for sending a deposit to the sila deposit.
 	SkipDepositConfirmationFlag = &cli.BoolFlag{
 		Name:  "skip-deposit-confirmation",
-		Usage: "Skips the y/n confirmation userprompt for sending a deposit to the deposit contract.",
+		Usage: "Skips the y/n confirmation userprompt for sending a deposit to the sila deposit.",
 		Value: false,
 	}
 

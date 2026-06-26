@@ -4,20 +4,20 @@ import (
 	"github.com/sila-chain/Sila/accounts/abi/bind"
 )
 
-// NewDepositContractCallerFromBoundContract creates a new instance of DepositContractCaller, bound to
+// NewSilaDepositCallerFromBoundContract creates a new instance of SilaDepositCaller, bound to
 // a specific deployed contract.
-func NewDepositContractCallerFromBoundContract(contract *bind.BoundContract) DepositContractCaller {
-	return DepositContractCaller{contract: contract}
+func NewSilaDepositCallerFromBoundContract(contract *bind.BoundContract) SilaDepositCaller {
+	return SilaDepositCaller{contract: contract}
 }
 
-// NewDepositContractTransactorFromBoundContract creates a new instance of
-// DepositContractTransactor, bound to a specific deployed contract.
-func NewDepositContractTransactorFromBoundContract(contract *bind.BoundContract) DepositContractTransactor {
-	return DepositContractTransactor{contract: contract}
+// NewSilaDepositTransactorFromBoundContract creates a new instance of
+// SilaDepositTransactor, bound to a specific deployed contract.
+func NewSilaDepositTransactorFromBoundContract(contract *bind.BoundContract) SilaDepositTransactor {
+	return SilaDepositTransactor{contract: contract}
 }
 
-// NewDepositContractFiltererFromBoundContract creates a new instance of
-// DepositContractFilterer, bound to a specific deployed contract.
-func NewDepositContractFiltererFromBoundContract(contract *bind.BoundContract) DepositContractFilterer {
-	return DepositContractFilterer{contract: contract}
+// NewSilaDepositFiltererFromBoundContract creates a new instance of
+// SilaDepositFilterer, bound to a specific deployed contract.
+func NewSilaDepositFiltererFromBoundContract(contract *bind.BoundContract) SilaDepositFilterer {
+	return SilaDepositFilterer{contract: contract}
 }

@@ -1,10 +1,10 @@
 package structs
 
-type GetDepositContractResponse struct {
-	Data *DepositContractData `json:"data"`
+type GetSilaDepositResponse struct {
+	Data *SilaDepositData `json:"data"`
 }
 
-type DepositContractData struct {
+type SilaDepositData struct {
 	ChainId string `json:"chain_id"`
 	Address string `json:"address"`
 }

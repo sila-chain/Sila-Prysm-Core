@@ -244,7 +244,7 @@ func (s *PremineGenesisConfig) deposits() ([]*silapb.Deposit, error) {
 		}
 	}
 
-	t, err := trie.GenerateTrieFromItems(s.depositEntries.roots, params.BeaconConfig().DepositContractTreeDepth)
+	t, err := trie.GenerateTrieFromItems(s.depositEntries.roots, params.BeaconConfig().SilaDepositTreeDepth)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not generate Merkle trie for deposit proofs")
 	}
@@ -275,7 +275,7 @@ func (s *PremineGenesisConfig) setSilaExecutionData(g state.BeaconState) error {
 }
 
 func emptyDepositRoot() ([32]byte, error) {
-	t, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	t, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	if err != nil {
 		return [32]byte{}, err
 	}

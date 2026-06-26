@@ -29,7 +29,7 @@ type BeaconChainConfig struct {
 	FarFutureEpoch           primitives.Epoch `yaml:"FAR_FUTURE_EPOCH"`            // FarFutureEpoch represents a epoch extremely far away in the future used as the default penalization epoch for validators.
 	FarFutureSlot            primitives.Slot  `yaml:"FAR_FUTURE_SLOT"`             // FarFutureSlot represents a slot extremely far away in the future.
 	BaseRewardsPerEpoch      uint64           `yaml:"BASE_REWARDS_PER_EPOCH"`      // BaseRewardsPerEpoch is used to calculate the per epoch rewards.
-	DepositContractTreeDepth uint64           `yaml:"DEPOSIT_CONTRACT_TREE_DEPTH"` // DepositContractTreeDepth depth of the Merkle trie of deposits in the validator deposit contract on the PoW chain.
+	SilaDepositTreeDepth uint64           `yaml:"SILA_DEPOSIT_TREE_DEPTH"` // SilaDepositTreeDepth depth of the Merkle trie of deposits in the validator sila deposit on the PoW chain.
 	JustificationBitsLength  uint64           `yaml:"JUSTIFICATION_BITS_LENGTH"`   // JustificationBitsLength defines number of epochs to track when implementing k-finality in Casper FFG.
 
 	// Misc constants.
@@ -49,7 +49,7 @@ type BeaconChainConfig struct {
 	HysteresisUpwardMultiplier     uint64 `yaml:"HYSTERESIS_UPWARD_MULTIPLIER" spec:"true"`       // HysteresisUpwardMultiplier defines the hysteresis upward multiplier for effective balance calculations.
 
 	// Gwei value constants.
-	MinDepositAmount          uint64 `yaml:"MIN_DEPOSIT_AMOUNT" spec:"true"`          // MinDepositAmount is the minimum amount of Gwei a validator can send to the deposit contract at once (lower amounts will be reverted).
+	MinDepositAmount          uint64 `yaml:"MIN_DEPOSIT_AMOUNT" spec:"true"`          // MinDepositAmount is the minimum amount of Gwei a validator can send to the sila deposit at once (lower amounts will be reverted).
 	MinActivationBalance      uint64 `yaml:"MIN_ACTIVATION_BALANCE" spec:"true"`      // MinActivationBalance is the minimum amount of Gwei a validator must have to be activated in the beacon state.
 	MaxEffectiveBalance       uint64 `yaml:"MAX_EFFECTIVE_BALANCE" spec:"true"`       // MaxEffectiveBalance is the maximal amount of Gwei that is effective for staking.
 	EjectionBalance           uint64 `yaml:"EJECTION_BALANCE" spec:"true"`            // EjectionBalance is the minimal GWei a validator needs to have before ejected.
@@ -105,7 +105,7 @@ type BeaconChainConfig struct {
 	// Sila execution-layer PoW compatibility parameters.
 	DepositChainID         uint64 `yaml:"DEPOSIT_CHAIN_ID" spec:"true"`         // DepositChainID of the silaexec network. This used for replay protection.
 	DepositNetworkID       uint64 `yaml:"DEPOSIT_NETWORK_ID" spec:"true"`       // DepositNetworkID of the silaexec network. This used for replay protection.
-	DepositContractAddress string `yaml:"DEPOSIT_CONTRACT_ADDRESS" spec:"true"` // DepositContractAddress is the address of the deposit contract.
+	SilaDepositAddress string `yaml:"SILA_DEPOSIT_ADDRESS" spec:"true"` // SilaDepositAddress is the address of the sila deposit.
 
 	// Validator parameters.
 	RandomSubnetsPerValidator         uint64 `yaml:"RANDOM_SUBNETS_PER_VALIDATOR" spec:"true"` // RandomSubnetsPerValidator specifies the amount of subnets a validator has to be subscribed to at one time.

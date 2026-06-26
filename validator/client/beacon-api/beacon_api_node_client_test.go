@@ -20,9 +20,9 @@ func TestGetGenesis(t *testing.T) {
 		name                    string
 		genesisResponse         *structs.Genesis
 		genesisError            error
-		depositContractResponse structs.GetDepositContractResponse
-		depositContractError    error
-		queriesDepositContract  bool
+		silaDepositResponse structs.GetSilaDepositResponse
+		silaDepositError    error
+		queriesSilaDeposit  bool
 		expectedResponse        *silapb.Genesis
 		expectedError           string
 	}{
@@ -53,35 +53,35 @@ func TestGetGenesis(t *testing.T) {
 				GenesisTime:           "1",
 				GenesisValidatorsRoot: hexutil.Encode([]byte{2}),
 			},
-			depositContractError:   errors.New("foo error"),
-			queriesDepositContract: true,
+			silaDepositError:   errors.New("foo error"),
+			queriesSilaDeposit: true,
 			expectedError:          "foo error",
 		},
 		{
-			name: "fails to read nil deposit contract data",
+			name: "fails to read nil sila deposit data",
 			genesisResponse: &structs.Genesis{
 				GenesisTime:           "1",
 				GenesisValidatorsRoot: hexutil.Encode([]byte{2}),
 			},
-			queriesDepositContract: true,
-			depositContractResponse: structs.GetDepositContractResponse{
+			queriesSilaDeposit: true,
+			silaDepositResponse: structs.GetSilaDepositResponse{
 				Data: nil,
 			},
-			expectedError: "deposit contract data is nil",
+			expectedError: "sila deposit data is nil",
 		},
 		{
-			name: "fails to decode deposit contract address",
+			name: "fails to decode sila deposit address",
 			genesisResponse: &structs.Genesis{
 				GenesisTime:           "1",
 				GenesisValidatorsRoot: hexutil.Encode([]byte{2}),
 			},
-			queriesDepositContract: true,
-			depositContractResponse: structs.GetDepositContractResponse{
-				Data: &structs.DepositContractData{
+			queriesSilaDeposit: true,
+			silaDepositResponse: structs.GetSilaDepositResponse{
+				Data: &structs.SilaDepositData{
 					Address: "foo",
 				},
 			},
-			expectedError: "failed to decode deposit contract address `foo`",
+			expectedError: "failed to decode sila deposit address `foo`",
 		},
 		{
 			name: "successfully retrieves genesis info",
@@ -89,9 +89,9 @@ func TestGetGenesis(t *testing.T) {
 				GenesisTime:           "654812",
 				GenesisValidatorsRoot: hexutil.Encode([]byte{2}),
 			},
-			queriesDepositContract: true,
-			depositContractResponse: structs.GetDepositContractResponse{
-				Data: &structs.DepositContractData{
+			queriesSilaDeposit: true,
+			silaDepositResponse: structs.GetSilaDepositResponse{
+				Data: &structs.SilaDepositData{
 					Address: hexutil.Encode([]byte{3}),
 				},
 			},
@@ -99,7 +99,7 @@ func TestGetGenesis(t *testing.T) {
 				GenesisTime: &timestamppb.Timestamp{
 					Seconds: 654812,
 				},
-				DepositContractAddress: []byte{3},
+				SilaDepositAddress: []byte{3},
 				GenesisValidatorsRoot:  []byte{2},
 			},
 		},
@@ -119,19 +119,19 @@ func TestGetGenesis(t *testing.T) {
 				testCase.genesisError,
 			)
 
-			depositContractJson := structs.GetDepositContractResponse{}
+			silaDepositJson := structs.GetSilaDepositResponse{}
 			handler := mock.NewMockJsonRestHandler(ctrl)
 
-			if testCase.queriesDepositContract {
+			if testCase.queriesSilaDeposit {
 				handler.EXPECT().Get(
 					gomock.Any(),
-					"/sila/v1/config/deposit_contract",
-					&depositContractJson,
+					"/sila/v1/config/sila_deposit",
+					&silaDepositJson,
 				).Return(
-					testCase.depositContractError,
+					testCase.silaDepositError,
 				).SetArg(
 					2,
-					testCase.depositContractResponse,
+					testCase.silaDepositResponse,
 				)
 			}
 

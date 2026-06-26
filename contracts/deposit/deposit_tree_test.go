@@ -17,7 +17,7 @@ func TestDepositTrieRoot_OK(t *testing.T) {
 	testAcc, err := depositcontract.Setup()
 	require.NoError(t, err)
 
-	localTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	localTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err)
 
 	depRoot, err := testAcc.Contract.GetDepositRoot(&bind.CallOpts{})
@@ -40,7 +40,7 @@ func TestDepositTrieRoot_OK(t *testing.T) {
 		copy(dataRoot[:], depositDataRoots[i])
 
 		_, err := testAcc.Contract.Deposit(testAcc.TxOpts, data.PublicKey, data.WithdrawalCredentials, data.Signature, dataRoot)
-		require.NoError(t, err, "Could not deposit to deposit contract")
+		require.NoError(t, err, "Could not deposit to sila deposit")
 
 		testAcc.Backend.Commit()
 		item, err := data.HashTreeRoot()
@@ -59,7 +59,7 @@ func TestDepositTrieRoot_Fail(t *testing.T) {
 	testAcc, err := depositcontract.Setup()
 	require.NoError(t, err)
 
-	localTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	localTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err)
 
 	depRoot, err := testAcc.Contract.GetDepositRoot(&bind.CallOpts{})
@@ -81,7 +81,7 @@ func TestDepositTrieRoot_Fail(t *testing.T) {
 		copy(dataRoot[:], depositDataRoots[i])
 
 		_, err := testAcc.Contract.Deposit(testAcc.TxOpts, data.PublicKey, data.WithdrawalCredentials, data.Signature, dataRoot)
-		require.NoError(t, err, "Could not deposit to deposit contract")
+		require.NoError(t, err, "Could not deposit to sila deposit")
 
 		// Change an element in the data when storing locally
 		copy(data.PublicKey, strconv.Itoa(i+10))

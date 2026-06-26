@@ -139,18 +139,18 @@ func FuzzSparseMerkleTrie_VerifyMerkleProofWithDepth(f *testing.F) {
 		[]byte("G"),
 		[]byte("H"),
 	}
-	m, err := trie.GenerateTrieFromItems(items, params.BeaconConfig().DepositContractTreeDepth)
+	m, err := trie.GenerateTrieFromItems(items, params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(f, err)
 	proof, err := m.MerkleProof(0)
 	require.NoError(f, err)
-	require.Equal(f, int(params.BeaconConfig().DepositContractTreeDepth)+1, len(proof))
+	require.Equal(f, int(params.BeaconConfig().SilaDepositTreeDepth)+1, len(proof))
 	root, err := m.HashTreeRoot()
 	require.NoError(f, err)
 	var proofRaw []byte
 	for _, p := range proof {
 		proofRaw = append(proofRaw, p...)
 	}
-	f.Add(root[:], items[0], uint64(0), proofRaw, params.BeaconConfig().DepositContractTreeDepth)
+	f.Add(root[:], items[0], uint64(0), proofRaw, params.BeaconConfig().SilaDepositTreeDepth)
 
 	f.Fuzz(func(t *testing.T, root, item []byte, merkleIndex uint64, proofRaw []byte, depth uint64) {
 		trie.VerifyMerkleProofWithDepth(root, item, merkleIndex, splitProofs(proofRaw), depth)

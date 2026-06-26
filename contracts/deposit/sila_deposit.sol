@@ -12,9 +12,9 @@
 pragma solidity 0.6.11;
 
 // This interface is designed to be compatible with the Vyper version.
-/// @notice This is the Sila 2.0 deposit contract interface.
+/// @notice This is the Sila 2.0 sila deposit interface.
 /// For historical reference see the external Phase 0 specification under https://github.com/sila-chain/silaconsensus.0-specs
-interface IDepositContract {
+interface ISilaDeposit {
     /// @notice A processed deposit event.
     event DepositEvent(
         bytes pubkey,
@@ -57,30 +57,30 @@ interface ERC165 {
     function supportsInterface(bytes4 interfaceId) external pure returns (bool);
 }
 
-// This is a rewrite of the Vyper SilaConsensus.0 deposit contract in Solidity.
+// This is a rewrite of the Vyper SilaConsensus.0 sila deposit in Solidity.
 // It tries to stay as close as possible to the original source code.
-/// @notice This is the Sila 2.0 deposit contract interface.
+/// @notice This is the Sila 2.0 sila deposit interface.
 /// For historical reference see the external Phase 0 specification under https://github.com/sila-chain/silaconsensus.0-specs
-contract DepositContract is IDepositContract, ERC165 {
-    uint constant DEPOSIT_CONTRACT_TREE_DEPTH = 32;
+contract SilaDeposit is ISilaDeposit, ERC165 {
+    uint constant SILA_DEPOSIT_TREE_DEPTH = 32;
     // NOTE: this also ensures `deposit_count` will fit into 64-bits
-    uint constant MAX_DEPOSIT_COUNT = 2**DEPOSIT_CONTRACT_TREE_DEPTH - 1;
+    uint constant MAX_DEPOSIT_COUNT = 2**SILA_DEPOSIT_TREE_DEPTH - 1;
 
-    bytes32[DEPOSIT_CONTRACT_TREE_DEPTH] branch;
+    bytes32[SILA_DEPOSIT_TREE_DEPTH] branch;
     uint256 deposit_count;
 
-    bytes32[DEPOSIT_CONTRACT_TREE_DEPTH] zero_hashes;
+    bytes32[SILA_DEPOSIT_TREE_DEPTH] zero_hashes;
 
     constructor() public {
         // Compute hashes in empty sparse Merkle tree
-        for (uint height = 0; height < DEPOSIT_CONTRACT_TREE_DEPTH - 1; height++)
+        for (uint height = 0; height < SILA_DEPOSIT_TREE_DEPTH - 1; height++)
             zero_hashes[height + 1] = sha256(abi.encodePacked(zero_hashes[height], zero_hashes[height]));
     }
 
     function get_deposit_root() override external view returns (bytes32) {
         bytes32 node;
         uint size = deposit_count;
-        for (uint height = 0; height < DEPOSIT_CONTRACT_TREE_DEPTH; height++) {
+        for (uint height = 0; height < SILA_DEPOSIT_TREE_DEPTH; height++) {
             if ((size & 1) == 1)
                 node = sha256(abi.encodePacked(branch[height], node));
             else
@@ -105,15 +105,15 @@ contract DepositContract is IDepositContract, ERC165 {
         bytes32 deposit_data_root
     ) override external payable {
         // Extended ABI length checks since dynamic types are used.
-        require(pubkey.length == 48, "DepositContract: invalid pubkey length");
-        require(withdrawal_credentials.length == 32, "DepositContract: invalid withdrawal_credentials length");
-        require(signature.length == 96, "DepositContract: invalid signature length");
+        require(pubkey.length == 48, "SilaDeposit: invalid pubkey length");
+        require(withdrawal_credentials.length == 32, "SilaDeposit: invalid withdrawal_credentials length");
+        require(signature.length == 96, "SilaDeposit: invalid signature length");
 
         // Check deposit amount
-        require(msg.value >= 1 sila, "DepositContract: deposit value too low");
-        require(msg.value % 1 gwei == 0, "DepositContract: deposit value not multiple of gwei");
+        require(msg.value >= 1 sila, "SilaDeposit: deposit value too low");
+        require(msg.value % 1 gwei == 0, "SilaDeposit: deposit value not multiple of gwei");
         uint deposit_amount = msg.value / 1 gwei;
-        require(deposit_amount <= type(uint64).max, "DepositContract: deposit value too high");
+        require(deposit_amount <= type(uint64).max, "SilaDeposit: deposit value too high");
 
         // Emit `DepositEvent` log
         bytes memory amount = to_little_endian_64(uint64(deposit_amount));
@@ -137,15 +137,15 @@ contract DepositContract is IDepositContract, ERC165 {
             ));
 
         // Verify computed and expected deposit data roots match
-        require(node == deposit_data_root, "DepositContract: reconstructed DepositData does not match supplied deposit_data_root");
+        require(node == deposit_data_root, "SilaDeposit: reconstructed DepositData does not match supplied deposit_data_root");
 
         // Avoid overflowing the Merkle tree (and prevent edge case in computing `branch`)
-        require(deposit_count < MAX_DEPOSIT_COUNT, "DepositContract: merkle tree full");
+        require(deposit_count < MAX_DEPOSIT_COUNT, "SilaDeposit: merkle tree full");
 
         // Add deposit data root to Merkle tree (update a single `branch` node)
         deposit_count += 1;
         uint size = deposit_count;
-        for (uint height = 0; height < DEPOSIT_CONTRACT_TREE_DEPTH; height++) {
+        for (uint height = 0; height < SILA_DEPOSIT_TREE_DEPTH; height++) {
             if ((size & 1) == 1) {
                 branch[height] = node;
                 return;
@@ -159,7 +159,7 @@ contract DepositContract is IDepositContract, ERC165 {
     }
 
     function supportsInterface(bytes4 interfaceId) override external pure returns (bool) {
-        return interfaceId == type(ERC165).interfaceId || interfaceId == type(IDepositContract).interfaceId;
+        return interfaceId == type(ERC165).interfaceId || interfaceId == type(ISilaDeposit).interfaceId;
     }
 
     function to_little_endian_64(uint64 value) internal pure returns (bytes memory ret) {

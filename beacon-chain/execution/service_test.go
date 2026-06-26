@@ -104,14 +104,14 @@ func TestStart_OK(t *testing.T) {
 
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 		WithVerifierWaiter(waiter),
 	)
 	require.NoError(t, err, "unable to setup execution service")
 	web3Service = setDefaultMocks(web3Service)
 	web3Service.rpcClient = &mockExecution.RPCClient{Backend: testAcc.Backend}
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 	testAcc.Backend.Commit()
 
@@ -134,7 +134,7 @@ func TestStart_NoHttpEndpointDefinedFails_WithoutChainStarted(t *testing.T) {
 	require.NoError(t, err, "Unable to set up simulated backend")
 	_, err = NewService(t.Context(),
 		WithHttpEndpoint(""),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 	)
 	require.NoError(t, err)
@@ -153,12 +153,12 @@ func TestStop_OK(t *testing.T) {
 	})
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 
 	testAcc.Backend.Commit()
@@ -183,12 +183,12 @@ func TestService_SilaExecutionSynced(t *testing.T) {
 	})
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	web3Service = setDefaultMocks(web3Service)
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 
 	header, err := testAcc.Backend.Client().HeaderByNumber(t.Context(), nil)
@@ -210,7 +210,7 @@ func TestFollowBlock_OK(t *testing.T) {
 	})
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
@@ -335,11 +335,11 @@ func TestLogTillGenesis_OK(t *testing.T) {
 	})
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
-	web3Service.depositContractCaller, err = contracts.NewDepositContractCaller(testAcc.ContractAddr, testAcc.Backend.Client())
+	web3Service.silaDepositCaller, err = contracts.NewSilaDepositCaller(testAcc.ContractAddr, testAcc.Backend.Client())
 	require.NoError(t, err)
 
 	web3Service.rpcClient = &mockExecution.RPCClient{Backend: testAcc.Backend}
@@ -476,7 +476,7 @@ func TestNewService_EarliestVotingBlock(t *testing.T) {
 	})
 	web3Service, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
@@ -534,14 +534,14 @@ func TestNewService_SilaExecutionHeaderRequLimit(t *testing.T) {
 	})
 	s1, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 	)
 	require.NoError(t, err, "unable to setup web3 SILAEXEC.0 chain service")
 	assert.Equal(t, defaultSilaExecutionHeaderReqLimit, s1.cfg.silaexecHeaderReqLimit, "default silaexec header request limit not set")
 	s2, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoint),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 		WithSilaExecutionHeaderRequestLimit(uint64(150)),
 	)
@@ -749,7 +749,7 @@ func TestSilaExecutionEndpoints(t *testing.T) {
 	mbs := &mockBSUpdater{}
 	s1, err := NewService(t.Context(),
 		WithHttpEndpoint(endpoints[0]),
-		WithDepositContractAddress(testAcc.ContractAddr),
+		WithSilaDepositAddress(testAcc.ContractAddr),
 		WithDatabase(beaconDB),
 		WithBeaconNodeStatsUpdater(mbs),
 	)

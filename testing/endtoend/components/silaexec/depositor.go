@@ -75,7 +75,7 @@ type Depositor struct {
 	Client    *ethclient.Client
 	ChainID   *big.Int
 	NetworkId *big.Int
-	cd        *contracts.DepositContract
+	cd        *contracts.SilaDeposit
 	sent      *DepositHistory
 }
 
@@ -274,12 +274,12 @@ func (d *Depositor) txops(ctx context.Context) (*bind.TransactOpts, error) {
 	return txo, nil
 }
 
-// contractDepositor is a little helper method that inits and caches a DepositContract value.
-// DepositContract is a special-purpose client for calling the deposit contract.
-func (d *Depositor) contractDepositor() (*contracts.DepositContract, error) {
+// contractDepositor is a little helper method that inits and caches a SilaDeposit value.
+// SilaDeposit is a special-purpose client for calling the sila deposit.
+func (d *Depositor) contractDepositor() (*contracts.SilaDeposit, error) {
 	if d.cd == nil {
-		addr := common.HexToAddress(params.BeaconConfig().DepositContractAddress)
-		contract, err := contracts.NewDepositContract(addr, d.Client)
+		addr := common.HexToAddress(params.BeaconConfig().SilaDepositAddress)
+		contract, err := contracts.NewSilaDeposit(addr, d.Client)
 		if err != nil {
 			return nil, err
 		}

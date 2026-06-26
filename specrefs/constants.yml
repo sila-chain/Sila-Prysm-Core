@@ -122,14 +122,14 @@
     CONSOLIDATION_REQUEST_TYPE: Bytes1 = '0x02'
     </spec>
 
-- name: DEPOSIT_CONTRACT_TREE_DEPTH#phase0
+- name: SILA_DEPOSIT_TREE_DEPTH#phase0
   sources:
     - file: config/params/config.go
-      search: DepositContractTreeDepth\s+.*yaml:"DEPOSIT_CONTRACT_TREE_DEPTH"
+      search: SilaDepositTreeDepth\s+.*yaml:"SILA_DEPOSIT_TREE_DEPTH"
       regex: true
   spec: |
-    <spec constant_var="DEPOSIT_CONTRACT_TREE_DEPTH" fork="phase0" hash="5763e551">
-    DEPOSIT_CONTRACT_TREE_DEPTH: uint64 = 2**5
+    <spec constant_var="SILA_DEPOSIT_TREE_DEPTH" fork="phase0" hash="5763e551">
+    SILA_DEPOSIT_TREE_DEPTH: uint64 = 2**5
     </spec>
 
 - name: DEPOSIT_REQUEST_TYPE#electra

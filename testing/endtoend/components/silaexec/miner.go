@@ -186,7 +186,7 @@ func (m *Miner) initAttempt(ctx context.Context, attempt int) (*os.File, error) 
 }
 
 // Start runs a mining SILAEXEC node.
-// The miner is responsible for moving the SILAEXEC chain forward and for deploying the deposit contract.
+// The miner is responsible for moving the SILAEXEC chain forward and for deploying the sila deposit.
 func (m *Miner) Start(ctx context.Context) error {
 	// give the miner start a couple of tries, since the p2p networking check is flaky
 	var retryErr error
@@ -224,22 +224,22 @@ func (m *Miner) Start(ctx context.Context) error {
 	silaexecBlockHash := block.Hash()
 	e2e.TestParams.SilaExecutionGenesisBlock = block
 	log.Infof("miner says genesis block root=%#x", silaexecBlockHash)
-	cAddr := common.HexToAddress(params.BeaconConfig().DepositContractAddress)
+	cAddr := common.HexToAddress(params.BeaconConfig().SilaDepositAddress)
 	code, err := web3.CodeAt(ctx, cAddr, nil)
 	if err != nil {
 		return err
 	}
 	log.Infof("contract code size = %d", len(code))
-	depositContractCaller, err := contracts.NewDepositContractCaller(cAddr, web3)
+	silaDepositCaller, err := contracts.NewSilaDepositCaller(cAddr, web3)
 	if err != nil {
 		return err
 	}
-	dCount, err := depositContractCaller.GetDepositCount(&bind.CallOpts{})
+	dCount, err := silaDepositCaller.GetDepositCount(&bind.CallOpts{})
 	if err != nil {
-		log.Error("Failed to call get_deposit_count method of deposit contract")
+		log.Error("Failed to call get_deposit_count method of sila deposit")
 		return err
 	}
-	log.Infof("deposit contract count=%d", dCount)
+	log.Infof("sila deposit count=%d", dCount)
 
 	// Mark node as ready.
 	close(m.started)

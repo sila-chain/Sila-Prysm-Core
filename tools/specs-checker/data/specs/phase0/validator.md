@@ -62,7 +62,7 @@ def get_silaexec_vote(state: BeaconState, silaexec_chain: Sequence[SilaBlock]) -
         get_sila_execution_data(block) for block in silaexec_chain
         if (
             is_candidate_block(block, period_start)
-            # Ensure cannot move back to earlier deposit contract states
+            # Ensure cannot move back to earlier sila deposit states
             and get_sila_execution_data(block).deposit_count >= state.sila_execution_data.deposit_count
         )
     ]

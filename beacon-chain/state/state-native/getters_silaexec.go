@@ -55,7 +55,7 @@ func (b *BeaconState) silaExecutionDataVotesVal() []*silapb.SilaExecutionData {
 }
 
 // SilaExecutionDepositIndex corresponds to the index of the deposit made to the
-// validator deposit contract at the time of this state's silaexec data.
+// validator sila deposit at the time of this state's silaexec data.
 func (b *BeaconState) SilaExecutionDepositIndex() uint64 {
 	b.lock.RLock()
 	defer b.lock.RUnlock()

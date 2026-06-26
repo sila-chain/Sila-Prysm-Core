@@ -60,7 +60,7 @@ func (vs *Server) silaexecDataMajorityVote(ctx context.Context, beaconState stat
 
 	// Special case for starting from a pre-mined genesis: the silaexec vote should be genesis until the chain has advanced
 	// by SilaExecution_FOLLOW_DISTANCE. The head state should maintain the same SILAExecutionData until this condition has passed, so
-	// trust the existing head for the right silaexec vote until we can get a meaningful value from the deposit contract.
+	// trust the existing head for the right silaexec vote until we can get a meaningful value from the sila deposit.
 	if latestValidTime < genesisTime+followDistanceSeconds {
 		log.WithField("genesisTime", genesisTime).WithField("latestValidTime", latestValidTime).Warn("Voting period before genesis + follow distance, using silaExecutionData from head")
 		return vs.HeadFetcher.HeadSilaExecutionData(), nil

@@ -224,7 +224,7 @@ func (x *SyncStatus) GetSyncing() bool {
 type Genesis struct {
 	state                  protoimpl.MessageState `protogen:"open.v1"`
 	GenesisTime            *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=genesis_time,json=genesisTime,proto3" json:"genesis_time,omitempty"`
-	DepositContractAddress []byte                 `protobuf:"bytes,2,opt,name=deposit_contract_address,json=depositContractAddress,proto3" json:"deposit_contract_address,omitempty"`
+	SilaDepositAddress []byte                 `protobuf:"bytes,2,opt,name=sila_deposit_address,json=silaDepositAddress,proto3" json:"sila_deposit_address,omitempty"`
 	GenesisValidatorsRoot  []byte                 `protobuf:"bytes,3,opt,name=genesis_validators_root,json=genesisValidatorsRoot,proto3" json:"genesis_validators_root,omitempty" ssz-size:"32"`
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
@@ -267,9 +267,9 @@ func (x *Genesis) GetGenesisTime() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *Genesis) GetDepositContractAddress() []byte {
+func (x *Genesis) GetSilaDepositAddress() []byte {
 	if x != nil {
-		return x.DepositContractAddress
+		return x.SilaDepositAddress
 	}
 	return nil
 }

@@ -16,7 +16,7 @@ import (
 )
 
 // GenesisBeaconState gets called when MinGenesisActiveValidatorCount count of
-// full deposits were made to the deposit contract and the ChainStart log gets emitted.
+// full deposits were made to the sila deposit and the ChainStart log gets emitted.
 //
 // Spec pseudocode definition:
 //
@@ -39,7 +39,7 @@ import (
 //	  # Process deposits
 //	  leaves = list(map(lambda deposit: deposit.data, deposits))
 //	  for index, deposit in enumerate(deposits):
-//	      deposit_data_list = List[DepositData, 2**DEPOSIT_CONTRACT_TREE_DEPTH](*leaves[:index + 1])
+//	      deposit_data_list = List[DepositData, 2**SILA_DEPOSIT_TREE_DEPTH](*leaves[:index + 1])
 //	      state.sila_execution_data.deposit_root = hash_tree_root(deposit_data_list)
 //	      process_deposit(state, deposit)
 //
@@ -78,8 +78,8 @@ func GenesisBeaconState(ctx context.Context, deposits []*silapb.Deposit, genesis
 }
 
 // PreminedGenesisBeaconState works almost exactly like GenesisBeaconState, except that it assumes that genesis deposits
-// are not represented in the deposit contract and are only found in the genesis state validator registry. In order
-// to ensure the deposit root and count match the empty deposit contract deployed in a testnet genesis block, the root
+// are not represented in the sila deposit and are only found in the genesis state validator registry. In order
+// to ensure the deposit root and count match the empty sila deposit deployed in a testnet genesis block, the root
 // of an empty deposit trie is computed and used as SilaExecutionData.deposit_root, and the deposit count is set to 0.
 func PreminedGenesisBeaconState(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, silaexecData *silapb.SilaExecutionData) (state.BeaconState, error) {
 	st, err := EmptyGenesisState()
@@ -97,7 +97,7 @@ func PreminedGenesisBeaconState(ctx context.Context, deposits []*silapb.Deposit,
 		return nil, errors.Wrap(err, "could not process validator deposits")
 	}
 
-	t, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	t, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	if err != nil {
 		return nil, err
 	}

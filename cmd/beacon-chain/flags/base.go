@@ -99,11 +99,11 @@ var (
 		Name:  "jwt-id",
 		Usage: "JWT claims id. Could be used to identify the client",
 	}
-	// DepositContractFlag defines a flag for the deposit contract address.
-	DepositContractFlag = &cli.StringFlag{
+	// SilaDepositFlag defines a flag for the sila deposit address.
+	SilaDepositFlag = &cli.StringFlag{
 		Name:  "deposit-contract",
-		Usage: "Deposit contract address. Beacon chain node will listen logs coming from the deposit contract to determine when validator is eligible to participate.",
-		Value: params.BeaconConfig().DepositContractAddress,
+		Usage: "Sila deposit address. Beacon chain node will listen logs coming from the sila deposit to determine when validator is eligible to participate.",
+		Value: params.BeaconConfig().SilaDepositAddress,
 	}
 	// RPCHost defines the host on which the RPC server should listen.
 	RPCHost = &cli.StringFlag{
@@ -169,10 +169,10 @@ var (
 		Usage: "The required number of valid peers to connect with before syncing.",
 		Value: 3,
 	}
-	// ContractDeploymentBlock is the block in which the silaexec deposit contract was deployed.
+	// ContractDeploymentBlock is the block in which the silaexec sila deposit was deployed.
 	ContractDeploymentBlock = &cli.IntFlag{
 		Name:  "contract-deployment-block",
-		Usage: "The silaexec block in which the deposit contract was deployed.",
+		Usage: "The silaexec block in which the sila deposit was deployed.",
 		Value: 11184524,
 	}
 	// SetGCPercent is the percentage of current live allocations at which the garbage collector is to run.

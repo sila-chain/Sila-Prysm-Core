@@ -139,7 +139,7 @@ func processDepositRequest(beaconState state.BeaconState, request *silaenginev1.
 //
 //	builder_pubkeys = [b.pubkey for b in state.builders]
 //	if pubkey not in builder_pubkeys:
-//	    # Verify the deposit signature (proof of possession) which is not checked by the deposit contract
+//	    # Verify the deposit signature (proof of possession) which is not checked by the sila deposit
 //	    if is_valid_deposit_signature(pubkey, withdrawal_credentials, amount, signature):
 //	        add_builder_to_registry(state, pubkey, withdrawal_credentials, amount, slot)
 //	else:

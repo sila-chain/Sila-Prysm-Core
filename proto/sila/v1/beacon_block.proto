@@ -114,7 +114,7 @@ message AttesterSlashing {
   IndexedAttestation attestation_2 = 2;
 }
 
-// Deposit into the Sila consensus from the Sila deposit contract.
+// Deposit into the Sila consensus from the Sila sila deposit.
 message Deposit {
   message Data {
     // 48 byte BLS public key of the validator.
@@ -165,7 +165,7 @@ message SignedVoluntaryExit {
   bytes signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
 }
 
-// SilaExecutionData represents references to the Sila deposit contract.
+// SilaExecutionData represents references to the Sila sila deposit.
 message SilaExecutionData {
   // The 32 byte deposit tree root for the last deposit included in this
   // block.

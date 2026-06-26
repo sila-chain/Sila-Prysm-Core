@@ -102,7 +102,7 @@ func (ns *Server) GetSyncStatus(_ context.Context, _ *empty.Empty) (*silapb.Sync
 // GetGenesis fetches genesis chain information of Sila. Returns unix timestamp 0
 // if a genesis time has yet to be determined.
 func (ns *Server) GetGenesis(ctx context.Context, _ *empty.Empty) (*silapb.Genesis, error) {
-	contractAddr, err := ns.BeaconDB.DepositContractAddress(ctx)
+	contractAddr, err := ns.BeaconDB.SilaDepositAddress(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Could not retrieve contract address from db: %v", err)
 	}
@@ -118,7 +118,7 @@ func (ns *Server) GetGenesis(ctx context.Context, _ *empty.Empty) (*silapb.Genes
 	genValRoot := ns.GenesisFetcher.GenesisValidatorsRoot()
 	return &silapb.Genesis{
 		GenesisTime:            gt,
-		DepositContractAddress: contractAddr,
+		SilaDepositAddress: contractAddr,
 		GenesisValidatorsRoot:  genValRoot[:],
 	}, nil
 }

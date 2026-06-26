@@ -176,7 +176,7 @@ func VerifyDeposit(beaconState state.ReadOnlyBeaconState, deposit *silapb.Deposi
 		leaf[:],
 		beaconState.SilaExecutionDepositIndex(),
 		deposit.Proof,
-		params.BeaconConfig().DepositContractTreeDepth,
+		params.BeaconConfig().SilaDepositTreeDepth,
 	); !ok {
 		return fmt.Errorf(
 			"deposit merkle branch of deposit root did not verify for root: %#x",

@@ -1017,13 +1017,13 @@ func (*Service) configEndpoints() []endpoint {
 	const namespace = "config"
 	return []endpoint{
 		{
-			template: "/sila/v1/config/deposit_contract",
-			name:     namespace + ".GetDepositContract",
+			template: "/sila/v1/config/sila_deposit",
+			name:     namespace + ".GetSilaDeposit",
 			middleware: []middleware.Middleware{
 				middleware.AcceptHeaderHandler([]string{api.JsonMediaType}),
 				middleware.AcceptEncodingHeaderHandler(),
 			},
-			handler: config.GetDepositContract,
+			handler: config.GetSilaDeposit,
 			methods: []string{http.MethodGet},
 		},
 		{

@@ -8,19 +8,19 @@ import (
 	"github.com/sila-chain/Sila/common"
 )
 
-func TestStore_DepositContract(t *testing.T) {
+func TestStore_SilaDeposit(t *testing.T) {
 	db := setupDB(t)
 	ctx := t.Context()
 	contractAddress := common.Address{1, 2, 3}
-	retrieved, err := db.DepositContractAddress(ctx)
+	retrieved, err := db.SilaDepositAddress(ctx)
 	require.NoError(t, err)
 	assert.DeepEqual(t, []uint8(nil), retrieved, "Expected nil contract address")
-	require.NoError(t, db.SaveDepositContractAddress(ctx, contractAddress))
-	retrieved, err = db.DepositContractAddress(ctx)
+	require.NoError(t, db.SaveSilaDepositAddress(ctx, contractAddress))
+	retrieved, err = db.SilaDepositAddress(ctx)
 	require.NoError(t, err)
 	assert.Equal(t, contractAddress, common.BytesToAddress(retrieved), "Unexpected address")
 	otherAddress := common.Address{4, 5, 6}
-	err = db.SaveDepositContractAddress(ctx, otherAddress)
-	want := "cannot override deposit contract address"
-	assert.ErrorContains(t, want, err, "Should not have been able to override old deposit contract address")
+	err = db.SaveSilaDepositAddress(ctx, otherAddress)
+	want := "cannot override sila deposit address"
+	assert.ErrorContains(t, want, err, "Should not have been able to override old sila deposit address")
 }

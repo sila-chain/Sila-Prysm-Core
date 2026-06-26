@@ -133,12 +133,12 @@ func (s *Service) setupExecutionClientConnections(ctx context.Context, currEndpo
 	s.rpcClient = client
 	s.httpLogger = &silaLogFilterer{client: client}
 
-	depositContractCaller, err := contracts.NewDepositContractCaller(s.cfg.depositContractAddr, &silaContractCaller{client: client})
+	silaDepositCaller, err := contracts.NewSilaDepositCaller(s.cfg.silaDepositAddr, &silaContractCaller{client: client})
 	if err != nil {
 		client.Close()
-		return errors.Wrap(err, "could not initialize deposit contract caller")
+		return errors.Wrap(err, "could not initialize sila deposit caller")
 	}
-	s.depositContractCaller = depositContractCaller
+	s.silaDepositCaller = silaDepositCaller
 
 	// Ensure we have the correct chain and deposit IDs.
 	if err := ensureCorrectExecutionChain(ctx, fetcher); err != nil {

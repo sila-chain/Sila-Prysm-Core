@@ -97,10 +97,10 @@ func assertEqualConfigs(t *testing.T, name string, fields []string, expected, ac
 	assert.Equal(t, expected.EpochsPerRandomSubnetSubscription, actual.EpochsPerRandomSubnetSubscription, "%s: EpochsPerRandomSubnetSubscription", name)
 	assert.Equal(t, expected.SecondsPerSilaBlock, actual.SecondsPerSilaBlock, "%s: SecondsPerSilaBlock", name)
 
-	// Deposit contract.
+	// Sila deposit.
 	assert.Equal(t, expected.DepositChainID, actual.DepositChainID, "%s: DepositChainID", name)
 	assert.Equal(t, expected.DepositNetworkID, actual.DepositNetworkID, "%s: DepositNetworkID", name)
-	assert.Equal(t, expected.DepositContractAddress, actual.DepositContractAddress, "%s: DepositContractAddress", name)
+	assert.Equal(t, expected.SilaDepositAddress, actual.SilaDepositAddress, "%s: SilaDepositAddress", name)
 
 	// Gwei values.
 	assert.Equal(t, expected.MinDepositAmount, actual.MinDepositAmount, "%s: MinDepositAmount", name)
@@ -184,7 +184,7 @@ func assertEqualConfigs(t *testing.T, name string, fields []string, expected, ac
 
 func TestModifiedE2E(t *testing.T) {
 	c := params.E2ETestConfig().Copy()
-	c.DepositContractAddress = "0x4242424242424242424242424242424242424242"
+	c.SilaDepositAddress = "0x4242424242424242424242424242424242424242"
 	c.TerminalTotalDifficulty = "0"
 	c.AltairForkEpoch = 112
 	c.BellatrixForkEpoch = 123

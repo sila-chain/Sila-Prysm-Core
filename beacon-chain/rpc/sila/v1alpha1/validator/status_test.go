@@ -35,7 +35,7 @@ func TestValidatorStatus_DepositedSilaExecution(t *testing.T) {
 	require.NoError(t, err, "Could not generate deposits and keys")
 	deposit := deposits[0]
 	pubKey1 := deposit.Data.PublicKey
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -77,7 +77,7 @@ func TestValidatorStatus_Deposited(t *testing.T) {
 	deposit := &silapb.Deposit{
 		Data: depData,
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -122,7 +122,7 @@ func TestValidatorStatus_PartiallyDeposited(t *testing.T) {
 	deposit := &silapb.Deposit{
 		Data: depData,
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -175,7 +175,7 @@ func TestValidatorStatus_Pending_MultipleDeposits(t *testing.T) {
 	deposit := &silapb.Deposit{
 		Data: depData,
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -252,7 +252,7 @@ func TestValidatorStatus_Pending(t *testing.T) {
 	deposit := &silapb.Deposit{
 		Data: depData,
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -315,7 +315,7 @@ func TestValidatorStatus_Exiting(t *testing.T) {
 	deposit := &silapb.Deposit{
 		Data: depData,
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -374,7 +374,7 @@ func TestValidatorStatus_Slashing(t *testing.T) {
 	deposit := &silapb.Deposit{
 		Data: depData,
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -432,7 +432,7 @@ func TestValidatorStatus_Exited(t *testing.T) {
 	deposit := &silapb.Deposit{
 		Data: depData,
 	}
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -517,7 +517,7 @@ func TestActivationStatus_OK(t *testing.T) {
 	genesisRoot, err := block.Block.HashTreeRoot()
 	require.NoError(t, err, "Could not get signing root")
 	dep := deposits[0]
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -656,7 +656,7 @@ func TestValidatorStatus_CorrectActivationQueue(t *testing.T) {
 	require.NoError(t, st.SetValidators(validators))
 	require.NoError(t, st.SetSlot(currentSlot))
 
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -748,7 +748,7 @@ func TestMultipleValidatorStatus_Pubkeys(t *testing.T) {
 	block := util.NewBeaconBlock()
 	genesisRoot, err := block.Block.HashTreeRoot()
 	require.NoError(t, err, "Could not get signing root")
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
@@ -913,7 +913,7 @@ func TestValidatorStatus_Invalid(t *testing.T) {
 	deposit := deposits[0]
 	pubKey1 := deposit.Data.PublicKey
 	deposit.Data.Signature = deposit.Data.Signature[1:]
-	depositTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	require.NoError(t, err, "Could not setup deposit trie")
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)

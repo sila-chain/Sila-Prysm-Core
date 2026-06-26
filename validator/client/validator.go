@@ -276,7 +276,7 @@ func recheckValidatingKeysBucket(ctx context.Context, valDB db.Database, km keym
 }
 
 // WaitForChainStart checks whether the beacon node has started its runtime. That is,
-// it calls to the beacon node which then verifies the SILAEXEC.0 deposit contract logs to check
+// it calls to the beacon node which then verifies the SILAEXEC.0 sila deposit logs to check
 // for the ChainStart log to have been emitted. If so, it starts a ticker based on the ChainStart
 // unix timestamp which will be used to keep track of time within the validator client.
 func (v *validator) WaitForChainStart(ctx context.Context) error {

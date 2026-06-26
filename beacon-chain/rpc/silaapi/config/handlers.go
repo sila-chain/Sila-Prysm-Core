@@ -17,15 +17,15 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// GetDepositContract retrieves deposit contract address and genesis fork version.
-func GetDepositContract(w http.ResponseWriter, r *http.Request) {
-	_, span := trace.StartSpan(r.Context(), "config.GetDepositContract")
+// GetSilaDeposit retrieves sila deposit address and genesis fork version.
+func GetSilaDeposit(w http.ResponseWriter, r *http.Request) {
+	_, span := trace.StartSpan(r.Context(), "config.GetSilaDeposit")
 	defer span.End()
 
-	httputil.WriteJson(w, &structs.GetDepositContractResponse{
-		Data: &structs.DepositContractData{
+	httputil.WriteJson(w, &structs.GetSilaDepositResponse{
+		Data: &structs.SilaDepositData{
 			ChainId: strconv.FormatUint(params.BeaconConfig().DepositChainID, 10),
-			Address: params.BeaconConfig().DepositContractAddress,
+			Address: params.BeaconConfig().SilaDepositAddress,
 		},
 	})
 }

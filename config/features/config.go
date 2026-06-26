@@ -67,7 +67,7 @@ type Flags struct {
 	EnableStartOptimistic     bool // EnableStartOptimistic treats every block as optimistic at startup.
 
 	DisableResourceManager     bool // Disables running the node with libp2p's resource manager.
-	DisableStakinContractCheck bool // Disables check for deposit contract when proposing blocks
+	DisableStakinContractCheck bool // Disables check for sila deposit when proposing blocks
 	IgnoreUnviableAttestations bool // Ignore attestations whose target state is not viable (avoids lagging-node DoS).
 	TrackEquivocations         bool // Record proposer equivocations seen on gossip into forkchoice.
 

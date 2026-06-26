@@ -92,13 +92,13 @@ CHURN_LIMIT_QUOTIENT: 65536
 PROPOSER_SCORE_BOOST: 40
 
 
-# Deposit contract
+# Sila deposit
 # ---------------------------------------------------------------
 # Testnet
 DEPOSIT_CHAIN_ID: 1337 # Override for e2e tests
 DEPOSIT_NETWORK_ID: 1337 # Override for e2e tests
 # Configured on a per testnet basis
-DEPOSIT_CONTRACT_ADDRESS: 0x4242424242424242424242424242424242424242
+SILA_DEPOSIT_ADDRESS: 0x4242424242424242424242424242424242424242
 
 # Updated penalty values
 # ---------------------------------------------------------------

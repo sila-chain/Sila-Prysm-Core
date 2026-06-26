@@ -115,7 +115,7 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	FarFutureEpoch:           math.MaxUint64,
 	FarFutureSlot:            math.MaxUint64,
 	BaseRewardsPerEpoch:      4,
-	DepositContractTreeDepth: 32,
+	SilaDepositTreeDepth: 32,
 	GenesisDelay:             604800, // 1 week.
 
 	// Misc constant.
@@ -186,7 +186,7 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	// Sila execution-layer PoW compatibility parameters.
 	DepositChainID:         1, // Chain ID of silaexec mainnet.
 	DepositNetworkID:       1, // Network ID of silaexec mainnet.
-	DepositContractAddress: "0x00000000219ab540356cBB839Cbe05303d7705Fa",
+	SilaDepositAddress: "0x00000000219ab540356cBB839Cbe05303d7705Fa",
 
 	// Validator params.
 	RandomSubnetsPerValidator:         1 << 0,

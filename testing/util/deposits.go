@@ -37,7 +37,7 @@ func DeterministicDepositsAndKeys(numDeposits uint64) ([]*silapb.Deposit, []bls.
 
 	// Populate trie cache, if not initialized yet.
 	if t == nil {
-		t, err = trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+		t, err = trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 		if err != nil {
 			return nil, nil, errors.Wrap(err, "failed to create new trie")
 		}
@@ -95,7 +95,7 @@ func DeterministicDepositsAndKeys(numDeposits uint64) ([]*silapb.Deposit, []bls.
 func DepositsWithBalance(balances []uint64) ([]*silapb.Deposit, *trie.SparseMerkleTrie, error) {
 	var err error
 
-	sparseTrie, err := trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+	sparseTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to create new trie")
 	}
@@ -223,7 +223,7 @@ func DepositTrieSubset(sparseTrie *trie.SparseMerkleTrie, size int) (*trie.Spars
 	}
 
 	items = items[:size]
-	depositTrie, err := trie.GenerateTrieFromItems(items, params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.GenerateTrieFromItems(items, params.BeaconConfig().SilaDepositTreeDepth)
 	if err != nil {
 		return nil, [][32]byte{}, errors.Wrapf(err, "could not generate trie of %d length", size)
 	}
@@ -284,7 +284,7 @@ func DepositTrieFromDeposits(deposits []*silapb.Deposit) (*trie.SparseMerkleTrie
 		roots[i] = hashedDeposit
 	}
 
-	depositTrie, err := trie.GenerateTrieFromItems(encodedDeposits, params.BeaconConfig().DepositContractTreeDepth)
+	depositTrie, err := trie.GenerateTrieFromItems(encodedDeposits, params.BeaconConfig().SilaDepositTreeDepth)
 	if err != nil {
 		return nil, [][32]byte{}, errors.Wrap(err, "Could not generate deposit trie")
 	}
@@ -312,7 +312,7 @@ func DeterministicDepositsAndKeysSameValidator(numDeposits uint64) ([]*silapb.De
 
 	// Populate trie cache, if not initialized yet.
 	if t == nil {
-		t, err = trie.NewTrie(params.BeaconConfig().DepositContractTreeDepth)
+		t, err = trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 		if err != nil {
 			return nil, nil, errors.Wrap(err, "failed to create new trie")
 		}
