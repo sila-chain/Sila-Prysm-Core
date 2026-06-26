@@ -12,9 +12,9 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls/common"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
@@ -26,20 +26,20 @@ type stubBlockBody struct {
 	signedBid *silapb.SignedSilaPayloadBid
 }
 
-func (s stubBlockBody) Version() int                                 { return version.Gloas }
-func (s stubBlockBody) RandaoReveal() [96]byte                       { return [96]byte{} }
+func (s stubBlockBody) Version() int                                  { return version.Gloas }
+func (s stubBlockBody) RandaoReveal() [96]byte                        { return [96]byte{} }
 func (s stubBlockBody) SilaData() *silapb.SilaData                    { return nil }
-func (s stubBlockBody) Graffiti() [32]byte                           { return [32]byte{} }
+func (s stubBlockBody) Graffiti() [32]byte                            { return [32]byte{} }
 func (s stubBlockBody) ProposerSlashings() []*silapb.ProposerSlashing { return nil }
 func (s stubBlockBody) AttesterSlashings() []silapb.AttSlashing       { return nil }
 func (s stubBlockBody) Attestations() []silapb.Att                    { return nil }
 func (s stubBlockBody) Deposits() []*silapb.Deposit                   { return nil }
 func (s stubBlockBody) VoluntaryExits() []*silapb.SignedVoluntaryExit { return nil }
 func (s stubBlockBody) SyncAggregate() (*silapb.SyncAggregate, error) { return nil, nil }
-func (s stubBlockBody) IsNil() bool                                  { return s.signedBid == nil }
-func (s stubBlockBody) HashTreeRoot() ([32]byte, error)              { return [32]byte{}, nil }
-func (s stubBlockBody) Proto() (proto.Message, error)                { return nil, nil }
-func (s stubBlockBody) Execution() (interfaces.SilaData, error) { return nil, nil }
+func (s stubBlockBody) IsNil() bool                                   { return s.signedBid == nil }
+func (s stubBlockBody) HashTreeRoot() ([32]byte, error)               { return [32]byte{}, nil }
+func (s stubBlockBody) Proto() (proto.Message, error)                 { return nil, nil }
+func (s stubBlockBody) SilaData() (interfaces.SilaData, error)        { return nil, nil }
 func (s stubBlockBody) BLSToSilaChanges() ([]*silapb.SignedBLSToSilaChange, error) {
 	return nil, nil
 }
@@ -140,7 +140,7 @@ func buildGloasState(t *testing.T, slot primitives.Slot, proposerIdx primitives.
 		builders[builderCount-1] = &silapb.Builder{
 			Pubkey:            builderPubkey[:],
 			Version:           []byte{0},
-			SilaAddress:  bytes.Repeat([]byte{0x01}, 20),
+			SilaAddress:       bytes.Repeat([]byte{0x01}, 20),
 			Balance:           primitives.Gwei(balance),
 			DepositEpoch:      0,
 			WithdrawableEpoch: cfg.FarFutureEpoch,
@@ -219,18 +219,18 @@ func TestProcessSilaPayloadBid_SelfBuildSuccess(t *testing.T) {
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinActivationBalance+1000, randao, latestHash, pubKey)
 
 	bid := &silapb.SilaPayloadBid{
-		ParentBlockHash:       latestHash[:],
-		ParentBlockRoot:       bytes.Repeat([]byte{0xCC}, 32),
-		BlockHash:             bytes.Repeat([]byte{0xDD}, 32),
-		PrevRandao:            randao[:],
-		GasLimit:              1,
-		BuilderIndex:          builderIdx,
-		Slot:                  slot,
-		Value:                 0,
-		SilaPayment:      0,
-		BlobKzgCommitments:    blobCommitmentsForSlot(slot, 1),
-		FeeRecipient:          bytes.Repeat([]byte{0xFF}, 20),
-		SilaRequestsRoot: make([]byte, 32),
+		ParentBlockHash:    latestHash[:],
+		ParentBlockRoot:    bytes.Repeat([]byte{0xCC}, 32),
+		BlockHash:          bytes.Repeat([]byte{0xDD}, 32),
+		PrevRandao:         randao[:],
+		GasLimit:           1,
+		BuilderIndex:       builderIdx,
+		Slot:               slot,
+		Value:              0,
+		SilaPayment:        0,
+		BlobKzgCommitments: blobCommitmentsForSlot(slot, 1),
+		FeeRecipient:       bytes.Repeat([]byte{0xFF}, 20),
+		SilaRequestsRoot:   make([]byte, 32),
 	}
 	signed := &silapb.SignedSilaPayloadBid{
 		Message:   bid,
@@ -262,17 +262,17 @@ func TestProcessSilaPayloadBid_SelfBuildNonZeroAmountFails(t *testing.T) {
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinActivationBalance+1000, randao, latestHash, [48]byte{})
 
 	bid := &silapb.SilaPayloadBid{
-		ParentBlockHash:       latestHash[:],
-		ParentBlockRoot:       bytes.Repeat([]byte{0xAA}, 32),
-		BlockHash:             bytes.Repeat([]byte{0xBB}, 32),
-		PrevRandao:            randao[:],
-		BuilderIndex:          builderIdx,
-		Slot:                  slot,
-		Value:                 10,
-		SilaPayment:      0,
-		BlobKzgCommitments:    blobCommitmentsForSlot(slot, 1),
-		FeeRecipient:          bytes.Repeat([]byte{0xDD}, 20),
-		SilaRequestsRoot: make([]byte, 32),
+		ParentBlockHash:    latestHash[:],
+		ParentBlockRoot:    bytes.Repeat([]byte{0xAA}, 32),
+		BlockHash:          bytes.Repeat([]byte{0xBB}, 32),
+		PrevRandao:         randao[:],
+		BuilderIndex:       builderIdx,
+		Slot:               slot,
+		Value:              10,
+		SilaPayment:        0,
+		BlobKzgCommitments: blobCommitmentsForSlot(slot, 1),
+		FeeRecipient:       bytes.Repeat([]byte{0xDD}, 20),
+		SilaRequestsRoot:   make([]byte, 32),
 	}
 	signed := &silapb.SignedSilaPayloadBid{
 		Message:   bid,
@@ -307,18 +307,18 @@ func TestProcessSilaPayloadBid_PendingPaymentAndCacheBid(t *testing.T) {
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, balance, randao, latestHash, pubKey)
 
 	bid := &silapb.SilaPayloadBid{
-		ParentBlockHash:       latestHash[:],
-		ParentBlockRoot:       bytes.Repeat([]byte{0xCC}, 32),
-		BlockHash:             bytes.Repeat([]byte{0xDD}, 32),
-		PrevRandao:            randao[:],
-		GasLimit:              1,
-		BuilderIndex:          builderIdx,
-		Slot:                  slot,
-		Value:                 500_000,
-		SilaPayment:      1,
-		BlobKzgCommitments:    blobCommitmentsForSlot(slot, 1),
-		FeeRecipient:          bytes.Repeat([]byte{0xFF}, 20),
-		SilaRequestsRoot: make([]byte, 32),
+		ParentBlockHash:    latestHash[:],
+		ParentBlockRoot:    bytes.Repeat([]byte{0xCC}, 32),
+		BlockHash:          bytes.Repeat([]byte{0xDD}, 32),
+		PrevRandao:         randao[:],
+		GasLimit:           1,
+		BuilderIndex:       builderIdx,
+		Slot:               slot,
+		Value:              500_000,
+		SilaPayment:        1,
+		BlobKzgCommitments: blobCommitmentsForSlot(slot, 1),
+		FeeRecipient:       bytes.Repeat([]byte{0xFF}, 20),
+		SilaRequestsRoot:   make([]byte, 32),
 	}
 
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
@@ -369,18 +369,18 @@ func TestProcessSilaPayloadBid_BuilderNotActive(t *testing.T) {
 	state = stateIface.(*state_native.BeaconState)
 
 	bid := &silapb.SilaPayloadBid{
-		ParentBlockHash:       latestHash[:],
-		ParentBlockRoot:       bytes.Repeat([]byte{0x03}, 32),
-		BlockHash:             bytes.Repeat([]byte{0x04}, 32),
-		PrevRandao:            randao[:],
-		GasLimit:              1,
-		BuilderIndex:          builderIdx,
-		Slot:                  slot,
-		Value:                 10,
-		SilaPayment:      0,
-		BlobKzgCommitments:    blobCommitmentsForSlot(slot, 1),
-		FeeRecipient:          bytes.Repeat([]byte{0x06}, 20),
-		SilaRequestsRoot: make([]byte, 32),
+		ParentBlockHash:    latestHash[:],
+		ParentBlockRoot:    bytes.Repeat([]byte{0x03}, 32),
+		BlockHash:          bytes.Repeat([]byte{0x04}, 32),
+		PrevRandao:         randao[:],
+		GasLimit:           1,
+		BuilderIndex:       builderIdx,
+		Slot:               slot,
+		Value:              10,
+		SilaPayment:        0,
+		BlobKzgCommitments: blobCommitmentsForSlot(slot, 1),
+		FeeRecipient:       bytes.Repeat([]byte{0x06}, 20),
+		SilaRequestsRoot:   make([]byte, 32),
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
@@ -423,18 +423,18 @@ func TestProcessSilaPayloadBid_CannotCoverBid(t *testing.T) {
 	state = stateIface.(*state_native.BeaconState)
 
 	bid := &silapb.SilaPayloadBid{
-		ParentBlockHash:       latestHash[:],
-		ParentBlockRoot:       bytes.Repeat([]byte{0xCC}, 32),
-		BlockHash:             bytes.Repeat([]byte{0xDD}, 32),
-		PrevRandao:            randao[:],
-		GasLimit:              1,
-		BuilderIndex:          builderIdx,
-		Slot:                  slot,
-		Value:                 25,
-		SilaPayment:      0,
-		BlobKzgCommitments:    blobCommitmentsForSlot(slot, 1),
-		FeeRecipient:          bytes.Repeat([]byte{0xFF}, 20),
-		SilaRequestsRoot: make([]byte, 32),
+		ParentBlockHash:    latestHash[:],
+		ParentBlockRoot:    bytes.Repeat([]byte{0xCC}, 32),
+		BlockHash:          bytes.Repeat([]byte{0xDD}, 32),
+		PrevRandao:         randao[:],
+		GasLimit:           1,
+		BuilderIndex:       builderIdx,
+		Slot:               slot,
+		Value:              25,
+		SilaPayment:        0,
+		BlobKzgCommitments: blobCommitmentsForSlot(slot, 1),
+		FeeRecipient:       bytes.Repeat([]byte{0xFF}, 20),
+		SilaRequestsRoot:   make([]byte, 32),
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
@@ -466,18 +466,18 @@ func TestProcessSilaPayloadBid_InvalidSignature(t *testing.T) {
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinDepositAmount+1000, randao, latestHash, pubKey)
 
 	bid := &silapb.SilaPayloadBid{
-		ParentBlockHash:       latestHash[:],
-		ParentBlockRoot:       bytes.Repeat([]byte{0xCC}, 32),
-		BlockHash:             bytes.Repeat([]byte{0xDD}, 32),
-		PrevRandao:            randao[:],
-		GasLimit:              1,
-		BuilderIndex:          builderIdx,
-		Slot:                  slot,
-		Value:                 10,
-		SilaPayment:      0,
-		BlobKzgCommitments:    blobCommitmentsForSlot(slot, 1),
-		FeeRecipient:          bytes.Repeat([]byte{0xFF}, 20),
-		SilaRequestsRoot: make([]byte, 32),
+		ParentBlockHash:    latestHash[:],
+		ParentBlockRoot:    bytes.Repeat([]byte{0xCC}, 32),
+		BlockHash:          bytes.Repeat([]byte{0xDD}, 32),
+		PrevRandao:         randao[:],
+		GasLimit:           1,
+		BuilderIndex:       builderIdx,
+		Slot:               slot,
+		Value:              10,
+		SilaPayment:        0,
+		BlobKzgCommitments: blobCommitmentsForSlot(slot, 1),
+		FeeRecipient:       bytes.Repeat([]byte{0xFF}, 20),
+		SilaRequestsRoot:   make([]byte, 32),
 	}
 	// Use an invalid signature.
 	invalidSig := [96]byte{1}
@@ -504,15 +504,15 @@ func TestProcessSilaPayloadBid_TooManyBlobCommitments(t *testing.T) {
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinActivationBalance+1000, randao, latestHash, pubKey)
 
 	bid := &silapb.SilaPayloadBid{
-		ParentBlockHash:       latestHash[:],
-		ParentBlockRoot:       bytes.Repeat([]byte{0xCC}, 32),
-		BlockHash:             bytes.Repeat([]byte{0xDD}, 32),
-		PrevRandao:            randao[:],
-		BuilderIndex:          builderIdx,
-		Slot:                  slot,
-		BlobKzgCommitments:    tooManyBlobCommitmentsForSlot(slot),
-		FeeRecipient:          bytes.Repeat([]byte{0xFF}, 20),
-		SilaRequestsRoot: make([]byte, 32),
+		ParentBlockHash:    latestHash[:],
+		ParentBlockRoot:    bytes.Repeat([]byte{0xCC}, 32),
+		BlockHash:          bytes.Repeat([]byte{0xDD}, 32),
+		PrevRandao:         randao[:],
+		BuilderIndex:       builderIdx,
+		Slot:               slot,
+		BlobKzgCommitments: tooManyBlobCommitmentsForSlot(slot),
+		FeeRecipient:       bytes.Repeat([]byte{0xFF}, 20),
+		SilaRequestsRoot:   make([]byte, 32),
 	}
 	signed := &silapb.SignedSilaPayloadBid{
 		Message:   bid,
@@ -546,18 +546,18 @@ func TestProcessSilaPayloadBid_SlotMismatch(t *testing.T) {
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinDepositAmount+1000, randao, latestHash, pubKey)
 
 	bid := &silapb.SilaPayloadBid{
-		ParentBlockHash:       latestHash[:],
-		ParentBlockRoot:       bytes.Repeat([]byte{0xAA}, 32),
-		BlockHash:             bytes.Repeat([]byte{0xBB}, 32),
-		PrevRandao:            randao[:],
-		GasLimit:              1,
-		BuilderIndex:          builderIdx,
-		Slot:                  slot + 1, // mismatch
-		Value:                 1,
-		SilaPayment:      0,
-		BlobKzgCommitments:    blobCommitmentsForSlot(slot, 1),
-		FeeRecipient:          bytes.Repeat([]byte{0xDD}, 20),
-		SilaRequestsRoot: make([]byte, 32),
+		ParentBlockHash:    latestHash[:],
+		ParentBlockRoot:    bytes.Repeat([]byte{0xAA}, 32),
+		BlockHash:          bytes.Repeat([]byte{0xBB}, 32),
+		PrevRandao:         randao[:],
+		GasLimit:           1,
+		BuilderIndex:       builderIdx,
+		Slot:               slot + 1, // mismatch
+		Value:              1,
+		SilaPayment:        0,
+		BlobKzgCommitments: blobCommitmentsForSlot(slot, 1),
+		FeeRecipient:       bytes.Repeat([]byte{0xDD}, 20),
+		SilaRequestsRoot:   make([]byte, 32),
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
@@ -589,18 +589,18 @@ func TestProcessSilaPayloadBid_ParentHashMismatch(t *testing.T) {
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinDepositAmount+1000, randao, latestHash, pubKey)
 
 	bid := &silapb.SilaPayloadBid{
-		ParentBlockHash:       bytes.Repeat([]byte{0x11}, 32), // mismatch
-		ParentBlockRoot:       bytes.Repeat([]byte{0x22}, 32),
-		BlockHash:             bytes.Repeat([]byte{0x33}, 32),
-		PrevRandao:            randao[:],
-		GasLimit:              1,
-		BuilderIndex:          builderIdx,
-		Slot:                  slot,
-		Value:                 1,
-		SilaPayment:      0,
-		BlobKzgCommitments:    blobCommitmentsForSlot(slot, 1),
-		FeeRecipient:          bytes.Repeat([]byte{0x55}, 20),
-		SilaRequestsRoot: make([]byte, 32),
+		ParentBlockHash:    bytes.Repeat([]byte{0x11}, 32), // mismatch
+		ParentBlockRoot:    bytes.Repeat([]byte{0x22}, 32),
+		BlockHash:          bytes.Repeat([]byte{0x33}, 32),
+		PrevRandao:         randao[:],
+		GasLimit:           1,
+		BuilderIndex:       builderIdx,
+		Slot:               slot,
+		Value:              1,
+		SilaPayment:        0,
+		BlobKzgCommitments: blobCommitmentsForSlot(slot, 1),
+		FeeRecipient:       bytes.Repeat([]byte{0x55}, 20),
+		SilaRequestsRoot:   make([]byte, 32),
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
@@ -633,18 +633,18 @@ func TestProcessSilaPayloadBid_ParentRootMismatch(t *testing.T) {
 
 	parentRoot := bytes.Repeat([]byte{0x22}, 32)
 	bid := &silapb.SilaPayloadBid{
-		ParentBlockHash:       latestHash[:],
-		ParentBlockRoot:       parentRoot,
-		BlockHash:             bytes.Repeat([]byte{0x33}, 32),
-		PrevRandao:            randao[:],
-		GasLimit:              1,
-		BuilderIndex:          builderIdx,
-		Slot:                  slot,
-		Value:                 1,
-		SilaPayment:      0,
-		BlobKzgCommitments:    blobCommitmentsForSlot(slot, 1),
-		FeeRecipient:          bytes.Repeat([]byte{0x55}, 20),
-		SilaRequestsRoot: make([]byte, 32),
+		ParentBlockHash:    latestHash[:],
+		ParentBlockRoot:    parentRoot,
+		BlockHash:          bytes.Repeat([]byte{0x33}, 32),
+		PrevRandao:         randao[:],
+		GasLimit:           1,
+		BuilderIndex:       builderIdx,
+		Slot:               slot,
+		Value:              1,
+		SilaPayment:        0,
+		BlobKzgCommitments: blobCommitmentsForSlot(slot, 1),
+		FeeRecipient:       bytes.Repeat([]byte{0x55}, 20),
+		SilaRequestsRoot:   make([]byte, 32),
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)
@@ -676,18 +676,18 @@ func TestProcessSilaPayloadBid_PrevRandaoMismatch(t *testing.T) {
 	state := buildGloasState(t, slot, proposerIdx, builderIdx, params.BeaconConfig().MinDepositAmount+1000, randao, latestHash, pubKey)
 
 	bid := &silapb.SilaPayloadBid{
-		ParentBlockHash:       latestHash[:],
-		ParentBlockRoot:       bytes.Repeat([]byte{0x22}, 32),
-		BlockHash:             bytes.Repeat([]byte{0x33}, 32),
-		PrevRandao:            bytes.Repeat([]byte{0x01}, 32), // mismatch
-		GasLimit:              1,
-		BuilderIndex:          builderIdx,
-		Slot:                  slot,
-		Value:                 1,
-		SilaPayment:      0,
-		BlobKzgCommitments:    blobCommitmentsForSlot(slot, 1),
-		FeeRecipient:          bytes.Repeat([]byte{0x55}, 20),
-		SilaRequestsRoot: make([]byte, 32),
+		ParentBlockHash:    latestHash[:],
+		ParentBlockRoot:    bytes.Repeat([]byte{0x22}, 32),
+		BlockHash:          bytes.Repeat([]byte{0x33}, 32),
+		PrevRandao:         bytes.Repeat([]byte{0x01}, 32), // mismatch
+		GasLimit:           1,
+		BuilderIndex:       builderIdx,
+		Slot:               slot,
+		Value:              1,
+		SilaPayment:        0,
+		BlobKzgCommitments: blobCommitmentsForSlot(slot, 1),
+		FeeRecipient:       bytes.Repeat([]byte{0x55}, 20),
+		SilaRequestsRoot:   make([]byte, 32),
 	}
 	genesis := bytesutil.ToBytes32(state.GenesisValidatorsRoot())
 	sig := signBid(t, sk, bid, state.Fork(), genesis)

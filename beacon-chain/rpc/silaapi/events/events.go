@@ -11,6 +11,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/pkg/errors"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed"
@@ -25,15 +28,12 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/httputil"
-	engine "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
-	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
+	engine "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common/hexutil"
-	"github.com/pkg/errors"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
 const DefaultEventFeedDepth = 1000
@@ -119,7 +119,7 @@ var opsFeedEventTopics = map[feed.EventType]string{
 	operation.SingleAttReceived:                 SingleAttestationTopic,
 	operation.ExitReceived:                      VoluntaryExitTopic,
 	operation.SyncCommitteeContributionReceived: SyncCommitteeContributionTopic,
-	operation.BLSToSilaChangeReceived:      BLSToSilaChangeTopic,
+	operation.BLSToSilaChangeReceived:           BLSToSilaChangeTopic,
 	operation.BlobSidecarReceived:               BlobSidecarTopic,
 	operation.AttesterSlashingReceived:          AttesterSlashingTopic,
 	operation.ProposerSlashingReceived:          ProposerSlashingTopic,
@@ -127,7 +127,7 @@ var opsFeedEventTopics = map[feed.EventType]string{
 	operation.DataColumnReceived:                DataColumnTopic,
 	operation.PayloadAttestationMessageReceived: PayloadAttestationMessageTopic,
 	operation.ProposerPreferencesReceived:       ProposerPreferencesTopic,
-	operation.SilaPayloadGossipReceived:    SilaPayloadGossipTopic,
+	operation.SilaPayloadGossipReceived:         SilaPayloadGossipTopic,
 }
 
 var stateFeedEventTopics = map[feed.EventType]string{
@@ -138,8 +138,8 @@ var stateFeedEventTopics = map[feed.EventType]string{
 	statefeed.Reorg:                       ChainReorgTopic,
 	statefeed.BlockProcessed:              BlockTopic,
 	statefeed.PayloadAttributes:           PayloadAttributesTopic,
-	statefeed.SilaPayloadAvailable:   SilaPayloadAvailableTopic,
-	statefeed.SilaPayloadProcessed:   SilaPayloadTopic,
+	statefeed.SilaPayloadAvailable:        SilaPayloadAvailableTopic,
+	statefeed.SilaPayloadProcessed:        SilaPayloadTopic,
 }
 
 var topicsForStateFeed = func() map[string]bool {
@@ -668,8 +668,8 @@ func (s *Server) lazyReaderForEvent(ctx context.Context, event *feed.Event, topi
 		}
 		return func() io.Reader {
 			blk := &structs.BlockEvent{
-				Slot:                fmt.Sprintf("%d", v.Slot),
-				Block:               hexutil.Encode(blockRoot[:]),
+				Slot:           fmt.Sprintf("%d", v.Slot),
+				Block:          hexutil.Encode(blockRoot[:]),
 				SilaOptimistic: v.Optimistic,
 			}
 			return jsonMarshalReader(eventName, blk)
@@ -696,10 +696,10 @@ func (s *Server) lazyReaderForEvent(ctx context.Context, event *feed.Event, topi
 	case *statefeed.SilaPayloadProcessedData:
 		return func() io.Reader {
 			return jsonMarshalReader(eventName, &structs.SilaPayloadEvent{
-				Slot:                fmt.Sprintf("%d", v.Slot),
-				BuilderIndex:        fmt.Sprintf("%d", v.BuilderIndex),
-				BlockHash:           hexutil.Encode(v.BlockHash[:]),
-				BlockRoot:           hexutil.Encode(v.BlockRoot[:]),
+				Slot:           fmt.Sprintf("%d", v.Slot),
+				BuilderIndex:   fmt.Sprintf("%d", v.BuilderIndex),
+				BlockHash:      hexutil.Encode(v.BlockHash[:]),
+				BlockRoot:      hexutil.Encode(v.BlockRoot[:]),
 				SilaOptimistic: v.Optimistic,
 			})
 		}, nil
@@ -853,7 +853,7 @@ func (s *Server) fillEventData(ctx context.Context, ev payloadattribute.EventDat
 		return ev, errors.Wrap(err, "could not get head state randado")
 	}
 
-	payload, err := ev.HeadBlock.Block().Body().Execution()
+	payload, err := ev.HeadBlock.Block().Body().SilaData()
 	if err != nil {
 		return ev, errors.Wrap(err, "could not get sila payload for head block")
 	}

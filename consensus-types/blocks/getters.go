@@ -3,15 +3,15 @@ package blocks
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	field_params "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
-	"github.com/pkg/errors"
 	ssz "github.com/sila-chain/fastssz"
 )
 
@@ -179,7 +179,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 	if b.block.IsNil() {
 		return nil, errors.New("cannot convert nil block to blinded format")
 	}
-	payload, err := b.block.Body().Execution()
+	payload, err := b.block.Body().SilaData()
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +187,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 	if b.version >= version.Fulu {
 		p, ok := payload.Proto().(*silaenginev1.SilaPayloadDeneb)
 		if !ok {
-			return nil, fmt.Errorf("%T is not an sila payload header of Deneb version", p)
+			return nil, fmt.Errorf("%T is not a sila payload header of Deneb version", p)
 		}
 		header, err := PayloadToHeaderFulu(payload)
 		if err != nil {
@@ -202,19 +202,19 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 					ParentRoot:    b.block.parentRoot[:],
 					StateRoot:     b.block.stateRoot[:],
 					Body: &eth.BlindedBeaconBlockBodyElectra{
-						RandaoReveal:           b.block.body.randaoReveal[:],
-						SilaData:               b.block.body.silaexecData,
-						Graffiti:               b.block.body.graffiti[:],
-						ProposerSlashings:      b.block.body.proposerSlashings,
-						AttesterSlashings:      b.block.body.attesterSlashingsElectra,
-						Attestations:           b.block.body.attestationsElectra,
-						Deposits:               b.block.body.deposits,
-						VoluntaryExits:         b.block.body.voluntaryExits,
-						SyncAggregate:          b.block.body.syncAggregate,
-						SilaPayloadHeader: header,
-						BlsToSilaChanges:  b.block.body.blsToSilaChanges,
-						BlobKzgCommitments:     b.block.body.blobKzgCommitments,
-						SilaRequests:      b.block.body.silaRequests,
+						RandaoReveal:       b.block.body.randaoReveal[:],
+						SilaData:           b.block.body.silaexecData,
+						Graffiti:           b.block.body.graffiti[:],
+						ProposerSlashings:  b.block.body.proposerSlashings,
+						AttesterSlashings:  b.block.body.attesterSlashingsElectra,
+						Attestations:       b.block.body.attestationsElectra,
+						Deposits:           b.block.body.deposits,
+						VoluntaryExits:     b.block.body.voluntaryExits,
+						SyncAggregate:      b.block.body.syncAggregate,
+						SilaPayloadHeader:  header,
+						BlsToSilaChanges:   b.block.body.blsToSilaChanges,
+						BlobKzgCommitments: b.block.body.blobKzgCommitments,
+						SilaRequests:       b.block.body.silaRequests,
 					},
 				},
 				Signature: b.signature[:],
@@ -224,7 +224,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 	if b.version >= version.Electra {
 		p, ok := payload.Proto().(*silaenginev1.SilaPayloadDeneb)
 		if !ok {
-			return nil, fmt.Errorf("%T is not an sila payload header of Deneb version", p)
+			return nil, fmt.Errorf("%T is not a sila payload header of Deneb version", p)
 		}
 		header, err := PayloadToHeaderElectra(payload)
 		if err != nil {
@@ -238,19 +238,19 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 					ParentRoot:    b.block.parentRoot[:],
 					StateRoot:     b.block.stateRoot[:],
 					Body: &eth.BlindedBeaconBlockBodyElectra{
-						RandaoReveal:           b.block.body.randaoReveal[:],
-						SilaData:               b.block.body.silaexecData,
-						Graffiti:               b.block.body.graffiti[:],
-						ProposerSlashings:      b.block.body.proposerSlashings,
-						AttesterSlashings:      b.block.body.attesterSlashingsElectra,
-						Attestations:           b.block.body.attestationsElectra,
-						Deposits:               b.block.body.deposits,
-						VoluntaryExits:         b.block.body.voluntaryExits,
-						SyncAggregate:          b.block.body.syncAggregate,
-						SilaPayloadHeader: header,
-						BlsToSilaChanges:  b.block.body.blsToSilaChanges,
-						BlobKzgCommitments:     b.block.body.blobKzgCommitments,
-						SilaRequests:      b.block.body.silaRequests,
+						RandaoReveal:       b.block.body.randaoReveal[:],
+						SilaData:           b.block.body.silaexecData,
+						Graffiti:           b.block.body.graffiti[:],
+						ProposerSlashings:  b.block.body.proposerSlashings,
+						AttesterSlashings:  b.block.body.attesterSlashingsElectra,
+						Attestations:       b.block.body.attestationsElectra,
+						Deposits:           b.block.body.deposits,
+						VoluntaryExits:     b.block.body.voluntaryExits,
+						SyncAggregate:      b.block.body.syncAggregate,
+						SilaPayloadHeader:  header,
+						BlsToSilaChanges:   b.block.body.blsToSilaChanges,
+						BlobKzgCommitments: b.block.body.blobKzgCommitments,
+						SilaRequests:       b.block.body.silaRequests,
 					},
 				},
 				Signature: b.signature[:],
@@ -271,15 +271,15 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 					ParentRoot:    b.block.parentRoot[:],
 					StateRoot:     b.block.stateRoot[:],
 					Body: &eth.BlindedBeaconBlockBodyBellatrix{
-						RandaoReveal:           b.block.body.randaoReveal[:],
-						SilaData:               b.block.body.silaexecData,
-						Graffiti:               b.block.body.graffiti[:],
-						ProposerSlashings:      b.block.body.proposerSlashings,
-						AttesterSlashings:      b.block.body.attesterSlashings,
-						Attestations:           b.block.body.attestations,
-						Deposits:               b.block.body.deposits,
-						VoluntaryExits:         b.block.body.voluntaryExits,
-						SyncAggregate:          b.block.body.syncAggregate,
+						RandaoReveal:      b.block.body.randaoReveal[:],
+						SilaData:          b.block.body.silaexecData,
+						Graffiti:          b.block.body.graffiti[:],
+						ProposerSlashings: b.block.body.proposerSlashings,
+						AttesterSlashings: b.block.body.attesterSlashings,
+						Attestations:      b.block.body.attestations,
+						Deposits:          b.block.body.deposits,
+						VoluntaryExits:    b.block.body.voluntaryExits,
+						SyncAggregate:     b.block.body.syncAggregate,
 						SilaPayloadHeader: header,
 					},
 				},
@@ -298,15 +298,15 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 					ParentRoot:    b.block.parentRoot[:],
 					StateRoot:     b.block.stateRoot[:],
 					Body: &eth.BlindedBeaconBlockBodyCapella{
-						RandaoReveal:           b.block.body.randaoReveal[:],
-						SilaData:               b.block.body.silaexecData,
-						Graffiti:               b.block.body.graffiti[:],
-						ProposerSlashings:      b.block.body.proposerSlashings,
-						AttesterSlashings:      b.block.body.attesterSlashings,
-						Attestations:           b.block.body.attestations,
-						Deposits:               b.block.body.deposits,
-						VoluntaryExits:         b.block.body.voluntaryExits,
-						SyncAggregate:          b.block.body.syncAggregate,
+						RandaoReveal:      b.block.body.randaoReveal[:],
+						SilaData:          b.block.body.silaexecData,
+						Graffiti:          b.block.body.graffiti[:],
+						ProposerSlashings: b.block.body.proposerSlashings,
+						AttesterSlashings: b.block.body.attesterSlashings,
+						Attestations:      b.block.body.attestations,
+						Deposits:          b.block.body.deposits,
+						VoluntaryExits:    b.block.body.voluntaryExits,
+						SyncAggregate:     b.block.body.syncAggregate,
 						SilaPayloadHeader: header,
 						BlsToSilaChanges:  b.block.body.blsToSilaChanges,
 					},
@@ -326,24 +326,24 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 					ParentRoot:    b.block.parentRoot[:],
 					StateRoot:     b.block.stateRoot[:],
 					Body: &eth.BlindedBeaconBlockBodyDeneb{
-						RandaoReveal:           b.block.body.randaoReveal[:],
-						SilaData:               b.block.body.silaexecData,
-						Graffiti:               b.block.body.graffiti[:],
-						ProposerSlashings:      b.block.body.proposerSlashings,
-						AttesterSlashings:      b.block.body.attesterSlashings,
-						Attestations:           b.block.body.attestations,
-						Deposits:               b.block.body.deposits,
-						VoluntaryExits:         b.block.body.voluntaryExits,
-						SyncAggregate:          b.block.body.syncAggregate,
-						SilaPayloadHeader: header,
-						BlsToSilaChanges:  b.block.body.blsToSilaChanges,
-						BlobKzgCommitments:     b.block.body.blobKzgCommitments,
+						RandaoReveal:       b.block.body.randaoReveal[:],
+						SilaData:           b.block.body.silaexecData,
+						Graffiti:           b.block.body.graffiti[:],
+						ProposerSlashings:  b.block.body.proposerSlashings,
+						AttesterSlashings:  b.block.body.attesterSlashings,
+						Attestations:       b.block.body.attestations,
+						Deposits:           b.block.body.deposits,
+						VoluntaryExits:     b.block.body.voluntaryExits,
+						SyncAggregate:      b.block.body.syncAggregate,
+						SilaPayloadHeader:  header,
+						BlsToSilaChanges:   b.block.body.blsToSilaChanges,
+						BlobKzgCommitments: b.block.body.blobKzgCommitments,
 					},
 				},
 				Signature: b.signature[:],
 			})
 	default:
-		return nil, fmt.Errorf("%T is not an sila payload header", p)
+		return nil, fmt.Errorf("%T is not a sila payload header", p)
 	}
 }
 
@@ -358,7 +358,7 @@ func (b *SignedBeaconBlock) Unblind(e interfaces.SilaData) error {
 	if err != nil {
 		return err
 	}
-	header, err := b.Block().Body().Execution()
+	header, err := b.Block().Body().SilaData()
 	if err != nil {
 		return err
 	}
@@ -369,7 +369,7 @@ func (b *SignedBeaconBlock) Unblind(e interfaces.SilaData) error {
 	if payloadRoot != headerRoot {
 		return errors.New("cannot unblind with different sila data")
 	}
-	if err := b.SetExecution(e); err != nil {
+	if err := b.SetSilaData(e); err != nil {
 		return err
 	}
 	return nil
@@ -1244,7 +1244,7 @@ func (b *BeaconBlockBody) SyncAggregate() (*eth.SyncAggregate, error) {
 }
 
 // Execution returns the sila payload of the block body.
-func (b *BeaconBlockBody) Execution() (interfaces.SilaData, error) {
+func (b *BeaconBlockBody) SilaData() (interfaces.SilaData, error) {
 	if b.version <= version.Altair || b.version >= version.Gloas {
 		return nil, consensus_types.ErrNotSupported("Execution", b.version)
 	}

@@ -5,6 +5,9 @@ import (
 	"strings"
 	"time"
 
+	libp2pcore "github.com/libp2p/go-libp2p/core"
+	corenet "github.com/libp2p/go-libp2p/core/network"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
 	p2ptypes "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync"
@@ -14,9 +17,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	libp2pcore "github.com/libp2p/go-libp2p/core"
-	corenet "github.com/libp2p/go-libp2p/core/network"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -230,7 +230,7 @@ func cliActionRequestBlocks(cliCtx *cli.Context) error {
 		end := time.Since(start)
 		totalSilaBlocks := 0
 		for _, blk := range blocks {
-			exec, err := blk.Block().Body().Execution()
+			exec, err := blk.Block().Body().SilaData()
 			switch {
 			case errors.Is(err, consensus_types.ErrUnsupportedField):
 				continue
@@ -254,7 +254,7 @@ func cliActionRequestBlocks(cliCtx *cli.Context) error {
 			"numBlocks":                           len(blocks),
 			"peer":                                pr.String(),
 			"timeFromSendingToProcessingResponse": end,
-			"totalBlocksWithSilaPayloads":    totalSilaBlocks,
+			"totalBlocksWithSilaPayloads":         totalSilaBlocks,
 		}).Info("Received blocks from peer")
 	}
 	return nil

@@ -1,12 +1,12 @@
 package interfaces
 
 import (
+	"github.com/pkg/errors"
 	field_params "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
-	"github.com/pkg/errors"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	ssz "github.com/sila-chain/fastssz"
 	"google.golang.org/protobuf/proto"
 )
@@ -65,7 +65,7 @@ type ReadOnlyBeaconBlockBody interface {
 	IsNil() bool
 	HashTreeRoot() ([field_params.RootLength]byte, error)
 	Proto() (proto.Message, error)
-	Execution() (SilaData, error)
+	SilaData() (SilaData, error)
 	BLSToSilaChanges() ([]*silapb.SignedBLSToSilaChange, error)
 	BlobKzgCommitments() ([][]byte, error)
 	SilaRequests() (*silaenginev1.SilaRequests, error)
@@ -76,7 +76,7 @@ type ReadOnlyBeaconBlockBody interface {
 
 type SignedBeaconBlock interface {
 	ReadOnlySignedBeaconBlock
-	SetExecution(SilaData) error
+	SetSilaData(SilaData) error
 	SetBLSToSilaChanges([]*silapb.SignedBLSToSilaChange) error
 	SetBlobKzgCommitments(c [][]byte) error
 	SetSyncAggregate(*silapb.SyncAggregate) error

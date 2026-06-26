@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/altair"
 	b "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/gloas"
@@ -19,7 +20,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
-	"github.com/pkg/errors"
 )
 
 // ExecuteStateTransitionNoVerifyAnySig defines the procedure for a state transition function.
@@ -471,7 +471,7 @@ func ProcessBlockForStateRoot(
 			return nil, errors.Wrap(err, "could not check if execution is enabled")
 		}
 		if enabled {
-			silaData, err := blk.Body().Execution()
+			silaData, err := blk.Body().SilaData()
 			if err != nil {
 				return nil, err
 			}

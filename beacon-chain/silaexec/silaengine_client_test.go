@@ -1181,7 +1181,7 @@ func TestReconstructFullBellatrixBlock(t *testing.T) {
 		reconstructed, err := service.ReconstructFullBlock(ctx, wrapped)
 		require.NoError(t, err)
 
-		got, err := reconstructed.Block().Body().Execution()
+		got, err := reconstructed.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.DeepEqual(t, payload, got.Proto())
 	})
@@ -1291,7 +1291,7 @@ func TestReconstructFullBellatrixBlockBatch(t *testing.T) {
 		require.DeepEqual(t, wantedWrappedEmpty, reconstructed[0])
 
 		// Handle normal sila blocks correctly
-		got, err := reconstructed[1].Block().Body().Execution()
+		got, err := reconstructed[1].Block().Body().SilaData()
 		require.NoError(t, err)
 		require.DeepEqual(t, payload, got.Proto())
 	})

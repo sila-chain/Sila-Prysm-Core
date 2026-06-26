@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
@@ -14,7 +15,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/pkg/errors"
 )
 
 var (
@@ -64,7 +64,7 @@ func IsSilaBlock(body interfaces.ReadOnlyBeaconBlockBody) (bool, error) {
 	if body.Version() >= version.Capella {
 		return true, nil
 	}
-	payload, err := body.Execution()
+	payload, err := body.SilaData()
 	switch {
 	case errors.Is(err, consensus_types.ErrUnsupportedField):
 		return false, nil
@@ -209,7 +209,7 @@ func ValidatePayload(st state.BeaconState, payload interfaces.SilaData) error {
 //	    transactions_root=hash_tree_root(payload.transactions),
 //	)
 func ProcessPayload(st state.BeaconState, body interfaces.ReadOnlyBeaconBlockBody) error {
-	payload, err := body.Execution()
+	payload, err := body.SilaData()
 	if err != nil {
 		return err
 	}

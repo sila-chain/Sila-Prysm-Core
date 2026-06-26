@@ -67,7 +67,7 @@ func (*FaultySilaChain) ClearPreGenesisData() {
 	// no-op
 }
 
-// IsConnectedToSilaExecution --
-func (*FaultySilaChain) IsConnectedToSilaExecution() bool {
+// IsConnectedToSilaData --
+func (*FaultySilaChain) IsConnectedToSilaData() bool {
 	return true
 }

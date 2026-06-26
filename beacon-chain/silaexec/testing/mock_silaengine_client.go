@@ -90,7 +90,7 @@ func (e *SilaEngineClient) ReconstructFullBlock(
 	if !blindedBlock.Block().IsBlinded() {
 		return nil, errors.New("block must be blinded")
 	}
-	header, err := blindedBlock.Block().Body().Execution()
+	header, err := blindedBlock.Block().Body().SilaData()
 	if err != nil {
 		return nil, err
 	}

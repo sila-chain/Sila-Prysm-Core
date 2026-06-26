@@ -105,7 +105,7 @@ func makeExecutionAndProofDeneb(ctx context.Context, blk interfaces.ReadOnlySign
 		return payloadHeader, payloadProof, nil
 	}
 
-	payload, err := blk.Block().Body().Execution()
+	payload, err := blk.Block().Body().SilaData()
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "could not get sila payload")
 	}
@@ -178,7 +178,7 @@ func makeExecutionAndProofCapella(ctx context.Context, blk interfaces.ReadOnlySi
 		return payloadHeader, payloadProof, nil
 	}
 
-	payload, err := blk.Block().Body().Execution()
+	payload, err := blk.Block().Body().SilaData()
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "could not get sila payload")
 	}

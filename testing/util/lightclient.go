@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
@@ -13,12 +14,11 @@ import (
 	lightclienttypes "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	v11 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	v11 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/pkg/errors"
 )
 
 type TestLightClient struct {
@@ -1149,7 +1149,7 @@ func (l *TestLightClient) CheckAttestedHeader(header interfaces.LightClientHeade
 	require.DeepSSZEqual(l.T, attestedStateRoot[:], updateAttestedHeaderBeacon.StateRoot, "Attested block state root is not equal")
 
 	if l.AttestedBlock.Version() == version.Capella {
-		payloadInterface, err := l.AttestedBlock.Block().Body().Execution()
+		payloadInterface, err := l.AttestedBlock.Block().Body().SilaData()
 		require.NoError(l.T, err)
 		transactionsRoot, err := payloadInterface.TransactionsRoot()
 		if errors.Is(err, consensus_types.ErrUnsupportedField) {
@@ -1189,7 +1189,7 @@ func (l *TestLightClient) CheckAttestedHeader(header interfaces.LightClientHeade
 			WithdrawalsRoot:  withdrawalsRoot,
 		}
 
-		updateAttestedHeaderExecution, err := header.Execution()
+		updateAttestedHeaderExecution, err := header.SilaData()
 		require.NoError(l.T, err)
 		require.DeepSSZEqual(l.T, execution, updateAttestedHeaderExecution.Proto(), "Attested Block Execution is not equal")
 
@@ -1203,7 +1203,7 @@ func (l *TestLightClient) CheckAttestedHeader(header interfaces.LightClientHeade
 	}
 
 	if l.AttestedBlock.Version() == version.Deneb {
-		payloadInterface, err := l.AttestedBlock.Block().Body().Execution()
+		payloadInterface, err := l.AttestedBlock.Block().Body().SilaData()
 		require.NoError(l.T, err)
 		transactionsRoot, err := payloadInterface.TransactionsRoot()
 		if errors.Is(err, consensus_types.ErrUnsupportedField) {
@@ -1243,7 +1243,7 @@ func (l *TestLightClient) CheckAttestedHeader(header interfaces.LightClientHeade
 			WithdrawalsRoot:  withdrawalsRoot,
 		}
 
-		updateAttestedHeaderExecution, err := header.Execution()
+		updateAttestedHeaderExecution, err := header.SilaData()
 		require.NoError(l.T, err)
 		require.DeepSSZEqual(l.T, execution, updateAttestedHeaderExecution.Proto(), "Attested Block Execution is not equal")
 

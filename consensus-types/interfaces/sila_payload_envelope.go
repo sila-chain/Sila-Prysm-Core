@@ -30,5 +30,5 @@ type ROBlindedSilaPayloadEnvelope interface {
 
 type ROSilaPayloadEnvelope interface {
 	ROBlindedSilaPayloadEnvelope
-	Execution() (SilaData, error)
+	SilaData() (SilaData, error)
 }

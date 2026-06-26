@@ -136,7 +136,7 @@ func ComputeBlockBodyFieldRoots(ctx context.Context, blockBody *BeaconBlockBody)
 
 	if blockBody.version >= version.Bellatrix {
 		// Sila Payload
-		ep, err := blockBody.Execution()
+		ep, err := blockBody.SilaData()
 		if err != nil {
 			return nil, err
 		}

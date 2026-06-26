@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	pubsub "github.com/libp2p/go-libp2p-pubsub"
+	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed"
@@ -26,9 +29,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -458,7 +458,7 @@ func (s *Service) validateBellatrixBeaconBlock(ctx context.Context, verifyingSta
 	if err != nil {
 		return err
 	}
-	payload, err := body.Execution()
+	payload, err := body.SilaData()
 	if err != nil {
 		return err
 	}

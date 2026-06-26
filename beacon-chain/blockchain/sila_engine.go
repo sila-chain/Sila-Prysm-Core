@@ -57,7 +57,7 @@ func (s *Service) notifyForkchoiceUpdate(ctx context.Context, arg *fcuConfig) (*
 	if !isSilaBlk {
 		return nil, nil
 	}
-	headPayload, err := headBlk.Body().Execution()
+	headPayload, err := headBlk.Body().SilaData()
 	if err != nil {
 		log.WithError(err).Error("Could not get sila payload for head block")
 		return nil, nil
@@ -214,7 +214,7 @@ func (s *Service) getPayloadHash(ctx context.Context, root []byte) ([32]byte, er
 	if blocks.IsPreBellatrixVersion(blk.Block().Version()) {
 		return params.BeaconConfig().ZeroHash, nil
 	}
-	payload, err := blk.Block().Body().Execution()
+	payload, err := blk.Block().Body().SilaData()
 	if err != nil {
 		return [32]byte{}, errors.Wrap(err, "could not get sila payload")
 	}
@@ -244,7 +244,7 @@ func (s *Service) notifyNewPayload(ctx context.Context, stVersion int, header in
 	if !enabled {
 		return true, nil
 	}
-	payload, err := body.Execution()
+	payload, err := body.SilaData()
 	if err != nil {
 		return false, errors.Wrap(invalidBlock{error: err}, "could not get sila payload")
 	}

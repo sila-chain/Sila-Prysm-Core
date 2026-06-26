@@ -3,6 +3,7 @@ package evaluators
 import (
 	"context"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
@@ -11,7 +12,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/policies"
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -78,7 +78,7 @@ func builderActive(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) err
 			// Skip fork slot and the next one, as we don't send FCUs yet.
 			continue
 		}
-		execPayload, err := b.Block().Body().Execution()
+		execPayload, err := b.Block().Body().SilaData()
 		if err != nil {
 			return err
 		}
@@ -126,7 +126,7 @@ func builderActive(_ *e2etypes.EvaluationContext, conns ...*grpc.ClientConn) err
 			// Skip fork slot and the next one, as we don't send FCUs yet.
 			continue
 		}
-		execPayload, err := b.Block().Body().Execution()
+		execPayload, err := b.Block().Body().SilaData()
 		if err != nil {
 			return err
 		}

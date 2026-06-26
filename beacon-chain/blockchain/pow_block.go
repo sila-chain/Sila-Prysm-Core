@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/holiman/uint256"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
@@ -15,8 +17,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	"github.com/holiman/uint256"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -42,7 +42,7 @@ func (s *Service) validateMergeBlock(ctx context.Context, b interfaces.ReadOnlyS
 	if err := blocks.BeaconBlockIsNil(b); err != nil {
 		return err
 	}
-	payload, err := b.Block().Body().Execution()
+	payload, err := b.Block().Body().SilaData()
 	if err != nil {
 		return err
 	}

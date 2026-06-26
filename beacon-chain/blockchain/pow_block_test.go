@@ -225,6 +225,6 @@ func Test_validateTerminalBlockHash(t *testing.T) {
 	blk, err := blocks.NewSignedBeaconBlock(util.HydrateSignedBeaconBlockBellatrix(&silapb.SignedBeaconBlockBellatrix{}))
 	require.NoError(t, err)
 	blk.SetSlot(1)
-	require.NoError(t, blk.SetExecution(wrapped))
+	require.NoError(t, blk.SetSilaData(wrapped))
 	require.NoError(t, service.validateMergeBlock(ctx, blk))
 }

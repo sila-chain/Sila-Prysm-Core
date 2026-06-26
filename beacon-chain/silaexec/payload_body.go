@@ -62,7 +62,7 @@ func (r *blindedBlockReconstructor) addToBatch(b interfaces.ReadOnlySignedBeacon
 	if !b.Block().IsBlinded() {
 		return errors.New("can only reconstruct block from blinded block format")
 	}
-	header, err := b.Block().Body().Execution()
+	header, err := b.Block().Body().SilaData()
 	if err != nil {
 		return err
 	}

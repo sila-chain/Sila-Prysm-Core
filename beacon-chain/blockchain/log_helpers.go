@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
@@ -14,7 +15,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -41,7 +41,7 @@ func logStateTransitionData(b interfaces.ReadOnlyBeaconBlock) error {
 		log = log.WithField("syncBitsCount", agg.SyncCommitteeBits.Count())
 	}
 	if b.Version() >= version.Bellatrix && b.Version() < version.Gloas {
-		p, err := b.Body().Execution()
+		p, err := b.Body().SilaData()
 		if err != nil {
 			return err
 		}
@@ -160,7 +160,7 @@ func logPayload(block interfaces.ReadOnlyBeaconBlock) error {
 	if block.Version() < version.Bellatrix || block.Version() >= version.Gloas {
 		return nil
 	}
-	payload, err := block.Body().Execution()
+	payload, err := block.Body().SilaData()
 	if err != nil {
 		return err
 	}

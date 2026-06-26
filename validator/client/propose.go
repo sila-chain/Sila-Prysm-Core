@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/golang/protobuf/ptypes/timestamp"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/async"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/signing"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
@@ -24,8 +26,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
 	"github.com/sila-chain/Sila/common/hexutil"
-	"github.com/golang/protobuf/ptypes/timestamp"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )
@@ -199,7 +199,7 @@ func (v *validator) ProposeBlock(ctx context.Context, slot primitives.Slot, pubK
 
 func logProposedBlock(log *logrus.Entry, blk interfaces.SignedBeaconBlock, blkRoot []byte) error {
 	if blk.Version() >= version.Bellatrix && blk.Version() < version.Gloas {
-		p, err := blk.Block().Body().Execution()
+		p, err := blk.Block().Body().SilaData()
 		if err != nil {
 			return errors.Wrap(err, "failed to get sila payload")
 		}

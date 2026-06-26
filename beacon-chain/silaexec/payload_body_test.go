@@ -45,7 +45,7 @@ type fullAndBlinded struct {
 }
 
 func blindedBlockWithHeader(t *testing.T, b interfaces.ReadOnlySignedBeaconBlock) *fullAndBlinded {
-	header, err := b.Block().Body().Execution()
+	header, err := b.Block().Body().SilaData()
 	require.NoError(t, err)
 	blinded, err := b.ToBlinded()
 	require.NoError(t, err)

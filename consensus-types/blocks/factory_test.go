@@ -7,8 +7,8 @@ import (
 
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
@@ -547,7 +547,7 @@ func TestBuildSignedBeaconBlockFromSilaPayload(t *testing.T) {
 		builtBlock, err := BuildSignedBeaconBlockFromSilaPayload(blk, payload)
 		require.NoError(t, err)
 
-		got, err := builtBlock.Block().Body().Execution()
+		got, err := builtBlock.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.DeepEqual(t, payload, got.Proto())
 	})
@@ -579,7 +579,7 @@ func TestBuildSignedBeaconBlockFromSilaPayload(t *testing.T) {
 		builtBlock, err := BuildSignedBeaconBlockFromSilaPayload(blk, payload)
 		require.NoError(t, err)
 
-		got, err := builtBlock.Block().Body().Execution()
+		got, err := builtBlock.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.DeepEqual(t, payload, got.Proto())
 		require.DeepEqual(t, uint64(123), payload.ExcessBlobGas)

@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/signing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
@@ -12,7 +13,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/pkg/errors"
 )
 
 // VerifySilaPayloadEnvelope is a verification function called by fork-choice when
@@ -142,7 +142,7 @@ func validatePayloadConsistency(ctx context.Context, st state.BeaconState, envel
 		return errors.Errorf("sila requests root mismatch: envelope=%#x, bid=%#x", silaRequestsRoot, bidSilaRequestsRoot)
 	}
 
-	payload, err := envelope.Execution()
+	payload, err := envelope.SilaData()
 	if err != nil {
 		return errors.Wrap(err, "could not get sila payload from envelope")
 	}

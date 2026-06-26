@@ -3,12 +3,12 @@ package blocks
 import (
 	"testing"
 
-	bitfield "github.com/sila-chain/go-bitfield"
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
+	bitfield "github.com/sila-chain/go-bitfield"
 )
 
 func TestSignedBeaconBlock_SetPayloadAttestations(t *testing.T) {
@@ -72,14 +72,14 @@ func TestSignedBeaconBlock_SetSignedSilaPayloadBid(t *testing.T) {
 	})
 }
 
-func TestSignedBeaconBlock_SetExecution(t *testing.T) {
+func TestSignedBeaconBlock_SetSilaData(t *testing.T) {
 	t.Run("rejects Gloas version", func(t *testing.T) {
 		sb := newTestSignedBeaconBlock(version.Gloas)
 		payload := &silaenginev1.SilaPayload{}
 		wrapped, err := WrappedSilaPayload(payload)
 		require.NoError(t, err)
 
-		err = sb.SetExecution(wrapped)
+		err = sb.SetSilaData(wrapped)
 		require.ErrorIs(t, err, consensus_types.ErrUnsupportedField)
 	})
 }

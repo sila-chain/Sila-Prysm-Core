@@ -6,10 +6,10 @@ import (
 	field_params "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
-	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	ssz "github.com/sila-chain/fastssz"
 	"google.golang.org/protobuf/proto"
 )
@@ -211,7 +211,7 @@ func (BeaconBlockBody) Proto() (proto.Message, error) {
 	panic("implement me")
 }
 
-func (BeaconBlockBody) Execution() (interfaces.SilaData, error) {
+func (BeaconBlockBody) SilaData() (interfaces.SilaData, error) {
 	panic("implement me")
 }
 
@@ -259,7 +259,7 @@ func (b *BeaconBlockBody) SetSyncAggregate(*eth.SyncAggregate) error {
 	panic("implement me")
 }
 
-func (b *BeaconBlockBody) SetExecution(interfaces.SilaData) error {
+func (b *BeaconBlockBody) SetSilaData(interfaces.SilaData) error {
 	panic("implement me")
 }
 

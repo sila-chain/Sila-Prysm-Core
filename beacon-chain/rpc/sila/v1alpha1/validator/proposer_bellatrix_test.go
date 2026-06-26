@@ -106,7 +106,7 @@ func TestServer_setSilaData(t *testing.T) {
 		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
-		e, err := blk.Block().Body().Execution()
+		e, err := blk.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.Equal(t, uint64(1), e.BlockNumber()) // Local block
 	})
@@ -175,7 +175,7 @@ func TestServer_setSilaData(t *testing.T) {
 		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
-		e, err := blk.Block().Body().Execution()
+		e, err := blk.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.Equal(t, uint64(1), e.BlockNumber()) // Local block because incorrect withdrawals
 	})
@@ -247,7 +247,7 @@ func TestServer_setSilaData(t *testing.T) {
 		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
-		e, err := blk.Block().Body().Execution()
+		e, err := blk.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.Equal(t, uint64(2), e.BlockNumber()) // Builder block
 	})
@@ -318,7 +318,7 @@ func TestServer_setSilaData(t *testing.T) {
 		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, math.MaxUint64)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
-		e, err := blk.Block().Body().Execution()
+		e, err := blk.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.Equal(t, uint64(2), e.BlockNumber()) // builder block
 	})
@@ -389,7 +389,7 @@ func TestServer_setSilaData(t *testing.T) {
 		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, 0)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
-		e, err := blk.Block().Body().Execution()
+		e, err := blk.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.Equal(t, uint64(1), e.BlockNumber()) // local block
 	})
@@ -410,7 +410,7 @@ func TestServer_setSilaData(t *testing.T) {
 		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
-		e, err := blk.Block().Body().Execution()
+		e, err := blk.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.Equal(t, uint64(3), e.BlockNumber()) // Local block
 
@@ -437,7 +437,7 @@ func TestServer_setSilaData(t *testing.T) {
 		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
-		e, err := blk.Block().Body().Execution()
+		e, err := blk.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.Equal(t, uint64(3), e.BlockNumber()) // Local block
 
@@ -467,7 +467,7 @@ func TestServer_setSilaData(t *testing.T) {
 		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
-		e, err := blk.Block().Body().Execution()
+		e, err := blk.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.Equal(t, uint64(3), e.BlockNumber()) // Local block
 
@@ -493,7 +493,7 @@ func TestServer_setSilaData(t *testing.T) {
 		_, bundle, err := setSilaData(t.Context(), blk, res, nil, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
-		e, err := blk.Block().Body().Execution()
+		e, err := blk.Block().Body().SilaData()
 		require.NoError(t, err)
 		require.Equal(t, uint64(4), e.BlockNumber()) // Local block
 	})

@@ -795,7 +795,7 @@ func (s *Service) validateMergeTransitionBlock(ctx context.Context, stateVersion
 	}
 
 	// Skip validation if block has an empty payload.
-	payload, err := blk.Block().Body().Execution()
+	payload, err := blk.Block().Body().SilaData()
 	if err != nil {
 		return invalidBlock{error: err}
 	}

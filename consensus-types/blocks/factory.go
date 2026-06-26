@@ -3,11 +3,11 @@ package blocks
 import (
 	"fmt"
 
-	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
-	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/pkg/errors"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
+	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
 
 var (
@@ -322,7 +322,7 @@ func checkPayloadAgainstHeader(wrappedPayload, payloadHeader interfaces.SilaData
 }
 
 // BuildSignedBeaconBlockFromSilaPayload takes a signed, blinded beacon block and converts into
-// a full, signed beacon block by specifying an sila payload.
+// a full, signed beacon block by specifying a sila payload.
 // nolint:gocognit
 func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBlock, payload any) (interfaces.SignedBeaconBlock, error) {
 	if err := BeaconBlockIsNil(blk); err != nil {
@@ -332,7 +332,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 		return nil, errNonBlindedSignedBeaconBlock
 	}
 	b := blk.Block()
-	payloadHeader, err := b.Body().Execution()
+	payloadHeader, err := b.Body().SilaData()
 	if err != nil {
 		return nil, errors.Wrap(err, "could not get sila payload header")
 	}
@@ -399,7 +399,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 					Deposits:          b.Body().Deposits(),
 					VoluntaryExits:    b.Body().VoluntaryExits(),
 					SyncAggregate:     syncAgg,
-					SilaPayload:  p,
+					SilaPayload:       p,
 				},
 			},
 			Signature: sig[:],
@@ -442,17 +442,17 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				ParentRoot:    parentRoot[:],
 				StateRoot:     stateRoot[:],
 				Body: &eth.BeaconBlockBodyCapella{
-					RandaoReveal:          randaoReveal[:],
-					SilaData:              b.Body().SilaData(),
-					Graffiti:              graffiti[:],
-					ProposerSlashings:     b.Body().ProposerSlashings(),
-					AttesterSlashings:     attSlashings,
-					Attestations:          atts,
-					Deposits:              b.Body().Deposits(),
-					VoluntaryExits:        b.Body().VoluntaryExits(),
-					SyncAggregate:         syncAgg,
-					SilaPayload:      p,
-					BlsToSilaChanges: blsToSilaChanges,
+					RandaoReveal:      randaoReveal[:],
+					SilaData:          b.Body().SilaData(),
+					Graffiti:          graffiti[:],
+					ProposerSlashings: b.Body().ProposerSlashings(),
+					AttesterSlashings: attSlashings,
+					Attestations:      atts,
+					Deposits:          b.Body().Deposits(),
+					VoluntaryExits:    b.Body().VoluntaryExits(),
+					SyncAggregate:     syncAgg,
+					SilaPayload:       p,
+					BlsToSilaChanges:  blsToSilaChanges,
 				},
 			},
 			Signature: sig[:],
@@ -499,18 +499,18 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				ParentRoot:    parentRoot[:],
 				StateRoot:     stateRoot[:],
 				Body: &eth.BeaconBlockBodyDeneb{
-					RandaoReveal:          randaoReveal[:],
-					SilaData:              b.Body().SilaData(),
-					Graffiti:              graffiti[:],
-					ProposerSlashings:     b.Body().ProposerSlashings(),
-					AttesterSlashings:     attSlashings,
-					Attestations:          atts,
-					Deposits:              b.Body().Deposits(),
-					VoluntaryExits:        b.Body().VoluntaryExits(),
-					SyncAggregate:         syncAgg,
-					SilaPayload:      p,
-					BlsToSilaChanges: blsToSilaChanges,
-					BlobKzgCommitments:    commitments,
+					RandaoReveal:       randaoReveal[:],
+					SilaData:           b.Body().SilaData(),
+					Graffiti:           graffiti[:],
+					ProposerSlashings:  b.Body().ProposerSlashings(),
+					AttesterSlashings:  attSlashings,
+					Attestations:       atts,
+					Deposits:           b.Body().Deposits(),
+					VoluntaryExits:     b.Body().VoluntaryExits(),
+					SyncAggregate:      syncAgg,
+					SilaPayload:        p,
+					BlsToSilaChanges:   blsToSilaChanges,
+					BlobKzgCommitments: commitments,
 				},
 			},
 			Signature: sig[:],
@@ -563,19 +563,19 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				ParentRoot:    parentRoot[:],
 				StateRoot:     stateRoot[:],
 				Body: &eth.BeaconBlockBodyElectra{
-					RandaoReveal:          randaoReveal[:],
-					SilaData:              b.Body().SilaData(),
-					Graffiti:              graffiti[:],
-					ProposerSlashings:     b.Body().ProposerSlashings(),
-					AttesterSlashings:     attSlashings,
-					Attestations:          atts,
-					Deposits:              b.Body().Deposits(),
-					VoluntaryExits:        b.Body().VoluntaryExits(),
-					SyncAggregate:         syncAgg,
-					SilaPayload:      p,
-					BlsToSilaChanges: blsToSilaChanges,
-					BlobKzgCommitments:    commitments,
-					SilaRequests:     er,
+					RandaoReveal:       randaoReveal[:],
+					SilaData:           b.Body().SilaData(),
+					Graffiti:           graffiti[:],
+					ProposerSlashings:  b.Body().ProposerSlashings(),
+					AttesterSlashings:  attSlashings,
+					Attestations:       atts,
+					Deposits:           b.Body().Deposits(),
+					VoluntaryExits:     b.Body().VoluntaryExits(),
+					SyncAggregate:      syncAgg,
+					SilaPayload:        p,
+					BlsToSilaChanges:   blsToSilaChanges,
+					BlobKzgCommitments: commitments,
+					SilaRequests:       er,
 				},
 			},
 			Signature: sig[:],
@@ -628,19 +628,19 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				ParentRoot:    parentRoot[:],
 				StateRoot:     stateRoot[:],
 				Body: &eth.BeaconBlockBodyElectra{
-					RandaoReveal:          randaoReveal[:],
-					SilaData:              b.Body().SilaData(),
-					Graffiti:              graffiti[:],
-					ProposerSlashings:     b.Body().ProposerSlashings(),
-					AttesterSlashings:     attSlashings,
-					Attestations:          atts,
-					Deposits:              b.Body().Deposits(),
-					VoluntaryExits:        b.Body().VoluntaryExits(),
-					SyncAggregate:         syncAgg,
-					SilaPayload:      p,
-					BlsToSilaChanges: blsToSilaChanges,
-					BlobKzgCommitments:    commitments,
-					SilaRequests:     er,
+					RandaoReveal:       randaoReveal[:],
+					SilaData:           b.Body().SilaData(),
+					Graffiti:           graffiti[:],
+					ProposerSlashings:  b.Body().ProposerSlashings(),
+					AttesterSlashings:  attSlashings,
+					Attestations:       atts,
+					Deposits:           b.Body().Deposits(),
+					VoluntaryExits:     b.Body().VoluntaryExits(),
+					SyncAggregate:      syncAgg,
+					SilaPayload:        p,
+					BlsToSilaChanges:   blsToSilaChanges,
+					BlobKzgCommitments: commitments,
+					SilaRequests:       er,
 				},
 			},
 			Signature: sig[:],

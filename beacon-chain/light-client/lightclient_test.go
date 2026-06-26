@@ -9,16 +9,16 @@ import (
 	light_client "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 
+	"github.com/pkg/errors"
 	lightClient "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/light-client"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	consensustypes "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	v11 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	v11 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
-	"github.com/pkg/errors"
 )
 
 func TestLightClient_NewLightClientOptimisticUpdateFromBeaconState(t *testing.T) {
@@ -129,7 +129,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 			}
 
 			// Check Sila BlockHash
-			payloadInterface, err := l.FinalizedBlock.Block().Body().Execution()
+			payloadInterface, err := l.FinalizedBlock.Block().Body().SilaData()
 			require.NoError(t, err)
 			transactionsRoot, err := payloadInterface.TransactionsRoot()
 			if errors.Is(err, consensustypes.ErrUnsupportedField) {
@@ -168,7 +168,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 				TransactionsRoot: transactionsRoot,
 				WithdrawalsRoot:  withdrawalsRoot,
 			}
-			updateExecution, err := update.FinalizedHeader().Execution()
+			updateExecution, err := update.FinalizedHeader().SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, execution, updateExecution.Proto(), "Finalized Block Execution is not equal")
 		})
@@ -237,7 +237,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 			}
 
 			// Check Sila BlockHash
-			payloadInterface, err := l.FinalizedBlock.Block().Body().Execution()
+			payloadInterface, err := l.FinalizedBlock.Block().Body().SilaData()
 			require.NoError(t, err)
 			transactionsRoot, err := payloadInterface.TransactionsRoot()
 			if errors.Is(err, consensustypes.ErrUnsupportedField) {
@@ -276,7 +276,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 				TransactionsRoot: transactionsRoot,
 				WithdrawalsRoot:  withdrawalsRoot,
 			}
-			updateExecution, err := update.FinalizedHeader().Execution()
+			updateExecution, err := update.FinalizedHeader().SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, execution, updateExecution.Proto(), "Finalized Block Execution is not equal")
 		})
@@ -312,7 +312,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 			}
 
 			// Check Sila BlockHash
-			payloadInterface, err := l.FinalizedBlock.Block().Body().Execution()
+			payloadInterface, err := l.FinalizedBlock.Block().Body().SilaData()
 			require.NoError(t, err)
 			transactionsRoot, err := payloadInterface.TransactionsRoot()
 			if errors.Is(err, consensustypes.ErrUnsupportedField) {
@@ -351,7 +351,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 				TransactionsRoot: transactionsRoot,
 				WithdrawalsRoot:  withdrawalsRoot,
 			}
-			updateExecution, err := update.FinalizedHeader().Execution()
+			updateExecution, err := update.FinalizedHeader().SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, execution, updateExecution.Proto(), "Finalized Block Execution is not equal")
 		})
@@ -389,7 +389,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 			}
 
 			// Check Sila BlockHash
-			payloadInterface, err := l.FinalizedBlock.Block().Body().Execution()
+			payloadInterface, err := l.FinalizedBlock.Block().Body().SilaData()
 			require.NoError(t, err)
 			transactionsRoot, err := payloadInterface.TransactionsRoot()
 			if errors.Is(err, consensustypes.ErrUnsupportedField) {
@@ -428,7 +428,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 				TransactionsRoot: transactionsRoot,
 				WithdrawalsRoot:  withdrawalsRoot,
 			}
-			updateExecution, err := update.FinalizedHeader().Execution()
+			updateExecution, err := update.FinalizedHeader().SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, execution, updateExecution.Proto(), "Finalized Block Execution is not equal")
 		})
@@ -463,7 +463,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 			}
 
 			// Check Sila BlockHash
-			payloadInterface, err := l.FinalizedBlock.Block().Body().Execution()
+			payloadInterface, err := l.FinalizedBlock.Block().Body().SilaData()
 			require.NoError(t, err)
 			transactionsRoot, err := payloadInterface.TransactionsRoot()
 			if errors.Is(err, consensustypes.ErrUnsupportedField) {
@@ -502,7 +502,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 				TransactionsRoot: transactionsRoot,
 				WithdrawalsRoot:  withdrawalsRoot,
 			}
-			updateExecution, err := update.FinalizedHeader().Execution()
+			updateExecution, err := update.FinalizedHeader().SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, execution, updateExecution.Proto(), "Finalized Block Execution is not equal")
 		})
@@ -540,7 +540,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 			}
 
 			// Check Sila BlockHash
-			payloadInterface, err := l.FinalizedBlock.Block().Body().Execution()
+			payloadInterface, err := l.FinalizedBlock.Block().Body().SilaData()
 			require.NoError(t, err)
 			transactionsRoot, err := payloadInterface.TransactionsRoot()
 			if errors.Is(err, consensustypes.ErrUnsupportedField) {
@@ -579,7 +579,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 				TransactionsRoot: transactionsRoot,
 				WithdrawalsRoot:  withdrawalsRoot,
 			}
-			updateExecution, err := update.FinalizedHeader().Execution()
+			updateExecution, err := update.FinalizedHeader().SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, execution, updateExecution.Proto(), "Finalized Block Execution is not equal")
 		})
@@ -614,7 +614,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 			}
 
 			// Check Sila BlockHash
-			payloadInterface, err := l.FinalizedBlock.Block().Body().Execution()
+			payloadInterface, err := l.FinalizedBlock.Block().Body().SilaData()
 			require.NoError(t, err)
 			transactionsRoot, err := payloadInterface.TransactionsRoot()
 			if errors.Is(err, consensustypes.ErrUnsupportedField) {
@@ -653,7 +653,7 @@ func TestLightClient_NewLightClientFinalityUpdateFromBeaconState(t *testing.T) {
 				TransactionsRoot: transactionsRoot,
 				WithdrawalsRoot:  withdrawalsRoot,
 			}
-			updateExecution, err := update.FinalizedHeader().Execution()
+			updateExecution, err := update.FinalizedHeader().SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, execution, updateExecution.Proto(), "Finalized Block Execution is not equal")
 		})
@@ -724,7 +724,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			bodyRoot, err := l.Block.Block().Body().HashTreeRoot()
 			require.NoError(t, err)
 
-			payload, err := l.Block.Block().Body().Execution()
+			payload, err := l.Block.Block().Body().SilaData()
 			require.NoError(t, err)
 
 			transactionsRoot, err := lightClient.ComputeTransactionsRoot(payload)
@@ -760,7 +760,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			require.DeepSSZEqual(t, stateRoot[:], header.Beacon().StateRoot, "State root is not equal")
 			require.DeepSSZEqual(t, bodyRoot[:], header.Beacon().BodyRoot, "Body root is not equal")
 
-			headerExecution, err := header.Execution()
+			headerExecution, err := header.SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, silaHeader, headerExecution.Proto(), "Execution headers are not equal")
 
@@ -785,7 +785,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			bodyRoot, err := l.Block.Block().Body().HashTreeRoot()
 			require.NoError(t, err)
 
-			payload, err := l.Block.Block().Body().Execution()
+			payload, err := l.Block.Block().Body().SilaData()
 			require.NoError(t, err)
 
 			transactionsRoot, err := payload.TransactionsRoot()
@@ -821,7 +821,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			require.DeepSSZEqual(t, stateRoot[:], header.Beacon().StateRoot, "State root is not equal")
 			require.DeepSSZEqual(t, bodyRoot[:], header.Beacon().BodyRoot, "Body root is not equal")
 
-			headerExecution, err := header.Execution()
+			headerExecution, err := header.SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, silaHeader, headerExecution.Proto(), "Execution headers are not equal")
 
@@ -848,7 +848,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			bodyRoot, err := l.Block.Block().Body().HashTreeRoot()
 			require.NoError(t, err)
 
-			payload, err := l.Block.Block().Body().Execution()
+			payload, err := l.Block.Block().Body().SilaData()
 			require.NoError(t, err)
 
 			transactionsRoot, err := lightClient.ComputeTransactionsRoot(payload)
@@ -892,7 +892,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			require.DeepSSZEqual(t, stateRoot[:], header.Beacon().StateRoot, "State root is not equal")
 			require.DeepSSZEqual(t, bodyRoot[:], header.Beacon().BodyRoot, "Body root is not equal")
 
-			headerExecution, err := header.Execution()
+			headerExecution, err := header.SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, silaHeader, headerExecution.Proto(), "Execution headers are not equal")
 
@@ -917,7 +917,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			bodyRoot, err := l.Block.Block().Body().HashTreeRoot()
 			require.NoError(t, err)
 
-			payload, err := l.Block.Block().Body().Execution()
+			payload, err := l.Block.Block().Body().SilaData()
 			require.NoError(t, err)
 
 			transactionsRoot, err := payload.TransactionsRoot()
@@ -961,7 +961,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			require.DeepSSZEqual(t, stateRoot[:], header.Beacon().StateRoot, "State root is not equal")
 			require.DeepSSZEqual(t, bodyRoot[:], header.Beacon().BodyRoot, "Body root is not equal")
 
-			headerExecution, err := header.Execution()
+			headerExecution, err := header.SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, silaHeader, headerExecution.Proto(), "Execution headers are not equal")
 
@@ -984,7 +984,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			bodyRoot, err := l.Block.Block().Body().HashTreeRoot()
 			require.NoError(t, err)
 
-			payload, err := l.Block.Block().Body().Execution()
+			payload, err := l.Block.Block().Body().SilaData()
 			require.NoError(t, err)
 
 			transactionsRoot, err := lightClient.ComputeTransactionsRoot(payload)
@@ -1028,7 +1028,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			require.DeepSSZEqual(t, stateRoot[:], header.Beacon().StateRoot, "State root is not equal")
 			require.DeepSSZEqual(t, bodyRoot[:], header.Beacon().BodyRoot, "Body root is not equal")
 
-			headerExecution, err := header.Execution()
+			headerExecution, err := header.SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, silaHeader, headerExecution.Proto(), "Execution headers are not equal")
 
@@ -1049,7 +1049,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			bodyRoot, err := l.Block.Block().Body().HashTreeRoot()
 			require.NoError(t, err)
 
-			payload, err := l.Block.Block().Body().Execution()
+			payload, err := l.Block.Block().Body().SilaData()
 			require.NoError(t, err)
 
 			transactionsRoot, err := payload.TransactionsRoot()
@@ -1093,7 +1093,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			require.DeepSSZEqual(t, stateRoot[:], header.Beacon().StateRoot, "State root is not equal")
 			require.DeepSSZEqual(t, bodyRoot[:], header.Beacon().BodyRoot, "Body root is not equal")
 
-			headerExecution, err := header.Execution()
+			headerExecution, err := header.SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, silaHeader, headerExecution.Proto(), "Execution headers are not equal")
 
@@ -1116,7 +1116,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			bodyRoot, err := l.Block.Block().Body().HashTreeRoot()
 			require.NoError(t, err)
 
-			payload, err := l.Block.Block().Body().Execution()
+			payload, err := l.Block.Block().Body().SilaData()
 			require.NoError(t, err)
 
 			transactionsRoot, err := lightClient.ComputeTransactionsRoot(payload)
@@ -1160,7 +1160,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			require.DeepSSZEqual(t, stateRoot[:], header.Beacon().StateRoot, "State root is not equal")
 			require.DeepSSZEqual(t, bodyRoot[:], header.Beacon().BodyRoot, "Body root is not equal")
 
-			headerExecution, err := header.Execution()
+			headerExecution, err := header.SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, silaHeader, headerExecution.Proto(), "Execution headers are not equal")
 
@@ -1181,7 +1181,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			bodyRoot, err := l.Block.Block().Body().HashTreeRoot()
 			require.NoError(t, err)
 
-			payload, err := l.Block.Block().Body().Execution()
+			payload, err := l.Block.Block().Body().SilaData()
 			require.NoError(t, err)
 
 			transactionsRoot, err := payload.TransactionsRoot()
@@ -1225,7 +1225,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			require.DeepSSZEqual(t, stateRoot[:], header.Beacon().StateRoot, "State root is not equal")
 			require.DeepSSZEqual(t, bodyRoot[:], header.Beacon().BodyRoot, "Body root is not equal")
 
-			headerExecution, err := header.Execution()
+			headerExecution, err := header.SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, silaHeader, headerExecution.Proto(), "Execution headers are not equal")
 
@@ -1295,7 +1295,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			bodyRoot, err := l.Block.Block().Body().HashTreeRoot()
 			require.NoError(t, err)
 
-			payload, err := l.Block.Block().Body().Execution()
+			payload, err := l.Block.Block().Body().SilaData()
 			require.NoError(t, err)
 
 			transactionsRoot, err := lightClient.ComputeTransactionsRoot(payload)
@@ -1331,7 +1331,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			require.DeepSSZEqual(t, stateRoot[:], header.Beacon().StateRoot, "State root is not equal")
 			require.DeepSSZEqual(t, bodyRoot[:], header.Beacon().BodyRoot, "Body root is not equal")
 
-			headerExecution, err := header.Execution()
+			headerExecution, err := header.SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, silaHeader, headerExecution.Proto(), "Execution headers are not equal")
 
@@ -1355,7 +1355,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			bodyRoot, err := l.Block.Block().Body().HashTreeRoot()
 			require.NoError(t, err)
 
-			payload, err := l.Block.Block().Body().Execution()
+			payload, err := l.Block.Block().Body().SilaData()
 			require.NoError(t, err)
 
 			transactionsRoot, err := payload.TransactionsRoot()
@@ -1391,7 +1391,7 @@ func TestLightClient_BlockToLightClientHeader(t *testing.T) {
 			require.DeepSSZEqual(t, stateRoot[:], header.Beacon().StateRoot, "State root is not equal")
 			require.DeepSSZEqual(t, bodyRoot[:], header.Beacon().BodyRoot, "Body root is not equal")
 
-			headerExecution, err := header.Execution()
+			headerExecution, err := header.SilaData()
 			require.NoError(t, err)
 			require.DeepSSZEqual(t, silaHeader, headerExecution.Proto(), "Execution headers are not equal")
 

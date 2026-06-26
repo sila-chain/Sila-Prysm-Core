@@ -6,8 +6,8 @@ import (
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 )
 
@@ -141,9 +141,9 @@ func (b *SignedBeaconBlock) SetSyncAggregate(s *eth.SyncAggregate) error {
 	return nil
 }
 
-// SetExecution sets the sila payload of the block body.
+// SetSilaData sets the sila payload of the block body.
 // This function is not thread safe, it is only used during block creation.
-func (b *SignedBeaconBlock) SetExecution(e interfaces.SilaData) error {
+func (b *SignedBeaconBlock) SetSilaData(e interfaces.SilaData) error {
 	if b.version == version.Phase0 || b.version == version.Altair || b.version >= version.Gloas {
 		return consensus_types.ErrNotSupported("Execution", b.version)
 	}

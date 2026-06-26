@@ -8,8 +8,8 @@ import (
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -30,7 +30,7 @@ func WrappedROSignedSilaPayloadEnvelope(s *silapb.SignedSilaPayloadEnvelope) (in
 	return w, nil
 }
 
-// WrappedROSilaPayloadEnvelope wraps an sila payload envelope proto in a read-only interface.
+// WrappedROSilaPayloadEnvelope wraps a sila payload envelope proto in a read-only interface.
 func WrappedROSilaPayloadEnvelope(p *silapb.SilaPayloadEnvelope) (interfaces.ROSilaPayloadEnvelope, error) {
 	w := &silaPayloadEnvelope{p: p}
 	if w.IsNil() {
@@ -109,7 +109,7 @@ func (p *silaPayloadEnvelope) IsBlinded() bool {
 }
 
 // Execution returns the sila payload as a read-only interface.
-func (p *silaPayloadEnvelope) Execution() (interfaces.SilaData, error) {
+func (p *silaPayloadEnvelope) SilaData() (interfaces.SilaData, error) {
 	return WrappedSilaPayloadGloas(p.p.Payload)
 }
 
@@ -206,7 +206,7 @@ func BlockBuiltOnEnvelope(env interfaces.ROSignedSilaPayloadEnvelope, blk ROBloc
 	if err != nil {
 		return false, err
 	}
-	ex, err := msg.Execution()
+	ex, err := msg.SilaData()
 	if err != nil {
 		return false, err
 	}

@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila/common/hexutil"
-	"github.com/pkg/errors"
 )
 
 func LightClientUpdateFromConsensus(update interfaces.LightClientUpdate) (*LightClientUpdate, error) {
@@ -128,7 +128,7 @@ func lightClientHeaderToJSON(header interfaces.LightClientHeader) (json.RawMessa
 	case version.Altair:
 		result = &LightClientHeader{Beacon: BeaconBlockHeaderFromConsensus(header.Beacon())}
 	case version.Capella:
-		exInterface, err := header.Execution()
+		exInterface, err := header.SilaData()
 		if err != nil {
 			return nil, err
 		}
@@ -150,7 +150,7 @@ func lightClientHeaderToJSON(header interfaces.LightClientHeader) (json.RawMessa
 			ExecutionBranch: branchToJSON(executionBranch[:]),
 		}
 	case version.Deneb:
-		exInterface, err := header.Execution()
+		exInterface, err := header.SilaData()
 		if err != nil {
 			return nil, err
 		}
@@ -172,7 +172,7 @@ func lightClientHeaderToJSON(header interfaces.LightClientHeader) (json.RawMessa
 			ExecutionBranch: branchToJSON(executionBranch[:]),
 		}
 	case version.Electra:
-		exInterface, err := header.Execution()
+		exInterface, err := header.SilaData()
 		if err != nil {
 			return nil, err
 		}

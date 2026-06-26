@@ -5,6 +5,7 @@ import (
 	"path"
 	"testing"
 
+	"github.com/golang/snappy"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	consensusblocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
@@ -13,7 +14,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/utils"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
-	"github.com/golang/snappy"
 )
 
 func RunWithdrawalsTest(t *testing.T, config string, fork string, sszToBlock SSZToBlock, sszToState SSZToState) {
@@ -33,7 +33,7 @@ func RunWithdrawalsTest(t *testing.T, config string, fork string, sszToBlock SSZ
 			require.NoError(t, err)
 
 			RunBlockOperationTest(t, folderPath, blk, sszToState, func(_ context.Context, s state.BeaconState, b interfaces.ReadOnlySignedBeaconBlock) (state.BeaconState, error) {
-				payload, err := b.Block().Body().Execution()
+				payload, err := b.Block().Body().SilaData()
 				if err != nil {
 					return nil, err
 				}

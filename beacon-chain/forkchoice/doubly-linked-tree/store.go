@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/sila-chain/go-bitfield"
+	"github.com/pkg/errors"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	consensus_blocks "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/pkg/errors"
+	"github.com/sila-chain/go-bitfield"
 	"github.com/sirupsen/logrus"
 )
 
@@ -93,7 +93,7 @@ func (s *Store) insert(ctx context.Context,
 		}
 	} else {
 		if block.Version() >= version.Bellatrix {
-			execution, err := block.Body().Execution()
+			execution, err := block.Body().SilaData()
 			if err != nil {
 				return nil, err
 			}

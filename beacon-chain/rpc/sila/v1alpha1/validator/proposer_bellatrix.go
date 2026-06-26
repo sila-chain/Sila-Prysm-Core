@@ -7,6 +7,9 @@ import (
 	"math/big"
 	"time"
 
+	"github.com/pkg/errors"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/client/builder"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/signing"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
@@ -21,9 +24,6 @@ import (
 	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/pkg/errors"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sirupsen/logrus"
 )
 
@@ -199,7 +199,7 @@ func (vs *Server) getPayloadHeaderFromBuilder(
 		return nil, err
 	}
 
-	h, err := b.Block().Body().Execution()
+	h, err := b.Block().Body().SilaData()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get sila header")
 	}
@@ -398,7 +398,7 @@ func setExecution(blk interfaces.SignedBeaconBlock, execution interfaces.SilaDat
 	if isBlinded {
 		errMessage = "failed to set builder execution"
 	}
-	if err := blk.SetExecution(execution); err != nil {
+	if err := blk.SetSilaData(execution); err != nil {
 		return errors.Wrap(err, errMessage)
 	}
 

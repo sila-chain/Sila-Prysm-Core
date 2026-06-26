@@ -1,6 +1,7 @@
 package blocks
 
 import (
+	"github.com/pkg/errors"
 	field_params "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
@@ -8,7 +9,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash/htr"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -304,7 +304,7 @@ func topLevelRoots(body interfaces.ReadOnlyBeaconBlockBody) ([][]byte, error) {
 	copy(layer[8], root[:])
 
 	// Sila Payload
-	ep, err := body.Execution()
+	ep, err := body.SilaData()
 	if err != nil {
 		return nil, err
 	}

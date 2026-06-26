@@ -6,7 +6,7 @@ import (
 	"slices"
 	"time"
 
-	"github.com/sila-chain/go-bitfield"
+	"github.com/pkg/errors"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
@@ -14,7 +14,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/pkg/errors"
+	"github.com/sila-chain/go-bitfield"
 )
 
 // CanonicalNodeAtSlot returns the full node that exists at the given slot in the canonical chain.
@@ -332,8 +332,8 @@ func (s *Store) nodeTreeDump(ctx context.Context, n *Node, nodes []*forkchoice2.
 		UnrealizedFinalizedEpoch: n.unrealizedFinalizedEpoch,
 		Balance:                  n.balance,
 		Weight:                   n.weight,
-		SilaOptimistic:      optimistic,
-		SilaBlockHash:       n.blockHash[:],
+		SilaOptimistic:           optimistic,
+		SilaBlockHash:            n.blockHash[:],
 		Timestamp:                timestamp,
 		Target:                   target[:],
 	}
@@ -385,9 +385,9 @@ func (s *Store) nodeTreeDumpV2(ctx context.Context, n *Node, nodes []*forkchoice
 		Slot:                            n.slot,
 		Weight:                          n.weight,
 		Balance:                         n.balance,
-		SilaOptimistic:             optimistic,
+		SilaOptimistic:                  optimistic,
 		Timestamp:                       en.timestamp,
-		SilaBlockHash:              n.blockHash[:],
+		SilaBlockHash:                   n.blockHash[:],
 		Target:                          target[:],
 		JustifiedEpoch:                  n.justifiedEpoch,
 		FinalizedEpoch:                  n.finalizedEpoch,
@@ -405,32 +405,32 @@ func (s *Store) nodeTreeDumpV2(ctx context.Context, n *Node, nodes []*forkchoice
 	nodes = append(nodes, pending)
 
 	emptyEntry := &forkchoice2.NodeV2{
-		PayloadStatus:       forkchoice2.PayloadStatusEmpty,
-		BlockRoot:           n.root[:],
-		ParentRoot:          parentRoot[:],
-		Slot:                n.slot,
-		Weight:              en.weight,
-		Balance:             en.balance,
-		Validity:            pending.Validity,
+		PayloadStatus:  forkchoice2.PayloadStatusEmpty,
+		BlockRoot:      n.root[:],
+		ParentRoot:     parentRoot[:],
+		Slot:           n.slot,
+		Weight:         en.weight,
+		Balance:        en.balance,
+		Validity:       pending.Validity,
 		SilaOptimistic: en.optimistic,
-		Timestamp:           en.timestamp,
+		Timestamp:      en.timestamp,
 		SilaBlockHash:  n.blockHash[:],
 	}
 	nodes = append(nodes, emptyEntry)
 
 	if fn != nil {
 		fullEntry := &forkchoice2.NodeV2{
-			PayloadStatus:       forkchoice2.PayloadStatusFull,
-			BlockRoot:           n.root[:],
-			ParentRoot:          parentRoot[:],
-			Slot:                n.slot,
-			Weight:              fn.weight,
-			Balance:             fn.balance,
-			Validity:            pending.Validity,
+			PayloadStatus:  forkchoice2.PayloadStatusFull,
+			BlockRoot:      n.root[:],
+			ParentRoot:     parentRoot[:],
+			Slot:           n.slot,
+			Weight:         fn.weight,
+			Balance:        fn.balance,
+			Validity:       pending.Validity,
 			SilaOptimistic: fn.optimistic,
-			Timestamp:           fn.timestamp,
+			Timestamp:      fn.timestamp,
 			SilaBlockHash:  n.blockHash[:],
-			GasLimit:            fn.gasLimit,
+			GasLimit:       fn.gasLimit,
 		}
 		nodes = append(nodes, fullEntry)
 	}
@@ -482,7 +482,7 @@ func (f *ForkChoice) InsertPayload(pe interfaces.ROSilaPayloadEnvelope) error {
 		// We don't import two payloads for the same root
 		return nil
 	}
-	exec, err := pe.Execution()
+	exec, err := pe.SilaData()
 	if err != nil {
 		return errors.Wrap(err, "could not get execution from payload envelope")
 	}

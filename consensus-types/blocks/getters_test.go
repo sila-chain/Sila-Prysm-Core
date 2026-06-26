@@ -3,19 +3,19 @@ package blocks
 import (
 	"testing"
 
-	bitfield "github.com/sila-chain/go-bitfield"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	validatorpb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1/validator-client"
+	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	ssz "github.com/sila-chain/fastssz"
+	bitfield "github.com/sila-chain/go-bitfield"
 )
 
 func Test_BeaconBlockIsNil(t *testing.T) {
@@ -94,8 +94,8 @@ func Test_SignedBeaconBlock_Copy(t *testing.T) {
 			block: &BeaconBlock{
 				version: version.Gloas,
 				body: &BeaconBlockBody{
-					version:                   version.Gloas,
-					payloadAttestations:       payload,
+					version:              version.Gloas,
+					payloadAttestations:  payload,
 					signedSilaPayloadBid: payloadBid,
 				},
 			},
@@ -469,8 +469,8 @@ func Test_BeaconBlockBody_Execution(t *testing.T) {
 	e, err := WrappedSilaPayload(execution)
 	require.NoError(t, err)
 	bb := &SignedBeaconBlock{version: version.Bellatrix, block: &BeaconBlock{body: &BeaconBlockBody{version: version.Bellatrix}}}
-	require.NoError(t, bb.SetExecution(e))
-	result, err := bb.Block().Body().Execution()
+	require.NoError(t, bb.SetSilaData(e))
+	result, err := bb.Block().Body().SilaData()
 	require.NoError(t, err)
 	assert.DeepEqual(t, result, e)
 
@@ -478,8 +478,8 @@ func Test_BeaconBlockBody_Execution(t *testing.T) {
 	eCapella, err := WrappedSilaPayloadCapella(executionCapella)
 	require.NoError(t, err)
 	bb = &SignedBeaconBlock{version: version.Capella, block: &BeaconBlock{body: &BeaconBlockBody{version: version.Capella}}}
-	require.NoError(t, bb.SetExecution(eCapella))
-	result, err = bb.Block().Body().Execution()
+	require.NoError(t, bb.SetSilaData(eCapella))
+	result, err = bb.Block().Body().SilaData()
 	require.NoError(t, err)
 	assert.DeepEqual(t, result, eCapella)
 
@@ -487,8 +487,8 @@ func Test_BeaconBlockBody_Execution(t *testing.T) {
 	eCapellaHeader, err := WrappedSilaPayloadHeaderCapella(executionCapellaHeader)
 	require.NoError(t, err)
 	bb = &SignedBeaconBlock{version: version.Capella, block: &BeaconBlock{version: version.Capella, body: &BeaconBlockBody{version: version.Capella}}}
-	require.NoError(t, bb.SetExecution(eCapellaHeader))
-	result, err = bb.Block().Body().Execution()
+	require.NoError(t, bb.SetSilaData(eCapellaHeader))
+	result, err = bb.Block().Body().SilaData()
 	require.NoError(t, err)
 	assert.DeepEqual(t, result, eCapellaHeader)
 
@@ -496,8 +496,8 @@ func Test_BeaconBlockBody_Execution(t *testing.T) {
 	eDeneb, err := WrappedSilaPayloadDeneb(executionDeneb)
 	require.NoError(t, err)
 	bb = &SignedBeaconBlock{version: version.Deneb, block: &BeaconBlock{body: &BeaconBlockBody{version: version.Deneb}}}
-	require.NoError(t, bb.SetExecution(eDeneb))
-	result, err = bb.Block().Body().Execution()
+	require.NoError(t, bb.SetSilaData(eDeneb))
+	result, err = bb.Block().Body().SilaData()
 	require.NoError(t, err)
 	assert.DeepEqual(t, result, eDeneb)
 	gas, err := eDeneb.ExcessBlobGas()
@@ -508,8 +508,8 @@ func Test_BeaconBlockBody_Execution(t *testing.T) {
 	eDenebHeader, err := WrappedSilaPayloadHeaderDeneb(executionDenebHeader)
 	require.NoError(t, err)
 	bb = &SignedBeaconBlock{version: version.Deneb, block: &BeaconBlock{version: version.Deneb, body: &BeaconBlockBody{version: version.Deneb}}}
-	require.NoError(t, bb.SetExecution(eDenebHeader))
-	result, err = bb.Block().Body().Execution()
+	require.NoError(t, bb.SetSilaData(eDenebHeader))
+	result, err = bb.Block().Body().SilaData()
 	require.NoError(t, err)
 	assert.DeepEqual(t, result, eDenebHeader)
 	gas, err = eDenebHeader.ExcessBlobGas()
@@ -517,7 +517,7 @@ func Test_BeaconBlockBody_Execution(t *testing.T) {
 	require.DeepEqual(t, gas, uint64(223))
 
 	bb = &SignedBeaconBlock{version: version.Gloas, block: &BeaconBlock{version: version.Gloas, body: &BeaconBlockBody{version: version.Gloas}}}
-	_, err = bb.Block().Body().Execution()
+	_, err = bb.Block().Body().SilaData()
 	require.ErrorIs(t, err, consensus_types.ErrUnsupportedField)
 }
 
@@ -678,13 +678,13 @@ func hydrateBeaconBlockBodyGloas() *eth.BeaconBlockBodyGloas {
 		},
 		SignedSilaPayloadBid: &eth.SignedSilaPayloadBid{
 			Message: &eth.SilaPayloadBid{
-				ParentBlockHash:       make([]byte, fieldparams.RootLength),
-				ParentBlockRoot:       make([]byte, fieldparams.RootLength),
-				BlockHash:             make([]byte, fieldparams.RootLength),
-				PrevRandao:            make([]byte, fieldparams.RootLength),
-				FeeRecipient:          make([]byte, 20),
-				BlobKzgCommitments:    [][]byte{make([]byte, fieldparams.BLSPubkeyLength)},
-				SilaRequestsRoot: make([]byte, fieldparams.RootLength),
+				ParentBlockHash:    make([]byte, fieldparams.RootLength),
+				ParentBlockRoot:    make([]byte, fieldparams.RootLength),
+				BlockHash:          make([]byte, fieldparams.RootLength),
+				PrevRandao:         make([]byte, fieldparams.RootLength),
+				FeeRecipient:       make([]byte, 20),
+				BlobKzgCommitments: [][]byte{make([]byte, fieldparams.BLSPubkeyLength)},
+				SilaRequestsRoot:   make([]byte, fieldparams.RootLength),
 			},
 			Signature: make([]byte, fieldparams.BLSSignatureLength),
 		},

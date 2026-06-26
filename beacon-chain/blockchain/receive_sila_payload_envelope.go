@@ -167,7 +167,7 @@ func (s *Service) ReceiveSilaPayloadEnvelope(ctx context.Context, signed interfa
 		},
 	})
 
-	execution, err := envelope.Execution()
+	execution, err := envelope.SilaData()
 	if err != nil {
 		log.WithError(err).Error("Could not get sila payload from envelope for logging")
 		return nil
@@ -186,7 +186,7 @@ func (s *Service) postPayloadTasks(ctx context.Context, envelope interfaces.ROSi
 	if headRoot != root {
 		return nil
 	}
-	payload, err := envelope.Execution()
+	payload, err := envelope.SilaData()
 	if err != nil {
 		return errors.Wrap(err, "could not get sila payload from envelope")
 	}
@@ -285,7 +285,7 @@ func (s *Service) notifyNewEnvelopeFromBlock(ctx context.Context, b blocks.ROBlo
 	ctx, span := trace.StartSpan(ctx, "blockChain.notifyNewEnvelopeFromBlock")
 	defer span.End()
 
-	payload, err := envelope.Execution()
+	payload, err := envelope.SilaData()
 	if err != nil {
 		return false, errors.Wrap(err, "could not get sila payload from envelope")
 	}
@@ -305,7 +305,7 @@ func (s *Service) notifyNewEnvelope(ctx context.Context, st state.BeaconState, e
 	ctx, span := trace.StartSpan(ctx, "blockChain.notifyNewEnvelope")
 	defer span.End()
 
-	payload, err := envelope.Execution()
+	payload, err := envelope.SilaData()
 	if err != nil {
 		return false, errors.Wrap(err, "could not get sila payload from envelope")
 	}
@@ -332,7 +332,7 @@ func (s *Service) validateSilaPayloadOnEnvelope(ctx context.Context, st state.Be
 
 	blockRoot := envelope.BeaconBlockRoot()
 	parentRoot := bytesutil.ToBytes32(st.LatestBlockHeader().ParentRoot)
-	payload, payloadErr := envelope.Execution()
+	payload, payloadErr := envelope.SilaData()
 	if payloadErr != nil {
 		return false, errors.Wrap(payloadErr, "could not get sila payload from envelope")
 	}

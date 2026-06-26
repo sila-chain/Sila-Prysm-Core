@@ -8,8 +8,8 @@ import (
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
@@ -83,7 +83,7 @@ func TestWrappedROSilaPayloadEnvelope(t *testing.T) {
 			require.NotEqual(t, reqs.Deposits[0].Pubkey[0], env.SilaRequests.Deposits[0].Pubkey[0])
 		}
 
-		exec, err := wrapped.Execution()
+		exec, err := wrapped.SilaData()
 		require.NoError(t, err)
 		assert.DeepEqual(t, env.Payload.ParentHash, exec.ParentHash())
 

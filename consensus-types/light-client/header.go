@@ -70,7 +70,7 @@ func (h *headerAltair) Beacon() *pb.BeaconBlockHeader {
 	return h.p.Beacon
 }
 
-func (h *headerAltair) Execution() (interfaces.SilaData, error) {
+func (h *headerAltair) SilaData() (interfaces.SilaData, error) {
 	return nil, consensustypes.ErrNotSupported("Execution", h.Version())
 }
 
@@ -135,7 +135,7 @@ func (h *headerCapella) Beacon() *pb.BeaconBlockHeader {
 	return h.p.Beacon
 }
 
-func (h *headerCapella) Execution() (interfaces.SilaData, error) {
+func (h *headerCapella) SilaData() (interfaces.SilaData, error) {
 	return h.execution, nil
 }
 
@@ -200,7 +200,7 @@ func (h *headerDeneb) Beacon() *pb.BeaconBlockHeader {
 	return h.p.Beacon
 }
 
-func (h *headerDeneb) Execution() (interfaces.SilaData, error) {
+func (h *headerDeneb) SilaData() (interfaces.SilaData, error) {
 	return h.execution, nil
 }
 
@@ -265,7 +265,7 @@ func (h *headerElectra) Beacon() *pb.BeaconBlockHeader {
 	return h.p.Beacon
 }
 
-func (h *headerElectra) Execution() (interfaces.SilaData, error) {
+func (h *headerElectra) SilaData() (interfaces.SilaData, error) {
 	return h.execution, nil
 }
 
