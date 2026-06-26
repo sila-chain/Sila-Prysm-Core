@@ -57,7 +57,7 @@ func (m *Miner) SetBootstrapENR(bootstrapEnr string) {
 }
 
 func (*Miner) DataDir(sub ...string) string {
-	parts := append([]string{e2e.TestParams.TestPath, "silaExecutionData/miner"}, sub...)
+	parts := append([]string{e2e.TestParams.TestPath, "silaData/miner"}, sub...)
 	return path.Join(parts...)
 }
 

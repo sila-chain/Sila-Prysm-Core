@@ -161,9 +161,9 @@ func VerifyDeposit(beaconState state.ReadOnlyBeaconState, deposit *silapb.Deposi
 	if deposit == nil || deposit.Data == nil {
 		return errors.New("received nil deposit or nil deposit data")
 	}
-	silaexecData := beaconState.SilaExecutionData()
+	silaexecData := beaconState.SilaData()
 	if silaexecData == nil {
-		return errors.New("received nil silaExecutionData in the beacon state")
+		return errors.New("received nil silaData in the beacon state")
 	}
 
 	receiptRoot := silaexecData.DepositRoot

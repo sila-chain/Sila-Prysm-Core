@@ -14,26 +14,26 @@ import (
 
 func TestSetLatestSilaPayloadHeader(t *testing.T) {
 	versionOffset := version.Bellatrix // PayloadHeader only applies in Bellatrix and beyond.
-	payloads := []interfaces.ExecutionData{
-		func() interfaces.ExecutionData {
+	payloads := []interfaces.SilaData{
+		func() interfaces.SilaData {
 			e := util.NewBeaconBlockBellatrix().Block.Body.SilaPayload
 			ee, err := blocks.WrappedSilaPayload(e)
 			require.NoError(t, err)
 			return ee
 		}(),
-		func() interfaces.ExecutionData {
+		func() interfaces.SilaData {
 			e := util.NewBeaconBlockCapella().Block.Body.SilaPayload
 			ee, err := blocks.WrappedSilaPayloadCapella(e)
 			require.NoError(t, err)
 			return ee
 		}(),
-		func() interfaces.ExecutionData {
+		func() interfaces.SilaData {
 			e := util.NewBeaconBlockDeneb().Block.Body.SilaPayload
 			ee, err := blocks.WrappedSilaPayloadDeneb(e)
 			require.NoError(t, err)
 			return ee
 		}(),
-		func() interfaces.ExecutionData {
+		func() interfaces.SilaData {
 			e := util.NewBeaconBlockElectra().Block.Body.SilaPayload
 			ee, err := blocks.WrappedSilaPayloadDeneb(e)
 			require.NoError(t, err)
@@ -41,26 +41,26 @@ func TestSetLatestSilaPayloadHeader(t *testing.T) {
 		}(),
 	}
 
-	payloadHeaders := []interfaces.ExecutionData{
-		func() interfaces.ExecutionData {
+	payloadHeaders := []interfaces.SilaData{
+		func() interfaces.SilaData {
 			e := util.NewBlindedBeaconBlockBellatrix().Block.Body.SilaPayloadHeader
 			ee, err := blocks.WrappedSilaPayloadHeader(e)
 			require.NoError(t, err)
 			return ee
 		}(),
-		func() interfaces.ExecutionData {
+		func() interfaces.SilaData {
 			e := util.NewBlindedBeaconBlockCapella().Block.Body.SilaPayloadHeader
 			ee, err := blocks.WrappedSilaPayloadHeaderCapella(e)
 			require.NoError(t, err)
 			return ee
 		}(),
-		func() interfaces.ExecutionData {
+		func() interfaces.SilaData {
 			e := util.NewBlindedBeaconBlockDeneb().Message.Body.SilaPayloadHeader
 			ee, err := blocks.WrappedSilaPayloadHeaderDeneb(e)
 			require.NoError(t, err)
 			return ee
 		}(),
-		func() interfaces.ExecutionData {
+		func() interfaces.SilaData {
 			e := util.NewBlindedBeaconBlockElectra().Message.Body.SilaPayloadHeader
 			ee, err := blocks.WrappedSilaPayloadHeaderDeneb(e)
 			require.NoError(t, err)

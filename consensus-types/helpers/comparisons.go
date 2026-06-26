@@ -44,7 +44,7 @@ func BlockHeadersEqual(s, t *silapb.BeaconBlockHeader) bool {
 	return bytes.Equal(s.BodyRoot, t.BodyRoot)
 }
 
-func SilaExecutionDataEqual(s, t *silapb.SilaExecutionData) bool {
+func SilaDataEqual(s, t *silapb.SilaData) bool {
 	if s == nil && t == nil {
 		return true
 	}

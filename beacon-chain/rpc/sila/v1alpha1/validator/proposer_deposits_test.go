@@ -84,9 +84,9 @@ func TestProposer_PendingDeposits_Electra(t *testing.T) {
 		},
 	}
 
-	var votes []*silapb.SilaExecutionData
+	var votes []*silapb.SilaData
 
-	vote := &silapb.SilaExecutionData{
+	vote := &silapb.SilaData{
 		BlockHash:    bytesutil.PadTo([]byte("0x1"), 32),
 		DepositRoot:  make([]byte, 32),
 		DepositCount: 7,
@@ -97,14 +97,14 @@ func TestProposer_PendingDeposits_Electra(t *testing.T) {
 	}
 
 	beaconState, err := state_native.InitializeFromProtoElectra(&silapb.BeaconStateElectra{
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			BlockHash:    []byte("0x0"),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 5,
 		},
 		SilaExecutionDepositIndex:          1,
 		DepositRequestsStartIndex: 7,
-		SilaExecutionDataVotes:             votes,
+		SilaDataVotes:             votes,
 	})
 	require.NoError(t, err)
 	blk := util.NewBeaconBlockElectra()
@@ -193,7 +193,7 @@ func TestProposer_PendingDeposits_Electra(t *testing.T) {
 		HeadFetcher:            &mock.ChainService{State: beaconState, Root: blkRoot[:]},
 	}
 
-	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaExecutionData{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaData{})
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(deposits), "Received unexpected list of deposits")
 

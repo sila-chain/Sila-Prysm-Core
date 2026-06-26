@@ -193,7 +193,7 @@ func TestStatusRPCHandler_ReturnsHelloMessage(t *testing.T) {
 	finalized.Block.Slot = blkSlot
 	finalizedRoot, err := finalized.Block.HashTreeRoot()
 	require.NoError(t, err)
-	genesisState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaExecutionData{})
+	genesisState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaData{})
 	require.NoError(t, err)
 	require.NoError(t, genesisState.SetSlot(111))
 	require.NoError(t, genesisState.UpdateBlockRootAtIndex(111%uint64(params.BeaconConfig().SlotsPerHistoricalRoot), headRoot))
@@ -542,7 +542,7 @@ func TestStatusRPCRequest_RequestSent(t *testing.T) {
 			finalizedRoot, err := finalized.Block.HashTreeRoot()
 			require.NoError(t, err)
 
-			genesisState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaExecutionData{})
+			genesisState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaData{})
 			require.NoError(t, err)
 
 			require.NoError(t, genesisState.SetSlot(111))
@@ -616,7 +616,7 @@ func TestStatusRPCRequest_FinalizedBlockExists(t *testing.T) {
 	finalized.Block.Slot = blkSlot
 	finalizedRoot, err := finalized.Block.HashTreeRoot()
 	require.NoError(t, err)
-	genesisState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaExecutionData{DepositRoot: make([]byte, 32), BlockHash: make([]byte, 32)})
+	genesisState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaData{DepositRoot: make([]byte, 32), BlockHash: make([]byte, 32)})
 	require.NoError(t, err)
 	require.NoError(t, genesisState.SetSlot(111))
 	require.NoError(t, genesisState.UpdateBlockRootAtIndex(111%uint64(params.BeaconConfig().SlotsPerHistoricalRoot), headRoot))
@@ -708,7 +708,7 @@ func TestStatusRPCRequest_FinalizedBlockSkippedSlots(t *testing.T) {
 
 	db, err := kv.NewKVStore(ctx, t.TempDir())
 	require.NoError(t, err)
-	bState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaExecutionData{DepositRoot: make([]byte, 32), BlockHash: make([]byte, 32)})
+	bState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaData{DepositRoot: make([]byte, 32), BlockHash: make([]byte, 32)})
 	require.NoError(t, err)
 
 	blk := util.NewBeaconBlock()
@@ -914,7 +914,7 @@ func TestStatusRPCRequest_BadPeerHandshake(t *testing.T) {
 	finalized := util.NewBeaconBlock()
 	finalizedRoot, err := finalized.Block.HashTreeRoot()
 	require.NoError(t, err)
-	genesisState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaExecutionData{})
+	genesisState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaData{})
 	require.NoError(t, err)
 	require.NoError(t, genesisState.SetSlot(111))
 	require.NoError(t, genesisState.UpdateBlockRootAtIndex(111%uint64(params.BeaconConfig().SlotsPerHistoricalRoot), headRoot))
@@ -1013,7 +1013,7 @@ func TestStatusRPC_ValidGenesisMessage(t *testing.T) {
 	finalized.Block.Slot = blkSlot
 	finalizedRoot, err := finalized.Block.HashTreeRoot()
 	require.NoError(t, err)
-	genesisState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaExecutionData{})
+	genesisState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaData{})
 	require.NoError(t, err)
 	require.NoError(t, genesisState.SetSlot(111))
 	require.NoError(t, genesisState.UpdateBlockRootAtIndex(111%uint64(params.BeaconConfig().SlotsPerHistoricalRoot), headRoot))
@@ -1143,7 +1143,7 @@ func TestShouldResync(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		headState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaExecutionData{})
+		headState, err := transition.GenesisBeaconState(ctx, nil, 0, &silapb.SilaData{})
 		require.NoError(t, err)
 		require.NoError(t, headState.SetSlot(tt.args.headSlot))
 		chain := &mock.ChainService{

@@ -90,9 +90,9 @@ func GenerateFullBlockElectra(
 
 	numToGen = conf.NumDeposits
 	var newDeposits []*silapb.Deposit
-	silaexecData := bState.SilaExecutionData()
+	silaexecData := bState.SilaData()
 	if numToGen > 0 {
-		newDeposits, silaexecData, err = generateDepositsAndSilaExecutionData(bState, numToGen)
+		newDeposits, silaexecData, err = generateDepositsAndSilaData(bState, numToGen)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed generating %d deposits:", numToGen)
 		}
@@ -240,7 +240,7 @@ func GenerateFullBlockElectra(
 		ParentRoot:    parentRoot[:],
 		ProposerIndex: idx,
 		Body: &silapb.BeaconBlockBodyElectra{
-			SilaExecutionData:              silaexecData,
+			SilaData:              silaexecData,
 			RandaoReveal:          reveal,
 			ProposerSlashings:     pSlashings,
 			AttesterSlashings:     aSlashings,

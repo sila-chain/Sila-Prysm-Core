@@ -71,7 +71,7 @@ var (
 // ChainStartFetcher retrieves information pertaining to the chain start event
 // of the beacon chain for usage across various services.
 type ChainStartFetcher interface {
-	ChainStartSilaExecutionData() *silapb.SilaExecutionData
+	ChainStartSilaData() *silapb.SilaData
 	PreGenesisState() state.BeaconState
 	ClearPreGenesisData()
 }
@@ -144,7 +144,7 @@ type Service struct {
 	isRunning               bool
 	depositRequestsStarted  bool
 	processingLock          sync.RWMutex
-	latestSilaExecutionDataLock      sync.RWMutex
+	latestSilaDataLock      sync.RWMutex
 	cfg                     *config
 	ctx                     context.Context
 	cancel                  context.CancelFunc
@@ -152,7 +152,7 @@ type Service struct {
 	httpLogger              bind.ContractFilterer
 	rpcClient               RPCClient
 	headerCache             *headerCache // cache to store block hash/block height.
-	latestSilaExecutionData          *silapb.LatestSilaExecutionData
+	latestSilaData          *silapb.LatestSilaData
 	silaDepositCaller   *contracts.SilaDepositCaller
 	depositTrie             cache.MerkleTree
 	chainStartData          *silapb.ChainStartData
@@ -185,7 +185,7 @@ func NewService(ctx context.Context, opts ...Option) (*Service, error) {
 			beaconNodeStatsUpdater: &NopBeaconNodeStatsUpdater{},
 			silaexecHeaderReqLimit:     defaultSilaExecutionHeaderReqLimit,
 		},
-		latestSilaExecutionData: &silapb.LatestSilaExecutionData{
+		latestSilaData: &silapb.LatestSilaData{
 			BlockHeight:        0,
 			BlockTime:          0,
 			BlockHash:          []byte{},
@@ -194,7 +194,7 @@ func NewService(ctx context.Context, opts ...Option) (*Service, error) {
 		headerCache: newHeaderCache(),
 		depositTrie: depositTrie,
 		chainStartData: &silapb.ChainStartData{
-			SilaExecutionData:           &silapb.SilaExecutionData{},
+			SilaData:           &silapb.SilaData{},
 			ChainstartDeposits: make([]*silapb.Deposit, 0),
 		},
 		lastReceivedMerkleIndex: -1,
@@ -213,7 +213,7 @@ func NewService(ctx context.Context, opts ...Option) (*Service, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to validate powchain data")
 	}
-	if err := s.initializeSilaExecutionData(ctx, silaexecData); err != nil {
+	if err := s.initializeSilaData(ctx, silaexecData); err != nil {
 		return nil, err
 	}
 	return s, nil
@@ -270,9 +270,9 @@ func (s *Service) ClearPreGenesisData() {
 	s.preGenesisState = &native.BeaconState{}
 }
 
-// ChainStartSilaExecutionData returns the silaexec data at chainstart.
-func (s *Service) ChainStartSilaExecutionData() *silapb.SilaExecutionData {
-	return s.chainStartData.SilaExecutionData
+// ChainStartSilaData returns the silaexec data at chainstart.
+func (s *Service) ChainStartSilaData() *silapb.SilaData {
+	return s.chainStartData.SilaData
 }
 
 // PreGenesisState returns a state that contains
@@ -346,12 +346,12 @@ func (s *Service) updateGraffitiInfo() {
 func (s *Service) followedBlockHeight(ctx context.Context) (uint64, error) {
 	followTime := params.BeaconConfig().SilaExecutionFollowDistance * params.BeaconConfig().SecondsPerSilaBlock
 	latestBlockTime := uint64(0)
-	if s.latestSilaExecutionData.BlockTime > followTime {
-		latestBlockTime = s.latestSilaExecutionData.BlockTime - followTime
+	if s.latestSilaData.BlockTime > followTime {
+		latestBlockTime = s.latestSilaData.BlockTime - followTime
 		// This should only come into play in testnets - when the chain hasn't advanced past the follow distance,
 		// we don't want to consider any block before the genesis block.
-		if s.latestSilaExecutionData.BlockHeight < params.BeaconConfig().SilaExecutionFollowDistance {
-			latestBlockTime = s.latestSilaExecutionData.BlockTime
+		if s.latestSilaData.BlockHeight < params.BeaconConfig().SilaExecutionFollowDistance {
+			latestBlockTime = s.latestSilaData.BlockTime
 		}
 	}
 	blk, err := s.BlockByTimestamp(ctx, latestBlockTime)
@@ -399,7 +399,7 @@ func (s *Service) initDepositCaches(ctx context.Context, ctrs []*silapb.DepositC
 		// to be included (rather than the last one to be processed). This was most likely
 		// done as the state cannot represent signed integers.
 		actualIndex := int64(currIndex) - 1 // lint:ignore uintcast -- deposit index will not exceed int64 in your lifetime.
-		if err = s.cfg.depositCache.InsertFinalizedDeposits(ctx, actualIndex, common.Hash(fState.SilaExecutionData().BlockHash),
+		if err = s.cfg.depositCache.InsertFinalizedDeposits(ctx, actualIndex, common.Hash(fState.SilaData().BlockHash),
 			0 /* Setting a zero value as we have no access to block height */); err != nil {
 			return err
 		}
@@ -425,14 +425,14 @@ func (s *Service) initDepositCaches(ctx context.Context, ctrs []*silapb.DepositC
 func (s *Service) processBlockHeader(header *types.HeaderInfo) {
 	defer safelyHandlePanic()
 	blockNumberGauge.Set(float64(header.Number.Int64()))
-	s.latestSilaExecutionDataLock.Lock()
-	s.latestSilaExecutionData.BlockHeight = header.Number.Uint64()
-	s.latestSilaExecutionData.BlockHash = header.Hash.Bytes()
-	s.latestSilaExecutionData.BlockTime = header.Time
-	s.latestSilaExecutionDataLock.Unlock()
+	s.latestSilaDataLock.Lock()
+	s.latestSilaData.BlockHeight = header.Number.Uint64()
+	s.latestSilaData.BlockHash = header.Hash.Bytes()
+	s.latestSilaData.BlockTime = header.Time
+	s.latestSilaDataLock.Unlock()
 	log.WithFields(logrus.Fields{
-		"blockNumber": s.latestSilaExecutionData.BlockHeight,
-		"blockHash":   hexutil.Encode(s.latestSilaExecutionData.BlockHash),
+		"blockNumber": s.latestSilaData.BlockHeight,
+		"blockHash":   hexutil.Encode(s.latestSilaData.BlockHash),
 	}).Debug("Latest silaexec chain event")
 }
 
@@ -495,11 +495,11 @@ func (s *Service) handleSilaExecutionFollowDistance() {
 	// (analyzed the time of the block from 2018-09-01 to 2019-02-13)
 	fiveMinutesTimeout := silaTime.Now().Add(-5 * time.Minute)
 	// check that web3 client is syncing
-	if time.Unix(int64(s.latestSilaExecutionData.BlockTime), 0).Before(fiveMinutesTimeout) {
+	if time.Unix(int64(s.latestSilaData.BlockTime), 0).Before(fiveMinutesTimeout) {
 		log.Warn("Execution client is not syncing")
 	}
 	if !s.chainStartData.Chainstarted {
-		if err := s.processChainStartFromBlockNum(ctx, big.NewInt(int64(s.latestSilaExecutionData.LastRequestedBlock))); err != nil {
+		if err := s.processChainStartFromBlockNum(ctx, big.NewInt(int64(s.latestSilaData.LastRequestedBlock))); err != nil {
 			s.runError = errors.Wrap(err, "processChainStartFromBlockNum")
 			log.Error(err)
 			return
@@ -510,8 +510,8 @@ func (s *Service) handleSilaExecutionFollowDistance() {
 	// we do not request batched logs as this means there are no new
 	// logs for the execution service to process. Also it is a potential
 	// failure condition as would mean we have not respected the protocol threshold.
-	if s.latestSilaExecutionData.LastRequestedBlock == s.latestSilaExecutionData.BlockHeight {
-		log.WithField("lastBlockNumber", s.latestSilaExecutionData.LastRequestedBlock).Error("Beacon node is not respecting the follow distance. EL client is syncing.")
+	if s.latestSilaData.LastRequestedBlock == s.latestSilaData.BlockHeight {
+		log.WithField("lastBlockNumber", s.latestSilaData.LastRequestedBlock).Error("Beacon node is not respecting the follow distance. EL client is syncing.")
 		return
 	}
 	if err := s.requestBatchedHeadersAndLogs(ctx); err != nil {
@@ -551,11 +551,11 @@ func (s *Service) initPOWService() {
 				continue
 			}
 
-			s.latestSilaExecutionDataLock.Lock()
-			s.latestSilaExecutionData.BlockHeight = header.Number.Uint64()
-			s.latestSilaExecutionData.BlockHash = header.Hash.Bytes()
-			s.latestSilaExecutionData.BlockTime = header.Time
-			s.latestSilaExecutionDataLock.Unlock()
+			s.latestSilaDataLock.Lock()
+			s.latestSilaData.BlockHeight = header.Number.Uint64()
+			s.latestSilaData.BlockHash = header.Hash.Bytes()
+			s.latestSilaData.BlockTime = header.Time
+			s.latestSilaDataLock.Unlock()
 
 			if !s.depositRequestsStarted {
 				if err := s.processPastLogs(ctx); err != nil {
@@ -568,8 +568,8 @@ func (s *Service) initPOWService() {
 					continue
 				}
 				// Cache silaexec headers from our voting period.
-				if err := s.cacheHeadersForSilaExecutionDataVote(ctx); err != nil {
-					err = errors.Wrap(err, "cacheHeadersForSilaExecutionDataVote")
+				if err := s.cacheHeadersForSilaDataVote(ctx); err != nil {
+					err = errors.Wrap(err, "cacheHeadersForSilaDataVote")
 					s.retryExecutionClientConnection(ctx, err)
 					if errors.Is(err, errBlockTimeTooLate) {
 						log.WithError(err).Debug("Unable to cache headers for execution client votes")
@@ -582,7 +582,7 @@ func (s *Service) initPOWService() {
 			// Handle edge case with embedded genesis state by fetching genesis header to determine
 			// its height only if the deposit requests have not started yet (Pre Pectra SIP-6110 behavior).
 			if s.chainStartData.Chainstarted && s.chainStartData.GenesisBlock == 0 && !s.depositRequestsStarted {
-				genHash := common.BytesToHash(s.chainStartData.SilaExecutionData.BlockHash)
+				genHash := common.BytesToHash(s.chainStartData.SilaData.BlockHash)
 				genBlock := s.chainStartData.GenesisBlock
 				// In the event our provided chainstart data references a non-existent block hash,
 				// we assume the genesis block to be 0.
@@ -662,7 +662,7 @@ func (s *Service) logTillChainStart(ctx context.Context) {
 	if s.chainStartData.Chainstarted {
 		return
 	}
-	_, blockTime, err := s.retrieveBlockHashAndTime(s.ctx, big.NewInt(int64(s.latestSilaExecutionData.LastRequestedBlock)))
+	_, blockTime, err := s.retrieveBlockHashAndTime(s.ctx, big.NewInt(int64(s.latestSilaData.LastRequestedBlock)))
 	if err != nil {
 		log.Error(err)
 		return
@@ -687,9 +687,9 @@ func (s *Service) logTillChainStart(ctx context.Context) {
 	log.WithFields(fields).Info("Currently waiting for chainstart")
 }
 
-// cacheHeadersForSilaExecutionDataVote makes sure that voting for silaExecutionData after startup utilizes cached headers
+// cacheHeadersForSilaDataVote makes sure that voting for silaData after startup utilizes cached headers
 // instead of making multiple RPC requests to the silaexec endpoint.
-func (s *Service) cacheHeadersForSilaExecutionDataVote(ctx context.Context) error {
+func (s *Service) cacheHeadersForSilaDataVote(ctx context.Context) error {
 	// Find the end block to request from.
 	end, err := s.followedBlockHeight(ctx)
 	if err != nil {
@@ -754,7 +754,7 @@ func (s *Service) determineEarliestVotingBlock(ctx context.Context, followBlock 
 	}
 	// This should only come into play in testnets - when the chain hasn't advanced past the follow distance,
 	// we don't want to consider any block before the genesis block.
-	if s.latestSilaExecutionData.BlockHeight < params.BeaconConfig().SilaExecutionFollowDistance {
+	if s.latestSilaData.BlockHeight < params.BeaconConfig().SilaExecutionFollowDistance {
 		return 0, nil
 	}
 	votingTime := slots.VotingPeriodStartTime(genesisTime, currSlot)
@@ -773,10 +773,10 @@ func (s *Service) determineEarliestVotingBlock(ctx context.Context, followBlock 
 	return hdr.Number.Uint64(), nil
 }
 
-// initializes our service from the provided silaExecutionData object by initializing all the relevant
+// initializes our service from the provided silaData object by initializing all the relevant
 // fields and data.
-func (s *Service) initializeSilaExecutionData(ctx context.Context, silaexecDataInDB *silapb.SilaExecutionChainData) error {
-	// The node has no silaExecutionData persisted on disk, so we exit and instead
+func (s *Service) initializeSilaData(ctx context.Context, silaexecDataInDB *silapb.SilaExecutionChainData) error {
+	// The node has no silaData persisted on disk, so we exit and instead
 	// request from contract logs.
 	if silaexecDataInDB == nil {
 		return nil
@@ -799,7 +799,7 @@ func (s *Service) initializeSilaExecutionData(ctx context.Context, silaexecDataI
 			return errors.Wrap(err, "Could not initialize state trie")
 		}
 	}
-	s.latestSilaExecutionData = silaexecDataInDB.CurrentSilaExecutionData
+	s.latestSilaData = silaexecDataInDB.CurrentSilaData
 	ctrs := silaexecDataInDB.DepositContainers
 	// Look at previously finalized index, as we are building off a finalized
 	// snapshot rather than the full trie.
@@ -870,11 +870,11 @@ func (s *Service) validPowchainData(ctx context.Context) (*silapb.SilaExecutionC
 			Chainstarted:       true,
 			GenesisTime:        uint64(genState.GenesisTime().Unix()),
 			GenesisBlock:       0,
-			SilaExecutionData:           genState.SilaExecutionData(),
+			SilaData:           genState.SilaData(),
 			ChainstartDeposits: make([]*silapb.Deposit, 0),
 		}
 		silaexecData = &silapb.SilaExecutionChainData{
-			CurrentSilaExecutionData:   s.latestSilaExecutionData,
+			CurrentSilaData:   s.latestSilaData,
 			ChainstartData:    s.chainStartData,
 			BeaconState:       pbState,
 			DepositContainers: s.cfg.depositCache.AllDepositContainers(ctx),

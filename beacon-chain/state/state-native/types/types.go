@@ -46,10 +46,10 @@ func (f FieldIndex) String() string {
 		return "stateRoots"
 	case HistoricalRoots:
 		return "historicalRoots"
-	case SilaExecutionData:
+	case SilaData:
 		return "silaexecData"
-	case SilaExecutionDataVotes:
-		return "silaExecutionDataVotes"
+	case SilaDataVotes:
+		return "silaDataVotes"
 	case SilaExecutionDepositIndex:
 		return "silaExecutionDepositIndex"
 	case Validators:
@@ -157,9 +157,9 @@ func (f FieldIndex) RealPosition() int {
 		return 6
 	case HistoricalRoots:
 		return 7
-	case SilaExecutionData:
+	case SilaData:
 		return 8
-	case SilaExecutionDataVotes:
+	case SilaDataVotes:
 		return 9
 	case SilaExecutionDepositIndex:
 		return 10
@@ -264,8 +264,8 @@ const (
 	BlockRoots
 	StateRoots
 	HistoricalRoots
-	SilaExecutionData
-	SilaExecutionDataVotes
+	SilaData
+	SilaDataVotes
 	SilaExecutionDepositIndex
 	Validators
 	Balances

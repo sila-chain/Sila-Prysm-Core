@@ -58,7 +58,7 @@ ssz_phase0_objs = [
     "Deposit_Data",
     "DepositMessage",
     "ENRForkID",
-    "SilaExecutionData",
+    "SilaData",
     "Fork",
     "ForkData",
     "HistoricalBatch",

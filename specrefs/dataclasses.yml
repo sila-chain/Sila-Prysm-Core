@@ -256,7 +256,7 @@
 - name: NewPayloadRequest#bellatrix
   sources:
     - file: beacon-chain/execution/silaengine_client.go
-      search: func (s *Service) NewPayload(ctx context.Context, payload interfaces.ExecutionData
+      search: func (s *Service) NewPayload(ctx context.Context, payload interfaces.SilaData
   spec: |
     <spec dataclass="NewPayloadRequest" fork="bellatrix" hash="cbd668dc">
     class NewPayloadRequest:
@@ -266,7 +266,7 @@
 - name: NewPayloadRequest#deneb
   sources:
     - file: beacon-chain/execution/silaengine_client.go
-      search: func (s *Service) NewPayload(ctx context.Context, payload interfaces.ExecutionData, versionedHashes []common.Hash, parentBlockRoot *common.Hash
+      search: func (s *Service) NewPayload(ctx context.Context, payload interfaces.SilaData, versionedHashes []common.Hash, parentBlockRoot *common.Hash
   spec: |
     <spec dataclass="NewPayloadRequest" fork="deneb" hash="a61cff05">
     class NewPayloadRequest:
@@ -278,7 +278,7 @@
 - name: NewPayloadRequest#electra
   sources:
     - file: beacon-chain/execution/silaengine_client.go
-      search: func (s *Service) NewPayload(ctx context.Context, payload interfaces.ExecutionData, versionedHashes []common.Hash, parentBlockRoot *common.Hash, silaRequests *pb.SilaRequests
+      search: func (s *Service) NewPayload(ctx context.Context, payload interfaces.SilaData, versionedHashes []common.Hash, parentBlockRoot *common.Hash, silaRequests *pb.SilaRequests
   spec: |
     <spec dataclass="NewPayloadRequest" fork="electra" hash="366a2e72">
     class NewPayloadRequest:

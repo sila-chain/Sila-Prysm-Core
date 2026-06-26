@@ -8,16 +8,16 @@ import (
 // SilaExecutionRoot computes the HashTreeRoot Merkleization of
 // a BeaconBlockHeader struct according to the Sila
 // Simple Serialize specification.
-func SilaExecutionRoot(silaexecData *silapb.SilaExecutionData) ([32]byte, error) {
+func SilaExecutionRoot(silaexecData *silapb.SilaData) ([32]byte, error) {
 	if silaexecData == nil {
 		return [32]byte{}, errors.New("nil silaexec data")
 	}
-	return SilaExecutionDataRootWithHasher(silaexecData)
+	return SilaDataRootWithHasher(silaexecData)
 }
 
-// SilaExecutionDataVotesRoot computes the HashTreeRoot Merkleization of
-// a list of SilaExecutionData structs according to the Sila
+// SilaDataVotesRoot computes the HashTreeRoot Merkleization of
+// a list of SilaData structs according to the Sila
 // Simple Serialize specification.
-func SilaExecutionDataVotesRoot(silaExecutionDataVotes []*silapb.SilaExecutionData) ([32]byte, error) {
-	return SilaExecutionDatasRoot(silaExecutionDataVotes)
+func SilaDataVotesRoot(silaDataVotes []*silapb.SilaData) ([32]byte, error) {
+	return SilaDatasRoot(silaDataVotes)
 }

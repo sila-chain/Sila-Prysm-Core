@@ -156,7 +156,7 @@ func (x *SignedBeaconBlock) GetSignature() []byte {
 type BeaconBlockBody struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	RandaoReveal      []byte                 `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData          *SilaExecutionData              `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData          *SilaData              `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti          []byte                 `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings []*ProposerSlashing    `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings []*AttesterSlashing    `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"2"`
@@ -204,9 +204,9 @@ func (x *BeaconBlockBody) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BeaconBlockBody) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconBlockBody) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -513,7 +513,7 @@ func (x *SignedVoluntaryExit) GetSignature() []byte {
 	return nil
 }
 
-type SilaExecutionData struct {
+type SilaData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DepositRoot   []byte                 `protobuf:"bytes,1,opt,name=deposit_root,json=depositRoot,proto3" json:"deposit_root,omitempty" ssz-size:"32"`
 	DepositCount  uint64                 `protobuf:"varint,2,opt,name=deposit_count,json=depositCount,proto3" json:"deposit_count,omitempty"`
@@ -522,20 +522,20 @@ type SilaExecutionData struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SilaExecutionData) Reset() {
-	*x = SilaExecutionData{}
+func (x *SilaData) Reset() {
+	*x = SilaData{}
 	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SilaExecutionData) String() string {
+func (x *SilaData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SilaExecutionData) ProtoMessage() {}
+func (*SilaData) ProtoMessage() {}
 
-func (x *SilaExecutionData) ProtoReflect() protoreflect.Message {
+func (x *SilaData) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_silaapi_v1_beacon_block_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -547,26 +547,26 @@ func (x *SilaExecutionData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SilaExecutionData.ProtoReflect.Descriptor instead.
-func (*SilaExecutionData) Descriptor() ([]byte, []int) {
+// Deprecated: Use SilaData.ProtoReflect.Descriptor instead.
+func (*SilaData) Descriptor() ([]byte, []int) {
 	return file_proto_silaapi_v1_beacon_block_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *SilaExecutionData) GetDepositRoot() []byte {
+func (x *SilaData) GetDepositRoot() []byte {
 	if x != nil {
 		return x.DepositRoot
 	}
 	return nil
 }
 
-func (x *SilaExecutionData) GetDepositCount() uint64 {
+func (x *SilaData) GetDepositCount() uint64 {
 	if x != nil {
 		return x.DepositCount
 	}
 	return 0
 }
 
-func (x *SilaExecutionData) GetBlockHash() []byte {
+func (x *SilaData) GetBlockHash() []byte {
 	if x != nil {
 		return x.BlockHash
 	}
@@ -1112,7 +1112,7 @@ var file_proto_silaapi_v1_beacon_block_proto_goTypes = []any{
 	(*Deposit)(nil),                 // 5: sila.eth.v1.Deposit
 	(*VoluntaryExit)(nil),           // 6: sila.eth.v1.VoluntaryExit
 	(*SignedVoluntaryExit)(nil),     // 7: sila.eth.v1.SignedVoluntaryExit
-	(*SilaExecutionData)(nil),                // 8: sila.eth.v1.SilaExecutionData
+	(*SilaData)(nil),                // 8: sila.eth.v1.SilaData
 	(*BeaconBlockHeader)(nil),       // 9: sila.eth.v1.BeaconBlockHeader
 	(*SignedBeaconBlockHeader)(nil), // 10: sila.eth.v1.SignedBeaconBlockHeader
 	(*IndexedAttestation)(nil),      // 11: sila.eth.v1.IndexedAttestation
@@ -1124,7 +1124,7 @@ var file_proto_silaapi_v1_beacon_block_proto_goTypes = []any{
 var file_proto_silaapi_v1_beacon_block_proto_depIdxs = []int32{
 	2,  // 0: sila.eth.v1.BeaconBlock.body:type_name -> sila.eth.v1.BeaconBlockBody
 	0,  // 1: sila.eth.v1.SignedBeaconBlock.block:type_name -> sila.eth.v1.BeaconBlock
-	8,  // 2: sila.eth.v1.BeaconBlockBody.sila_execution_data:type_name -> sila.eth.v1.SilaExecutionData
+	8,  // 2: sila.eth.v1.BeaconBlockBody.sila_data:type_name -> sila.eth.v1.SilaData
 	3,  // 3: sila.eth.v1.BeaconBlockBody.proposer_slashings:type_name -> sila.eth.v1.ProposerSlashing
 	4,  // 4: sila.eth.v1.BeaconBlockBody.attester_slashings:type_name -> sila.eth.v1.AttesterSlashing
 	14, // 5: sila.eth.v1.BeaconBlockBody.attestations:type_name -> sila.eth.v1.Attestation

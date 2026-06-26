@@ -258,7 +258,7 @@ func (s *Service) getPayloadEnvelopePrestate(ctx context.Context, envelope inter
 
 func (s *Service) callNewPayload(
 	ctx context.Context,
-	payload interfaces.ExecutionData,
+	payload interfaces.SilaData,
 	versionedHashes []common.Hash,
 	parentRoot common.Hash,
 	requests *silaenginev1.SilaRequests,

@@ -52,7 +52,7 @@ type ReadOnlyBeaconState interface {
 	ReadOnlyBlockRoots
 	ReadOnlyStateRoots
 	ReadOnlyRandaoMixes
-	ReadOnlySilaExecutionData
+	ReadOnlySilaData
 	ReadOnlyExits
 	ReadOnlyValidators
 	ReadOnlyBalances
@@ -82,7 +82,7 @@ type ReadOnlyBeaconState interface {
 	MarshalSSZ() ([]byte, error)
 	IsNil() bool
 	Version() int
-	LatestSilaPayloadHeader() (interfaces.ExecutionData, error)
+	LatestSilaPayloadHeader() (interfaces.SilaData, error)
 	ProposerDependentRoot(slot primitives.Slot) ([32]byte, error)
 }
 
@@ -91,7 +91,7 @@ type WriteOnlyBeaconState interface {
 	WriteOnlyBlockRoots
 	WriteOnlyStateRoots
 	WriteOnlyRandaoMixes
-	WriteOnlySilaExecutionData
+	WriteOnlySilaData
 	WriteOnlyValidators
 	WriteOnlyBalances
 	WriteOnlyCheckpoint
@@ -114,7 +114,7 @@ type WriteOnlyBeaconState interface {
 	UpdateSlashingsAtIndex(idx, val uint64) error
 	AppendHistoricalRoots(root [32]byte) error
 	AppendHistoricalSummaries(*silapb.HistoricalSummary) error
-	SetLatestSilaPayloadHeader(payload interfaces.ExecutionData) error
+	SetLatestSilaPayloadHeader(payload interfaces.SilaData) error
 }
 
 // ReadOnlyValidator defines a struct which only has read access to validator methods.
@@ -187,10 +187,10 @@ type ReadOnlyRandaoMixes interface {
 	RandaoMixesLength() int
 }
 
-// ReadOnlySilaExecutionData defines a struct which only has read access to silaexec data methods.
-type ReadOnlySilaExecutionData interface {
-	SilaExecutionData() *silapb.SilaExecutionData
-	SilaExecutionDataVotes() []*silapb.SilaExecutionData
+// ReadOnlySilaData defines a struct which only has read access to silaexec data methods.
+type ReadOnlySilaData interface {
+	SilaData() *silapb.SilaData
+	SilaDataVotes() []*silapb.SilaData
 	SilaExecutionDepositIndex() uint64
 }
 
@@ -266,11 +266,11 @@ type WriteOnlyStateRoots interface {
 	UpdateStateRootAtIndex(idx uint64, stateRoot [32]byte) error
 }
 
-// WriteOnlySilaExecutionData defines a struct which only has write access to silaexec data methods.
-type WriteOnlySilaExecutionData interface {
-	SetSilaExecutionData(val *silapb.SilaExecutionData) error
-	SetSilaExecutionDataVotes(val []*silapb.SilaExecutionData) error
-	AppendSilaExecutionDataVotes(val *silapb.SilaExecutionData) error
+// WriteOnlySilaData defines a struct which only has write access to silaexec data methods.
+type WriteOnlySilaData interface {
+	SetSilaData(val *silapb.SilaData) error
+	SetSilaDataVotes(val []*silapb.SilaData) error
+	AppendSilaDataVotes(val *silapb.SilaData) error
 	SetSilaExecutionDepositIndex(val uint64) error
 	ExitEpochAndUpdateChurn(ctx context.Context, exitBalance primitives.Gwei) (primitives.Epoch, error)
 	ExitEpochAndUpdateChurnForTotalBal(totalActiveBalance primitives.Gwei, exitBalance primitives.Gwei) (primitives.Epoch, error)

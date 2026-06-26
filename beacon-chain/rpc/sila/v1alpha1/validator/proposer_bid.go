@@ -29,7 +29,7 @@ func (vs *Server) setSilaPayloadBid(
 	_, span := trace.StartSpan(ctx, "ProposerServer.setSilaPayloadBid")
 	defer span.End()
 
-	if local == nil || local.ExecutionData == nil {
+	if local == nil || local.SilaData == nil {
 		return false, errors.New("local sila payload is nil")
 	}
 
@@ -68,7 +68,7 @@ func (vs *Server) winningP2PBid(
 		return nil
 	}
 
-	ed := local.ExecutionData
+	ed := local.SilaData
 	var parentHash [32]byte
 	copy(parentHash[:], ed.ParentHash())
 	cached, ok := vs.HighestBidCache.Get(sBlk.Block().Slot(), parentHash, sBlk.Block().ParentRoot())
@@ -103,9 +103,9 @@ func (vs *Server) createSelfBuildSilaPayloadBid(
 	local *consensusblocks.GetPayloadResponse,
 	block interfaces.ReadOnlyBeaconBlock,
 ) (*silapb.SilaPayloadBid, error) {
-	ed := local.ExecutionData
+	ed := local.SilaData
 	if ed == nil || ed.IsNil() {
-		return nil, errors.New("execution data is nil")
+		return nil, errors.New("sila data is nil")
 	}
 
 	parentBlockRoot := block.ParentRoot()

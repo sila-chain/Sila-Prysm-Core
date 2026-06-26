@@ -48,7 +48,7 @@ func (node *Node) Start(ctx context.Context) error {
 		return errors.New("Sila binary not found")
 	}
 
-	silaexecPath := path.Join(e2e.TestParams.TestPath, "silaExecutionData/"+strconv.Itoa(node.index)+"/")
+	silaexecPath := path.Join(e2e.TestParams.TestPath, "silaData/"+strconv.Itoa(node.index)+"/")
 	// Clear out potentially existing dir to prevent issues.
 	if _, err := os.Stat(silaexecPath); !os.IsNotExist(err) {
 		if err = os.RemoveAll(silaexecPath); err != nil {

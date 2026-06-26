@@ -264,7 +264,7 @@ func (b BlockSignatureBatches) Batch() *bls.SignatureBatch {
 //	def process_block(state: BeaconState, block: ReadOnlyBeaconBlock) -> None:
 //	  process_block_header(state, block)
 //	  process_randao(state, block.body)
-//	  process_sila_execution_data(state, block.body)
+//	  process_sila_data(state, block.body)
 //	  process_operations(state, block.body)
 func ProcessBlockNoVerifyAnySig(
 	ctx context.Context,
@@ -327,7 +327,7 @@ func ProcessBlockNoVerifyAnySig(
 //	def process_operations(state: BeaconState, body: BeaconBlockBody) -> None:
 //	    # [Modified in Electra:SIP6110]
 //	    # Disable former deposit mechanism once all prior deposits are processed
-//	    silaexec_deposit_index_limit = min(state.sila_execution_data.deposit_count, state.deposit_requests_start_index)
+//	    silaexec_deposit_index_limit = min(state.sila_data.deposit_count, state.deposit_requests_start_index)
 //	    if state.silaexec_deposit_index < silaexec_deposit_index_limit:
 //	        assert len(body.deposits) == min(MAX_DEPOSITS, silaexec_deposit_index_limit - state.silaexec_deposit_index)
 //	    else:
@@ -407,7 +407,7 @@ func ProcessOperationsNoVerifyAttsSigs(
 //	if is_execution_enabled(state, block.body):
 //	    process_sila_payload(state, block.body.sila_payload, EXECUTION_ENGINE)  # [New in Bellatrix]
 //	process_randao(state, block.body)
-//	process_sila_execution_data(state, block.body)
+//	process_sila_data(state, block.body)
 //	process_operations(state, block.body)
 //	process_sync_aggregate(state, block.body.sync_aggregate)
 func ProcessBlockForStateRoot(
@@ -454,7 +454,7 @@ func ProcessBlockForStateRoot(
 		//     # [New in Gloas:SIP7732]
 		//     process_sila_payload_bid(state, block)
 		//     process_randao(state, block.body)
-		//     process_sila_execution_data(state, block.body)
+		//     process_sila_data(state, block.body)
 		//     # [Modified in Gloas:SIP7732]
 		//     process_operations(state, block.body)
 		//     process_sync_aggregate(state, block.body.sync_aggregate)
@@ -471,18 +471,18 @@ func ProcessBlockForStateRoot(
 			return nil, errors.Wrap(err, "could not check if execution is enabled")
 		}
 		if enabled {
-			executionData, err := blk.Body().Execution()
+			silaData, err := blk.Body().Execution()
 			if err != nil {
 				return nil, err
 			}
 			if state.Version() >= version.Capella {
-				state, err = b.ProcessWithdrawals(state, executionData)
+				state, err = b.ProcessWithdrawals(state, silaData)
 				if err != nil {
 					return nil, errors.Wrap(ErrProcessWithdrawalsFailed, err.Error())
 				}
 			}
 			if err = b.ProcessPayload(state, blk.Body()); err != nil {
-				return nil, errors.Wrap(err, "could not process execution data")
+				return nil, errors.Wrap(err, "could not process sila data")
 			}
 		}
 	}
@@ -494,10 +494,10 @@ func ProcessBlockForStateRoot(
 		return nil, errors.Wrap(ErrProcessRandaoFailed, err.Error())
 	}
 
-	state, err = b.ProcessSilaExecutionDataInBlock(ctx, state, signed.Block().Body().SilaExecutionData())
+	state, err = b.ProcessSilaDataInBlock(ctx, state, signed.Block().Body().SilaData())
 	if err != nil {
 		tracing.AnnotateError(span, err)
-		return nil, errors.Wrap(ErrProcessSilaExecutionDataFailed, err.Error())
+		return nil, errors.Wrap(ErrProcessSilaDataFailed, err.Error())
 	}
 
 	state, err = ProcessOperationsNoVerifyAttsSigs(ctx, state, signed.Block())

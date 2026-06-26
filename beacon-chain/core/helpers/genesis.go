@@ -10,10 +10,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-// UpdateGenesisSilaExecutionData updates silaexec data for genesis state.
-func UpdateGenesisSilaExecutionData(state state.BeaconState, deposits []*silapb.Deposit, silaexecData *silapb.SilaExecutionData) (state.BeaconState, error) {
+// UpdateGenesisSilaData updates silaexec data for genesis state.
+func UpdateGenesisSilaData(state state.BeaconState, deposits []*silapb.Deposit, silaexecData *silapb.SilaData) (state.BeaconState, error) {
 	if silaexecData == nil {
-		return nil, errors.New("no silaExecutionData provided for genesis state")
+		return nil, errors.New("no silaData provided for genesis state")
 	}
 
 	leaves := make([][]byte, 0, len(deposits))
@@ -46,7 +46,7 @@ func UpdateGenesisSilaExecutionData(state state.BeaconState, deposits []*silapb.
 		return nil, err
 	}
 	silaexecData.DepositRoot = depositRoot[:]
-	err = state.SetSilaExecutionData(silaexecData)
+	err = state.SetSilaData(silaexecData)
 	if err != nil {
 		return nil, err
 	}

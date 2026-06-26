@@ -958,7 +958,7 @@ func testSignedBlindedBeaconBlockBellatrix(t *testing.T) *eth.SignedBlindedBeaco
 			StateRoot:     ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
 			Body: &eth.BlindedBeaconBlockBodyBellatrix{
 				RandaoReveal: ezDecode(t, "0x1b66ac1fb663c9bc59509846d6ec05345bd908eda73e670af888da41af171505cc411d61252fb6cb3fa0017b679f8bb2305b26a285fa2737f175668d0dff91cc1b66ac1fb663c9bc59509846d6ec05345bd908eda73e670af888da41af171505"),
-				SilaExecutionData: &eth.SilaExecutionData{
+				SilaData: &eth.SilaData{
 					DepositRoot:  ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
 					DepositCount: 1,
 					BlockHash:    ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
@@ -1106,7 +1106,7 @@ func testSignedBlindedBeaconBlockCapella(t *testing.T) *eth.SignedBlindedBeaconB
 			StateRoot:     ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
 			Body: &eth.BlindedBeaconBlockBodyCapella{
 				RandaoReveal: ezDecode(t, "0x1b66ac1fb663c9bc59509846d6ec05345bd908eda73e670af888da41af171505cc411d61252fb6cb3fa0017b679f8bb2305b26a285fa2737f175668d0dff91cc1b66ac1fb663c9bc59509846d6ec05345bd908eda73e670af888da41af171505"),
-				SilaExecutionData: &eth.SilaExecutionData{
+				SilaData: &eth.SilaData{
 					DepositRoot:  ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
 					DepositCount: 1,
 					BlockHash:    ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
@@ -1259,7 +1259,7 @@ func testSignedBlindedBeaconBlockDeneb(t *testing.T) *eth.SignedBlindedBeaconBlo
 			StateRoot:     ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
 			Body: &eth.BlindedBeaconBlockBodyDeneb{
 				RandaoReveal: ezDecode(t, "0x1b66ac1fb663c9bc59509846d6ec05345bd908eda73e670af888da41af171505cc411d61252fb6cb3fa0017b679f8bb2305b26a285fa2737f175668d0dff91cc1b66ac1fb663c9bc59509846d6ec05345bd908eda73e670af888da41af171505"),
-				SilaExecutionData: &eth.SilaExecutionData{
+				SilaData: &eth.SilaData{
 					DepositRoot:  ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
 					DepositCount: 1,
 					BlockHash:    ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
@@ -1414,7 +1414,7 @@ func testSignedBlindedBeaconBlockElectra(t *testing.T) *eth.SignedBlindedBeaconB
 			StateRoot:     ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
 			Body: &eth.BlindedBeaconBlockBodyElectra{
 				RandaoReveal: ezDecode(t, "0x1b66ac1fb663c9bc59509846d6ec05345bd908eda73e670af888da41af171505cc411d61252fb6cb3fa0017b679f8bb2305b26a285fa2737f175668d0dff91cc1b66ac1fb663c9bc59509846d6ec05345bd908eda73e670af888da41af171505"),
-				SilaExecutionData: &eth.SilaExecutionData{
+				SilaData: &eth.SilaData{
 					DepositRoot:  ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
 					DepositCount: 1,
 					BlockHash:    ezDecode(t, "0xcf8e0d4e9587369b2301d0790347320302cc0943d5a1884560367e8208d920f2"),
@@ -1818,7 +1818,7 @@ func TestSubmitBlindedBlock_BlobsBundlerInterface(t *testing.T) {
 
 		// Verify the method exists with the correct signature
 		// by using reflection or by checking it compiles with the interface
-		var _ func(ctx context.Context, sb interfaces.ReadOnlySignedBeaconBlock) (interfaces.ExecutionData, v1.BlobsBundler, error) = client.SubmitBlindedBlock
+		var _ func(ctx context.Context, sb interfaces.ReadOnlySignedBeaconBlock) (interfaces.SilaData, v1.BlobsBundler, error) = client.SubmitBlindedBlock
 
 		// This test passes if the signature is correct
 		assert.Equal(t, true, true)

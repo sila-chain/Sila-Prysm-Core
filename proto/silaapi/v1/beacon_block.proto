@@ -65,7 +65,7 @@ message BeaconBlockBody {
   bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
 
   // A reference to the Sila execution chain.
-  SilaExecutionData sila_execution_data = 2;
+  SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.
@@ -165,8 +165,8 @@ message SignedVoluntaryExit {
   bytes signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
 }
 
-// SilaExecutionData represents references to the Sila sila deposit.
-message SilaExecutionData {
+// SilaData represents references to the Sila sila deposit.
+message SilaData {
   // The 32 byte deposit tree root for the last deposit included in this
   // block.
   bytes deposit_root = 1 [ (sila.eth.ext.ssz_size) = "32" ];

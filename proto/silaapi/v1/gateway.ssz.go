@@ -828,11 +828,11 @@ func (b *BeaconBlockBody) MarshalSSZTo(buf []byte) (dst []byte, err error) {
 	}
 	dst = append(dst, b.RandaoReveal...)
 
-	// Field (1) 'SilaExecutionData'
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = new(SilaExecutionData)
+	// Field (1) 'SilaData'
+	if b.SilaData == nil {
+		b.SilaData = new(SilaData)
 	}
-	if dst, err = b.SilaExecutionData.MarshalSSZTo(dst); err != nil {
+	if dst, err = b.SilaData.MarshalSSZTo(dst); err != nil {
 		return
 	}
 
@@ -958,11 +958,11 @@ func (b *BeaconBlockBody) UnmarshalSSZ(buf []byte) error {
 	}
 	b.RandaoReveal = append(b.RandaoReveal, buf[0:96]...)
 
-	// Field (1) 'SilaExecutionData'
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = new(SilaExecutionData)
+	// Field (1) 'SilaData'
+	if b.SilaData == nil {
+		b.SilaData = new(SilaData)
 	}
-	if err = b.SilaExecutionData.UnmarshalSSZ(buf[96:168]); err != nil {
+	if err = b.SilaData.UnmarshalSSZ(buf[96:168]); err != nil {
 		return err
 	}
 
@@ -1145,8 +1145,8 @@ func (b *BeaconBlockBody) HashTreeRootWith(hh *ssz.Hasher) (err error) {
 	}
 	hh.PutBytes(b.RandaoReveal)
 
-	// Field (1) 'SilaExecutionData'
-	if err = b.SilaExecutionData.HashTreeRootWith(hh); err != nil {
+	// Field (1) 'SilaData'
+	if err = b.SilaData.HashTreeRootWith(hh); err != nil {
 		return
 	}
 
@@ -1698,13 +1698,13 @@ func (s *SignedVoluntaryExit) HashTreeRootWith(hh *ssz.Hasher) (err error) {
 	return
 }
 
-// MarshalSSZ ssz marshals the SilaExecutionData object
-func (e *SilaExecutionData) MarshalSSZ() ([]byte, error) {
+// MarshalSSZ ssz marshals the SilaData object
+func (e *SilaData) MarshalSSZ() ([]byte, error) {
 	return ssz.MarshalSSZ(e)
 }
 
-// MarshalSSZTo ssz marshals the SilaExecutionData object to a target array
-func (e *SilaExecutionData) MarshalSSZTo(buf []byte) (dst []byte, err error) {
+// MarshalSSZTo ssz marshals the SilaData object to a target array
+func (e *SilaData) MarshalSSZTo(buf []byte) (dst []byte, err error) {
 	dst = buf
 
 	// Field (0) 'DepositRoot'
@@ -1727,8 +1727,8 @@ func (e *SilaExecutionData) MarshalSSZTo(buf []byte) (dst []byte, err error) {
 	return
 }
 
-// UnmarshalSSZ ssz unmarshals the SilaExecutionData object
-func (e *SilaExecutionData) UnmarshalSSZ(buf []byte) error {
+// UnmarshalSSZ ssz unmarshals the SilaData object
+func (e *SilaData) UnmarshalSSZ(buf []byte) error {
 	var err error
 	size := uint64(len(buf))
 	if size != 72 {
@@ -1753,19 +1753,19 @@ func (e *SilaExecutionData) UnmarshalSSZ(buf []byte) error {
 	return err
 }
 
-// SizeSSZ returns the ssz encoded size in bytes for the SilaExecutionData object
-func (e *SilaExecutionData) SizeSSZ() (size int) {
+// SizeSSZ returns the ssz encoded size in bytes for the SilaData object
+func (e *SilaData) SizeSSZ() (size int) {
 	size = 72
 	return
 }
 
-// HashTreeRoot ssz hashes the SilaExecutionData object
-func (e *SilaExecutionData) HashTreeRoot() ([32]byte, error) {
+// HashTreeRoot ssz hashes the SilaData object
+func (e *SilaData) HashTreeRoot() ([32]byte, error) {
 	return ssz.HashWithDefaultHasher(e)
 }
 
-// HashTreeRootWith ssz hashes the SilaExecutionData object with a hasher
-func (e *SilaExecutionData) HashTreeRootWith(hh *ssz.Hasher) (err error) {
+// HashTreeRootWith ssz hashes the SilaData object with a hasher
+func (e *SilaData) HashTreeRootWith(hh *ssz.Hasher) (err error) {
 	indx := hh.Index()
 
 	// Field (0) 'DepositRoot'

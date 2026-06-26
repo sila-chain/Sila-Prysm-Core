@@ -18,7 +18,7 @@ func TestGenesisBeaconStateBellatrix(t *testing.T) {
 	ctx := t.Context()
 	deposits, _, err := DeterministicDepositsAndKeys(params.BeaconConfig().MaxCommitteesPerSlot)
 	require.NoError(t, err)
-	silaexecData, err := DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 	gt := time.Now()
 	st, err := genesisBeaconStateBellatrix(ctx, deposits, gt, silaexecData)

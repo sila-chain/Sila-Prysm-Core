@@ -48,9 +48,9 @@ func (*FaultyExecutionChain) BlockByTimestamp(context.Context, uint64) (*types.H
 	return &types.HeaderInfo{Number: big.NewInt(0)}, nil
 }
 
-// ChainStartSilaExecutionData --
-func (*FaultyExecutionChain) ChainStartSilaExecutionData() *silapb.SilaExecutionData {
-	return &silapb.SilaExecutionData{}
+// ChainStartSilaData --
+func (*FaultyExecutionChain) ChainStartSilaData() *silapb.SilaData {
+	return &silapb.SilaData{}
 }
 
 // PreGenesisState --

@@ -120,7 +120,7 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *silaenginev1.SilaPay
 	withdrawalCreds := make([]byte, 32)
 	withdrawalCreds[0] = cfg.SilaExecutionAddressWithdrawalPrefixByte
 
-	silaexecData := &silapb.SilaExecutionData{
+	silaexecData := &silapb.SilaData{
 		DepositRoot:  bytes.Repeat([]byte{0x66}, 32),
 		DepositCount: 0,
 		BlockHash:    bytes.Repeat([]byte{0x77}, 32),
@@ -175,7 +175,7 @@ func buildPayloadFixture(t *testing.T, mutate func(payload *silaenginev1.SilaPay
 		BlockRoots:                   blockRoots,
 		StateRoots:                   stateRoots,
 		RandaoMixes:                  randaoMixes,
-		SilaExecutionData:                     silaexecData,
+		SilaData:                     silaexecData,
 		Validators:                   vals,
 		Balances:                     balances,
 		LatestBlockHash:              payload.ParentHash,

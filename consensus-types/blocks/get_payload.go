@@ -12,7 +12,7 @@ import (
 // GetPayloadResponse represents the result of unmarshaling an SilaEngine
 // GetPayloadResponseV(1|2|3|4|5) value.
 type GetPayloadResponse struct {
-	ExecutionData   interfaces.ExecutionData
+	SilaData   interfaces.SilaData
 	BlobsBundler    pb.BlobsBundler
 	OverrideBuilder bool
 	// todo: should we convert this to Gwei up front?
@@ -66,11 +66,11 @@ func NewGetPayloadResponse(msg proto.Message) (*GetPayloadResponse, error) {
 	if hasShouldOverride {
 		r.OverrideBuilder = shouldOverride.GetShouldOverrideBuilder()
 	}
-	ed, err := NewWrappedExecutionData(msg)
+	ed, err := NewWrappedSilaData(msg)
 	if err != nil {
-		return nil, errors.Wrap(err, "new wrapped execution data")
+		return nil, errors.Wrap(err, "new wrapped sila data")
 	}
-	r.ExecutionData = ed
+	r.SilaData = ed
 
 	silaRequestsGetter, hasSilaRequests := msg.(silaRequestsGetter)
 	if hasSilaRequests {

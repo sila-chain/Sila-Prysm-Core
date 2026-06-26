@@ -46,7 +46,7 @@ func TestSetSelfBuildSilaPayloadBid(t *testing.T) {
 	// 5 Gwei = 5,000,000,000 Wei
 	bidValue := big.NewInt(5_000_000_000)
 	local := &consensusblocks.GetPayloadResponse{
-		ExecutionData:     ed,
+		SilaData:     ed,
 		Bid:               bidValue,
 		BlobsBundler:      &silaenginev1.BlobsBundle{},
 		SilaRequests: &silaenginev1.SilaRequests{},
@@ -115,7 +115,7 @@ func TestSetSelfBuildSilaPayloadBid_BlobCommitments(t *testing.T) {
 	}
 
 	local := &consensusblocks.GetPayloadResponse{
-		ExecutionData: ed,
+		SilaData: ed,
 		BlobsBundler: &silaenginev1.BlobsBundle{
 			KzgCommitments: commitments,
 		},
@@ -183,7 +183,7 @@ func TestSetSilaPayloadBid_PrefersP2PBid(t *testing.T) {
 	require.NoError(t, err)
 
 	local := &consensusblocks.GetPayloadResponse{
-		ExecutionData:     ed,
+		SilaData:     ed,
 		Bid:               big.NewInt(0),
 		BlobsBundler:      &silaenginev1.BlobsBundle{},
 		SilaRequests: &silaenginev1.SilaRequests{},
@@ -257,7 +257,7 @@ func TestSetSilaPayloadBid_PrefersLocalWhenHigherValue(t *testing.T) {
 
 	// Local bid is 2000 Gwei (in Wei: 2000 * 1e9).
 	local := &consensusblocks.GetPayloadResponse{
-		ExecutionData:     ed,
+		SilaData:     ed,
 		Bid:               big.NewInt(2000_000_000_000),
 		BlobsBundler:      &silaenginev1.BlobsBundle{},
 		SilaRequests: &silaenginev1.SilaRequests{},
@@ -330,7 +330,7 @@ func TestSetSilaPayloadBid_SelfBuildOnlyIgnoresCache(t *testing.T) {
 	require.NoError(t, err)
 
 	local := &consensusblocks.GetPayloadResponse{
-		ExecutionData:     ed,
+		SilaData:     ed,
 		Bid:               big.NewInt(0),
 		BlobsBundler:      &silaenginev1.BlobsBundle{},
 		SilaRequests: &silaenginev1.SilaRequests{},
@@ -402,7 +402,7 @@ func TestSetSilaPayloadBid_FallsBackToSelfBuildWhenNoCachedBid(t *testing.T) {
 	require.NoError(t, err)
 
 	local := &consensusblocks.GetPayloadResponse{
-		ExecutionData:     ed,
+		SilaData:     ed,
 		Bid:               big.NewInt(0),
 		BlobsBundler:      &silaenginev1.BlobsBundle{},
 		SilaRequests: &silaenginev1.SilaRequests{},

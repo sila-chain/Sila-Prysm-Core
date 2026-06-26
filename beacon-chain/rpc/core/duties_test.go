@@ -19,7 +19,7 @@ func TestAttesterDuties(t *testing.T) {
 	depChainStart := params.BeaconConfig().MinGenesisActiveValidatorCount
 	deposits, _, err := util.DeterministicDepositsAndKeys(depChainStart)
 	require.NoError(t, err)
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := util.DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 	bs, err := transition.GenesisBeaconState(t.Context(), deposits, 0, silaexecData)
 	require.NoError(t, err)
@@ -58,7 +58,7 @@ func TestProposerDuties(t *testing.T) {
 	depChainStart := params.BeaconConfig().MinGenesisActiveValidatorCount
 	deposits, _, err := util.DeterministicDepositsAndKeys(depChainStart)
 	require.NoError(t, err)
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := util.DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 	bs, err := transition.GenesisBeaconState(t.Context(), deposits, 0, silaexecData)
 	require.NoError(t, err)

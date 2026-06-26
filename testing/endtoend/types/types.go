@@ -181,10 +181,10 @@ type EvaluationContext struct {
 	// The actual exit takes effect at: submission_epoch + 1 + MaxSeedLookahead
 	ExitedVals           map[[48]byte]primitives.Epoch
 	SeenVotes            map[primitives.Slot][]byte
-	ExpectedSilaExecutionDataVote []byte
-	// SilaExecutionDataMismatchCount tracks how many silaExecutionData vote mismatches have been seen
+	ExpectedSilaDataVote []byte
+	// SilaDataMismatchCount tracks how many silaData vote mismatches have been seen
 	// in the current voting period. Some tolerance is allowed for timing differences.
-	SilaExecutionDataMismatchCount int
+	SilaDataMismatchCount int
 }
 
 // NewEvaluationContext handles initializing internal datastructures (like maps) provided by the EvaluationContext.

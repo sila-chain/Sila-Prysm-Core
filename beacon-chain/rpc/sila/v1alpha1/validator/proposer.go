@@ -43,7 +43,7 @@ import (
 var silaexecDataNotification bool
 
 const (
-	silaExecutionDataTimeout           = 2 * time.Second
+	silaDataTimeout           = 2 * time.Second
 	defaultBuilderBoostFactor = primitives.Gwei(100)
 )
 
@@ -204,10 +204,10 @@ func (vs *Server) BuildBlockParallel(ctx context.Context, sBlk interfaces.Signed
 		// Set silaexec data.
 		silaexecData, err := vs.silaexecDataMajorityVote(ctx, head)
 		if err != nil {
-			silaexecData = &silapb.SilaExecutionData{DepositRoot: params.BeaconConfig().ZeroHash[:], BlockHash: params.BeaconConfig().ZeroHash[:]}
-			log.WithError(err).Error("Could not get silaExecutionData")
+			silaexecData = &silapb.SilaData{DepositRoot: params.BeaconConfig().ZeroHash[:], BlockHash: params.BeaconConfig().ZeroHash[:]}
+			log.WithError(err).Error("Could not get silaData")
 		}
-		sBlk.SetSilaExecutionData(silaexecData)
+		sBlk.SetSilaData(silaexecData)
 
 		// Set deposit and attestation.
 		deposits, atts, err := vs.packDepositsAndAttestations(ctx, head, sBlk.Block().Slot(), silaexecData) // TODO: split attestations and deposits
@@ -278,15 +278,15 @@ func (vs *Server) BuildBlockParallel(ctx context.Context, sBlk interfaces.Signed
 				}
 			}
 
-			winningBid, bundle, err = setExecutionData(ctx, sBlk, local, builderBid, builderBoostFactor)
+			winningBid, bundle, err = setSilaData(ctx, sBlk, local, builderBid, builderBoostFactor)
 			if err != nil {
-				return nil, status.Errorf(codes.Internal, "Could not set execution data: %v", err)
+				return nil, status.Errorf(codes.Internal, "Could not set sila data: %v", err)
 			}
 		} else {
 			selfBuildOnly := local.OverrideBuilder || skipMevBoost
 			selfBuildEnvelope, err = vs.setSilaPayloadBid(ctx, sBlk, local, selfBuildOnly)
 			if err != nil {
-				return nil, status.Errorf(codes.Internal, "Could not set execution data for Gloas: %v", err)
+				return nil, status.Errorf(codes.Internal, "Could not set sila data for Gloas: %v", err)
 			}
 		}
 	}

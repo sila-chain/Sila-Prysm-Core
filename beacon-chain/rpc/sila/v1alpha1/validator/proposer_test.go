@@ -77,7 +77,7 @@ func TestServer_GetBeaconBlock_Phase0(t *testing.T) {
 			Body: &silapb.BeaconBlockBody{
 				RandaoReveal: genesis.Block.Body.RandaoReveal,
 				Graffiti:     genesis.Block.Body.Graffiti,
-				SilaExecutionData:     genesis.Block.Body.SilaExecutionData,
+				SilaData:     genesis.Block.Body.SilaData,
 			},
 		},
 		Signature: genesis.Signature,
@@ -161,7 +161,7 @@ func TestServer_GetBeaconBlock_Altair(t *testing.T) {
 			Body: &silapb.BeaconBlockBodyAltair{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
-				SilaExecutionData:      genesis.Block.Body.SilaExecutionData,
+				SilaData:      genesis.Block.Body.SilaData,
 				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 			},
 		},
@@ -240,7 +240,7 @@ func TestServer_GetBeaconBlock_Bellatrix(t *testing.T) {
 			Body: &silapb.BeaconBlockBodyBellatrix{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
-				SilaExecutionData:      genesis.Block.Body.SilaExecutionData,
+				SilaData:      genesis.Block.Body.SilaData,
 				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 				SilaPayload: &silaenginev1.SilaPayload{
 					ParentHash:    make([]byte, fieldparams.RootLength),
@@ -288,11 +288,11 @@ func TestServer_GetBeaconBlock_Bellatrix(t *testing.T) {
 
 	proposerServer := getProposerServer(ctx, db, beaconState, parentRoot[:])
 	proposerServer.SilaBlockFetcher = c
-	ed, err := blocks.NewWrappedExecutionData(payload)
+	ed, err := blocks.NewWrappedSilaData(payload)
 	require.NoError(t, err)
 	proposerServer.SilaEngineCaller = &mockExecution.SilaEngineClient{
 		PayloadIDBytes:     &silaenginev1.PayloadIDBytes{1},
-		GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
+		GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed},
 	}
 
 	randaoReveal, err := util.RandaoReveal(beaconState, 0, privKeys)
@@ -365,7 +365,7 @@ func TestServer_GetBeaconBlock_Capella(t *testing.T) {
 			Body: &silapb.BeaconBlockBodyCapella{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
-				SilaExecutionData:      genesis.Block.Body.SilaExecutionData,
+				SilaData:      genesis.Block.Body.SilaData,
 				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 				SilaPayload: &silaenginev1.SilaPayloadCapella{
 					ParentHash:    make([]byte, fieldparams.RootLength),
@@ -421,11 +421,11 @@ func TestServer_GetBeaconBlock_Capella(t *testing.T) {
 		Root:            parentRoot[:],
 		ForkChoiceStore: doublylinkedtree.New(),
 	}
-	ed, err := blocks.NewWrappedExecutionData(payload)
+	ed, err := blocks.NewWrappedSilaData(payload)
 	require.NoError(t, err)
 	proposerServer.SilaEngineCaller = &mockExecution.SilaEngineClient{
 		PayloadIDBytes:     &silaenginev1.PayloadIDBytes{1},
-		GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
+		GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed},
 	}
 
 	randaoReveal, err := util.RandaoReveal(beaconState, 0, privKeys)
@@ -489,7 +489,7 @@ func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
 			Body: &silapb.BeaconBlockBodyDeneb{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
-				SilaExecutionData:      genesis.Block.Body.SilaExecutionData,
+				SilaData:      genesis.Block.Body.SilaData,
 				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 				SilaPayload: &silaenginev1.SilaPayloadDeneb{
 					ParentHash:    make([]byte, fieldparams.RootLength),
@@ -533,7 +533,7 @@ func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
 		BlobGasUsed:   4,
 		ExcessBlobGas: 5,
 	}
-	ed, err := blocks.NewWrappedExecutionData(payload)
+	ed, err := blocks.NewWrappedSilaData(payload)
 	require.NoError(t, err)
 
 	kc := make([][]byte, 0)
@@ -555,7 +555,7 @@ func TestServer_GetBeaconBlock_Deneb(t *testing.T) {
 	proposerServer.SilaEngineCaller = &mockExecution.SilaEngineClient{
 		PayloadIDBytes: &silaenginev1.PayloadIDBytes{1},
 		GetPayloadResponse: &blocks.GetPayloadResponse{
-			ExecutionData: ed,
+			SilaData: ed,
 			BlobsBundler:  bundle,
 		},
 	}
@@ -642,7 +642,7 @@ func TestServer_GetBeaconBlock_Electra(t *testing.T) {
 			Body: &silapb.BeaconBlockBodyElectra{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
-				SilaExecutionData:      genesis.Block.Body.SilaExecutionData,
+				SilaData:      genesis.Block.Body.SilaData,
 				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 				SilaPayload: &silaenginev1.SilaPayloadDeneb{
 					ParentHash:    make([]byte, fieldparams.RootLength),
@@ -693,11 +693,11 @@ func TestServer_GetBeaconBlock_Electra(t *testing.T) {
 		Root:            parentRoot[:],
 		ForkChoiceStore: doublylinkedtree.New(),
 	}
-	ed, err := blocks.NewWrappedExecutionData(payload)
+	ed, err := blocks.NewWrappedSilaData(payload)
 	require.NoError(t, err)
 	proposerServer.SilaEngineCaller = &mockExecution.SilaEngineClient{
 		PayloadIDBytes: &silaenginev1.PayloadIDBytes{1},
-		GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, SilaRequests: &silaenginev1.SilaRequests{
+		GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed, SilaRequests: &silaenginev1.SilaRequests{
 			Withdrawals:    wr,
 			Deposits:       dr,
 			Consolidations: cr,
@@ -779,7 +779,7 @@ func TestServer_GetBeaconBlock_Fulu(t *testing.T) {
 			Body: &silapb.BeaconBlockBodyElectra{
 				RandaoReveal:  genesis.Block.Body.RandaoReveal,
 				Graffiti:      genesis.Block.Body.Graffiti,
-				SilaExecutionData:      genesis.Block.Body.SilaExecutionData,
+				SilaData:      genesis.Block.Body.SilaData,
 				SyncAggregate: &silapb.SyncAggregate{SyncCommitteeBits: scBits[:], SyncCommitteeSignature: make([]byte, 96)},
 				SilaPayload: &silaenginev1.SilaPayloadDeneb{
 					ParentHash:    make([]byte, fieldparams.RootLength),
@@ -830,11 +830,11 @@ func TestServer_GetBeaconBlock_Fulu(t *testing.T) {
 		Root:            parentRoot[:],
 		ForkChoiceStore: doublylinkedtree.New(),
 	}
-	ed, err := blocks.NewWrappedExecutionData(payload)
+	ed, err := blocks.NewWrappedSilaData(payload)
 	require.NoError(t, err)
 	proposerServer.SilaEngineCaller = &mockExecution.SilaEngineClient{
 		PayloadIDBytes: &silaenginev1.PayloadIDBytes{1},
-		GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, SilaRequests: &silaenginev1.SilaRequests{
+		GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed, SilaRequests: &silaenginev1.SilaRequests{
 			Withdrawals:    wr,
 			Deposits:       dr,
 			Consolidations: cr,
@@ -1412,7 +1412,7 @@ func TestHandlePostBlockStateError_IncrementsAttempts(t *testing.T) {
 	require.NotNil(t, err)
 }
 
-func TestProposer_PendingDeposits_SilaExecutionDataVoteOK(t *testing.T) {
+func TestProposer_PendingDeposits_SilaDataVoteOK(t *testing.T) {
 	ctx := t.Context()
 
 	height := big.NewInt(int64(params.BeaconConfig().SilaExecutionFollowDistance))
@@ -1425,11 +1425,11 @@ func TestProposer_PendingDeposits_SilaExecutionDataVoteOK(t *testing.T) {
 		},
 	}
 
-	var votes []*silapb.SilaExecutionData
+	var votes []*silapb.SilaData
 
 	blockHash := make([]byte, 32)
 	copy(blockHash, "0x1")
-	vote := &silapb.SilaExecutionData{
+	vote := &silapb.SilaData{
 		DepositRoot:  make([]byte, 32),
 		BlockHash:    blockHash,
 		DepositCount: 3,
@@ -1444,12 +1444,12 @@ func TestProposer_PendingDeposits_SilaExecutionDataVoteOK(t *testing.T) {
 	beaconState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetSilaExecutionDepositIndex(2))
-	require.NoError(t, beaconState.SetSilaExecutionData(&silapb.SilaExecutionData{
+	require.NoError(t, beaconState.SetSilaData(&silapb.SilaData{
 		DepositRoot:  make([]byte, 32),
 		BlockHash:    blockHash,
 		DepositCount: 2,
 	}))
-	require.NoError(t, beaconState.SetSilaExecutionDataVotes(votes))
+	require.NoError(t, beaconState.SetSilaDataVotes(votes))
 
 	blk := util.NewBeaconBlock()
 	blkRoot, err := blk.Block.HashTreeRoot()
@@ -1465,30 +1465,30 @@ func TestProposer_PendingDeposits_SilaExecutionDataVoteOK(t *testing.T) {
 
 	// It should also return the recent deposits after their follow window.
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	_, silaexecHeight, err := bs.canonicalSilaExecutionData(ctx, beaconState, &silapb.SilaExecutionData{})
+	_, silaexecHeight, err := bs.canonicalSilaData(ctx, beaconState, &silapb.SilaData{})
 	require.NoError(t, err)
 
 	assert.Equal(t, 0, silaexecHeight.Cmp(height))
 
-	newState, err := b.ProcessSilaExecutionDataInBlock(ctx, beaconState, blk.Block.Body.SilaExecutionData)
+	newState, err := b.ProcessSilaDataInBlock(ctx, beaconState, blk.Block.Body.SilaData)
 	require.NoError(t, err)
 
-	if proto.Equal(newState.SilaExecutionData(), vote) {
-		t.Errorf("silaExecutionData in the state equal to vote, when not expected to"+
+	if proto.Equal(newState.SilaData(), vote) {
+		t.Errorf("silaData in the state equal to vote, when not expected to"+
 			"have majority: Got %v", vote)
 	}
 
-	blk.Block.Body.SilaExecutionData = vote
+	blk.Block.Body.SilaData = vote
 
-	_, silaexecHeight, err = bs.canonicalSilaExecutionData(ctx, beaconState, vote)
+	_, silaexecHeight, err = bs.canonicalSilaData(ctx, beaconState, vote)
 	require.NoError(t, err)
 	assert.Equal(t, 0, silaexecHeight.Cmp(newHeight))
 
-	newState, err = b.ProcessSilaExecutionDataInBlock(ctx, beaconState, blk.Block.Body.SilaExecutionData)
+	newState, err = b.ProcessSilaDataInBlock(ctx, beaconState, blk.Block.Body.SilaData)
 	require.NoError(t, err)
 
-	if !proto.Equal(newState.SilaExecutionData(), vote) {
-		t.Errorf("silaExecutionData in the state not of the expected kind: Got %v but wanted %v", newState.SilaExecutionData(), vote)
+	if !proto.Equal(newState.SilaData(), vote) {
+		t.Errorf("silaData in the state not of the expected kind: Got %v but wanted %v", newState.SilaData(), vote)
 	}
 }
 
@@ -1504,7 +1504,7 @@ func TestProposer_PendingDeposits_OutsideSilaExecutionFollowWindow(t *testing.T)
 	}
 
 	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			BlockHash:   bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot: make([]byte, 32),
 		},
@@ -1598,14 +1598,14 @@ func TestProposer_PendingDeposits_OutsideSilaExecutionFollowWindow(t *testing.T)
 		HeadFetcher:            &mock.ChainService{State: beaconState, Root: blkRoot[:]},
 	}
 
-	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaExecutionData{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaData{})
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(deposits), "Received unexpected list of deposits")
 
 	// It should not return the recent deposits after their follow window.
 	// as latest block number makes no difference in retrieval of deposits
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	deposits, err = bs.deposits(ctx, beaconState, &silapb.SilaExecutionData{})
+	deposits, err = bs.deposits(ctx, beaconState, &silapb.SilaData{})
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(deposits), "Received unexpected number of pending deposits")
 }
@@ -1623,9 +1623,9 @@ func TestProposer_PendingDeposits_FollowsCorrectSilaBlock(t *testing.T) {
 		},
 	}
 
-	var votes []*silapb.SilaExecutionData
+	var votes []*silapb.SilaData
 
-	vote := &silapb.SilaExecutionData{
+	vote := &silapb.SilaData{
 		BlockHash:    bytesutil.PadTo([]byte("0x1"), 32),
 		DepositRoot:  make([]byte, 32),
 		DepositCount: 7,
@@ -1636,13 +1636,13 @@ func TestProposer_PendingDeposits_FollowsCorrectSilaBlock(t *testing.T) {
 	}
 
 	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			BlockHash:    []byte("0x0"),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 5,
 		},
 		SilaExecutionDepositIndex: 1,
-		SilaExecutionDataVotes:    votes,
+		SilaDataVotes:    votes,
 	})
 	require.NoError(t, err)
 	blk := util.NewBeaconBlock()
@@ -1731,7 +1731,7 @@ func TestProposer_PendingDeposits_FollowsCorrectSilaBlock(t *testing.T) {
 		HeadFetcher:            &mock.ChainService{State: beaconState, Root: blkRoot[:]},
 	}
 
-	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaExecutionData{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaData{})
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(deposits), "Received unexpected list of deposits")
 
@@ -1756,7 +1756,7 @@ func TestProposer_PendingDeposits_CantReturnBelowStateSilaExecutionDepositIndex(
 
 	beaconState, err := util.NewBeaconState()
 	require.NoError(t, err)
-	require.NoError(t, beaconState.SetSilaExecutionData(&silapb.SilaExecutionData{
+	require.NoError(t, beaconState.SetSilaData(&silapb.SilaData{
 		BlockHash:    bytesutil.PadTo([]byte("0x0"), 32),
 		DepositRoot:  make([]byte, 32),
 		DepositCount: 100,
@@ -1836,7 +1836,7 @@ func TestProposer_PendingDeposits_CantReturnBelowStateSilaExecutionDepositIndex(
 
 	// It should also return the recent deposits after their follow window.
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaExecutionData{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaData{})
 	require.NoError(t, err)
 
 	expectedDeposits := 6
@@ -1855,7 +1855,7 @@ func TestProposer_PendingDeposits_CantReturnMoreThanMax(t *testing.T) {
 	}
 
 	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			BlockHash:    bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 100,
@@ -1936,7 +1936,7 @@ func TestProposer_PendingDeposits_CantReturnMoreThanMax(t *testing.T) {
 
 	// It should also return the recent deposits after their follow window.
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaExecutionData{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaData{})
 	require.NoError(t, err)
 	assert.Equal(t, params.BeaconConfig().MaxDeposits, uint64(len(deposits)), "Received unexpected number of pending deposits")
 }
@@ -1953,7 +1953,7 @@ func TestProposer_PendingDeposits_CantReturnMoreThanDepositCount(t *testing.T) {
 	}
 
 	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			BlockHash:    bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 5,
@@ -2034,7 +2034,7 @@ func TestProposer_PendingDeposits_CantReturnMoreThanDepositCount(t *testing.T) {
 
 	// It should also return the recent deposits after their follow window.
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaExecutionData{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaData{})
 	require.NoError(t, err)
 	assert.Equal(t, 3, len(deposits), "Received unexpected number of pending deposits")
 }
@@ -2051,7 +2051,7 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 	}
 
 	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			BlockHash:    bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 4,
@@ -2145,7 +2145,7 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 		HeadFetcher:            &mock.ChainService{State: beaconState, Root: blkRoot[:]},
 	}
 
-	dt, err := bs.depositTrie(ctx, &silapb.SilaExecutionData{}, big.NewInt(int64(params.BeaconConfig().SilaExecutionFollowDistance)))
+	dt, err := bs.depositTrie(ctx, &silapb.SilaData{}, big.NewInt(int64(params.BeaconConfig().SilaExecutionFollowDistance)))
 	require.NoError(t, err)
 
 	actualRoot, err := dt.HashTreeRoot()
@@ -2167,7 +2167,7 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 	}
 
 	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			BlockHash:    bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 4,
@@ -2274,7 +2274,7 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 		HeadFetcher:            &mock.ChainService{State: beaconState, Root: blkRoot[:]},
 	}
 
-	dt, err := bs.depositTrie(ctx, &silapb.SilaExecutionData{}, big.NewInt(int64(params.BeaconConfig().SilaExecutionFollowDistance)))
+	dt, err := bs.depositTrie(ctx, &silapb.SilaData{}, big.NewInt(int64(params.BeaconConfig().SilaExecutionFollowDistance)))
 	require.NoError(t, err)
 
 	expectedRoot, err := depositTrie.HashTreeRoot()
@@ -2288,14 +2288,14 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 func TestProposer_ValidateDepositTrie(t *testing.T) {
 	tt := []struct {
 		name            string
-		silaExecutionDataCreator func() *silapb.SilaExecutionData
+		silaDataCreator func() *silapb.SilaData
 		trieCreator     func() *trie.SparseMerkleTrie
 		success         bool
 	}{
 		{
 			name: "invalid trie items",
-			silaExecutionDataCreator: func() *silapb.SilaExecutionData {
-				return &silapb.SilaExecutionData{DepositRoot: []byte{}, DepositCount: 10, BlockHash: []byte{}}
+			silaDataCreator: func() *silapb.SilaData {
+				return &silapb.SilaData{DepositRoot: []byte{}, DepositCount: 10, BlockHash: []byte{}}
 			},
 			trieCreator: func() *trie.SparseMerkleTrie {
 				newTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
@@ -2306,13 +2306,13 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 		},
 		{
 			name: "invalid deposit root",
-			silaExecutionDataCreator: func() *silapb.SilaExecutionData {
+			silaDataCreator: func() *silapb.SilaData {
 				newTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 				assert.NoError(t, err)
 				assert.NoError(t, newTrie.Insert([]byte{'a'}, 0))
 				assert.NoError(t, newTrie.Insert([]byte{'b'}, 1))
 				assert.NoError(t, newTrie.Insert([]byte{'c'}, 2))
-				return &silapb.SilaExecutionData{DepositRoot: []byte{'B'}, DepositCount: 3, BlockHash: []byte{}}
+				return &silapb.SilaData{DepositRoot: []byte{'B'}, DepositCount: 3, BlockHash: []byte{}}
 			},
 			trieCreator: func() *trie.SparseMerkleTrie {
 				newTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
@@ -2326,7 +2326,7 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 		},
 		{
 			name: "valid deposit trie",
-			silaExecutionDataCreator: func() *silapb.SilaExecutionData {
+			silaDataCreator: func() *silapb.SilaData {
 				newTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
 				assert.NoError(t, err)
 				assert.NoError(t, newTrie.Insert([]byte{'a'}, 0))
@@ -2334,7 +2334,7 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 				assert.NoError(t, newTrie.Insert([]byte{'c'}, 2))
 				rt, err := newTrie.HashTreeRoot()
 				require.NoError(t, err)
-				return &silapb.SilaExecutionData{DepositRoot: rt[:], DepositCount: 3, BlockHash: []byte{}}
+				return &silapb.SilaData{DepositRoot: rt[:], DepositCount: 3, BlockHash: []byte{}}
 			},
 			trieCreator: func() *trie.SparseMerkleTrie {
 				newTrie, err := trie.NewTrie(params.BeaconConfig().SilaDepositTreeDepth)
@@ -2350,7 +2350,7 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 
 	for _, test := range tt {
 		t.Run(test.name, func(t *testing.T) {
-			valid, err := validateDepositTrie(test.trieCreator(), test.silaExecutionDataCreator())
+			valid, err := validateDepositTrie(test.trieCreator(), test.silaDataCreator())
 			assert.Equal(t, test.success, valid)
 			if valid {
 				assert.NoError(t, err)
@@ -2359,7 +2359,7 @@ func TestProposer_ValidateDepositTrie(t *testing.T) {
 	}
 }
 
-func TestProposer_SilaExecutionData_MajorityVote_SpansGenesis(t *testing.T) {
+func TestProposer_SilaData_MajorityVote_SpansGenesis(t *testing.T) {
 	ctx := t.Context()
 	// Voting period will span genesis, causing the special case for pre-mined genesis to kick in.
 	// In other words some part of the valid time range is before genesis, so querying the block cache would fail
@@ -2380,22 +2380,22 @@ func TestProposer_SilaExecutionData_MajorityVote_SpansGenesis(t *testing.T) {
 		SilaBlockFetcher:  p,
 		BlockFetcher:      p,
 		DepositFetcher:    depositCache,
-		HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{BlockHash: headBlockHash, DepositCount: 0}},
+		HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{BlockHash: headBlockHash, DepositCount: 0}},
 	}
 
 	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 		Slot: slot,
-		SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+		SilaDataVotes: []*silapb.SilaData{
 			{BlockHash: []byte("earliest"), DepositCount: 1},
 		},
 	})
 	require.NoError(t, err)
-	majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+	majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 	require.NoError(t, err)
-	assert.DeepEqual(t, headBlockHash, majorityVoteSilaExecutionData.BlockHash)
+	assert.DeepEqual(t, headBlockHash, majorityVoteSilaData.BlockHash)
 }
 
-func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
+func TestProposer_SilaData_MajorityVote(t *testing.T) {
 	followDistanceSecs := params.BeaconConfig().SilaExecutionFollowDistance * params.BeaconConfig().SecondsPerSilaBlock
 	followSlots := followDistanceSecs / params.BeaconConfig().SecondsPerSlot
 	slot := primitives.Slot(64 + followSlots)
@@ -2429,7 +2429,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("first"), DepositCount: 1},
 				{BlockHash: []byte("first"), DepositCount: 1},
 				{BlockHash: []byte("second"), DepositCount: 1},
@@ -2443,14 +2443,14 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("first")
 		assert.DeepEqual(t, expectedHash, hash)
@@ -2465,7 +2465,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("earliest"), DepositCount: 1},
 				{BlockHash: []byte("earliest"), DepositCount: 1},
 				{BlockHash: []byte("second"), DepositCount: 1},
@@ -2479,14 +2479,14 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("earliest")
 		assert.DeepEqual(t, expectedHash, hash)
@@ -2501,7 +2501,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("first"), DepositCount: 1},
 				{BlockHash: []byte("latest"), DepositCount: 1},
 				{BlockHash: []byte("latest"), DepositCount: 1},
@@ -2515,14 +2515,14 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("latest")
 		assert.DeepEqual(t, expectedHash, hash)
@@ -2538,7 +2538,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("before_range"), DepositCount: 1},
 				{BlockHash: []byte("before_range"), DepositCount: 1},
 				{BlockHash: []byte("first"), DepositCount: 1},
@@ -2552,14 +2552,14 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("first")
 		assert.DeepEqual(t, expectedHash, hash)
@@ -2575,7 +2575,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("first"), DepositCount: 1},
 				{BlockHash: []byte("after_range"), DepositCount: 1},
 				{BlockHash: []byte("after_range"), DepositCount: 1},
@@ -2589,14 +2589,14 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("first")
 		assert.DeepEqual(t, expectedHash, hash)
@@ -2612,7 +2612,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("unknown"), DepositCount: 1},
 				{BlockHash: []byte("unknown"), DepositCount: 1},
 				{BlockHash: []byte("first"), DepositCount: 1},
@@ -2626,20 +2626,20 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("first")
 		assert.DeepEqual(t, expectedHash, hash)
 	})
 
-	t.Run("no blocks in range - choose current silaExecutionData", func(t *testing.T) {
+	t.Run("no blocks in range - choose current silaData", func(t *testing.T) {
 		p := mockExecution.New().
 			InsertBlock(49, earliestValidTime-1, []byte("before_range")).
 			InsertBlock(101, latestValidTime+1, []byte("after_range"))
@@ -2649,21 +2649,21 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 		})
 		require.NoError(t, err)
 
-		currentSilaExecutionData := &silapb.SilaExecutionData{DepositCount: 1, BlockHash: []byte("current")}
+		currentSilaData := &silapb.SilaData{DepositCount: 1, BlockHash: []byte("current")}
 		ps := &Server{
 			ChainStartFetcher: p,
 			SilaExecutionInfoFetcher:   p,
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: currentSilaExecutionData},
+			HeadFetcher:       &mock.ChainService{SILASilaData: currentSilaData},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("current")
 		assert.DeepEqual(t, expectedHash, hash)
@@ -2678,7 +2678,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("before_range"), DepositCount: 1},
 				{BlockHash: []byte("after_range"), DepositCount: 1},
 			},
@@ -2691,14 +2691,14 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := make([]byte, 32)
 		copy(expectedHash, "second")
@@ -2712,7 +2712,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot:          slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{}})
+			SilaDataVotes: []*silapb.SilaData{}})
 		require.NoError(t, err)
 
 		ps := &Server{
@@ -2721,21 +2721,21 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := make([]byte, 32)
 		copy(expectedHash, "latest")
 		assert.DeepEqual(t, expectedHash, hash)
 	})
 
-	t.Run("no votes and more recent block has less deposits - choose current silaExecutionData", func(t *testing.T) {
+	t.Run("no votes and more recent block has less deposits - choose current silaData", func(t *testing.T) {
 		p := mockExecution.New().
 			InsertBlock(50, earliestValidTime, []byte("earliest")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
@@ -2745,22 +2745,22 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 		})
 		require.NoError(t, err)
 
-		// Set the deposit count in current silaExecutionData to exceed the latest most recent block's deposit count.
-		currentSilaExecutionData := &silapb.SilaExecutionData{DepositCount: 2, BlockHash: []byte("current")}
+		// Set the deposit count in current silaData to exceed the latest most recent block's deposit count.
+		currentSilaData := &silapb.SilaData{DepositCount: 2, BlockHash: []byte("current")}
 		ps := &Server{
 			ChainStartFetcher: p,
 			SilaExecutionInfoFetcher:   p,
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: currentSilaExecutionData},
+			HeadFetcher:       &mock.ChainService{SILASilaData: currentSilaData},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("current")
 		assert.DeepEqual(t, expectedHash, hash)
@@ -2776,7 +2776,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("first"), DepositCount: 1},
 				{BlockHash: []byte("second"), DepositCount: 1},
 			},
@@ -2789,14 +2789,14 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("second")
 		assert.DeepEqual(t, expectedHash, hash)
@@ -2812,7 +2812,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("no_new_deposits"), DepositCount: 0},
 				{BlockHash: []byte("no_new_deposits"), DepositCount: 0},
 				{BlockHash: []byte("second"), DepositCount: 1},
@@ -2826,14 +2826,14 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("second")
 		assert.DeepEqual(t, expectedHash, hash)
@@ -2845,7 +2845,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("earliest"), DepositCount: 1},
 			},
 		})
@@ -2857,14 +2857,14 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("earliest")
 		assert.DeepEqual(t, expectedHash, hash)
@@ -2879,7 +2879,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("before_range"), DepositCount: 1},
 			},
 		})
@@ -2891,26 +2891,26 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 1}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 1}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := make([]byte, 32)
 		copy(expectedHash, "first")
 		assert.DeepEqual(t, expectedHash, hash)
 	})
 
-	t.Run("no deposits - choose chain start silaExecutionData", func(t *testing.T) {
+	t.Run("no deposits - choose chain start silaData", func(t *testing.T) {
 		p := mockExecution.New().
 			InsertBlock(50, earliestValidTime, []byte("earliest")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
-		p.SilaExecutionData = &silapb.SilaExecutionData{
-			BlockHash: []byte("silaExecutionData"),
+		p.SilaData = &silapb.SilaData{
+			BlockHash: []byte("silaData"),
 		}
 
 		depositCache, err := depositsnapshot.New()
@@ -2918,7 +2918,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
 			Slot: slot,
-			SilaExecutionDataVotes: []*silapb.SilaExecutionData{
+			SilaDataVotes: []*silapb.SilaData{
 				{BlockHash: []byte("earliest"), DepositCount: 1},
 			},
 		})
@@ -2930,25 +2930,25 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 			SilaBlockFetcher:  p,
 			BlockFetcher:      p,
 			DepositFetcher:    depositCache,
-			HeadFetcher:       &mock.ChainService{SILAExecutionData: &silapb.SilaExecutionData{DepositCount: 0}},
+			HeadFetcher:       &mock.ChainService{SILASilaData: &silapb.SilaData{DepositCount: 0}},
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
-		expectedHash := []byte("silaExecutionData")
+		expectedHash := []byte("silaData")
 		assert.DeepEqual(t, expectedHash, hash)
 	})
 
-	t.Run("post electra the head silaExecutionData should be returned", func(t *testing.T) {
+	t.Run("post electra the head silaData should be returned", func(t *testing.T) {
 		p := mockExecution.New().
 			InsertBlock(50, earliestValidTime, []byte("earliest")).
 			InsertBlock(100, latestValidTime, []byte("latest"))
-		p.SilaExecutionData = &silapb.SilaExecutionData{
-			BlockHash: []byte("silaExecutionData"),
+		p.SilaData = &silapb.SilaData{
+			BlockHash: []byte("silaData"),
 		}
 
 		depositCache, err := depositsnapshot.New()
@@ -2956,7 +2956,7 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 
 		beaconState, err := state_native.InitializeFromProtoElectra(&silapb.BeaconStateElectra{
 			Slot:     slot,
-			SilaExecutionData: &silapb.SilaExecutionData{BlockHash: []byte("legacy"), DepositCount: 1},
+			SilaData: &silapb.SilaData{BlockHash: []byte("legacy"), DepositCount: 1},
 		})
 		require.NoError(t, err)
 
@@ -2969,10 +2969,10 @@ func TestProposer_SilaExecutionData_MajorityVote(t *testing.T) {
 		}
 
 		ctx := t.Context()
-		majorityVoteSilaExecutionData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
+		majorityVoteSilaData, err := ps.silaexecDataMajorityVote(ctx, beaconState)
 		require.NoError(t, err)
 
-		hash := majorityVoteSilaExecutionData.BlockHash
+		hash := majorityVoteSilaData.BlockHash
 
 		expectedHash := []byte("legacy")
 		assert.DeepEqual(t, expectedHash, hash)
@@ -3073,7 +3073,7 @@ func TestProposer_FilterAttestation(t *testing.T) {
 	}
 }
 
-func TestProposer_Deposits_ReturnsEmptyList_IfLatestSilaExecutionDataEqGenesisSilaBlock(t *testing.T) {
+func TestProposer_Deposits_ReturnsEmptyList_IfLatestSilaDataEqGenesisSilaBlock(t *testing.T) {
 	ctx := t.Context()
 
 	height := big.NewInt(int64(params.BeaconConfig().SilaExecutionFollowDistance))
@@ -3086,7 +3086,7 @@ func TestProposer_Deposits_ReturnsEmptyList_IfLatestSilaExecutionDataEqGenesisSi
 	}
 
 	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			BlockHash:   bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot: make([]byte, 32),
 		},
@@ -3167,7 +3167,7 @@ func TestProposer_Deposits_ReturnsEmptyList_IfLatestSilaExecutionDataEqGenesisSi
 
 	// It should also return the recent deposits after their follow window.
 	p.LatestBlockNumber = big.NewInt(0).Add(p.LatestBlockNumber, big.NewInt(10000))
-	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaExecutionData{})
+	deposits, err := bs.deposits(ctx, beaconState, &silapb.SilaData{})
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(deposits), "Received unexpected number of pending deposits")
 }

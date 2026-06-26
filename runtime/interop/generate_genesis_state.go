@@ -60,7 +60,7 @@ func GenerateGenesisStateFromDepositData(
 	if genesisTime == 0 {
 		genesisTime = uint64(time.Now().Unix())
 	}
-	beaconState, err := coreState.GenesisBeaconState(ctx, deposits, genesisTime, &silapb.SilaExecutionData{
+	beaconState, err := coreState.GenesisBeaconState(ctx, deposits, genesisTime, &silapb.SilaData{
 		DepositRoot:  root[:],
 		DepositCount: uint64(len(deposits)),
 		BlockHash:    mockSilaBlockHash,

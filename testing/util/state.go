@@ -83,7 +83,7 @@ func NewBeaconState(options ...NewBeaconStateOption) (state.BeaconState, error) 
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
 		Validators:                 make([]*silapb.Validator, 0),
 		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
@@ -91,7 +91,7 @@ func NewBeaconState(options ...NewBeaconStateOption) (state.BeaconState, error) 
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		SilaExecutionDataVotes:               make([]*silapb.SilaExecutionData, 0),
+		SilaDataVotes:               make([]*silapb.SilaData, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
 		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
@@ -130,7 +130,7 @@ func NewBeaconStateAltair(options ...func(state *silapb.BeaconStateAltair) error
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
 		Validators:                 make([]*silapb.Validator, 0),
 		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
@@ -138,7 +138,7 @@ func NewBeaconStateAltair(options ...func(state *silapb.BeaconStateAltair) error
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		SilaExecutionDataVotes:               make([]*silapb.SilaExecutionData, 0),
+		SilaDataVotes:               make([]*silapb.SilaData, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
 		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
@@ -185,7 +185,7 @@ func NewBeaconStateBellatrix(options ...func(state *silapb.BeaconStateBellatrix)
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
 		Validators:                 make([]*silapb.Validator, 0),
 		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
@@ -193,7 +193,7 @@ func NewBeaconStateBellatrix(options ...func(state *silapb.BeaconStateBellatrix)
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		SilaExecutionDataVotes:               make([]*silapb.SilaExecutionData, 0),
+		SilaDataVotes:               make([]*silapb.SilaData, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
 		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
@@ -252,7 +252,7 @@ func NewBeaconStateCapella(options ...func(state *silapb.BeaconStateCapella) err
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
 		Validators:                 make([]*silapb.Validator, 0),
 		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
@@ -260,7 +260,7 @@ func NewBeaconStateCapella(options ...func(state *silapb.BeaconStateCapella) err
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		SilaExecutionDataVotes:               make([]*silapb.SilaExecutionData, 0),
+		SilaDataVotes:               make([]*silapb.SilaData, 0),
 		HistoricalSummaries:         make([]*silapb.HistoricalSummary, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
 		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
@@ -320,7 +320,7 @@ func NewBeaconStateDeneb(options ...func(state *silapb.BeaconStateDeneb) error) 
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
 		Validators:                 make([]*silapb.Validator, 0),
 		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
@@ -328,7 +328,7 @@ func NewBeaconStateDeneb(options ...func(state *silapb.BeaconStateDeneb) error) 
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		SilaExecutionDataVotes:               make([]*silapb.SilaExecutionData, 0),
+		SilaDataVotes:               make([]*silapb.SilaData, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
 		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
@@ -388,7 +388,7 @@ func NewBeaconStateElectra(options ...func(state *silapb.BeaconStateElectra) err
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
 		Validators:                 make([]*silapb.Validator, 0),
 		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
@@ -396,7 +396,7 @@ func NewBeaconStateElectra(options ...func(state *silapb.BeaconStateElectra) err
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		SilaExecutionDataVotes:               make([]*silapb.SilaExecutionData, 0),
+		SilaDataVotes:               make([]*silapb.SilaData, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
 		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
@@ -456,7 +456,7 @@ func NewBeaconStateFulu(options ...func(state *silapb.BeaconStateFulu) error) (s
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
 		Validators:                 make([]*silapb.Validator, 0),
 		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
@@ -464,7 +464,7 @@ func NewBeaconStateFulu(options ...func(state *silapb.BeaconStateFulu) error) (s
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		SilaExecutionDataVotes:               make([]*silapb.SilaExecutionData, 0),
+		SilaDataVotes:               make([]*silapb.SilaData, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
 		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
@@ -541,7 +541,7 @@ func NewBeaconStateGloas(options ...func(state *silapb.BeaconStateGloas) error) 
 		RandaoMixes:                filledByteSlice2D(uint64(params.BeaconConfig().EpochsPerHistoricalVector), 32),
 		Validators:                 make([]*silapb.Validator, 0),
 		CurrentJustifiedCheckpoint: &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
@@ -549,7 +549,7 @@ func NewBeaconStateGloas(options ...func(state *silapb.BeaconStateGloas) error) 
 			PreviousVersion: make([]byte, 4),
 			CurrentVersion:  make([]byte, 4),
 		},
-		SilaExecutionDataVotes:               make([]*silapb.SilaExecutionData, 0),
+		SilaDataVotes:               make([]*silapb.SilaData, 0),
 		HistoricalRoots:             make([][]byte, 0),
 		JustificationBits:           bitfield.Bitvector4{0x0},
 		FinalizedCheckpoint:         &silapb.Checkpoint{Root: make([]byte, fieldparams.RootLength)},

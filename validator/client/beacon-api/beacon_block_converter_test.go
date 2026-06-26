@@ -37,7 +37,7 @@ func TestGetBeaconBlockConverter_Phase0Error(t *testing.T) {
 			expectedErrorMessage: "silaexec data is nil",
 			generateData: func() *structs.BeaconBlock {
 				beaconBlock := testhelpers.GenerateJsonPhase0BeaconBlock()
-				beaconBlock.Body.SilaExecutionData = nil
+				beaconBlock.Body.SilaData = nil
 				return beaconBlock
 			},
 		},
@@ -91,7 +91,7 @@ func TestGetBeaconBlockConverter_Phase0Error(t *testing.T) {
 			expectedErrorMessage: "failed to decode deposit root `bar`",
 			generateData: func() *structs.BeaconBlock {
 				beaconBlock := testhelpers.GenerateJsonPhase0BeaconBlock()
-				beaconBlock.Body.SilaExecutionData.DepositRoot = "bar"
+				beaconBlock.Body.SilaData.DepositRoot = "bar"
 				return beaconBlock
 			},
 		},
@@ -100,7 +100,7 @@ func TestGetBeaconBlockConverter_Phase0Error(t *testing.T) {
 			expectedErrorMessage: "failed to parse deposit count `foo`",
 			generateData: func() *structs.BeaconBlock {
 				beaconBlock := testhelpers.GenerateJsonPhase0BeaconBlock()
-				beaconBlock.Body.SilaExecutionData.DepositCount = "foo"
+				beaconBlock.Body.SilaData.DepositCount = "foo"
 				return beaconBlock
 			},
 		},
@@ -109,7 +109,7 @@ func TestGetBeaconBlockConverter_Phase0Error(t *testing.T) {
 			expectedErrorMessage: "failed to decode block hash `bar`",
 			generateData: func() *structs.BeaconBlock {
 				beaconBlock := testhelpers.GenerateJsonPhase0BeaconBlock()
-				beaconBlock.Body.SilaExecutionData.BlockHash = "bar"
+				beaconBlock.Body.SilaData.BlockHash = "bar"
 				return beaconBlock
 			},
 		},
@@ -217,7 +217,7 @@ func TestGetBeaconBlockConverter_AltairError(t *testing.T) {
 			expectedErrorMessage: "failed to get the phase0 fields of the altair block",
 			generateData: func() *structs.BeaconBlockAltair {
 				beaconBlock := testhelpers.GenerateJsonAltairBeaconBlock()
-				beaconBlock.Body.SilaExecutionData = nil
+				beaconBlock.Body.SilaData = nil
 				return beaconBlock
 			},
 		},
@@ -289,7 +289,7 @@ func TestGetBeaconBlockConverter_BellatrixError(t *testing.T) {
 			expectedErrorMessage: "failed to get the altair fields of the bellatrix block",
 			generateData: func() *structs.BeaconBlockBellatrix {
 				beaconBlock := testhelpers.GenerateJsonBellatrixBeaconBlock()
-				beaconBlock.Body.SilaExecutionData = nil
+				beaconBlock.Body.SilaData = nil
 				return beaconBlock
 			},
 		},
@@ -469,7 +469,7 @@ func TestGetBeaconBlockConverter_CapellaError(t *testing.T) {
 			expectedErrorMessage: "failed to get the bellatrix fields of the capella block",
 			generateData: func() *structs.BeaconBlockCapella {
 				beaconBlock := testhelpers.GenerateJsonCapellaBeaconBlock()
-				beaconBlock.Body.SilaExecutionData = nil
+				beaconBlock.Body.SilaData = nil
 				return beaconBlock
 			},
 		},

@@ -28,7 +28,7 @@ var (
 //  def process_operations(state: BeaconState, body: BeaconBlockBody) -> None:
 //      # [Modified in Electra:SIP6110]
 //      # Disable former deposit mechanism once all prior deposits are processed
-//      silaexec_deposit_index_limit = min(state.sila_execution_data.deposit_count, state.deposit_requests_start_index)
+//      silaexec_deposit_index_limit = min(state.sila_data.deposit_count, state.deposit_requests_start_index)
 //      if state.silaexec_deposit_index < silaexec_deposit_index_limit:
 //          assert len(body.deposits) == min(MAX_DEPOSITS, silaexec_deposit_index_limit - state.silaexec_deposit_index)
 //      else:

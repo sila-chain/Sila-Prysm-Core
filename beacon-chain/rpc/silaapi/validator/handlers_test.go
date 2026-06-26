@@ -783,7 +783,7 @@ func TestSubmitSyncCommitteeSubscription(t *testing.T) {
 	genesis := util.NewBeaconBlock()
 	deposits, _, err := util.DeterministicDepositsAndKeys(64)
 	require.NoError(t, err)
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := util.DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 	bs, err := util.GenesisBeaconState(t.Context(), deposits, 0, silaexecData)
 	require.NoError(t, err, "Could not set up genesis state")
@@ -953,7 +953,7 @@ func TestSubmitBeaconCommitteeSubscription(t *testing.T) {
 	depChainStart := params.BeaconConfig().MinGenesisActiveValidatorCount
 	deposits, _, err := util.DeterministicDepositsAndKeys(depChainStart)
 	require.NoError(t, err)
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := util.DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 	bs, err := transition.GenesisBeaconState(t.Context(), deposits, 0, silaexecData)
 	require.NoError(t, err, "Could not set up genesis state")
@@ -2051,7 +2051,7 @@ func TestGetAttesterDuties(t *testing.T) {
 	depChainStart := params.BeaconConfig().MinGenesisActiveValidatorCount
 	deposits, _, err := util.DeterministicDepositsAndKeys(depChainStart)
 	require.NoError(t, err)
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := util.DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 	bs, err := transition.GenesisBeaconState(t.Context(), deposits, 0, silaexecData)
 	require.NoError(t, err, "Could not set up genesis state")
@@ -2381,7 +2381,7 @@ func TestGetProposerDuties(t *testing.T) {
 	depChainStart := params.BeaconConfig().MinGenesisActiveValidatorCount
 	deposits, _, err := util.DeterministicDepositsAndKeys(depChainStart)
 	require.NoError(t, err)
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := util.DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 	genesisRoot, err := genesis.Block.HashTreeRoot()
 	require.NoError(t, err)
@@ -2642,7 +2642,7 @@ func TestGetProposerDutiesV2(t *testing.T) {
 	depChainStart := params.BeaconConfig().MinGenesisActiveValidatorCount
 	deposits, _, err := util.DeterministicDepositsAndKeys(depChainStart)
 	require.NoError(t, err)
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := util.DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 	genesisRoot, err := genesis.Block.HashTreeRoot()
 	require.NoError(t, err)

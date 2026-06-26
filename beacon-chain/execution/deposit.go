@@ -23,9 +23,9 @@ func SilaDepositAddress() (string, error) {
 	return address, nil
 }
 
-func (s *Service) processDeposit(ctx context.Context, silaexecData *silapb.SilaExecutionData, deposit *silapb.Deposit) error {
+func (s *Service) processDeposit(ctx context.Context, silaexecData *silapb.SilaData, deposit *silapb.Deposit) error {
 	var err error
-	if err := s.preGenesisState.SetSilaExecutionData(silaexecData); err != nil {
+	if err := s.preGenesisState.SetSilaData(silaexecData); err != nil {
 		return err
 	}
 	// preGenesisState is always a genesis state ( phase 0 ) and so state version does not need to be checked here for post electra deposit processing

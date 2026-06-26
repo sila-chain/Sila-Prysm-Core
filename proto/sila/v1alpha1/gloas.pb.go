@@ -648,7 +648,7 @@ func (x *BeaconBlockGloas) GetBody() *BeaconBlockBodyGloas {
 type BeaconBlockBodyGloas struct {
 	state                     protoimpl.MessageState        `protogen:"open.v1"`
 	RandaoReveal              []byte                        `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData                  *SilaExecutionData                     `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData                  *SilaData                     `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti                  []byte                        `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings         []*ProposerSlashing           `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings         []*AttesterSlashingElectra    `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"1"`
@@ -701,9 +701,9 @@ func (x *BeaconBlockBodyGloas) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BeaconBlockBodyGloas) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconBlockBodyGloas) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -847,8 +847,8 @@ type BeaconStateGloas struct {
 	BlockRoots                    [][]byte                                                                     `protobuf:"bytes,2002,rep,name=block_roots,json=blockRoots,proto3" json:"block_roots,omitempty" ssz-size:"8192,32"`
 	StateRoots                    [][]byte                                                                     `protobuf:"bytes,2003,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" ssz-size:"8192,32"`
 	HistoricalRoots               [][]byte                                                                     `protobuf:"bytes,2004,rep,name=historical_roots,json=historicalRoots,proto3" json:"historical_roots,omitempty" ssz-max:"16777216" ssz-size:"?,32"`
-	SilaExecutionData                      *SilaExecutionData                                                                    `protobuf:"bytes,3001,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
-	SilaExecutionDataVotes                 []*SilaExecutionData                                                                  `protobuf:"bytes,3002,rep,name=sila_execution_data_votes,json=silaExecutionDataVotes,proto3" json:"sila_execution_data_votes,omitempty" ssz-max:"2048"`
+	SilaData                      *SilaData                                                                    `protobuf:"bytes,3001,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
+	SilaDataVotes                 []*SilaData                                                                  `protobuf:"bytes,3002,rep,name=sila_data_votes,json=silaDataVotes,proto3" json:"sila_data_votes,omitempty" ssz-max:"2048"`
 	SilaExecutionDepositIndex              uint64                                                                       `protobuf:"varint,3003,opt,name=silaexec_deposit_index,json=silaExecutionDepositIndex,proto3" json:"silaexec_deposit_index,omitempty"`
 	Validators                    []*Validator                                                                 `protobuf:"bytes,4001,rep,name=validators,proto3" json:"validators,omitempty" ssz-max:"1099511627776"`
 	Balances                      []uint64                                                                     `protobuf:"varint,4002,rep,packed,name=balances,proto3" json:"balances,omitempty" ssz-max:"1099511627776"`
@@ -975,16 +975,16 @@ func (x *BeaconStateGloas) GetHistoricalRoots() [][]byte {
 	return nil
 }
 
-func (x *BeaconStateGloas) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconStateGloas) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
 
-func (x *BeaconStateGloas) GetSilaExecutionDataVotes() []*SilaExecutionData {
+func (x *BeaconStateGloas) GetSilaDataVotes() []*SilaData {
 	if x != nil {
-		return x.SilaExecutionDataVotes
+		return x.SilaDataVotes
 	}
 	return nil
 }
@@ -2899,7 +2899,7 @@ var file_proto_sila_v1alpha1_gloas_proto_goTypes = []any{
 	(*WireBlindedSilaPayloadEnvelope)(nil),       // 22: sila.eth.v1alpha1.WireBlindedSilaPayloadEnvelope
 	(*SignedWireBlindedSilaPayloadEnvelope)(nil), // 23: sila.eth.v1alpha1.SignedWireBlindedSilaPayloadEnvelope
 	(*Builder)(nil),                                   // 24: sila.eth.v1alpha1.Builder
-	(*SilaExecutionData)(nil),                                  // 25: sila.eth.v1alpha1.SilaExecutionData
+	(*SilaData)(nil),                                  // 25: sila.eth.v1alpha1.SilaData
 	(*ProposerSlashing)(nil),                          // 26: sila.eth.v1alpha1.ProposerSlashing
 	(*AttesterSlashingElectra)(nil),                   // 27: sila.eth.v1alpha1.AttesterSlashingElectra
 	(*AttestationElectra)(nil),                        // 28: sila.eth.v1alpha1.AttestationElectra
@@ -2927,7 +2927,7 @@ var file_proto_sila_v1alpha1_gloas_proto_depIdxs = []int32{
 	5,  // 3: sila.eth.v1alpha1.PayloadAttestation.data:type_name -> sila.eth.v1alpha1.PayloadAttestationData
 	5,  // 4: sila.eth.v1alpha1.PayloadAttestationMessage.data:type_name -> sila.eth.v1alpha1.PayloadAttestationData
 	9,  // 5: sila.eth.v1alpha1.BeaconBlockGloas.body:type_name -> sila.eth.v1alpha1.BeaconBlockBodyGloas
-	25, // 6: sila.eth.v1alpha1.BeaconBlockBodyGloas.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	25, // 6: sila.eth.v1alpha1.BeaconBlockBodyGloas.sila_data:type_name -> sila.eth.v1alpha1.SilaData
 	26, // 7: sila.eth.v1alpha1.BeaconBlockBodyGloas.proposer_slashings:type_name -> sila.eth.v1alpha1.ProposerSlashing
 	27, // 8: sila.eth.v1alpha1.BeaconBlockBodyGloas.attester_slashings:type_name -> sila.eth.v1alpha1.AttesterSlashingElectra
 	28, // 9: sila.eth.v1alpha1.BeaconBlockBodyGloas.attestations:type_name -> sila.eth.v1alpha1.AttestationElectra
@@ -2941,8 +2941,8 @@ var file_proto_sila_v1alpha1_gloas_proto_depIdxs = []int32{
 	8,  // 17: sila.eth.v1alpha1.SignedBeaconBlockGloas.block:type_name -> sila.eth.v1alpha1.BeaconBlockGloas
 	34, // 18: sila.eth.v1alpha1.BeaconStateGloas.fork:type_name -> sila.eth.v1alpha1.Fork
 	35, // 19: sila.eth.v1alpha1.BeaconStateGloas.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
-	25, // 20: sila.eth.v1alpha1.BeaconStateGloas.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
-	25, // 21: sila.eth.v1alpha1.BeaconStateGloas.sila_execution_data_votes:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	25, // 20: sila.eth.v1alpha1.BeaconStateGloas.sila_data:type_name -> sila.eth.v1alpha1.SilaData
+	25, // 21: sila.eth.v1alpha1.BeaconStateGloas.sila_data_votes:type_name -> sila.eth.v1alpha1.SilaData
 	36, // 22: sila.eth.v1alpha1.BeaconStateGloas.validators:type_name -> sila.eth.v1alpha1.Validator
 	37, // 23: sila.eth.v1alpha1.BeaconStateGloas.previous_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	37, // 24: sila.eth.v1alpha1.BeaconStateGloas.current_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint

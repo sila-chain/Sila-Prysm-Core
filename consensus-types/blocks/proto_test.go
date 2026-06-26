@@ -1352,7 +1352,7 @@ func bodyPbPhase0() *eth.BeaconBlockBody {
 	f := getFields()
 	return &eth.BeaconBlockBody{
 		RandaoReveal: f.sig[:],
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1370,7 +1370,7 @@ func bodyPbAltair() *eth.BeaconBlockBodyAltair {
 	f := getFields()
 	return &eth.BeaconBlockBodyAltair{
 		RandaoReveal: f.sig[:],
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1389,7 +1389,7 @@ func bodyPbBellatrix() *eth.BeaconBlockBodyBellatrix {
 	f := getFields()
 	return &eth.BeaconBlockBodyBellatrix{
 		RandaoReveal: f.sig[:],
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1409,7 +1409,7 @@ func bodyPbBlindedBellatrix() *eth.BlindedBeaconBlockBodyBellatrix {
 	f := getFields()
 	return &eth.BlindedBeaconBlockBodyBellatrix{
 		RandaoReveal: f.sig[:],
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1429,7 +1429,7 @@ func bodyPbCapella() *eth.BeaconBlockBodyCapella {
 	f := getFields()
 	return &eth.BeaconBlockBodyCapella{
 		RandaoReveal: f.sig[:],
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1450,7 +1450,7 @@ func bodyPbBlindedCapella() *eth.BlindedBeaconBlockBodyCapella {
 	f := getFields()
 	return &eth.BlindedBeaconBlockBodyCapella{
 		RandaoReveal: f.sig[:],
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1471,7 +1471,7 @@ func bodyPbDeneb() *eth.BeaconBlockBodyDeneb {
 	f := getFields()
 	return &eth.BeaconBlockBodyDeneb{
 		RandaoReveal: f.sig[:],
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1493,7 +1493,7 @@ func bodyPbBlindedDeneb() *eth.BlindedBeaconBlockBodyDeneb {
 	f := getFields()
 	return &eth.BlindedBeaconBlockBodyDeneb{
 		RandaoReveal: f.sig[:],
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1515,7 +1515,7 @@ func bodyPbElectra() *eth.BeaconBlockBodyElectra {
 	f := getFields()
 	return &eth.BeaconBlockBodyElectra{
 		RandaoReveal: f.sig[:],
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1538,7 +1538,7 @@ func bodyPbBlindedElectra() *eth.BlindedBeaconBlockBodyElectra {
 	f := getFields()
 	return &eth.BlindedBeaconBlockBodyElectra{
 		RandaoReveal: f.sig[:],
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1562,7 +1562,7 @@ func bodyPhase0() *BeaconBlockBody {
 	return &BeaconBlockBody{
 		version:      version.Phase0,
 		randaoReveal: f.sig,
-		silaexecData: &eth.SilaExecutionData{
+		silaexecData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1581,7 +1581,7 @@ func bodyAltair() *BeaconBlockBody {
 	return &BeaconBlockBody{
 		version:      version.Altair,
 		randaoReveal: f.sig,
-		silaexecData: &eth.SilaExecutionData{
+		silaexecData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1603,7 +1603,7 @@ func bodyBellatrix(t *testing.T) *BeaconBlockBody {
 	return &BeaconBlockBody{
 		version:      version.Bellatrix,
 		randaoReveal: f.sig,
-		silaexecData: &eth.SilaExecutionData{
+		silaexecData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1626,7 +1626,7 @@ func bodyBlindedBellatrix(t *testing.T) *BeaconBlockBody {
 	return &BeaconBlockBody{
 		version:      version.Bellatrix,
 		randaoReveal: f.sig,
-		silaexecData: &eth.SilaExecutionData{
+		silaexecData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1649,7 +1649,7 @@ func bodyCapella(t *testing.T) *BeaconBlockBody {
 	return &BeaconBlockBody{
 		version:      version.Capella,
 		randaoReveal: f.sig,
-		silaexecData: &eth.SilaExecutionData{
+		silaexecData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1673,7 +1673,7 @@ func bodyBlindedCapella(t *testing.T) *BeaconBlockBody {
 	return &BeaconBlockBody{
 		version:      version.Capella,
 		randaoReveal: f.sig,
-		silaexecData: &eth.SilaExecutionData{
+		silaexecData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1697,7 +1697,7 @@ func bodyDeneb(t *testing.T) *BeaconBlockBody {
 	return &BeaconBlockBody{
 		version:      version.Deneb,
 		randaoReveal: f.sig,
-		silaexecData: &eth.SilaExecutionData{
+		silaexecData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1722,7 +1722,7 @@ func bodyBlindedDeneb(t *testing.T) *BeaconBlockBody {
 	return &BeaconBlockBody{
 		version:      version.Deneb,
 		randaoReveal: f.sig,
-		silaexecData: &eth.SilaExecutionData{
+		silaexecData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1747,7 +1747,7 @@ func bodyElectra(t *testing.T) *BeaconBlockBody {
 	return &BeaconBlockBody{
 		version:      version.Electra,
 		randaoReveal: f.sig,
-		silaexecData: &eth.SilaExecutionData{
+		silaexecData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],
@@ -1773,7 +1773,7 @@ func bodyBlindedElectra(t *testing.T) *BeaconBlockBody {
 	return &BeaconBlockBody{
 		version:      version.Electra,
 		randaoReveal: f.sig,
-		silaexecData: &eth.SilaExecutionData{
+		silaexecData: &eth.SilaData{
 			DepositRoot:  f.root[:],
 			DepositCount: 128,
 			BlockHash:    f.root[:],

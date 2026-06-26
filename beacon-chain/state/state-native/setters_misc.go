@@ -24,7 +24,7 @@ import (
 // fields except for the following below.
 // 1) BlockRoots
 // 2) StateRoots
-// 3) SilaExecutionDataVotes
+// 3) SilaDataVotes
 // 4) RandaoMixes
 // 5) HistoricalRoots
 // 6) CurrentEpochAttestations

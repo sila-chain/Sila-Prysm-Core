@@ -42,7 +42,7 @@ var (
 type BeaconBlockBody struct {
 	version                   int
 	randaoReveal              [field_params.BLSSignatureLength]byte
-	silaexecData                  *eth.SilaExecutionData
+	silaexecData                  *eth.SilaData
 	graffiti                  [field_params.RootLength]byte
 	proposerSlashings         []*eth.ProposerSlashing
 	attesterSlashings         []*eth.AttesterSlashing
@@ -52,8 +52,8 @@ type BeaconBlockBody struct {
 	deposits                  []*eth.Deposit
 	voluntaryExits            []*eth.SignedVoluntaryExit
 	syncAggregate             *eth.SyncAggregate
-	silaPayload          interfaces.ExecutionData
-	silaPayloadHeader    interfaces.ExecutionData
+	silaPayload          interfaces.SilaData
+	silaPayloadHeader    interfaces.SilaData
 	blsToSilaChanges     []*eth.SignedBLSToSilaChange
 	blobKzgCommitments        [][]byte
 	silaRequests         *silaenginev1.SilaRequests

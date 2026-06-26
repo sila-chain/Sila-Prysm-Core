@@ -281,7 +281,7 @@ func BuildSignedBeaconBlock(blk interfaces.ReadOnlyBeaconBlock, signature []byte
 	}
 }
 
-func getWrappedPayload(payload any) (wrappedPayload interfaces.ExecutionData, wrapErr error) {
+func getWrappedPayload(payload any) (wrappedPayload interfaces.SilaData, wrapErr error) {
 	switch p := payload.(type) {
 	case *silaenginev1.SilaPayload:
 		wrappedPayload, wrapErr = WrappedSilaPayload(p)
@@ -295,8 +295,8 @@ func getWrappedPayload(payload any) (wrappedPayload interfaces.ExecutionData, wr
 	return wrappedPayload, wrapErr
 }
 
-func checkPayloadAgainstHeader(wrappedPayload, payloadHeader interfaces.ExecutionData) error {
-	empty, err := IsEmptyExecutionData(wrappedPayload)
+func checkPayloadAgainstHeader(wrappedPayload, payloadHeader interfaces.SilaData) error {
+	empty, err := IsEmptySilaData(wrappedPayload)
 	if err != nil {
 		return err
 	}
@@ -391,7 +391,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				StateRoot:     stateRoot[:],
 				Body: &eth.BeaconBlockBodyBellatrix{
 					RandaoReveal:      randaoReveal[:],
-					SilaExecutionData:          b.Body().SilaExecutionData(),
+					SilaData:          b.Body().SilaData(),
 					Graffiti:          graffiti[:],
 					ProposerSlashings: b.Body().ProposerSlashings(),
 					AttesterSlashings: attSlashings,
@@ -443,7 +443,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				StateRoot:     stateRoot[:],
 				Body: &eth.BeaconBlockBodyCapella{
 					RandaoReveal:          randaoReveal[:],
-					SilaExecutionData:              b.Body().SilaExecutionData(),
+					SilaData:              b.Body().SilaData(),
 					Graffiti:              graffiti[:],
 					ProposerSlashings:     b.Body().ProposerSlashings(),
 					AttesterSlashings:     attSlashings,
@@ -500,7 +500,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				StateRoot:     stateRoot[:],
 				Body: &eth.BeaconBlockBodyDeneb{
 					RandaoReveal:          randaoReveal[:],
-					SilaExecutionData:              b.Body().SilaExecutionData(),
+					SilaData:              b.Body().SilaData(),
 					Graffiti:              graffiti[:],
 					ProposerSlashings:     b.Body().ProposerSlashings(),
 					AttesterSlashings:     attSlashings,
@@ -564,7 +564,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				StateRoot:     stateRoot[:],
 				Body: &eth.BeaconBlockBodyElectra{
 					RandaoReveal:          randaoReveal[:],
-					SilaExecutionData:              b.Body().SilaExecutionData(),
+					SilaData:              b.Body().SilaData(),
 					Graffiti:              graffiti[:],
 					ProposerSlashings:     b.Body().ProposerSlashings(),
 					AttesterSlashings:     attSlashings,
@@ -629,7 +629,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				StateRoot:     stateRoot[:],
 				Body: &eth.BeaconBlockBodyElectra{
 					RandaoReveal:          randaoReveal[:],
-					SilaExecutionData:              b.Body().SilaExecutionData(),
+					SilaData:              b.Body().SilaData(),
 					Graffiti:              graffiti[:],
 					ProposerSlashings:     b.Body().ProposerSlashings(),
 					AttesterSlashings:     attSlashings,

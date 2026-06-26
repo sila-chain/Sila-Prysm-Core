@@ -25,7 +25,7 @@ go_library(
         "proposer_deneb.go",
         "proposer_deposits.go",
         "proposer_empty_block.go",
-        "proposer_silaExecutionData.go",
+        "proposer_silaData.go",
         "proposer_sila_payload.go",
         "proposer_exits.go",
         "proposer_bid.go",

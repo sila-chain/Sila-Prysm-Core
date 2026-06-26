@@ -43,7 +43,7 @@ type BeaconBlock struct {
 
 type BeaconBlockBody struct {
 	RandaoReveal      string                 `json:"randao_reveal"`
-	SilaExecutionData          *SilaExecutionData              `json:"sila_execution_data"`
+	SilaData          *SilaData              `json:"sila_data"`
 	Graffiti          string                 `json:"graffiti"`
 	ProposerSlashings []*ProposerSlashing    `json:"proposer_slashings"`
 	AttesterSlashings []*AttesterSlashing    `json:"attester_slashings"`
@@ -100,7 +100,7 @@ type BeaconBlockAltair struct {
 
 type BeaconBlockBodyAltair struct {
 	RandaoReveal      string                 `json:"randao_reveal"`
-	SilaExecutionData          *SilaExecutionData              `json:"sila_execution_data"`
+	SilaData          *SilaData              `json:"sila_data"`
 	Graffiti          string                 `json:"graffiti"`
 	ProposerSlashings []*ProposerSlashing    `json:"proposer_slashings"`
 	AttesterSlashings []*AttesterSlashing    `json:"attester_slashings"`
@@ -139,7 +139,7 @@ type BeaconBlockBellatrix struct {
 
 type BeaconBlockBodyBellatrix struct {
 	RandaoReveal      string                 `json:"randao_reveal"`
-	SilaExecutionData          *SilaExecutionData              `json:"sila_execution_data"`
+	SilaData          *SilaData              `json:"sila_data"`
 	Graffiti          string                 `json:"graffiti"`
 	ProposerSlashings []*ProposerSlashing    `json:"proposer_slashings"`
 	AttesterSlashings []*AttesterSlashing    `json:"attester_slashings"`
@@ -175,7 +175,7 @@ type BlindedBeaconBlockBellatrix struct {
 
 type BlindedBeaconBlockBodyBellatrix struct {
 	RandaoReveal           string                  `json:"randao_reveal"`
-	SilaExecutionData               *SilaExecutionData               `json:"sila_execution_data"`
+	SilaData               *SilaData               `json:"sila_data"`
 	Graffiti               string                  `json:"graffiti"`
 	ProposerSlashings      []*ProposerSlashing     `json:"proposer_slashings"`
 	AttesterSlashings      []*AttesterSlashing     `json:"attester_slashings"`
@@ -215,7 +215,7 @@ type BeaconBlockCapella struct {
 
 type BeaconBlockBodyCapella struct {
 	RandaoReveal          string                        `json:"randao_reveal"`
-	SilaExecutionData              *SilaExecutionData                     `json:"sila_execution_data"`
+	SilaData              *SilaData                     `json:"sila_data"`
 	Graffiti              string                        `json:"graffiti"`
 	ProposerSlashings     []*ProposerSlashing           `json:"proposer_slashings"`
 	AttesterSlashings     []*AttesterSlashing           `json:"attester_slashings"`
@@ -252,7 +252,7 @@ type BlindedBeaconBlockCapella struct {
 
 type BlindedBeaconBlockBodyCapella struct {
 	RandaoReveal           string                         `json:"randao_reveal"`
-	SilaExecutionData               *SilaExecutionData                      `json:"sila_execution_data"`
+	SilaData               *SilaData                      `json:"sila_data"`
 	Graffiti               string                         `json:"graffiti"`
 	ProposerSlashings      []*ProposerSlashing            `json:"proposer_slashings"`
 	AttesterSlashings      []*AttesterSlashing            `json:"attester_slashings"`
@@ -305,7 +305,7 @@ type BeaconBlockDeneb struct {
 
 type BeaconBlockBodyDeneb struct {
 	RandaoReveal          string                        `json:"randao_reveal"`
-	SilaExecutionData              *SilaExecutionData                     `json:"sila_execution_data"`
+	SilaData              *SilaData                     `json:"sila_data"`
 	Graffiti              string                        `json:"graffiti"`
 	ProposerSlashings     []*ProposerSlashing           `json:"proposer_slashings"`
 	AttesterSlashings     []*AttesterSlashing           `json:"attester_slashings"`
@@ -343,7 +343,7 @@ func (s *SignedBlindedBeaconBlockDeneb) SigString() string {
 
 type BlindedBeaconBlockBodyDeneb struct {
 	RandaoReveal           string                        `json:"randao_reveal"`
-	SilaExecutionData               *SilaExecutionData                     `json:"sila_execution_data"`
+	SilaData               *SilaData                     `json:"sila_data"`
 	Graffiti               string                        `json:"graffiti"`
 	ProposerSlashings      []*ProposerSlashing           `json:"proposer_slashings"`
 	AttesterSlashings      []*AttesterSlashing           `json:"attester_slashings"`
@@ -397,7 +397,7 @@ type BeaconBlockElectra struct {
 
 type BeaconBlockBodyElectra struct {
 	RandaoReveal          string                        `json:"randao_reveal"`
-	SilaExecutionData              *SilaExecutionData                     `json:"sila_execution_data"`
+	SilaData              *SilaData                     `json:"sila_data"`
 	Graffiti              string                        `json:"graffiti"`
 	ProposerSlashings     []*ProposerSlashing           `json:"proposer_slashings"`
 	AttesterSlashings     []*AttesterSlashingElectra    `json:"attester_slashings"`
@@ -436,7 +436,7 @@ func (s *SignedBlindedBeaconBlockElectra) SigString() string {
 
 type BlindedBeaconBlockBodyElectra struct {
 	RandaoReveal           string                        `json:"randao_reveal"`
-	SilaExecutionData               *SilaExecutionData                     `json:"sila_execution_data"`
+	SilaData               *SilaData                     `json:"sila_data"`
 	Graffiti               string                        `json:"graffiti"`
 	ProposerSlashings      []*ProposerSlashing           `json:"proposer_slashings"`
 	AttesterSlashings      []*AttesterSlashingElectra    `json:"attester_slashings"`
@@ -549,7 +549,7 @@ type PayloadAttestationMessage struct {
 
 type BeaconBlockBodyGloas struct {
 	RandaoReveal              string                        `json:"randao_reveal"`
-	SilaExecutionData                  *SilaExecutionData                     `json:"sila_execution_data"`
+	SilaData                  *SilaData                     `json:"sila_data"`
 	Graffiti                  string                        `json:"graffiti"`
 	ProposerSlashings         []*ProposerSlashing           `json:"proposer_slashings"`
 	AttesterSlashings         []*AttesterSlashingElectra    `json:"attester_slashings"`

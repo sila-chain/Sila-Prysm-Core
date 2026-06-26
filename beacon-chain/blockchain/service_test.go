@@ -60,11 +60,11 @@ func setupBeaconChain(t *testing.T, beaconDB db.Database) *Service {
 	err = beaconDB.SaveExecutionChainData(ctx, &silapb.SilaExecutionChainData{
 		BeaconState: pbState,
 		Trie:        mockTrie.ToProto(),
-		CurrentSilaExecutionData: &silapb.LatestSilaExecutionData{
+		CurrentSilaData: &silapb.LatestSilaData{
 			BlockHash: make([]byte, 32),
 		},
 		ChainstartData: &silapb.ChainStartData{
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositRoot:  make([]byte, 32),
 				DepositCount: 0,
 				BlockHash:    make([]byte, 32),
@@ -203,7 +203,7 @@ func TestChainService_InitializeBeaconChain(t *testing.T) {
 	require.NoError(t, err)
 	genState, err := transition.EmptyGenesisState()
 	require.NoError(t, err)
-	err = genState.SetSilaExecutionData(&silapb.SilaExecutionData{
+	err = genState.SetSilaData(&silapb.SilaData{
 		DepositRoot:  hashTreeRoot[:],
 		DepositCount: uint64(len(deposits)),
 		BlockHash:    make([]byte, 32),
@@ -212,7 +212,7 @@ func TestChainService_InitializeBeaconChain(t *testing.T) {
 	genState, err = altair.ProcessPreGenesisDeposits(ctx, genState, deposits)
 	require.NoError(t, err)
 
-	_, err = bc.initializeBeaconChain(ctx, time.Unix(0, 0), genState, &silapb.SilaExecutionData{DepositRoot: hashTreeRoot[:], BlockHash: make([]byte, 32)})
+	_, err = bc.initializeBeaconChain(ctx, time.Unix(0, 0), genState, &silapb.SilaData{DepositRoot: hashTreeRoot[:], BlockHash: make([]byte, 32)})
 	require.NoError(t, err)
 
 	_, err = bc.HeadState(ctx)

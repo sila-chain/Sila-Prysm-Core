@@ -84,8 +84,8 @@ func ConvertToElectra(beaconState state.BeaconState) (state.BeaconState, error) 
 		BlockRoots:                  beaconState.BlockRoots(),
 		StateRoots:                  beaconState.StateRoots(),
 		HistoricalRoots:             beaconState.HistoricalRoots(),
-		SilaExecutionData:                    beaconState.SilaExecutionData(),
-		SilaExecutionDataVotes:               beaconState.SilaExecutionDataVotes(),
+		SilaData:                    beaconState.SilaData(),
+		SilaDataVotes:               beaconState.SilaDataVotes(),
 		SilaExecutionDepositIndex:            beaconState.SilaExecutionDepositIndex(),
 		Validators:                  beaconState.Validators(),
 		Balances:                    beaconState.Balances(),
@@ -171,8 +171,8 @@ func ConvertToElectra(beaconState state.BeaconState) (state.BeaconState, error) 
 //	    state_roots=pre.state_roots,
 //	    historical_roots=pre.historical_roots,
 //	    # SilaExecution
-//	    sila_execution_data=pre.sila_execution_data,
-//	    sila_execution_data_votes=pre.sila_execution_data_votes,
+//	    sila_data=pre.sila_data,
+//	    sila_data_votes=pre.sila_data_votes,
 //	    silaexec_deposit_index=pre.silaexec_deposit_index,
 //	    # Registry
 //	    validators=pre.validators,

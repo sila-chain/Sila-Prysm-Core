@@ -44,7 +44,7 @@ func IsMergeTransitionComplete(st state.BeaconState) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	isEmpty, err := blocks.IsEmptyExecutionData(h)
+	isEmpty, err := blocks.IsEmptySilaData(h)
 	if err != nil {
 		return false, err
 	}
@@ -72,7 +72,7 @@ func IsSilaBlock(body interfaces.ReadOnlyBeaconBlockBody) (bool, error) {
 		return false, err
 	default:
 	}
-	isEmpty, err := blocks.IsEmptyExecutionData(payload)
+	isEmpty, err := blocks.IsEmptySilaData(payload)
 	if err != nil {
 		return false, err
 	}
@@ -105,8 +105,8 @@ func IsExecutionEnabled(st state.ReadOnlyBeaconState, body interfaces.ReadOnlyBe
 
 // IsExecutionEnabledUsingHeader returns true if the execution is enabled using post processed payload header and block body.
 // This is an optimized version of IsExecutionEnabled where beacon state is not required as an argument.
-func IsExecutionEnabledUsingHeader(header interfaces.ExecutionData, body interfaces.ReadOnlyBeaconBlockBody) (bool, error) {
-	isEmpty, err := blocks.IsEmptyExecutionData(header)
+func IsExecutionEnabledUsingHeader(header interfaces.SilaData, body interfaces.ReadOnlyBeaconBlockBody) (bool, error) {
+	isEmpty, err := blocks.IsEmptySilaData(header)
 	if err != nil {
 		return false, err
 	}
@@ -129,7 +129,7 @@ func IsPreBellatrixVersion(v int) bool {
 //	# Verify consistency of the parent hash with respect to the previous sila payload header
 //	if is_merge_complete(state):
 //	    assert payload.parent_hash == state.latest_sila_payload_header.block_hash
-func ValidatePayloadWhenMergeCompletes(st state.BeaconState, payload interfaces.ExecutionData) error {
+func ValidatePayloadWhenMergeCompletes(st state.BeaconState, payload interfaces.SilaData) error {
 	complete, err := IsMergeTransitionComplete(st)
 	if err != nil {
 		return err
@@ -156,7 +156,7 @@ func ValidatePayloadWhenMergeCompletes(st state.BeaconState, payload interfaces.
 //	assert payload.random == get_randao_mix(state, get_current_epoch(state))
 //	# Verify timestamp
 //	assert payload.timestamp == compute_timestamp_at_slot(state, state.slot)
-func ValidatePayload(st state.BeaconState, payload interfaces.ExecutionData) error {
+func ValidatePayload(st state.BeaconState, payload interfaces.SilaData) error {
 	random, err := helpers.RandaoMix(st, time.CurrentEpoch(st))
 	if err != nil {
 		return err

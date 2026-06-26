@@ -15,7 +15,7 @@ func GenerateProtoGloasBeaconBlock() *silapb.BeaconBlockGloas {
 		StateRoot:     FillByteSlice(32, 4),
 		Body: &silapb.BeaconBlockBodyGloas{
 			RandaoReveal: FillByteSlice(96, 5),
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositRoot:  FillByteSlice(32, 6),
 				DepositCount: 7,
 				BlockHash:    FillByteSlice(32, 8),
@@ -84,7 +84,7 @@ func GenerateJsonGloasBeaconBlock() *structs.BeaconBlockGloas {
 		StateRoot:     hexutil.Encode(FillByteSlice(32, 4)),
 		Body: &structs.BeaconBlockBodyGloas{
 			RandaoReveal: hexutil.Encode(FillByteSlice(96, 5)),
-			SilaExecutionData: &structs.SilaExecutionData{
+			SilaData: &structs.SilaData{
 				DepositRoot:  hexutil.Encode(FillByteSlice(32, 6)),
 				DepositCount: "7",
 				BlockHash:    hexutil.Encode(FillByteSlice(32, 8)),

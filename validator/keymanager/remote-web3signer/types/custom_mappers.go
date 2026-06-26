@@ -140,15 +140,15 @@ func MapBeaconBlockBody(body *silapb.BeaconBlockBody) (*BeaconBlockBody, error) 
 	if body == nil {
 		return nil, fmt.Errorf("beacon block body is nil")
 	}
-	if body.SilaExecutionData == nil {
+	if body.SilaData == nil {
 		return nil, fmt.Errorf("silaexec data in Beacon Block Body is nil")
 	}
 	block := &BeaconBlockBody{
 		RandaoReveal: body.RandaoReveal,
-		SilaExecutionData: &SilaExecutionData{
-			DepositRoot:  body.SilaExecutionData.DepositRoot,
-			DepositCount: fmt.Sprint(body.SilaExecutionData.DepositCount),
-			BlockHash:    body.SilaExecutionData.BlockHash,
+		SilaData: &SilaData{
+			DepositRoot:  body.SilaData.DepositRoot,
+			DepositCount: fmt.Sprint(body.SilaData.DepositCount),
+			BlockHash:    body.SilaData.BlockHash,
 		},
 		Graffiti:          body.Graffiti,
 		ProposerSlashings: make([]*ProposerSlashing, len(body.ProposerSlashings)),
@@ -342,10 +342,10 @@ func MapBeaconBlockBodyAltair(body *silapb.BeaconBlockBodyAltair) (*BeaconBlockB
 
 	block := &BeaconBlockBodyAltair{
 		RandaoReveal: body.RandaoReveal,
-		SilaExecutionData: &SilaExecutionData{
-			DepositRoot:  body.SilaExecutionData.DepositRoot,
-			DepositCount: fmt.Sprint(body.SilaExecutionData.DepositCount),
-			BlockHash:    body.SilaExecutionData.BlockHash,
+		SilaData: &SilaData{
+			DepositRoot:  body.SilaData.DepositRoot,
+			DepositCount: fmt.Sprint(body.SilaData.DepositCount),
+			BlockHash:    body.SilaData.BlockHash,
 		},
 		Graffiti:          body.Graffiti,
 		ProposerSlashings: make([]*ProposerSlashing, len(body.ProposerSlashings)),

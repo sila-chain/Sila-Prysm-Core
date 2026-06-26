@@ -19,7 +19,7 @@ var errNilPayloadBody = errors.New("nil payload body for block")
 
 type blockWithHeader struct {
 	block  interfaces.ReadOnlySignedBeaconBlock
-	header interfaces.ExecutionData
+	header interfaces.SilaData
 }
 
 // reconstructionBatch is a map of block hashes to block numbers.
@@ -202,7 +202,7 @@ func (r *blindedBlockReconstructor) requestBodiesByHash(ctx context.Context, cli
 	return nilBodies, nil
 }
 
-func (r *blindedBlockReconstructor) payloadForHeader(header interfaces.ExecutionData, v int) (proto.Message, error) {
+func (r *blindedBlockReconstructor) payloadForHeader(header interfaces.SilaData, v int) (proto.Message, error) {
 	bodyKey := bytesutil.ToBytes32(header.BlockHash())
 	if bodyKey == params.BeaconConfig().ZeroHash {
 		payload, err := EmptySilaPayload(v)

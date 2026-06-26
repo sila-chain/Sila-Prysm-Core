@@ -486,17 +486,17 @@ func VerifyOperationLengths(_ context.Context, state state.BeaconState, b interf
 			params.BeaconConfig().MaxVoluntaryExits,
 		)
 	}
-	silaexecData := state.SilaExecutionData()
+	silaexecData := state.SilaData()
 	if silaexecData == nil {
-		return nil, errors.New("nil silaExecutionData in state")
+		return nil, errors.New("nil silaData in state")
 	}
 
 	if state.Version() < version.Electra {
 		// Deneb specs
 		//  # Verify that outstanding deposits are processed up to the maximum number of deposits
-		//    assert len(body.deposits) == min(MAX_DEPOSITS, state.sila_execution_data.deposit_count - state.silaexec_deposit_index)
+		//    assert len(body.deposits) == min(MAX_DEPOSITS, state.sila_data.deposit_count - state.silaexec_deposit_index)
 		if state.SilaExecutionDepositIndex() > silaexecData.DepositCount {
-			return nil, fmt.Errorf("expected state.deposit_index %d <= silaExecutionData.deposit_count %d", state.SilaExecutionDepositIndex(), silaexecData.DepositCount)
+			return nil, fmt.Errorf("expected state.deposit_index %d <= silaData.deposit_count %d", state.SilaExecutionDepositIndex(), silaexecData.DepositCount)
 		}
 		maxDeposits := min(params.BeaconConfig().MaxDeposits, silaexecData.DepositCount-state.SilaExecutionDepositIndex())
 		// Verify outstanding deposits are processed up to max number of deposits

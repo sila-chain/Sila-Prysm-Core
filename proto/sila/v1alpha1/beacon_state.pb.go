@@ -35,8 +35,8 @@ type BeaconState struct {
 	BlockRoots                  [][]byte                                                         `protobuf:"bytes,2002,rep,name=block_roots,json=blockRoots,proto3" json:"block_roots,omitempty" ssz-size:"8192,32"`
 	StateRoots                  [][]byte                                                         `protobuf:"bytes,2003,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" ssz-size:"8192,32"`
 	HistoricalRoots             [][]byte                                                         `protobuf:"bytes,2004,rep,name=historical_roots,json=historicalRoots,proto3" json:"historical_roots,omitempty" ssz-max:"16777216" ssz-size:"?,32"`
-	SilaExecutionData                    *SilaExecutionData                                                        `protobuf:"bytes,3001,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
-	SilaExecutionDataVotes               []*SilaExecutionData                                                      `protobuf:"bytes,3002,rep,name=sila_execution_data_votes,json=silaExecutionDataVotes,proto3" json:"sila_execution_data_votes,omitempty" ssz-max:"2048"`
+	SilaData                    *SilaData                                                        `protobuf:"bytes,3001,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
+	SilaDataVotes               []*SilaData                                                      `protobuf:"bytes,3002,rep,name=sila_data_votes,json=silaDataVotes,proto3" json:"sila_data_votes,omitempty" ssz-max:"2048"`
 	SilaExecutionDepositIndex            uint64                                                           `protobuf:"varint,3003,opt,name=silaexec_deposit_index,json=silaExecutionDepositIndex,proto3" json:"silaexec_deposit_index,omitempty"`
 	Validators                  []*Validator                                                     `protobuf:"bytes,4001,rep,name=validators,proto3" json:"validators,omitempty" ssz-max:"1099511627776"`
 	Balances                    []uint64                                                         `protobuf:"varint,4002,rep,packed,name=balances,proto3" json:"balances,omitempty" ssz-max:"1099511627776"`
@@ -138,16 +138,16 @@ func (x *BeaconState) GetHistoricalRoots() [][]byte {
 	return nil
 }
 
-func (x *BeaconState) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconState) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
 
-func (x *BeaconState) GetSilaExecutionDataVotes() []*SilaExecutionData {
+func (x *BeaconState) GetSilaDataVotes() []*SilaData {
 	if x != nil {
-		return x.SilaExecutionDataVotes
+		return x.SilaDataVotes
 	}
 	return nil
 }
@@ -711,8 +711,8 @@ type BeaconStateAltair struct {
 	BlockRoots                  [][]byte                                                         `protobuf:"bytes,2002,rep,name=block_roots,json=blockRoots,proto3" json:"block_roots,omitempty" ssz-size:"8192,32"`
 	StateRoots                  [][]byte                                                         `protobuf:"bytes,2003,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" ssz-size:"8192,32"`
 	HistoricalRoots             [][]byte                                                         `protobuf:"bytes,2004,rep,name=historical_roots,json=historicalRoots,proto3" json:"historical_roots,omitempty" ssz-max:"16777216" ssz-size:"?,32"`
-	SilaExecutionData                    *SilaExecutionData                                                        `protobuf:"bytes,3001,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
-	SilaExecutionDataVotes               []*SilaExecutionData                                                      `protobuf:"bytes,3002,rep,name=sila_execution_data_votes,json=silaExecutionDataVotes,proto3" json:"sila_execution_data_votes,omitempty" ssz-max:"2048"`
+	SilaData                    *SilaData                                                        `protobuf:"bytes,3001,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
+	SilaDataVotes               []*SilaData                                                      `protobuf:"bytes,3002,rep,name=sila_data_votes,json=silaDataVotes,proto3" json:"sila_data_votes,omitempty" ssz-max:"2048"`
 	SilaExecutionDepositIndex            uint64                                                           `protobuf:"varint,3003,opt,name=silaexec_deposit_index,json=silaExecutionDepositIndex,proto3" json:"silaexec_deposit_index,omitempty"`
 	Validators                  []*Validator                                                     `protobuf:"bytes,4001,rep,name=validators,proto3" json:"validators,omitempty" ssz-max:"1099511627776"`
 	Balances                    []uint64                                                         `protobuf:"varint,4002,rep,packed,name=balances,proto3" json:"balances,omitempty" ssz-max:"1099511627776"`
@@ -817,16 +817,16 @@ func (x *BeaconStateAltair) GetHistoricalRoots() [][]byte {
 	return nil
 }
 
-func (x *BeaconStateAltair) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconStateAltair) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
 
-func (x *BeaconStateAltair) GetSilaExecutionDataVotes() []*SilaExecutionData {
+func (x *BeaconStateAltair) GetSilaDataVotes() []*SilaData {
 	if x != nil {
-		return x.SilaExecutionDataVotes
+		return x.SilaDataVotes
 	}
 	return nil
 }
@@ -991,8 +991,8 @@ type BeaconStateBellatrix struct {
 	BlockRoots                   [][]byte                                                         `protobuf:"bytes,2002,rep,name=block_roots,json=blockRoots,proto3" json:"block_roots,omitempty" ssz-size:"8192,32"`
 	StateRoots                   [][]byte                                                         `protobuf:"bytes,2003,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" ssz-size:"8192,32"`
 	HistoricalRoots              [][]byte                                                         `protobuf:"bytes,2004,rep,name=historical_roots,json=historicalRoots,proto3" json:"historical_roots,omitempty" ssz-max:"16777216" ssz-size:"?,32"`
-	SilaExecutionData                     *SilaExecutionData                                                        `protobuf:"bytes,3001,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
-	SilaExecutionDataVotes                []*SilaExecutionData                                                      `protobuf:"bytes,3002,rep,name=sila_execution_data_votes,json=silaExecutionDataVotes,proto3" json:"sila_execution_data_votes,omitempty" ssz-max:"2048"`
+	SilaData                     *SilaData                                                        `protobuf:"bytes,3001,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
+	SilaDataVotes                []*SilaData                                                      `protobuf:"bytes,3002,rep,name=sila_data_votes,json=silaDataVotes,proto3" json:"sila_data_votes,omitempty" ssz-max:"2048"`
 	SilaExecutionDepositIndex             uint64                                                           `protobuf:"varint,3003,opt,name=silaexec_deposit_index,json=silaExecutionDepositIndex,proto3" json:"silaexec_deposit_index,omitempty"`
 	Validators                   []*Validator                                                     `protobuf:"bytes,4001,rep,name=validators,proto3" json:"validators,omitempty" ssz-max:"1099511627776"`
 	Balances                     []uint64                                                         `protobuf:"varint,4002,rep,packed,name=balances,proto3" json:"balances,omitempty" ssz-max:"1099511627776"`
@@ -1098,16 +1098,16 @@ func (x *BeaconStateBellatrix) GetHistoricalRoots() [][]byte {
 	return nil
 }
 
-func (x *BeaconStateBellatrix) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconStateBellatrix) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
 
-func (x *BeaconStateBellatrix) GetSilaExecutionDataVotes() []*SilaExecutionData {
+func (x *BeaconStateBellatrix) GetSilaDataVotes() []*SilaData {
 	if x != nil {
-		return x.SilaExecutionDataVotes
+		return x.SilaDataVotes
 	}
 	return nil
 }
@@ -1227,8 +1227,8 @@ type BeaconStateCapella struct {
 	BlockRoots                   [][]byte                                                                   `protobuf:"bytes,2002,rep,name=block_roots,json=blockRoots,proto3" json:"block_roots,omitempty" ssz-size:"8192,32"`
 	StateRoots                   [][]byte                                                                   `protobuf:"bytes,2003,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" ssz-size:"8192,32"`
 	HistoricalRoots              [][]byte                                                                   `protobuf:"bytes,2004,rep,name=historical_roots,json=historicalRoots,proto3" json:"historical_roots,omitempty" ssz-max:"16777216" ssz-size:"?,32"`
-	SilaExecutionData                     *SilaExecutionData                                                                  `protobuf:"bytes,3001,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
-	SilaExecutionDataVotes                []*SilaExecutionData                                                                `protobuf:"bytes,3002,rep,name=sila_execution_data_votes,json=silaExecutionDataVotes,proto3" json:"sila_execution_data_votes,omitempty" ssz-max:"2048"`
+	SilaData                     *SilaData                                                                  `protobuf:"bytes,3001,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
+	SilaDataVotes                []*SilaData                                                                `protobuf:"bytes,3002,rep,name=sila_data_votes,json=silaDataVotes,proto3" json:"sila_data_votes,omitempty" ssz-max:"2048"`
 	SilaExecutionDepositIndex             uint64                                                                     `protobuf:"varint,3003,opt,name=silaexec_deposit_index,json=silaExecutionDepositIndex,proto3" json:"silaexec_deposit_index,omitempty"`
 	Validators                   []*Validator                                                               `protobuf:"bytes,4001,rep,name=validators,proto3" json:"validators,omitempty" ssz-max:"1099511627776"`
 	Balances                     []uint64                                                                   `protobuf:"varint,4002,rep,packed,name=balances,proto3" json:"balances,omitempty" ssz-max:"1099511627776"`
@@ -1337,16 +1337,16 @@ func (x *BeaconStateCapella) GetHistoricalRoots() [][]byte {
 	return nil
 }
 
-func (x *BeaconStateCapella) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconStateCapella) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
 
-func (x *BeaconStateCapella) GetSilaExecutionDataVotes() []*SilaExecutionData {
+func (x *BeaconStateCapella) GetSilaDataVotes() []*SilaData {
 	if x != nil {
-		return x.SilaExecutionDataVotes
+		return x.SilaDataVotes
 	}
 	return nil
 }
@@ -1487,8 +1487,8 @@ type BeaconStateDeneb struct {
 	BlockRoots                   [][]byte                                                                   `protobuf:"bytes,2002,rep,name=block_roots,json=blockRoots,proto3" json:"block_roots,omitempty" ssz-size:"8192,32"`
 	StateRoots                   [][]byte                                                                   `protobuf:"bytes,2003,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" ssz-size:"8192,32"`
 	HistoricalRoots              [][]byte                                                                   `protobuf:"bytes,2004,rep,name=historical_roots,json=historicalRoots,proto3" json:"historical_roots,omitempty" ssz-max:"16777216" ssz-size:"?,32"`
-	SilaExecutionData                     *SilaExecutionData                                                                  `protobuf:"bytes,3001,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
-	SilaExecutionDataVotes                []*SilaExecutionData                                                                `protobuf:"bytes,3002,rep,name=sila_execution_data_votes,json=silaExecutionDataVotes,proto3" json:"sila_execution_data_votes,omitempty" ssz-max:"2048"`
+	SilaData                     *SilaData                                                                  `protobuf:"bytes,3001,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
+	SilaDataVotes                []*SilaData                                                                `protobuf:"bytes,3002,rep,name=sila_data_votes,json=silaDataVotes,proto3" json:"sila_data_votes,omitempty" ssz-max:"2048"`
 	SilaExecutionDepositIndex             uint64                                                                     `protobuf:"varint,3003,opt,name=silaexec_deposit_index,json=silaExecutionDepositIndex,proto3" json:"silaexec_deposit_index,omitempty"`
 	Validators                   []*Validator                                                               `protobuf:"bytes,4001,rep,name=validators,proto3" json:"validators,omitempty" ssz-max:"1099511627776"`
 	Balances                     []uint64                                                                   `protobuf:"varint,4002,rep,packed,name=balances,proto3" json:"balances,omitempty" ssz-max:"1099511627776"`
@@ -1597,16 +1597,16 @@ func (x *BeaconStateDeneb) GetHistoricalRoots() [][]byte {
 	return nil
 }
 
-func (x *BeaconStateDeneb) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconStateDeneb) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
 
-func (x *BeaconStateDeneb) GetSilaExecutionDataVotes() []*SilaExecutionData {
+func (x *BeaconStateDeneb) GetSilaDataVotes() []*SilaData {
 	if x != nil {
-		return x.SilaExecutionDataVotes
+		return x.SilaDataVotes
 	}
 	return nil
 }
@@ -1747,8 +1747,8 @@ type BeaconStateElectra struct {
 	BlockRoots                    [][]byte                                                                   `protobuf:"bytes,2002,rep,name=block_roots,json=blockRoots,proto3" json:"block_roots,omitempty" ssz-size:"8192,32"`
 	StateRoots                    [][]byte                                                                   `protobuf:"bytes,2003,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" ssz-size:"8192,32"`
 	HistoricalRoots               [][]byte                                                                   `protobuf:"bytes,2004,rep,name=historical_roots,json=historicalRoots,proto3" json:"historical_roots,omitempty" ssz-max:"16777216" ssz-size:"?,32"`
-	SilaExecutionData                      *SilaExecutionData                                                                  `protobuf:"bytes,3001,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
-	SilaExecutionDataVotes                 []*SilaExecutionData                                                                `protobuf:"bytes,3002,rep,name=sila_execution_data_votes,json=silaExecutionDataVotes,proto3" json:"sila_execution_data_votes,omitempty" ssz-max:"2048"`
+	SilaData                      *SilaData                                                                  `protobuf:"bytes,3001,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
+	SilaDataVotes                 []*SilaData                                                                `protobuf:"bytes,3002,rep,name=sila_data_votes,json=silaDataVotes,proto3" json:"sila_data_votes,omitempty" ssz-max:"2048"`
 	SilaExecutionDepositIndex              uint64                                                                     `protobuf:"varint,3003,opt,name=silaexec_deposit_index,json=silaExecutionDepositIndex,proto3" json:"silaexec_deposit_index,omitempty"`
 	Validators                    []*Validator                                                               `protobuf:"bytes,4001,rep,name=validators,proto3" json:"validators,omitempty" ssz-max:"1099511627776"`
 	Balances                      []uint64                                                                   `protobuf:"varint,4002,rep,packed,name=balances,proto3" json:"balances,omitempty" ssz-max:"1099511627776"`
@@ -1866,16 +1866,16 @@ func (x *BeaconStateElectra) GetHistoricalRoots() [][]byte {
 	return nil
 }
 
-func (x *BeaconStateElectra) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconStateElectra) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
 
-func (x *BeaconStateElectra) GetSilaExecutionDataVotes() []*SilaExecutionData {
+func (x *BeaconStateElectra) GetSilaDataVotes() []*SilaData {
 	if x != nil {
-		return x.SilaExecutionDataVotes
+		return x.SilaDataVotes
 	}
 	return nil
 }
@@ -2079,8 +2079,8 @@ type BeaconStateFulu struct {
 	BlockRoots                    [][]byte                                                                     `protobuf:"bytes,2002,rep,name=block_roots,json=blockRoots,proto3" json:"block_roots,omitempty" ssz-size:"8192,32"`
 	StateRoots                    [][]byte                                                                     `protobuf:"bytes,2003,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" ssz-size:"8192,32"`
 	HistoricalRoots               [][]byte                                                                     `protobuf:"bytes,2004,rep,name=historical_roots,json=historicalRoots,proto3" json:"historical_roots,omitempty" ssz-max:"16777216" ssz-size:"?,32"`
-	SilaExecutionData                      *SilaExecutionData                                                                    `protobuf:"bytes,3001,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
-	SilaExecutionDataVotes                 []*SilaExecutionData                                                                  `protobuf:"bytes,3002,rep,name=sila_execution_data_votes,json=silaExecutionDataVotes,proto3" json:"sila_execution_data_votes,omitempty" ssz-max:"2048"`
+	SilaData                      *SilaData                                                                    `protobuf:"bytes,3001,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
+	SilaDataVotes                 []*SilaData                                                                  `protobuf:"bytes,3002,rep,name=sila_data_votes,json=silaDataVotes,proto3" json:"sila_data_votes,omitempty" ssz-max:"2048"`
 	SilaExecutionDepositIndex              uint64                                                                       `protobuf:"varint,3003,opt,name=silaexec_deposit_index,json=silaExecutionDepositIndex,proto3" json:"silaexec_deposit_index,omitempty"`
 	Validators                    []*Validator                                                                 `protobuf:"bytes,4001,rep,name=validators,proto3" json:"validators,omitempty" ssz-max:"1099511627776"`
 	Balances                      []uint64                                                                     `protobuf:"varint,4002,rep,packed,name=balances,proto3" json:"balances,omitempty" ssz-max:"1099511627776"`
@@ -2199,16 +2199,16 @@ func (x *BeaconStateFulu) GetHistoricalRoots() [][]byte {
 	return nil
 }
 
-func (x *BeaconStateFulu) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconStateFulu) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
 
-func (x *BeaconStateFulu) GetSilaExecutionDataVotes() []*SilaExecutionData {
+func (x *BeaconStateFulu) GetSilaDataVotes() []*SilaData {
 	if x != nil {
-		return x.SilaExecutionDataVotes
+		return x.SilaDataVotes
 	}
 	return nil
 }
@@ -3578,7 +3578,7 @@ var file_proto_sila_v1alpha1_beacon_state_proto_goTypes = []any{
 	(*BeaconStateFulu)(nil),                  // 15: sila.eth.v1alpha1.BeaconStateFulu
 	(*Fork)(nil),                             // 16: sila.eth.v1alpha1.Fork
 	(*BeaconBlockHeader)(nil),                // 17: sila.eth.v1alpha1.BeaconBlockHeader
-	(*SilaExecutionData)(nil),                         // 18: sila.eth.v1alpha1.SilaExecutionData
+	(*SilaData)(nil),                         // 18: sila.eth.v1alpha1.SilaData
 	(*Validator)(nil),                        // 19: sila.eth.v1alpha1.Validator
 	(*Checkpoint)(nil),                       // 20: sila.eth.v1alpha1.Checkpoint
 	(*AttestationData)(nil),                  // 21: sila.eth.v1alpha1.AttestationData
@@ -3594,8 +3594,8 @@ var file_proto_sila_v1alpha1_beacon_state_proto_goTypes = []any{
 var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	16, // 0: sila.eth.v1alpha1.BeaconState.fork:type_name -> sila.eth.v1alpha1.Fork
 	17, // 1: sila.eth.v1alpha1.BeaconState.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
-	18, // 2: sila.eth.v1alpha1.BeaconState.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
-	18, // 3: sila.eth.v1alpha1.BeaconState.sila_execution_data_votes:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	18, // 2: sila.eth.v1alpha1.BeaconState.sila_data:type_name -> sila.eth.v1alpha1.SilaData
+	18, // 3: sila.eth.v1alpha1.BeaconState.sila_data_votes:type_name -> sila.eth.v1alpha1.SilaData
 	19, // 4: sila.eth.v1alpha1.BeaconState.validators:type_name -> sila.eth.v1alpha1.Validator
 	1,  // 5: sila.eth.v1alpha1.BeaconState.previous_epoch_attestations:type_name -> sila.eth.v1alpha1.PendingAttestation
 	1,  // 6: sila.eth.v1alpha1.BeaconState.current_epoch_attestations:type_name -> sila.eth.v1alpha1.PendingAttestation
@@ -3606,8 +3606,8 @@ var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	16, // 11: sila.eth.v1alpha1.CheckPtInfo.fork:type_name -> sila.eth.v1alpha1.Fork
 	16, // 12: sila.eth.v1alpha1.BeaconStateAltair.fork:type_name -> sila.eth.v1alpha1.Fork
 	17, // 13: sila.eth.v1alpha1.BeaconStateAltair.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
-	18, // 14: sila.eth.v1alpha1.BeaconStateAltair.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
-	18, // 15: sila.eth.v1alpha1.BeaconStateAltair.sila_execution_data_votes:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	18, // 14: sila.eth.v1alpha1.BeaconStateAltair.sila_data:type_name -> sila.eth.v1alpha1.SilaData
+	18, // 15: sila.eth.v1alpha1.BeaconStateAltair.sila_data_votes:type_name -> sila.eth.v1alpha1.SilaData
 	19, // 16: sila.eth.v1alpha1.BeaconStateAltair.validators:type_name -> sila.eth.v1alpha1.Validator
 	20, // 17: sila.eth.v1alpha1.BeaconStateAltair.previous_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	20, // 18: sila.eth.v1alpha1.BeaconStateAltair.current_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
@@ -3616,8 +3616,8 @@ var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	22, // 21: sila.eth.v1alpha1.BeaconStateAltair.next_sync_committee:type_name -> sila.eth.v1alpha1.SyncCommittee
 	16, // 22: sila.eth.v1alpha1.BeaconStateBellatrix.fork:type_name -> sila.eth.v1alpha1.Fork
 	17, // 23: sila.eth.v1alpha1.BeaconStateBellatrix.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
-	18, // 24: sila.eth.v1alpha1.BeaconStateBellatrix.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
-	18, // 25: sila.eth.v1alpha1.BeaconStateBellatrix.sila_execution_data_votes:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	18, // 24: sila.eth.v1alpha1.BeaconStateBellatrix.sila_data:type_name -> sila.eth.v1alpha1.SilaData
+	18, // 25: sila.eth.v1alpha1.BeaconStateBellatrix.sila_data_votes:type_name -> sila.eth.v1alpha1.SilaData
 	19, // 26: sila.eth.v1alpha1.BeaconStateBellatrix.validators:type_name -> sila.eth.v1alpha1.Validator
 	20, // 27: sila.eth.v1alpha1.BeaconStateBellatrix.previous_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	20, // 28: sila.eth.v1alpha1.BeaconStateBellatrix.current_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
@@ -3627,8 +3627,8 @@ var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	23, // 32: sila.eth.v1alpha1.BeaconStateBellatrix.latest_sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeader
 	16, // 33: sila.eth.v1alpha1.BeaconStateCapella.fork:type_name -> sila.eth.v1alpha1.Fork
 	17, // 34: sila.eth.v1alpha1.BeaconStateCapella.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
-	18, // 35: sila.eth.v1alpha1.BeaconStateCapella.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
-	18, // 36: sila.eth.v1alpha1.BeaconStateCapella.sila_execution_data_votes:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	18, // 35: sila.eth.v1alpha1.BeaconStateCapella.sila_data:type_name -> sila.eth.v1alpha1.SilaData
+	18, // 36: sila.eth.v1alpha1.BeaconStateCapella.sila_data_votes:type_name -> sila.eth.v1alpha1.SilaData
 	19, // 37: sila.eth.v1alpha1.BeaconStateCapella.validators:type_name -> sila.eth.v1alpha1.Validator
 	20, // 38: sila.eth.v1alpha1.BeaconStateCapella.previous_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	20, // 39: sila.eth.v1alpha1.BeaconStateCapella.current_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
@@ -3639,8 +3639,8 @@ var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	25, // 44: sila.eth.v1alpha1.BeaconStateCapella.historical_summaries:type_name -> sila.eth.v1alpha1.HistoricalSummary
 	16, // 45: sila.eth.v1alpha1.BeaconStateDeneb.fork:type_name -> sila.eth.v1alpha1.Fork
 	17, // 46: sila.eth.v1alpha1.BeaconStateDeneb.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
-	18, // 47: sila.eth.v1alpha1.BeaconStateDeneb.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
-	18, // 48: sila.eth.v1alpha1.BeaconStateDeneb.sila_execution_data_votes:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	18, // 47: sila.eth.v1alpha1.BeaconStateDeneb.sila_data:type_name -> sila.eth.v1alpha1.SilaData
+	18, // 48: sila.eth.v1alpha1.BeaconStateDeneb.sila_data_votes:type_name -> sila.eth.v1alpha1.SilaData
 	19, // 49: sila.eth.v1alpha1.BeaconStateDeneb.validators:type_name -> sila.eth.v1alpha1.Validator
 	20, // 50: sila.eth.v1alpha1.BeaconStateDeneb.previous_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	20, // 51: sila.eth.v1alpha1.BeaconStateDeneb.current_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
@@ -3651,8 +3651,8 @@ var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	25, // 56: sila.eth.v1alpha1.BeaconStateDeneb.historical_summaries:type_name -> sila.eth.v1alpha1.HistoricalSummary
 	16, // 57: sila.eth.v1alpha1.BeaconStateElectra.fork:type_name -> sila.eth.v1alpha1.Fork
 	17, // 58: sila.eth.v1alpha1.BeaconStateElectra.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
-	18, // 59: sila.eth.v1alpha1.BeaconStateElectra.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
-	18, // 60: sila.eth.v1alpha1.BeaconStateElectra.sila_execution_data_votes:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	18, // 59: sila.eth.v1alpha1.BeaconStateElectra.sila_data:type_name -> sila.eth.v1alpha1.SilaData
+	18, // 60: sila.eth.v1alpha1.BeaconStateElectra.sila_data_votes:type_name -> sila.eth.v1alpha1.SilaData
 	19, // 61: sila.eth.v1alpha1.BeaconStateElectra.validators:type_name -> sila.eth.v1alpha1.Validator
 	20, // 62: sila.eth.v1alpha1.BeaconStateElectra.previous_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	20, // 63: sila.eth.v1alpha1.BeaconStateElectra.current_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
@@ -3666,8 +3666,8 @@ var file_proto_sila_v1alpha1_beacon_state_proto_depIdxs = []int32{
 	29, // 71: sila.eth.v1alpha1.BeaconStateElectra.pending_consolidations:type_name -> sila.eth.v1alpha1.PendingConsolidation
 	16, // 72: sila.eth.v1alpha1.BeaconStateFulu.fork:type_name -> sila.eth.v1alpha1.Fork
 	17, // 73: sila.eth.v1alpha1.BeaconStateFulu.latest_block_header:type_name -> sila.eth.v1alpha1.BeaconBlockHeader
-	18, // 74: sila.eth.v1alpha1.BeaconStateFulu.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
-	18, // 75: sila.eth.v1alpha1.BeaconStateFulu.sila_execution_data_votes:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	18, // 74: sila.eth.v1alpha1.BeaconStateFulu.sila_data:type_name -> sila.eth.v1alpha1.SilaData
+	18, // 75: sila.eth.v1alpha1.BeaconStateFulu.sila_data_votes:type_name -> sila.eth.v1alpha1.SilaData
 	19, // 76: sila.eth.v1alpha1.BeaconStateFulu.validators:type_name -> sila.eth.v1alpha1.Validator
 	20, // 77: sila.eth.v1alpha1.BeaconStateFulu.previous_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint
 	20, // 78: sila.eth.v1alpha1.BeaconStateFulu.current_justified_checkpoint:type_name -> sila.eth.v1alpha1.Checkpoint

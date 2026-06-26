@@ -32,7 +32,7 @@ func (c *Cache) PruneProofs(ctx context.Context, untilDepositIndex int64) error 
 // PruneAllProofs removes proofs from all deposits.
 // As SIP-6110 applies and the legacy deposit mechanism is deprecated,
 // proofs in deposit snapshot are no longer needed.
-// See: https://sips.sila.org/SIPS/sip-6110#silaExecutionData-poll-deprecation
+// See: https://sips.sila.org/SIPS/sip-6110#silaData-poll-deprecation
 func (c *Cache) PruneAllProofs(ctx context.Context) {
 	_, span := trace.StartSpan(ctx, "Cache.PruneAllProofs")
 	defer span.End()
@@ -75,7 +75,7 @@ func (c *Cache) PrunePendingDeposits(ctx context.Context, merkleTreeIndex int64)
 // PruneAllPendingDeposits removes all pending deposits from the cache.
 // As SIP-6110 applies and the legacy deposit mechanism is deprecated,
 // pending deposits in deposit snapshot are no longer needed.
-// See: https://sips.sila.org/SIPS/sip-6110#silaExecutionData-poll-deprecation
+// See: https://sips.sila.org/SIPS/sip-6110#silaData-poll-deprecation
 func (c *Cache) PruneAllPendingDeposits(ctx context.Context) {
 	_, span := trace.StartSpan(ctx, "Cache.PruneAllPendingDeposits")
 	defer span.End()

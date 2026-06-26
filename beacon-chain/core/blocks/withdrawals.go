@@ -151,21 +151,21 @@ func ValidateBLSToSilaChange(st state.ReadOnlyBeaconState, signed *silapb.Signed
 //	    next_index = state.next_withdrawal_validator_index + MAX_VALIDATORS_PER_WITHDRAWALS_SWEEP
 //	    next_validator_index = ValidatorIndex(next_index % len(state.validators))
 //	    state.next_withdrawal_validator_index = next_validator_index
-func ProcessWithdrawals(st state.BeaconState, executionData interfaces.ExecutionData) (state.BeaconState, error) {
+func ProcessWithdrawals(st state.BeaconState, silaData interfaces.SilaData) (state.BeaconState, error) {
 	expectedWithdrawals, processedPartialWithdrawalsCount, err := st.ExpectedWithdrawals()
 	if err != nil {
 		return nil, errors.Wrap(err, "could not get expected withdrawals")
 	}
 
 	var wdRoot [32]byte
-	if executionData.IsBlinded() {
-		r, err := executionData.WithdrawalsRoot()
+	if silaData.IsBlinded() {
+		r, err := silaData.WithdrawalsRoot()
 		if err != nil {
 			return nil, errors.Wrap(err, "could not get withdrawals root")
 		}
 		wdRoot = bytesutil.ToBytes32(r)
 	} else {
-		wds, err := executionData.Withdrawals()
+		wds, err := silaData.Withdrawals()
 		if err != nil {
 			return nil, errors.Wrap(err, "could not get withdrawals")
 		}

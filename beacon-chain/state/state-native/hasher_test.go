@@ -27,8 +27,8 @@ func TestComputeFieldRootsWithHasher_Phase0(t *testing.T) {
 	historicalRoots, err := util.PrepareRoots(int(params.BeaconConfig().SlotsPerHistoricalRoot))
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetHistoricalRoots(historicalRoots))
-	require.NoError(t, beaconState.SetSilaExecutionData(silaexecData()))
-	require.NoError(t, beaconState.SetSilaExecutionDataVotes([]*silapb.SilaExecutionData{silaexecData()}))
+	require.NoError(t, beaconState.SetSilaData(silaexecData()))
+	require.NoError(t, beaconState.SetSilaDataVotes([]*silapb.SilaData{silaexecData()}))
 	require.NoError(t, beaconState.SetSilaExecutionDepositIndex(123))
 	require.NoError(t, beaconState.SetValidators([]*silapb.Validator{validator()}))
 	require.NoError(t, beaconState.SetBalances([]uint64{1, 2, 3}))
@@ -91,8 +91,8 @@ func TestComputeFieldRootsWithHasher_Altair(t *testing.T) {
 	historicalRoots, err := util.PrepareRoots(int(params.BeaconConfig().SlotsPerHistoricalRoot))
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetHistoricalRoots(historicalRoots))
-	require.NoError(t, beaconState.SetSilaExecutionData(silaexecData()))
-	require.NoError(t, beaconState.SetSilaExecutionDataVotes([]*silapb.SilaExecutionData{silaexecData()}))
+	require.NoError(t, beaconState.SetSilaData(silaexecData()))
+	require.NoError(t, beaconState.SetSilaDataVotes([]*silapb.SilaData{silaexecData()}))
 	require.NoError(t, beaconState.SetSilaExecutionDepositIndex(123))
 	require.NoError(t, beaconState.SetValidators([]*silapb.Validator{validator()}))
 	require.NoError(t, beaconState.SetBalances([]uint64{1, 2, 3}))
@@ -161,8 +161,8 @@ func TestComputeFieldRootsWithHasher_Bellatrix(t *testing.T) {
 	historicalRoots, err := util.PrepareRoots(int(params.BeaconConfig().SlotsPerHistoricalRoot))
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetHistoricalRoots(historicalRoots))
-	require.NoError(t, beaconState.SetSilaExecutionData(silaexecData()))
-	require.NoError(t, beaconState.SetSilaExecutionDataVotes([]*silapb.SilaExecutionData{silaexecData()}))
+	require.NoError(t, beaconState.SetSilaData(silaexecData()))
+	require.NoError(t, beaconState.SetSilaDataVotes([]*silapb.SilaData{silaexecData()}))
 	require.NoError(t, beaconState.SetSilaExecutionDepositIndex(123))
 	require.NoError(t, beaconState.SetValidators([]*silapb.Validator{validator()}))
 	require.NoError(t, beaconState.SetBalances([]uint64{1, 2, 3}))
@@ -235,8 +235,8 @@ func TestComputeFieldRootsWithHasher_Capella(t *testing.T) {
 	historicalRoots, err := util.PrepareRoots(int(params.BeaconConfig().SlotsPerHistoricalRoot))
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetHistoricalRoots(historicalRoots))
-	require.NoError(t, beaconState.SetSilaExecutionData(silaexecData()))
-	require.NoError(t, beaconState.SetSilaExecutionDataVotes([]*silapb.SilaExecutionData{silaexecData()}))
+	require.NoError(t, beaconState.SetSilaData(silaexecData()))
+	require.NoError(t, beaconState.SetSilaDataVotes([]*silapb.SilaData{silaexecData()}))
 	require.NoError(t, beaconState.SetSilaExecutionDepositIndex(123))
 	require.NoError(t, beaconState.SetValidators([]*silapb.Validator{validator()}))
 	require.NoError(t, beaconState.SetBalances([]uint64{1, 2, 3}))
@@ -335,10 +335,10 @@ func latestBlockHeader() *silapb.BeaconBlockHeader {
 	}
 }
 
-func silaexecData() *silapb.SilaExecutionData {
+func silaexecData() *silapb.SilaData {
 	dr := bytesutil.ToBytes32([]byte("deposit"))
 	bh := bytesutil.ToBytes32([]byte("block"))
-	return &silapb.SilaExecutionData{
+	return &silapb.SilaData{
 		DepositRoot:  dr[:],
 		DepositCount: 123,
 		BlockHash:    bh[:],

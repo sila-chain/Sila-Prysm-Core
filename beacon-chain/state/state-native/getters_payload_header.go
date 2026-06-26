@@ -9,7 +9,7 @@ import (
 )
 
 // LatestSilaPayloadHeader of the beacon state.
-func (b *BeaconState) LatestSilaPayloadHeader() (interfaces.ExecutionData, error) {
+func (b *BeaconState) LatestSilaPayloadHeader() (interfaces.SilaData, error) {
 	if b.version < version.Bellatrix {
 		return nil, errNotSupported("LatestSilaPayloadHeader", b.version)
 	}

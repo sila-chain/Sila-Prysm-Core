@@ -262,22 +262,22 @@ func ProcessSlashings(ctx context.Context, st state.BeaconState) error {
 	return nil
 }
 
-// ProcessSilaExecutionDataReset processes updates to SILAEXEC data votes during epoch processing.
+// ProcessSilaDataReset processes updates to SILAEXEC data votes during epoch processing.
 //
 // Spec pseudocode definition:
 //
-//	def process_sila_execution_data_reset(state: BeaconState) -> None:
+//	def process_sila_data_reset(state: BeaconState) -> None:
 //	  next_epoch = Epoch(get_current_epoch(state) + 1)
 //	  # Reset silaexec data votes
 //	  if next_epoch % EPOCHS_PER_SilaExecution_VOTING_PERIOD == 0:
-//	      state.sila_execution_data_votes = []
-func ProcessSilaExecutionDataReset(state state.BeaconState) (state.BeaconState, error) {
+//	      state.sila_data_votes = []
+func ProcessSilaDataReset(state state.BeaconState) (state.BeaconState, error) {
 	currentEpoch := time.CurrentEpoch(state)
 	nextEpoch := currentEpoch + 1
 
 	// Reset SILAEXEC data votes.
 	if nextEpoch%params.BeaconConfig().EpochsPerSilaExecutionVotingPeriod == 0 {
-		if err := state.SetSilaExecutionDataVotes([]*silapb.SilaExecutionData{}); err != nil {
+		if err := state.SetSilaDataVotes([]*silapb.SilaData{}); err != nil {
 			return nil, err
 		}
 	}
@@ -460,7 +460,7 @@ func ProcessFinalUpdates(state state.BeaconState) (state.BeaconState, error) {
 	var err error
 
 	// Reset SILAEXEC data votes.
-	state, err = ProcessSilaExecutionDataReset(state)
+	state, err = ProcessSilaDataReset(state)
 	if err != nil {
 		return nil, err
 	}

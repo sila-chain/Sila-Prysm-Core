@@ -13,7 +13,7 @@ import (
 )
 
 // SetLatestSilaPayloadHeader for the beacon state.
-func (b *BeaconState) SetLatestSilaPayloadHeader(val interfaces.ExecutionData) error {
+func (b *BeaconState) SetLatestSilaPayloadHeader(val interfaces.SilaData) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 

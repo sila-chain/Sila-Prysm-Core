@@ -15,7 +15,7 @@ func GenerateProtoBellatrixBeaconBlock() *silapb.BeaconBlockBellatrix {
 		StateRoot:     FillByteSlice(32, 4),
 		Body: &silapb.BeaconBlockBodyBellatrix{
 			RandaoReveal: FillByteSlice(96, 5),
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositRoot:  FillByteSlice(32, 6),
 				DepositCount: 7,
 				BlockHash:    FillByteSlice(32, 8),
@@ -248,7 +248,7 @@ func GenerateProtoBlindedBellatrixBeaconBlock() *silapb.BlindedBeaconBlockBellat
 		StateRoot:     FillByteSlice(32, 4),
 		Body: &silapb.BlindedBeaconBlockBodyBellatrix{
 			RandaoReveal: FillByteSlice(96, 5),
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositRoot:  FillByteSlice(32, 6),
 				DepositCount: 7,
 				BlockHash:    FillByteSlice(32, 8),
@@ -478,7 +478,7 @@ func GenerateJsonBellatrixBeaconBlock() *structs.BeaconBlockBellatrix {
 		StateRoot:     FillEncodedByteSlice(32, 4),
 		Body: &structs.BeaconBlockBodyBellatrix{
 			RandaoReveal: FillEncodedByteSlice(96, 5),
-			SilaExecutionData: &structs.SilaExecutionData{
+			SilaData: &structs.SilaData{
 				DepositRoot:  FillEncodedByteSlice(32, 6),
 				DepositCount: "7",
 				BlockHash:    FillEncodedByteSlice(32, 8),
@@ -711,7 +711,7 @@ func GenerateJsonBlindedBellatrixBeaconBlock() *structs.BlindedBeaconBlockBellat
 		StateRoot:     FillEncodedByteSlice(32, 4),
 		Body: &structs.BlindedBeaconBlockBodyBellatrix{
 			RandaoReveal: FillEncodedByteSlice(96, 5),
-			SilaExecutionData: &structs.SilaExecutionData{
+			SilaData: &structs.SilaData{
 				DepositRoot:  FillEncodedByteSlice(32, 6),
 				DepositCount: "7",
 				BlockHash:    FillEncodedByteSlice(32, 8),

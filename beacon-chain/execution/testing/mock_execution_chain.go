@@ -30,7 +30,7 @@ type Chain struct {
 	HashesByHeight    map[int][]byte
 	TimesByHeight     map[int]uint64
 	BlockNumberByTime map[uint64]*big.Int
-	SilaExecutionData          *silapb.SilaExecutionData
+	SilaData          *silapb.SilaData
 	GenesisSilaBlock  *big.Int
 	GenesisState      state.BeaconState
 	CurrEndpoint      string
@@ -104,9 +104,9 @@ func (m *Chain) BlockByTimestamp(_ context.Context, time uint64) (*types.HeaderI
 	return &types.HeaderInfo{Number: chosenNumber, Time: chosenTime}, nil
 }
 
-// ChainStartSilaExecutionData --
-func (m *Chain) ChainStartSilaExecutionData() *silapb.SilaExecutionData {
-	return m.SilaExecutionData
+// ChainStartSilaData --
+func (m *Chain) ChainStartSilaData() *silapb.SilaData {
+	return m.SilaData
 }
 
 // PreGenesisState --

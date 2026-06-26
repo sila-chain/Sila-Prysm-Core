@@ -22,7 +22,7 @@ var (
 	ProcessInactivityScores              = altair.ProcessInactivityScores
 	ProcessRewardsAndPenaltiesPrecompute = altair.ProcessRewardsAndPenaltiesPrecompute
 	ProcessSlashings                     = e.ProcessSlashings
-	ProcessSilaExecutionDataReset                 = e.ProcessSilaExecutionDataReset
+	ProcessSilaDataReset                 = e.ProcessSilaDataReset
 	ProcessSlashingsReset                = e.ProcessSlashingsReset
 	ProcessRandaoMixesReset              = e.ProcessRandaoMixesReset
 	ProcessHistoricalDataUpdate          = e.ProcessHistoricalDataUpdate
@@ -42,7 +42,7 @@ var (
 //	    process_rewards_and_penalties(state)
 //	    process_registry_updates(state)  # [Modified in Electra:SIP7251]
 //	    process_slashings(state)  # [Modified in Electra:SIP7251]
-//	    process_sila_execution_data_reset(state)
+//	    process_sila_data_reset(state)
 //	    process_pending_deposits(state)  # [New in Electra:SIP7251]
 //	    process_pending_consolidations(state)  # [New in Electra:SIP7251]
 //	    process_effective_balance_updates(state)  # [Modified in Electra:SIP7251]
@@ -84,7 +84,7 @@ func ProcessEpoch(ctx context.Context, state state.BeaconState) error {
 	if err := ProcessSlashings(ctx, state); err != nil {
 		return err
 	}
-	state, err = ProcessSilaExecutionDataReset(state)
+	state, err = ProcessSilaDataReset(state)
 	if err != nil {
 		return err
 	}
@@ -126,13 +126,13 @@ func ProcessEpoch(ctx context.Context, state state.BeaconState) error {
 //
 //	# [Modified in Electra:SIP6110]
 //	  # Disable former deposit mechanism once all prior deposits are processed
-//	  silaexec_deposit_index_limit = min(state.sila_execution_data.deposit_count, state.deposit_requests_start_index)
+//	  silaexec_deposit_index_limit = min(state.sila_data.deposit_count, state.deposit_requests_start_index)
 //	  if state.silaexec_deposit_index < silaexec_deposit_index_limit:
 //	      assert len(body.deposits) == min(MAX_DEPOSITS, silaexec_deposit_index_limit - state.silaexec_deposit_index)
 //	  else:
 //	      assert len(body.deposits) == 0
 func VerifyBlockDepositLength(body interfaces.ReadOnlyBeaconBlockBody, state state.BeaconState) error {
-	silaexecData := state.SilaExecutionData()
+	silaexecData := state.SilaData()
 	requestsStartIndex, err := state.DepositRequestsStartIndex()
 	if err != nil {
 		return errors.Wrap(err, "failed to get requests start index")

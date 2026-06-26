@@ -73,7 +73,7 @@ func ProcessDeposits(
 //		branch=deposit.proof,
 //		depth=SILA_DEPOSIT_TREE_DEPTH + 1,  # Add 1 for the List length mix-in
 //		index=state.silaexec_deposit_index,
-//		root=state.sila_execution_data.deposit_root,
+//		root=state.sila_data.deposit_root,
 //	)
 //
 //	 # Deposits must be processed in order

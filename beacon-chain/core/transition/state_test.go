@@ -33,7 +33,7 @@ func TestGenesisBeaconState_OK(t *testing.T) {
 	genesisTime := uint64(99999)
 	deposits, _, err := util.DeterministicDepositsAndKeys(uint64(depositsForChainStart))
 	require.NoError(t, err)
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := util.DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 	newState, err := transition.GenesisBeaconState(t.Context(), deposits, genesisTime, silaexecData)
 	require.NoError(t, err, "Could not execute GenesisBeaconState")
@@ -85,16 +85,16 @@ func TestGenesisBeaconState_OK(t *testing.T) {
 	assert.DeepEqual(t, zeroHash, newState.BlockRoots()[0], "BlockRoots was not correctly initialized")
 
 	// Deposit root checks.
-	assert.DeepEqual(t, silaexecData.DepositRoot, newState.SilaExecutionData().DepositRoot, "SilaExecutionData DepositRoot was not correctly initialized")
-	assert.DeepSSZEqual(t, []*silapb.SilaExecutionData{}, newState.SilaExecutionDataVotes(), "SilaExecutionDataVotes was not correctly initialized")
+	assert.DeepEqual(t, silaexecData.DepositRoot, newState.SilaData().DepositRoot, "SilaData DepositRoot was not correctly initialized")
+	assert.DeepSSZEqual(t, []*silapb.SilaData{}, newState.SilaDataVotes(), "SilaDataVotes was not correctly initialized")
 }
 
 func TestGenesisState_HashEquality(t *testing.T) {
 	deposits, _, err := util.DeterministicDepositsAndKeys(100)
 	require.NoError(t, err)
-	state1, err := transition.GenesisBeaconState(t.Context(), deposits, 0, &silapb.SilaExecutionData{BlockHash: make([]byte, 32)})
+	state1, err := transition.GenesisBeaconState(t.Context(), deposits, 0, &silapb.SilaData{BlockHash: make([]byte, 32)})
 	require.NoError(t, err)
-	state, err := transition.GenesisBeaconState(t.Context(), deposits, 0, &silapb.SilaExecutionData{BlockHash: make([]byte, 32)})
+	state, err := transition.GenesisBeaconState(t.Context(), deposits, 0, &silapb.SilaData{BlockHash: make([]byte, 32)})
 	require.NoError(t, err)
 
 	pbState1, err := state_native.ProtobufBeaconStatePhase0(state1.ToProto())
@@ -112,7 +112,7 @@ func TestGenesisState_HashEquality(t *testing.T) {
 }
 
 func TestGenesisState_InitializesLatestBlockHashes(t *testing.T) {
-	s, err := transition.GenesisBeaconState(t.Context(), nil, 0, &silapb.SilaExecutionData{})
+	s, err := transition.GenesisBeaconState(t.Context(), nil, 0, &silapb.SilaData{})
 	require.NoError(t, err)
 	got, want := uint64(len(s.BlockRoots())), uint64(params.BeaconConfig().SlotsPerHistoricalRoot)
 	assert.Equal(t, want, got, "Wrong number of recent block hashes")
@@ -127,5 +127,5 @@ func TestGenesisState_InitializesLatestBlockHashes(t *testing.T) {
 
 func TestGenesisState_FailsWithoutSilaExecutiondata(t *testing.T) {
 	_, err := transition.GenesisBeaconState(t.Context(), nil, 0, nil)
-	assert.ErrorContains(t, "no silaExecutionData provided for genesis state", err)
+	assert.ErrorContains(t, "no silaData provided for genesis state", err)
 }

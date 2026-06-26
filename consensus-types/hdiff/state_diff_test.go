@@ -102,7 +102,7 @@ func TestApplyDiff(t *testing.T) {
 	for i := range blockHash {
 		blockHash[i] = byte(i + 100)
 	}
-	require.NoError(t, target.SetSilaExecutionData(&silapb.SilaExecutionData{
+	require.NoError(t, target.SetSilaData(&silapb.SilaData{
 		DepositRoot:  depositRoot,
 		DepositCount: 99999,
 		BlockHash:    blockHash,
@@ -836,25 +836,25 @@ func Test_diffStateRoots(t *testing.T) {
 	require.NotEqual(t, [32]byte{}, diff.stateRoots[1])
 }
 
-func Test_shouldAppendSilaExecutionDataVotes(t *testing.T) {
+func Test_shouldAppendSilaDataVotes(t *testing.T) {
 	// Test empty votes
 	root1 := make([]byte, 32)
 	root1[0] = 0x01
-	require.Equal(t, true, shouldAppendSilaExecutionDataVotes([]*silapb.SilaExecutionData{}, []*silapb.SilaExecutionData{{BlockHash: root1}}))
+	require.Equal(t, true, shouldAppendSilaDataVotes([]*silapb.SilaData{}, []*silapb.SilaData{{BlockHash: root1}}))
 
 	// Test appending to existing votes
 	root2 := make([]byte, 32)
 	root2[0] = 0x02
-	sourceVotes := []*silapb.SilaExecutionData{{BlockHash: root1}}
-	targetVotes := []*silapb.SilaExecutionData{{BlockHash: root1}, {BlockHash: root2}}
-	require.Equal(t, true, shouldAppendSilaExecutionDataVotes(sourceVotes, targetVotes))
+	sourceVotes := []*silapb.SilaData{{BlockHash: root1}}
+	targetVotes := []*silapb.SilaData{{BlockHash: root1}, {BlockHash: root2}}
+	require.Equal(t, true, shouldAppendSilaDataVotes(sourceVotes, targetVotes))
 
 	// Test complete replacement
 	root3 := make([]byte, 32)
 	root3[0] = 0x03
-	sourceVotes = []*silapb.SilaExecutionData{{BlockHash: root1}, {BlockHash: root2}}
-	targetVotes = []*silapb.SilaExecutionData{{BlockHash: root3}}
-	require.Equal(t, false, shouldAppendSilaExecutionDataVotes(sourceVotes, targetVotes))
+	sourceVotes = []*silapb.SilaData{{BlockHash: root1}, {BlockHash: root2}}
+	targetVotes = []*silapb.SilaData{{BlockHash: root3}}
+	require.Equal(t, false, shouldAppendSilaDataVotes(sourceVotes, targetVotes))
 }
 
 // Test key serialization methods
@@ -964,13 +964,13 @@ func Test_readPendingAttestation(t *testing.T) {
 	require.ErrorContains(t, "data is too small", err)
 }
 
-// Test readSilaExecutionData - regression test for bug where indices were off by 1
-func Test_readSilaExecutionData(t *testing.T) {
+// Test readSilaData - regression test for bug where indices were off by 1
+func Test_readSilaData(t *testing.T) {
 	diff := &stateDiff{}
 
 	// Test nil marker
 	data := []byte{nilMarker}
-	err := diff.readSilaExecutionData(&data)
+	err := diff.readSilaData(&data)
 	require.NoError(t, err)
 	require.IsNil(t, diff.silaexecData)
 	require.Equal(t, 0, len(data))
@@ -995,7 +995,7 @@ func Test_readSilaExecutionData(t *testing.T) {
 	data = append(data, blockHash...)
 
 	diff = &stateDiff{}
-	err = diff.readSilaExecutionData(&data)
+	err = diff.readSilaData(&data)
 	require.NoError(t, err)
 	require.NotNil(t, diff.silaexecData)
 	require.DeepEqual(t, depositRoot, diff.silaexecData.DepositRoot)
@@ -1006,13 +1006,13 @@ func Test_readSilaExecutionData(t *testing.T) {
 	// Test insufficient data for marker
 	data = []byte{}
 	diff = &stateDiff{}
-	err = diff.readSilaExecutionData(&data)
+	err = diff.readSilaData(&data)
 	require.ErrorContains(t, "silaexecData", err)
 
 	// Test insufficient data after marker
 	data = []byte{notNilMarker}
 	diff = &stateDiff{}
-	err = diff.readSilaExecutionData(&data)
+	err = diff.readSilaData(&data)
 	require.ErrorContains(t, "silaexecData", err)
 }
 

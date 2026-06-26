@@ -16,7 +16,7 @@ func GenerateProtoElectraBeaconBlockContents() *silapb.BeaconBlockContentsElectr
 			StateRoot:     FillByteSlice(32, 4),
 			Body: &silapb.BeaconBlockBodyElectra{
 				RandaoReveal: FillByteSlice(96, 5),
-				SilaExecutionData: &silapb.SilaExecutionData{
+				SilaData: &silapb.SilaData{
 					DepositRoot:  FillByteSlice(32, 6),
 					DepositCount: 7,
 					BlockHash:    FillByteSlice(32, 8),
@@ -276,7 +276,7 @@ func GenerateProtoBlindedElectraBeaconBlock() *silapb.BlindedBeaconBlockElectra 
 		StateRoot:     FillByteSlice(32, 4),
 		Body: &silapb.BlindedBeaconBlockBodyElectra{
 			RandaoReveal: FillByteSlice(96, 5),
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositRoot:  FillByteSlice(32, 6),
 				DepositCount: 7,
 				BlockHash:    FillByteSlice(32, 8),
@@ -518,7 +518,7 @@ func GenerateJsonElectraBeaconBlockContents() *structs.BeaconBlockContentsElectr
 			StateRoot:     FillEncodedByteSlice(32, 4),
 			Body: &structs.BeaconBlockBodyElectra{
 				RandaoReveal: FillEncodedByteSlice(96, 5),
-				SilaExecutionData: &structs.SilaExecutionData{
+				SilaData: &structs.SilaData{
 					DepositRoot:  FillEncodedByteSlice(32, 6),
 					DepositCount: "7",
 					BlockHash:    FillEncodedByteSlice(32, 8),
@@ -778,7 +778,7 @@ func GenerateJsonBlindedElectraBeaconBlock() *structs.BlindedBeaconBlockElectra 
 		StateRoot:     FillEncodedByteSlice(32, 4),
 		Body: &structs.BlindedBeaconBlockBodyElectra{
 			RandaoReveal: FillEncodedByteSlice(96, 5),
-			SilaExecutionData: &structs.SilaExecutionData{
+			SilaData: &structs.SilaData{
 				DepositRoot:  FillEncodedByteSlice(32, 6),
 				DepositCount: "7",
 				BlockHash:    FillEncodedByteSlice(32, 8),

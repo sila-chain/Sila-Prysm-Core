@@ -134,7 +134,7 @@ func Test_SignedBeaconBlock_Header(t *testing.T) {
 	bb := &BeaconBlockBody{
 		version:      version.Phase0,
 		randaoReveal: [96]byte{},
-		silaexecData: &eth.SilaExecutionData{
+		silaexecData: &eth.SilaData{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},
@@ -345,11 +345,11 @@ func Test_BeaconBlockBody_RandaoReveal(t *testing.T) {
 	assert.DeepEqual(t, bytesutil.ToBytes96([]byte("randaoreveal")), bb.Block().Body().RandaoReveal())
 }
 
-func Test_BeaconBlockBody_SilaExecutionData(t *testing.T) {
-	e := &eth.SilaExecutionData{DepositRoot: []byte("depositroot")}
+func Test_BeaconBlockBody_SilaData(t *testing.T) {
+	e := &eth.SilaData{DepositRoot: []byte("depositroot")}
 	bb := &SignedBeaconBlock{block: &BeaconBlock{body: &BeaconBlockBody{}}}
-	bb.SetSilaExecutionData(e)
-	assert.DeepEqual(t, e, bb.Block().Body().SilaExecutionData())
+	bb.SetSilaData(e)
+	assert.DeepEqual(t, e, bb.Block().Body().SilaData())
 }
 
 func Test_BeaconBlockBody_Graffiti(t *testing.T) {
@@ -584,7 +584,7 @@ func hydrateBeaconBlockBody() *eth.BeaconBlockBody {
 	return &eth.BeaconBlockBody{
 		RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
 		Graffiti:     make([]byte, fieldparams.RootLength),
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
@@ -595,7 +595,7 @@ func hydrateBeaconBlockBodyAltair() *eth.BeaconBlockBodyAltair {
 	return &eth.BeaconBlockBodyAltair{
 		RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
 		Graffiti:     make([]byte, fieldparams.RootLength),
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
@@ -610,7 +610,7 @@ func hydrateBeaconBlockBodyBellatrix() *eth.BeaconBlockBodyBellatrix {
 	return &eth.BeaconBlockBodyBellatrix{
 		RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
 		Graffiti:     make([]byte, fieldparams.RootLength),
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
@@ -637,7 +637,7 @@ func hydrateBeaconBlockBodyCapella() *eth.BeaconBlockBodyCapella {
 	return &eth.BeaconBlockBodyCapella{
 		RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
 		Graffiti:     make([]byte, fieldparams.RootLength),
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
@@ -668,7 +668,7 @@ func hydrateBeaconBlockBodyGloas() *eth.BeaconBlockBodyGloas {
 	return &eth.BeaconBlockBodyGloas{
 		RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
 		Graffiti:     make([]byte, fieldparams.RootLength),
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
@@ -705,7 +705,7 @@ func hydrateBeaconBlockBodyDeneb() *eth.BeaconBlockBodyDeneb {
 	return &eth.BeaconBlockBodyDeneb{
 		RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
 		Graffiti:     make([]byte, fieldparams.RootLength),
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
@@ -733,7 +733,7 @@ func hydrateBeaconBlockBodyElectra() *eth.BeaconBlockBodyElectra {
 	return &eth.BeaconBlockBodyElectra{
 		RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
 		Graffiti:     make([]byte, fieldparams.RootLength),
-		SilaExecutionData: &eth.SilaExecutionData{
+		SilaData: &eth.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},

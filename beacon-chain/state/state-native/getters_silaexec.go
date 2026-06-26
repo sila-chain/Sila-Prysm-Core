@@ -4,8 +4,8 @@ import (
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
-// SilaExecutionData corresponding to the proof-of-work chain information stored in the beacon state.
-func (b *BeaconState) SilaExecutionData() *silapb.SilaExecutionData {
+// SilaData corresponding to the proof-of-work chain information stored in the beacon state.
+func (b *BeaconState) SilaData() *silapb.SilaData {
 	if b.silaexecData == nil {
 		return nil
 	}
@@ -18,7 +18,7 @@ func (b *BeaconState) SilaExecutionData() *silapb.SilaExecutionData {
 
 // silaexecDataVal corresponding to the proof-of-work chain information stored in the beacon state.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) silaexecDataVal() *silapb.SilaExecutionData {
+func (b *BeaconState) silaexecDataVal() *silapb.SilaData {
 	if b.silaexecData == nil {
 		return nil
 	}
@@ -26,30 +26,30 @@ func (b *BeaconState) silaexecDataVal() *silapb.SilaExecutionData {
 	return b.silaexecData.Copy()
 }
 
-// SilaExecutionDataVotes corresponds to votes from Sila on the canonical proof-of-work chain
+// SilaDataVotes corresponds to votes from Sila on the canonical proof-of-work chain
 // data retrieved from silaexec.
-func (b *BeaconState) SilaExecutionDataVotes() []*silapb.SilaExecutionData {
-	if b.silaExecutionDataVotes == nil {
+func (b *BeaconState) SilaDataVotes() []*silapb.SilaData {
+	if b.silaDataVotes == nil {
 		return nil
 	}
 
 	b.lock.RLock()
 	defer b.lock.RUnlock()
 
-	return b.silaExecutionDataVotesVal()
+	return b.silaDataVotesVal()
 }
 
-// silaExecutionDataVotesVal corresponds to votes from Sila on the canonical proof-of-work chain
+// silaDataVotesVal corresponds to votes from Sila on the canonical proof-of-work chain
 // data retrieved from silaexec.
 // This assumes that a lock is already held on BeaconState.
-func (b *BeaconState) silaExecutionDataVotesVal() []*silapb.SilaExecutionData {
-	if b.silaExecutionDataVotes == nil {
+func (b *BeaconState) silaDataVotesVal() []*silapb.SilaData {
+	if b.silaDataVotes == nil {
 		return nil
 	}
 
-	res := make([]*silapb.SilaExecutionData, len(b.silaExecutionDataVotes))
+	res := make([]*silapb.SilaData, len(b.silaDataVotes))
 	for i := range res {
-		res[i] = b.silaExecutionDataVotes[i].Copy()
+		res[i] = b.silaDataVotes[i].Copy()
 	}
 	return res
 }

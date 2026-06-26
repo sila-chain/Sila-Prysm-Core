@@ -32,7 +32,7 @@ import (
 //	  state = BeaconState(
 //	      genesis_time=silaexec_timestamp + GENESIS_DELAY,
 //	      fork=fork,
-//	      sila_execution_data=SilaExecutionData(block_hash=silaexec_block_hash, deposit_count=uint64(len(deposits))),
+//	      sila_data=SilaData(block_hash=silaexec_block_hash, deposit_count=uint64(len(deposits))),
 //	      latest_block_header=BeaconBlockHeader(body_root=hash_tree_root(BeaconBlockBody())),
 //	      randao_mixes=[silaexec_block_hash] * EPOCHS_PER_HISTORICAL_VECTOR,  # Seed RANDAO with SilaExecution entropy
 //	  )
@@ -41,7 +41,7 @@ import (
 //	  leaves = list(map(lambda deposit: deposit.data, deposits))
 //	  for index, deposit in enumerate(deposits):
 //	      deposit_data_list = List[DepositData, 2**SILA_DEPOSIT_TREE_DEPTH](*leaves[:index + 1])
-//	      state.sila_execution_data.deposit_root = hash_tree_root(deposit_data_list)
+//	      state.sila_data.deposit_root = hash_tree_root(deposit_data_list)
 //	      process_deposit(state, deposit)
 //
 //	  # Process activations
@@ -58,14 +58,14 @@ import (
 //	  return state
 //
 // This method differs from the spec so as to process deposits beforehand instead of the end of the function.
-func GenesisBeaconStateBellatrix(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, silaexecData *silapb.SilaExecutionData, ep *silaenginev1.SilaPayload) (state.BeaconState, error) {
+func GenesisBeaconStateBellatrix(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, silaexecData *silapb.SilaData, ep *silaenginev1.SilaPayload) (state.BeaconState, error) {
 	st, err := EmptyGenesisStateBellatrix()
 	if err != nil {
 		return nil, err
 	}
 
 	// Process initial deposits.
-	st, err = helpers.UpdateGenesisSilaExecutionData(st, deposits, silaexecData)
+	st, err = helpers.UpdateGenesisSilaData(st, deposits, silaexecData)
 	if err != nil {
 		return nil, err
 	}
@@ -75,23 +75,23 @@ func GenesisBeaconStateBellatrix(ctx context.Context, deposits []*silapb.Deposit
 		return nil, errors.Wrap(err, "could not process validator deposits")
 	}
 
-	// After deposits have been processed, overwrite silaExecutionData to what is passed in. This allows us to "pre-mine" validators
+	// After deposits have been processed, overwrite silaData to what is passed in. This allows us to "pre-mine" validators
 	// without the deposit root and count mismatching the real sila deposit.
-	if err := st.SetSilaExecutionData(silaexecData); err != nil {
+	if err := st.SetSilaData(silaexecData); err != nil {
 		return nil, err
 	}
 	if err := st.SetSilaExecutionDepositIndex(silaexecData.DepositCount); err != nil {
 		return nil, err
 	}
 
-	return OptimizedGenesisBeaconStateBellatrix(genesisTime, st, st.SilaExecutionData(), ep)
+	return OptimizedGenesisBeaconStateBellatrix(genesisTime, st, st.SilaData(), ep)
 }
 
 // OptimizedGenesisBeaconStateBellatrix is used to create a state that has already processed deposits. This is to efficiently
 // create a mainnet state at chainstart.
-func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.BeaconState, silaexecData *silapb.SilaExecutionData, ep *silaenginev1.SilaPayload) (state.BeaconState, error) {
+func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.BeaconState, silaexecData *silapb.SilaData, ep *silaenginev1.SilaPayload) (state.BeaconState, error) {
 	if silaexecData == nil {
-		return nil, errors.New("no silaExecutionData provided for genesis state")
+		return nil, errors.New("no silaData provided for genesis state")
 	}
 
 	randaoMixes := make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector)
@@ -184,8 +184,8 @@ func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.Bea
 		Slashings:       slashings,
 
 		// SilaExecution data.
-		SilaExecutionData:                     silaexecData,
-		SilaExecutionDataVotes:                []*silapb.SilaExecutionData{},
+		SilaData:                     silaexecData,
+		SilaDataVotes:                []*silapb.SilaData{},
 		SilaExecutionDepositIndex:             preState.SilaExecutionDepositIndex(),
 		LatestSilaPayloadHeader: eph,
 		InactivityScores:             scores,
@@ -193,7 +193,7 @@ func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.Bea
 
 	bodyRoot, err := (&silapb.BeaconBlockBodyBellatrix{
 		RandaoReveal: make([]byte, 96),
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},
@@ -260,8 +260,8 @@ func EmptyGenesisStateBellatrix() (state.BeaconState, error) {
 		HistoricalRoots:   [][]byte{},
 
 		// SilaExecution data.
-		SilaExecutionData:         &silapb.SilaExecutionData{},
-		SilaExecutionDataVotes:    []*silapb.SilaExecutionData{},
+		SilaData:         &silapb.SilaData{},
+		SilaDataVotes:    []*silapb.SilaData{},
 		SilaExecutionDepositIndex: 0,
 		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeader{
 			ParentHash:       make([]byte, 32),

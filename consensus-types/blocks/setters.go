@@ -53,9 +53,9 @@ func (b *SignedBeaconBlock) SetGraffiti(g []byte) {
 	copy(b.block.body.graffiti[:], g)
 }
 
-// SetSilaExecutionData sets the silaexec data in the block.
+// SetSilaData sets the silaexec data in the block.
 // This function is not thread safe, it is only used during block creation.
-func (b *SignedBeaconBlock) SetSilaExecutionData(e *eth.SilaExecutionData) {
+func (b *SignedBeaconBlock) SetSilaData(e *eth.SilaData) {
 	b.block.body.silaexecData = e
 }
 
@@ -143,7 +143,7 @@ func (b *SignedBeaconBlock) SetSyncAggregate(s *eth.SyncAggregate) error {
 
 // SetExecution sets the sila payload of the block body.
 // This function is not thread safe, it is only used during block creation.
-func (b *SignedBeaconBlock) SetExecution(e interfaces.ExecutionData) error {
+func (b *SignedBeaconBlock) SetExecution(e interfaces.SilaData) error {
 	if b.version == version.Phase0 || b.version == version.Altair || b.version >= version.Gloas {
 		return consensus_types.ErrNotSupported("Execution", b.version)
 	}

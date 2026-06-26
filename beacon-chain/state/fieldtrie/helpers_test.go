@@ -25,10 +25,10 @@ func Test_handlePendingAttestation_OutOfRange(t *testing.T) {
 	assert.ErrorContains(t, "index 3 greater than number of pending attestations 1", err)
 }
 
-func Test_handleSilaExecutionDataSlice_OutOfRange(t *testing.T) {
-	items := make([]*silapb.SilaExecutionData, 1)
+func Test_handleSilaDataSlice_OutOfRange(t *testing.T) {
+	items := make([]*silapb.SilaData, 1)
 	indices := []uint64{3}
-	_, err := handleSilaExecutionDataSlice(items, indices)
+	_, err := handleSilaDataSlice(items, indices)
 	assert.ErrorContains(t, "index 3 greater than number of items in silaexec data slice 1", err)
 
 }
@@ -206,10 +206,10 @@ func TestFieldTrie_NativeState_fieldConvertersNative(t *testing.T) {
 			errMsg:  "non-existent type provided",
 		},
 		{
-			name: "SilaExecutionDataVotes all",
+			name: "SilaDataVotes all",
 			args: &args{
 				field: types.FieldIndex(9),
-				elements: []*silapb.SilaExecutionData{
+				elements: []*silapb.SilaData{
 					{
 						DepositRoot:  make([]byte, fieldparams.RootLength),
 						DepositCount: 1,
@@ -219,11 +219,11 @@ func TestFieldTrie_NativeState_fieldConvertersNative(t *testing.T) {
 			wantHex: []string{"0x4833912e1264aef8a18392d795f3f2eed17cf5c0e8471cb0c0db2ec5aca10231"},
 		},
 		{
-			name: "SilaExecutionDataVotes by index",
+			name: "SilaDataVotes by index",
 			args: &args{
 				field:   types.FieldIndex(9),
 				indices: []uint64{1},
-				elements: []*silapb.SilaExecutionData{
+				elements: []*silapb.SilaData{
 					{
 						DepositRoot:  make([]byte, fieldparams.RootLength),
 						DepositCount: 2,
@@ -237,13 +237,13 @@ func TestFieldTrie_NativeState_fieldConvertersNative(t *testing.T) {
 			wantHex: []string{"0x4833912e1264aef8a18392d795f3f2eed17cf5c0e8471cb0c0db2ec5aca10231"},
 		},
 		{
-			name: "SilaExecutionDataVotes type not found",
+			name: "SilaDataVotes type not found",
 			args: &args{
 				field:    types.FieldIndex(9),
 				elements: 123,
 			},
 			wantHex: nil,
-			errMsg:  fmt.Sprintf("Wanted type of %T", []*silapb.SilaExecutionData{}),
+			errMsg:  fmt.Sprintf("Wanted type of %T", []*silapb.SilaData{}),
 		},
 		{
 			name: "Balance",

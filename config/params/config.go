@@ -678,9 +678,9 @@ func ConfigForkVersions(b *BeaconChainConfig) map[[fieldparams.VersionLength]byt
 	}
 }
 
-// SilaExecutionDataVotesLength returns the maximum length of the votes on the SilaExecution data,
+// SilaDataVotesLength returns the maximum length of the votes on the SilaExecution data,
 // computed from the parameters in BeaconChainConfig.
-func (b *BeaconChainConfig) SilaExecutionDataVotesLength() uint64 {
+func (b *BeaconChainConfig) SilaDataVotesLength() uint64 {
 	return uint64(b.EpochsPerSilaExecutionVotingPeriod.Mul(uint64(b.SlotsPerEpoch)))
 }
 

@@ -94,7 +94,7 @@ func (vs *Server) getLocalPayloadFromEngine(
 		payloadIDCacheHit.Inc()
 		res, err := vs.SilaEngineCaller.GetPayload(ctx, pid, slot)
 		if err == nil {
-			warnIfFeeRecipientDiffers(val.FeeRecipient[:], res.ExecutionData.FeeRecipient())
+			warnIfFeeRecipientDiffers(val.FeeRecipient[:], res.SilaData.FeeRecipient())
 			return res, nil
 		}
 		// TODO: TestServer_getSilaPayloadContextTimeout expects this behavior.
@@ -213,7 +213,7 @@ func (vs *Server) getLocalPayloadFromEngine(
 		return nil, err
 	}
 
-	warnIfFeeRecipientDiffers(val.FeeRecipient[:], res.ExecutionData.FeeRecipient())
+	warnIfFeeRecipientDiffers(val.FeeRecipient[:], res.SilaData.FeeRecipient())
 	log.WithField("value", res.Bid).Debug("Received sila payload from local engine")
 	return res, nil
 }

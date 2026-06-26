@@ -44,7 +44,7 @@ func TestFuzzProcessBlockHeader_10000(t *testing.T) {
 
 		s, err := state_native.InitializeFromProtoUnsafePhase0(state)
 		require.NoError(t, err)
-		if block.Block == nil || block.Block.Body == nil || block.Block.Body.SilaExecutionData == nil {
+		if block.Block == nil || block.Block.Body == nil || block.Block.Body.SilaData == nil {
 			continue
 		}
 		wsb, err := blocks.NewSignedBeaconBlock(block)
@@ -79,46 +79,46 @@ func TestFuzzverifyDepositDataSigningRoot_10000(_ *testing.T) {
 	}
 }
 
-func TestFuzzProcessSilaExecutionDataInBlock_10000(t *testing.T) {
+func TestFuzzProcessSilaDataInBlock_10000(t *testing.T) {
 	fuzzer := gofuzz.NewWithSeed(0)
-	e := &silapb.SilaExecutionData{}
+	e := &silapb.SilaData{}
 	state, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{})
 	require.NoError(t, err)
 	for range 10000 {
 		fuzzer.Fuzz(state)
 		fuzzer.Fuzz(e)
-		s, err := ProcessSilaExecutionDataInBlock(t.Context(), state, e)
+		s, err := ProcessSilaDataInBlock(t.Context(), state, e)
 		if err != nil && s != nil {
-			t.Fatalf("state should be nil on err. found: %v on error: %v for state: %v and silaExecutionData: %v", s, err, state, e)
+			t.Fatalf("state should be nil on err. found: %v on error: %v for state: %v and silaData: %v", s, err, state, e)
 		}
 	}
 }
 
-func TestFuzzareSilaExecutionDataEqual_10000(_ *testing.T) {
+func TestFuzzareSilaDataEqual_10000(_ *testing.T) {
 	fuzzer := gofuzz.NewWithSeed(0)
-	silaExecutionData := &silapb.SilaExecutionData{}
-	silaExecutionData2 := &silapb.SilaExecutionData{}
+	silaData := &silapb.SilaData{}
+	silaData2 := &silapb.SilaData{}
 
 	for range 10000 {
-		fuzzer.Fuzz(silaExecutionData)
-		fuzzer.Fuzz(silaExecutionData2)
-		AreSilaExecutionDataEqual(silaExecutionData, silaExecutionData2)
-		AreSilaExecutionDataEqual(silaExecutionData, silaExecutionData)
+		fuzzer.Fuzz(silaData)
+		fuzzer.Fuzz(silaData2)
+		AreSilaDataEqual(silaData, silaData2)
+		AreSilaDataEqual(silaData, silaData)
 	}
 }
 
-func TestFuzzSilaExecutionDataHasEnoughSupport_10000(t *testing.T) {
+func TestFuzzSilaDataHasEnoughSupport_10000(t *testing.T) {
 	fuzzer := gofuzz.NewWithSeed(0)
-	silaExecutionData := &silapb.SilaExecutionData{}
-	var stateVotes []*silapb.SilaExecutionData
+	silaData := &silapb.SilaData{}
+	var stateVotes []*silapb.SilaData
 	for i := range 100000 {
-		fuzzer.Fuzz(silaExecutionData)
+		fuzzer.Fuzz(silaData)
 		fuzzer.Fuzz(&stateVotes)
 		s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
-			SilaExecutionDataVotes: stateVotes,
+			SilaDataVotes: stateVotes,
 		})
 		require.NoError(t, err)
-		_, err = SilaExecutionDataHasEnoughSupport(s, silaExecutionData)
+		_, err = SilaDataHasEnoughSupport(s, silaData)
 		_ = err
 		fuzz.FreeMemory(i)
 	}

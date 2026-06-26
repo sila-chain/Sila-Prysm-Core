@@ -9,8 +9,8 @@ type BeaconState struct {
 	BlockRoots                  []string              `json:"block_roots"`
 	StateRoots                  []string              `json:"state_roots"`
 	HistoricalRoots             []string              `json:"historical_roots"`
-	SilaExecutionData                    *SilaExecutionData             `json:"sila_execution_data"`
-	SilaExecutionDataVotes               []*SilaExecutionData           `json:"sila_execution_data_votes"`
+	SilaData                    *SilaData             `json:"sila_data"`
+	SilaDataVotes               []*SilaData           `json:"sila_data_votes"`
 	SilaExecutionDepositIndex            string                `json:"silaexec_deposit_index"`
 	Validators                  []*Validator          `json:"validators"`
 	Balances                    []string              `json:"balances"`
@@ -33,8 +33,8 @@ type BeaconStateAltair struct {
 	BlockRoots                  []string           `json:"block_roots"`
 	StateRoots                  []string           `json:"state_roots"`
 	HistoricalRoots             []string           `json:"historical_roots"`
-	SilaExecutionData                    *SilaExecutionData          `json:"sila_execution_data"`
-	SilaExecutionDataVotes               []*SilaExecutionData        `json:"sila_execution_data_votes"`
+	SilaData                    *SilaData          `json:"sila_data"`
+	SilaDataVotes               []*SilaData        `json:"sila_data_votes"`
 	SilaExecutionDepositIndex            string             `json:"silaexec_deposit_index"`
 	Validators                  []*Validator       `json:"validators"`
 	Balances                    []string           `json:"balances"`
@@ -60,8 +60,8 @@ type BeaconStateBellatrix struct {
 	BlockRoots                   []string                `json:"block_roots"`
 	StateRoots                   []string                `json:"state_roots"`
 	HistoricalRoots              []string                `json:"historical_roots"`
-	SilaExecutionData                     *SilaExecutionData               `json:"sila_execution_data"`
-	SilaExecutionDataVotes                []*SilaExecutionData             `json:"sila_execution_data_votes"`
+	SilaData                     *SilaData               `json:"sila_data"`
+	SilaDataVotes                []*SilaData             `json:"sila_data_votes"`
 	SilaExecutionDepositIndex             string                  `json:"silaexec_deposit_index"`
 	Validators                   []*Validator            `json:"validators"`
 	Balances                     []string                `json:"balances"`
@@ -88,8 +88,8 @@ type BeaconStateCapella struct {
 	BlockRoots                   []string                       `json:"block_roots"`
 	StateRoots                   []string                       `json:"state_roots"`
 	HistoricalRoots              []string                       `json:"historical_roots"`
-	SilaExecutionData                     *SilaExecutionData                      `json:"sila_execution_data"`
-	SilaExecutionDataVotes                []*SilaExecutionData                    `json:"sila_execution_data_votes"`
+	SilaData                     *SilaData                      `json:"sila_data"`
+	SilaDataVotes                []*SilaData                    `json:"sila_data_votes"`
 	SilaExecutionDepositIndex             string                         `json:"silaexec_deposit_index"`
 	Validators                   []*Validator                   `json:"validators"`
 	Balances                     []string                       `json:"balances"`
@@ -119,8 +119,8 @@ type BeaconStateDeneb struct {
 	BlockRoots                   []string                     `json:"block_roots"`
 	StateRoots                   []string                     `json:"state_roots"`
 	HistoricalRoots              []string                     `json:"historical_roots"`
-	SilaExecutionData                     *SilaExecutionData                    `json:"sila_execution_data"`
-	SilaExecutionDataVotes                []*SilaExecutionData                  `json:"sila_execution_data_votes"`
+	SilaData                     *SilaData                    `json:"sila_data"`
+	SilaDataVotes                []*SilaData                  `json:"sila_data_votes"`
 	SilaExecutionDepositIndex             string                       `json:"silaexec_deposit_index"`
 	Validators                   []*Validator                 `json:"validators"`
 	Balances                     []string                     `json:"balances"`
@@ -150,8 +150,8 @@ type BeaconStateElectra struct {
 	BlockRoots                    []string                     `json:"block_roots"`
 	StateRoots                    []string                     `json:"state_roots"`
 	HistoricalRoots               []string                     `json:"historical_roots"`
-	SilaExecutionData                      *SilaExecutionData                    `json:"sila_execution_data"`
-	SilaExecutionDataVotes                 []*SilaExecutionData                  `json:"sila_execution_data_votes"`
+	SilaData                      *SilaData                    `json:"sila_data"`
+	SilaDataVotes                 []*SilaData                  `json:"sila_data_votes"`
 	SilaExecutionDepositIndex              string                       `json:"silaexec_deposit_index"`
 	Validators                    []*Validator                 `json:"validators"`
 	Balances                      []string                     `json:"balances"`
@@ -190,8 +190,8 @@ type BeaconStateFulu struct {
 	BlockRoots                    []string                     `json:"block_roots"`
 	StateRoots                    []string                     `json:"state_roots"`
 	HistoricalRoots               []string                     `json:"historical_roots"`
-	SilaExecutionData                      *SilaExecutionData                    `json:"sila_execution_data"`
-	SilaExecutionDataVotes                 []*SilaExecutionData                  `json:"sila_execution_data_votes"`
+	SilaData                      *SilaData                    `json:"sila_data"`
+	SilaDataVotes                 []*SilaData                  `json:"sila_data_votes"`
 	SilaExecutionDepositIndex              string                       `json:"silaexec_deposit_index"`
 	Validators                    []*Validator                 `json:"validators"`
 	Balances                      []string                     `json:"balances"`
@@ -231,8 +231,8 @@ type BeaconStateGloas struct {
 	BlockRoots                    []string                    `json:"block_roots"`
 	StateRoots                    []string                    `json:"state_roots"`
 	HistoricalRoots               []string                    `json:"historical_roots"`
-	SilaExecutionData                      *SilaExecutionData                   `json:"sila_execution_data"`
-	SilaExecutionDataVotes                 []*SilaExecutionData                 `json:"sila_execution_data_votes"`
+	SilaData                      *SilaData                   `json:"sila_data"`
+	SilaDataVotes                 []*SilaData                 `json:"sila_data_votes"`
 	SilaExecutionDepositIndex              string                      `json:"silaexec_deposit_index"`
 	Validators                    []*Validator                `json:"validators"`
 	Balances                      []string                    `json:"balances"`

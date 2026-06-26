@@ -451,8 +451,8 @@ func genCheckpoint() *v1alpha1.Checkpoint {
 	}
 }
 
-func genSilaExecutionData() *v1alpha1.SilaExecutionData {
-	return &v1alpha1.SilaExecutionData{
+func genSilaData() *v1alpha1.SilaData {
+	return &v1alpha1.SilaData{
 		DepositRoot:  bytes(32),
 		DepositCount: 4,
 		BlockHash:    bytes(32),
@@ -488,7 +488,7 @@ func genBeaconBlock() *v1alpha1.BeaconBlock {
 func genBeaconBlockBody() *v1alpha1.BeaconBlockBody {
 	return &v1alpha1.BeaconBlockBody{
 		RandaoReveal:      bytes(32),
-		SilaExecutionData:          genSilaExecutionData(),
+		SilaData:          genSilaData(),
 		Graffiti:          bytes(32),
 		ProposerSlashings: genProposerSlashings(5),
 		AttesterSlashings: genAttesterSlashings(5),
@@ -632,7 +632,7 @@ func genSyncAggregate() *v1alpha1.SyncAggregate {
 func genBeaconBlockBodyAltair() *v1alpha1.BeaconBlockBodyAltair {
 	return &v1alpha1.BeaconBlockBodyAltair{
 		RandaoReveal:      bytes(32),
-		SilaExecutionData:          genSilaExecutionData(),
+		SilaData:          genSilaData(),
 		Graffiti:          bytes(32),
 		ProposerSlashings: genProposerSlashings(5),
 		AttesterSlashings: genAttesterSlashings(5),
@@ -663,7 +663,7 @@ func genSignedBeaconBlockAltair() *v1alpha1.SignedBeaconBlockAltair {
 func genBeaconBlockBodyBellatrix() *v1alpha1.BeaconBlockBodyBellatrix {
 	return &v1alpha1.BeaconBlockBodyBellatrix{
 		RandaoReveal:      bytes(32),
-		SilaExecutionData:          genSilaExecutionData(),
+		SilaData:          genSilaData(),
 		Graffiti:          bytes(32),
 		ProposerSlashings: genProposerSlashings(5),
 		AttesterSlashings: genAttesterSlashings(5),
@@ -695,7 +695,7 @@ func genSignedBeaconBlockBellatrix() *v1alpha1.SignedBeaconBlockBellatrix {
 func genBeaconBlockBodyCapella() *v1alpha1.BeaconBlockBodyCapella {
 	return &v1alpha1.BeaconBlockBodyCapella{
 		RandaoReveal:          bytes(96),
-		SilaExecutionData:              genSilaExecutionData(),
+		SilaData:              genSilaData(),
 		Graffiti:              bytes(32),
 		ProposerSlashings:     genProposerSlashings(5),
 		AttesterSlashings:     genAttesterSlashings(5),
@@ -728,7 +728,7 @@ func genSignedBeaconBlockCapella() *v1alpha1.SignedBeaconBlockCapella {
 func genBlindedBeaconBlockBodyCapella() *v1alpha1.BlindedBeaconBlockBodyCapella {
 	return &v1alpha1.BlindedBeaconBlockBodyCapella{
 		RandaoReveal:           bytes(96),
-		SilaExecutionData:               genSilaExecutionData(),
+		SilaData:               genSilaData(),
 		Graffiti:               bytes(32),
 		ProposerSlashings:      genProposerSlashings(5),
 		AttesterSlashings:      genAttesterSlashings(5),
@@ -761,7 +761,7 @@ func genSignedBlindedBeaconBlockCapella() *v1alpha1.SignedBlindedBeaconBlockCape
 func genBeaconBlockBodyDeneb() *v1alpha1.BeaconBlockBodyDeneb {
 	return &v1alpha1.BeaconBlockBodyDeneb{
 		RandaoReveal:          bytes(96),
-		SilaExecutionData:              genSilaExecutionData(),
+		SilaData:              genSilaData(),
 		Graffiti:              bytes(32),
 		ProposerSlashings:     genProposerSlashings(5),
 		AttesterSlashings:     genAttesterSlashings(5),
@@ -795,7 +795,7 @@ func genSignedBeaconBlockDeneb() *v1alpha1.SignedBeaconBlockDeneb {
 func genBlindedBeaconBlockBodyDeneb() *v1alpha1.BlindedBeaconBlockBodyDeneb {
 	return &v1alpha1.BlindedBeaconBlockBodyDeneb{
 		RandaoReveal:           bytes(96),
-		SilaExecutionData:               genSilaExecutionData(),
+		SilaData:               genSilaData(),
 		Graffiti:               bytes(32),
 		ProposerSlashings:      genProposerSlashings(5),
 		AttesterSlashings:      genAttesterSlashings(5),
@@ -1064,7 +1064,7 @@ func genBlindedBeaconBlockElectra() *v1alpha1.BlindedBeaconBlockElectra {
 func genBlindedBeaconBlockBodyElectra() *v1alpha1.BlindedBeaconBlockBodyElectra {
 	return &v1alpha1.BlindedBeaconBlockBodyElectra{
 		RandaoReveal:           bytes(96),
-		SilaExecutionData:               genSilaExecutionData(),
+		SilaData:               genSilaData(),
 		Graffiti:               bytes(32),
 		ProposerSlashings:      genProposerSlashings(5),
 		AttesterSlashings:      genAttesterSlashingsElectra(5),
@@ -1099,7 +1099,7 @@ func genBeaconBlockElectra() *v1alpha1.BeaconBlockElectra {
 func genBeaconBlockBodyElectra() *v1alpha1.BeaconBlockBodyElectra {
 	return &v1alpha1.BeaconBlockBodyElectra{
 		RandaoReveal:          bytes(96),
-		SilaExecutionData:              genSilaExecutionData(),
+		SilaData:              genSilaData(),
 		Graffiti:              bytes(32),
 		ProposerSlashings:     genProposerSlashings(5),
 		AttesterSlashings:     genAttesterSlashingsElectra(5),
@@ -1192,7 +1192,7 @@ func genBeaconBlockGloas() *v1alpha1.BeaconBlockGloas {
 func genBeaconBlockBodyGloas() *v1alpha1.BeaconBlockBodyGloas {
 	return &v1alpha1.BeaconBlockBodyGloas{
 		RandaoReveal:              bytes(96),
-		SilaExecutionData:                  genSilaExecutionData(),
+		SilaData:                  genSilaData(),
 		Graffiti:                  bytes(32),
 		ProposerSlashings:         genProposerSlashings(3),
 		AttesterSlashings:         genAttesterSlashingsElectra(3),

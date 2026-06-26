@@ -13,7 +13,7 @@ func GenerateProtoPhase0BeaconBlock() *silapb.BeaconBlock {
 		StateRoot:     FillByteSlice(32, 4),
 		Body: &silapb.BeaconBlockBody{
 			RandaoReveal: FillByteSlice(96, 5),
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositRoot:  FillByteSlice(32, 6),
 				DepositCount: 7,
 				BlockHash:    FillByteSlice(32, 8),
@@ -223,7 +223,7 @@ func GenerateJsonPhase0BeaconBlock() *structs.BeaconBlock {
 		StateRoot:     FillEncodedByteSlice(32, 4),
 		Body: &structs.BeaconBlockBody{
 			RandaoReveal: FillEncodedByteSlice(96, 5),
-			SilaExecutionData: &structs.SilaExecutionData{
+			SilaData: &structs.SilaData{
 				DepositRoot:  FillEncodedByteSlice(32, 6),
 				DepositCount: "7",
 				BlockHash:    FillEncodedByteSlice(32, 8),

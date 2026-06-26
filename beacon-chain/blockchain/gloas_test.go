@@ -129,7 +129,7 @@ func testGloasState(t *testing.T, slot primitives.Slot, parentRoot [32]byte, blo
 			StateRoot:  make([]byte, 32),
 			BodyRoot:   make([]byte, 32),
 		},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},

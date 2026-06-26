@@ -96,7 +96,7 @@ type Builder struct {
 	currId         *v1.PayloadIDBytes
 	prevBeaconRoot []byte
 	currVersion    int
-	currPayload    interfaces.ExecutionData
+	currPayload    interfaces.SilaData
 	blobBundle     *v1.BlobsBundle
 	mux            *http.ServeMux
 	validatorMap   map[string]*eth.ValidatorRegistrationV1
@@ -735,9 +735,9 @@ func (p *Builder) handleBlindedBlock(w http.ResponseWriter, req *http.Request) {
 
 var errInvalidTypeConversion = errors.New("unable to translate between api and foreign type")
 
-// SilaPayloadResponseFromData converts an ExecutionData interface value to a payload response.
+// SilaPayloadResponseFromData converts an SilaData interface value to a payload response.
 // This involves serializing the sila payload value so that the abstract payload envelope can be used.
-func SilaPayloadResponseFromData(v int, ed interfaces.ExecutionData, bundle *v1.BlobsBundle) (*builderAPI.SilaPayloadResponse, error) {
+func SilaPayloadResponseFromData(v int, ed interfaces.SilaData, bundle *v1.BlobsBundle) (*builderAPI.SilaPayloadResponse, error) {
 	pb := ed.Proto()
 	var data any
 	var err error

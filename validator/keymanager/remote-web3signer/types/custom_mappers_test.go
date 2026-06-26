@@ -342,7 +342,7 @@ func TestMapBeaconBlockAltair(t *testing.T) {
 					StateRoot:     make([]byte, fieldparams.RootLength),
 					Body: &silapb.BeaconBlockBodyAltair{
 						RandaoReveal: make([]byte, 32),
-						SilaExecutionData: &silapb.SilaExecutionData{
+						SilaData: &silapb.SilaData{
 							DepositRoot:  make([]byte, fieldparams.RootLength),
 							DepositCount: 0,
 							BlockHash:    make([]byte, 32),
@@ -477,7 +477,7 @@ func TestMapBeaconBlockBody(t *testing.T) {
 			args: args{
 				body: &silapb.BeaconBlockBody{
 					RandaoReveal: make([]byte, 32),
-					SilaExecutionData: &silapb.SilaExecutionData{
+					SilaData: &silapb.SilaData{
 						DepositRoot:  make([]byte, fieldparams.RootLength),
 						DepositCount: 0,
 						BlockHash:    make([]byte, 32),

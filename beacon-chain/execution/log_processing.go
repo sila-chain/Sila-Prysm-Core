@@ -178,7 +178,7 @@ func (s *Service) ProcessDepositLog(ctx context.Context, depositLog *gethtypes.L
 		if err != nil {
 			return errors.Wrap(err, "unable to determine root of deposit trie")
 		}
-		silaexecData := &silapb.SilaExecutionData{
+		silaexecData := &silapb.SilaData{
 			DepositRoot:  root[:],
 			DepositCount: uint64(len(s.chainStartData.ChainstartDeposits)),
 		}
@@ -258,7 +258,7 @@ func (s *Service) ProcessChainStart(genesisTime uint64, silaexecBlockHash [32]by
 		log.WithError(err).Error("Unable to determine root of deposit trie, aborting chain start")
 		return
 	}
-	s.chainStartData.SilaExecutionData = &silapb.SilaExecutionData{
+	s.chainStartData.SilaData = &silapb.SilaData{
 		DepositCount: uint64(len(s.chainStartData.ChainstartDeposits)),
 		DepositRoot:  root[:],
 		BlockHash:    silaexecBlockHash[:],
@@ -289,7 +289,7 @@ func createGenesisTime(timeStamp uint64) uint64 {
 // processPastLogs processes all the past logs from the sila deposit and
 // updates the deposit trie with the data from each individual log.
 func (s *Service) processPastLogs(ctx context.Context) error {
-	currentBlockNum := s.latestSilaExecutionData.LastRequestedBlock
+	currentBlockNum := s.latestSilaData.LastRequestedBlock
 	deploymentBlock := params.BeaconNetworkConfig().ContractDeploymentBlock
 	// Start from the deployment block if our last requested block
 	// is behind it. This is as the deposit logs can only start from the
@@ -323,9 +323,9 @@ func (s *Service) processPastLogs(ctx context.Context) error {
 		}
 	}
 
-	s.latestSilaExecutionDataLock.Lock()
-	s.latestSilaExecutionData.LastRequestedBlock = currentBlockNum
-	s.latestSilaExecutionDataLock.Unlock()
+	s.latestSilaDataLock.Lock()
+	s.latestSilaData.LastRequestedBlock = currentBlockNum
+	s.latestSilaDataLock.Unlock()
 
 	c, err := s.cfg.beaconDB.FinalizedCheckpoint(ctx)
 	if err != nil {
@@ -416,9 +416,9 @@ func (s *Service) processBlockInBatch(ctx context.Context, currentBlockNum uint6
 		}
 	}
 
-	s.latestSilaExecutionDataLock.RLock()
-	lastReqBlock := s.latestSilaExecutionData.LastRequestedBlock
-	s.latestSilaExecutionDataLock.RUnlock()
+	s.latestSilaDataLock.RLock()
+	lastReqBlock := s.latestSilaData.LastRequestedBlock
+	s.latestSilaDataLock.RUnlock()
 
 	for i, filterLog := range logs {
 		if filterLog.BlockNumber > currentBlockNum {
@@ -426,9 +426,9 @@ func (s *Service) processBlockInBatch(ctx context.Context, currentBlockNum uint6
 				return 0, 0, err
 			}
 			// set new block number after checking for chainstart for previous block.
-			s.latestSilaExecutionDataLock.Lock()
-			s.latestSilaExecutionData.LastRequestedBlock = currentBlockNum
-			s.latestSilaExecutionDataLock.Unlock()
+			s.latestSilaDataLock.Lock()
+			s.latestSilaData.LastRequestedBlock = currentBlockNum
+			s.latestSilaDataLock.Unlock()
 			currentBlockNum = filterLog.BlockNumber
 		}
 		if err := s.ProcessLog(ctx, &logs[i]); err != nil {
@@ -436,9 +436,9 @@ func (s *Service) processBlockInBatch(ctx context.Context, currentBlockNum uint6
 			// we reset the last requested block to the previous valid block range. This
 			// prevents the beacon from advancing processing of logs to another range
 			// in the event of an execution client failure.
-			s.latestSilaExecutionDataLock.Lock()
-			s.latestSilaExecutionData.LastRequestedBlock = lastReqBlock
-			s.latestSilaExecutionDataLock.Unlock()
+			s.latestSilaDataLock.Lock()
+			s.latestSilaData.LastRequestedBlock = lastReqBlock
+			s.latestSilaDataLock.Unlock()
 			return 0, 0, err
 		}
 	}
@@ -467,12 +467,12 @@ func (s *Service) requestBatchedHeadersAndLogs(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	if requestedBlock > s.latestSilaExecutionData.LastRequestedBlock &&
-		requestedBlock-s.latestSilaExecutionData.LastRequestedBlock > maxTolerableDifference {
-		log.Infof("Falling back to historical headers and logs sync. Current difference is %d", requestedBlock-s.latestSilaExecutionData.LastRequestedBlock)
+	if requestedBlock > s.latestSilaData.LastRequestedBlock &&
+		requestedBlock-s.latestSilaData.LastRequestedBlock > maxTolerableDifference {
+		log.Infof("Falling back to historical headers and logs sync. Current difference is %d", requestedBlock-s.latestSilaData.LastRequestedBlock)
 		return s.processPastLogs(ctx)
 	}
-	for i := s.latestSilaExecutionData.LastRequestedBlock + 1; i <= requestedBlock; i++ {
+	for i := s.latestSilaData.LastRequestedBlock + 1; i <= requestedBlock; i++ {
 		// Cache silaexec block header here.
 		_, err := s.BlockHashByHeight(ctx, new(big.Int).SetUint64(i))
 		if err != nil {
@@ -482,9 +482,9 @@ func (s *Service) requestBatchedHeadersAndLogs(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		s.latestSilaExecutionDataLock.Lock()
-		s.latestSilaExecutionData.LastRequestedBlock = i
-		s.latestSilaExecutionDataLock.Unlock()
+		s.latestSilaDataLock.Lock()
+		s.latestSilaData.LastRequestedBlock = i
+		s.latestSilaDataLock.Unlock()
 	}
 
 	return nil
@@ -570,7 +570,7 @@ func (s *Service) savePowchainData(ctx context.Context) error {
 		return err
 	}
 	silaexecData := &silapb.SilaExecutionChainData{
-		CurrentSilaExecutionData:   s.latestSilaExecutionData,
+		CurrentSilaData:   s.latestSilaData,
 		ChainstartData:    s.chainStartData,
 		BeaconState:       pbState, // I promise not to mutate it!
 		DepositContainers: s.cfg.depositCache.AllDepositContainers(ctx),

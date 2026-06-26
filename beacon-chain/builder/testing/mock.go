@@ -48,7 +48,7 @@ func (s *MockBuilderService) Configured() bool {
 }
 
 // SubmitBlindedBlock for mocking.
-func (s *MockBuilderService) SubmitBlindedBlock(_ context.Context, b interfaces.ReadOnlySignedBeaconBlock) (interfaces.ExecutionData, v1.BlobsBundler, error) {
+func (s *MockBuilderService) SubmitBlindedBlock(_ context.Context, b interfaces.ReadOnlySignedBeaconBlock) (interfaces.SilaData, v1.BlobsBundler, error) {
 	switch b.Version() {
 	case version.Bellatrix:
 		w, err := blocks.WrappedSilaPayload(s.Payload)

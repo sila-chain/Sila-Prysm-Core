@@ -154,7 +154,7 @@ type Reconstructor interface {
 // EngineCaller defines a client that can interact with a Sila
 // execution node's engine service via JSON-RPC.
 type EngineCaller interface {
-	NewPayload(ctx context.Context, payload interfaces.ExecutionData, versionedHashes []common.Hash, parentBlockRoot *common.Hash, silaRequests *pb.SilaRequests) ([]byte, error)
+	NewPayload(ctx context.Context, payload interfaces.SilaData, versionedHashes []common.Hash, parentBlockRoot *common.Hash, silaRequests *pb.SilaRequests) ([]byte, error)
 	ForkchoiceUpdated(
 		ctx context.Context, state *pb.ForkchoiceState, attrs payloadattribute.Attributer,
 	) (*pb.PayloadIDBytes, []byte, error)
@@ -167,7 +167,7 @@ type EngineCaller interface {
 var ErrEmptyBlockHash = errors.New("Block hash is empty 0x0000...")
 
 // NewPayload request calls the silaEngine_newPayloadVX method via JSON-RPC.
-func (s *Service) NewPayload(ctx context.Context, payload interfaces.ExecutionData, versionedHashes []common.Hash, parentBlockRoot *common.Hash, silaRequests *pb.SilaRequests) ([]byte, error) {
+func (s *Service) NewPayload(ctx context.Context, payload interfaces.SilaData, versionedHashes []common.Hash, parentBlockRoot *common.Hash, silaRequests *pb.SilaRequests) ([]byte, error) {
 	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.NewPayload")
 	defer span.End()
 	defer func(start time.Time) {
@@ -216,7 +216,7 @@ func (s *Service) NewPayload(ctx context.Context, payload interfaces.ExecutionDa
 			return nil, handleRPCError(err)
 		}
 	default:
-		return nil, errors.New("unknown execution data type")
+		return nil, errors.New("unknown sila data type")
 	}
 	if result.ValidationError != "" {
 		log.WithField("status", result.Status.String()).
@@ -338,7 +338,7 @@ func getPayloadMethodAndMessage(slot primitives.Slot) (string, proto.Message) {
 }
 
 // GetPayload calls the silaEngine_getPayloadVX method via JSON-RPC.
-// It returns the execution data as well as the blobs bundle.
+// It returns the sila data as well as the blobs bundle.
 func (s *Service) GetPayload(ctx context.Context, payloadId [8]byte, slot primitives.Slot) (*blocks.GetPayloadResponse, error) {
 	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.GetPayload")
 	defer span.End()
@@ -978,8 +978,8 @@ func upgradeSidecarsToVerifiedSidecars(roSidecars []blocks.RODataColumn) []block
 }
 
 func fullPayloadFromPayloadBody(
-	header interfaces.ExecutionData, body *pb.SilaPayloadBody, bVersion int,
-) (interfaces.ExecutionData, error) {
+	header interfaces.SilaData, body *pb.SilaPayloadBody, bVersion int,
+) (interfaces.SilaData, error) {
 	if header == nil || header.IsNil() || body == nil {
 		return nil, errors.New("sila block and header cannot be nil")
 	}

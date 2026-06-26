@@ -134,7 +134,7 @@ func lightClientHeaderToJSON(header interfaces.LightClientHeader) (json.RawMessa
 		}
 		ex, ok := exInterface.Proto().(*silaenginev1.SilaPayloadHeaderCapella)
 		if !ok {
-			return nil, fmt.Errorf("execution data is not %T", &silaenginev1.SilaPayloadHeaderCapella{})
+			return nil, fmt.Errorf("sila data is not %T", &silaenginev1.SilaPayloadHeaderCapella{})
 		}
 		execution, err := SilaPayloadHeaderCapellaFromConsensus(ex)
 		if err != nil {
@@ -156,7 +156,7 @@ func lightClientHeaderToJSON(header interfaces.LightClientHeader) (json.RawMessa
 		}
 		ex, ok := exInterface.Proto().(*silaenginev1.SilaPayloadHeaderDeneb)
 		if !ok {
-			return nil, fmt.Errorf("execution data is not %T", &silaenginev1.SilaPayloadHeaderDeneb{})
+			return nil, fmt.Errorf("sila data is not %T", &silaenginev1.SilaPayloadHeaderDeneb{})
 		}
 		execution, err := SilaPayloadHeaderDenebFromConsensus(ex)
 		if err != nil {
@@ -178,7 +178,7 @@ func lightClientHeaderToJSON(header interfaces.LightClientHeader) (json.RawMessa
 		}
 		ex, ok := exInterface.Proto().(*silaenginev1.SilaPayloadHeaderDeneb)
 		if !ok {
-			return nil, fmt.Errorf("execution data is not %T", &silaenginev1.SilaPayloadHeaderDeneb{})
+			return nil, fmt.Errorf("sila data is not %T", &silaenginev1.SilaPayloadHeaderDeneb{})
 		}
 		execution, err := SilaPayloadHeaderElectraFromConsensus(ex)
 		if err != nil {

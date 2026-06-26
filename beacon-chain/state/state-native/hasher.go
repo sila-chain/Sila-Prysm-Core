@@ -101,19 +101,19 @@ func ComputeFieldRootsWithHasher(ctx context.Context, state *BeaconState) ([][]b
 	}
 	fieldRoots[types.HistoricalRoots.RealPosition()] = historicalRootsRt[:]
 
-	// SilaExecutionData data structure root.
+	// SilaData data structure root.
 	silaexecHashTreeRoot, err := stateutil.SilaExecutionRoot(state.silaexecData)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not compute silaExecutionData merkleization")
+		return nil, errors.Wrap(err, "could not compute silaData merkleization")
 	}
-	fieldRoots[types.SilaExecutionData.RealPosition()] = silaexecHashTreeRoot[:]
+	fieldRoots[types.SilaData.RealPosition()] = silaexecHashTreeRoot[:]
 
-	// SilaExecutionDataVotes slice root.
-	silaexecVotesRoot, err := stateutil.SilaExecutionDataVotesRoot(state.silaExecutionDataVotes)
+	// SilaDataVotes slice root.
+	silaexecVotesRoot, err := stateutil.SilaDataVotesRoot(state.silaDataVotes)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not compute silaExecutionData votes merkleization")
+		return nil, errors.Wrap(err, "could not compute silaData votes merkleization")
 	}
-	fieldRoots[types.SilaExecutionDataVotes.RealPosition()] = silaexecVotesRoot[:]
+	fieldRoots[types.SilaDataVotes.RealPosition()] = silaexecVotesRoot[:]
 
 	// SilaExecutionDepositIndex root.
 	silaExecutionDepositIndexBuf := make([]byte, 8)

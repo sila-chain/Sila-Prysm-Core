@@ -57,8 +57,8 @@ func unmarshalledSSZ(t *testing.T, serializedBytes []byte, objectName string) (a
 		obj = &silapb.DepositMessage{}
 	case "DepositData":
 		obj = &silapb.Deposit_Data{}
-	case "SilaExecutionData":
-		obj = &silapb.SilaExecutionData{}
+	case "SilaData":
+		obj = &silapb.SilaData{}
 	case "SilaBlock":
 		t.Skip("Unused type")
 		return nil, nil

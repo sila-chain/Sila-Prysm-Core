@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 )
 
-func payloadToBody(t *testing.T, ed interfaces.ExecutionData) *pb.SilaPayloadBody {
+func payloadToBody(t *testing.T, ed interfaces.SilaData) *pb.SilaPayloadBody {
 	body := &pb.SilaPayloadBody{}
 	txs, err := ed.Transactions()
 	require.NoError(t, err)

@@ -430,7 +430,7 @@ def initialize_beacon_state_from_silaexec(silaexec_block_hash: Bytes32,
     state = BeaconState(
         genesis_time=silaexec_timestamp + GENESIS_DELAY,
         fork=fork,
-        sila_execution_data=SilaExecutionData(block_hash=silaexec_block_hash, deposit_count=uint64(len(deposits))),
+        sila_data=SilaData(block_hash=silaexec_block_hash, deposit_count=uint64(len(deposits))),
         latest_block_header=BeaconBlockHeader(body_root=hash_tree_root(BeaconBlockBody())),
         randao_mixes=[silaexec_block_hash] * EPOCHS_PER_HISTORICAL_VECTOR,  # Seed RANDAO with SilaExecution entropy
     )
@@ -439,7 +439,7 @@ def initialize_beacon_state_from_silaexec(silaexec_block_hash: Bytes32,
     leaves = list(map(lambda deposit: deposit.data, deposits))
     for index, deposit in enumerate(deposits):
         deposit_data_list = List[DepositData, 2**SILA_DEPOSIT_TREE_DEPTH](*leaves[:index + 1])
-        state.sila_execution_data.deposit_root = hash_tree_root(deposit_data_list)
+        state.sila_data.deposit_root = hash_tree_root(deposit_data_list)
         process_deposit(state, deposit)
 
     # Process activations
@@ -511,7 +511,7 @@ def process_epoch(state: BeaconState) -> None:
     process_rewards_and_penalties(state)
     process_registry_updates(state)
     process_slashings(state)
-    process_sila_execution_data_reset(state)
+    process_sila_data_reset(state)
     process_effective_balance_updates(state)
     process_slashings_reset(state)
     process_randao_mixes_reset(state)
@@ -789,11 +789,11 @@ def process_slashings(state: BeaconState) -> None:
             decrease_balance(state, ValidatorIndex(index), penalty)
 ```
 ```python
-def process_sila_execution_data_reset(state: BeaconState) -> None:
+def process_sila_data_reset(state: BeaconState) -> None:
     next_epoch = Epoch(get_current_epoch(state) + 1)
     # Reset silaexec data votes
     if next_epoch % EPOCHS_PER_SilaExecution_VOTING_PERIOD == 0:
-        state.sila_execution_data_votes = []
+        state.sila_data_votes = []
 ```
 ```python
 def process_effective_balance_updates(state: BeaconState) -> None:
@@ -840,7 +840,7 @@ def process_participation_record_updates(state: BeaconState) -> None:
 def process_block(state: BeaconState, block: BeaconBlock) -> None:
     process_block_header(state, block)
     process_randao(state, block.body)
-    process_sila_execution_data(state, block.body)
+    process_sila_data(state, block.body)
     process_operations(state, block.body)
 ```
 ```python
@@ -878,15 +878,15 @@ def process_randao(state: BeaconState, body: BeaconBlockBody) -> None:
     state.randao_mixes[epoch % EPOCHS_PER_HISTORICAL_VECTOR] = mix
 ```
 ```python
-def process_sila_execution_data(state: BeaconState, body: BeaconBlockBody) -> None:
-    state.sila_execution_data_votes.append(body.sila_execution_data)
-    if state.sila_execution_data_votes.count(body.sila_execution_data) * 2 > EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH:
-        state.sila_execution_data = body.sila_execution_data
+def process_sila_data(state: BeaconState, body: BeaconBlockBody) -> None:
+    state.sila_data_votes.append(body.sila_data)
+    if state.sila_data_votes.count(body.sila_data) * 2 > EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH:
+        state.sila_data = body.sila_data
 ```
 ```python
 def process_operations(state: BeaconState, body: BeaconBlockBody) -> None:
     # Verify that outstanding deposits are processed up to the maximum number of deposits
-    assert len(body.deposits) == min(MAX_DEPOSITS, state.sila_execution_data.deposit_count - state.silaexec_deposit_index)
+    assert len(body.deposits) == min(MAX_DEPOSITS, state.sila_data.deposit_count - state.silaexec_deposit_index)
 
     def for_ops(operations: Sequence[Any], fn: Callable[[BeaconState, Any], None]) -> None:
         for operation in operations:
@@ -987,7 +987,7 @@ def process_deposit(state: BeaconState, deposit: Deposit) -> None:
         branch=deposit.proof,
         depth=SILA_DEPOSIT_TREE_DEPTH + 1,  # Add 1 for the List length mix-in
         index=state.silaexec_deposit_index,
-        root=state.sila_execution_data.deposit_root,
+        root=state.sila_data.deposit_root,
     )
 
     # Deposits must be processed in order

@@ -235,7 +235,7 @@ func cliActionRequestBlocks(cliCtx *cli.Context) error {
 			case errors.Is(err, consensus_types.ErrUnsupportedField):
 				continue
 			case err != nil:
-				log.WithError(err).Error("Could not read execution data from block body")
+				log.WithError(err).Error("Could not read sila data from block body")
 				continue
 			default:
 			}

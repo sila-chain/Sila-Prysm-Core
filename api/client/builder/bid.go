@@ -21,7 +21,7 @@ type SignedBid interface {
 
 // Bid is an interface describing the method set of a builder bid.
 type Bid interface {
-	Header() (interfaces.ExecutionData, error)
+	Header() (interfaces.SilaData, error)
 	Value() primitives.Wei
 	Pubkey() []byte
 	Version() int
@@ -122,7 +122,7 @@ func WrappedBuilderBid(p *silapb.BuilderBid) (Bid, error) {
 }
 
 // Header --
-func (b builderBid) Header() (interfaces.ExecutionData, error) {
+func (b builderBid) Header() (interfaces.SilaData, error) {
 	return blocks.WrappedSilaPayloadHeader(b.p.Header)
 }
 
@@ -169,8 +169,8 @@ func WrappedBuilderBidCapella(p *silapb.BuilderBidCapella) (Bid, error) {
 	return w, nil
 }
 
-// Header returns the execution data interface.
-func (b builderBidCapella) Header() (interfaces.ExecutionData, error) {
+// Header returns the sila data interface.
+func (b builderBidCapella) Header() (interfaces.SilaData, error) {
 	// We have to convert big endian to little endian because the value is coming from the execution layer.
 	return blocks.WrappedSilaPayloadHeaderCapella(b.p.Header)
 }
@@ -249,7 +249,7 @@ func (b builderBidDeneb) HashTreeRootWith(hh *ssz.Hasher) error {
 }
 
 // Header --
-func (b builderBidDeneb) Header() (interfaces.ExecutionData, error) {
+func (b builderBidDeneb) Header() (interfaces.SilaData, error) {
 	// We have to convert big endian to little endian because the value is coming from the execution layer.
 	return blocks.WrappedSilaPayloadHeaderDeneb(b.p.Header)
 }
@@ -336,7 +336,7 @@ func (b builderBidElectra) HashTreeRootWith(hh *ssz.Hasher) error {
 }
 
 // Header --
-func (b builderBidElectra) Header() (interfaces.ExecutionData, error) {
+func (b builderBidElectra) Header() (interfaces.SilaData, error) {
 	// We have to convert big endian to little endian because the value is coming from the execution layer.
 	return blocks.WrappedSilaPayloadHeaderDeneb(b.p.Header)
 }

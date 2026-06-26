@@ -53,23 +53,23 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTPhase0BlockToProto(block *stru
 		return nil, errors.Wrapf(err, "failed to decode randao reveal `%s`", block.Body.RandaoReveal)
 	}
 
-	if block.Body.SilaExecutionData == nil {
+	if block.Body.SilaData == nil {
 		return nil, errors.New("silaexec data is nil")
 	}
 
-	depositRoot, err := hexutil.Decode(block.Body.SilaExecutionData.DepositRoot)
+	depositRoot, err := hexutil.Decode(block.Body.SilaData.DepositRoot)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to decode deposit root `%s`", block.Body.SilaExecutionData.DepositRoot)
+		return nil, errors.Wrapf(err, "failed to decode deposit root `%s`", block.Body.SilaData.DepositRoot)
 	}
 
-	depositCount, err := strconv.ParseUint(block.Body.SilaExecutionData.DepositCount, 10, 64)
+	depositCount, err := strconv.ParseUint(block.Body.SilaData.DepositCount, 10, 64)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to parse deposit count `%s`", block.Body.SilaExecutionData.DepositCount)
+		return nil, errors.Wrapf(err, "failed to parse deposit count `%s`", block.Body.SilaData.DepositCount)
 	}
 
-	blockHash, err := hexutil.Decode(block.Body.SilaExecutionData.BlockHash)
+	blockHash, err := hexutil.Decode(block.Body.SilaData.BlockHash)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to decode block hash `%s`", block.Body.SilaExecutionData.BlockHash)
+		return nil, errors.Wrapf(err, "failed to decode block hash `%s`", block.Body.SilaData.BlockHash)
 	}
 
 	graffiti, err := hexutil.Decode(block.Body.Graffiti)
@@ -109,7 +109,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTPhase0BlockToProto(block *stru
 		StateRoot:     stateRoot,
 		Body: &silapb.BeaconBlockBody{
 			RandaoReveal: randaoReveal,
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositRoot:  depositRoot,
 				DepositCount: depositCount,
 				BlockHash:    blockHash,
@@ -139,7 +139,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTAltairBlockToProto(block *stru
 		StateRoot:     block.StateRoot,
 		Body: &structs.BeaconBlockBody{
 			RandaoReveal:      block.Body.RandaoReveal,
-			SilaExecutionData:          block.Body.SilaExecutionData,
+			SilaData:          block.Body.SilaData,
 			Graffiti:          block.Body.Graffiti,
 			ProposerSlashings: block.Body.ProposerSlashings,
 			AttesterSlashings: block.Body.AttesterSlashings,
@@ -173,7 +173,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTAltairBlockToProto(block *stru
 		StateRoot:     phase0Block.StateRoot,
 		Body: &silapb.BeaconBlockBodyAltair{
 			RandaoReveal:      phase0Block.Body.RandaoReveal,
-			SilaExecutionData:          phase0Block.Body.SilaExecutionData,
+			SilaData:          phase0Block.Body.SilaData,
 			Graffiti:          phase0Block.Body.Graffiti,
 			ProposerSlashings: phase0Block.Body.ProposerSlashings,
 			AttesterSlashings: phase0Block.Body.AttesterSlashings,
@@ -203,7 +203,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTBellatrixBlockToProto(block *s
 		StateRoot:     block.StateRoot,
 		Body: &structs.BeaconBlockBodyAltair{
 			RandaoReveal:      block.Body.RandaoReveal,
-			SilaExecutionData:          block.Body.SilaExecutionData,
+			SilaData:          block.Body.SilaData,
 			Graffiti:          block.Body.Graffiti,
 			ProposerSlashings: block.Body.ProposerSlashings,
 			AttesterSlashings: block.Body.AttesterSlashings,
@@ -298,7 +298,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTBellatrixBlockToProto(block *s
 		StateRoot:     altairBlock.StateRoot,
 		Body: &silapb.BeaconBlockBodyBellatrix{
 			RandaoReveal:      altairBlock.Body.RandaoReveal,
-			SilaExecutionData:          altairBlock.Body.SilaExecutionData,
+			SilaData:          altairBlock.Body.SilaData,
 			Graffiti:          altairBlock.Body.Graffiti,
 			ProposerSlashings: altairBlock.Body.ProposerSlashings,
 			AttesterSlashings: altairBlock.Body.AttesterSlashings,
@@ -345,7 +345,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTCapellaBlockToProto(block *str
 		StateRoot:     block.StateRoot,
 		Body: &structs.BeaconBlockBodyBellatrix{
 			RandaoReveal:      block.Body.RandaoReveal,
-			SilaExecutionData:          block.Body.SilaExecutionData,
+			SilaData:          block.Body.SilaData,
 			Graffiti:          block.Body.Graffiti,
 			ProposerSlashings: block.Body.ProposerSlashings,
 			AttesterSlashings: block.Body.AttesterSlashings,
@@ -392,7 +392,7 @@ func (c beaconApiBeaconBlockConverter) ConvertRESTCapellaBlockToProto(block *str
 		StateRoot:     bellatrixBlock.StateRoot,
 		Body: &silapb.BeaconBlockBodyCapella{
 			RandaoReveal:      bellatrixBlock.Body.RandaoReveal,
-			SilaExecutionData:          bellatrixBlock.Body.SilaExecutionData,
+			SilaData:          bellatrixBlock.Body.SilaData,
 			Graffiti:          bellatrixBlock.Body.Graffiti,
 			ProposerSlashings: bellatrixBlock.Body.ProposerSlashings,
 			AttesterSlashings: bellatrixBlock.Body.AttesterSlashings,

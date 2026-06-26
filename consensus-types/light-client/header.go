@@ -70,7 +70,7 @@ func (h *headerAltair) Beacon() *pb.BeaconBlockHeader {
 	return h.p.Beacon
 }
 
-func (h *headerAltair) Execution() (interfaces.ExecutionData, error) {
+func (h *headerAltair) Execution() (interfaces.SilaData, error) {
 	return nil, consensustypes.ErrNotSupported("Execution", h.Version())
 }
 
@@ -80,7 +80,7 @@ func (h *headerAltair) ExecutionBranch() (interfaces.LightClientExecutionBranch,
 
 type headerCapella struct {
 	p               *pb.LightClientHeaderCapella
-	execution       interfaces.ExecutionData
+	execution       interfaces.SilaData
 	executionBranch interfaces.LightClientExecutionBranch
 }
 
@@ -135,7 +135,7 @@ func (h *headerCapella) Beacon() *pb.BeaconBlockHeader {
 	return h.p.Beacon
 }
 
-func (h *headerCapella) Execution() (interfaces.ExecutionData, error) {
+func (h *headerCapella) Execution() (interfaces.SilaData, error) {
 	return h.execution, nil
 }
 
@@ -145,7 +145,7 @@ func (h *headerCapella) ExecutionBranch() (interfaces.LightClientExecutionBranch
 
 type headerDeneb struct {
 	p               *pb.LightClientHeaderDeneb
-	execution       interfaces.ExecutionData
+	execution       interfaces.SilaData
 	executionBranch interfaces.LightClientExecutionBranch
 }
 
@@ -200,7 +200,7 @@ func (h *headerDeneb) Beacon() *pb.BeaconBlockHeader {
 	return h.p.Beacon
 }
 
-func (h *headerDeneb) Execution() (interfaces.ExecutionData, error) {
+func (h *headerDeneb) Execution() (interfaces.SilaData, error) {
 	return h.execution, nil
 }
 
@@ -210,7 +210,7 @@ func (h *headerDeneb) ExecutionBranch() (interfaces.LightClientExecutionBranch, 
 
 type headerElectra struct {
 	p               *pb.LightClientHeaderDeneb
-	execution       interfaces.ExecutionData
+	execution       interfaces.SilaData
 	executionBranch interfaces.LightClientExecutionBranch
 }
 
@@ -265,7 +265,7 @@ func (h *headerElectra) Beacon() *pb.BeaconBlockHeader {
 	return h.p.Beacon
 }
 
-func (h *headerElectra) Execution() (interfaces.ExecutionData, error) {
+func (h *headerElectra) Execution() (interfaces.SilaData, error) {
 	return h.execution, nil
 }
 

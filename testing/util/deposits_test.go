@@ -269,7 +269,7 @@ func TestDeterministicGenesisState_100Validators(t *testing.T) {
 func TestDepositTrieFromDeposits(t *testing.T) {
 	deposits, _, err := DeterministicDepositsAndKeys(100)
 	require.NoError(t, err)
-	silaexecData, err := DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 
 	depositTrie, _, err := DepositTrieFromDeposits(deposits)
@@ -280,6 +280,6 @@ func TestDepositTrieFromDeposits(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !bytes.Equal(root[:], silaexecData.DepositRoot) {
-		t.Fatal("expected deposit trie root to equal silaExecutionData deposit root")
+		t.Fatal("expected deposit trie root to equal silaData deposit root")
 	}
 }

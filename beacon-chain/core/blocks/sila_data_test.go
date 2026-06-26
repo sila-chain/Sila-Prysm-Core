@@ -17,10 +17,10 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func FakeDeposits(n uint64) []*silapb.SilaExecutionData {
-	deposits := make([]*silapb.SilaExecutionData, n)
+func FakeDeposits(n uint64) []*silapb.SilaData {
+	deposits := make([]*silapb.SilaData, n)
 	for i := range n {
-		deposits[i] = &silapb.SilaExecutionData{
+		deposits[i] = &silapb.SilaData{
 			DepositCount: 1,
 			DepositRoot:  bytesutil.PadTo([]byte("root"), 32),
 		}
@@ -28,16 +28,16 @@ func FakeDeposits(n uint64) []*silapb.SilaExecutionData {
 	return deposits
 }
 
-func TestSilaExecutionDataHasEnoughSupport(t *testing.T) {
+func TestSilaDataHasEnoughSupport(t *testing.T) {
 	tests := []struct {
-		stateVotes         []*silapb.SilaExecutionData
-		data               *silapb.SilaExecutionData
+		stateVotes         []*silapb.SilaData
+		data               *silapb.SilaData
 		hasSupport         bool
 		votingPeriodLength primitives.Epoch
 	}{
 		{
 			stateVotes: FakeDeposits(uint64(params.BeaconConfig().SlotsPerEpoch.Mul(4))),
-			data: &silapb.SilaExecutionData{
+			data: &silapb.SilaData{
 				DepositCount: 1,
 				DepositRoot:  bytesutil.PadTo([]byte("root"), 32),
 			},
@@ -45,7 +45,7 @@ func TestSilaExecutionDataHasEnoughSupport(t *testing.T) {
 			votingPeriodLength: 7,
 		}, {
 			stateVotes: FakeDeposits(uint64(params.BeaconConfig().SlotsPerEpoch.Mul(4))),
-			data: &silapb.SilaExecutionData{
+			data: &silapb.SilaData{
 				DepositCount: 1,
 				DepositRoot:  bytesutil.PadTo([]byte("root"), 32),
 			},
@@ -53,7 +53,7 @@ func TestSilaExecutionDataHasEnoughSupport(t *testing.T) {
 			votingPeriodLength: 8,
 		}, {
 			stateVotes: FakeDeposits(uint64(params.BeaconConfig().SlotsPerEpoch.Mul(4))),
-			data: &silapb.SilaExecutionData{
+			data: &silapb.SilaData{
 				DepositCount: 1,
 				DepositRoot:  bytesutil.PadTo([]byte("root"), 32),
 			},
@@ -70,15 +70,15 @@ func TestSilaExecutionDataHasEnoughSupport(t *testing.T) {
 			params.OverrideBeaconConfig(c)
 
 			s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
-				SilaExecutionDataVotes: tt.stateVotes,
+				SilaDataVotes: tt.stateVotes,
 			})
 			require.NoError(t, err)
-			result, err := blocks.SilaExecutionDataHasEnoughSupport(s, tt.data)
+			result, err := blocks.SilaDataHasEnoughSupport(s, tt.data)
 			require.NoError(t, err)
 
 			if result != tt.hasSupport {
 				t.Errorf(
-					"blocks.SilaExecutionDataHasEnoughSupport(%+v) = %t, wanted %t",
+					"blocks.SilaDataHasEnoughSupport(%+v) = %t, wanted %t",
 					tt.data,
 					result,
 					tt.hasSupport,
@@ -88,10 +88,10 @@ func TestSilaExecutionDataHasEnoughSupport(t *testing.T) {
 	}
 }
 
-func TestAreSilaExecutionDataEqual(t *testing.T) {
+func TestAreSilaDataEqual(t *testing.T) {
 	type args struct {
-		a *silapb.SilaExecutionData
-		b *silapb.SilaExecutionData
+		a *silapb.SilaData
+		b *silapb.SilaData
 	}
 	tests := []struct {
 		name string
@@ -110,7 +110,7 @@ func TestAreSilaExecutionDataEqual(t *testing.T) {
 			name: "false when only one is nil",
 			args: args{
 				a: nil,
-				b: &silapb.SilaExecutionData{
+				b: &silapb.SilaData{
 					DepositRoot:  make([]byte, 32),
 					DepositCount: 0,
 					BlockHash:    make([]byte, 32),
@@ -121,12 +121,12 @@ func TestAreSilaExecutionDataEqual(t *testing.T) {
 		{
 			name: "true when real equality",
 			args: args{
-				a: &silapb.SilaExecutionData{
+				a: &silapb.SilaData{
 					DepositRoot:  make([]byte, 32),
 					DepositCount: 0,
 					BlockHash:    make([]byte, 32),
 				},
-				b: &silapb.SilaExecutionData{
+				b: &silapb.SilaData{
 					DepositRoot:  make([]byte, 32),
 					DepositCount: 0,
 					BlockHash:    make([]byte, 32),
@@ -137,12 +137,12 @@ func TestAreSilaExecutionDataEqual(t *testing.T) {
 		{
 			name: "false is field value differs",
 			args: args{
-				a: &silapb.SilaExecutionData{
+				a: &silapb.SilaData{
 					DepositRoot:  make([]byte, 32),
 					DepositCount: 0,
 					BlockHash:    make([]byte, 32),
 				},
-				b: &silapb.SilaExecutionData{
+				b: &silapb.SilaData{
 					DepositRoot:  make([]byte, 32),
 					DepositCount: 64,
 					BlockHash:    make([]byte, 32),
@@ -153,21 +153,21 @@ func TestAreSilaExecutionDataEqual(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, blocks.AreSilaExecutionDataEqual(tt.args.a, tt.args.b))
+			assert.Equal(t, tt.want, blocks.AreSilaDataEqual(tt.args.a, tt.args.b))
 		})
 	}
 }
 
-func TestProcessSilaExecutionData_SetsCorrectly(t *testing.T) {
+func TestProcessSilaData_SetsCorrectly(t *testing.T) {
 	beaconState, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{
-		SilaExecutionDataVotes: []*silapb.SilaExecutionData{},
+		SilaDataVotes: []*silapb.SilaData{},
 	})
 	require.NoError(t, err)
 
 	b := util.NewBeaconBlock()
 	b.Block = &silapb.BeaconBlock{
 		Body: &silapb.BeaconBlockBody{
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositRoot: []byte{2},
 				BlockHash:   []byte{3},
 			},
@@ -176,20 +176,20 @@ func TestProcessSilaExecutionData_SetsCorrectly(t *testing.T) {
 
 	period := uint64(params.BeaconConfig().SlotsPerEpoch.Mul(uint64(params.BeaconConfig().EpochsPerSilaExecutionVotingPeriod)))
 	for range period {
-		processedState, err := blocks.ProcessSilaExecutionDataInBlock(t.Context(), beaconState, b.Block.Body.SilaExecutionData)
+		processedState, err := blocks.ProcessSilaDataInBlock(t.Context(), beaconState, b.Block.Body.SilaData)
 		require.NoError(t, err)
 		require.Equal(t, true, processedState.Version() == version.Phase0)
 	}
 
-	newSilaExecutionDataVotes := beaconState.SilaExecutionDataVotes()
-	if len(newSilaExecutionDataVotes) <= 1 {
+	newSilaDataVotes := beaconState.SilaDataVotes()
+	if len(newSilaDataVotes) <= 1 {
 		t.Error("Expected new SILAEXEC data votes to have length > 1")
 	}
-	if !proto.Equal(beaconState.SilaExecutionData(), b.Block.Body.SilaExecutionData.Copy()) {
+	if !proto.Equal(beaconState.SilaData(), b.Block.Body.SilaData.Copy()) {
 		t.Errorf(
 			"Expected latest silaexec data to have been set to %v, received %v",
-			b.Block.Body.SilaExecutionData,
-			beaconState.SilaExecutionData(),
+			b.Block.Body.SilaData,
+			beaconState.SilaData(),
 		)
 	}
 }

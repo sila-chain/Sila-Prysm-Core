@@ -109,7 +109,7 @@ func (p *silaPayloadEnvelope) IsBlinded() bool {
 }
 
 // Execution returns the sila payload as a read-only interface.
-func (p *silaPayloadEnvelope) Execution() (interfaces.ExecutionData, error) {
+func (p *silaPayloadEnvelope) Execution() (interfaces.SilaData, error) {
 	return WrappedSilaPayloadGloas(p.p.Payload)
 }
 

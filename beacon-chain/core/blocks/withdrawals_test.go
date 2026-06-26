@@ -1131,7 +1131,7 @@ func TestProcessWithdrawals(t *testing.T) {
 					slot, err := slots.EpochStart(currentEpoch)
 					require.NoError(t, err)
 					var st state.BeaconState
-					var p interfaces.ExecutionData
+					var p interfaces.SilaData
 					switch fork {
 					case version.Capella:
 						spb := &silapb.BeaconStateCapella{

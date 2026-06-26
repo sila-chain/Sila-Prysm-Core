@@ -41,9 +41,9 @@ message BeaconState {
   ];
 
   // SilaExecution [3001-4000]
-  SilaExecutionData sila_execution_data = 3001;
-  repeated SilaExecutionData sila_execution_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_execution_data_votes.size" ];
+  SilaData sila_data = 3001;
+  repeated SilaData sila_data_votes = 3002
+      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
@@ -203,9 +203,9 @@ message BeaconStateAltair {
   ];
 
   // SilaExecution [3001-4000]
-  SilaExecutionData sila_execution_data = 3001;
-  repeated SilaExecutionData sila_execution_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_execution_data_votes.size" ];
+  SilaData sila_data = 3001;
+  repeated SilaData sila_data_votes = 3002
+      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
@@ -286,9 +286,9 @@ message BeaconStateBellatrix {
   ];
 
   // SilaExecution [3001-4000]
-  SilaExecutionData sila_execution_data = 3001;
-  repeated SilaExecutionData sila_execution_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_execution_data_votes.size" ];
+  SilaData sila_data = 3001;
+  repeated SilaData sila_data_votes = 3002
+      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
@@ -359,9 +359,9 @@ message BeaconStateCapella {
   ];
 
   // SilaExecution [3001-4000]
-  SilaExecutionData sila_execution_data = 3001;
-  repeated SilaExecutionData sila_execution_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_execution_data_votes.size" ];
+  SilaData sila_data = 3001;
+  repeated SilaData sila_data_votes = 3002
+      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
@@ -441,9 +441,9 @@ message BeaconStateDeneb {
   ];
 
   // SilaExecution [3001-4000]
-  SilaExecutionData sila_execution_data = 3001;
-  repeated SilaExecutionData sila_execution_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_execution_data_votes.size" ];
+  SilaData sila_data = 3001;
+  repeated SilaData sila_data_votes = 3002
+      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
@@ -523,9 +523,9 @@ message BeaconStateElectra {
   ];
 
   // SilaExecution [3001-4000]
-  SilaExecutionData sila_execution_data = 3001;
-  repeated SilaExecutionData sila_execution_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_execution_data_votes.size" ];
+  SilaData sila_data = 3001;
+  repeated SilaData sila_data_votes = 3002
+      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
@@ -634,9 +634,9 @@ message BeaconStateFulu {
   ];
 
   // SilaExecution [3001-4000]
-  SilaExecutionData sila_execution_data = 3001;
-  repeated SilaExecutionData sila_execution_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_execution_data_votes.size" ];
+  SilaData sila_data = 3001;
+  repeated SilaData sila_data_votes = 3002
+      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]

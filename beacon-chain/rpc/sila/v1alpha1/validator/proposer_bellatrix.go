@@ -51,9 +51,9 @@ var emptyTransactionsRoot = [32]byte{127, 254, 36, 30, 166, 1, 135, 253, 176, 24
 const blockBuilderTimeout = 1 * time.Second
 const gasLimitAdjustmentFactor = 1024
 
-// Sets the execution data for the block. Execution data can come from local EL client or remote builder depends on validator registration and circuit breaker conditions.
-func setExecutionData(ctx context.Context, blk interfaces.SignedBeaconBlock, local *blocks.GetPayloadResponse, bid builder.Bid, builderBoostFactor primitives.Gwei) (primitives.Wei, silaenginev1.BlobsBundler, error) {
-	_, span := trace.StartSpan(ctx, "ProposerServer.setExecutionData")
+// Sets the sila data for the block. Execution data can come from local EL client or remote builder depends on validator registration and circuit breaker conditions.
+func setSilaData(ctx context.Context, blk interfaces.SignedBeaconBlock, local *blocks.GetPayloadResponse, bid builder.Bid, builderBoostFactor primitives.Gwei) (primitives.Wei, silaenginev1.BlobsBundler, error) {
+	_, span := trace.StartSpan(ctx, "ProposerServer.setSilaData")
 	defer span.End()
 
 	slot := blk.Block().Slot()
@@ -78,7 +78,7 @@ func setExecutionData(ctx context.Context, blk interfaces.SignedBeaconBlock, loc
 
 	switch {
 	case blk.Version() >= version.Capella:
-		withdrawalsMatched, err := matchingWithdrawalsRoot(local.ExecutionData, builderPayload)
+		withdrawalsMatched, err := matchingWithdrawalsRoot(local.SilaData, builderPayload)
 		if err != nil {
 			tracing.AnnotateError(span, err)
 			log.WithError(err).Warn("Proposer: failed to match withdrawals root")
@@ -341,7 +341,7 @@ func validateBuilderSignature(signedBid builder.SignedBid) error {
 	return signing.VerifySigningRoot(bid, bid.Pubkey(), signedBid.Signature(), d)
 }
 
-func matchingWithdrawalsRoot(local, builder interfaces.ExecutionData) (bool, error) {
+func matchingWithdrawalsRoot(local, builder interfaces.SilaData) (bool, error) {
 	wds, err := local.Withdrawals()
 	if err != nil {
 		return false, errors.Wrap(err, "could not get local withdrawals")
@@ -377,23 +377,23 @@ func setLocalExecution(blk interfaces.SignedBeaconBlock, local *blocks.GetPayloa
 			return errors.Wrap(err, "could not set sila requests")
 		}
 	}
-	return setExecution(blk, local.ExecutionData, false, kzgCommitments, local.SilaRequests)
+	return setExecution(blk, local.SilaData, false, kzgCommitments, local.SilaRequests)
 }
 
 // setBuilderExecution sets the execution context for a builder's beacon block.
 // It delegates to setExecution for the actual work.
-func setBuilderExecution(blk interfaces.SignedBeaconBlock, execution interfaces.ExecutionData, builderKzgCommitments [][]byte, requests *silaenginev1.SilaRequests) error {
+func setBuilderExecution(blk interfaces.SignedBeaconBlock, execution interfaces.SilaData, builderKzgCommitments [][]byte, requests *silaenginev1.SilaRequests) error {
 	return setExecution(blk, execution, true, builderKzgCommitments, requests)
 }
 
 // setExecution sets the execution context for a beacon block. It also sets KZG commitments based on the block version.
 // The function is designed to be flexible and handle both local and builder executions.
-func setExecution(blk interfaces.SignedBeaconBlock, execution interfaces.ExecutionData, isBlinded bool, kzgCommitments [][]byte, requests *silaenginev1.SilaRequests) error {
+func setExecution(blk interfaces.SignedBeaconBlock, execution interfaces.SilaData, isBlinded bool, kzgCommitments [][]byte, requests *silaenginev1.SilaRequests) error {
 	if execution == nil {
 		return errors.New("execution is nil")
 	}
 
-	// Set the execution data for the block
+	// Set the sila data for the block
 	errMessage := "failed to set local execution"
 	if isBlinded {
 		errMessage = "failed to set builder execution"

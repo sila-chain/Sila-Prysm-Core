@@ -371,7 +371,7 @@ func TestBatchProcessNewPendingDeposits(t *testing.T) {
 func TestProcessDeposit_Electra_Simple(t *testing.T) {
 	deps, _, err := util.DeterministicDepositsAndKeysSameValidator(3)
 	require.NoError(t, err)
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deps))
+	silaexecData, err := util.DeterministicSilaData(len(deps))
 	require.NoError(t, err)
 	registry := []*eth.Validator{
 		{
@@ -383,7 +383,7 @@ func TestProcessDeposit_Electra_Simple(t *testing.T) {
 	st, err := state_native.InitializeFromProtoElectra(&eth.BeaconStateElectra{
 		Validators: registry,
 		Balances:   balances,
-		SilaExecutionData:   silaexecData,
+		SilaData:   silaexecData,
 		Fork: &eth.Fork{
 			PreviousVersion: params.BeaconConfig().ElectraForkVersion,
 			CurrentVersion:  params.BeaconConfig().ElectraForkVersion,
@@ -407,7 +407,7 @@ func TestProcessDeposit_SkipsInvalidDeposit(t *testing.T) {
 	require.NoError(t, err)
 	root, err := dt.HashTreeRoot()
 	require.NoError(t, err)
-	silaexecData := &eth.SilaExecutionData{
+	silaexecData := &eth.SilaData{
 		DepositRoot:  root[:],
 		DepositCount: 1,
 	}
@@ -421,7 +421,7 @@ func TestProcessDeposit_SkipsInvalidDeposit(t *testing.T) {
 	beaconState, err := state_native.InitializeFromProtoElectra(&eth.BeaconStateElectra{
 		Validators: registry,
 		Balances:   balances,
-		SilaExecutionData:   silaexecData,
+		SilaData:   silaexecData,
 		Fork: &eth.Fork{
 			PreviousVersion: params.BeaconConfig().GenesisForkVersion,
 			CurrentVersion:  params.BeaconConfig().GenesisForkVersion,

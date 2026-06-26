@@ -28,7 +28,7 @@ func TestGenerateGenesisStateBellatrix(t *testing.T) {
 		BlockHash:     make([]byte, 32),
 		Transactions:  make([][]byte, 0),
 	}
-	e1d := &silapb.SilaExecutionData{
+	e1d := &silapb.SilaData{
 		DepositRoot:  make([]byte, 32),
 		DepositCount: 0,
 		BlockHash:    make([]byte, 32),
@@ -40,8 +40,8 @@ func TestGenerateGenesisStateBellatrix(t *testing.T) {
 	require.NoError(t, err)
 	dr, err := tr.HashTreeRoot()
 	require.NoError(t, err)
-	g.SilaExecutionData.DepositRoot = dr[:]
-	g.SilaExecutionData.BlockHash = make([]byte, 32)
+	g.SilaData.DepositRoot = dr[:]
+	g.SilaData.BlockHash = make([]byte, 32)
 	st, err := state_native.InitializeFromProtoUnsafeBellatrix(g)
 	require.NoError(t, err)
 	_, err = st.MarshalSSZ()

@@ -366,13 +366,13 @@ func (s *Service) initializeBeaconChain(
 	ctx context.Context,
 	genesisTime time.Time,
 	preGenesisState state.BeaconState,
-	silaExecutionData *silapb.SilaExecutionData) (state.BeaconState, error) {
+	silaData *silapb.SilaData) (state.BeaconState, error) {
 	ctx, span := trace.StartSpan(ctx, "beacon-chain.Service.initializeBeaconChain")
 	defer span.End()
 	s.genesisTime = genesisTime.Truncate(time.Second) // Genesis time has a precision of 1 second.
 	unixTime := uint64(genesisTime.Unix())
 
-	genesisState, err := transition.OptimizedGenesisBeaconState(unixTime, preGenesisState, silaExecutionData)
+	genesisState, err := transition.OptimizedGenesisBeaconState(unixTime, preGenesisState, silaData)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not initialize genesis state")
 	}

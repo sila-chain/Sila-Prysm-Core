@@ -101,10 +101,10 @@ func (s *Service) BlockByTimestamp(ctx context.Context, time uint64) (*types.Hea
 	ctx, span := trace.StartSpan(ctx, "powchain.BlockByTimestamp")
 	defer span.End()
 
-	s.latestSilaExecutionDataLock.RLock()
-	latestBlkHeight := s.latestSilaExecutionData.BlockHeight
-	latestBlkTime := s.latestSilaExecutionData.BlockTime
-	s.latestSilaExecutionDataLock.RUnlock()
+	s.latestSilaDataLock.RLock()
+	latestBlkHeight := s.latestSilaData.BlockHeight
+	latestBlkTime := s.latestSilaData.BlockTime
+	s.latestSilaDataLock.RUnlock()
 
 	if time > latestBlkTime {
 		return nil, errors.Wrap(errBlockTimeTooLate, fmt.Sprintf("(%d > %d)", time, latestBlkTime))

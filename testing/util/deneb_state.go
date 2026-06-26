@@ -22,9 +22,9 @@ func DeterministicGenesisStateDeneb(t testing.TB, numValidators uint64) (state.B
 	if err != nil {
 		t.Fatal(errors.Wrapf(err, "failed to get %d deposits", numValidators))
 	}
-	silaexecData, err := DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := DeterministicSilaData(len(deposits))
 	if err != nil {
-		t.Fatal(errors.Wrapf(err, "failed to get silaExecutionData for %d deposits", numValidators))
+		t.Fatal(errors.Wrapf(err, "failed to get silaData for %d deposits", numValidators))
 	}
 	beaconState, err := genesisBeaconStateDeneb(context.Background(), deposits, uint64(0), silaexecData)
 	if err != nil {
@@ -35,14 +35,14 @@ func DeterministicGenesisStateDeneb(t testing.TB, numValidators uint64) (state.B
 }
 
 // genesisBeaconStateDeneb returns the genesis beacon state.
-func genesisBeaconStateDeneb(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, silaexecData *silapb.SilaExecutionData) (state.BeaconState, error) {
+func genesisBeaconStateDeneb(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, silaexecData *silapb.SilaData) (state.BeaconState, error) {
 	st, err := emptyGenesisStateDeneb()
 	if err != nil {
 		return nil, err
 	}
 
 	// Process initial deposits.
-	st, err = helpers.UpdateGenesisSilaExecutionData(st, deposits, silaexecData)
+	st, err = helpers.UpdateGenesisSilaData(st, deposits, silaexecData)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func genesisBeaconStateDeneb(ctx context.Context, deposits []*silapb.Deposit, ge
 		return nil, errors.Wrap(err, "could not process validator deposits")
 	}
 
-	return buildGenesisBeaconStateDeneb(genesisTime, st, st.SilaExecutionData())
+	return buildGenesisBeaconStateDeneb(genesisTime, st, st.SilaData())
 }
 
 // emptyGenesisStateDeneb returns an empty genesis state in Deneb format.
@@ -76,8 +76,8 @@ func emptyGenesisStateDeneb() (state.BeaconState, error) {
 		PreviousEpochParticipation: []byte{},
 
 		// SilaExecution data.
-		SilaExecutionData:         &silapb.SilaExecutionData{},
-		SilaExecutionDataVotes:    []*silapb.SilaExecutionData{},
+		SilaData:         &silapb.SilaData{},
+		SilaDataVotes:    []*silapb.SilaData{},
 		SilaExecutionDepositIndex: 0,
 
 		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{},
@@ -85,9 +85,9 @@ func emptyGenesisStateDeneb() (state.BeaconState, error) {
 	return state_native.InitializeFromProtoUnsafeDeneb(st)
 }
 
-func buildGenesisBeaconStateDeneb(genesisTime uint64, preState state.BeaconState, silaexecData *silapb.SilaExecutionData) (state.BeaconState, error) {
+func buildGenesisBeaconStateDeneb(genesisTime uint64, preState state.BeaconState, silaexecData *silapb.SilaData) (state.BeaconState, error) {
 	if silaexecData == nil {
-		return nil, errors.New("no silaExecutionData provided for genesis state")
+		return nil, errors.New("no silaData provided for genesis state")
 	}
 
 	randaoMixes := make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector)
@@ -177,15 +177,15 @@ func buildGenesisBeaconStateDeneb(genesisTime uint64, preState state.BeaconState
 		Slashings:       slashings,
 
 		// SilaExecution data.
-		SilaExecutionData:         silaexecData,
-		SilaExecutionDataVotes:    []*silapb.SilaExecutionData{},
+		SilaData:         silaexecData,
+		SilaDataVotes:    []*silapb.SilaData{},
 		SilaExecutionDepositIndex: preState.SilaExecutionDepositIndex(),
 	}
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
 	bodyRoot, err := (&silapb.BeaconBlockBodyDeneb{
 		RandaoReveal: make([]byte, 96),
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},

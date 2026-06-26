@@ -337,9 +337,9 @@ func printStates(stateC <-chan *modifiedState, doneC chan<- bool) {
 		roots := st.HistoricalRoots()
 		size, count = sizeAndCountOfByteList(roots)
 		log.Infof("historical_roots              : size = %s, count = %d", humanize.Bytes(size), count)
-		log.Infof("sila_execution_data                     : sizeSSZ = %s", humanize.Bytes(uint64(st.SilaExecutionData().SizeSSZ())))
-		size, count = sizeAndCountGeneric(st.SilaExecutionDataVotes(), nil)
-		log.Infof("sila_execution_data_votes               : sizeSSZ = %s, count = %d", humanize.Bytes(size), count)
+		log.Infof("sila_data                     : sizeSSZ = %s", humanize.Bytes(uint64(st.SilaData().SizeSSZ())))
+		size, count = sizeAndCountGeneric(st.SilaDataVotes(), nil)
+		log.Infof("sila_data_votes               : sizeSSZ = %s, count = %d", humanize.Bytes(size), count)
 		log.Infof("silaexec_deposit_index            : %d", st.SilaExecutionDepositIndex())
 		size, count = sizeAndCountGeneric(st.Validators(), nil)
 		log.Infof("validators                    : sizeSSZ = %s, count = %d", humanize.Bytes(size), count)
@@ -515,7 +515,7 @@ func sizeAndCountGeneric(genericItems any, err error) (uint64, uint64) {
 	}
 
 	switch items := genericItems.(type) {
-	case []*silapb.SilaExecutionData:
+	case []*silapb.SilaData:
 		for _, item := range items {
 			size += uint64(item.SizeSSZ())
 		}

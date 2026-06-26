@@ -25,7 +25,7 @@ func NewGenesisBlock(stateRoot []byte) *silapb.SignedBeaconBlock {
 			StateRoot:  bytesutil.PadTo(stateRoot, 32),
 			Body: &silapb.BeaconBlockBody{
 				RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
-				SilaExecutionData: &silapb.SilaExecutionData{
+				SilaData: &silapb.SilaData{
 					DepositRoot: make([]byte, 32),
 					BlockHash:   make([]byte, 32),
 				},
@@ -53,7 +53,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 				StateRoot:  root[:],
 				Body: &silapb.BeaconBlockBody{
 					RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
-					SilaExecutionData: &silapb.SilaExecutionData{
+					SilaData: &silapb.SilaData{
 						DepositRoot: make([]byte, 32),
 						BlockHash:   make([]byte, 32),
 					},
@@ -69,7 +69,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 				StateRoot:  root[:],
 				Body: &silapb.BeaconBlockBodyAltair{
 					RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
-					SilaExecutionData: &silapb.SilaExecutionData{
+					SilaData: &silapb.SilaData{
 						DepositRoot: make([]byte, 32),
 						BlockHash:   make([]byte, 32),
 					},
@@ -89,7 +89,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 				StateRoot:  root[:],
 				Body: &silapb.BeaconBlockBodyBellatrix{
 					RandaoReveal: make([]byte, 96),
-					SilaExecutionData: &silapb.SilaExecutionData{
+					SilaData: &silapb.SilaData{
 						DepositRoot: make([]byte, 32),
 						BlockHash:   make([]byte, 32),
 					},
@@ -121,7 +121,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 				StateRoot:  root[:],
 				Body: &silapb.BeaconBlockBodyCapella{
 					RandaoReveal: make([]byte, 96),
-					SilaExecutionData: &silapb.SilaExecutionData{
+					SilaData: &silapb.SilaData{
 						DepositRoot: make([]byte, 32),
 						BlockHash:   make([]byte, 32),
 					},
@@ -154,7 +154,7 @@ func NewGenesisBlockForState(ctx context.Context, st state.BeaconState) (interfa
 				StateRoot:  root[:],
 				Body: &silapb.BeaconBlockBodyDeneb{
 					RandaoReveal: make([]byte, 96),
-					SilaExecutionData: &silapb.SilaExecutionData{
+					SilaData: &silapb.SilaData{
 						DepositRoot: make([]byte, 32),
 						BlockHash:   make([]byte, 32),
 					},
@@ -226,7 +226,7 @@ func gloasGenesisBlock(root [fieldparams.RootLength]byte, latestBid *silapb.Sila
 		StateRoot:  root[:],
 		Body: &silapb.BeaconBlockBodyGloas{
 			RandaoReveal: make([]byte, 96),
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositRoot: make([]byte, 32),
 				BlockHash:   make([]byte, 32),
 			},
@@ -255,7 +255,7 @@ func electraGenesisBlock(root [fieldparams.RootLength]byte) *silapb.BeaconBlockE
 		StateRoot:  root[:],
 		Body: &silapb.BeaconBlockBodyElectra{
 			RandaoReveal: make([]byte, 96),
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositRoot: make([]byte, 32),
 				BlockHash:   make([]byte, 32),
 			},

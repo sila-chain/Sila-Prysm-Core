@@ -261,19 +261,19 @@ func TestGenesisValidatorsRoot_CanRetrieve(t *testing.T) {
 	assert.Equal(t, [32]byte{'a'}, c.GenesisValidatorsRoot(), "Did not get correct genesis validators root")
 }
 
-func TestHeadSilaExecutionData_Nil(t *testing.T) {
+func TestHeadSilaData_Nil(t *testing.T) {
 	beaconDB := testDB.SetupDB(t)
 	c := setupBeaconChain(t, beaconDB)
-	assert.DeepEqual(t, &silapb.SilaExecutionData{}, c.HeadSilaExecutionData(), "Incorrect pre chain start value")
+	assert.DeepEqual(t, &silapb.SilaData{}, c.HeadSilaData(), "Incorrect pre chain start value")
 }
 
-func TestHeadSilaExecutionData_CanRetrieve(t *testing.T) {
-	d := &silapb.SilaExecutionData{DepositCount: 999}
-	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{SilaExecutionData: d})
+func TestHeadSilaData_CanRetrieve(t *testing.T) {
+	d := &silapb.SilaData{DepositCount: 999}
+	s, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{SilaData: d})
 	require.NoError(t, err)
 	c := testServiceNoDB(t)
 	c.head = &head{state: s}
-	if !proto.Equal(c.HeadSilaExecutionData(), d) {
+	if !proto.Equal(c.HeadSilaData(), d) {
 		t.Error("Received incorrect silaexec data")
 	}
 }

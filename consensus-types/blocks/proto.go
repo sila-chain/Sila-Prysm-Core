@@ -444,7 +444,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 	case version.Phase0:
 		return &eth.BeaconBlockBody{
 			RandaoReveal:      b.randaoReveal[:],
-			SilaExecutionData:          b.silaexecData,
+			SilaData:          b.silaexecData,
 			Graffiti:          b.graffiti[:],
 			ProposerSlashings: b.proposerSlashings,
 			AttesterSlashings: b.attesterSlashings,
@@ -455,7 +455,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 	case version.Altair:
 		return &eth.BeaconBlockBodyAltair{
 			RandaoReveal:      b.randaoReveal[:],
-			SilaExecutionData:          b.silaexecData,
+			SilaData:          b.silaexecData,
 			Graffiti:          b.graffiti[:],
 			ProposerSlashings: b.proposerSlashings,
 			AttesterSlashings: b.attesterSlashings,
@@ -476,7 +476,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 			}
 			return &eth.BlindedBeaconBlockBodyBellatrix{
 				RandaoReveal:           b.randaoReveal[:],
-				SilaExecutionData:               b.silaexecData,
+				SilaData:               b.silaexecData,
 				Graffiti:               b.graffiti[:],
 				ProposerSlashings:      b.proposerSlashings,
 				AttesterSlashings:      b.attesterSlashings,
@@ -497,7 +497,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 		}
 		return &eth.BeaconBlockBodyBellatrix{
 			RandaoReveal:      b.randaoReveal[:],
-			SilaExecutionData:          b.silaexecData,
+			SilaData:          b.silaexecData,
 			Graffiti:          b.graffiti[:],
 			ProposerSlashings: b.proposerSlashings,
 			AttesterSlashings: b.attesterSlashings,
@@ -519,7 +519,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 			}
 			return &eth.BlindedBeaconBlockBodyCapella{
 				RandaoReveal:           b.randaoReveal[:],
-				SilaExecutionData:               b.silaexecData,
+				SilaData:               b.silaexecData,
 				Graffiti:               b.graffiti[:],
 				ProposerSlashings:      b.proposerSlashings,
 				AttesterSlashings:      b.attesterSlashings,
@@ -541,7 +541,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 		}
 		return &eth.BeaconBlockBodyCapella{
 			RandaoReveal:          b.randaoReveal[:],
-			SilaExecutionData:              b.silaexecData,
+			SilaData:              b.silaexecData,
 			Graffiti:              b.graffiti[:],
 			ProposerSlashings:     b.proposerSlashings,
 			AttesterSlashings:     b.attesterSlashings,
@@ -564,7 +564,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 			}
 			return &eth.BlindedBeaconBlockBodyDeneb{
 				RandaoReveal:           b.randaoReveal[:],
-				SilaExecutionData:               b.silaexecData,
+				SilaData:               b.silaexecData,
 				Graffiti:               b.graffiti[:],
 				ProposerSlashings:      b.proposerSlashings,
 				AttesterSlashings:      b.attesterSlashings,
@@ -587,7 +587,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 		}
 		return &eth.BeaconBlockBodyDeneb{
 			RandaoReveal:          b.randaoReveal[:],
-			SilaExecutionData:              b.silaexecData,
+			SilaData:              b.silaexecData,
 			Graffiti:              b.graffiti[:],
 			ProposerSlashings:     b.proposerSlashings,
 			AttesterSlashings:     b.attesterSlashings,
@@ -611,7 +611,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 			}
 			return &eth.BlindedBeaconBlockBodyElectra{
 				RandaoReveal:           b.randaoReveal[:],
-				SilaExecutionData:               b.silaexecData,
+				SilaData:               b.silaexecData,
 				Graffiti:               b.graffiti[:],
 				ProposerSlashings:      b.proposerSlashings,
 				AttesterSlashings:      b.attesterSlashingsElectra,
@@ -635,7 +635,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 		}
 		return &eth.BeaconBlockBodyElectra{
 			RandaoReveal:          b.randaoReveal[:],
-			SilaExecutionData:              b.silaexecData,
+			SilaData:              b.silaexecData,
 			Graffiti:              b.graffiti[:],
 			ProposerSlashings:     b.proposerSlashings,
 			AttesterSlashings:     b.attesterSlashingsElectra,
@@ -660,7 +660,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 			}
 			return &eth.BlindedBeaconBlockBodyElectra{
 				RandaoReveal:           b.randaoReveal[:],
-				SilaExecutionData:               b.silaexecData,
+				SilaData:               b.silaexecData,
 				Graffiti:               b.graffiti[:],
 				ProposerSlashings:      b.proposerSlashings,
 				AttesterSlashings:      b.attesterSlashingsElectra,
@@ -684,7 +684,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 		}
 		return &eth.BeaconBlockBodyElectra{
 			RandaoReveal:          b.randaoReveal[:],
-			SilaExecutionData:              b.silaexecData,
+			SilaData:              b.silaexecData,
 			Graffiti:              b.graffiti[:],
 			ProposerSlashings:     b.proposerSlashings,
 			AttesterSlashings:     b.attesterSlashingsElectra,
@@ -700,7 +700,7 @@ func (b *BeaconBlockBody) Proto() (proto.Message, error) {
 	case version.Gloas:
 		return &eth.BeaconBlockBodyGloas{
 			RandaoReveal:              b.randaoReveal[:],
-			SilaExecutionData:                  b.silaexecData,
+			SilaData:                  b.silaexecData,
 			Graffiti:                  b.graffiti[:],
 			ProposerSlashings:         b.proposerSlashings,
 			AttesterSlashings:         b.attesterSlashingsElectra,
@@ -767,7 +767,7 @@ func initBlockBodyFromProtoPhase0(pb *eth.BeaconBlockBody) (*BeaconBlockBody, er
 	b := &BeaconBlockBody{
 		version:           version.Phase0,
 		randaoReveal:      bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:          pb.SilaExecutionData,
+		silaexecData:          pb.SilaData,
 		graffiti:          bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings: pb.ProposerSlashings,
 		attesterSlashings: pb.AttesterSlashings,
@@ -827,7 +827,7 @@ func initBlockBodyFromProtoAltair(pb *eth.BeaconBlockBodyAltair) (*BeaconBlockBo
 	b := &BeaconBlockBody{
 		version:           version.Altair,
 		randaoReveal:      bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:          pb.SilaExecutionData,
+		silaexecData:          pb.SilaData,
 		graffiti:          bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings: pb.ProposerSlashings,
 		attesterSlashings: pb.AttesterSlashings,
@@ -930,7 +930,7 @@ func initBlockBodyFromProtoBellatrix(pb *eth.BeaconBlockBodyBellatrix) (*BeaconB
 	b := &BeaconBlockBody{
 		version:           version.Bellatrix,
 		randaoReveal:      bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:          pb.SilaExecutionData,
+		silaexecData:          pb.SilaData,
 		graffiti:          bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings: pb.ProposerSlashings,
 		attesterSlashings: pb.AttesterSlashings,
@@ -956,7 +956,7 @@ func initBlindedBlockBodyFromProtoBellatrix(pb *eth.BlindedBeaconBlockBodyBellat
 	b := &BeaconBlockBody{
 		version:                version.Bellatrix,
 		randaoReveal:           bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:               pb.SilaExecutionData,
+		silaexecData:               pb.SilaData,
 		graffiti:               bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings:      pb.ProposerSlashings,
 		attesterSlashings:      pb.AttesterSlashings,
@@ -1060,7 +1060,7 @@ func initBlockBodyFromProtoCapella(pb *eth.BeaconBlockBodyCapella) (*BeaconBlock
 	b := &BeaconBlockBody{
 		version:               version.Capella,
 		randaoReveal:          bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:              pb.SilaExecutionData,
+		silaexecData:              pb.SilaData,
 		graffiti:              bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings:     pb.ProposerSlashings,
 		attesterSlashings:     pb.AttesterSlashings,
@@ -1087,7 +1087,7 @@ func initBlindedBlockBodyFromProtoCapella(pb *eth.BlindedBeaconBlockBodyCapella)
 	b := &BeaconBlockBody{
 		version:                version.Capella,
 		randaoReveal:           bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:               pb.SilaExecutionData,
+		silaexecData:               pb.SilaData,
 		graffiti:               bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings:      pb.ProposerSlashings,
 		attesterSlashings:      pb.AttesterSlashings,
@@ -1192,7 +1192,7 @@ func initBlockBodyFromProtoDeneb(pb *eth.BeaconBlockBodyDeneb) (*BeaconBlockBody
 	b := &BeaconBlockBody{
 		version:               version.Deneb,
 		randaoReveal:          bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:              pb.SilaExecutionData,
+		silaexecData:              pb.SilaData,
 		graffiti:              bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings:     pb.ProposerSlashings,
 		attesterSlashings:     pb.AttesterSlashings,
@@ -1220,7 +1220,7 @@ func initBlindedBlockBodyFromProtoDeneb(pb *eth.BlindedBeaconBlockBodyDeneb) (*B
 	b := &BeaconBlockBody{
 		version:                version.Deneb,
 		randaoReveal:           bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:               pb.SilaExecutionData,
+		silaexecData:               pb.SilaData,
 		graffiti:               bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings:      pb.ProposerSlashings,
 		attesterSlashings:      pb.AttesterSlashings,
@@ -1330,7 +1330,7 @@ func initBlockBodyFromProtoElectra(pb *eth.BeaconBlockBodyElectra) (*BeaconBlock
 	b := &BeaconBlockBody{
 		version:                  version.Electra,
 		randaoReveal:             bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:                 pb.SilaExecutionData,
+		silaexecData:                 pb.SilaData,
 		graffiti:                 bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings:        pb.ProposerSlashings,
 		attesterSlashingsElectra: pb.AttesterSlashings,
@@ -1363,7 +1363,7 @@ func initBlindedBlockBodyFromProtoElectra(pb *eth.BlindedBeaconBlockBodyElectra)
 	b := &BeaconBlockBody{
 		version:                  version.Electra,
 		randaoReveal:             bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:                 pb.SilaExecutionData,
+		silaexecData:                 pb.SilaData,
 		graffiti:                 bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings:        pb.ProposerSlashings,
 		attesterSlashingsElectra: pb.AttesterSlashings,
@@ -1474,7 +1474,7 @@ func initBlockBodyFromProtoFulu(pb *eth.BeaconBlockBodyElectra) (*BeaconBlockBod
 	b := &BeaconBlockBody{
 		version:                  version.Fulu,
 		randaoReveal:             bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:                 pb.SilaExecutionData,
+		silaexecData:                 pb.SilaData,
 		graffiti:                 bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings:        pb.ProposerSlashings,
 		attesterSlashingsElectra: pb.AttesterSlashings,
@@ -1507,7 +1507,7 @@ func initBlindedBlockBodyFromProtoFulu(pb *eth.BlindedBeaconBlockBodyElectra) (*
 	b := &BeaconBlockBody{
 		version:                  version.Fulu,
 		randaoReveal:             bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:                 pb.SilaExecutionData,
+		silaexecData:                 pb.SilaData,
 		graffiti:                 bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings:        pb.ProposerSlashings,
 		attesterSlashingsElectra: pb.AttesterSlashings,
@@ -1576,7 +1576,7 @@ func initBlockBodyFromProtoGloas(pb *eth.BeaconBlockBodyGloas) (*BeaconBlockBody
 	b := &BeaconBlockBody{
 		version:                   version.Gloas,
 		randaoReveal:              bytesutil.ToBytes96(pb.RandaoReveal),
-		silaexecData:                  pb.SilaExecutionData,
+		silaexecData:                  pb.SilaData,
 		graffiti:                  bytesutil.ToBytes32(pb.Graffiti),
 		proposerSlashings:         pb.ProposerSlashings,
 		attesterSlashingsElectra:  pb.AttesterSlashings,

@@ -50,7 +50,7 @@ func TestBeaconBlock_Fuzz(t *testing.T) {
 }
 
 func TestCopyBeaconBlockFields_Fuzz(t *testing.T) {
-	fuzzCopies(t, &eth.SilaExecutionData{})
+	fuzzCopies(t, &eth.SilaData{})
 	fuzzCopies(t, &eth.ProposerSlashing{})
 	fuzzCopies(t, &eth.SignedBeaconBlockHeader{})
 	fuzzCopies(t, &eth.BeaconBlockHeader{})

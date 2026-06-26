@@ -65,9 +65,9 @@ func TestLatestMainchainInfo_OK(t *testing.T) {
 	web3Service.cancel()
 	exitRoutine <- true
 
-	assert.Equal(t, web3Service.latestSilaExecutionData.BlockHeight, header.Number.Uint64())
-	assert.Equal(t, hexutil.Encode(web3Service.latestSilaExecutionData.BlockHash), header.Hash.Hex())
-	assert.Equal(t, web3Service.latestSilaExecutionData.BlockTime, header.Time)
+	assert.Equal(t, web3Service.latestSilaData.BlockHeight, header.Number.Uint64())
+	assert.Equal(t, hexutil.Encode(web3Service.latestSilaData.BlockHash), header.Hash.Hex())
+	assert.Equal(t, web3Service.latestSilaData.BlockTime, header.Time)
 }
 
 func TestBlockHashByHeight_ReturnsHash(t *testing.T) {
@@ -232,8 +232,8 @@ func TestService_BlockNumberByTimestamp(t *testing.T) {
 
 	hd, err := testAcc.Backend.Client().HeaderByNumber(ctx, nil)
 	require.NoError(t, err)
-	web3Service.latestSilaExecutionData.BlockTime = hd.Time
-	web3Service.latestSilaExecutionData.BlockHeight = hd.Number.Uint64()
+	web3Service.latestSilaData.BlockTime = hd.Time
+	web3Service.latestSilaData.BlockHeight = hd.Number.Uint64()
 	blk, err := web3Service.BlockByTimestamp(ctx, initialHead.Time+100 /* time */)
 	require.NoError(t, err)
 	if blk.Number.Cmp(big.NewInt(0)) == 0 {
@@ -264,7 +264,7 @@ func TestService_BlockNumberByTimestampLessTargetTime(t *testing.T) {
 	ctx := t.Context()
 	hd, err := testAcc.Backend.Client().HeaderByNumber(ctx, nil)
 	require.NoError(t, err)
-	web3Service.latestSilaExecutionData.BlockTime = hd.Time
+	web3Service.latestSilaData.BlockTime = hd.Time
 	// Use extremely small deadline to illustrate that context deadlines are respected.
 	ctx, cancel := context.WithTimeout(ctx, 100*time.Nanosecond)
 	defer cancel()
@@ -302,7 +302,7 @@ func TestService_BlockNumberByTimestampMoreTargetTime(t *testing.T) {
 	ctx := t.Context()
 	hd, err := testAcc.Backend.Client().HeaderByNumber(ctx, nil)
 	require.NoError(t, err)
-	web3Service.latestSilaExecutionData.BlockTime = hd.Time
+	web3Service.latestSilaData.BlockTime = hd.Time
 	// Use extremely small deadline to illustrate that context deadlines are respected.
 	ctx, cancel := context.WithTimeout(ctx, 100*time.Nanosecond)
 	defer cancel()

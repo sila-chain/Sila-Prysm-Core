@@ -24,12 +24,12 @@ import (
 func Test_IsMergeComplete(t *testing.T) {
 	tests := []struct {
 		name    string
-		payload interfaces.ExecutionData
+		payload interfaces.SilaData
 		want    bool
 	}{
 		{
 			name: "empty payload header",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				return h
@@ -38,7 +38,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has parent hash",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -50,7 +50,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has fee recipient",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -62,7 +62,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has state root",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -74,7 +74,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has receipt root",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -86,7 +86,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has logs bloom",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -98,7 +98,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has random",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -110,7 +110,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has base fee",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -122,7 +122,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has block hash",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -134,7 +134,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has extra data",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -146,7 +146,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has block number",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -158,7 +158,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has gas limit",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -170,7 +170,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has gas used",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -182,7 +182,7 @@ func Test_IsMergeComplete(t *testing.T) {
 		},
 		{
 			name: "has time stamp",
-			payload: func() interfaces.ExecutionData {
+			payload: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -262,7 +262,7 @@ func Test_IsExecutionEnabled(t *testing.T) {
 	tests := []struct {
 		name         string
 		payload      *silaenginev1.SilaPayload
-		header       interfaces.ExecutionData
+		header       interfaces.SilaData
 		useAltairSt  bool
 		useCapellaSt bool
 		want         bool
@@ -270,7 +270,7 @@ func Test_IsExecutionEnabled(t *testing.T) {
 		{
 			name:    "use older than bellatrix state",
 			payload: emptyPayload(),
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				return h
@@ -281,7 +281,7 @@ func Test_IsExecutionEnabled(t *testing.T) {
 		{
 			name:    "empty header, empty payload",
 			payload: emptyPayload(),
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				return h
@@ -291,7 +291,7 @@ func Test_IsExecutionEnabled(t *testing.T) {
 		{
 			name:    "non-empty header, empty payload",
 			payload: emptyPayload(),
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -303,7 +303,7 @@ func Test_IsExecutionEnabled(t *testing.T) {
 		},
 		{
 			name: "empty header, non-empty payload",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				return h
@@ -317,7 +317,7 @@ func Test_IsExecutionEnabled(t *testing.T) {
 		},
 		{
 			name: "non-empty header, non-empty payload",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -335,7 +335,7 @@ func Test_IsExecutionEnabled(t *testing.T) {
 		{
 			name:    "capella state always enabled",
 			payload: emptyPayload(),
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				return h
@@ -370,13 +370,13 @@ func Test_IsExecutionEnabledUsingHeader(t *testing.T) {
 	tests := []struct {
 		name    string
 		payload *silaenginev1.SilaPayload
-		header  interfaces.ExecutionData
+		header  interfaces.SilaData
 		want    bool
 	}{
 		{
 			name:    "empty header, empty payload",
 			payload: emptyPayload(),
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				return h
@@ -386,7 +386,7 @@ func Test_IsExecutionEnabledUsingHeader(t *testing.T) {
 		{
 			name:    "non-empty header, empty payload",
 			payload: emptyPayload(),
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -398,7 +398,7 @@ func Test_IsExecutionEnabledUsingHeader(t *testing.T) {
 		},
 		{
 			name: "empty header, non-empty payload",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				return h
@@ -412,7 +412,7 @@ func Test_IsExecutionEnabledUsingHeader(t *testing.T) {
 		},
 		{
 			name: "non-empty header, non-empty payload",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -447,13 +447,13 @@ func Test_ValidatePayloadWhenMergeCompletes(t *testing.T) {
 	tests := []struct {
 		name    string
 		payload *silaenginev1.SilaPayload
-		header  interfaces.ExecutionData
+		header  interfaces.SilaData
 		err     error
 	}{
 		{
 			name:    "merge incomplete",
 			payload: emptyPayload(),
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				return h
@@ -467,7 +467,7 @@ func Test_ValidatePayloadWhenMergeCompletes(t *testing.T) {
 				p.ParentHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return p
 			}(),
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -484,7 +484,7 @@ func Test_ValidatePayloadWhenMergeCompletes(t *testing.T) {
 				p.ParentHash = bytesutil.PadTo([]byte{'a'}, fieldparams.RootLength)
 				return p
 			}(),
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -645,12 +645,12 @@ func Test_ProcessPayload_Blinded(t *testing.T) {
 	require.NoError(t, err)
 	tests := []struct {
 		name   string
-		header interfaces.ExecutionData
+		header interfaces.SilaData
 		err    error
 	}{
 		{
 			name: "process passes",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -662,7 +662,7 @@ func Test_ProcessPayload_Blinded(t *testing.T) {
 		},
 		{
 			name: "incorrect prev randao",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				return h
@@ -671,7 +671,7 @@ func Test_ProcessPayload_Blinded(t *testing.T) {
 		},
 		{
 			name: "incorrect timestamp",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -715,12 +715,12 @@ func Test_ValidatePayloadHeader(t *testing.T) {
 	require.NoError(t, err)
 	tests := []struct {
 		name   string
-		header interfaces.ExecutionData
+		header interfaces.SilaData
 		err    error
 	}{
 		{
 			name: "process passes",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -732,7 +732,7 @@ func Test_ValidatePayloadHeader(t *testing.T) {
 		},
 		{
 			name: "incorrect prev randao",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				return h
@@ -741,7 +741,7 @@ func Test_ValidatePayloadHeader(t *testing.T) {
 		},
 		{
 			name: "incorrect timestamp",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -770,12 +770,12 @@ func Test_ValidatePayloadHeaderWhenMergeCompletes(t *testing.T) {
 	tests := []struct {
 		name   string
 		state  state.BeaconState
-		header interfaces.ExecutionData
+		header interfaces.SilaData
 		err    error
 	}{
 		{
 			name: "no merge",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				return h
@@ -785,7 +785,7 @@ func Test_ValidatePayloadHeaderWhenMergeCompletes(t *testing.T) {
 		},
 		{
 			name: "process passes",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -798,7 +798,7 @@ func Test_ValidatePayloadHeaderWhenMergeCompletes(t *testing.T) {
 		},
 		{
 			name: "invalid block hash",
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := emptyPayloadHeader()
 				require.NoError(t, err)
 				p, ok := h.Proto().(*silaenginev1.SilaPayloadHeader)
@@ -871,7 +871,7 @@ func BenchmarkBellatrixComplete(b *testing.B) {
 	}
 }
 
-func emptyPayloadHeader() (interfaces.ExecutionData, error) {
+func emptyPayloadHeader() (interfaces.SilaData, error) {
 	return consensusblocks.WrappedSilaPayloadHeader(&silaenginev1.SilaPayloadHeader{
 		ParentHash:       make([]byte, fieldparams.RootLength),
 		FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
@@ -886,7 +886,7 @@ func emptyPayloadHeader() (interfaces.ExecutionData, error) {
 	})
 }
 
-func emptyPayloadHeaderCapella() (interfaces.ExecutionData, error) {
+func emptyPayloadHeaderCapella() (interfaces.SilaData, error) {
 	return consensusblocks.WrappedSilaPayloadHeaderCapella(&silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       make([]byte, fieldparams.RootLength),
 		FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),

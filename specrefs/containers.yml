@@ -122,7 +122,7 @@
     <spec ssz_object="BeaconBlockBody" fork="phase0" hash="e982fea2">
     class BeaconBlockBody(Container):
         randao_reveal: BLSSignature
-        sila_execution_data: SilaExecutionData
+        sila_data: SilaData
         graffiti: Bytes32
         proposer_slashings: List[ProposerSlashing, MAX_PROPOSER_SLASHINGS]
         attester_slashings: List[AttesterSlashing, MAX_ATTESTER_SLASHINGS]
@@ -139,7 +139,7 @@
     <spec ssz_object="BeaconBlockBody" fork="altair" hash="4afb2e64">
     class BeaconBlockBody(Container):
         randao_reveal: BLSSignature
-        sila_execution_data: SilaExecutionData
+        sila_data: SilaData
         graffiti: Bytes32
         proposer_slashings: List[ProposerSlashing, MAX_PROPOSER_SLASHINGS]
         attester_slashings: List[AttesterSlashing, MAX_ATTESTER_SLASHINGS]
@@ -158,7 +158,7 @@
     <spec ssz_object="BeaconBlockBody" fork="bellatrix" hash="2ba73fc8">
     class BeaconBlockBody(Container):
         randao_reveal: BLSSignature
-        sila_execution_data: SilaExecutionData
+        sila_data: SilaData
         graffiti: Bytes32
         proposer_slashings: List[ProposerSlashing, MAX_PROPOSER_SLASHINGS]
         attester_slashings: List[AttesterSlashing, MAX_ATTESTER_SLASHINGS]
@@ -178,7 +178,7 @@
     <spec ssz_object="BeaconBlockBody" fork="capella" hash="3136f99b">
     class BeaconBlockBody(Container):
         randao_reveal: BLSSignature
-        sila_execution_data: SilaExecutionData
+        sila_data: SilaData
         graffiti: Bytes32
         proposer_slashings: List[ProposerSlashing, MAX_PROPOSER_SLASHINGS]
         attester_slashings: List[AttesterSlashing, MAX_ATTESTER_SLASHINGS]
@@ -199,7 +199,7 @@
     <spec ssz_object="BeaconBlockBody" fork="deneb" hash="cf0c1053">
     class BeaconBlockBody(Container):
         randao_reveal: BLSSignature
-        sila_execution_data: SilaExecutionData
+        sila_data: SilaData
         graffiti: Bytes32
         proposer_slashings: List[ProposerSlashing, MAX_PROPOSER_SLASHINGS]
         attester_slashings: List[AttesterSlashing, MAX_ATTESTER_SLASHINGS]
@@ -222,7 +222,7 @@
     <spec ssz_object="BeaconBlockBody" fork="electra" hash="cd172b8c">
     class BeaconBlockBody(Container):
         randao_reveal: BLSSignature
-        sila_execution_data: SilaExecutionData
+        sila_data: SilaData
         graffiti: Bytes32
         proposer_slashings: List[ProposerSlashing, MAX_PROPOSER_SLASHINGS]
         # [Modified in Electra:SIP7549]
@@ -245,7 +245,7 @@
     <spec ssz_object="BeaconBlockBody" fork="gloas" hash="7a5140aa">
     class BeaconBlockBody(Container):
         randao_reveal: BLSSignature
-        sila_execution_data: SilaExecutionData
+        sila_data: SilaData
         graffiti: Bytes32
         proposer_slashings: List[ProposerSlashing, MAX_PROPOSER_SLASHINGS]
         attester_slashings: List[AttesterSlashing, MAX_ATTESTER_SLASHINGS_ELECTRA]
@@ -297,8 +297,8 @@
         block_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         state_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         historical_roots: List[Root, HISTORICAL_ROOTS_LIMIT]
-        sila_execution_data: SilaExecutionData
-        sila_execution_data_votes: List[SilaExecutionData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
+        sila_data: SilaData
+        sila_data_votes: List[SilaData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
         silaexec_deposit_index: uint64
         validators: List[Validator, VALIDATOR_REGISTRY_LIMIT]
         balances: List[Gwei, VALIDATOR_REGISTRY_LIMIT]
@@ -327,8 +327,8 @@
         block_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         state_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         historical_roots: List[Root, HISTORICAL_ROOTS_LIMIT]
-        sila_execution_data: SilaExecutionData
-        sila_execution_data_votes: List[SilaExecutionData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
+        sila_data: SilaData
+        sila_data_votes: List[SilaData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
         silaexec_deposit_index: uint64
         validators: List[Validator, VALIDATOR_REGISTRY_LIMIT]
         balances: List[Gwei, VALIDATOR_REGISTRY_LIMIT]
@@ -365,8 +365,8 @@
         block_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         state_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         historical_roots: List[Root, HISTORICAL_ROOTS_LIMIT]
-        sila_execution_data: SilaExecutionData
-        sila_execution_data_votes: List[SilaExecutionData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
+        sila_data: SilaData
+        sila_data_votes: List[SilaData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
         silaexec_deposit_index: uint64
         validators: List[Validator, VALIDATOR_REGISTRY_LIMIT]
         balances: List[Gwei, VALIDATOR_REGISTRY_LIMIT]
@@ -400,8 +400,8 @@
         block_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         state_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         historical_roots: List[Root, HISTORICAL_ROOTS_LIMIT]
-        sila_execution_data: SilaExecutionData
-        sila_execution_data_votes: List[SilaExecutionData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
+        sila_data: SilaData
+        sila_data_votes: List[SilaData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
         silaexec_deposit_index: uint64
         validators: List[Validator, VALIDATOR_REGISTRY_LIMIT]
         balances: List[Gwei, VALIDATOR_REGISTRY_LIMIT]
@@ -441,8 +441,8 @@
         block_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         state_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         historical_roots: List[Root, HISTORICAL_ROOTS_LIMIT]
-        sila_execution_data: SilaExecutionData
-        sila_execution_data_votes: List[SilaExecutionData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
+        sila_data: SilaData
+        sila_data_votes: List[SilaData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
         silaexec_deposit_index: uint64
         validators: List[Validator, VALIDATOR_REGISTRY_LIMIT]
         balances: List[Gwei, VALIDATOR_REGISTRY_LIMIT]
@@ -479,8 +479,8 @@
         block_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         state_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         historical_roots: List[Root, HISTORICAL_ROOTS_LIMIT]
-        sila_execution_data: SilaExecutionData
-        sila_execution_data_votes: List[SilaExecutionData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
+        sila_data: SilaData
+        sila_data_votes: List[SilaData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
         silaexec_deposit_index: uint64
         validators: List[Validator, VALIDATOR_REGISTRY_LIMIT]
         balances: List[Gwei, VALIDATOR_REGISTRY_LIMIT]
@@ -534,8 +534,8 @@
         block_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         state_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         historical_roots: List[Root, HISTORICAL_ROOTS_LIMIT]
-        sila_execution_data: SilaExecutionData
-        sila_execution_data_votes: List[SilaExecutionData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
+        sila_data: SilaData
+        sila_data_votes: List[SilaData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
         silaexec_deposit_index: uint64
         validators: List[Validator, VALIDATOR_REGISTRY_LIMIT]
         balances: List[Gwei, VALIDATOR_REGISTRY_LIMIT]
@@ -580,8 +580,8 @@
         block_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         state_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         historical_roots: List[Root, HISTORICAL_ROOTS_LIMIT]
-        sila_execution_data: SilaExecutionData
-        sila_execution_data_votes: List[SilaExecutionData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
+        sila_data: SilaData
+        sila_data_votes: List[SilaData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
         silaexec_deposit_index: uint64
         validators: List[Validator, VALIDATOR_REGISTRY_LIMIT]
         balances: List[Gwei, VALIDATOR_REGISTRY_LIMIT]
@@ -644,8 +644,8 @@
         block_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         state_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         historical_roots: List[Root, HISTORICAL_ROOTS_LIMIT]
-        sila_execution_data: SilaExecutionData
-        sila_execution_data_votes: List[SilaExecutionData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
+        sila_data: SilaData
+        sila_data_votes: List[SilaData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
         silaexec_deposit_index: uint64
         validators: List[Validator, VALIDATOR_REGISTRY_LIMIT]
         balances: List[Gwei, VALIDATOR_REGISTRY_LIMIT]
@@ -698,8 +698,8 @@
         block_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         state_roots: Vector[Root, SLOTS_PER_HISTORICAL_ROOT]
         historical_roots: List[Root, HISTORICAL_ROOTS_LIMIT]
-        sila_execution_data: SilaExecutionData
-        sila_execution_data_votes: List[SilaExecutionData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
+        sila_data: SilaData
+        sila_data_votes: List[SilaData, EPOCHS_PER_SilaExecution_VOTING_PERIOD * SLOTS_PER_EPOCH]
         silaexec_deposit_index: uint64
         validators: List[Validator, VALIDATOR_REGISTRY_LIMIT]
         balances: List[Gwei, VALIDATOR_REGISTRY_LIMIT]
@@ -938,13 +938,13 @@
         deposit_count: uint64
     </spec>
 
-- name: SilaExecutionData#phase0
+- name: SilaData#phase0
   sources:
     - file: proto/sila/v1alpha1/beacon_core_types.proto
-      search: message SilaExecutionData {
+      search: message SilaData {
   spec: |
-    <spec ssz_object="SilaExecutionData" fork="phase0" hash="1d7be228">
-    class SilaExecutionData(Container):
+    <spec ssz_object="SilaData" fork="phase0" hash="1d7be228">
+    class SilaData(Container):
         deposit_root: Root
         deposit_count: uint64
         block_hash: Hash32

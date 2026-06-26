@@ -235,8 +235,8 @@ func DepositTrieSubset(sparseTrie *trie.SparseMerkleTrie, size int) (*trie.Spars
 	return depositTrie, roots, nil
 }
 
-// DeterministicSilaExecutionData takes an array of deposits and returns the silaexecData made from the deposit trie.
-func DeterministicSilaExecutionData(size int) (*silapb.SilaExecutionData, error) {
+// DeterministicSilaData takes an array of deposits and returns the silaexecData made from the deposit trie.
+func DeterministicSilaData(size int) (*silapb.SilaData, error) {
 	depositTrie, _, err := DeterministicDepositTrie(size)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create trie")
@@ -245,7 +245,7 @@ func DeterministicSilaExecutionData(size int) (*silapb.SilaExecutionData, error)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to compute deposit trie root")
 	}
-	silaexecData := &silapb.SilaExecutionData{
+	silaexecData := &silapb.SilaData{
 		BlockHash:    root[:],
 		DepositRoot:  root[:],
 		DepositCount: uint64(size),
@@ -259,9 +259,9 @@ func DeterministicGenesisState(t testing.TB, numValidators uint64) (state.Beacon
 	if err != nil {
 		t.Fatal(errors.Wrapf(err, "failed to get %d deposits", numValidators))
 	}
-	silaexecData, err := DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := DeterministicSilaData(len(deposits))
 	if err != nil {
-		t.Fatal(errors.Wrapf(err, "failed to get silaExecutionData for %d deposits", numValidators))
+		t.Fatal(errors.Wrapf(err, "failed to get silaData for %d deposits", numValidators))
 	}
 	beaconState, err := transition.GenesisBeaconState(t.Context(), deposits, uint64(0), silaexecData)
 	if err != nil {

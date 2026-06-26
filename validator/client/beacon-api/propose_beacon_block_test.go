@@ -422,7 +422,7 @@ func generateSignedBlindedBellatrixBlock() *silapb.GenericSignedBeaconBlock_Blin
 				StateRoot:     testhelpers.FillByteSlice(32, 4),
 				Body: &silapb.BlindedBeaconBlockBodyBellatrix{
 					RandaoReveal: testhelpers.FillByteSlice(96, 5),
-					SilaExecutionData: &silapb.SilaExecutionData{
+					SilaData: &silapb.SilaData{
 						DepositRoot:  testhelpers.FillByteSlice(32, 6),
 						DepositCount: 7,
 						BlockHash:    testhelpers.FillByteSlice(32, 8),
@@ -502,7 +502,7 @@ func generateSignedBlindedCapellaBlock() *silapb.GenericSignedBeaconBlock_Blinde
 				StateRoot:     testhelpers.FillByteSlice(32, 4),
 				Body: &silapb.BlindedBeaconBlockBodyCapella{
 					RandaoReveal: testhelpers.FillByteSlice(96, 5),
-					SilaExecutionData: &silapb.SilaExecutionData{
+					SilaData: &silapb.SilaData{
 						DepositRoot:  testhelpers.FillByteSlice(32, 6),
 						DepositCount: 7,
 						BlockHash:    testhelpers.FillByteSlice(32, 8),

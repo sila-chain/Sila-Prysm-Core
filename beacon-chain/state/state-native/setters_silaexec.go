@@ -6,28 +6,28 @@ import (
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 )
 
-// SetSilaExecutionData for the beacon state.
-func (b *BeaconState) SetSilaExecutionData(val *silapb.SilaExecutionData) error {
+// SetSilaData for the beacon state.
+func (b *BeaconState) SetSilaData(val *silapb.SilaData) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
 	b.silaexecData = val
-	b.markFieldAsDirty(types.SilaExecutionData)
+	b.markFieldAsDirty(types.SilaData)
 	return nil
 }
 
-// SetSilaExecutionDataVotes for the beacon state. Updates the entire
+// SetSilaDataVotes for the beacon state. Updates the entire
 // list to a new value by overwriting the previous one.
-func (b *BeaconState) SetSilaExecutionDataVotes(val []*silapb.SilaExecutionData) error {
+func (b *BeaconState) SetSilaDataVotes(val []*silapb.SilaData) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	b.sharedFieldReferences[types.SilaExecutionDataVotes].MinusRef()
-	b.sharedFieldReferences[types.SilaExecutionDataVotes] = stateutil.NewRef(1)
+	b.sharedFieldReferences[types.SilaDataVotes].MinusRef()
+	b.sharedFieldReferences[types.SilaDataVotes] = stateutil.NewRef(1)
 
-	b.silaExecutionDataVotes = val
-	b.markFieldAsDirty(types.SilaExecutionDataVotes)
-	b.rebuildTrie[types.SilaExecutionDataVotes] = true
+	b.silaDataVotes = val
+	b.markFieldAsDirty(types.SilaDataVotes)
+	b.rebuildTrie[types.SilaDataVotes] = true
 	return nil
 }
 
@@ -41,23 +41,23 @@ func (b *BeaconState) SetSilaExecutionDepositIndex(val uint64) error {
 	return nil
 }
 
-// AppendSilaExecutionDataVotes for the beacon state. Appends the new value
+// AppendSilaDataVotes for the beacon state. Appends the new value
 // to the end of list.
-func (b *BeaconState) AppendSilaExecutionDataVotes(val *silapb.SilaExecutionData) error {
+func (b *BeaconState) AppendSilaDataVotes(val *silapb.SilaData) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	votes := b.silaExecutionDataVotes
-	if b.sharedFieldReferences[types.SilaExecutionDataVotes].Refs() > 1 {
+	votes := b.silaDataVotes
+	if b.sharedFieldReferences[types.SilaDataVotes].Refs() > 1 {
 		// Copy elements in underlying array by reference.
-		votes = make([]*silapb.SilaExecutionData, 0, len(b.silaExecutionDataVotes)+1)
-		votes = append(votes, b.silaExecutionDataVotes...)
-		b.sharedFieldReferences[types.SilaExecutionDataVotes].MinusRef()
-		b.sharedFieldReferences[types.SilaExecutionDataVotes] = stateutil.NewRef(1)
+		votes = make([]*silapb.SilaData, 0, len(b.silaDataVotes)+1)
+		votes = append(votes, b.silaDataVotes...)
+		b.sharedFieldReferences[types.SilaDataVotes].MinusRef()
+		b.sharedFieldReferences[types.SilaDataVotes] = stateutil.NewRef(1)
 	}
 
-	b.silaExecutionDataVotes = append(votes, val)
-	b.markFieldAsDirty(types.SilaExecutionDataVotes)
-	b.addDirtyIndices(types.SilaExecutionDataVotes, []uint64{uint64(len(b.silaExecutionDataVotes) - 1)})
+	b.silaDataVotes = append(votes, val)
+	b.markFieldAsDirty(types.SilaDataVotes)
+	b.addDirtyIndices(types.SilaDataVotes, []uint64{uint64(len(b.silaDataVotes) - 1)})
 	return nil
 }

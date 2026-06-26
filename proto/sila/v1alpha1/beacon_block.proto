@@ -169,7 +169,7 @@ message BeaconBlockBody {
   bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
 
   // A reference to the Sila execution chain.
-  SilaExecutionData sila_execution_data = 2;
+  SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.
@@ -289,7 +289,7 @@ message BeaconBlockBodyAltair {
   bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
 
   // A reference to the Sila execution chain.
-  SilaExecutionData sila_execution_data = 2;
+  SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.
@@ -361,7 +361,7 @@ message BeaconBlockBodyBellatrix {
   bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
 
   // A reference to the Sila execution chain.
-  SilaExecutionData sila_execution_data = 2;
+  SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.
@@ -432,7 +432,7 @@ message BlindedBeaconBlockBodyBellatrix {
   bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
 
   // A reference to the Sila execution chain.
-  SilaExecutionData sila_execution_data = 2;
+  SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.
@@ -503,7 +503,7 @@ message BeaconBlockBodyCapella {
   bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
 
   // A reference to the Sila execution chain.
-  SilaExecutionData sila_execution_data = 2;
+  SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.
@@ -577,7 +577,7 @@ message BlindedBeaconBlockBodyCapella {
   bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
 
   // A reference to the Sila execution chain.
-  SilaExecutionData sila_execution_data = 2;
+  SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.
@@ -687,7 +687,7 @@ message BeaconBlockBodyDeneb {
   bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
 
   // A reference to the Sila execution chain.
-  SilaExecutionData sila_execution_data = 2;
+  SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.
@@ -766,7 +766,7 @@ message BlindedBeaconBlockBodyDeneb {
   bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
 
   // A reference to the Sila execution chain.
-  SilaExecutionData sila_execution_data = 2;
+  SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.
@@ -917,7 +917,7 @@ message BeaconBlockBodyElectra {
   bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
 
   // A reference to the Sila execution chain.
-  SilaExecutionData sila_execution_data = 2;
+  SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.
@@ -1002,7 +1002,7 @@ message BlindedBeaconBlockBodyElectra {
   bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
 
   // A reference to the Sila execution chain.
-  SilaExecutionData sila_execution_data = 2;
+  SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.

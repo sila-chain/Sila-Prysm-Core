@@ -61,7 +61,7 @@ func buildTestKzgsAndBody(t *testing.T) ([][]byte, interfaces.ReadOnlyBeaconBloc
 			Transactions:  make([][]byte, 0),
 			ExtraData:     make([]byte, 0),
 		},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
@@ -220,7 +220,7 @@ func Benchmark_MerkleProofKZGCommitment(b *testing.B) {
 			Transactions:  make([][]byte, 0),
 			ExtraData:     make([]byte, 0),
 		},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},
@@ -265,7 +265,7 @@ func Test_VerifyKZGInclusionProof(t *testing.T) {
 			Transactions:  make([][]byte, 0),
 			ExtraData:     make([]byte, 0),
 		},
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		},

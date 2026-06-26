@@ -79,9 +79,9 @@ var (
 		Name: "validators_total_effective_balance",
 		Help: "The total effective balance of validators, in GWei",
 	}, []string{"state"})
-	currentSilaExecutionDataDepositCount = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "current_sila_execution_data_deposit_count",
-		Help: "The current silaexec deposit count in the last processed state silaExecutionData field.",
+	currentSilaDataDepositCount = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "current_sila_data_deposit_count",
+		Help: "The current silaexec deposit count in the last processed state silaData field.",
 	})
 	processedDepositsCount = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "beacon_processed_deposits_total",
@@ -364,7 +364,7 @@ func reportEpochMetrics(ctx context.Context, postState, headState state.BeaconSt
 	// Last finalized slot
 	beaconFinalizedEpoch.Set(float64(postState.FinalizedCheckpointEpoch()))
 	beaconFinalizedRoot.Set(float64(bytesutil.ToLowInt64(postState.FinalizedCheckpoint().Root)))
-	currentSilaExecutionDataDepositCount.Set(float64(postState.SilaExecutionData().DepositCount))
+	currentSilaDataDepositCount.Set(float64(postState.SilaData().DepositCount))
 	processedDepositsCount.Set(float64(postState.SilaExecutionDepositIndex() + 1))
 
 	var b *precompute.Balance

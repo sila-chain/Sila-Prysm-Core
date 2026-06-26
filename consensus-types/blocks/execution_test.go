@@ -298,7 +298,7 @@ func TestWrapSilaPayloadHeaderDeneb_SSZ(t *testing.T) {
 	assert.NoError(t, payload.UnmarshalSSZ(encoded))
 }
 
-func createWrappedPayload(t testing.TB) interfaces.ExecutionData {
+func createWrappedPayload(t testing.TB) interfaces.SilaData {
 	wsb, err := blocks.WrappedSilaPayload(&silaenginev1.SilaPayload{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
@@ -319,7 +319,7 @@ func createWrappedPayload(t testing.TB) interfaces.ExecutionData {
 	return wsb
 }
 
-func createWrappedPayloadHeader(t testing.TB) interfaces.ExecutionData {
+func createWrappedPayloadHeader(t testing.TB) interfaces.SilaData {
 	wsb, err := blocks.WrappedSilaPayloadHeader(&silaenginev1.SilaPayloadHeader{
 		ParentHash:       make([]byte, fieldparams.RootLength),
 		FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
@@ -340,7 +340,7 @@ func createWrappedPayloadHeader(t testing.TB) interfaces.ExecutionData {
 	return wsb
 }
 
-func createWrappedPayloadCapella(t testing.TB) interfaces.ExecutionData {
+func createWrappedPayloadCapella(t testing.TB) interfaces.SilaData {
 	payload, err := blocks.WrappedSilaPayloadCapella(&silaenginev1.SilaPayloadCapella{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
@@ -362,7 +362,7 @@ func createWrappedPayloadCapella(t testing.TB) interfaces.ExecutionData {
 	return payload
 }
 
-func createWrappedPayloadHeaderCapella(t testing.TB) interfaces.ExecutionData {
+func createWrappedPayloadHeaderCapella(t testing.TB) interfaces.SilaData {
 	payload, err := blocks.WrappedSilaPayloadHeaderCapella(&silaenginev1.SilaPayloadHeaderCapella{
 		ParentHash:       make([]byte, fieldparams.RootLength),
 		FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
@@ -384,7 +384,7 @@ func createWrappedPayloadHeaderCapella(t testing.TB) interfaces.ExecutionData {
 	return payload
 }
 
-func createWrappedPayloadDeneb(t testing.TB) interfaces.ExecutionData {
+func createWrappedPayloadDeneb(t testing.TB) interfaces.SilaData {
 	payload, err := blocks.WrappedSilaPayloadDeneb(&silaenginev1.SilaPayloadDeneb{
 		ParentHash:    make([]byte, fieldparams.RootLength),
 		FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
@@ -408,7 +408,7 @@ func createWrappedPayloadDeneb(t testing.TB) interfaces.ExecutionData {
 	return payload
 }
 
-func createWrappedPayloadHeaderDeneb(t testing.TB) interfaces.ExecutionData {
+func createWrappedPayloadHeaderDeneb(t testing.TB) interfaces.SilaData {
 	payload, err := blocks.WrappedSilaPayloadHeaderDeneb(&silaenginev1.SilaPayloadHeaderDeneb{
 		ParentHash:       make([]byte, fieldparams.RootLength),
 		FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),

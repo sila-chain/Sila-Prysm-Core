@@ -20,7 +20,7 @@ import (
 type testCase struct {
 	DepositData     depositData `yaml:"deposit_data"`
 	DepositDataRoot [32]byte    `yaml:"deposit_data_root"`
-	SilaExecutionData        *silaexecData   `yaml:"sila_execution_data"`
+	SilaData        *silaexecData   `yaml:"sila_data"`
 	BlockHeight     uint64      `yaml:"block_height"`
 	Snapshot        snapshot    `yaml:"snapshot"`
 }
@@ -29,7 +29,7 @@ func (tc *testCase) UnmarshalYAML(value *yaml.Node) error {
 	raw := struct {
 		DepositData     depositData `yaml:"deposit_data"`
 		DepositDataRoot string      `yaml:"deposit_data_root"`
-		SilaExecutionData        *silaexecData   `yaml:"sila_execution_data"`
+		SilaData        *silaexecData   `yaml:"sila_data"`
 		BlockHeight     string      `yaml:"block_height"`
 		Snapshot        snapshot    `yaml:"snapshot"`
 	}{}
@@ -42,7 +42,7 @@ func (tc *testCase) UnmarshalYAML(value *yaml.Node) error {
 		return err
 	}
 	tc.DepositData = raw.DepositData
-	tc.SilaExecutionData = raw.SilaExecutionData
+	tc.SilaData = raw.SilaData
 	tc.BlockHeight, err = stringToUint64(raw.BlockHeight)
 	if err != nil {
 		return err
@@ -301,8 +301,8 @@ func TestFinalization(t *testing.T) {
 		require.NoError(t, err)
 	}
 	originalRoot := tree.getRoot()
-	require.DeepEqual(t, testCases[127].SilaExecutionData.DepositRoot, originalRoot)
-	err = tree.Finalize(int64(testCases[100].SilaExecutionData.DepositCount-1), testCases[100].SilaExecutionData.BlockHash, testCases[100].BlockHeight)
+	require.DeepEqual(t, testCases[127].SilaData.DepositRoot, originalRoot)
+	err = tree.Finalize(int64(testCases[100].SilaData.DepositCount-1), testCases[100].SilaData.BlockHash, testCases[100].BlockHeight)
 	require.NoError(t, err)
 	// ensure finalization doesn't change root
 	require.Equal(t, tree.getRoot(), originalRoot)
@@ -315,7 +315,7 @@ func TestFinalization(t *testing.T) {
 	// ensure original and copy have the same root
 	require.Equal(t, tree.getRoot(), cp.getRoot())
 	//	finalize original again to check double finalization
-	err = tree.Finalize(int64(testCases[105].SilaExecutionData.DepositCount-1), testCases[105].SilaExecutionData.BlockHash, testCases[105].BlockHeight)
+	err = tree.Finalize(int64(testCases[105].SilaData.DepositCount-1), testCases[105].SilaData.BlockHash, testCases[105].BlockHeight)
 	require.NoError(t, err)
 	//	root should still be the same
 	require.Equal(t, originalRoot, tree.getRoot())
@@ -344,7 +344,7 @@ func TestSnapshotCases(t *testing.T) {
 		require.NoError(t, err)
 	}
 	for _, c := range testCases {
-		err = tree.Finalize(int64(c.SilaExecutionData.DepositCount-1), c.SilaExecutionData.BlockHash, c.BlockHeight)
+		err = tree.Finalize(int64(c.SilaData.DepositCount-1), c.SilaData.BlockHash, c.BlockHeight)
 		require.NoError(t, err)
 		s, err := tree.GetSnapshot()
 		require.NoError(t, err)

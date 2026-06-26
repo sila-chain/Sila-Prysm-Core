@@ -16,7 +16,7 @@ func GenerateProtoDenebBeaconBlockContents() *silapb.BeaconBlockContentsDeneb {
 			StateRoot:     FillByteSlice(32, 4),
 			Body: &silapb.BeaconBlockBodyDeneb{
 				RandaoReveal: FillByteSlice(96, 5),
-				SilaExecutionData: &silapb.SilaExecutionData{
+				SilaData: &silapb.SilaData{
 					DepositRoot:  FillByteSlice(32, 6),
 					DepositCount: 7,
 					BlockHash:    FillByteSlice(32, 8),
@@ -287,7 +287,7 @@ func GenerateProtoBlindedDenebBeaconBlock() *silapb.BlindedBeaconBlockDeneb {
 		StateRoot:     FillByteSlice(32, 4),
 		Body: &silapb.BlindedBeaconBlockBodyDeneb{
 			RandaoReveal: FillByteSlice(96, 5),
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositRoot:  FillByteSlice(32, 6),
 				DepositCount: 7,
 				BlockHash:    FillByteSlice(32, 8),
@@ -540,7 +540,7 @@ func GenerateJsonDenebBeaconBlockContents() *structs.BeaconBlockContentsDeneb {
 			StateRoot:     FillEncodedByteSlice(32, 4),
 			Body: &structs.BeaconBlockBodyDeneb{
 				RandaoReveal: FillEncodedByteSlice(96, 5),
-				SilaExecutionData: &structs.SilaExecutionData{
+				SilaData: &structs.SilaData{
 					DepositRoot:  FillEncodedByteSlice(32, 6),
 					DepositCount: "7",
 					BlockHash:    FillEncodedByteSlice(32, 8),
@@ -811,7 +811,7 @@ func GenerateJsonBlindedDenebBeaconBlock() *structs.BlindedBeaconBlockDeneb {
 		StateRoot:     FillEncodedByteSlice(32, 4),
 		Body: &structs.BlindedBeaconBlockBodyDeneb{
 			RandaoReveal: FillEncodedByteSlice(96, 5),
-			SilaExecutionData: &structs.SilaExecutionData{
+			SilaData: &structs.SilaData{
 				DepositRoot:  FillEncodedByteSlice(32, 6),
 				DepositCount: "7",
 				BlockHash:    FillEncodedByteSlice(32, 8),

@@ -80,8 +80,8 @@ type stateDiff struct {
 	blockRoots                  [fieldparams.BlockRootsLength][fieldparams.RootLength]byte  // zero or override.
 	stateRoots                  [fieldparams.StateRootsLength][fieldparams.RootLength]byte  // zero or override.
 	historicalRoots             [][fieldparams.RootLength]byte                              // append only.
-	silaexecData                    *silapb.SilaExecutionData                                             // override.
-	silaExecutionDataVotes               []*silapb.SilaExecutionData                                           // append only or override.
+	silaexecData                    *silapb.SilaData                                             // override.
+	silaDataVotes               []*silapb.SilaData                                           // append only or override.
 	silaExecutionDepositIndex            uint64                                                      // override.
 	randaoMixes                 [fieldparams.RandaoMixesLength][fieldparams.RootLength]byte // zero or override.
 	slashings                   [fieldparams.SlashingsLength]int64                          // algebraic diff.
@@ -97,7 +97,7 @@ type stateDiff struct {
 	currentSyncCommittee       *silapb.SyncCommittee // override.
 	nextSyncCommittee          *silapb.SyncCommittee // override.
 	// Bellatrix
-	silaPayloadHeader interfaces.ExecutionData // override.
+	silaPayloadHeader interfaces.SilaData // override.
 	// Capella
 	nextWithdrawalIndex          uint64                     // override.
 	nextWithdrawalValidatorIndex primitives.ValidatorIndex  // override.
@@ -297,7 +297,7 @@ func (ret *stateDiff) readHistoricalRoots(data *[]byte) error {
 	return nil
 }
 
-func (ret *stateDiff) readSilaExecutionData(data *[]byte) error {
+func (ret *stateDiff) readSilaData(data *[]byte) error {
 	if len(*data) < 1 {
 		return errors.Wrap(errDataSmall, "silaexecData")
 	}
@@ -309,7 +309,7 @@ func (ret *stateDiff) readSilaExecutionData(data *[]byte) error {
 	if len(*data) < silaexecDataLength {
 		return errors.Wrap(errDataSmall, "silaexecData")
 	}
-	ret.silaexecData = &silapb.SilaExecutionData{
+	ret.silaexecData = &silapb.SilaData{
 		DepositRoot:  slices.Clone((*data)[:fieldparams.RootLength]),
 		DepositCount: binary.LittleEndian.Uint64((*data)[fieldparams.RootLength : fieldparams.RootLength+8]),
 		BlockHash:    slices.Clone((*data)[fieldparams.RootLength+8 : 2*fieldparams.RootLength+8]),
@@ -318,27 +318,27 @@ func (ret *stateDiff) readSilaExecutionData(data *[]byte) error {
 	return nil
 }
 
-func (ret *stateDiff) readSilaExecutionDataVotes(data *[]byte) error {
-	// Read silaExecutionDataVotes.
+func (ret *stateDiff) readSilaDataVotes(data *[]byte) error {
+	// Read silaDataVotes.
 	if len(*data) < 9 {
-		return errors.Wrap(errDataSmall, "silaExecutionDataVotes")
+		return errors.Wrap(errDataSmall, "silaDataVotes")
 	}
 	ret.silaexecVotesAppend = ((*data)[0] == nilMarker)
-	silaExecutionDataVotesLength := int(binary.LittleEndian.Uint64((*data)[1 : 1+8])) // lint:ignore uintcast
-	if len(*data) < 1+8+silaExecutionDataVotesLength*silaexecDataLength {
-		return errors.Wrap(errDataSmall, "silaExecutionDataVotes")
+	silaDataVotesLength := int(binary.LittleEndian.Uint64((*data)[1 : 1+8])) // lint:ignore uintcast
+	if len(*data) < 1+8+silaDataVotesLength*silaexecDataLength {
+		return errors.Wrap(errDataSmall, "silaDataVotes")
 	}
-	ret.silaExecutionDataVotes = make([]*silapb.SilaExecutionData, silaExecutionDataVotesLength)
+	ret.silaDataVotes = make([]*silapb.SilaData, silaDataVotesLength)
 	cursor := 9
-	for i := range silaExecutionDataVotesLength {
-		ret.silaExecutionDataVotes[i] = &silapb.SilaExecutionData{
+	for i := range silaDataVotesLength {
+		ret.silaDataVotes[i] = &silapb.SilaData{
 			DepositRoot:  slices.Clone((*data)[cursor : cursor+fieldparams.RootLength]),
 			DepositCount: binary.LittleEndian.Uint64((*data)[cursor+fieldparams.RootLength : cursor+fieldparams.RootLength+8]),
 			BlockHash:    slices.Clone((*data)[cursor+fieldparams.RootLength+8 : cursor+2*fieldparams.RootLength+8]),
 		}
 		cursor += silaexecDataLength
 	}
-	*data = (*data)[1+8+silaExecutionDataVotesLength*silaexecDataLength:]
+	*data = (*data)[1+8+silaDataVotesLength*silaexecDataLength:]
 	return nil
 }
 
@@ -622,7 +622,7 @@ func (ret *stateDiff) readSilaPayloadHeader(data *[]byte) error {
 		return errors.Wrap(err, "failed to unmarshal silaPayloadHeader")
 	}
 	var err error
-	ret.silaPayloadHeader, err = blocks.NewWrappedExecutionData(header)
+	ret.silaPayloadHeader, err = blocks.NewWrappedSilaData(header)
 	if err != nil {
 		return err
 	}
@@ -799,10 +799,10 @@ func newStateDiff(input []byte) (*stateDiff, error) {
 	if err := ret.readHistoricalRoots(&data); err != nil {
 		return nil, err
 	}
-	if err := ret.readSilaExecutionData(&data); err != nil {
+	if err := ret.readSilaData(&data); err != nil {
 		return nil, err
 	}
-	if err := ret.readSilaExecutionDataVotes(&data); err != nil {
+	if err := ret.readSilaDataVotes(&data); err != nil {
 		return nil, err
 	}
 	if err := ret.readSilaExecutionDepositIndex(&data); err != nil {
@@ -1042,8 +1042,8 @@ func (s *stateDiff) serialize() []byte {
 	} else {
 		ret = append(ret, notNilMarker)
 	}
-	ret = binary.LittleEndian.AppendUint64(ret, uint64(len(s.silaExecutionDataVotes)))
-	for _, v := range s.silaExecutionDataVotes {
+	ret = binary.LittleEndian.AppendUint64(ret, uint64(len(s.silaDataVotes)))
+	for _, v := range s.silaDataVotes {
 		ret = append(ret, v.DepositRoot...)
 		ret = binary.LittleEndian.AppendUint64(ret, v.DepositCount)
 		ret = append(ret, v.BlockHash...)
@@ -1367,10 +1367,10 @@ func diffToState(source, target state.ReadOnlyBeaconState) (*stateDiff, error) {
 	if err != nil {
 		return nil, err
 	}
-	if !helpers.SilaExecutionDataEqual(source.SilaExecutionData(), target.SilaExecutionData()) {
-		ret.silaexecData = target.SilaExecutionData()
+	if !helpers.SilaDataEqual(source.SilaData(), target.SilaData()) {
+		ret.silaexecData = target.SilaData()
 	}
-	diffSilaExecutionDataVotes(ret, source, target)
+	diffSilaDataVotes(ret, source, target)
 	ret.silaExecutionDepositIndex = target.SilaExecutionDepositIndex()
 	diffRandaoMixes(ret, source, target)
 	diffSlashings(ret, source, target)
@@ -1531,28 +1531,28 @@ func diffHistoricalRoots(source, target state.ReadOnlyBeaconState) ([][fieldpara
 	return ret, nil
 }
 
-func shouldAppendSilaExecutionDataVotes(sVotes, tVotes []*silapb.SilaExecutionData) bool {
+func shouldAppendSilaDataVotes(sVotes, tVotes []*silapb.SilaData) bool {
 	if len(tVotes) < len(sVotes) {
 		return false
 	}
 	for i, v := range sVotes {
-		if !helpers.SilaExecutionDataEqual(v, tVotes[i]) {
+		if !helpers.SilaDataEqual(v, tVotes[i]) {
 			return false
 		}
 	}
 	return true
 }
 
-func diffSilaExecutionDataVotes(diff *stateDiff, source, target state.ReadOnlyBeaconState) {
-	sVotes := source.SilaExecutionDataVotes()
-	tVotes := target.SilaExecutionDataVotes()
-	if shouldAppendSilaExecutionDataVotes(sVotes, tVotes) {
+func diffSilaDataVotes(diff *stateDiff, source, target state.ReadOnlyBeaconState) {
+	sVotes := source.SilaDataVotes()
+	tVotes := target.SilaDataVotes()
+	if shouldAppendSilaDataVotes(sVotes, tVotes) {
 		diff.silaexecVotesAppend = true
-		diff.silaExecutionDataVotes = tVotes[len(sVotes):]
+		diff.silaDataVotes = tVotes[len(sVotes):]
 		return
 	}
 	diff.silaexecVotesAppend = false
-	diff.silaExecutionDataVotes = tVotes
+	diff.silaDataVotes = tVotes
 }
 
 func diffRandaoMixes(diff *stateDiff, source, target state.ReadOnlyBeaconState) {
@@ -1850,11 +1850,11 @@ func applyStateDiff(ctx context.Context, source state.BeaconState, diff *stateDi
 		return nil, errors.Wrap(err, "failed to apply historical roots diff")
 	}
 	if diff.silaexecData != nil {
-		if err := source.SetSilaExecutionData(diff.silaexecData); err != nil {
+		if err := source.SetSilaData(diff.silaexecData); err != nil {
 			return nil, errors.Wrap(err, "failed to set silaexec data")
 		}
 	}
-	if err := applySilaExecutionDataVotesDiff(source, diff); err != nil {
+	if err := applySilaDataVotesDiff(source, diff); err != nil {
 		return nil, errors.Wrap(err, "failed to apply silaexec data votes diff")
 	}
 	if err := source.SetSilaExecutionDepositIndex(diff.silaExecutionDepositIndex); err != nil {
@@ -2084,15 +2084,15 @@ func applyRandaoMixesDiff(source state.BeaconState, diff *stateDiff) error {
 	return source.SetRandaoMixes(sMixes)
 }
 
-// applySilaExecutionDataVotesDiff applies the silaexec data votes diff to the source state in place.
-func applySilaExecutionDataVotesDiff(source state.BeaconState, diff *stateDiff) error {
-	sVotes := source.SilaExecutionDataVotes()
-	tVotes := diff.silaExecutionDataVotes
+// applySilaDataVotesDiff applies the silaexec data votes diff to the source state in place.
+func applySilaDataVotesDiff(source state.BeaconState, diff *stateDiff) error {
+	sVotes := source.SilaDataVotes()
+	tVotes := diff.silaDataVotes
 	if diff.silaexecVotesAppend {
 		sVotes = append(sVotes, tVotes...)
-		return source.SetSilaExecutionDataVotes(sVotes)
+		return source.SetSilaDataVotes(sVotes)
 	}
-	return source.SetSilaExecutionDataVotes(tVotes)
+	return source.SetSilaDataVotes(tVotes)
 }
 
 // applyHistoricalRootsDiff applies the historical roots diff to the source state in place.

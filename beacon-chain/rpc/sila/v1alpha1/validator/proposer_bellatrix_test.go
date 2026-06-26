@@ -34,7 +34,7 @@ import (
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
 
-func TestServer_setExecutionData(t *testing.T) {
+func TestServer_setSilaData(t *testing.T) {
 	hook := logTest.NewGlobal()
 
 	ctx := t.Context()
@@ -78,11 +78,11 @@ func TestServer_setExecutionData(t *testing.T) {
 	}}
 	id := &v1.PayloadIDBytes{0x1}
 
-	ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadCapella{BlockNumber: 1, Withdrawals: withdrawals})
+	ed, err := blocks.NewWrappedSilaData(&v1.SilaPayloadCapella{BlockNumber: 1, Withdrawals: withdrawals})
 	require.NoError(t, err)
 	vs := &Server{
 		SilaEngineCaller: &powtesting.SilaEngineClient{
-			GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
+			GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed},
 			PayloadIDBytes:     id,
 		},
 		HeadFetcher:            &blockchainTest.ChainService{State: capellaTransitionState},
@@ -103,7 +103,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		builderBid, err := vs.getBuilderPayloadAndBlobs(ctx, b.Slot(), b.ProposerIndex(), gasLimit)
 		require.NoError(t, err)
 		require.IsNil(t, builderBid)
-		_, bundle, err := setExecutionData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
+		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
 		e, err := blk.Block().Body().Execution()
@@ -172,7 +172,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		_, err = builderBid.Header()
 		require.NoError(t, err)
-		_, bundle, err := setExecutionData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
+		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
 		e, err := blk.Block().Body().Execution()
@@ -244,7 +244,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		_, err = builderBid.Header()
 		require.NoError(t, err)
-		_, bundle, err := setExecutionData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
+		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
 		e, err := blk.Block().Body().Execution()
@@ -315,7 +315,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		_, err = builderBid.Header()
 		require.NoError(t, err)
-		_, bundle, err := setExecutionData(t.Context(), blk, res, builderBid, math.MaxUint64)
+		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, math.MaxUint64)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
 		e, err := blk.Block().Body().Execution()
@@ -386,7 +386,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		_, err = builderBid.Header()
 		require.NoError(t, err)
-		_, bundle, err := setExecutionData(t.Context(), blk, res, builderBid, 0)
+		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, 0)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
 		e, err := blk.Block().Body().Execution()
@@ -397,9 +397,9 @@ func TestServer_setExecutionData(t *testing.T) {
 		blk, err := blocks.NewSignedBeaconBlock(util.NewBeaconBlockCapella())
 		require.NoError(t, err)
 		elBid := primitives.Uint64ToWei(2 * 1e9)
-		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadCapella{BlockNumber: 3})
+		ed, err := blocks.NewWrappedSilaData(&v1.SilaPayloadCapella{BlockNumber: 3})
 		require.NoError(t, err)
-		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, Bid: elBid}}
+		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed, Bid: elBid}}
 		b := blk.Block()
 		res, err := vs.getLocalPayload(ctx, b, capellaTransitionState, false)
 		require.NoError(t, err)
@@ -407,7 +407,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		_, err = builderBid.Header()
 		require.NoError(t, err)
-		_, bundle, err := setExecutionData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
+		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
 		e, err := blk.Block().Body().Execution()
@@ -424,9 +424,9 @@ func TestServer_setExecutionData(t *testing.T) {
 		blk, err := blocks.NewSignedBeaconBlock(util.NewBeaconBlockCapella())
 		require.NoError(t, err)
 		elBid := primitives.Uint64ToWei(2 * 1e9)
-		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadCapella{BlockNumber: 3})
+		ed, err := blocks.NewWrappedSilaData(&v1.SilaPayloadCapella{BlockNumber: 3})
 		require.NoError(t, err)
-		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, Bid: elBid}}
+		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed, Bid: elBid}}
 		b := blk.Block()
 		res, err := vs.getLocalPayload(ctx, b, capellaTransitionState, false)
 		require.NoError(t, err)
@@ -434,7 +434,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		_, err = builderBid.Header()
 		require.NoError(t, err)
-		_, bundle, err := setExecutionData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
+		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
 		e, err := blk.Block().Body().Execution()
@@ -453,10 +453,10 @@ func TestServer_setExecutionData(t *testing.T) {
 		blk, err := blocks.NewSignedBeaconBlock(util.NewBeaconBlockCapella())
 		require.NoError(t, err)
 		elBid := primitives.Uint64ToWei(1 * 1e9)
-		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadCapella{BlockNumber: 3})
+		ed, err := blocks.NewWrappedSilaData(&v1.SilaPayloadCapella{BlockNumber: 3})
 		require.NoError(t, err)
 
-		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, Bid: elBid}}
+		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed, Bid: elBid}}
 		b := blk.Block()
 		res, err := vs.getLocalPayload(ctx, b, capellaTransitionState, false)
 		require.NoError(t, err)
@@ -464,7 +464,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		require.NoError(t, err)
 		_, err = builderBid.Header()
 		require.NoError(t, err)
-		_, bundle, err := setExecutionData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
+		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
 		e, err := blk.Block().Body().Execution()
@@ -481,16 +481,16 @@ func TestServer_setExecutionData(t *testing.T) {
 			HasConfigured: true,
 			Cfg:           &builderTest.Config{BeaconDB: beaconDB},
 		}
-		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadCapella{BlockNumber: 4})
+		ed, err := blocks.NewWrappedSilaData(&v1.SilaPayloadCapella{BlockNumber: 4})
 		require.NoError(t, err)
-		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed}}
+		vs.SilaEngineCaller = &powtesting.SilaEngineClient{PayloadIDBytes: id, GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed}}
 		b := blk.Block()
 		res, err := vs.getLocalPayload(ctx, b, capellaTransitionState, false)
 		require.NoError(t, err)
 		builderBid, err := vs.getBuilderPayloadAndBlobs(ctx, b.Slot(), b.ProposerIndex(), gasLimit)
 		require.ErrorIs(t, consensus_types.ErrNilObjectWrapped, err) // Builder returns fault. Use local block
 		require.IsNil(t, builderBid)
-		_, bundle, err := setExecutionData(t.Context(), blk, res, nil, defaultBuilderBoostFactor)
+		_, bundle, err := setSilaData(t.Context(), blk, res, nil, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
 		e, err := blk.Block().Body().Execution()
@@ -514,12 +514,12 @@ func TestServer_setExecutionData(t *testing.T) {
 			Proofs:         [][]byte{{4, 5, 6}},
 			Blobs:          [][]byte{{7, 8, 9}},
 		}
-		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadDeneb{BlockNumber: 4})
+		ed, err := blocks.NewWrappedSilaData(&v1.SilaPayloadDeneb{BlockNumber: 4})
 		require.NoError(t, err)
 		vs.SilaEngineCaller = &powtesting.SilaEngineClient{
 			PayloadIDBytes: id,
 			GetPayloadResponse: &blocks.GetPayloadResponse{
-				ExecutionData: ed,
+				SilaData: ed,
 				BlobsBundler:  blobsBundle,
 				Bid:           primitives.ZeroWei(),
 			},
@@ -527,7 +527,7 @@ func TestServer_setExecutionData(t *testing.T) {
 		blk.SetSlot(primitives.Slot(params.BeaconConfig().DenebForkEpoch) * params.BeaconConfig().SlotsPerEpoch)
 		res, err := vs.getLocalPayload(ctx, blk.Block(), capellaTransitionState, false)
 		require.NoError(t, err)
-		require.Equal(t, uint64(4), res.ExecutionData.BlockNumber())
+		require.Equal(t, uint64(4), res.SilaData.BlockNumber())
 		require.DeepEqual(t, res.BlobsBundler, blobsBundle)
 	})
 	t.Run("Can get builder payload and blobs in Deneb", func(t *testing.T) {
@@ -598,11 +598,11 @@ func TestServer_setExecutionData(t *testing.T) {
 		vs.TimeFetcher = chain
 		vs.HeadFetcher = chain
 
-		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadDeneb{BlockNumber: 4, Withdrawals: withdrawals})
+		ed, err := blocks.NewWrappedSilaData(&v1.SilaPayloadDeneb{BlockNumber: 4, Withdrawals: withdrawals})
 		require.NoError(t, err)
 		vs.SilaEngineCaller = &powtesting.SilaEngineClient{
 			PayloadIDBytes:     id,
-			GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
+			GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed},
 		}
 
 		require.NoError(t, err)
@@ -620,7 +620,7 @@ func TestServer_setExecutionData(t *testing.T) {
 
 		res, err := vs.getLocalPayload(ctx, blk.Block(), denebTransitionState, false)
 		require.NoError(t, err)
-		_, bundle, err := setExecutionData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
+		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
 
@@ -722,11 +722,11 @@ func TestServer_setExecutionData(t *testing.T) {
 		vs.TimeFetcher = chain
 		vs.HeadFetcher = chain
 
-		ed, err := blocks.NewWrappedExecutionData(&v1.SilaPayloadDeneb{BlockNumber: 4, Withdrawals: withdrawals})
+		ed, err := blocks.NewWrappedSilaData(&v1.SilaPayloadDeneb{BlockNumber: 4, Withdrawals: withdrawals})
 		require.NoError(t, err)
 		vs.SilaEngineCaller = &powtesting.SilaEngineClient{
 			PayloadIDBytes:     id,
-			GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
+			GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed},
 		}
 
 		require.NoError(t, err)
@@ -744,7 +744,7 @@ func TestServer_setExecutionData(t *testing.T) {
 
 		res, err := vs.getLocalPayload(ctx, blk.Block(), denebTransitionState, false)
 		require.NoError(t, err)
-		_, bundle, err := setExecutionData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
+		_, bundle, err := setSilaData(t.Context(), blk, res, builderBid, defaultBuilderBoostFactor)
 		require.NoError(t, err)
 		require.IsNil(t, bundle)
 

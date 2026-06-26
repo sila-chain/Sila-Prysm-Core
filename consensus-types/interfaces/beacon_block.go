@@ -54,7 +54,7 @@ type ReadOnlyBeaconBlock interface {
 type ReadOnlyBeaconBlockBody interface {
 	Version() int
 	RandaoReveal() [field_params.BLSSignatureLength]byte
-	SilaExecutionData() *silapb.SilaExecutionData
+	SilaData() *silapb.SilaData
 	Graffiti() [field_params.RootLength]byte
 	ProposerSlashings() []*silapb.ProposerSlashing
 	AttesterSlashings() []silapb.AttSlashing
@@ -65,7 +65,7 @@ type ReadOnlyBeaconBlockBody interface {
 	IsNil() bool
 	HashTreeRoot() ([field_params.RootLength]byte, error)
 	Proto() (proto.Message, error)
-	Execution() (ExecutionData, error)
+	Execution() (SilaData, error)
 	BLSToSilaChanges() ([]*silapb.SignedBLSToSilaChange, error)
 	BlobKzgCommitments() ([][]byte, error)
 	SilaRequests() (*silaenginev1.SilaRequests, error)
@@ -76,7 +76,7 @@ type ReadOnlyBeaconBlockBody interface {
 
 type SignedBeaconBlock interface {
 	ReadOnlySignedBeaconBlock
-	SetExecution(ExecutionData) error
+	SetExecution(SilaData) error
 	SetBLSToSilaChanges([]*silapb.SignedBLSToSilaChange) error
 	SetBlobKzgCommitments(c [][]byte) error
 	SetSyncAggregate(*silapb.SyncAggregate) error
@@ -86,7 +86,7 @@ type SignedBeaconBlock interface {
 	SetAttesterSlashings([]silapb.AttSlashing) error
 	SetProposerSlashings([]*silapb.ProposerSlashing)
 	SetGraffiti([]byte)
-	SetSilaExecutionData(*silapb.SilaExecutionData)
+	SetSilaData(*silapb.SilaData)
 	SetRandaoReveal([]byte)
 	SetStateRoot([]byte)
 	SetParentRoot([]byte)
@@ -97,12 +97,12 @@ type SignedBeaconBlock interface {
 	SetPayloadAttestations(pa []*silapb.PayloadAttestation) error
 	SetSignedSilaPayloadBid(header *silapb.SignedSilaPayloadBid) error
 	SetParentSilaRequests(r *silaenginev1.SilaRequests) error
-	Unblind(e ExecutionData) error
+	Unblind(e SilaData) error
 }
 
-// ExecutionData represents execution layer information that is contained
+// SilaData represents execution layer information that is contained
 // within post-Bellatrix beacon block bodies.
-type ExecutionData interface {
+type SilaData interface {
 	ssz.Marshaler
 	ssz.Unmarshaler
 	ssz.HashRoot

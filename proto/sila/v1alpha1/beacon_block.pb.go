@@ -697,7 +697,7 @@ func (x *BeaconBlock) GetBody() *BeaconBlockBody {
 type BeaconBlockBody struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	RandaoReveal      []byte                 `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData          *SilaExecutionData              `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData          *SilaData              `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti          []byte                 `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings []*ProposerSlashing    `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings []*AttesterSlashing    `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"2"`
@@ -745,9 +745,9 @@ func (x *BeaconBlockBody) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BeaconBlockBody) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconBlockBody) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -1314,7 +1314,7 @@ func (x *BeaconBlockAltair) GetBody() *BeaconBlockBodyAltair {
 type BeaconBlockBodyAltair struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	RandaoReveal      []byte                 `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData          *SilaExecutionData              `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData          *SilaData              `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti          []byte                 `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings []*ProposerSlashing    `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings []*AttesterSlashing    `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"2"`
@@ -1363,9 +1363,9 @@ func (x *BeaconBlockBodyAltair) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BeaconBlockBodyAltair) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconBlockBodyAltair) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -1550,7 +1550,7 @@ func (x *BeaconBlockBellatrix) GetBody() *BeaconBlockBodyBellatrix {
 type BeaconBlockBodyBellatrix struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	RandaoReveal      []byte                 `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData          *SilaExecutionData              `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData          *SilaData              `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti          []byte                 `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings []*ProposerSlashing    `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings []*AttesterSlashing    `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"2"`
@@ -1600,9 +1600,9 @@ func (x *BeaconBlockBodyBellatrix) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BeaconBlockBodyBellatrix) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconBlockBodyBellatrix) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -1794,7 +1794,7 @@ func (x *BlindedBeaconBlockBellatrix) GetBody() *BlindedBeaconBlockBodyBellatrix
 type BlindedBeaconBlockBodyBellatrix struct {
 	state                  protoimpl.MessageState     `protogen:"open.v1"`
 	RandaoReveal           []byte                     `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData               *SilaExecutionData                  `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData               *SilaData                  `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti               []byte                     `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings      []*ProposerSlashing        `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings      []*AttesterSlashing        `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"2"`
@@ -1844,9 +1844,9 @@ func (x *BlindedBeaconBlockBodyBellatrix) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BlindedBeaconBlockBodyBellatrix) GetSilaExecutionData() *SilaExecutionData {
+func (x *BlindedBeaconBlockBodyBellatrix) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -2038,7 +2038,7 @@ func (x *BeaconBlockCapella) GetBody() *BeaconBlockBodyCapella {
 type BeaconBlockBodyCapella struct {
 	state                 protoimpl.MessageState        `protogen:"open.v1"`
 	RandaoReveal          []byte                        `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData              *SilaExecutionData                     `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData              *SilaData                     `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti              []byte                        `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings     []*ProposerSlashing           `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings     []*AttesterSlashing           `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"2"`
@@ -2089,9 +2089,9 @@ func (x *BeaconBlockBodyCapella) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BeaconBlockBodyCapella) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconBlockBodyCapella) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -2290,7 +2290,7 @@ func (x *BlindedBeaconBlockCapella) GetBody() *BlindedBeaconBlockBodyCapella {
 type BlindedBeaconBlockBodyCapella struct {
 	state                  protoimpl.MessageState            `protogen:"open.v1"`
 	RandaoReveal           []byte                            `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData               *SilaExecutionData                         `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData               *SilaData                         `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti               []byte                            `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings      []*ProposerSlashing               `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings      []*AttesterSlashing               `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"2"`
@@ -2341,9 +2341,9 @@ func (x *BlindedBeaconBlockBodyCapella) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BlindedBeaconBlockBodyCapella) GetSilaExecutionData() *SilaExecutionData {
+func (x *BlindedBeaconBlockBodyCapella) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -2774,7 +2774,7 @@ func (x *BeaconBlockDeneb) GetBody() *BeaconBlockBodyDeneb {
 type BeaconBlockBodyDeneb struct {
 	state                 protoimpl.MessageState        `protogen:"open.v1"`
 	RandaoReveal          []byte                        `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData              *SilaExecutionData                     `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData              *SilaData                     `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti              []byte                        `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings     []*ProposerSlashing           `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings     []*AttesterSlashing           `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"2"`
@@ -2826,9 +2826,9 @@ func (x *BeaconBlockBodyDeneb) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BeaconBlockBodyDeneb) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconBlockBodyDeneb) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -3034,7 +3034,7 @@ func (x *BlindedBeaconBlockDeneb) GetBody() *BlindedBeaconBlockBodyDeneb {
 type BlindedBeaconBlockBodyDeneb struct {
 	state                  protoimpl.MessageState          `protogen:"open.v1"`
 	RandaoReveal           []byte                          `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData               *SilaExecutionData                       `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData               *SilaData                       `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti               []byte                          `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings      []*ProposerSlashing             `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings      []*AttesterSlashing             `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"2"`
@@ -3086,9 +3086,9 @@ func (x *BlindedBeaconBlockBodyDeneb) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BlindedBeaconBlockBodyDeneb) GetSilaExecutionData() *SilaExecutionData {
+func (x *BlindedBeaconBlockBodyDeneb) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -3790,7 +3790,7 @@ func (x *BeaconBlockElectra) GetBody() *BeaconBlockBodyElectra {
 type BeaconBlockBodyElectra struct {
 	state                 protoimpl.MessageState        `protogen:"open.v1"`
 	RandaoReveal          []byte                        `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData              *SilaExecutionData                     `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData              *SilaData                     `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti              []byte                        `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings     []*ProposerSlashing           `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings     []*AttesterSlashingElectra    `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"1"`
@@ -3843,9 +3843,9 @@ func (x *BeaconBlockBodyElectra) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BeaconBlockBodyElectra) GetSilaExecutionData() *SilaExecutionData {
+func (x *BeaconBlockBodyElectra) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -4058,7 +4058,7 @@ func (x *BlindedBeaconBlockElectra) GetBody() *BlindedBeaconBlockBodyElectra {
 type BlindedBeaconBlockBodyElectra struct {
 	state                  protoimpl.MessageState          `protogen:"open.v1"`
 	RandaoReveal           []byte                          `protobuf:"bytes,1,opt,name=randao_reveal,json=randaoReveal,proto3" json:"randao_reveal,omitempty" ssz-size:"96"`
-	SilaExecutionData               *SilaExecutionData                       `protobuf:"bytes,2,opt,name=sila_execution_data,json=silaexecData,proto3" json:"sila_execution_data,omitempty"`
+	SilaData               *SilaData                       `protobuf:"bytes,2,opt,name=sila_data,json=silaexecData,proto3" json:"sila_data,omitempty"`
 	Graffiti               []byte                          `protobuf:"bytes,3,opt,name=graffiti,proto3" json:"graffiti,omitempty" ssz-size:"32"`
 	ProposerSlashings      []*ProposerSlashing             `protobuf:"bytes,4,rep,name=proposer_slashings,json=proposerSlashings,proto3" json:"proposer_slashings,omitempty" ssz-max:"16"`
 	AttesterSlashings      []*AttesterSlashingElectra      `protobuf:"bytes,5,rep,name=attester_slashings,json=attesterSlashings,proto3" json:"attester_slashings,omitempty" ssz-max:"1"`
@@ -4111,9 +4111,9 @@ func (x *BlindedBeaconBlockBodyElectra) GetRandaoReveal() []byte {
 	return nil
 }
 
-func (x *BlindedBeaconBlockBodyElectra) GetSilaExecutionData() *SilaExecutionData {
+func (x *BlindedBeaconBlockBodyElectra) GetSilaData() *SilaData {
 	if x != nil {
-		return x.SilaExecutionData
+		return x.SilaData
 	}
 	return nil
 }
@@ -5888,7 +5888,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_goTypes = []any{
 	(*BlindedBeaconBlockFulu)(nil),            // 55: sila.eth.v1alpha1.BlindedBeaconBlockFulu
 	(*SignedBeaconBlockGloas)(nil),            // 56: sila.eth.v1alpha1.SignedBeaconBlockGloas
 	(*BeaconBlockGloas)(nil),                  // 57: sila.eth.v1alpha1.BeaconBlockGloas
-	(*SilaExecutionData)(nil),                          // 58: sila.eth.v1alpha1.SilaExecutionData
+	(*SilaData)(nil),                          // 58: sila.eth.v1alpha1.SilaData
 	(*ProposerSlashing)(nil),                  // 59: sila.eth.v1alpha1.ProposerSlashing
 	(*Attestation)(nil),                       // 60: sila.eth.v1alpha1.Attestation
 	(*Deposit)(nil),                           // 61: sila.eth.v1alpha1.Deposit
@@ -5936,7 +5936,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	57,  // 25: sila.eth.v1alpha1.GenericBeaconBlock.gloas:type_name -> sila.eth.v1alpha1.BeaconBlockGloas
 	3,   // 26: sila.eth.v1alpha1.SignedBeaconBlock.block:type_name -> sila.eth.v1alpha1.BeaconBlock
 	4,   // 27: sila.eth.v1alpha1.BeaconBlock.body:type_name -> sila.eth.v1alpha1.BeaconBlockBody
-	58,  // 28: sila.eth.v1alpha1.BeaconBlockBody.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	58,  // 28: sila.eth.v1alpha1.BeaconBlockBody.sila_data:type_name -> sila.eth.v1alpha1.SilaData
 	59,  // 29: sila.eth.v1alpha1.BeaconBlockBody.proposer_slashings:type_name -> sila.eth.v1alpha1.ProposerSlashing
 	5,   // 30: sila.eth.v1alpha1.BeaconBlockBody.attester_slashings:type_name -> sila.eth.v1alpha1.AttesterSlashing
 	60,  // 31: sila.eth.v1alpha1.BeaconBlockBody.attestations:type_name -> sila.eth.v1alpha1.Attestation
@@ -5951,7 +5951,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	64,  // 40: sila.eth.v1alpha1.BuilderBid.header:type_name -> sila.silaengine.v1.SilaPayloadHeader
 	13,  // 41: sila.eth.v1alpha1.SignedBeaconBlockAltair.block:type_name -> sila.eth.v1alpha1.BeaconBlockAltair
 	14,  // 42: sila.eth.v1alpha1.BeaconBlockAltair.body:type_name -> sila.eth.v1alpha1.BeaconBlockBodyAltair
-	58,  // 43: sila.eth.v1alpha1.BeaconBlockBodyAltair.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	58,  // 43: sila.eth.v1alpha1.BeaconBlockBodyAltair.sila_data:type_name -> sila.eth.v1alpha1.SilaData
 	59,  // 44: sila.eth.v1alpha1.BeaconBlockBodyAltair.proposer_slashings:type_name -> sila.eth.v1alpha1.ProposerSlashing
 	5,   // 45: sila.eth.v1alpha1.BeaconBlockBodyAltair.attester_slashings:type_name -> sila.eth.v1alpha1.AttesterSlashing
 	60,  // 46: sila.eth.v1alpha1.BeaconBlockBodyAltair.attestations:type_name -> sila.eth.v1alpha1.Attestation
@@ -5960,7 +5960,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	65,  // 49: sila.eth.v1alpha1.BeaconBlockBodyAltair.sync_aggregate:type_name -> sila.eth.v1alpha1.SyncAggregate
 	16,  // 50: sila.eth.v1alpha1.SignedBeaconBlockBellatrix.block:type_name -> sila.eth.v1alpha1.BeaconBlockBellatrix
 	17,  // 51: sila.eth.v1alpha1.BeaconBlockBellatrix.body:type_name -> sila.eth.v1alpha1.BeaconBlockBodyBellatrix
-	58,  // 52: sila.eth.v1alpha1.BeaconBlockBodyBellatrix.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	58,  // 52: sila.eth.v1alpha1.BeaconBlockBodyBellatrix.sila_data:type_name -> sila.eth.v1alpha1.SilaData
 	59,  // 53: sila.eth.v1alpha1.BeaconBlockBodyBellatrix.proposer_slashings:type_name -> sila.eth.v1alpha1.ProposerSlashing
 	5,   // 54: sila.eth.v1alpha1.BeaconBlockBodyBellatrix.attester_slashings:type_name -> sila.eth.v1alpha1.AttesterSlashing
 	60,  // 55: sila.eth.v1alpha1.BeaconBlockBodyBellatrix.attestations:type_name -> sila.eth.v1alpha1.Attestation
@@ -5970,7 +5970,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	66,  // 59: sila.eth.v1alpha1.BeaconBlockBodyBellatrix.sila_payload:type_name -> sila.silaengine.v1.SilaPayload
 	19,  // 60: sila.eth.v1alpha1.SignedBlindedBeaconBlockBellatrix.block:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBellatrix
 	20,  // 61: sila.eth.v1alpha1.BlindedBeaconBlockBellatrix.body:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix
-	58,  // 62: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	58,  // 62: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.sila_data:type_name -> sila.eth.v1alpha1.SilaData
 	59,  // 63: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.proposer_slashings:type_name -> sila.eth.v1alpha1.ProposerSlashing
 	5,   // 64: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.attester_slashings:type_name -> sila.eth.v1alpha1.AttesterSlashing
 	60,  // 65: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.attestations:type_name -> sila.eth.v1alpha1.Attestation
@@ -5980,7 +5980,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	64,  // 69: sila.eth.v1alpha1.BlindedBeaconBlockBodyBellatrix.sila_payload_header:type_name -> sila.silaengine.v1.SilaPayloadHeader
 	22,  // 70: sila.eth.v1alpha1.SignedBeaconBlockCapella.block:type_name -> sila.eth.v1alpha1.BeaconBlockCapella
 	23,  // 71: sila.eth.v1alpha1.BeaconBlockCapella.body:type_name -> sila.eth.v1alpha1.BeaconBlockBodyCapella
-	58,  // 72: sila.eth.v1alpha1.BeaconBlockBodyCapella.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	58,  // 72: sila.eth.v1alpha1.BeaconBlockBodyCapella.sila_data:type_name -> sila.eth.v1alpha1.SilaData
 	59,  // 73: sila.eth.v1alpha1.BeaconBlockBodyCapella.proposer_slashings:type_name -> sila.eth.v1alpha1.ProposerSlashing
 	5,   // 74: sila.eth.v1alpha1.BeaconBlockBodyCapella.attester_slashings:type_name -> sila.eth.v1alpha1.AttesterSlashing
 	60,  // 75: sila.eth.v1alpha1.BeaconBlockBodyCapella.attestations:type_name -> sila.eth.v1alpha1.Attestation
@@ -5991,7 +5991,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	68,  // 80: sila.eth.v1alpha1.BeaconBlockBodyCapella.bls_to_sila_changes:type_name -> sila.eth.v1alpha1.SignedBLSToSilaChange
 	25,  // 81: sila.eth.v1alpha1.SignedBlindedBeaconBlockCapella.block:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockCapella
 	26,  // 82: sila.eth.v1alpha1.BlindedBeaconBlockCapella.body:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella
-	58,  // 83: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	58,  // 83: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.sila_data:type_name -> sila.eth.v1alpha1.SilaData
 	59,  // 84: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.proposer_slashings:type_name -> sila.eth.v1alpha1.ProposerSlashing
 	5,   // 85: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.attester_slashings:type_name -> sila.eth.v1alpha1.AttesterSlashing
 	60,  // 86: sila.eth.v1alpha1.BlindedBeaconBlockBodyCapella.attestations:type_name -> sila.eth.v1alpha1.Attestation
@@ -6006,7 +6006,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	32,  // 95: sila.eth.v1alpha1.SignedBeaconBlockDeneb.block:type_name -> sila.eth.v1alpha1.BeaconBlockDeneb
 	32,  // 96: sila.eth.v1alpha1.BeaconBlockContentsDeneb.block:type_name -> sila.eth.v1alpha1.BeaconBlockDeneb
 	33,  // 97: sila.eth.v1alpha1.BeaconBlockDeneb.body:type_name -> sila.eth.v1alpha1.BeaconBlockBodyDeneb
-	58,  // 98: sila.eth.v1alpha1.BeaconBlockBodyDeneb.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	58,  // 98: sila.eth.v1alpha1.BeaconBlockBodyDeneb.sila_data:type_name -> sila.eth.v1alpha1.SilaData
 	59,  // 99: sila.eth.v1alpha1.BeaconBlockBodyDeneb.proposer_slashings:type_name -> sila.eth.v1alpha1.ProposerSlashing
 	5,   // 100: sila.eth.v1alpha1.BeaconBlockBodyDeneb.attester_slashings:type_name -> sila.eth.v1alpha1.AttesterSlashing
 	60,  // 101: sila.eth.v1alpha1.BeaconBlockBodyDeneb.attestations:type_name -> sila.eth.v1alpha1.Attestation
@@ -6017,7 +6017,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	68,  // 106: sila.eth.v1alpha1.BeaconBlockBodyDeneb.bls_to_sila_changes:type_name -> sila.eth.v1alpha1.SignedBLSToSilaChange
 	35,  // 107: sila.eth.v1alpha1.SignedBlindedBeaconBlockDeneb.message:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockDeneb
 	36,  // 108: sila.eth.v1alpha1.BlindedBeaconBlockDeneb.body:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb
-	58,  // 109: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	58,  // 109: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.sila_data:type_name -> sila.eth.v1alpha1.SilaData
 	59,  // 110: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.proposer_slashings:type_name -> sila.eth.v1alpha1.ProposerSlashing
 	5,   // 111: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.attester_slashings:type_name -> sila.eth.v1alpha1.AttesterSlashing
 	60,  // 112: sila.eth.v1alpha1.BlindedBeaconBlockBodyDeneb.attestations:type_name -> sila.eth.v1alpha1.Attestation
@@ -6037,7 +6037,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	46,  // 126: sila.eth.v1alpha1.SignedBeaconBlockElectra.block:type_name -> sila.eth.v1alpha1.BeaconBlockElectra
 	46,  // 127: sila.eth.v1alpha1.BeaconBlockContentsElectra.block:type_name -> sila.eth.v1alpha1.BeaconBlockElectra
 	47,  // 128: sila.eth.v1alpha1.BeaconBlockElectra.body:type_name -> sila.eth.v1alpha1.BeaconBlockBodyElectra
-	58,  // 129: sila.eth.v1alpha1.BeaconBlockBodyElectra.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	58,  // 129: sila.eth.v1alpha1.BeaconBlockBodyElectra.sila_data:type_name -> sila.eth.v1alpha1.SilaData
 	59,  // 130: sila.eth.v1alpha1.BeaconBlockBodyElectra.proposer_slashings:type_name -> sila.eth.v1alpha1.ProposerSlashing
 	74,  // 131: sila.eth.v1alpha1.BeaconBlockBodyElectra.attester_slashings:type_name -> sila.eth.v1alpha1.AttesterSlashingElectra
 	75,  // 132: sila.eth.v1alpha1.BeaconBlockBodyElectra.attestations:type_name -> sila.eth.v1alpha1.AttestationElectra
@@ -6049,7 +6049,7 @@ var file_proto_sila_v1alpha1_beacon_block_proto_depIdxs = []int32{
 	72,  // 138: sila.eth.v1alpha1.BeaconBlockBodyElectra.sila_requests:type_name -> sila.silaengine.v1.SilaRequests
 	49,  // 139: sila.eth.v1alpha1.SignedBlindedBeaconBlockElectra.message:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockElectra
 	50,  // 140: sila.eth.v1alpha1.BlindedBeaconBlockElectra.body:type_name -> sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra
-	58,  // 141: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.sila_execution_data:type_name -> sila.eth.v1alpha1.SilaExecutionData
+	58,  // 141: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.sila_data:type_name -> sila.eth.v1alpha1.SilaData
 	59,  // 142: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.proposer_slashings:type_name -> sila.eth.v1alpha1.ProposerSlashing
 	74,  // 143: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.attester_slashings:type_name -> sila.eth.v1alpha1.AttesterSlashingElectra
 	75,  // 144: sila.eth.v1alpha1.BlindedBeaconBlockBodyElectra.attestations:type_name -> sila.eth.v1alpha1.AttestationElectra

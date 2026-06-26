@@ -55,25 +55,25 @@ def is_candidate_block(block: SilaBlock, period_start: uint64) -> bool:
     )
 ```
 ```python
-def get_silaexec_vote(state: BeaconState, silaexec_chain: Sequence[SilaBlock]) -> SilaExecutionData:
+def get_silaexec_vote(state: BeaconState, silaexec_chain: Sequence[SilaBlock]) -> SilaData:
     period_start = voting_period_start_time(state)
     # `silaexec_chain` abstractly represents all blocks in the silaexec chain sorted by ascending block height
     votes_to_consider = [
-        get_sila_execution_data(block) for block in silaexec_chain
+        get_sila_data(block) for block in silaexec_chain
         if (
             is_candidate_block(block, period_start)
             # Ensure cannot move back to earlier sila deposit states
-            and get_sila_execution_data(block).deposit_count >= state.sila_execution_data.deposit_count
+            and get_sila_data(block).deposit_count >= state.sila_data.deposit_count
         )
     ]
 
     # Valid votes already cast during this period
-    valid_votes = [vote for vote in state.sila_execution_data_votes if vote in votes_to_consider]
+    valid_votes = [vote for vote in state.sila_data_votes if vote in votes_to_consider]
 
     # Default vote on latest silaexec block data in the period range unless silaexec chain is not live
     # Non-substantive casting for linter
-    state_sila_execution_data: SilaExecutionData = state.sila_execution_data
-    default_vote = votes_to_consider[len(votes_to_consider) - 1] if any(votes_to_consider) else state_sila_execution_data
+    state_sila_data: SilaData = state.sila_data
+    default_vote = votes_to_consider[len(votes_to_consider) - 1] if any(votes_to_consider) else state_sila_data
 
     return max(
         valid_votes,

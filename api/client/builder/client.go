@@ -102,7 +102,7 @@ type BuilderClient interface {
 	NodeURL() string
 	GetHeader(ctx context.Context, slot primitives.Slot, parentHash [32]byte, pubkey [48]byte) (SignedBid, error)
 	RegisterValidator(ctx context.Context, svr []*silapb.SignedValidatorRegistrationV1) error
-	SubmitBlindedBlock(ctx context.Context, sb interfaces.ReadOnlySignedBeaconBlock) (interfaces.ExecutionData, v1.BlobsBundler, error)
+	SubmitBlindedBlock(ctx context.Context, sb interfaces.ReadOnlySignedBeaconBlock) (interfaces.SilaData, v1.BlobsBundler, error)
 	SubmitBlindedBlockPostFulu(ctx context.Context, sb interfaces.ReadOnlySignedBeaconBlock) error
 	Status(ctx context.Context) error
 }
@@ -466,7 +466,7 @@ func getVersionsBlockToPayload(blockVersion int) (int, error) {
 
 // SubmitBlindedBlock calls the builder API endpoint that binds the validator to the builder and submits the block.
 // The response is the full sila payload used to create the blinded block.
-func (c *Client) SubmitBlindedBlock(ctx context.Context, sb interfaces.ReadOnlySignedBeaconBlock) (interfaces.ExecutionData, v1.BlobsBundler, error) {
+func (c *Client) SubmitBlindedBlock(ctx context.Context, sb interfaces.ReadOnlySignedBeaconBlock) (interfaces.SilaData, v1.BlobsBundler, error) {
 	body, postOpts, err := c.buildBlindedBlockRequest(sb)
 	if err != nil {
 		return nil, nil, err
@@ -582,7 +582,7 @@ func (c *Client) buildBlindedBlockRequest(sb interfaces.ReadOnlySignedBeaconBloc
 func (c *Client) parseBlindedBlockResponse(
 	respBytes []byte,
 	forkVersion int,
-) (interfaces.ExecutionData, v1.BlobsBundler, error) {
+) (interfaces.SilaData, v1.BlobsBundler, error) {
 	if c.sszEnabled {
 		return c.parseBlindedBlockResponseSSZ(respBytes, forkVersion)
 	}
@@ -592,15 +592,15 @@ func (c *Client) parseBlindedBlockResponse(
 func (c *Client) parseBlindedBlockResponseSSZ(
 	respBytes []byte,
 	forkVersion int,
-) (interfaces.ExecutionData, v1.BlobsBundler, error) {
+) (interfaces.SilaData, v1.BlobsBundler, error) {
 	if forkVersion >= version.Fulu {
 		payloadAndBlobs := &v1.SilaPayloadDenebAndBlobsBundleV2{}
 		if err := payloadAndBlobs.UnmarshalSSZ(respBytes); err != nil {
 			return nil, nil, errors.Wrap(err, "unable to unmarshal SilaPayloadDenebAndBlobsBundleV2 SSZ")
 		}
-		ed, err := blocks.NewWrappedExecutionData(payloadAndBlobs.Payload)
+		ed, err := blocks.NewWrappedSilaData(payloadAndBlobs.Payload)
 		if err != nil {
-			return nil, nil, errors.Wrapf(err, "unable to wrap execution data for %s", version.String(forkVersion))
+			return nil, nil, errors.Wrapf(err, "unable to wrap sila data for %s", version.String(forkVersion))
 		}
 		return ed, payloadAndBlobs.BlobsBundle, nil
 	} else if forkVersion >= version.Deneb {
@@ -608,9 +608,9 @@ func (c *Client) parseBlindedBlockResponseSSZ(
 		if err := payloadAndBlobs.UnmarshalSSZ(respBytes); err != nil {
 			return nil, nil, errors.Wrap(err, "unable to unmarshal SilaPayloadDenebAndBlobsBundle SSZ")
 		}
-		ed, err := blocks.NewWrappedExecutionData(payloadAndBlobs.Payload)
+		ed, err := blocks.NewWrappedSilaData(payloadAndBlobs.Payload)
 		if err != nil {
-			return nil, nil, errors.Wrapf(err, "unable to wrap execution data for %s", version.String(forkVersion))
+			return nil, nil, errors.Wrapf(err, "unable to wrap sila data for %s", version.String(forkVersion))
 		}
 		return ed, payloadAndBlobs.BlobsBundle, nil
 	} else if forkVersion >= version.Capella {
@@ -618,9 +618,9 @@ func (c *Client) parseBlindedBlockResponseSSZ(
 		if err := payload.UnmarshalSSZ(respBytes); err != nil {
 			return nil, nil, errors.Wrap(err, "unable to unmarshal SilaPayloadCapella SSZ")
 		}
-		ed, err := blocks.NewWrappedExecutionData(payload)
+		ed, err := blocks.NewWrappedSilaData(payload)
 		if err != nil {
-			return nil, nil, errors.Wrapf(err, "unable to wrap execution data for %s", version.String(forkVersion))
+			return nil, nil, errors.Wrapf(err, "unable to wrap sila data for %s", version.String(forkVersion))
 		}
 		return ed, nil, nil
 	} else if forkVersion >= version.Bellatrix {
@@ -628,9 +628,9 @@ func (c *Client) parseBlindedBlockResponseSSZ(
 		if err := payload.UnmarshalSSZ(respBytes); err != nil {
 			return nil, nil, errors.Wrap(err, "unable to unmarshal SilaPayload SSZ")
 		}
-		ed, err := blocks.NewWrappedExecutionData(payload)
+		ed, err := blocks.NewWrappedSilaData(payload)
 		if err != nil {
-			return nil, nil, errors.Wrapf(err, "unable to wrap execution data for %s", version.String(forkVersion))
+			return nil, nil, errors.Wrapf(err, "unable to wrap sila data for %s", version.String(forkVersion))
 		}
 		return ed, nil, nil
 	} else {
@@ -641,7 +641,7 @@ func (c *Client) parseBlindedBlockResponseSSZ(
 func (c *Client) parseBlindedBlockResponseJSON(
 	respBytes []byte,
 	forkVersion int,
-) (interfaces.ExecutionData, *v1.BlobsBundle, error) {
+) (interfaces.SilaData, *v1.BlobsBundle, error) {
 	ep := &SilaPayloadResponse{}
 	if err := json.Unmarshal(respBytes, ep); err != nil {
 		return nil, nil, errors.Wrap(err, "error unmarshaling SilaPayloadResponse")
@@ -654,7 +654,7 @@ func (c *Client) parseBlindedBlockResponseJSON(
 	if err != nil {
 		return nil, nil, err
 	}
-	ed, err := blocks.NewWrappedExecutionData(pb)
+	ed, err := blocks.NewWrappedSilaData(pb)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -11,8 +11,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// SilaExecutionDataRootWithHasher returns the hash tree root of input `silaexecData`.
-func SilaExecutionDataRootWithHasher(silaexecData *silapb.SilaExecutionData) ([32]byte, error) {
+// SilaDataRootWithHasher returns the hash tree root of input `silaexecData`.
+func SilaDataRootWithHasher(silaexecData *silapb.SilaData) ([32]byte, error) {
 	if silaexecData == nil {
 		return [32]byte{}, errors.New("nil silaexec data")
 	}
@@ -39,24 +39,24 @@ func SilaExecutionDataRootWithHasher(silaexecData *silapb.SilaExecutionData) ([3
 	return root, nil
 }
 
-// SilaExecutionDatasRoot returns the hash tree root of input `silaexecDatas`.
-func SilaExecutionDatasRoot(silaexecDatas []*silapb.SilaExecutionData) ([32]byte, error) {
+// SilaDatasRoot returns the hash tree root of input `silaexecDatas`.
+func SilaDatasRoot(silaexecDatas []*silapb.SilaData) ([32]byte, error) {
 	silaexecVotesRoots := make([][32]byte, 0, len(silaexecDatas))
 	for i := range silaexecDatas {
-		silaexec, err := SilaExecutionDataRootWithHasher(silaexecDatas[i])
+		silaexec, err := SilaDataRootWithHasher(silaexecDatas[i])
 		if err != nil {
-			return [32]byte{}, errors.Wrap(err, "could not compute silaExecutionData merkleization")
+			return [32]byte{}, errors.Wrap(err, "could not compute silaData merkleization")
 		}
 		silaexecVotesRoots = append(silaexecVotesRoots, silaexec)
 	}
 
-	silaexecVotesRootsRoot, err := ssz.BitwiseMerkleize(silaexecVotesRoots, uint64(len(silaexecVotesRoots)), params.BeaconConfig().SilaExecutionDataVotesLength())
+	silaexecVotesRootsRoot, err := ssz.BitwiseMerkleize(silaexecVotesRoots, uint64(len(silaexecVotesRoots)), params.BeaconConfig().SilaDataVotesLength())
 	if err != nil {
-		return [32]byte{}, errors.Wrap(err, "could not compute silaExecutionData votes merkleization")
+		return [32]byte{}, errors.Wrap(err, "could not compute silaData votes merkleization")
 	}
 	silaexecVotesRootBuf := new(bytes.Buffer)
 	if err := binary.Write(silaexecVotesRootBuf, binary.LittleEndian, uint64(len(silaexecDatas))); err != nil {
-		return [32]byte{}, errors.Wrap(err, "could not marshal silaExecutionData votes length")
+		return [32]byte{}, errors.Wrap(err, "could not marshal silaData votes length")
 	}
 	// We need to mix in the length of the slice.
 	silaexecVotesRootBufRoot := make([]byte, 32)

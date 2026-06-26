@@ -50,7 +50,7 @@ type SilaEngineClient struct {
 }
 
 // NewPayload --
-func (e *SilaEngineClient) NewPayload(_ context.Context, _ interfaces.ExecutionData, _ []common.Hash, _ *common.Hash, _ *pb.SilaRequests) ([]byte, error) {
+func (e *SilaEngineClient) NewPayload(_ context.Context, _ interfaces.SilaData, _ []common.Hash, _ *common.Hash, _ *pb.SilaRequests) ([]byte, error) {
 	return e.NewPayloadResp, e.ErrNewPayload
 }
 
@@ -145,8 +145,8 @@ func (e *SilaEngineClient) ReconstructFullGloasSilaPayloadsByHash(
 			}
 			continue
 		}
-		if e.GetPayloadResponse != nil && e.GetPayloadResponse.ExecutionData != nil {
-			if p, ok := e.GetPayloadResponse.ExecutionData.Proto().(*pb.SilaPayloadGloas); ok {
+		if e.GetPayloadResponse != nil && e.GetPayloadResponse.SilaData != nil {
+			if p, ok := e.GetPayloadResponse.SilaData.Proto().(*pb.SilaPayloadGloas); ok {
 				payloads[blockHash] = p
 				continue
 			}

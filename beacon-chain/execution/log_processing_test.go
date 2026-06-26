@@ -403,11 +403,11 @@ func TestProcessSilaGenesisLog_CorrectNumOfDeposits(t *testing.T) {
 	require.NoError(t, err)
 	web3Service.rpcClient = &mockExecution.RPCClient{Backend: testAcc.Backend}
 	web3Service.httpLogger = testAcc.Backend.Client()
-	web3Service.latestSilaExecutionData.LastRequestedBlock = 0
+	web3Service.latestSilaData.LastRequestedBlock = 0
 	block, err := testAcc.Backend.Client().BlockByNumber(t.Context(), nil)
 	require.NoError(t, err)
-	web3Service.latestSilaExecutionData.BlockHeight = block.NumberU64()
-	web3Service.latestSilaExecutionData.BlockTime = block.Time()
+	web3Service.latestSilaData.BlockHeight = block.NumberU64()
+	web3Service.latestSilaData.BlockTime = block.Time()
 	bConfig := params.MinimalSpecConfig().Copy()
 	bConfig.MinGenesisTime = 0
 	bConfig.SecondsPerSilaBlock = 1
@@ -447,8 +447,8 @@ func TestProcessSilaGenesisLog_CorrectNumOfDeposits(t *testing.T) {
 	}
 	b, err := testAcc.Backend.Client().BlockByNumber(t.Context(), nil)
 	require.NoError(t, err)
-	web3Service.latestSilaExecutionData.BlockHeight = b.NumberU64()
-	web3Service.latestSilaExecutionData.BlockTime = b.Time()
+	web3Service.latestSilaData.BlockHeight = b.NumberU64()
+	web3Service.latestSilaData.BlockTime = b.Time()
 
 	// Set up our subscriber now to listen for the chain started event.
 	stateChannel := make(chan *feed.Event, 1)
@@ -504,11 +504,11 @@ func TestProcessLogs_DepositRequestsStarted(t *testing.T) {
 	require.NoError(t, err)
 	web3Service.rpcClient = &mockExecution.RPCClient{Backend: testAcc.Backend}
 	web3Service.httpLogger = testAcc.Backend.Client()
-	web3Service.latestSilaExecutionData.LastRequestedBlock = 0
+	web3Service.latestSilaData.LastRequestedBlock = 0
 	block, err := testAcc.Backend.Client().BlockByNumber(t.Context(), nil)
 	require.NoError(t, err)
-	web3Service.latestSilaExecutionData.BlockHeight = block.NumberU64()
-	web3Service.latestSilaExecutionData.BlockTime = block.Time()
+	web3Service.latestSilaData.BlockHeight = block.NumberU64()
+	web3Service.latestSilaData.BlockTime = block.Time()
 	bConfig := params.MinimalSpecConfig().Copy()
 	bConfig.MinGenesisTime = 0
 	bConfig.SecondsPerSilaBlock = 1
@@ -548,8 +548,8 @@ func TestProcessLogs_DepositRequestsStarted(t *testing.T) {
 	}
 	b, err := testAcc.Backend.Client().BlockByNumber(t.Context(), nil)
 	require.NoError(t, err)
-	web3Service.latestSilaExecutionData.BlockHeight = b.NumberU64()
-	web3Service.latestSilaExecutionData.BlockTime = b.Time()
+	web3Service.latestSilaData.BlockHeight = b.NumberU64()
+	web3Service.latestSilaData.BlockTime = b.Time()
 
 	// Set up our subscriber now to listen for the chain started event.
 	stateChannel := make(chan *feed.Event, 1)
@@ -591,11 +591,11 @@ func TestProcessSilaGenesisLog_LargePeriodOfNoLogs(t *testing.T) {
 	require.NoError(t, err)
 	web3Service.rpcClient = &mockExecution.RPCClient{Backend: testAcc.Backend}
 	web3Service.httpLogger = testAcc.Backend.Client()
-	web3Service.latestSilaExecutionData.LastRequestedBlock = 0
+	web3Service.latestSilaData.LastRequestedBlock = 0
 	b, err := testAcc.Backend.Client().BlockByNumber(t.Context(), nil)
 	require.NoError(t, err)
-	web3Service.latestSilaExecutionData.BlockHeight = b.NumberU64()
-	web3Service.latestSilaExecutionData.BlockTime = b.Time()
+	web3Service.latestSilaData.BlockHeight = b.NumberU64()
+	web3Service.latestSilaData.BlockTime = b.Time()
 	bConfig := params.MinimalSpecConfig().Copy()
 	bConfig.SecondsPerSilaBlock = 10
 	params.OverrideBeaconConfig(bConfig)
@@ -643,8 +643,8 @@ func TestProcessSilaGenesisLog_LargePeriodOfNoLogs(t *testing.T) {
 	}
 	currBlock, err := testAcc.Backend.Client().BlockByNumber(t.Context(), nil)
 	require.NoError(t, err)
-	web3Service.latestSilaExecutionData.BlockHeight = currBlock.NumberU64()
-	web3Service.latestSilaExecutionData.BlockTime = currBlock.Time()
+	web3Service.latestSilaData.BlockHeight = currBlock.NumberU64()
+	web3Service.latestSilaData.BlockTime = currBlock.Time()
 
 	// Set the genesis time 500 blocks ahead of the last
 	// deposit log.

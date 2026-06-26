@@ -17,7 +17,7 @@ func (s *Store) SaveExecutionChainData(ctx context.Context, data *v2.SilaExecuti
 	defer span.End()
 
 	if data == nil {
-		err := errors.New("cannot save nil silaExecutionData")
+		err := errors.New("cannot save nil silaData")
 		tracing.AnnotateError(span, err)
 		return err
 	}

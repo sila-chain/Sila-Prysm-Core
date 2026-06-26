@@ -233,9 +233,9 @@ func (node *BeaconNode) Start(ctx context.Context) error {
 	if node.config.TestCheckpointSync {
 		expectedNumOfPeers += 1
 	}
-	jwtPath := path.Join(e2e.TestParams.TestPath, "silaExecutionData/"+strconv.Itoa(node.index)+"/")
+	jwtPath := path.Join(e2e.TestParams.TestPath, "silaData/"+strconv.Itoa(node.index)+"/")
 	if index == 0 {
-		jwtPath = path.Join(e2e.TestParams.TestPath, "silaExecutionData/miner/")
+		jwtPath = path.Join(e2e.TestParams.TestPath, "silaData/miner/")
 	}
 	jwtPath = path.Join(jwtPath, "geth/jwtsecret")
 

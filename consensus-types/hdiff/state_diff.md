@@ -190,7 +190,7 @@ type stateDiff struct {
 	currentSyncCommittee       *silapb.SyncCommittee
 	nextSyncCommittee          *silapb.SyncCommittee
 
-	silaPayloadHeader interfaces.ExecutionData
+	silaPayloadHeader interfaces.SilaData
 
 	nextWithdrawalIndex          uint64
 	nextWithdrawalValidatorIndex primitives.ValidatorIndex

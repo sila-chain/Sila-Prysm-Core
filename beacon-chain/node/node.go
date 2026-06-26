@@ -973,7 +973,7 @@ func (b *BeaconNode) registerRPCService(router *http.ServeMux) error {
 	beaconMonitoringPort := b.cliCtx.Int(flags.MonitoringPortFlag.Name)
 	cert := b.cliCtx.String(flags.CertFlag.Name)
 	key := b.cliCtx.String(flags.KeyFlag.Name)
-	mockSilaExecutionDataVotes := b.cliCtx.Bool(flags.InteropMockSilaExecutionDataVotesFlag.Name)
+	mockSilaDataVotes := b.cliCtx.Bool(flags.InteropMockSilaDataVotesFlag.Name)
 	maxMsgSize := b.cliCtx.Int(cmd.GrpcMaxCallRecvMsgSizeFlag.Name)
 	enableDebugRPCEndpoints := !b.cliCtx.Bool(flags.DisableDebugRPCEndpoints.Name)
 
@@ -1017,7 +1017,7 @@ func (b *BeaconNode) registerRPCService(router *http.ServeMux) error {
 		ExecutionChainService:            web3Service,
 		ExecutionChainInfoFetcher:        web3Service,
 		ChainStartFetcher:                chainStartFetcher,
-		MockSilaExecutionVotes:                    mockSilaExecutionDataVotes,
+		MockSilaExecutionVotes:                    mockSilaDataVotes,
 		SyncService:                      syncService,
 		DepositFetcher:                   depositFetcher,
 		PendingDepositFetcher:            b.depositCache,

@@ -171,7 +171,7 @@ func (BeaconBlockBody) RandaoReveal() [field_params.BLSSignatureLength]byte {
 	panic("implement me")
 }
 
-func (BeaconBlockBody) SilaExecutionData() *eth.SilaExecutionData {
+func (BeaconBlockBody) SilaData() *eth.SilaData {
 	panic("implement me")
 }
 
@@ -211,7 +211,7 @@ func (BeaconBlockBody) Proto() (proto.Message, error) {
 	panic("implement me")
 }
 
-func (BeaconBlockBody) Execution() (interfaces.ExecutionData, error) {
+func (BeaconBlockBody) Execution() (interfaces.SilaData, error) {
 	panic("implement me")
 }
 
@@ -227,7 +227,7 @@ func (b *BeaconBlockBody) SetRandaoReveal([]byte) {
 	panic("implement me")
 }
 
-func (b *BeaconBlockBody) SetSilaExecutionData(*eth.SilaExecutionData) {
+func (b *BeaconBlockBody) SetSilaData(*eth.SilaData) {
 	panic("implement me")
 }
 
@@ -259,7 +259,7 @@ func (b *BeaconBlockBody) SetSyncAggregate(*eth.SyncAggregate) error {
 	panic("implement me")
 }
 
-func (b *BeaconBlockBody) SetExecution(interfaces.ExecutionData) error {
+func (b *BeaconBlockBody) SetExecution(interfaces.SilaData) error {
 	panic("implement me")
 }
 

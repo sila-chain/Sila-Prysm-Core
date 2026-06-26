@@ -240,11 +240,11 @@ func TestBlockHeadersEqual(t *testing.T) {
 	}
 }
 
-func TestSilaExecutionDataEqual(t *testing.T) {
+func TestSilaDataEqual(t *testing.T) {
 	tests := []struct {
 		name string
-		s    *silapb.SilaExecutionData
-		t    *silapb.SilaExecutionData
+		s    *silapb.SilaData
+		t    *silapb.SilaData
 		want bool
 	}{
 		{
@@ -256,23 +256,23 @@ func TestSilaExecutionDataEqual(t *testing.T) {
 		{
 			name: "first nil",
 			s:    nil,
-			t:    &silapb.SilaExecutionData{DepositCount: 1},
+			t:    &silapb.SilaData{DepositCount: 1},
 			want: false,
 		},
 		{
 			name: "second nil",
-			s:    &silapb.SilaExecutionData{DepositCount: 1},
+			s:    &silapb.SilaData{DepositCount: 1},
 			t:    nil,
 			want: false,
 		},
 		{
 			name: "equal silaexec data",
-			s: &silapb.SilaExecutionData{
+			s: &silapb.SilaData{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
 			},
-			t: &silapb.SilaExecutionData{
+			t: &silapb.SilaData{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
@@ -281,12 +281,12 @@ func TestSilaExecutionDataEqual(t *testing.T) {
 		},
 		{
 			name: "different deposit root",
-			s: &silapb.SilaExecutionData{
+			s: &silapb.SilaData{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
 			},
-			t: &silapb.SilaExecutionData{
+			t: &silapb.SilaData{
 				DepositRoot:  []byte{9, 10, 11, 12},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
@@ -295,12 +295,12 @@ func TestSilaExecutionDataEqual(t *testing.T) {
 		},
 		{
 			name: "different deposit count",
-			s: &silapb.SilaExecutionData{
+			s: &silapb.SilaData{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
 			},
-			t: &silapb.SilaExecutionData{
+			t: &silapb.SilaData{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 200,
 				BlockHash:    []byte{5, 6, 7, 8},
@@ -309,12 +309,12 @@ func TestSilaExecutionDataEqual(t *testing.T) {
 		},
 		{
 			name: "different block hash",
-			s: &silapb.SilaExecutionData{
+			s: &silapb.SilaData{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{5, 6, 7, 8},
 			},
-			t: &silapb.SilaExecutionData{
+			t: &silapb.SilaData{
 				DepositRoot:  []byte{1, 2, 3, 4},
 				DepositCount: 100,
 				BlockHash:    []byte{9, 10, 11, 12},
@@ -324,8 +324,8 @@ func TestSilaExecutionDataEqual(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := SilaExecutionDataEqual(tt.s, tt.t); got != tt.want {
-				t.Errorf("SilaExecutionDataEqual() = %v, want %v", got, tt.want)
+			if got := SilaDataEqual(tt.s, tt.t); got != tt.want {
+				t.Errorf("SilaDataEqual() = %v, want %v", got, tt.want)
 			}
 		})
 	}

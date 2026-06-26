@@ -698,11 +698,11 @@ func (b *BeaconBlockBodyDeneb) MarshalSSZTo(buf []byte) (dst []byte, err error) 
 	}
 	dst = append(dst, b.RandaoReveal...)
 
-	// Field (1) 'SilaExecutionData'
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = new(SilaExecutionData)
+	// Field (1) 'SilaData'
+	if b.SilaData == nil {
+		b.SilaData = new(SilaData)
 	}
-	if dst, err = b.SilaExecutionData.MarshalSSZTo(dst); err != nil {
+	if dst, err = b.SilaData.MarshalSSZTo(dst); err != nil {
 		return
 	}
 
@@ -880,11 +880,11 @@ func (b *BeaconBlockBodyDeneb) UnmarshalSSZ(buf []byte) error {
 	}
 	b.RandaoReveal = append(b.RandaoReveal, buf[0:96]...)
 
-	// Field (1) 'SilaExecutionData'
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = new(SilaExecutionData)
+	// Field (1) 'SilaData'
+	if b.SilaData == nil {
+		b.SilaData = new(SilaData)
 	}
-	if err = b.SilaExecutionData.UnmarshalSSZ(buf[96:168]); err != nil {
+	if err = b.SilaData.UnmarshalSSZ(buf[96:168]); err != nil {
 		return err
 	}
 
@@ -1147,8 +1147,8 @@ func (b *BeaconBlockBodyDeneb) HashTreeRootWith(hh *ssz.Hasher) (err error) {
 	}
 	hh.PutBytes(b.RandaoReveal)
 
-	// Field (1) 'SilaExecutionData'
-	if err = b.SilaExecutionData.HashTreeRootWith(hh); err != nil {
+	// Field (1) 'SilaData'
+	if err = b.SilaData.HashTreeRootWith(hh); err != nil {
 		return
 	}
 
@@ -1561,11 +1561,11 @@ func (b *BlindedBeaconBlockBodyDeneb) MarshalSSZTo(buf []byte) (dst []byte, err 
 	}
 	dst = append(dst, b.RandaoReveal...)
 
-	// Field (1) 'SilaExecutionData'
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = new(SilaExecutionData)
+	// Field (1) 'SilaData'
+	if b.SilaData == nil {
+		b.SilaData = new(SilaData)
 	}
-	if dst, err = b.SilaExecutionData.MarshalSSZTo(dst); err != nil {
+	if dst, err = b.SilaData.MarshalSSZTo(dst); err != nil {
 		return
 	}
 
@@ -1743,11 +1743,11 @@ func (b *BlindedBeaconBlockBodyDeneb) UnmarshalSSZ(buf []byte) error {
 	}
 	b.RandaoReveal = append(b.RandaoReveal, buf[0:96]...)
 
-	// Field (1) 'SilaExecutionData'
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = new(SilaExecutionData)
+	// Field (1) 'SilaData'
+	if b.SilaData == nil {
+		b.SilaData = new(SilaData)
 	}
-	if err = b.SilaExecutionData.UnmarshalSSZ(buf[96:168]); err != nil {
+	if err = b.SilaData.UnmarshalSSZ(buf[96:168]); err != nil {
 		return err
 	}
 
@@ -2010,8 +2010,8 @@ func (b *BlindedBeaconBlockBodyDeneb) HashTreeRootWith(hh *ssz.Hasher) (err erro
 	}
 	hh.PutBytes(b.RandaoReveal)
 
-	// Field (1) 'SilaExecutionData'
-	if err = b.SilaExecutionData.HashTreeRootWith(hh); err != nil {
+	// Field (1) 'SilaData'
+	if err = b.SilaData.HashTreeRootWith(hh); err != nil {
 		return
 	}
 
@@ -2796,17 +2796,17 @@ func (b *BeaconStateDeneb) MarshalSSZTo(buf []byte) (dst []byte, err error) {
 	dst = ssz.WriteOffset(dst, offset)
 	offset += len(b.HistoricalRoots) * 32
 
-	// Field (8) 'SilaExecutionData'
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = new(SilaExecutionData)
+	// Field (8) 'SilaData'
+	if b.SilaData == nil {
+		b.SilaData = new(SilaData)
 	}
-	if dst, err = b.SilaExecutionData.MarshalSSZTo(dst); err != nil {
+	if dst, err = b.SilaData.MarshalSSZTo(dst); err != nil {
 		return
 	}
 
-	// Offset (9) 'SilaExecutionDataVotes'
+	// Offset (9) 'SilaDataVotes'
 	dst = ssz.WriteOffset(dst, offset)
-	offset += len(b.SilaExecutionDataVotes) * 72
+	offset += len(b.SilaDataVotes) * 72
 
 	// Field (10) 'SilaExecutionDepositIndex'
 	dst = ssz.MarshalUint(dst, b.SilaExecutionDepositIndex)
@@ -2930,13 +2930,13 @@ func (b *BeaconStateDeneb) MarshalSSZTo(buf []byte) (dst []byte, err error) {
 		dst = append(dst, b.HistoricalRoots[ii]...)
 	}
 
-	// Field (9) 'SilaExecutionDataVotes'
-	if size := len(b.SilaExecutionDataVotes); size > 2048 {
-		err = ssz.ErrListTooBigFn("--.SilaExecutionDataVotes", size, 2048)
+	// Field (9) 'SilaDataVotes'
+	if size := len(b.SilaDataVotes); size > 2048 {
+		err = ssz.ErrListTooBigFn("--.SilaDataVotes", size, 2048)
 		return
 	}
-	for ii := 0; ii < len(b.SilaExecutionDataVotes); ii++ {
-		if dst, err = b.SilaExecutionDataVotes[ii].MarshalSSZTo(dst); err != nil {
+	for ii := 0; ii < len(b.SilaDataVotes); ii++ {
+		if dst, err = b.SilaDataVotes[ii].MarshalSSZTo(dst); err != nil {
 			return
 		}
 	}
@@ -3069,15 +3069,15 @@ func (b *BeaconStateDeneb) UnmarshalSSZ(buf []byte) error {
 		return ssz.ErrInvalidVariableOffset
 	}
 
-	// Field (8) 'SilaExecutionData'
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = new(SilaExecutionData)
+	// Field (8) 'SilaData'
+	if b.SilaData == nil {
+		b.SilaData = new(SilaData)
 	}
-	if err = b.SilaExecutionData.UnmarshalSSZ(buf[524468:524540]); err != nil {
+	if err = b.SilaData.UnmarshalSSZ(buf[524468:524540]); err != nil {
 		return err
 	}
 
-	// Offset (9) 'SilaExecutionDataVotes'
+	// Offset (9) 'SilaDataVotes'
 	if o9 = ssz.ReadOffset(buf[524540:524544]); o9 > size || o7 > o9 {
 		return ssz.ErrOffset
 	}
@@ -3203,19 +3203,19 @@ func (b *BeaconStateDeneb) UnmarshalSSZ(buf []byte) error {
 		}
 	}
 
-	// Field (9) 'SilaExecutionDataVotes'
+	// Field (9) 'SilaDataVotes'
 	{
 		buf = tail[o9:o11]
 		num, err := ssz.DivideInt2(len(buf), 72, 2048)
 		if err != nil {
 			return err
 		}
-		b.SilaExecutionDataVotes = make([]*SilaExecutionData, num)
+		b.SilaDataVotes = make([]*SilaData, num)
 		for ii := 0; ii < num; ii++ {
-			if b.SilaExecutionDataVotes[ii] == nil {
-				b.SilaExecutionDataVotes[ii] = new(SilaExecutionData)
+			if b.SilaDataVotes[ii] == nil {
+				b.SilaDataVotes[ii] = new(SilaData)
 			}
-			if err = b.SilaExecutionDataVotes[ii].UnmarshalSSZ(buf[ii*72 : (ii+1)*72]); err != nil {
+			if err = b.SilaDataVotes[ii].UnmarshalSSZ(buf[ii*72 : (ii+1)*72]); err != nil {
 				return err
 			}
 		}
@@ -3327,8 +3327,8 @@ func (b *BeaconStateDeneb) SizeSSZ() (size int) {
 	// Field (7) 'HistoricalRoots'
 	size += len(b.HistoricalRoots) * 32
 
-	// Field (9) 'SilaExecutionDataVotes'
-	size += len(b.SilaExecutionDataVotes) * 72
+	// Field (9) 'SilaDataVotes'
+	size += len(b.SilaDataVotes) * 72
 
 	// Field (11) 'Validators'
 	size += len(b.Validators) * 121
@@ -3442,20 +3442,20 @@ func (b *BeaconStateDeneb) HashTreeRootWith(hh *ssz.Hasher) (err error) {
 		hh.MerkleizeWithMixin(subIndx, numItems, 16777216)
 	}
 
-	// Field (8) 'SilaExecutionData'
-	if err = b.SilaExecutionData.HashTreeRootWith(hh); err != nil {
+	// Field (8) 'SilaData'
+	if err = b.SilaData.HashTreeRootWith(hh); err != nil {
 		return
 	}
 
-	// Field (9) 'SilaExecutionDataVotes'
+	// Field (9) 'SilaDataVotes'
 	{
 		subIndx := hh.Index()
-		num := uint64(len(b.SilaExecutionDataVotes))
+		num := uint64(len(b.SilaDataVotes))
 		if num > 2048 {
 			err = ssz.ErrIncorrectListSize
 			return
 		}
-		for _, elem := range b.SilaExecutionDataVotes {
+		for _, elem := range b.SilaDataVotes {
 			if err = elem.HashTreeRootWith(hh); err != nil {
 				return
 			}

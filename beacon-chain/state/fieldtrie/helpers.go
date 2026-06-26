@@ -206,8 +206,8 @@ func fieldConverters(field types.FieldIndex, elements any, indices []uint64) ([]
 	switch field {
 	case types.BlockRoots, types.StateRoots, types.RandaoMixes:
 		return convertRoots(indices, elements)
-	case types.SilaExecutionDataVotes:
-		return convertSilaExecutionDataVotes(indices, elements)
+	case types.SilaDataVotes:
+		return convertSilaDataVotes(indices, elements)
 	case types.Validators:
 		return convertValidators(indices, elements)
 	case types.PreviousEpochAttestations, types.CurrentEpochAttestations:
@@ -234,12 +234,12 @@ func convertRoots(indices []uint64, elements any) ([][32]byte, error) {
 	}
 }
 
-func convertSilaExecutionDataVotes(indices []uint64, elements any) ([][32]byte, error) {
-	val, ok := elements.([]*silapb.SilaExecutionData)
+func convertSilaDataVotes(indices []uint64, elements any) ([][32]byte, error) {
+	val, ok := elements.([]*silapb.SilaData)
 	if !ok {
-		return nil, errors.Errorf("Wanted type of %T but got %T", []*silapb.SilaExecutionData{}, elements)
+		return nil, errors.Errorf("Wanted type of %T but got %T", []*silapb.SilaData{}, elements)
 	}
-	return handleSilaExecutionDataSlice(val, indices)
+	return handleSilaDataSlice(val, indices)
 }
 
 func convertValidators(indices []uint64, elements any) ([][32]byte, error) {
@@ -334,12 +334,12 @@ func handleValidatorMVSlice(mv multi_value_slice.MultiValueSliceComposite[stateu
 	return roots, nil
 }
 
-// handleSilaExecutionDataSlice processes a list of silaExecutionData and indices into the appropriate roots.
-func handleSilaExecutionDataSlice(val []*silapb.SilaExecutionData, indices []uint64) ([][32]byte, error) {
+// handleSilaDataSlice processes a list of silaData and indices into the appropriate roots.
+func handleSilaDataSlice(val []*silapb.SilaData, indices []uint64) ([][32]byte, error) {
 	if len(indices) == 0 {
 		roots := make([][32]byte, 0, len(val))
 		for _, v := range val {
-			root, err := stateutil.SilaExecutionDataRootWithHasher(v)
+			root, err := stateutil.SilaDataRootWithHasher(v)
 			if err != nil {
 				return nil, err
 			}
@@ -352,7 +352,7 @@ func handleSilaExecutionDataSlice(val []*silapb.SilaExecutionData, indices []uin
 		if idx >= uint64(len(val)) {
 			return nil, fmt.Errorf("index %d greater than number of items in silaexec data slice %d", idx, len(val))
 		}
-		root, err := stateutil.SilaExecutionDataRootWithHasher(val[idx])
+		root, err := stateutil.SilaDataRootWithHasher(val[idx])
 		if err != nil {
 			return nil, err
 		}

@@ -30,9 +30,9 @@ func DeterministicGenesisStateAltair(t testing.TB, numValidators uint64) (state.
 	if err != nil {
 		t.Fatal(errors.Wrapf(err, "failed to get %d deposits", numValidators))
 	}
-	silaexecData, err := DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := DeterministicSilaData(len(deposits))
 	if err != nil {
-		t.Fatal(errors.Wrapf(err, "failed to get silaExecutionData for %d deposits", numValidators))
+		t.Fatal(errors.Wrapf(err, "failed to get silaData for %d deposits", numValidators))
 	}
 	beaconState, err := GenesisBeaconState(context.Background(), deposits, uint64(0), silaexecData)
 	if err != nil {
@@ -43,14 +43,14 @@ func DeterministicGenesisStateAltair(t testing.TB, numValidators uint64) (state.
 }
 
 // GenesisBeaconState returns the genesis beacon state.
-func GenesisBeaconState(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, silaexecData *silapb.SilaExecutionData) (state.BeaconState, error) {
+func GenesisBeaconState(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, silaexecData *silapb.SilaData) (state.BeaconState, error) {
 	st, err := emptyGenesisState()
 	if err != nil {
 		return nil, err
 	}
 
 	// Process initial deposits.
-	st, err = helpers.UpdateGenesisSilaExecutionData(st, deposits, silaexecData)
+	st, err = helpers.UpdateGenesisSilaData(st, deposits, silaexecData)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func GenesisBeaconState(ctx context.Context, deposits []*silapb.Deposit, genesis
 		return nil, errors.Wrap(err, "could not process validator deposits")
 	}
 
-	return buildGenesisBeaconState(genesisTime, st, st.SilaExecutionData())
+	return buildGenesisBeaconState(genesisTime, st, st.SilaData())
 }
 
 // processPreGenesisDeposits processes a deposit for the beacon state Altair before chain start.
@@ -81,9 +81,9 @@ func processPreGenesisDeposits(
 	return beaconState, nil
 }
 
-func buildGenesisBeaconState(genesisTime uint64, preState state.BeaconState, silaexecData *silapb.SilaExecutionData) (state.BeaconState, error) {
+func buildGenesisBeaconState(genesisTime uint64, preState state.BeaconState, silaexecData *silapb.SilaData) (state.BeaconState, error) {
 	if silaexecData == nil {
-		return nil, errors.New("no silaExecutionData provided for genesis state")
+		return nil, errors.New("no silaData provided for genesis state")
 	}
 
 	randaoMixes := make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector)
@@ -173,15 +173,15 @@ func buildGenesisBeaconState(genesisTime uint64, preState state.BeaconState, sil
 		Slashings:       slashings,
 
 		// SilaExecution data.
-		SilaExecutionData:         silaexecData,
-		SilaExecutionDataVotes:    []*silapb.SilaExecutionData{},
+		SilaData:         silaexecData,
+		SilaDataVotes:    []*silapb.SilaData{},
 		SilaExecutionDepositIndex: preState.SilaExecutionDepositIndex(),
 	}
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
 	bodyRoot, err := (&silapb.BeaconBlockBodyAltair{
 		RandaoReveal: make([]byte, 96),
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		},
@@ -237,8 +237,8 @@ func emptyGenesisState() (state.BeaconState, error) {
 		PreviousEpochParticipation: []byte{},
 
 		// SilaExecution data.
-		SilaExecutionData:         &silapb.SilaExecutionData{},
-		SilaExecutionDataVotes:    []*silapb.SilaExecutionData{},
+		SilaData:         &silapb.SilaData{},
+		SilaDataVotes:    []*silapb.SilaData{},
 		SilaExecutionDepositIndex: 0,
 	}
 	return state_native.InitializeFromProtoUnsafeAltair(st)
@@ -253,7 +253,7 @@ func NewBeaconBlockAltair() *silapb.SignedBeaconBlockAltair {
 			StateRoot:  make([]byte, fieldparams.RootLength),
 			Body: &silapb.BeaconBlockBodyAltair{
 				RandaoReveal: make([]byte, 96),
-				SilaExecutionData: &silapb.SilaExecutionData{
+				SilaData: &silapb.SilaData{
 					DepositRoot: make([]byte, fieldparams.RootLength),
 					BlockHash:   make([]byte, 32),
 				},
@@ -378,9 +378,9 @@ func GenerateFullBlockAltair(
 
 	numToGen = conf.NumDeposits
 	var newDeposits []*silapb.Deposit
-	silaexecData := bState.SilaExecutionData()
+	silaexecData := bState.SilaData()
 	if numToGen > 0 {
-		newDeposits, silaexecData, err = generateDepositsAndSilaExecutionData(bState, numToGen)
+		newDeposits, silaexecData, err = generateDepositsAndSilaData(bState, numToGen)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed generating %d deposits:", numToGen)
 		}
@@ -453,7 +453,7 @@ func GenerateFullBlockAltair(
 		ParentRoot:    parentRoot[:],
 		ProposerIndex: idx,
 		Body: &silapb.BeaconBlockBodyAltair{
-			SilaExecutionData:          silaexecData,
+			SilaData:          silaexecData,
 			RandaoReveal:      reveal,
 			ProposerSlashings: pSlashings,
 			AttesterSlashings: aSlashings,

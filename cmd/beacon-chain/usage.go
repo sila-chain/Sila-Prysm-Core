@@ -169,7 +169,7 @@ var appHelpFlagGroups = []flagGroup{
 			flags.ExecutionEngineHeaders,
 			flags.ExecutionJWTSecretFlag,
 			flags.JwtId,
-			flags.InteropMockSilaExecutionDataVotesFlag,
+			flags.InteropMockSilaDataVotesFlag,
 		},
 	},
 	{ // Flags relevant to configuring beacon chain monitoring.

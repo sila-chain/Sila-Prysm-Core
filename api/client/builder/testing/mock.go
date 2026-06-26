@@ -41,7 +41,7 @@ func (m MockClient) RegisterValidator(_ context.Context, svr []*silapb.SignedVal
 }
 
 // SubmitBlindedBlock --
-func (MockClient) SubmitBlindedBlock(_ context.Context, _ interfaces.ReadOnlySignedBeaconBlock) (interfaces.ExecutionData, v1.BlobsBundler, error) {
+func (MockClient) SubmitBlindedBlock(_ context.Context, _ interfaces.ReadOnlySignedBeaconBlock) (interfaces.SilaData, v1.BlobsBundler, error) {
 	return nil, nil, nil
 }
 

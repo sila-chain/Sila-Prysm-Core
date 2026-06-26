@@ -119,7 +119,7 @@ func TestProcessFinalUpdates_CanProcess(t *testing.T) {
 	s := buildState(t, params.BeaconConfig().SlotsPerHistoricalRoot-1, uint64(params.BeaconConfig().SlotsPerEpoch))
 	ce := time.CurrentEpoch(s)
 	ne := ce + 1
-	require.NoError(t, s.SetSilaExecutionDataVotes([]*silapb.SilaExecutionData{}))
+	require.NoError(t, s.SetSilaDataVotes([]*silapb.SilaData{}))
 	balances := s.Balances()
 	balances[0] = 31.75 * 1e9
 	balances[1] = 31.74 * 1e9

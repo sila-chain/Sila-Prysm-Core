@@ -38,7 +38,7 @@ var (
 		OutputJSON         string
 		OutputYaml         string
 		ForkName           string
-		OverrideSilaExecutionData   bool
+		OverrideSilaData   bool
 		ExecutionEndpoint  string
 		GethGenesisJsonIn  string
 		GethGenesisJsonOut string
@@ -98,9 +98,9 @@ var (
 				Usage:       "Delay genesis time by N seconds",
 			},
 			&cli.BoolFlag{
-				Name:        "override-silaExecutionData",
-				Destination: &generateGenesisStateFlags.OverrideSilaExecutionData,
-				Usage:       "Overrides SilaExecutionData with values from execution client. If unset, defaults to false",
+				Name:        "override-silaData",
+				Destination: &generateGenesisStateFlags.OverrideSilaData,
+				Usage:       "Overrides SilaData with values from execution client. If unset, defaults to false",
 				Value:       false,
 			},
 			&cli.StringFlag{
@@ -335,8 +335,8 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 		return nil, err
 	}
 
-	if f.OverrideSilaExecutionData {
-		log.Print("Overriding SilaExecutionData with data from execution client")
+	if f.OverrideSilaData {
+		log.Print("Overriding SilaData with data from execution client")
 		conn, err := rpc.Dial(generateGenesisStateFlags.ExecutionEndpoint)
 		if err != nil {
 			return nil, errors.Wrapf(
@@ -357,12 +357,12 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "could not get hash tree root")
 		}
-		e1d := &silapb.SilaExecutionData{
+		e1d := &silapb.SilaData{
 			DepositRoot:  depositRoot[:],
 			DepositCount: 0,
 			BlockHash:    header.Hash().Bytes(),
 		}
-		if err := genesisState.SetSilaExecutionData(e1d); err != nil {
+		if err := genesisState.SetSilaData(e1d); err != nil {
 			return nil, err
 		}
 		if err := genesisState.SetSilaExecutionDepositIndex(0); err != nil {

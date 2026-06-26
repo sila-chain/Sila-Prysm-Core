@@ -104,7 +104,7 @@ func gloasOperations(ctx context.Context, st state.BeaconState, block interfaces
 //	    process_rewards_and_penalties(state)
 //	    process_registry_updates(state)
 //	    process_slashings(state)
-//	    process_sila_execution_data_reset(state)
+//	    process_sila_data_reset(state)
 //	    # [Modified in Gloas:SIP8061]
 //	    process_pending_deposits(state)
 //	    process_pending_consolidations(state)
@@ -153,7 +153,7 @@ func processEpochGloas(ctx context.Context, state state.BeaconState) error {
 	if err := electra.ProcessSlashings(ctx, state); err != nil {
 		return err
 	}
-	state, err = electra.ProcessSilaExecutionDataReset(state)
+	state, err = electra.ProcessSilaDataReset(state)
 	if err != nil {
 		return err
 	}

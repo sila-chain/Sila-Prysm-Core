@@ -170,7 +170,7 @@ func (node *LighthouseBeaconNode) Start(ctx context.Context) error {
 	}
 
 	silaNodeCount := e2e.TestParams.BeaconNodeCount
-	jwtPath := path.Join(e2e.TestParams.TestPath, "silaExecutionData/"+strconv.Itoa(node.index+silaNodeCount)+"/")
+	jwtPath := path.Join(e2e.TestParams.TestPath, "silaData/"+strconv.Itoa(node.index+silaNodeCount)+"/")
 	jwtPath = path.Join(jwtPath, "geth/jwtsecret")
 	args := []string{
 		"beacon_node",

@@ -52,19 +52,19 @@ func TestExecuteStateTransition_IncorrectSlot(t *testing.T) {
 func TestExecuteStateTransition_FullProcess(t *testing.T) {
 	beaconState, privKeys := util.DeterministicGenesisState(t, 100)
 
-	silaexecData := &silapb.SilaExecutionData{
+	silaexecData := &silapb.SilaData{
 		DepositCount: 100,
 		DepositRoot:  bytesutil.PadTo([]byte{2}, 32),
 		BlockHash:    make([]byte, 32),
 	}
 	require.NoError(t, beaconState.SetSlot(params.BeaconConfig().SlotsPerEpoch-1))
-	e := beaconState.SilaExecutionData()
+	e := beaconState.SilaData()
 	e.DepositCount = 100
-	require.NoError(t, beaconState.SetSilaExecutionData(e))
+	require.NoError(t, beaconState.SetSilaData(e))
 	bh := beaconState.LatestBlockHeader()
 	bh.Slot = beaconState.Slot()
 	require.NoError(t, beaconState.SetLatestBlockHeader(bh))
-	require.NoError(t, beaconState.SetSilaExecutionDataVotes([]*silapb.SilaExecutionData{silaexecData}))
+	require.NoError(t, beaconState.SetSilaDataVotes([]*silapb.SilaData{silaexecData}))
 
 	oldMix, err := beaconState.RandaoMixAtIndex(1)
 	require.NoError(t, err)
@@ -86,7 +86,7 @@ func TestExecuteStateTransition_FullProcess(t *testing.T) {
 	block.Block.Slot = beaconState.Slot() + 1
 	block.Block.ParentRoot = parentRoot[:]
 	block.Block.Body.RandaoReveal = randaoReveal
-	block.Block.Body.SilaExecutionData = silaexecData
+	block.Block.Body.SilaData = silaexecData
 
 	wsb, err := consensusblocks.NewSignedBeaconBlock(block)
 	require.NoError(t, err)
@@ -180,8 +180,8 @@ func TestProcessBlock_IncorrectProcessExits(t *testing.T) {
 	block.Block.Body.Attestations = attestations
 	block.Block.Body.AttesterSlashings = attesterSlashings
 	block.Block.Body.VoluntaryExits = exits
-	block.Block.Body.SilaExecutionData.DepositRoot = bytesutil.PadTo([]byte{2}, 32)
-	block.Block.Body.SilaExecutionData.BlockHash = bytesutil.PadTo([]byte{3}, 32)
+	block.Block.Body.SilaData.DepositRoot = bytesutil.PadTo([]byte{2}, 32)
+	block.Block.Body.SilaData.BlockHash = bytesutil.PadTo([]byte{3}, 32)
 	err = beaconState.SetSlot(beaconState.Slot() + params.BeaconConfig().MinAttestationInclusionDelay)
 	require.NoError(t, err)
 	cp := beaconState.CurrentJustifiedCheckpoint()
@@ -512,7 +512,7 @@ func TestProcessBlock_OverMaxVoluntaryExits(t *testing.T) {
 
 func TestProcessBlock_IncorrectDeposits(t *testing.T) {
 	base := &silapb.BeaconState{
-		SilaExecutionData:         &silapb.SilaExecutionData{DepositCount: 100},
+		SilaData:         &silapb.SilaData{DepositCount: 100},
 		SilaExecutionDepositIndex: 98,
 	}
 	s, err := state_native.InitializeFromProtoPhase0(base)
@@ -525,7 +525,7 @@ func TestProcessBlock_IncorrectDeposits(t *testing.T) {
 		},
 	}
 	want := fmt.Sprintf("incorrect outstanding deposits in block body, wanted: %d, got: %d",
-		s.SilaExecutionData().DepositCount-s.SilaExecutionDepositIndex(), len(b.Block.Body.Deposits))
+		s.SilaData().DepositCount-s.SilaExecutionDepositIndex(), len(b.Block.Body.Deposits))
 	wsb, err := consensusblocks.NewSignedBeaconBlock(b)
 	require.NoError(t, err)
 	_, err = transition.VerifyOperationLengths(t.Context(), s, wsb.Block())

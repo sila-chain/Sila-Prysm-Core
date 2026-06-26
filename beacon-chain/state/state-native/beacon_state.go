@@ -32,8 +32,8 @@ type BeaconState struct {
 	blockRootsMultiValue                *MultiValueBlockRoots
 	stateRootsMultiValue                *MultiValueStateRoots
 	historicalRoots                     customtypes.HistoricalRoots
-	silaexecData                            *silapb.SilaExecutionData
-	silaExecutionDataVotes                       []*silapb.SilaExecutionData
+	silaexecData                            *silapb.SilaData
+	silaDataVotes                       []*silapb.SilaData
 	silaExecutionDepositIndex                    uint64
 	validatorsMultiValue                *MultiValueValidators
 	balancesMultiValue                  *MultiValueBalances
@@ -104,8 +104,8 @@ type beaconStateMarshalable struct {
 	BlockRoots                          customtypes.BlockRoots                  `json:"block_roots" yaml:"block_roots"`
 	StateRoots                          customtypes.StateRoots                  `json:"state_roots" yaml:"state_roots"`
 	HistoricalRoots                     customtypes.HistoricalRoots             `json:"historical_roots" yaml:"historical_roots"`
-	SilaExecutionData                            *silapb.SilaExecutionData                         `json:"eth_1_data" yaml:"eth_1_data"`
-	SilaExecutionDataVotes                       []*silapb.SilaExecutionData                       `json:"eth_1_data_votes" yaml:"eth_1_data_votes"`
+	SilaData                            *silapb.SilaData                         `json:"eth_1_data" yaml:"eth_1_data"`
+	SilaDataVotes                       []*silapb.SilaData                       `json:"eth_1_data_votes" yaml:"eth_1_data_votes"`
 	SilaExecutionDepositIndex                    uint64                                  `json:"eth_1_deposit_index" yaml:"eth_1_deposit_index"`
 	Validators                          []*silapb.Validator                      `json:"validators" yaml:"validators"`
 	Balances                            []uint64                                `json:"balances" yaml:"balances"`
@@ -167,8 +167,8 @@ func (b *BeaconState) MarshalJSON() ([]byte, error) {
 		BlockRoots:                          bRoots,
 		StateRoots:                          sRoots,
 		HistoricalRoots:                     b.historicalRoots,
-		SilaExecutionData:                            b.silaexecData,
-		SilaExecutionDataVotes:                       b.silaExecutionDataVotes,
+		SilaData:                            b.silaexecData,
+		SilaDataVotes:                       b.silaDataVotes,
 		SilaExecutionDepositIndex:                    b.silaExecutionDepositIndex,
 		Validators:                          stateutil.CompactValidatorsToProto(vals),
 		Balances:                            balances,

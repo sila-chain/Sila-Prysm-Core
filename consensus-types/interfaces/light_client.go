@@ -19,7 +19,7 @@ type LightClientHeader interface {
 	Proto() proto.Message
 	Version() int
 	Beacon() *pb.BeaconBlockHeader
-	Execution() (ExecutionData, error)
+	Execution() (SilaData, error)
 	ExecutionBranch() (LightClientExecutionBranch, error)
 }
 

@@ -60,8 +60,8 @@ func ComputeBlockBodyFieldRoots(ctx context.Context, blockBody *BeaconBlockBody)
 	}
 	copy(fieldRoots[0], root[:])
 
-	// sila_execution_data
-	silaexec := blockBody.SilaExecutionData()
+	// sila_data
+	silaexec := blockBody.SilaData()
 	root, err = silaexec.HashTreeRoot()
 	if err != nil {
 		return nil, err

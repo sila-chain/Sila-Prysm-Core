@@ -19,8 +19,8 @@ func jsonifyTransactions(transactions [][]byte) []string {
 	return jsonTransactions
 }
 
-func jsonifySilaExecutionData(silaexecData *silapb.SilaExecutionData) *structs.SilaExecutionData {
-	return &structs.SilaExecutionData{
+func jsonifySilaData(silaexecData *silapb.SilaData) *structs.SilaData {
+	return &structs.SilaData{
 		BlockHash:    hexutil.Encode(silaexecData.BlockHash),
 		DepositCount: apiutil.Uint64ToString(silaexecData.DepositCount),
 		DepositRoot:  hexutil.Encode(silaexecData.DepositRoot),

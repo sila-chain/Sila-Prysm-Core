@@ -203,7 +203,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 					StateRoot:     b.block.stateRoot[:],
 					Body: &eth.BlindedBeaconBlockBodyElectra{
 						RandaoReveal:           b.block.body.randaoReveal[:],
-						SilaExecutionData:               b.block.body.silaexecData,
+						SilaData:               b.block.body.silaexecData,
 						Graffiti:               b.block.body.graffiti[:],
 						ProposerSlashings:      b.block.body.proposerSlashings,
 						AttesterSlashings:      b.block.body.attesterSlashingsElectra,
@@ -239,7 +239,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 					StateRoot:     b.block.stateRoot[:],
 					Body: &eth.BlindedBeaconBlockBodyElectra{
 						RandaoReveal:           b.block.body.randaoReveal[:],
-						SilaExecutionData:               b.block.body.silaexecData,
+						SilaData:               b.block.body.silaexecData,
 						Graffiti:               b.block.body.graffiti[:],
 						ProposerSlashings:      b.block.body.proposerSlashings,
 						AttesterSlashings:      b.block.body.attesterSlashingsElectra,
@@ -272,7 +272,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 					StateRoot:     b.block.stateRoot[:],
 					Body: &eth.BlindedBeaconBlockBodyBellatrix{
 						RandaoReveal:           b.block.body.randaoReveal[:],
-						SilaExecutionData:               b.block.body.silaexecData,
+						SilaData:               b.block.body.silaexecData,
 						Graffiti:               b.block.body.graffiti[:],
 						ProposerSlashings:      b.block.body.proposerSlashings,
 						AttesterSlashings:      b.block.body.attesterSlashings,
@@ -299,7 +299,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 					StateRoot:     b.block.stateRoot[:],
 					Body: &eth.BlindedBeaconBlockBodyCapella{
 						RandaoReveal:           b.block.body.randaoReveal[:],
-						SilaExecutionData:               b.block.body.silaexecData,
+						SilaData:               b.block.body.silaexecData,
 						Graffiti:               b.block.body.graffiti[:],
 						ProposerSlashings:      b.block.body.proposerSlashings,
 						AttesterSlashings:      b.block.body.attesterSlashings,
@@ -327,7 +327,7 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 					StateRoot:     b.block.stateRoot[:],
 					Body: &eth.BlindedBeaconBlockBodyDeneb{
 						RandaoReveal:           b.block.body.randaoReveal[:],
-						SilaExecutionData:               b.block.body.silaexecData,
+						SilaData:               b.block.body.silaexecData,
 						Graffiti:               b.block.body.graffiti[:],
 						ProposerSlashings:      b.block.body.proposerSlashings,
 						AttesterSlashings:      b.block.body.attesterSlashings,
@@ -347,9 +347,9 @@ func (b *SignedBeaconBlock) ToBlinded() (interfaces.ReadOnlySignedBeaconBlock, e
 	}
 }
 
-func (b *SignedBeaconBlock) Unblind(e interfaces.ExecutionData) error {
+func (b *SignedBeaconBlock) Unblind(e interfaces.SilaData) error {
 	if e == nil || e.IsNil() {
-		return errors.New("cannot unblind with nil execution data")
+		return errors.New("cannot unblind with nil sila data")
 	}
 	if !b.IsBlinded() {
 		return errors.New("cannot unblind if the block is already unblinded")
@@ -367,7 +367,7 @@ func (b *SignedBeaconBlock) Unblind(e interfaces.ExecutionData) error {
 		return err
 	}
 	if payloadRoot != headerRoot {
-		return errors.New("cannot unblind with different execution data")
+		return errors.New("cannot unblind with different sila data")
 	}
 	if err := b.SetExecution(e); err != nil {
 		return err
@@ -1164,8 +1164,8 @@ func (b *BeaconBlockBody) RandaoReveal() [field_params.BLSSignatureLength]byte {
 	return b.randaoReveal
 }
 
-// SilaExecutionData returns the silaexec data in the block.
-func (b *BeaconBlockBody) SilaExecutionData() *eth.SilaExecutionData {
+// SilaData returns the silaexec data in the block.
+func (b *BeaconBlockBody) SilaData() *eth.SilaData {
 	return b.silaexecData
 }
 
@@ -1244,7 +1244,7 @@ func (b *BeaconBlockBody) SyncAggregate() (*eth.SyncAggregate, error) {
 }
 
 // Execution returns the sila payload of the block body.
-func (b *BeaconBlockBody) Execution() (interfaces.ExecutionData, error) {
+func (b *BeaconBlockBody) Execution() (interfaces.SilaData, error) {
 	if b.version <= version.Altair || b.version >= version.Gloas {
 		return nil, consensus_types.ErrNotSupported("Execution", b.version)
 	}

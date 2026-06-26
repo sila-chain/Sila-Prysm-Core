@@ -21,7 +21,7 @@ import (
 //	process_rewards_and_penalties(state)  # [Modified in Altair]
 //	process_registry_updates(state)
 //	process_slashings(state)  # [Modified in Altair]
-//	process_sila_execution_data_reset(state)
+//	process_sila_data_reset(state)
 //	process_effective_balance_updates(state)
 //	process_slashings_reset(state)
 //	process_randao_mixes_reset(state)
@@ -72,7 +72,7 @@ func ProcessEpoch(ctx context.Context, state state.BeaconState) error {
 	if err := e.ProcessSlashings(ctx, state); err != nil {
 		return err
 	}
-	state, err = e.ProcessSilaExecutionDataReset(state)
+	state, err = e.ProcessSilaDataReset(state)
 	if err != nil {
 		return err
 	}

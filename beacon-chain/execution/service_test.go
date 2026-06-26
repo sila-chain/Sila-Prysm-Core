@@ -237,8 +237,8 @@ func TestFollowBlock_OK(t *testing.T) {
 	// set current height
 	block, err = testAcc.Backend.Client().BlockByNumber(t.Context(), nil)
 	require.NoError(t, err)
-	web3Service.latestSilaExecutionData.BlockHeight = block.NumberU64()
-	web3Service.latestSilaExecutionData.BlockTime = block.Time()
+	web3Service.latestSilaData.BlockHeight = block.NumberU64()
+	web3Service.latestSilaData.BlockTime = block.Time()
 
 	h, err := web3Service.followedBlockHeight(t.Context())
 	require.NoError(t, err)
@@ -253,8 +253,8 @@ func TestFollowBlock_OK(t *testing.T) {
 	newBlock, err := testAcc.Backend.Client().BlockByNumber(t.Context(), nil)
 	require.NoError(t, err)
 	// set current height
-	web3Service.latestSilaExecutionData.BlockHeight = newBlock.NumberU64()
-	web3Service.latestSilaExecutionData.BlockTime = newBlock.Time()
+	web3Service.latestSilaData.BlockHeight = newBlock.NumberU64()
+	web3Service.latestSilaData.BlockTime = newBlock.Time()
 
 	h, err = web3Service.followedBlockHeight(t.Context())
 	require.NoError(t, err)
@@ -270,8 +270,8 @@ func TestStatus(t *testing.T) {
 	testCases := map[*Service]string{
 		// "status is ok" cases
 		{}: "",
-		{isRunning: true, latestSilaExecutionData: &silapb.LatestSilaExecutionData{BlockTime: afterFiveMinutesAgo}}:   "",
-		{isRunning: false, latestSilaExecutionData: &silapb.LatestSilaExecutionData{BlockTime: beforeFiveMinutesAgo}}: "",
+		{isRunning: true, latestSilaData: &silapb.LatestSilaData{BlockTime: afterFiveMinutesAgo}}:   "",
+		{isRunning: false, latestSilaData: &silapb.LatestSilaData{BlockTime: beforeFiveMinutesAgo}}: "",
 		{isRunning: false, runError: errors.New("test runError")}:                                  "",
 		// "status is error" cases
 		{isRunning: true, runError: errors.New("test runError")}: "test runError",
@@ -347,7 +347,7 @@ func TestLogTillGenesis_OK(t *testing.T) {
 	for range 30 {
 		testAcc.Backend.Commit()
 	}
-	web3Service.latestSilaExecutionData = &silapb.LatestSilaExecutionData{LastRequestedBlock: 0}
+	web3Service.latestSilaData = &silapb.LatestSilaData{LastRequestedBlock: 0}
 	// Spin off to a separate routine
 	go web3Service.run(web3Service.ctx.Done())
 	// Wait for 2 seconds so that the
@@ -511,8 +511,8 @@ func TestNewService_EarliestVotingBlock(t *testing.T) {
 	currHeader, err = testAcc.Backend.Client().HeaderByNumber(t.Context(), nil)
 	require.NoError(t, err)
 	currTime = currHeader.Time
-	web3Service.latestSilaExecutionData.BlockHeight = currHeader.Number.Uint64()
-	web3Service.latestSilaExecutionData.BlockTime = currHeader.Time
+	web3Service.latestSilaData.BlockHeight = currHeader.Number.Uint64()
+	web3Service.latestSilaData.BlockTime = currHeader.Time
 	web3Service.chainStartData.GenesisTime = currTime
 
 	// With a current slot of zero, only request follow_blocks behind.
@@ -637,7 +637,7 @@ func TestService_InitializeCorrectly(t *testing.T) {
 	silaexecData, err := s1.cfg.beaconDB.ExecutionChainData(t.Context())
 	assert.NoError(t, err)
 
-	assert.NoError(t, s1.initializeSilaExecutionData(t.Context(), silaexecData))
+	assert.NoError(t, s1.initializeSilaData(t.Context(), silaexecData))
 	assert.Equal(t, int64(-1), s1.lastReceivedMerkleIndex, "received incorrect last received merkle index")
 }
 
@@ -800,7 +800,7 @@ func TestService_FollowBlock(t *testing.T) {
 		cfg:            &config{silaexecHeaderReqLimit: 1000},
 		rpcClient:      &mockExecution.RPCClient{BlockNumMap: bMap},
 		headerCache:    newHeaderCache(),
-		latestSilaExecutionData: &silapb.LatestSilaExecutionData{BlockTime: (3000 * 40) + followTime, BlockHeight: 3000},
+		latestSilaData: &silapb.LatestSilaData{BlockTime: (3000 * 40) + followTime, BlockHeight: 3000},
 	}
 	h, err := s.followedBlockHeight(t.Context())
 	assert.NoError(t, err)
@@ -855,11 +855,11 @@ func TestService_migrateOldDepositTree(t *testing.T) {
 	require.NoError(t, err)
 	silaexecData := &silapb.SilaExecutionChainData{
 		BeaconState: &silapb.BeaconState{
-			SilaExecutionData: &silapb.SilaExecutionData{
+			SilaData: &silapb.SilaData{
 				DepositCount: 800,
 			},
 		},
-		CurrentSilaExecutionData: &silapb.LatestSilaExecutionData{
+		CurrentSilaData: &silapb.LatestSilaData{
 			BlockHeight: 100,
 		},
 	}

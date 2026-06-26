@@ -187,7 +187,7 @@ type SyncDetailsContainer struct {
 	Data *SyncDetails `json:"data"`
 }
 
-type SilaExecutionData struct {
+type SilaData struct {
 	DepositRoot  string `json:"deposit_root"`
 	DepositCount string `json:"deposit_count"`
 	BlockHash    string `json:"block_hash"`

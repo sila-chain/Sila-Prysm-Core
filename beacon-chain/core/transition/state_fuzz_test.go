@@ -16,7 +16,7 @@ func TestGenesisBeaconState_1000(t *testing.T) {
 	fuzzer.NilChance(0.1)
 	deposits := make([]*silapb.Deposit, 300000)
 	var genesisTime uint64
-	silaexecData := &silapb.SilaExecutionData{}
+	silaexecData := &silapb.SilaData{}
 	for range 1000 {
 		fuzzer.Fuzz(&deposits)
 		fuzzer.Fuzz(&genesisTime)
@@ -25,7 +25,7 @@ func TestGenesisBeaconState_1000(t *testing.T) {
 		if err != nil {
 			if gs != nil {
 				t.Fatalf("Genesis state should be nil on err. found: %v on error: %v for inputs deposit: %v "+
-					"genesis time: %v silaExecutionData: %v", gs, err, deposits, genesisTime, silaexecData)
+					"genesis time: %v silaData: %v", gs, err, deposits, genesisTime, silaexecData)
 			}
 		}
 	}
@@ -39,7 +39,7 @@ func TestOptimizedGenesisBeaconState_1000(t *testing.T) {
 	var genesisTime uint64
 	preState, err := state_native.InitializeFromProtoUnsafePhase0(&silapb.BeaconState{})
 	require.NoError(t, err)
-	silaexecData := &silapb.SilaExecutionData{}
+	silaexecData := &silapb.SilaData{}
 	for range 1000 {
 		fuzzer.Fuzz(&genesisTime)
 		fuzzer.Fuzz(silaexecData)
@@ -48,7 +48,7 @@ func TestOptimizedGenesisBeaconState_1000(t *testing.T) {
 		if err != nil {
 			if gs != nil {
 				t.Fatalf("Genesis state should be nil on err. found: %v on error: %v for inputs genesis time: %v "+
-					"pre state: %v silaExecutionData: %v", gs, err, genesisTime, preState, silaexecData)
+					"pre state: %v silaData: %v", gs, err, genesisTime, preState, silaexecData)
 			}
 		}
 	}

@@ -21,8 +21,8 @@ type silaPayload struct {
 	p *silaenginev1.SilaPayload
 }
 
-// NewWrappedExecutionData creates an appropriate sila payload wrapper based on the incoming type.
-func NewWrappedExecutionData(v proto.Message) (interfaces.ExecutionData, error) {
+// NewWrappedSilaData creates an appropriate sila payload wrapper based on the incoming type.
+func NewWrappedSilaData(v proto.Message) (interfaces.SilaData, error) {
 	if v == nil {
 		return nil, consensus_types.ErrNilObjectWrapped
 	}
@@ -57,10 +57,10 @@ func NewWrappedExecutionData(v proto.Message) (interfaces.ExecutionData, error) 
 	}
 }
 
-var _ interfaces.ExecutionData = &silaPayload{}
+var _ interfaces.SilaData = &silaPayload{}
 
 // WrappedSilaPayload is a constructor which wraps a protobuf sila payload into an interface.
-func WrappedSilaPayload(p *silaenginev1.SilaPayload) (interfaces.ExecutionData, error) {
+func WrappedSilaPayload(p *silaenginev1.SilaPayload) (interfaces.SilaData, error) {
 	w := silaPayload{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -220,10 +220,10 @@ type silaPayloadHeader struct {
 	p *silaenginev1.SilaPayloadHeader
 }
 
-var _ interfaces.ExecutionData = &silaPayloadHeader{}
+var _ interfaces.SilaData = &silaPayloadHeader{}
 
 // WrappedSilaPayloadHeader is a constructor which wraps a protobuf execution header into an interface.
-func WrappedSilaPayloadHeader(p *silaenginev1.SilaPayloadHeader) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadHeader(p *silaenginev1.SilaPayloadHeader) (interfaces.SilaData, error) {
 	w := silaPayloadHeader{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -377,7 +377,7 @@ func (e silaPayloadHeader) ExcessBlobGas() (uint64, error) {
 }
 
 // PayloadToHeader converts `payload` into sila payload header format.
-func PayloadToHeader(payload interfaces.ExecutionData) (*silaenginev1.SilaPayloadHeader, error) {
+func PayloadToHeader(payload interfaces.SilaData) (*silaenginev1.SilaPayloadHeader, error) {
 	txs, err := payload.Transactions()
 	if err != nil {
 		return nil, err
@@ -411,10 +411,10 @@ type silaPayloadCapella struct {
 	p *silaenginev1.SilaPayloadCapella
 }
 
-var _ interfaces.ExecutionData = &silaPayloadCapella{}
+var _ interfaces.SilaData = &silaPayloadCapella{}
 
 // WrappedSilaPayloadCapella is a constructor which wraps a protobuf sila payload into an interface.
-func WrappedSilaPayloadCapella(p *silaenginev1.SilaPayloadCapella) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadCapella(p *silaenginev1.SilaPayloadCapella) (interfaces.SilaData, error) {
 	w := silaPayloadCapella{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -574,10 +574,10 @@ type silaPayloadHeaderCapella struct {
 	p *silaenginev1.SilaPayloadHeaderCapella
 }
 
-var _ interfaces.ExecutionData = &silaPayloadHeaderCapella{}
+var _ interfaces.SilaData = &silaPayloadHeaderCapella{}
 
 // WrappedSilaPayloadHeaderCapella is a constructor which wraps a protobuf execution header into an interface.
-func WrappedSilaPayloadHeaderCapella(p *silaenginev1.SilaPayloadHeaderCapella) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadHeaderCapella(p *silaenginev1.SilaPayloadHeaderCapella) (interfaces.SilaData, error) {
 	w := silaPayloadHeaderCapella{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -731,7 +731,7 @@ func (e silaPayloadHeaderCapella) ExcessBlobGas() (uint64, error) {
 }
 
 // PayloadToHeaderCapella converts `payload` into sila payload header format.
-func PayloadToHeaderCapella(payload interfaces.ExecutionData) (*silaenginev1.SilaPayloadHeaderCapella, error) {
+func PayloadToHeaderCapella(payload interfaces.SilaData) (*silaenginev1.SilaPayloadHeaderCapella, error) {
 	txs, err := payload.Transactions()
 	if err != nil {
 		return nil, err
@@ -769,7 +769,7 @@ func PayloadToHeaderCapella(payload interfaces.ExecutionData) (*silaenginev1.Sil
 }
 
 // PayloadToHeaderDeneb converts `payload` into sila payload header format.
-func PayloadToHeaderDeneb(payload interfaces.ExecutionData) (*silaenginev1.SilaPayloadHeaderDeneb, error) {
+func PayloadToHeaderDeneb(payload interfaces.SilaData) (*silaenginev1.SilaPayloadHeaderDeneb, error) {
 	txs, err := payload.Transactions()
 	if err != nil {
 		return nil, err
@@ -821,9 +821,9 @@ var (
 	PayloadToHeaderFulu    = PayloadToHeaderDeneb
 )
 
-// IsEmptyExecutionData checks if an execution data is empty underneath. If a single field has
+// IsEmptySilaData checks if an sila data is empty underneath. If a single field has
 // a non-zero value, this function will return false.
-func IsEmptyExecutionData(data interfaces.ExecutionData) (bool, error) {
+func IsEmptySilaData(data interfaces.SilaData) (bool, error) {
 	if data == nil {
 		return true, nil
 	}
@@ -888,10 +888,10 @@ type silaPayloadHeaderDeneb struct {
 	p *silaenginev1.SilaPayloadHeaderDeneb
 }
 
-var _ interfaces.ExecutionData = &silaPayloadHeaderDeneb{}
+var _ interfaces.SilaData = &silaPayloadHeaderDeneb{}
 
 // WrappedSilaPayloadHeaderDeneb is a constructor which wraps a protobuf execution header into an interface.
-func WrappedSilaPayloadHeaderDeneb(p *silaenginev1.SilaPayloadHeaderDeneb) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadHeaderDeneb(p *silaenginev1.SilaPayloadHeaderDeneb) (interfaces.SilaData, error) {
 	w := silaPayloadHeaderDeneb{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -1051,10 +1051,10 @@ type silaPayloadDeneb struct {
 	p *silaenginev1.SilaPayloadDeneb
 }
 
-var _ interfaces.ExecutionData = &silaPayloadDeneb{}
+var _ interfaces.SilaData = &silaPayloadDeneb{}
 
 // WrappedSilaPayloadDeneb is a constructor which wraps a protobuf sila payload into an interface.
-func WrappedSilaPayloadDeneb(p *silaenginev1.SilaPayloadDeneb) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadDeneb(p *silaenginev1.SilaPayloadDeneb) (interfaces.SilaData, error) {
 	w := silaPayloadDeneb{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped
@@ -1212,10 +1212,10 @@ type silaPayloadGloas struct {
 	p *silaenginev1.SilaPayloadGloas
 }
 
-var _ interfaces.ExecutionData = &silaPayloadGloas{}
+var _ interfaces.SilaData = &silaPayloadGloas{}
 
 // WrappedSilaPayloadGloas is a constructor which wraps a protobuf sila payload into an interface.
-func WrappedSilaPayloadGloas(p *silaenginev1.SilaPayloadGloas) (interfaces.ExecutionData, error) {
+func WrappedSilaPayloadGloas(p *silaenginev1.SilaPayloadGloas) (interfaces.SilaData, error) {
 	w := silaPayloadGloas{p: p}
 	if w.IsNil() {
 		return nil, consensus_types.ErrNilObjectWrapped

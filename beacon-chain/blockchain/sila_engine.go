@@ -224,7 +224,7 @@ func (s *Service) getPayloadHash(ctx context.Context, root []byte) ([32]byte, er
 // notifyNewPayload signals SilaEngine on a new payload.
 // It returns true if the EL has returned VALID for the block
 // stVersion should represent the version of the pre-state; header should also be from the pre-state.
-func (s *Service) notifyNewPayload(ctx context.Context, stVersion int, header interfaces.ExecutionData, blk blocktypes.ROBlock) (bool, error) {
+func (s *Service) notifyNewPayload(ctx context.Context, stVersion int, header interfaces.SilaData, blk blocktypes.ROBlock) (bool, error) {
 	ctx, span := trace.StartSpan(ctx, "blockChain.notifyNewPayload")
 	defer span.End()
 

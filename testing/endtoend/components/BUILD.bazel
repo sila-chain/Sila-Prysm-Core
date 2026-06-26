@@ -15,7 +15,7 @@ go_library(
         "web3remotesigner.go",
     ],
     data = [
-        "//testing/endtoend/static-files/silaexec:silaExecutionData",
+        "//testing/endtoend/static-files/silaexec:silaData",
         "@lighthouse//:lighthouse_bin",
     ],
     importpath = "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/components",

@@ -51,8 +51,8 @@ message SignedBeaconBlockHeader {
   bytes signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
 }
 
-// SilaExecutionData represents references to the Sila sila deposit.
-message SilaExecutionData {
+// SilaData represents references to the Sila sila deposit.
+message SilaData {
   // The 32 byte deposit tree root for the last deposit included in this
   // block.
   bytes deposit_root = 1 [ (sila.eth.ext.ssz_size) = "32" ];

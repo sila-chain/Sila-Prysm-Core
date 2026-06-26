@@ -24,9 +24,9 @@ func DeterministicGenesisStateFulu(t testing.TB, numValidators uint64) (state.Be
 	if err != nil {
 		t.Fatal(errors.Wrapf(err, "failed to get %d deposits", numValidators))
 	}
-	silaexecData, err := DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := DeterministicSilaData(len(deposits))
 	if err != nil {
-		t.Fatal(errors.Wrapf(err, "failed to get silaExecutionData for %d deposits", numValidators))
+		t.Fatal(errors.Wrapf(err, "failed to get silaData for %d deposits", numValidators))
 	}
 	beaconState, err := genesisBeaconStateFulu(t.Context(), deposits, uint64(0), silaexecData)
 	if err != nil {
@@ -39,7 +39,7 @@ func DeterministicGenesisStateFulu(t testing.TB, numValidators uint64) (state.Be
 	return beaconState, privKeys
 }
 
-// setKeysToActiveFulu is a function to set the validators to active post fulu, fulu no longer processes deposits based on silaExecutionData
+// setKeysToActiveFulu is a function to set the validators to active post fulu, fulu no longer processes deposits based on silaData
 func setKeysToActiveFulu(beaconState state.BeaconState) error {
 	vals := make([]*silapb.Validator, len(beaconState.Validators()))
 	for i, val := range beaconState.Validators() {
@@ -51,14 +51,14 @@ func setKeysToActiveFulu(beaconState state.BeaconState) error {
 }
 
 // genesisBeaconStateFulu returns the genesis beacon state.
-func genesisBeaconStateFulu(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, silaexecData *silapb.SilaExecutionData) (state.BeaconState, error) {
+func genesisBeaconStateFulu(ctx context.Context, deposits []*silapb.Deposit, genesisTime uint64, silaexecData *silapb.SilaData) (state.BeaconState, error) {
 	st, err := emptyGenesisStateFulu()
 	if err != nil {
 		return nil, err
 	}
 
 	// Process initial deposits.
-	st, err = helpers.UpdateGenesisSilaExecutionData(st, deposits, silaexecData)
+	st, err = helpers.UpdateGenesisSilaData(st, deposits, silaexecData)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func genesisBeaconStateFulu(ctx context.Context, deposits []*silapb.Deposit, gen
 		return nil, errors.Wrap(err, "could not process validator deposits")
 	}
 
-	return buildGenesisBeaconStateFulu(ctx, genesisTime, st, st.SilaExecutionData())
+	return buildGenesisBeaconStateFulu(ctx, genesisTime, st, st.SilaData())
 }
 
 // emptyGenesisStateFulu returns an empty genesis state in Fulu format.
@@ -92,8 +92,8 @@ func emptyGenesisStateFulu() (state.BeaconState, error) {
 		PreviousEpochParticipation: []byte{},
 
 		// SilaExecution data.
-		SilaExecutionData:         &silapb.SilaExecutionData{},
-		SilaExecutionDataVotes:    []*silapb.SilaExecutionData{},
+		SilaData:         &silapb.SilaData{},
+		SilaDataVotes:    []*silapb.SilaData{},
 		SilaExecutionDepositIndex: 0,
 
 		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{},
@@ -109,9 +109,9 @@ func emptyGenesisStateFulu() (state.BeaconState, error) {
 	return state_native.InitializeFromProtoUnsafeFulu(st)
 }
 
-func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preState state.BeaconState, silaexecData *silapb.SilaExecutionData) (state.BeaconState, error) {
+func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preState state.BeaconState, silaexecData *silapb.SilaData) (state.BeaconState, error) {
 	if silaexecData == nil {
-		return nil, errors.New("no silaExecutionData provided for genesis state")
+		return nil, errors.New("no silaData provided for genesis state")
 	}
 
 	randaoMixes := make([][]byte, params.BeaconConfig().EpochsPerHistoricalVector)
@@ -206,8 +206,8 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 		Slashings:       slashings,
 
 		// SilaExecution data.
-		SilaExecutionData:         silaexecData,
-		SilaExecutionDataVotes:    []*silapb.SilaExecutionData{},
+		SilaData:         silaexecData,
+		SilaDataVotes:    []*silapb.SilaData{},
 		SilaExecutionDepositIndex: preState.SilaExecutionDepositIndex(),
 
 		// Electra Data
@@ -223,7 +223,7 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
 	bodyRoot, err := (&silapb.BeaconBlockBodyElectra{
 		RandaoReveal: make([]byte, 96),
-		SilaExecutionData: &silapb.SilaExecutionData{
+		SilaData: &silapb.SilaData{
 			DepositRoot: make([]byte, 32),
 			BlockHash:   make([]byte, 32),
 		},

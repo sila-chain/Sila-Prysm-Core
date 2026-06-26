@@ -462,7 +462,7 @@ func (s *Service) insertFinalizedDepositsAndPrune(ctx context.Context, fRoot [32
 	// Check if we should prune all pending deposits.
 	// In post-Electra(after the legacy deposit mechanism is deprecated),
 	// we can prune all pending deposits in the deposit cache.
-	// See: https://sips.sila.org/SIPS/sip-6110#silaExecutionData-poll-deprecation
+	// See: https://sips.sila.org/SIPS/sip-6110#silaData-poll-deprecation
 	if helpers.DepositRequestsStarted(finalizedState) {
 		s.pruneAllPendingDepositsAndProofs(ctx)
 		return
@@ -480,7 +480,7 @@ func (s *Service) insertFinalizedDepositsAndPrune(ctx context.Context, fRoot [32
 	// to be included(rather than the last one to be processed). This was most likely
 	// done as the state cannot represent signed integers.
 	finalizedSilaExecutionDepIdx := silaExecutionDepositIndex - 1
-	if err = s.cfg.DepositCache.InsertFinalizedDeposits(ctx, int64(finalizedSilaExecutionDepIdx), common.Hash(finalizedState.SilaExecutionData().BlockHash),
+	if err = s.cfg.DepositCache.InsertFinalizedDeposits(ctx, int64(finalizedSilaExecutionDepIdx), common.Hash(finalizedState.SilaData().BlockHash),
 		0 /* Setting a zero value as we have no access to block height */); err != nil {
 		log.WithError(err).Error("Could not insert finalized deposits")
 		return

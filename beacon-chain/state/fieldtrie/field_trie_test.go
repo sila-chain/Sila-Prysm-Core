@@ -26,15 +26,15 @@ type recomputeStep struct {
 }
 
 // newTestElements creates fresh test data for the three field trie data types.
-func newTestElements() (customtypes.BlockRoots, []*silapb.SilaExecutionData, []uint64) {
+func newTestElements() (customtypes.BlockRoots, []*silapb.SilaData, []uint64) {
 	blockRoots := make(customtypes.BlockRoots, testBlockRootsSize)
 	for i := range blockRoots {
 		binary.LittleEndian.PutUint64(blockRoots[i][:8], uint64(i))
 	}
 
-	votes := make([]*silapb.SilaExecutionData, testVotesSize)
+	votes := make([]*silapb.SilaData, testVotesSize)
 	for i := range votes {
-		votes[i] = &silapb.SilaExecutionData{
+		votes[i] = &silapb.SilaData{
 			DepositRoot:  make([]byte, fieldparams.RootLength),
 			DepositCount: uint64(i),
 			BlockHash:    make([]byte, fieldparams.RootLength),
@@ -276,7 +276,7 @@ func TestFieldTrie_RecomputePromotion(t *testing.T) {
 		},
 		{
 			name:           "CompositeArray",
-			field:          types.SilaExecutionDataVotes,
+			field:          types.SilaDataVotes,
 			dataType:       types.CompositeArray,
 			elements:       votes,
 			length:         testVotesSize,
@@ -505,7 +505,7 @@ func TestFieldTrie_RecomputeAccumulatedPromotion(t *testing.T) {
 		},
 		{
 			name:     "CompositeArray",
-			field:    types.SilaExecutionDataVotes,
+			field:    types.SilaDataVotes,
 			dataType: types.CompositeArray,
 			elements: votes,
 			length:   testVotesSize,
@@ -799,7 +799,7 @@ func TestFieldTrie_RecomputeOwned(t *testing.T) {
 		},
 		{
 			name:           "CompositeArray",
-			field:          types.SilaExecutionDataVotes,
+			field:          types.SilaDataVotes,
 			dataType:       types.CompositeArray,
 			elements:       votes,
 			length:         testVotesSize,
@@ -1041,27 +1041,27 @@ func TestFieldTrie_compressedIndicesToChunks(t *testing.T) {
 // with an index beyond the current leaf count triggers ensureLeafCapacity, which
 // grows the buffer and calls nodesData.updateMetrics.
 func TestFieldTrie_RecomputeOwnedGrowsBuffer(t *testing.T) {
-	// Start with a small SilaExecutionDataVotes trie (2 elements).
-	votes := make([]*silapb.SilaExecutionData, 2)
+	// Start with a small SilaDataVotes trie (2 elements).
+	votes := make([]*silapb.SilaData, 2)
 	for i := range votes {
-		votes[i] = &silapb.SilaExecutionData{
+		votes[i] = &silapb.SilaData{
 			DepositRoot:  make([]byte, fieldparams.RootLength),
 			DepositCount: uint64(i),
 			BlockHash:    make([]byte, fieldparams.RootLength),
 		}
 	}
 
-	ft, err := NewFieldTrie(types.SilaExecutionDataVotes, types.CompositeArray, votes, testVotesSize, 0)
+	ft, err := NewFieldTrie(types.SilaDataVotes, types.CompositeArray, votes, testVotesSize, 0)
 	require.NoError(t, err)
 
 	originalLeafCount := ft.levelSize(0)
 
 	// Grow the elements slice and recompute with an index beyond the current leaf count.
 	// This forces ensureLeafCapacity → updateMetrics.
-	grown := make([]*silapb.SilaExecutionData, originalLeafCount+10)
+	grown := make([]*silapb.SilaData, originalLeafCount+10)
 	copy(grown, votes)
 	for i := len(votes); i < len(grown); i++ {
-		grown[i] = &silapb.SilaExecutionData{
+		grown[i] = &silapb.SilaData{
 			DepositRoot:  make([]byte, fieldparams.RootLength),
 			DepositCount: uint64(i) + 5000,
 			BlockHash:    make([]byte, fieldparams.RootLength),
@@ -1086,5 +1086,5 @@ func TestFieldTrie_RecomputeOwnedGrowsBuffer(t *testing.T) {
 	require.Equal(t, recomputedRoot, trieRoot)
 
 	// The result must match a fresh trie built from the same elements.
-	requireFreshTrieRoot(t, types.SilaExecutionDataVotes, types.CompositeArray, grown, testVotesSize, 0, recomputedRoot)
+	requireFreshTrieRoot(t, types.SilaDataVotes, types.CompositeArray, grown, testVotesSize, 0, recomputedRoot)
 }

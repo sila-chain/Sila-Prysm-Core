@@ -32,19 +32,19 @@ func TestExecuteBellatrixStateTransitionNoVerify_FullProcess(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetCurrentSyncCommittee(syncCommittee))
 
-	silaexecData := &silapb.SilaExecutionData{
+	silaexecData := &silapb.SilaData{
 		DepositCount: 100,
 		DepositRoot:  bytesutil.PadTo([]byte{2}, 32),
 		BlockHash:    make([]byte, 32),
 	}
 	require.NoError(t, beaconState.SetSlot(params.BeaconConfig().SlotsPerEpoch-1))
-	e := beaconState.SilaExecutionData()
+	e := beaconState.SilaData()
 	e.DepositCount = 100
-	require.NoError(t, beaconState.SetSilaExecutionData(e))
+	require.NoError(t, beaconState.SetSilaData(e))
 	bh := beaconState.LatestBlockHeader()
 	bh.Slot = beaconState.Slot()
 	require.NoError(t, beaconState.SetLatestBlockHeader(bh))
-	require.NoError(t, beaconState.SetSilaExecutionDataVotes([]*silapb.SilaExecutionData{silaexecData}))
+	require.NoError(t, beaconState.SetSilaDataVotes([]*silapb.SilaData{silaexecData}))
 
 	require.NoError(t, beaconState.SetSlot(beaconState.Slot()+1))
 	epoch := time.CurrentEpoch(beaconState)
@@ -63,7 +63,7 @@ func TestExecuteBellatrixStateTransitionNoVerify_FullProcess(t *testing.T) {
 	block.Block.Slot = beaconState.Slot() + 1
 	block.Block.ParentRoot = parentRoot[:]
 	block.Block.Body.RandaoReveal = randaoReveal
-	block.Block.Body.SilaExecutionData = silaexecData
+	block.Block.Body.SilaData = silaexecData
 
 	syncBits := bitfield.NewBitvector512()
 	for i := range syncBits {
@@ -119,19 +119,19 @@ func TestExecuteBellatrixStateTransitionNoVerifySignature_CouldNotVerifyStateRoo
 	require.NoError(t, err)
 	require.NoError(t, beaconState.SetCurrentSyncCommittee(syncCommittee))
 
-	silaexecData := &silapb.SilaExecutionData{
+	silaexecData := &silapb.SilaData{
 		DepositCount: 100,
 		DepositRoot:  bytesutil.PadTo([]byte{2}, 32),
 		BlockHash:    make([]byte, 32),
 	}
 	require.NoError(t, beaconState.SetSlot(slots.PrevSlot(params.BeaconConfig().SlotsPerEpoch)))
-	e := beaconState.SilaExecutionData()
+	e := beaconState.SilaData()
 	e.DepositCount = 100
-	require.NoError(t, beaconState.SetSilaExecutionData(e))
+	require.NoError(t, beaconState.SetSilaData(e))
 	bh := beaconState.LatestBlockHeader()
 	bh.Slot = beaconState.Slot()
 	require.NoError(t, beaconState.SetLatestBlockHeader(bh))
-	require.NoError(t, beaconState.SetSilaExecutionDataVotes([]*silapb.SilaExecutionData{silaexecData}))
+	require.NoError(t, beaconState.SetSilaDataVotes([]*silapb.SilaData{silaexecData}))
 
 	require.NoError(t, beaconState.SetSlot(beaconState.Slot()+1))
 	epoch := time.CurrentEpoch(beaconState)
@@ -150,7 +150,7 @@ func TestExecuteBellatrixStateTransitionNoVerifySignature_CouldNotVerifyStateRoo
 	block.Block.Slot = beaconState.Slot() + 1
 	block.Block.ParentRoot = parentRoot[:]
 	block.Block.Body.RandaoReveal = randaoReveal
-	block.Block.Body.SilaExecutionData = silaexecData
+	block.Block.Body.SilaData = silaexecData
 
 	syncBits := bitfield.NewBitvector512()
 	for i := range syncBits {
@@ -230,7 +230,7 @@ func createFullBellatrixBlockWithOperations(t *testing.T) (state.BeaconState,
 			StateRoot:     altairBlk.Block.StateRoot,
 			Body: &silapb.BeaconBlockBodyBellatrix{
 				RandaoReveal:      altairBlk.Block.Body.RandaoReveal,
-				SilaExecutionData:          altairBlk.Block.Body.SilaExecutionData,
+				SilaData:          altairBlk.Block.Body.SilaData,
 				Graffiti:          altairBlk.Block.Body.Graffiti,
 				ProposerSlashings: altairBlk.Block.Body.ProposerSlashings,
 				AttesterSlashings: altairBlk.Block.Body.AttesterSlashings,
@@ -269,7 +269,7 @@ func createFullCapellaBlockWithOperations(t *testing.T) (state.BeaconState,
 			StateRoot:     bellatrixBlk.Block.StateRoot,
 			Body: &silapb.BeaconBlockBodyCapella{
 				RandaoReveal:      bellatrixBlk.Block.Body.RandaoReveal,
-				SilaExecutionData:          bellatrixBlk.Block.Body.SilaExecutionData,
+				SilaData:          bellatrixBlk.Block.Body.SilaData,
 				Graffiti:          bellatrixBlk.Block.Body.Graffiti,
 				ProposerSlashings: bellatrixBlk.Block.Body.ProposerSlashings,
 				AttesterSlashings: bellatrixBlk.Block.Body.AttesterSlashings,

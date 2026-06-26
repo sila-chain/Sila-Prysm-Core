@@ -672,7 +672,7 @@ func (s *Service) sendBlockAttestationsToSlasher(signed interfaces.ReadOnlySigne
 }
 
 // validateExecutionOnBlock notifies the engine of the incoming block sila payload and returns true if the payload is valid
-func (s *Service) validateExecutionOnBlock(ctx context.Context, ver int, header interfaces.ExecutionData, block blocks.ROBlock) (bool, error) {
+func (s *Service) validateExecutionOnBlock(ctx context.Context, ver int, header interfaces.SilaData, block blocks.ROBlock) (bool, error) {
 	isValidPayload, err := s.notifyNewPayload(ctx, ver, header, block)
 	if err != nil {
 		s.cfg.ForkChoiceStore.Lock()

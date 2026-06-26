@@ -17,7 +17,7 @@ option php_namespace = "Sila\\Eth\\v1alpha1";
 // SilaExecutionChainData is a container which holds all the relevant silaexec
 // information
 message SilaExecutionChainData {
-  LatestSilaExecutionData current_sila_execution_data = 1;
+  LatestSilaData current_sila_data = 1;
   ChainStartData chainstart_data = 2;
   BeaconState beacon_state = 3;
   SparseMerkleTrie trie = 4;
@@ -37,8 +37,8 @@ message DepositSnapshot {
   uint64 execution_depth = 5;
 }
 
-// LatestSilaExecutionData contains the current state of the silaexec chain.
-message LatestSilaExecutionData {
+// LatestSilaData contains the current state of the silaexec chain.
+message LatestSilaData {
   uint64 block_height = 2;
   uint64 block_time = 3;
   bytes block_hash = 4;
@@ -50,7 +50,7 @@ message ChainStartData {
   bool chainstarted = 1;
   uint64 genesis_time = 2;
   uint64 genesis_block = 3;
-  SilaExecutionData sila_execution_data = 4;
+  SilaData sila_data = 4;
   repeated Deposit chainstart_deposits = 5;
 }
 

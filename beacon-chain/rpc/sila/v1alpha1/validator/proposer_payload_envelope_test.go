@@ -38,7 +38,7 @@ func testGloasBlock(t *testing.T) (*consensusblocks.GetPayloadResponse, interfac
 	require.NoError(t, err)
 
 	local := &consensusblocks.GetPayloadResponse{
-		ExecutionData:     ed,
+		SilaData:     ed,
 		Bid:               big.NewInt(0),
 		SilaRequests: &silaenginev1.SilaRequests{},
 	}
@@ -77,7 +77,7 @@ func TestExtractSilaPayloadGloas(t *testing.T) {
 	require.NoError(t, err)
 
 	local := &consensusblocks.GetPayloadResponse{
-		ExecutionData: ed,
+		SilaData: ed,
 		Bid:           big.NewInt(0),
 	}
 

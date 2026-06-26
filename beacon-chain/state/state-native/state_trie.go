@@ -36,8 +36,8 @@ var (
 		types.BlockRoots,
 		types.StateRoots,
 		types.HistoricalRoots,
-		types.SilaExecutionData,
-		types.SilaExecutionDataVotes,
+		types.SilaData,
+		types.SilaDataVotes,
 		types.SilaExecutionDepositIndex,
 		types.Validators,
 		types.Balances,
@@ -60,8 +60,8 @@ var (
 		types.BlockRoots,
 		types.StateRoots,
 		types.HistoricalRoots,
-		types.SilaExecutionData,
-		types.SilaExecutionDataVotes,
+		types.SilaData,
+		types.SilaDataVotes,
 		types.SilaExecutionDepositIndex,
 		types.Validators,
 		types.Balances,
@@ -223,8 +223,8 @@ func InitializeFromProtoUnsafePhase0(st *silapb.BeaconState) (state.BeaconState,
 		fork:                        st.Fork,
 		latestBlockHeader:           st.LatestBlockHeader,
 		historicalRoots:             hRoots,
-		silaexecData:                    st.SilaExecutionData,
-		silaExecutionDataVotes:               st.SilaExecutionDataVotes,
+		silaexecData:                    st.SilaData,
+		silaDataVotes:               st.SilaDataVotes,
 		silaExecutionDepositIndex:            st.SilaExecutionDepositIndex,
 		slashings:                   st.Slashings,
 		previousEpochAttestations:   st.PreviousEpochAttestations,
@@ -267,7 +267,7 @@ func InitializeFromProtoUnsafePhase0(st *silapb.BeaconState) (state.BeaconState,
 
 	// Initialize field reference tracking for shared data.
 	b.sharedFieldReferences[types.HistoricalRoots] = stateutil.NewRef(1)
-	b.sharedFieldReferences[types.SilaExecutionDataVotes] = stateutil.NewRef(1)
+	b.sharedFieldReferences[types.SilaDataVotes] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.Slashings] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.PreviousEpochAttestations] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.CurrentEpochAttestations] = stateutil.NewRef(1)
@@ -299,8 +299,8 @@ func InitializeFromProtoUnsafeAltair(st *silapb.BeaconStateAltair) (state.Beacon
 		fork:                        st.Fork,
 		latestBlockHeader:           st.LatestBlockHeader,
 		historicalRoots:             hRoots,
-		silaexecData:                    st.SilaExecutionData,
-		silaExecutionDataVotes:               st.SilaExecutionDataVotes,
+		silaexecData:                    st.SilaData,
+		silaDataVotes:               st.SilaDataVotes,
 		silaExecutionDepositIndex:            st.SilaExecutionDepositIndex,
 		slashings:                   st.Slashings,
 		previousEpochParticipation:  st.PreviousEpochParticipation,
@@ -346,7 +346,7 @@ func InitializeFromProtoUnsafeAltair(st *silapb.BeaconStateAltair) (state.Beacon
 
 	// Initialize field reference tracking for shared data.
 	b.sharedFieldReferences[types.HistoricalRoots] = stateutil.NewRef(1)
-	b.sharedFieldReferences[types.SilaExecutionDataVotes] = stateutil.NewRef(1)
+	b.sharedFieldReferences[types.SilaDataVotes] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.Slashings] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.PreviousEpochParticipationBits] = stateutil.NewRef(1) // New in Altair.
 	b.sharedFieldReferences[types.CurrentEpochParticipationBits] = stateutil.NewRef(1)  // New in Altair.
@@ -378,8 +378,8 @@ func InitializeFromProtoUnsafeBellatrix(st *silapb.BeaconStateBellatrix) (state.
 		fork:                         st.Fork,
 		latestBlockHeader:            st.LatestBlockHeader,
 		historicalRoots:              hRoots,
-		silaexecData:                     st.SilaExecutionData,
-		silaExecutionDataVotes:                st.SilaExecutionDataVotes,
+		silaexecData:                     st.SilaData,
+		silaDataVotes:                st.SilaDataVotes,
 		silaExecutionDepositIndex:             st.SilaExecutionDepositIndex,
 		slashings:                    st.Slashings,
 		previousEpochParticipation:   st.PreviousEpochParticipation,
@@ -426,7 +426,7 @@ func InitializeFromProtoUnsafeBellatrix(st *silapb.BeaconStateBellatrix) (state.
 
 	// Initialize field reference tracking for shared data.
 	b.sharedFieldReferences[types.HistoricalRoots] = stateutil.NewRef(1)
-	b.sharedFieldReferences[types.SilaExecutionDataVotes] = stateutil.NewRef(1)
+	b.sharedFieldReferences[types.SilaDataVotes] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.Slashings] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.PreviousEpochParticipationBits] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.CurrentEpochParticipationBits] = stateutil.NewRef(1)
@@ -459,8 +459,8 @@ func InitializeFromProtoUnsafeCapella(st *silapb.BeaconStateCapella) (state.Beac
 		fork:                                st.Fork,
 		latestBlockHeader:                   st.LatestBlockHeader,
 		historicalRoots:                     hRoots,
-		silaexecData:                            st.SilaExecutionData,
-		silaExecutionDataVotes:                       st.SilaExecutionDataVotes,
+		silaexecData:                            st.SilaData,
+		silaDataVotes:                       st.SilaDataVotes,
 		silaExecutionDepositIndex:                    st.SilaExecutionDepositIndex,
 		slashings:                           st.Slashings,
 		previousEpochParticipation:          st.PreviousEpochParticipation,
@@ -510,7 +510,7 @@ func InitializeFromProtoUnsafeCapella(st *silapb.BeaconStateCapella) (state.Beac
 
 	// Initialize field reference tracking for shared data.
 	b.sharedFieldReferences[types.HistoricalRoots] = stateutil.NewRef(1)
-	b.sharedFieldReferences[types.SilaExecutionDataVotes] = stateutil.NewRef(1)
+	b.sharedFieldReferences[types.SilaDataVotes] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.Slashings] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.PreviousEpochParticipationBits] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.CurrentEpochParticipationBits] = stateutil.NewRef(1)
@@ -544,8 +544,8 @@ func InitializeFromProtoUnsafeDeneb(st *silapb.BeaconStateDeneb) (state.BeaconSt
 		fork:                              st.Fork,
 		latestBlockHeader:                 st.LatestBlockHeader,
 		historicalRoots:                   hRoots,
-		silaexecData:                          st.SilaExecutionData,
-		silaExecutionDataVotes:                     st.SilaExecutionDataVotes,
+		silaexecData:                          st.SilaData,
+		silaDataVotes:                     st.SilaDataVotes,
 		silaExecutionDepositIndex:                  st.SilaExecutionDepositIndex,
 		slashings:                         st.Slashings,
 		previousEpochParticipation:        st.PreviousEpochParticipation,
@@ -593,7 +593,7 @@ func InitializeFromProtoUnsafeDeneb(st *silapb.BeaconStateDeneb) (state.BeaconSt
 
 	// Initialize field reference tracking for shared data.
 	b.sharedFieldReferences[types.HistoricalRoots] = stateutil.NewRef(1)
-	b.sharedFieldReferences[types.SilaExecutionDataVotes] = stateutil.NewRef(1)
+	b.sharedFieldReferences[types.SilaDataVotes] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.Slashings] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.PreviousEpochParticipationBits] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.CurrentEpochParticipationBits] = stateutil.NewRef(1)
@@ -627,8 +627,8 @@ func InitializeFromProtoUnsafeElectra(st *silapb.BeaconStateElectra) (state.Beac
 		fork:                              st.Fork,
 		latestBlockHeader:                 st.LatestBlockHeader,
 		historicalRoots:                   hRoots,
-		silaexecData:                          st.SilaExecutionData,
-		silaExecutionDataVotes:                     st.SilaExecutionDataVotes,
+		silaexecData:                          st.SilaData,
+		silaDataVotes:                     st.SilaDataVotes,
 		silaExecutionDepositIndex:                  st.SilaExecutionDepositIndex,
 		slashings:                         st.Slashings,
 		previousEpochParticipation:        st.PreviousEpochParticipation,
@@ -685,7 +685,7 @@ func InitializeFromProtoUnsafeElectra(st *silapb.BeaconStateElectra) (state.Beac
 
 	// Initialize field reference tracking for shared data.
 	b.sharedFieldReferences[types.HistoricalRoots] = stateutil.NewRef(1)
-	b.sharedFieldReferences[types.SilaExecutionDataVotes] = stateutil.NewRef(1)
+	b.sharedFieldReferences[types.SilaDataVotes] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.Slashings] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.PreviousEpochParticipationBits] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.CurrentEpochParticipationBits] = stateutil.NewRef(1)
@@ -731,8 +731,8 @@ func InitializeFromProtoUnsafeFulu(st *silapb.BeaconStateFulu) (state.BeaconStat
 		fork:                              st.Fork,
 		latestBlockHeader:                 st.LatestBlockHeader,
 		historicalRoots:                   hRoots,
-		silaexecData:                          st.SilaExecutionData,
-		silaExecutionDataVotes:                     st.SilaExecutionDataVotes,
+		silaexecData:                          st.SilaData,
+		silaDataVotes:                     st.SilaDataVotes,
 		silaExecutionDepositIndex:                  st.SilaExecutionDepositIndex,
 		slashings:                         st.Slashings,
 		previousEpochParticipation:        st.PreviousEpochParticipation,
@@ -790,7 +790,7 @@ func InitializeFromProtoUnsafeFulu(st *silapb.BeaconStateFulu) (state.BeaconStat
 
 	// Initialize field reference tracking for shared data.
 	b.sharedFieldReferences[types.HistoricalRoots] = stateutil.NewRef(1)
-	b.sharedFieldReferences[types.SilaExecutionDataVotes] = stateutil.NewRef(1)
+	b.sharedFieldReferences[types.SilaDataVotes] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.Slashings] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.PreviousEpochParticipationBits] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.CurrentEpochParticipationBits] = stateutil.NewRef(1)
@@ -833,8 +833,8 @@ func InitializeFromProtoUnsafeGloas(st *silapb.BeaconStateGloas) (state.BeaconSt
 		fork:                          st.Fork,
 		latestBlockHeader:             st.LatestBlockHeader,
 		historicalRoots:               hRoots,
-		silaexecData:                      st.SilaExecutionData,
-		silaExecutionDataVotes:                 st.SilaExecutionDataVotes,
+		silaexecData:                      st.SilaData,
+		silaDataVotes:                 st.SilaDataVotes,
 		silaExecutionDepositIndex:              st.SilaExecutionDepositIndex,
 		slashings:                     st.Slashings,
 		previousEpochParticipation:    st.PreviousEpochParticipation,
@@ -900,7 +900,7 @@ func InitializeFromProtoUnsafeGloas(st *silapb.BeaconStateGloas) (state.BeaconSt
 
 	// Initialize field reference tracking for shared data.
 	b.sharedFieldReferences[types.HistoricalRoots] = stateutil.NewRef(1)
-	b.sharedFieldReferences[types.SilaExecutionDataVotes] = stateutil.NewRef(1)
+	b.sharedFieldReferences[types.SilaDataVotes] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.Slashings] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.PreviousEpochParticipationBits] = stateutil.NewRef(1)
 	b.sharedFieldReferences[types.CurrentEpochParticipationBits] = stateutil.NewRef(1)
@@ -967,7 +967,7 @@ func (b *BeaconState) Copy() state.BeaconState {
 		randaoMixesMultiValue:     b.randaoMixesMultiValue,
 		previousEpochAttestations: b.previousEpochAttestations,
 		currentEpochAttestations:  b.currentEpochAttestations,
-		silaExecutionDataVotes:             b.silaExecutionDataVotes,
+		silaDataVotes:             b.silaDataVotes,
 		slashings:                 b.slashings,
 		proposerLookahead:         b.proposerLookahead,
 		ptcWindow:                 b.ptcWindow,
@@ -1331,14 +1331,14 @@ func (b *BeaconState) rootSelector(ctx context.Context, field types.FieldIndex) 
 			hRoots[i] = b.historicalRoots[i][:]
 		}
 		return ssz.ByteArrayRootWithLimit(hRoots, fieldparams.HistoricalRootsLength)
-	case types.SilaExecutionData:
+	case types.SilaData:
 		return stateutil.SilaExecutionRoot(b.silaexecData)
-	case types.SilaExecutionDataVotes:
+	case types.SilaDataVotes:
 		if b.rebuildTrie[field] {
 			err := b.resetFieldTrie(
 				field,
-				b.silaExecutionDataVotes,
-				params.BeaconConfig().SilaExecutionDataVotesLength(),
+				b.silaDataVotes,
+				params.BeaconConfig().SilaDataVotesLength(),
 			)
 			if err != nil {
 				return [32]byte{}, err
@@ -1346,7 +1346,7 @@ func (b *BeaconState) rootSelector(ctx context.Context, field types.FieldIndex) 
 			delete(b.rebuildTrie, field)
 			return b.stateFieldLeaves[field].TrieRoot()
 		}
-		return b.recomputeFieldTrie(field, b.silaExecutionDataVotes)
+		return b.recomputeFieldTrie(field, b.silaDataVotes)
 	case types.Validators:
 		return b.validatorsRootSelector(field)
 	case types.Balances:

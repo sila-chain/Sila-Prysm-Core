@@ -9,18 +9,18 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 )
 
-func BenchmarkAppendSilaExecutionDataVotes(b *testing.B) {
+func BenchmarkAppendSilaDataVotes(b *testing.B) {
 	st, err := state_native.InitializeFromProtoPhase0(&silapb.BeaconState{})
 	require.NoError(b, err)
 
-	max := params.BeaconConfig().SilaExecutionDataVotesLength()
+	max := params.BeaconConfig().SilaDataVotesLength()
 
 	if max < 2 {
-		b.Fatalf("SilaExecutionDataVotesLength is less than 2")
+		b.Fatalf("SilaDataVotesLength is less than 2")
 	}
 
 	for i := uint64(0); i < max-2; i++ {
-		err := st.AppendSilaExecutionDataVotes(&silapb.SilaExecutionData{
+		err := st.AppendSilaDataVotes(&silapb.SilaData{
 			DepositCount: i,
 			DepositRoot:  make([]byte, 64),
 			BlockHash:    make([]byte, 64),
@@ -31,7 +31,7 @@ func BenchmarkAppendSilaExecutionDataVotes(b *testing.B) {
 	ref := st.Copy()
 
 	for i := 0; b.Loop(); i++ {
-		err := ref.AppendSilaExecutionDataVotes(&silapb.SilaExecutionData{DepositCount: uint64(i)})
+		err := ref.AppendSilaDataVotes(&silapb.SilaData{DepositCount: uint64(i)})
 		require.NoError(b, err)
 		ref = st.Copy()
 	}

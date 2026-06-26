@@ -869,7 +869,7 @@ func TestInsertFinalizedDeposits(t *testing.T) {
 	gs, _ := util.DeterministicGenesisState(t, 32)
 	require.NoError(t, service.saveGenesisData(ctx, gs))
 	gs = gs.Copy()
-	assert.NoError(t, gs.SetSilaExecutionData(&silapb.SilaExecutionData{DepositCount: 10, BlockHash: make([]byte, 32)}))
+	assert.NoError(t, gs.SetSilaData(&silapb.SilaData{DepositCount: 10, BlockHash: make([]byte, 32)}))
 	assert.NoError(t, gs.SetSilaExecutionDepositIndex(8))
 	assert.NoError(t, service.cfg.StateGen.SaveState(ctx, [32]byte{'m', 'o', 'c', 'k'}, gs))
 	var zeroSig [96]byte
@@ -899,7 +899,7 @@ func TestInsertFinalizedDeposits_PrunePendingDeposits(t *testing.T) {
 	gs, _ := util.DeterministicGenesisState(t, 32)
 	require.NoError(t, service.saveGenesisData(ctx, gs))
 	gs = gs.Copy()
-	assert.NoError(t, gs.SetSilaExecutionData(&silapb.SilaExecutionData{DepositCount: 10, BlockHash: make([]byte, 32)}))
+	assert.NoError(t, gs.SetSilaData(&silapb.SilaData{DepositCount: 10, BlockHash: make([]byte, 32)}))
 	assert.NoError(t, gs.SetSilaExecutionDepositIndex(8))
 	assert.NoError(t, service.cfg.StateGen.SaveState(ctx, [32]byte{'m', 'o', 'c', 'k'}, gs))
 	var zeroSig [96]byte
@@ -939,11 +939,11 @@ func TestInsertFinalizedDeposits_MultipleFinalizedRoutines(t *testing.T) {
 	gs, _ := util.DeterministicGenesisState(t, 32)
 	require.NoError(t, service.saveGenesisData(ctx, gs))
 	gs = gs.Copy()
-	assert.NoError(t, gs.SetSilaExecutionData(&silapb.SilaExecutionData{DepositCount: 7, BlockHash: make([]byte, 32)}))
+	assert.NoError(t, gs.SetSilaData(&silapb.SilaData{DepositCount: 7, BlockHash: make([]byte, 32)}))
 	assert.NoError(t, gs.SetSilaExecutionDepositIndex(6))
 	assert.NoError(t, service.cfg.StateGen.SaveState(ctx, [32]byte{'m', 'o', 'c', 'k'}, gs))
 	gs2 := gs.Copy()
-	assert.NoError(t, gs2.SetSilaExecutionData(&silapb.SilaExecutionData{DepositCount: 15, BlockHash: make([]byte, 32)}))
+	assert.NoError(t, gs2.SetSilaData(&silapb.SilaData{DepositCount: 15, BlockHash: make([]byte, 32)}))
 	assert.NoError(t, gs2.SetSilaExecutionDepositIndex(13))
 	assert.NoError(t, service.cfg.StateGen.SaveState(ctx, [32]byte{'m', 'o', 'c', 'k', '2'}, gs2))
 	var zeroSig [96]byte
@@ -1077,7 +1077,7 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 	tests := []struct {
 		name         string
 		stateVersion int
-		header       interfaces.ExecutionData
+		header       interfaces.SilaData
 		payload      *silaenginev1.SilaPayload
 		errString    string
 	}{
@@ -1134,7 +1134,7 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 			payload: &silaenginev1.SilaPayload{
 				ParentHash: aHash[:],
 			},
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := consensusblocks.WrappedSilaPayloadHeader(&silaenginev1.SilaPayloadHeader{
 					ParentHash:       make([]byte, fieldparams.RootLength),
 					FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
@@ -1157,7 +1157,7 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 			payload: &silaenginev1.SilaPayload{
 				ParentHash: aHash[:],
 			},
-			header: func() interfaces.ExecutionData {
+			header: func() interfaces.SilaData {
 				h, err := consensusblocks.WrappedSilaPayloadHeader(&silaenginev1.SilaPayloadHeader{
 					BlockNumber: 1,
 				})

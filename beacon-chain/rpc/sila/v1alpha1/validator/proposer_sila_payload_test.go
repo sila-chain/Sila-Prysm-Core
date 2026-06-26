@@ -145,10 +145,10 @@ func TestServer_getSilaPayload(t *testing.T) {
 			cfg.TerminalBlockHashActivationEpoch = tt.activationEpoch
 			params.OverrideBeaconConfig(cfg)
 
-			ed, err := blocks.NewWrappedExecutionData(&pb.SilaPayload{})
+			ed, err := blocks.NewWrappedSilaData(&pb.SilaPayload{})
 			require.NoError(t, err)
 			vs := &Server{
-				SilaEngineCaller:  &powtesting.SilaEngineClient{PayloadIDBytes: tt.payloadID, ErrForkchoiceUpdated: tt.forkchoiceErr, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed, OverrideBuilder: tt.override}},
+				SilaEngineCaller:  &powtesting.SilaEngineClient{PayloadIDBytes: tt.payloadID, ErrForkchoiceUpdated: tt.forkchoiceErr, GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed, OverrideBuilder: tt.override}},
 				HeadFetcher:            &chainMock.ChainService{State: tt.st},
 				FinalizationFetcher:    &chainMock.ChainService{},
 				BeaconDB:               beaconDB,
@@ -260,10 +260,10 @@ func TestServer_getSilaPayloadContextTimeout(t *testing.T) {
 	cfg.TerminalBlockHashActivationEpoch = 1
 	params.OverrideBeaconConfig(cfg)
 
-	ed, err := blocks.NewWrappedExecutionData(&pb.SilaPayload{})
+	ed, err := blocks.NewWrappedSilaData(&pb.SilaPayload{})
 	require.NoError(t, err)
 	vs := &Server{
-		SilaEngineCaller:  &powtesting.SilaEngineClient{PayloadIDBytes: &pb.PayloadIDBytes{}, ErrGetPayload: context.DeadlineExceeded, GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed}},
+		SilaEngineCaller:  &powtesting.SilaEngineClient{PayloadIDBytes: &pb.PayloadIDBytes{}, ErrGetPayload: context.DeadlineExceeded, GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed}},
 		HeadFetcher:            &chainMock.ChainService{State: nonTransitionSt},
 		BeaconDB:               beaconDB,
 		PayloadIDCache:         cache.NewPayloadIDCache(),
@@ -309,12 +309,12 @@ func TestServer_getSilaPayload_UnexpectedFeeRecipient(t *testing.T) {
 	payloadID := &pb.PayloadIDBytes{0x1}
 	payload := emptyPayload()
 	payload.FeeRecipient = feeRecipient[:]
-	ed, err := blocks.NewWrappedExecutionData(payload)
+	ed, err := blocks.NewWrappedSilaData(payload)
 	require.NoError(t, err)
 	vs := &Server{
 		SilaEngineCaller: &powtesting.SilaEngineClient{
 			PayloadIDBytes:     payloadID,
-			GetPayloadResponse: &blocks.GetPayloadResponse{ExecutionData: ed},
+			GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed},
 		},
 		HeadFetcher:            &chainMock.ChainService{State: transitionSt},
 		FinalizationFetcher:    &chainMock.ChainService{},
@@ -337,7 +337,7 @@ func TestServer_getSilaPayload_UnexpectedFeeRecipient(t *testing.T) {
 	res, err := vs.getLocalPayload(t.Context(), b.Block(), transitionSt, false)
 	require.NoError(t, err)
 	require.NotNil(t, res)
-	require.Equal(t, common.Address(res.ExecutionData.FeeRecipient()), feeRecipient)
+	require.Equal(t, common.Address(res.SilaData.FeeRecipient()), feeRecipient)
 
 	// We should NOT be getting the warning.
 	require.LogsDoNotContain(t, hook, "Fee recipient address from execution client is not what was expected")

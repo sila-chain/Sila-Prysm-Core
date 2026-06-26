@@ -47,7 +47,7 @@ func (body *BeaconBlockBody) Copy() *BeaconBlockBody {
 	}
 	return &BeaconBlockBody{
 		RandaoReveal:      bytesutil.SafeCopyBytes(body.RandaoReveal),
-		SilaExecutionData:          body.SilaExecutionData.Copy(),
+		SilaData:          body.SilaData.Copy(),
 		Graffiti:          bytesutil.SafeCopyBytes(body.Graffiti),
 		ProposerSlashings: CopySlice(body.ProposerSlashings),
 		AttesterSlashings: CopySlice(body.AttesterSlashings),
@@ -58,11 +58,11 @@ func (body *BeaconBlockBody) Copy() *BeaconBlockBody {
 }
 
 // Copy --
-func (data *SilaExecutionData) Copy() *SilaExecutionData {
+func (data *SilaData) Copy() *SilaData {
 	if data == nil {
 		return nil
 	}
-	return &SilaExecutionData{
+	return &SilaData{
 		DepositRoot:  bytesutil.SafeCopyBytes(data.DepositRoot),
 		DepositCount: data.DepositCount,
 		BlockHash:    bytesutil.SafeCopyBytes(data.BlockHash),
@@ -190,7 +190,7 @@ func (body *BeaconBlockBodyAltair) Copy() *BeaconBlockBodyAltair {
 	}
 	return &BeaconBlockBodyAltair{
 		RandaoReveal:      bytesutil.SafeCopyBytes(body.RandaoReveal),
-		SilaExecutionData:          body.SilaExecutionData.Copy(),
+		SilaData:          body.SilaData.Copy(),
 		Graffiti:          bytesutil.SafeCopyBytes(body.Graffiti),
 		ProposerSlashings: CopySlice(body.ProposerSlashings),
 		AttesterSlashings: CopySlice(body.AttesterSlashings),
@@ -259,7 +259,7 @@ func (body *BeaconBlockBodyBellatrix) Copy() *BeaconBlockBodyBellatrix {
 	}
 	return &BeaconBlockBodyBellatrix{
 		RandaoReveal:      bytesutil.SafeCopyBytes(body.RandaoReveal),
-		SilaExecutionData:          body.SilaExecutionData.Copy(),
+		SilaData:          body.SilaData.Copy(),
 		Graffiti:          bytesutil.SafeCopyBytes(body.Graffiti),
 		ProposerSlashings: CopySlice(body.ProposerSlashings),
 		AttesterSlashings: CopySlice(body.AttesterSlashings),
@@ -303,7 +303,7 @@ func (body *BlindedBeaconBlockBodyBellatrix) Copy() *BlindedBeaconBlockBodyBella
 	}
 	return &BlindedBeaconBlockBodyBellatrix{
 		RandaoReveal:           bytesutil.SafeCopyBytes(body.RandaoReveal),
-		SilaExecutionData:               body.SilaExecutionData.Copy(),
+		SilaData:               body.SilaData.Copy(),
 		Graffiti:               bytesutil.SafeCopyBytes(body.Graffiti),
 		ProposerSlashings:      CopySlice(body.ProposerSlashings),
 		AttesterSlashings:      CopySlice(body.AttesterSlashings),
@@ -351,7 +351,7 @@ func (body *BeaconBlockBodyCapella) Copy() *BeaconBlockBodyCapella {
 	}
 	return &BeaconBlockBodyCapella{
 		RandaoReveal:          bytesutil.SafeCopyBytes(body.RandaoReveal),
-		SilaExecutionData:              body.SilaExecutionData.Copy(),
+		SilaData:              body.SilaData.Copy(),
 		Graffiti:              bytesutil.SafeCopyBytes(body.Graffiti),
 		ProposerSlashings:     CopySlice(body.ProposerSlashings),
 		AttesterSlashings:     CopySlice(body.AttesterSlashings),
@@ -396,7 +396,7 @@ func (body *BlindedBeaconBlockBodyCapella) Copy() *BlindedBeaconBlockBodyCapella
 	}
 	return &BlindedBeaconBlockBodyCapella{
 		RandaoReveal:           bytesutil.SafeCopyBytes(body.RandaoReveal),
-		SilaExecutionData:               body.SilaExecutionData.Copy(),
+		SilaData:               body.SilaData.Copy(),
 		Graffiti:               bytesutil.SafeCopyBytes(body.Graffiti),
 		ProposerSlashings:      CopySlice(body.ProposerSlashings),
 		AttesterSlashings:      CopySlice(body.AttesterSlashings),
@@ -468,7 +468,7 @@ func (body *BlindedBeaconBlockBodyDeneb) Copy() *BlindedBeaconBlockBodyDeneb {
 	}
 	return &BlindedBeaconBlockBodyDeneb{
 		RandaoReveal:           bytesutil.SafeCopyBytes(body.RandaoReveal),
-		SilaExecutionData:               body.SilaExecutionData.Copy(),
+		SilaData:               body.SilaData.Copy(),
 		Graffiti:               bytesutil.SafeCopyBytes(body.Graffiti),
 		ProposerSlashings:      CopySlice(body.ProposerSlashings),
 		AttesterSlashings:      CopySlice(body.AttesterSlashings),
@@ -514,7 +514,7 @@ func (body *BeaconBlockBodyDeneb) Copy() *BeaconBlockBodyDeneb {
 	}
 	return &BeaconBlockBodyDeneb{
 		RandaoReveal:          bytesutil.SafeCopyBytes(body.RandaoReveal),
-		SilaExecutionData:              body.SilaExecutionData.Copy(),
+		SilaData:              body.SilaData.Copy(),
 		Graffiti:              bytesutil.SafeCopyBytes(body.Graffiti),
 		ProposerSlashings:     CopySlice(body.ProposerSlashings),
 		AttesterSlashings:     CopySlice(body.AttesterSlashings),
@@ -569,7 +569,7 @@ func (body *BlindedBeaconBlockBodyElectra) Copy() *BlindedBeaconBlockBodyElectra
 	}
 	return &BlindedBeaconBlockBodyElectra{
 		RandaoReveal:           bytesutil.SafeCopyBytes(body.RandaoReveal),
-		SilaExecutionData:               body.SilaExecutionData.Copy(),
+		SilaData:               body.SilaData.Copy(),
 		Graffiti:               bytesutil.SafeCopyBytes(body.Graffiti),
 		ProposerSlashings:      CopySlice(body.ProposerSlashings),
 		AttesterSlashings:      CopySlice(body.AttesterSlashings),
@@ -616,7 +616,7 @@ func (body *BeaconBlockBodyElectra) Copy() *BeaconBlockBodyElectra {
 	}
 	return &BeaconBlockBodyElectra{
 		RandaoReveal:          bytesutil.SafeCopyBytes(body.RandaoReveal),
-		SilaExecutionData:              body.SilaExecutionData.Copy(),
+		SilaData:              body.SilaData.Copy(),
 		Graffiti:              bytesutil.SafeCopyBytes(body.Graffiti),
 		ProposerSlashings:     CopySlice(body.ProposerSlashings),
 		AttesterSlashings:     CopySlice(body.AttesterSlashings),

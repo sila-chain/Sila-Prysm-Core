@@ -124,11 +124,11 @@ func (s *Service) postBlockProcess(cfg *postBlockProcessConfig) error {
 	return nil
 }
 
-func getStateVersionAndPayload(st state.BeaconState) (int, interfaces.ExecutionData, error) {
+func getStateVersionAndPayload(st state.BeaconState) (int, interfaces.SilaData, error) {
 	if st == nil {
 		return 0, nil, errors.New("nil state")
 	}
-	var preStateHeader interfaces.ExecutionData
+	var preStateHeader interfaces.SilaData
 	var err error
 	preStateVersion := st.Version()
 	switch preStateVersion {
@@ -178,7 +178,7 @@ func (s *Service) getBatchPrestate(ctx context.Context, b consensusblocks.ROBloc
 
 type versionAndHeader struct {
 	version int
-	header  interfaces.ExecutionData
+	header  interfaces.SilaData
 }
 
 func (s *Service) onBlockBatch(ctx context.Context, blks []consensusblocks.ROBlock, envelopes []interfaces.ROSignedSilaPayloadEnvelope, avs das.AvailabilityChecker) error {
@@ -785,7 +785,7 @@ func (s *Service) pruneCoveredElectraAttsFromPool(ctx context.Context, headState
 }
 
 // validateMergeTransitionBlock validates the merge transition block.
-func (s *Service) validateMergeTransitionBlock(ctx context.Context, stateVersion int, stateHeader interfaces.ExecutionData, blk interfaces.ReadOnlySignedBeaconBlock) error {
+func (s *Service) validateMergeTransitionBlock(ctx context.Context, stateVersion int, stateHeader interfaces.SilaData, blk interfaces.ReadOnlySignedBeaconBlock) error {
 	// Skip validation if block is older than Bellatrix.
 	if blocks.IsPreBellatrixVersion(blk.Block().Version()) {
 		return nil
@@ -799,7 +799,7 @@ func (s *Service) validateMergeTransitionBlock(ctx context.Context, stateVersion
 	if err != nil {
 		return invalidBlock{error: err}
 	}
-	isEmpty, err := consensusblocks.IsEmptyExecutionData(payload)
+	isEmpty, err := consensusblocks.IsEmptySilaData(payload)
 	if err != nil {
 		return err
 	}
@@ -815,7 +815,7 @@ func (s *Service) validateMergeTransitionBlock(ctx context.Context, stateVersion
 
 	// Skip validation if the block is not a merge transition block.
 	// To reach here. The payload must be non-empty. If the state header is empty then it's at transition.
-	empty, err := consensusblocks.IsEmptyExecutionData(stateHeader)
+	empty, err := consensusblocks.IsEmptySilaData(stateHeader)
 	if err != nil {
 		return err
 	}

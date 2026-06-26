@@ -68,7 +68,7 @@ func TestProcessDeposit_OK(t *testing.T) {
 	deposits, _, err := util.DeterministicDepositsAndKeys(1)
 	require.NoError(t, err)
 
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := util.DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 
 	err = web3Service.processDeposit(t.Context(), silaexecData, deposits[0])
@@ -96,7 +96,7 @@ func TestProcessDeposit_InvalidMerkleBranch(t *testing.T) {
 	deposits, _, err := util.DeterministicDepositsAndKeys(1)
 	require.NoError(t, err)
 
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := util.DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 
 	deposits[0].Proof = [][]byte{{'f', 'a', 'k', 'e'}}
@@ -140,7 +140,7 @@ func TestProcessDeposit_InvalidPublicKey(t *testing.T) {
 	root, err := generatedTrie.HashTreeRoot()
 	require.NoError(t, err)
 
-	silaexecData := &silapb.SilaExecutionData{
+	silaexecData := &silapb.SilaData{
 		DepositCount: 1,
 		DepositRoot:  root[:],
 	}
@@ -181,7 +181,7 @@ func TestProcessDeposit_InvalidSignature(t *testing.T) {
 	root, err := generatedTrie.HashTreeRoot()
 	require.NoError(t, err)
 
-	silaexecData := &silapb.SilaExecutionData{
+	silaexecData := &silapb.SilaData{
 		DepositCount: 1,
 		DepositRoot:  root[:],
 	}
@@ -217,7 +217,7 @@ func TestProcessDeposit_UnableToVerify(t *testing.T) {
 	require.NoError(t, err)
 	root, err := generatedTrie.HashTreeRoot()
 	require.NoError(t, err)
-	silaexecData := &silapb.SilaExecutionData{
+	silaexecData := &silapb.SilaData{
 		DepositCount: 1,
 		DepositRoot:  root[:],
 	}
@@ -270,7 +270,7 @@ func TestProcessDeposit_IncompleteDeposit(t *testing.T) {
 	require.NoError(t, err)
 	root, err := generatedTrie.HashTreeRoot()
 	require.NoError(t, err)
-	silaexecData := &silapb.SilaExecutionData{
+	silaexecData := &silapb.SilaData{
 		DepositCount: 1,
 		DepositRoot:  root[:],
 	}
@@ -317,7 +317,7 @@ func TestProcessDeposit_AllDepositedSuccessfully(t *testing.T) {
 
 	deposits, keys, err := util.DeterministicDepositsAndKeys(10)
 	require.NoError(t, err)
-	silaexecData, err := util.DeterministicSilaExecutionData(len(deposits))
+	silaexecData, err := util.DeterministicSilaData(len(deposits))
 	require.NoError(t, err)
 
 	for i := range keys {

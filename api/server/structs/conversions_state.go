@@ -31,10 +31,10 @@ func BeaconStateFromConsensus(st beaconState.BeaconState) (*BeaconState, error) 
 	for i, r := range srcHr {
 		hr[i] = hexutil.Encode(r)
 	}
-	srcVotes := st.SilaExecutionDataVotes()
-	votes := make([]*SilaExecutionData, len(srcVotes))
+	srcVotes := st.SilaDataVotes()
+	votes := make([]*SilaData, len(srcVotes))
 	for i, e := range srcVotes {
-		votes[i] = SilaExecutionDataFromConsensus(e)
+		votes[i] = SilaDataFromConsensus(e)
 	}
 	srcVals := st.Validators()
 	vals := make([]*Validator, len(srcVals))
@@ -82,8 +82,8 @@ func BeaconStateFromConsensus(st beaconState.BeaconState) (*BeaconState, error) 
 		BlockRoots:                  br,
 		StateRoots:                  sr,
 		HistoricalRoots:             hr,
-		SilaExecutionData:                    SilaExecutionDataFromConsensus(st.SilaExecutionData()),
-		SilaExecutionDataVotes:               votes,
+		SilaData:                    SilaDataFromConsensus(st.SilaData()),
+		SilaDataVotes:               votes,
 		SilaExecutionDepositIndex:            fmt.Sprintf("%d", st.SilaExecutionDepositIndex()),
 		Validators:                  vals,
 		Balances:                    bals,
@@ -118,10 +118,10 @@ func BeaconStateAltairFromConsensus(st beaconState.BeaconState) (*BeaconStateAlt
 	for i, r := range srcHr {
 		hr[i] = hexutil.Encode(r)
 	}
-	srcVotes := st.SilaExecutionDataVotes()
-	votes := make([]*SilaExecutionData, len(srcVotes))
+	srcVotes := st.SilaDataVotes()
+	votes := make([]*SilaData, len(srcVotes))
 	for i, e := range srcVotes {
-		votes[i] = SilaExecutionDataFromConsensus(e)
+		votes[i] = SilaDataFromConsensus(e)
 	}
 	srcVals := st.Validators()
 	vals := make([]*Validator, len(srcVals))
@@ -185,8 +185,8 @@ func BeaconStateAltairFromConsensus(st beaconState.BeaconState) (*BeaconStateAlt
 		BlockRoots:                  br,
 		StateRoots:                  sr,
 		HistoricalRoots:             hr,
-		SilaExecutionData:                    SilaExecutionDataFromConsensus(st.SilaExecutionData()),
-		SilaExecutionDataVotes:               votes,
+		SilaData:                    SilaDataFromConsensus(st.SilaData()),
+		SilaDataVotes:               votes,
 		SilaExecutionDepositIndex:            fmt.Sprintf("%d", st.SilaExecutionDepositIndex()),
 		Validators:                  vals,
 		Balances:                    bals,
@@ -224,10 +224,10 @@ func BeaconStateBellatrixFromConsensus(st beaconState.BeaconState) (*BeaconState
 	for i, r := range srcHr {
 		hr[i] = hexutil.Encode(r)
 	}
-	srcVotes := st.SilaExecutionDataVotes()
-	votes := make([]*SilaExecutionData, len(srcVotes))
+	srcVotes := st.SilaDataVotes()
+	votes := make([]*SilaData, len(srcVotes))
 	for i, e := range srcVotes {
-		votes[i] = SilaExecutionDataFromConsensus(e)
+		votes[i] = SilaDataFromConsensus(e)
 	}
 	srcVals := st.Validators()
 	vals := make([]*Validator, len(srcVals))
@@ -303,8 +303,8 @@ func BeaconStateBellatrixFromConsensus(st beaconState.BeaconState) (*BeaconState
 		BlockRoots:                   br,
 		StateRoots:                   sr,
 		HistoricalRoots:              hr,
-		SilaExecutionData:                     SilaExecutionDataFromConsensus(st.SilaExecutionData()),
-		SilaExecutionDataVotes:                votes,
+		SilaData:                     SilaDataFromConsensus(st.SilaData()),
+		SilaDataVotes:                votes,
 		SilaExecutionDepositIndex:             fmt.Sprintf("%d", st.SilaExecutionDepositIndex()),
 		Validators:                   vals,
 		Balances:                     bals,
@@ -343,10 +343,10 @@ func BeaconStateCapellaFromConsensus(st beaconState.BeaconState) (*BeaconStateCa
 	for i, r := range srcHr {
 		hr[i] = hexutil.Encode(r)
 	}
-	srcVotes := st.SilaExecutionDataVotes()
-	votes := make([]*SilaExecutionData, len(srcVotes))
+	srcVotes := st.SilaDataVotes()
+	votes := make([]*SilaData, len(srcVotes))
 	for i, e := range srcVotes {
-		votes[i] = SilaExecutionDataFromConsensus(e)
+		votes[i] = SilaDataFromConsensus(e)
 	}
 	srcVals := st.Validators()
 	vals := make([]*Validator, len(srcVals))
@@ -438,8 +438,8 @@ func BeaconStateCapellaFromConsensus(st beaconState.BeaconState) (*BeaconStateCa
 		BlockRoots:                   br,
 		StateRoots:                   sr,
 		HistoricalRoots:              hr,
-		SilaExecutionData:                     SilaExecutionDataFromConsensus(st.SilaExecutionData()),
-		SilaExecutionDataVotes:                votes,
+		SilaData:                     SilaDataFromConsensus(st.SilaData()),
+		SilaDataVotes:                votes,
 		SilaExecutionDepositIndex:             fmt.Sprintf("%d", st.SilaExecutionDepositIndex()),
 		Validators:                   vals,
 		Balances:                     bals,
@@ -481,10 +481,10 @@ func BeaconStateDenebFromConsensus(st beaconState.BeaconState) (*BeaconStateDene
 	for i, r := range srcHr {
 		hr[i] = hexutil.Encode(r)
 	}
-	srcVotes := st.SilaExecutionDataVotes()
-	votes := make([]*SilaExecutionData, len(srcVotes))
+	srcVotes := st.SilaDataVotes()
+	votes := make([]*SilaData, len(srcVotes))
 	for i, e := range srcVotes {
-		votes[i] = SilaExecutionDataFromConsensus(e)
+		votes[i] = SilaDataFromConsensus(e)
 	}
 	srcVals := st.Validators()
 	vals := make([]*Validator, len(srcVals))
@@ -576,8 +576,8 @@ func BeaconStateDenebFromConsensus(st beaconState.BeaconState) (*BeaconStateDene
 		BlockRoots:                   br,
 		StateRoots:                   sr,
 		HistoricalRoots:              hr,
-		SilaExecutionData:                     SilaExecutionDataFromConsensus(st.SilaExecutionData()),
-		SilaExecutionDataVotes:                votes,
+		SilaData:                     SilaDataFromConsensus(st.SilaData()),
+		SilaDataVotes:                votes,
 		SilaExecutionDepositIndex:             fmt.Sprintf("%d", st.SilaExecutionDepositIndex()),
 		Validators:                   vals,
 		Balances:                     bals,
@@ -619,10 +619,10 @@ func BeaconStateElectraFromConsensus(st beaconState.BeaconState) (*BeaconStateEl
 	for i, r := range srcHr {
 		hr[i] = hexutil.Encode(r)
 	}
-	srcVotes := st.SilaExecutionDataVotes()
-	votes := make([]*SilaExecutionData, len(srcVotes))
+	srcVotes := st.SilaDataVotes()
+	votes := make([]*SilaData, len(srcVotes))
 	for i, e := range srcVotes {
-		votes[i] = SilaExecutionDataFromConsensus(e)
+		votes[i] = SilaDataFromConsensus(e)
 	}
 	srcVals := st.Validators()
 	vals := make([]*Validator, len(srcVals))
@@ -750,8 +750,8 @@ func BeaconStateElectraFromConsensus(st beaconState.BeaconState) (*BeaconStateEl
 		BlockRoots:                    br,
 		StateRoots:                    sr,
 		HistoricalRoots:               hr,
-		SilaExecutionData:                      SilaExecutionDataFromConsensus(st.SilaExecutionData()),
-		SilaExecutionDataVotes:                 votes,
+		SilaData:                      SilaDataFromConsensus(st.SilaData()),
+		SilaDataVotes:                 votes,
 		SilaExecutionDepositIndex:              fmt.Sprintf("%d", st.SilaExecutionDepositIndex()),
 		Validators:                    vals,
 		Balances:                      bals,
@@ -802,10 +802,10 @@ func BeaconStateFuluFromConsensus(st beaconState.BeaconState) (*BeaconStateFulu,
 	for i, r := range srcHr {
 		hr[i] = hexutil.Encode(r)
 	}
-	srcVotes := st.SilaExecutionDataVotes()
-	votes := make([]*SilaExecutionData, len(srcVotes))
+	srcVotes := st.SilaDataVotes()
+	votes := make([]*SilaData, len(srcVotes))
 	for i, e := range srcVotes {
-		votes[i] = SilaExecutionDataFromConsensus(e)
+		votes[i] = SilaDataFromConsensus(e)
 	}
 	srcVals := st.Validators()
 	vals := make([]*Validator, len(srcVals))
@@ -940,8 +940,8 @@ func BeaconStateFuluFromConsensus(st beaconState.BeaconState) (*BeaconStateFulu,
 		BlockRoots:                    br,
 		StateRoots:                    sr,
 		HistoricalRoots:               hr,
-		SilaExecutionData:                      SilaExecutionDataFromConsensus(st.SilaExecutionData()),
-		SilaExecutionDataVotes:                 votes,
+		SilaData:                      SilaDataFromConsensus(st.SilaData()),
+		SilaDataVotes:                 votes,
 		SilaExecutionDepositIndex:              fmt.Sprintf("%d", st.SilaExecutionDepositIndex()),
 		Validators:                    vals,
 		Balances:                      bals,
@@ -993,10 +993,10 @@ func BeaconStateGloasFromConsensus(st beaconState.BeaconState) (*BeaconStateGloa
 	for i, r := range srcHr {
 		hr[i] = hexutil.Encode(r)
 	}
-	srcVotes := st.SilaExecutionDataVotes()
-	votes := make([]*SilaExecutionData, len(srcVotes))
+	srcVotes := st.SilaDataVotes()
+	votes := make([]*SilaData, len(srcVotes))
 	for i, e := range srcVotes {
-		votes[i] = SilaExecutionDataFromConsensus(e)
+		votes[i] = SilaDataFromConsensus(e)
 	}
 	srcVals := st.Validators()
 	vals := make([]*Validator, len(srcVals))
@@ -1157,8 +1157,8 @@ func BeaconStateGloasFromConsensus(st beaconState.BeaconState) (*BeaconStateGloa
 		BlockRoots:                    br,
 		StateRoots:                    sr,
 		HistoricalRoots:               hr,
-		SilaExecutionData:                      SilaExecutionDataFromConsensus(st.SilaExecutionData()),
-		SilaExecutionDataVotes:                 votes,
+		SilaData:                      SilaDataFromConsensus(st.SilaData()),
+		SilaDataVotes:                 votes,
 		SilaExecutionDepositIndex:              fmt.Sprintf("%d", st.SilaExecutionDepositIndex()),
 		Validators:                    vals,
 		Balances:                      bals,

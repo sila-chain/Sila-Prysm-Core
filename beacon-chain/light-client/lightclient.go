@@ -477,7 +477,7 @@ func CreateDefaultLightClientUpdate(attestedBlock interfaces.ReadOnlySignedBeaco
 	return light_client.NewWrappedUpdate(m)
 }
 
-func ComputeTransactionsRoot(payload interfaces.ExecutionData) ([]byte, error) {
+func ComputeTransactionsRoot(payload interfaces.SilaData) ([]byte, error) {
 	transactionsRoot, err := payload.TransactionsRoot()
 	if errors.Is(err, consensus_types.ErrUnsupportedField) {
 		transactions, err := payload.Transactions()
@@ -495,7 +495,7 @@ func ComputeTransactionsRoot(payload interfaces.ExecutionData) ([]byte, error) {
 	return transactionsRoot, nil
 }
 
-func ComputeWithdrawalsRoot(payload interfaces.ExecutionData) ([]byte, error) {
+func ComputeWithdrawalsRoot(payload interfaces.SilaData) ([]byte, error) {
 	withdrawalsRoot, err := payload.WithdrawalsRoot()
 	if errors.Is(err, consensus_types.ErrUnsupportedField) {
 		withdrawals, err := payload.Withdrawals()

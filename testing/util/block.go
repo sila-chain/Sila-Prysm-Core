@@ -78,7 +78,7 @@ func NewBeaconBlock() *silapb.SignedBeaconBlock {
 			StateRoot:  make([]byte, fieldparams.RootLength),
 			Body: &silapb.BeaconBlockBody{
 				RandaoReveal: make([]byte, fieldparams.BLSSignatureLength),
-				SilaExecutionData: &silapb.SilaExecutionData{
+				SilaData: &silapb.SilaData{
 					DepositRoot: make([]byte, fieldparams.RootLength),
 					BlockHash:   make([]byte, fieldparams.RootLength),
 				},
@@ -159,9 +159,9 @@ func GenerateFullBlock(
 
 	numToGen = conf.NumDeposits
 	var newDeposits []*silapb.Deposit
-	silaexecData := bState.SilaExecutionData()
+	silaexecData := bState.SilaData()
 	if numToGen > 0 {
-		newDeposits, silaexecData, err = generateDepositsAndSilaExecutionData(bState, numToGen)
+		newDeposits, silaexecData, err = generateDepositsAndSilaData(bState, numToGen)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed generating %d deposits:", numToGen)
 		}
@@ -211,7 +211,7 @@ func GenerateFullBlock(
 		ParentRoot:    parentRoot[:],
 		ProposerIndex: idx,
 		Body: &silapb.BeaconBlockBody{
-			SilaExecutionData:          silaexecData,
+			SilaData:          silaexecData,
 			RandaoReveal:      reveal,
 			ProposerSlashings: pSlashings,
 			AttesterSlashings: aSlashings,
@@ -424,12 +424,12 @@ func generateAttesterSlashings(
 	return attesterSlashings, nil
 }
 
-func generateDepositsAndSilaExecutionData(
+func generateDepositsAndSilaData(
 	bState state.BeaconState,
 	numDeposits uint64,
 ) (
 	[]*silapb.Deposit,
-	*silapb.SilaExecutionData,
+	*silapb.SilaData,
 	error,
 ) {
 	previousDepsLen := bState.SilaExecutionDepositIndex()
@@ -437,9 +437,9 @@ func generateDepositsAndSilaExecutionData(
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "could not get deposits")
 	}
-	silaexecData, err := DeterministicSilaExecutionData(len(currentDeposits))
+	silaexecData, err := DeterministicSilaData(len(currentDeposits))
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "could not get silaExecutionData")
+		return nil, nil, errors.Wrap(err, "could not get silaData")
 	}
 	return currentDeposits[previousDepsLen:], silaexecData, nil
 }
@@ -569,8 +569,8 @@ func HydrateBeaconBlockBody(b *silapb.BeaconBlockBody) *silapb.BeaconBlockBody {
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, fieldparams.RootLength)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		}
@@ -616,8 +616,8 @@ func HydrateV1BeaconBlockBody(b *v1.BeaconBlockBody) *v1.BeaconBlockBody {
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, fieldparams.RootLength)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &v1.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &v1.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		}
@@ -674,8 +674,8 @@ func HydrateBeaconBlockBodyAltair(b *silapb.BeaconBlockBodyAltair) *silapb.Beaco
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, fieldparams.RootLength)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		}
@@ -731,8 +731,8 @@ func HydrateBeaconBlockBodyBellatrix(b *silapb.BeaconBlockBodyBellatrix) *silapb
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, fieldparams.RootLength)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		}
@@ -798,8 +798,8 @@ func HydrateBlindedBeaconBlockBodyBellatrix(b *silapb.BlindedBeaconBlockBodyBell
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, 32)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		}
@@ -869,8 +869,8 @@ func HydrateBeaconBlockBodyCapella(b *silapb.BeaconBlockBodyCapella) *silapb.Bea
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, fieldparams.RootLength)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		}
@@ -937,8 +937,8 @@ func HydrateBlindedBeaconBlockBodyCapella(b *silapb.BlindedBeaconBlockBodyCapell
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, 32)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		}
@@ -1019,8 +1019,8 @@ func HydrateBeaconBlockBodyDeneb(b *silapb.BeaconBlockBodyDeneb) *silapb.BeaconB
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, fieldparams.RootLength)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		}
@@ -1071,8 +1071,8 @@ func HydrateBlindedBeaconBlockBodyDeneb(b *silapb.BlindedBeaconBlockBodyDeneb) *
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, 32)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		}
@@ -1169,8 +1169,8 @@ func HydrateBeaconBlockBodyElectra(b *silapb.BeaconBlockBodyElectra) *silapb.Bea
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, fieldparams.RootLength)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		}
@@ -1256,8 +1256,8 @@ func HydrateBlindedBeaconBlockBodyElectra(b *silapb.BlindedBeaconBlockBodyElectr
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, 32)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		}
@@ -1374,8 +1374,8 @@ func HydrateBeaconBlockBodyFulu(b *silapb.BeaconBlockBodyElectra) *silapb.Beacon
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, fieldparams.RootLength)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		}
@@ -1443,8 +1443,8 @@ func HydrateBlindedBeaconBlockBodyFulu(b *silapb.BlindedBeaconBlockBodyElectra) 
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, 32)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, 32),
 		}
@@ -1515,8 +1515,8 @@ func HydrateBeaconBlockBodyGloas(b *silapb.BeaconBlockBodyGloas) *silapb.BeaconB
 	if b.Graffiti == nil {
 		b.Graffiti = make([]byte, fieldparams.RootLength)
 	}
-	if b.SilaExecutionData == nil {
-		b.SilaExecutionData = &silapb.SilaExecutionData{
+	if b.SilaData == nil {
+		b.SilaData = &silapb.SilaData{
 			DepositRoot: make([]byte, fieldparams.RootLength),
 			BlockHash:   make([]byte, fieldparams.RootLength),
 		}

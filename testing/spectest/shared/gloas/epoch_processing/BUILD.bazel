@@ -6,7 +6,7 @@ go_library(
     srcs = [
         "builder_pending_payments.go",
         "effective_balance_updates.go",
-        "sila_execution_data_reset.go",
+        "sila_data_reset.go",
         "helpers.go",
         "historical_summaries_update.go",
         "inactivity_updates.go",

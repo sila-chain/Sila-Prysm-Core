@@ -67,10 +67,10 @@ func (vs *Server) storeSilaPayloadEnvelope(
 }
 
 func extractSilaPayloadGloas(local *consensusblocks.GetPayloadResponse) *silaenginev1.SilaPayloadGloas {
-	if local == nil || local.ExecutionData == nil || local.ExecutionData.IsNil() {
+	if local == nil || local.SilaData == nil || local.SilaData.IsNil() {
 		return nil
 	}
-	if p, ok := local.ExecutionData.Proto().(*silaenginev1.SilaPayloadGloas); ok {
+	if p, ok := local.SilaData.Proto().(*silaenginev1.SilaPayloadGloas); ok {
 		return p
 	}
 	return nil
