@@ -61,7 +61,7 @@ func (node *Node) Start(ctx context.Context) error {
 	}
 	silaJsonPath := path.Join(silaexecPath, "genesis.json")
 
-	gen := interop.GethTestnetGenesis(e2e.TestParams.SilaExecutionGenesisTime, params.BeaconConfig())
+	gen := interop.SilaTestnetGenesis(e2e.TestParams.SilaExecutionGenesisTime, params.BeaconConfig())
 	b, err := json.Marshal(gen)
 	if err != nil {
 		return err

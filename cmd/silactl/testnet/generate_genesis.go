@@ -282,10 +282,10 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 	if f.SilaGenesisJsonIn != "" {
 		gen.Timestamp = f.GenesisTime
 		genesis := time.Unix(int64(f.GenesisTime), 0)
-		gen.Config.ShanghaiTime = interop.GethShanghaiTime(genesis, params.BeaconConfig())
-		gen.Config.CancunTime = interop.GethCancunTime(genesis, params.BeaconConfig())
-		gen.Config.PragueTime = interop.GethPragueTime(genesis, params.BeaconConfig())
-		gen.Config.OsakaTime = interop.GethOsakaTime(genesis, params.BeaconConfig())
+		gen.Config.ShanghaiTime = interop.SilaShanghaiTime(genesis, params.BeaconConfig())
+		gen.Config.CancunTime = interop.SilaCancunTime(genesis, params.BeaconConfig())
+		gen.Config.PragueTime = interop.SilaPragueTime(genesis, params.BeaconConfig())
+		gen.Config.OsakaTime = interop.SilaOsakaTime(genesis, params.BeaconConfig())
 
 		fields := logrus.Fields{}
 		if gen.Config.ShanghaiTime != nil {
@@ -314,7 +314,7 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 			}
 		}
 	} else {
-		gen = interop.GethTestnetGenesis(time.Unix(int64(f.GenesisTime), 0), params.BeaconConfig())
+		gen = interop.SilaTestnetGenesis(time.Unix(int64(f.GenesisTime), 0), params.BeaconConfig())
 	}
 
 	if f.SilaGenesisJsonOut != "" {

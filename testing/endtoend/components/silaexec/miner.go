@@ -88,7 +88,7 @@ func (m *Miner) initAttempt(ctx context.Context, attempt int) (*os.File, error) 
 	}
 
 	silaJsonPath := path.Join(path.Dir(binaryPath), "genesis.json")
-	gen := interop.GethTestnetGenesis(e2e.TestParams.SilaExecutionGenesisTime, params.BeaconConfig())
+	gen := interop.SilaTestnetGenesis(e2e.TestParams.SilaExecutionGenesisTime, params.BeaconConfig())
 	log.WithField("timestamp", e2e.TestParams.SilaExecutionGenesisTime).Info("SilaExecution miner genesis")
 	b, err := json.Marshal(gen)
 	if err != nil {

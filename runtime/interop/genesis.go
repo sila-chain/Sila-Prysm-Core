@@ -68,9 +68,9 @@ var DefaultSilaDepositStorage = map[string]string{
 var bigz = big.NewInt(0)
 var minerBalance = big.NewInt(0)
 
-// GethShanghaiTime calculates the absolute time of the shanghai (aka capella) fork block
+// SilaShanghaiTime calculates the absolute time of the shanghai (aka capella) fork block
 // by adding the relative time of the capella the fork epoch to the given genesis timestamp.
-func GethShanghaiTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
+func SilaShanghaiTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
 	var shanghaiTime *uint64
 	if cfg.CapellaForkEpoch != math.MaxUint64 {
 		startSlot, err := slots.EpochStart(cfg.CapellaForkEpoch)
@@ -83,9 +83,9 @@ func GethShanghaiTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *u
 	return shanghaiTime
 }
 
-// GethCancunTime calculates the absolute time of the cancun (aka deneb) fork block
+// SilaCancunTime calculates the absolute time of the cancun (aka deneb) fork block
 // by adding the relative time of the capella the fork epoch to the given genesis timestamp.
-func GethCancunTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
+func SilaCancunTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
 	var cancunTime *uint64
 	if cfg.DenebForkEpoch != math.MaxUint64 {
 		startSlot, err := slots.EpochStart(cfg.DenebForkEpoch)
@@ -98,9 +98,9 @@ func GethCancunTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uin
 	return cancunTime
 }
 
-// GethPragueTime calculates the absolute time of the prague (aka electra) fork block
+// SilaPragueTime calculates the absolute time of the prague (aka electra) fork block
 // by adding the relative time of the electra fork epoch to the given genesis timestamp.
-func GethPragueTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
+func SilaPragueTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
 	var pragueTime *uint64
 	if cfg.ElectraForkEpoch != math.MaxUint64 {
 		startSlot, err := slots.EpochStart(cfg.ElectraForkEpoch)
@@ -113,9 +113,9 @@ func GethPragueTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uin
 	return pragueTime
 }
 
-// GethOsakaTime calculates the absolute time of the osaka (aka fulu) fork block
+// SilaOsakaTime calculates the absolute time of the osaka (aka fulu) fork block
 // by adding the relative time of the capella the fork epoch to the given genesis timestamp.
-func GethOsakaTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
+func SilaOsakaTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
 	var osakaTime *uint64
 	if cfg.FuluForkEpoch != math.MaxUint64 {
 		startSlot, err := slots.EpochStart(cfg.FuluForkEpoch)
@@ -167,24 +167,24 @@ func GethBPO2Time(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint6
 	return nil
 }
 
-// GethTestnetGenesis creates a genesis.json for silaexec clients with a set of defaults suitable for ephemeral testnets,
+// SilaTestnetGenesis creates a genesis.json for silaexec clients with a set of defaults suitable for ephemeral testnets,
 // like in an e2e test. The parameters are minimal but the full value is returned unmarshaled so that it can be
 // customized as desired.
-func GethTestnetGenesis(genesis time.Time, cfg *clparams.BeaconChainConfig) *core.Genesis {
+func SilaTestnetGenesis(genesis time.Time, cfg *clparams.BeaconChainConfig) *core.Genesis {
 	genesisTime := uint64(genesis.Unix())
-	shanghaiTime := GethShanghaiTime(genesis, cfg)
+	shanghaiTime := SilaShanghaiTime(genesis, cfg)
 	if cfg.CapellaForkEpoch == 0 {
 		shanghaiTime = &genesisTime
 	}
-	cancunTime := GethCancunTime(genesis, cfg)
+	cancunTime := SilaCancunTime(genesis, cfg)
 	if cfg.DenebForkEpoch == 0 {
 		cancunTime = &genesisTime
 	}
-	pragueTime := GethPragueTime(genesis, cfg)
+	pragueTime := SilaPragueTime(genesis, cfg)
 	if cfg.ElectraForkEpoch == 0 {
 		pragueTime = &genesisTime
 	}
-	osakaTime := GethOsakaTime(genesis, cfg)
+	osakaTime := SilaOsakaTime(genesis, cfg)
 	if cfg.FuluForkEpoch == 0 {
 		osakaTime = &genesisTime
 	}
@@ -214,7 +214,7 @@ func GethTestnetGenesis(genesis time.Time, cfg *clparams.BeaconChainConfig) *cor
 		OsakaTime:               osakaTime,
 		BPO1Time:                bpo1Time,
 		BPO2Time:                bpo2Time,
-		SilaDepositAddress:  common.HexToAddress(cfg.SilaDepositAddress),
+		SilaDepositAddress:      common.HexToAddress(cfg.SilaDepositAddress),
 		BlobScheduleConfig: &params.BlobScheduleConfig{
 			Cancun: params.DefaultCancunBlobConfig,
 			Prague: params.DefaultPragueBlobConfig,
