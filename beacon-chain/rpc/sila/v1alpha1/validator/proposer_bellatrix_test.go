@@ -6,14 +6,15 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/client/builder"
 	blockchainTest "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/testing"
 	builderTest "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/builder/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/signing"
 	dbTest "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/testing"
-	powtesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
 	doublylinkedtree "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice/doubly-linked-tree"
+	powtesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	consensus_types "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types"
@@ -23,14 +24,13 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/ssz"
-	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
-	"github.com/pkg/errors"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
 
@@ -519,9 +519,9 @@ func TestServer_setSilaData(t *testing.T) {
 		vs.SilaEngineCaller = &powtesting.SilaEngineClient{
 			PayloadIDBytes: id,
 			GetPayloadResponse: &blocks.GetPayloadResponse{
-				SilaData: ed,
-				BlobsBundler:  blobsBundle,
-				Bid:           primitives.ZeroWei(),
+				SilaData:     ed,
+				BlobsBundler: blobsBundle,
+				Bid:          primitives.ZeroWei(),
 			},
 		}
 		blk.SetSlot(primitives.Slot(params.BeaconConfig().DenebForkEpoch) * params.BeaconConfig().SlotsPerEpoch)
@@ -691,7 +691,7 @@ func TestServer_setSilaData(t *testing.T) {
 			Pubkey:             sk.PublicKey().Marshal(),
 			Value:              bytesutil.PadTo(builderValue, 32),
 			BlobKzgCommitments: [][]byte{bytesutil.PadTo([]byte{2}, fieldparams.BLSPubkeyLength), bytesutil.PadTo([]byte{5}, fieldparams.BLSPubkeyLength)},
-			SilaRequests:  requests,
+			SilaRequests:       requests,
 		}
 
 		d := params.BeaconConfig().DomainApplicationBuilder
@@ -1058,7 +1058,7 @@ func TestServer_getPayloadHeader(t *testing.T) {
 					Pubkey:             sk.PublicKey().Marshal(),
 					Value:              bytesutil.PadTo([]byte{1, 2, 3}, 32),
 					BlobKzgCommitments: [][]byte{bytesutil.PadTo([]byte{2}, fieldparams.BLSPubkeyLength)},
-					SilaRequests:  requests,
+					SilaRequests:       requests,
 				}
 
 				d := params.BeaconConfig().DomainApplicationBuilder

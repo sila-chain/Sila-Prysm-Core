@@ -19,6 +19,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/httprest"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/middleware"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/async/event"
@@ -32,7 +33,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/kv"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/pruner"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/slasherkv"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice"
 	doublylinkedtree "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice/doubly-linked-tree"
 	lightclient "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/light-client"
@@ -47,6 +47,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/peers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/slasher"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
@@ -68,7 +69,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/prereqs"
 	"github.com/sila-chain/Sila/common"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -79,9 +79,9 @@ const testSkipPowFlag = "test-skip-pow"
 // for the beacon node. We keep this as a separate struct to not pollute the actual BeaconNode
 // struct, as it is merely used to pass down configuration options into the appropriate services.
 type serviceFlagOpts struct {
-	blockchainFlagOpts     []blockchain.Option
-	silaChainFlagOpts []execution.Option
-	builderOpts            []builder.Option
+	blockchainFlagOpts []blockchain.Option
+	silaChainFlagOpts  []silaexec.Option
+	builderOpts        []builder.Option
 }
 
 // BeaconNode defines a struct that handles the services running a random beacon chain
@@ -107,7 +107,7 @@ type BeaconNode struct {
 	trackedValidatorsCache   *cache.TrackedValidatorsCache
 	proposerPreferencesCache *cache.ProposerPreferencesCache
 	payloadIDCache           *cache.PayloadIDCache
-	silaPayloadCache    *cache.SilaPayloadEnvelopeCache
+	silaPayloadCache         *cache.SilaPayloadEnvelopeCache
 	stateFeed                *event.Feed
 	blockFeed                *event.Feed
 	opFeed                   *event.Feed
@@ -177,7 +177,7 @@ func New(cliCtx *cli.Context, cancel context.CancelFunc, optFuncs []func(*cli.Co
 		// are global and include proposers we do not own.
 		proposerPreferencesCache: cache.NewProposerPreferencesCache(),
 		payloadIDCache:           cache.NewPayloadIDCache(),
-		silaPayloadCache:    cache.NewSilaPayloadEnvelopeCache(),
+		silaPayloadCache:         cache.NewSilaPayloadEnvelopeCache(),
 		slasherBlockHeadersFeed:  new(event.Feed),
 		slasherAttestationsFeed:  new(event.Feed),
 		serviceFlagOpts:          &serviceFlagOpts{},
@@ -218,7 +218,7 @@ func New(cliCtx *cli.Context, cancel context.CancelFunc, optFuncs []func(*cli.Co
 	beacon.ClockWaiter = synchronizer
 	beacon.forkChoicer = doublylinkedtree.New()
 
-	depositAddress, err := execution.SilaDepositAddress()
+	depositAddress, err := silaexec.SilaDepositAddress()
 	if err != nil {
 		return nil, err
 	}
@@ -741,7 +741,7 @@ func (b *BeaconNode) registerSlashingPoolService() error {
 }
 
 func (b *BeaconNode) registerBlockchainService(fc forkchoice.ForkChoicer, gs *startup.ClockSynchronizer, syncComplete chan struct{}) error {
-	var web3Service *execution.Service
+	var web3Service *silaexec.Service
 	if err := b.services.FetchService(&web3Service); err != nil {
 		return err
 	}
@@ -792,35 +792,35 @@ func (b *BeaconNode) registerBlockchainService(fc forkchoice.ForkChoicer, gs *st
 
 func (b *BeaconNode) registerPOWChainService() error {
 	if b.cliCtx.Bool(testSkipPowFlag) {
-		return b.services.RegisterService(&execution.Service{})
+		return b.services.RegisterService(&silaexec.Service{})
 	}
-	bs, err := execution.NewPowchainCollector(b.ctx)
+	bs, err := silaexec.NewPowchainCollector(b.ctx)
 	if err != nil {
 		return err
 	}
-	silaDepositAddr, err := execution.SilaDepositAddress()
+	silaDepositAddr, err := silaexec.SilaDepositAddress()
 	if err != nil {
 		return err
 	}
 
 	// Create GraffitiInfo for client version tracking in block graffiti
-	graffitiInfo := execution.NewGraffitiInfo()
+	graffitiInfo := silaexec.NewGraffitiInfo()
 
 	// skipcq: CRT-D0001
 	opts := append(
 		b.serviceFlagOpts.silaChainFlagOpts,
-		execution.WithSilaDepositAddress(common.HexToAddress(silaDepositAddr)),
-		execution.WithDatabase(b.db),
-		execution.WithDepositCache(b.depositCache),
-		execution.WithStateNotifier(b),
-		execution.WithStateGen(b.stateGen),
-		execution.WithBeaconNodeStatsUpdater(bs),
-		execution.WithFinalizedStateAtStartup(b.finalizedStateAtStartUp),
-		execution.WithJwtId(b.cliCtx.String(flags.JwtId.Name)),
-		execution.WithVerifierWaiter(b.verifyInitWaiter),
-		execution.WithGraffitiInfo(graffitiInfo),
+		silaexec.WithSilaDepositAddress(common.HexToAddress(silaDepositAddr)),
+		silaexec.WithDatabase(b.db),
+		silaexec.WithDepositCache(b.depositCache),
+		silaexec.WithStateNotifier(b),
+		silaexec.WithStateGen(b.stateGen),
+		silaexec.WithBeaconNodeStatsUpdater(bs),
+		silaexec.WithFinalizedStateAtStartup(b.finalizedStateAtStartUp),
+		silaexec.WithJwtId(b.cliCtx.String(flags.JwtId.Name)),
+		silaexec.WithVerifierWaiter(b.verifyInitWaiter),
+		silaexec.WithGraffitiInfo(graffitiInfo),
 	)
-	web3Service, err := execution.NewService(b.ctx, opts...)
+	web3Service, err := silaexec.NewService(b.ctx, opts...)
 	if err != nil {
 		return errors.Wrap(err, "could not register proof-of-work chain web3Service")
 	}
@@ -829,7 +829,7 @@ func (b *BeaconNode) registerPOWChainService() error {
 }
 
 func (b *BeaconNode) registerSyncService(initialSyncComplete chan struct{}, bFillStore *backfill.Store) error {
-	var web3Service *execution.Service
+	var web3Service *silaexec.Service
 	if err := b.services.FetchService(&web3Service); err != nil {
 		return err
 	}
@@ -942,7 +942,7 @@ func (b *BeaconNode) registerRPCService(router *http.ServeMux) error {
 		return err
 	}
 
-	var web3Service *execution.Service
+	var web3Service *silaexec.Service
 	if err := b.services.FetchService(&web3Service); err != nil {
 		return err
 	}
@@ -980,65 +980,65 @@ func (b *BeaconNode) registerRPCService(router *http.ServeMux) error {
 	p2pService := b.fetchP2P()
 	rpcService := rpc.NewService(b.ctx, &rpc.Config{
 		SilaEngineCaller:            web3Service,
-		ExecutionReconstructor:           web3Service,
-		Host:                             host,
-		Port:                             port,
-		BeaconMonitoringHost:             beaconMonitoringHost,
-		BeaconMonitoringPort:             beaconMonitoringPort,
-		CertFlag:                         cert,
-		KeyFlag:                          key,
-		BeaconDB:                         b.db,
-		Broadcaster:                      p2pService,
-		PeersFetcher:                     p2pService,
-		PeerManager:                      p2pService,
-		MetadataProvider:                 p2pService,
-		ChainInfoFetcher:                 chainService,
-		HeadFetcher:                      chainService,
-		CanonicalFetcher:                 chainService,
-		ForkFetcher:                      chainService,
-		ForkchoiceFetcher:                chainService,
-		FinalizationFetcher:              chainService,
-		BlockReceiver:                    chainService,
-		PayloadAttestationReceiver:       chainService,
+		ExecutionReconstructor:      web3Service,
+		Host:                        host,
+		Port:                        port,
+		BeaconMonitoringHost:        beaconMonitoringHost,
+		BeaconMonitoringPort:        beaconMonitoringPort,
+		CertFlag:                    cert,
+		KeyFlag:                     key,
+		BeaconDB:                    b.db,
+		Broadcaster:                 p2pService,
+		PeersFetcher:                p2pService,
+		PeerManager:                 p2pService,
+		MetadataProvider:            p2pService,
+		ChainInfoFetcher:            chainService,
+		HeadFetcher:                 chainService,
+		CanonicalFetcher:            chainService,
+		ForkFetcher:                 chainService,
+		ForkchoiceFetcher:           chainService,
+		FinalizationFetcher:         chainService,
+		BlockReceiver:               chainService,
+		PayloadAttestationReceiver:  chainService,
 		SilaPayloadEnvelopeReceiver: chainService,
-		BlobReceiver:                     chainService,
-		DataColumnReceiver:               chainService,
-		AttestationReceiver:              chainService,
-		GenesisTimeFetcher:               chainService,
-		GenesisFetcher:                   chainService,
-		OptimisticModeFetcher:            chainService,
-		AttestationCache:                 b.attestationCache,
-		AttestationsPool:                 b.attestationPool,
-		PayloadAttestationPool:           b.payloadAttestationPool,
-		ExitPool:                         b.exitPool,
-		SlashingsPool:                    b.slashingsPool,
-		BLSChangesPool:                   b.blsToExecPool,
-		SyncCommitteeObjectPool:          b.syncCommitteePool,
+		BlobReceiver:                chainService,
+		DataColumnReceiver:          chainService,
+		AttestationReceiver:         chainService,
+		GenesisTimeFetcher:          chainService,
+		GenesisFetcher:              chainService,
+		OptimisticModeFetcher:       chainService,
+		AttestationCache:            b.attestationCache,
+		AttestationsPool:            b.attestationPool,
+		PayloadAttestationPool:      b.payloadAttestationPool,
+		ExitPool:                    b.exitPool,
+		SlashingsPool:               b.slashingsPool,
+		BLSChangesPool:              b.blsToExecPool,
+		SyncCommitteeObjectPool:     b.syncCommitteePool,
 		SilaChainService:            web3Service,
 		SilaChainInfoFetcher:        web3Service,
-		ChainStartFetcher:                chainStartFetcher,
-		MockSilaExecutionVotes:                    mockSilaDataVotes,
-		SyncService:                      syncService,
-		DepositFetcher:                   depositFetcher,
-		PendingDepositFetcher:            b.depositCache,
-		BlockNotifier:                    b,
-		StateNotifier:                    b,
-		OperationNotifier:                b,
-		StateGen:                         b.stateGen,
-		EnableDebugRPCEndpoints:          enableDebugRPCEndpoints,
-		MaxMsgSize:                       maxMsgSize,
-		BlockBuilder:                     b.fetchBuilderService(),
-		Router:                           router,
-		ClockWaiter:                      b.ClockWaiter,
-		BlobStorage:                      b.BlobStorage,
-		DataColumnStorage:                b.DataColumnStorage,
-		TrackedValidatorsCache:           b.trackedValidatorsCache,
-		ProposerPreferencesCache:         b.proposerPreferencesCache,
-		HighestBidCache:                  regularSyncService.HighestSilaPayloadBidCache(),
-		PayloadIDCache:                   b.payloadIDCache,
+		ChainStartFetcher:           chainStartFetcher,
+		MockSilaExecutionVotes:      mockSilaDataVotes,
+		SyncService:                 syncService,
+		DepositFetcher:              depositFetcher,
+		PendingDepositFetcher:       b.depositCache,
+		BlockNotifier:               b,
+		StateNotifier:               b,
+		OperationNotifier:           b,
+		StateGen:                    b.stateGen,
+		EnableDebugRPCEndpoints:     enableDebugRPCEndpoints,
+		MaxMsgSize:                  maxMsgSize,
+		BlockBuilder:                b.fetchBuilderService(),
+		Router:                      router,
+		ClockWaiter:                 b.ClockWaiter,
+		BlobStorage:                 b.BlobStorage,
+		DataColumnStorage:           b.DataColumnStorage,
+		TrackedValidatorsCache:      b.trackedValidatorsCache,
+		ProposerPreferencesCache:    b.proposerPreferencesCache,
+		HighestBidCache:             regularSyncService.HighestSilaPayloadBidCache(),
+		PayloadIDCache:              b.payloadIDCache,
 		SilaPayloadEnvelopeCache:    b.silaPayloadCache,
-		LCStore:                          b.lcStore,
-		GraffitiInfo:                     web3Service.GraffitiInfo(),
+		LCStore:                     b.lcStore,
+		GraffitiInfo:                web3Service.GraffitiInfo(),
 	})
 
 	return b.services.RegisterService(rpcService)

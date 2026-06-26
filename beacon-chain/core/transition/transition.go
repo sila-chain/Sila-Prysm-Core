@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/altair"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/capella"
@@ -15,9 +16,9 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/electra"
 	e "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/epoch"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/epoch/precompute"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/fulu"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/gloas"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
@@ -29,7 +30,6 @@ import (
 	silaTrace "github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -380,7 +380,7 @@ func UpgradeState(ctx context.Context, state state.BeaconState) (state.BeaconSta
 	}
 
 	if time.CanUpgradeToBellatrix(slot) {
-		state, err = execution.UpgradeToBellatrix(state)
+		state, err = silaexec.UpgradeToBellatrix(state)
 		if err != nil {
 			tracing.AnnotateError(span, err)
 			return nil, err

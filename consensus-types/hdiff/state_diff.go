@@ -6,26 +6,26 @@ import (
 	"encoding/binary"
 	"slices"
 
-	"github.com/sila-chain/go-bitfield"
+	"github.com/golang/snappy"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/altair"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/capella"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/deneb"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/electra"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/fulu"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/gloas"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
-	"github.com/golang/snappy"
-	"github.com/pkg/errors"
 	ssz "github.com/sila-chain/fastssz"
+	"github.com/sila-chain/go-bitfield"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )
@@ -72,35 +72,35 @@ type stateDiff struct {
 	// genesis_time does not change.
 	// genesis_validators_root does not change.
 	targetVersion               int
-	silaexecVotesAppend             bool                                                        // Positioned here because of alignement.
+	silaexecVotesAppend         bool                                                        // Positioned here because of alignement.
 	justificationBits           byte                                                        // override.
 	slot                        primitives.Slot                                             // override.
-	fork                        *silapb.Fork                                                 // override.
-	latestBlockHeader           *silapb.BeaconBlockHeader                                    // override.
+	fork                        *silapb.Fork                                                // override.
+	latestBlockHeader           *silapb.BeaconBlockHeader                                   // override.
 	blockRoots                  [fieldparams.BlockRootsLength][fieldparams.RootLength]byte  // zero or override.
 	stateRoots                  [fieldparams.StateRootsLength][fieldparams.RootLength]byte  // zero or override.
 	historicalRoots             [][fieldparams.RootLength]byte                              // append only.
-	silaexecData                    *silapb.SilaData                                             // override.
-	silaDataVotes               []*silapb.SilaData                                           // append only or override.
-	silaExecutionDepositIndex            uint64                                                      // override.
+	silaexecData                *silapb.SilaData                                            // override.
+	silaDataVotes               []*silapb.SilaData                                          // append only or override.
+	silaExecutionDepositIndex   uint64                                                      // override.
 	randaoMixes                 [fieldparams.RandaoMixesLength][fieldparams.RootLength]byte // zero or override.
 	slashings                   [fieldparams.SlashingsLength]int64                          // algebraic diff.
-	previousEpochAttestations   []*silapb.PendingAttestation                                 // override.
-	currentEpochAttestations    []*silapb.PendingAttestation                                 // override.
-	previousJustifiedCheckpoint *silapb.Checkpoint                                           // override.
-	currentJustifiedCheckpoint  *silapb.Checkpoint                                           // override.
-	finalizedCheckpoint         *silapb.Checkpoint                                           // override.
+	previousEpochAttestations   []*silapb.PendingAttestation                                // override.
+	currentEpochAttestations    []*silapb.PendingAttestation                                // override.
+	previousJustifiedCheckpoint *silapb.Checkpoint                                          // override.
+	currentJustifiedCheckpoint  *silapb.Checkpoint                                          // override.
+	finalizedCheckpoint         *silapb.Checkpoint                                          // override.
 	// Altair Fields
-	previousEpochParticipation []byte               // override.
-	currentEpochParticipation  []byte               // override.
-	inactivityScores           []uint64             // override.
+	previousEpochParticipation []byte                // override.
+	currentEpochParticipation  []byte                // override.
+	inactivityScores           []uint64              // override.
 	currentSyncCommittee       *silapb.SyncCommittee // override.
 	nextSyncCommittee          *silapb.SyncCommittee // override.
 	// Bellatrix
 	silaPayloadHeader interfaces.SilaData // override.
 	// Capella
-	nextWithdrawalIndex          uint64                     // override.
-	nextWithdrawalValidatorIndex primitives.ValidatorIndex  // override.
+	nextWithdrawalIndex          uint64                      // override.
+	nextWithdrawalValidatorIndex primitives.ValidatorIndex   // override.
 	historicalSummaries          []*silapb.HistoricalSummary // append only.
 	// Electra
 	depositRequestsStartIndex     uint64           // override.
@@ -110,24 +110,24 @@ type stateDiff struct {
 	consolidationBalanceToConsume primitives.Gwei  // override.
 	earliestConsolidationEpoch    primitives.Epoch // override.
 
-	pendingDepositIndex            uint64                            // override.
-	pendingPartialWithdrawalsIndex uint64                            // override.
-	pendingConsolidationsIndex     uint64                            // override.
+	pendingDepositIndex            uint64                             // override.
+	pendingPartialWithdrawalsIndex uint64                             // override.
+	pendingConsolidationsIndex     uint64                             // override.
 	pendingDepositDiff             []*silapb.PendingDeposit           // override.
 	pendingPartialWithdrawalsDiff  []*silapb.PendingPartialWithdrawal // override.
 	pendingConsolidationsDiffs     []*silapb.PendingConsolidation     // override.
 	// Fulu
 	proposerLookahead []uint64 // override
 	// Gloas
-	latestSilaPayloadBid      *silapb.SilaPayloadBid        // override.
-	builderDiffs                   []builderDiff                     // sparse diff: only changed/replaced builders.
-	nextWithdrawalBuilderIndex     uint64                            // override.
-	silaPayloadAvailability   []byte                            // override.
+	latestSilaPayloadBid           *silapb.SilaPayloadBid             // override.
+	builderDiffs                   []builderDiff                      // sparse diff: only changed/replaced builders.
+	nextWithdrawalBuilderIndex     uint64                             // override.
+	silaPayloadAvailability        []byte                             // override.
 	builderPendingPayments         []*silapb.BuilderPendingPayment    // override.
-	builderPendingWithdrawalsIndex uint64                            // prefix-drop index.
+	builderPendingWithdrawalsIndex uint64                             // prefix-drop index.
 	builderPendingWithdrawalsDiff  []*silapb.BuilderPendingWithdrawal // prefix-drop + append.
-	latestBlockHash                [fieldparams.RootLength]byte      // override.
-	payloadExpectedWithdrawals     []*silaenginev1.Withdrawal            // override.
+	latestBlockHash                [fieldparams.RootLength]byte       // override.
+	payloadExpectedWithdrawals     []*silaenginev1.Withdrawal         // override.
 	ptcWindow                      []*silapb.PTCs                     // override.
 }
 
@@ -161,7 +161,7 @@ const (
 	blockHeaderLength              = 8 + 8 + 3*fieldparams.RootLength // slot + proposer_index + parent_root + state_root + body_root
 	blockRootsLength               = fieldparams.BlockRootsLength * fieldparams.RootLength
 	stateRootsLength               = fieldparams.StateRootsLength * fieldparams.RootLength
-	silaexecDataLength                 = 8 + 2*fieldparams.RootLength // deposit_count + deposit_root + block_hash
+	silaexecDataLength             = 8 + 2*fieldparams.RootLength // deposit_count + deposit_root + block_hash
 	randaoMixesLength              = fieldparams.RandaoMixesLength * fieldparams.RootLength
 	checkpointLength               = 8 + fieldparams.RootLength // epoch + root
 	syncCommitteeLength            = (fieldparams.SyncCommitteeLength + 1) * fieldparams.BLSPubkeyLength
@@ -2163,7 +2163,7 @@ func updateToVersion(ctx context.Context, source state.BeaconState, target int) 
 	case version.Phase0:
 		ret, err = altair.ConvertToAltair(source)
 	case version.Altair:
-		ret, err = execution.UpgradeToBellatrix(source)
+		ret, err = silaexec.UpgradeToBellatrix(source)
 	case version.Bellatrix:
 		ret, err = capella.UpgradeToCapella(source)
 	case version.Capella:

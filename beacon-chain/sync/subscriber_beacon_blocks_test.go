@@ -9,10 +9,10 @@ import (
 	chainMock "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/filesystem"
 	dbtest "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/testing"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
-	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations"
 	mockp2p "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/testing"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
+	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	lruwrpr "github.com/sila-chain/Sila-Consensus-Core/v7/cache/lru"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
@@ -105,13 +105,13 @@ func TestService_BeaconBlockSubscribe_ExecutionEngineTimesOut(t *testing.T) {
 	s := &Service{
 		cfg: &config{
 			chain: &chainMock.ChainService{
-				ReceiveBlockMockErr: execution.ErrHTTPTimeout,
+				ReceiveBlockMockErr: silaexec.ErrHTTPTimeout,
 			},
 		},
 		seenBlockCache: lruwrpr.New(10),
 		badBlockCache:  lruwrpr.New(10),
 	}
-	require.ErrorIs(t, execution.ErrHTTPTimeout, s.beaconBlockSubscriber(t.Context(), util.NewBeaconBlock()))
+	require.ErrorIs(t, silaexec.ErrHTTPTimeout, s.beaconBlockSubscriber(t.Context(), util.NewBeaconBlock()))
 	require.Equal(t, 0, len(s.badBlockCache.Keys()))
 	require.Equal(t, 1, len(s.seenBlockCache.Keys()))
 }

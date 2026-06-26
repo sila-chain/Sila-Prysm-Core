@@ -6,15 +6,18 @@ import (
 	"testing"
 	"time"
 
+	"github.com/libp2p/go-libp2p/core/network"
+	"github.com/libp2p/go-libp2p/core/protocol"
+	gcache "github.com/patrickmn/go-cache"
 	mock "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/signing"
 	dbtest "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/testing"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	doublylinkedtree "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice/doubly-linked-tree"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/peers"
 	p2ptest "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/testing"
 	p2ptypes "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/types"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
@@ -26,9 +29,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila/p2p/enr"
-	"github.com/libp2p/go-libp2p/core/network"
-	"github.com/libp2p/go-libp2p/core/protocol"
-	gcache "github.com/patrickmn/go-cache"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
 
@@ -207,7 +207,7 @@ func TestRegularSyncBeaconBlockSubscriber_ExecutionEngineTimesOut(t *testing.T) 
 		FinalizedCheckPoint: &silapb.Checkpoint{
 			Epoch: 0,
 		},
-		ReceiveBlockMockErr: execution.ErrHTTPTimeout,
+		ReceiveBlockMockErr: silaexec.ErrHTTPTimeout,
 	}
 	r := &Service{
 		cfg: &config{

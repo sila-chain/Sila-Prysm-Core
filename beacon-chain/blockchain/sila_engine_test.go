@@ -7,9 +7,9 @@ import (
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/blocks"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
-	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
 	forkchoicetypes "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice/types"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
+	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	bstate "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
@@ -203,7 +203,7 @@ func Test_NotifyForkchoiceUpdate(t *testing.T) {
 				require.NoError(t, err)
 				return b
 			}(),
-			newForkchoiceErr: execution.ErrAcceptedSyncingPayloadStatus,
+			newForkchoiceErr: silaexec.ErrAcceptedSyncingPayloadStatus,
 			finalizedRoot:    bellatrixBlkRoot,
 			justifiedRoot:    bellatrixBlkRoot,
 		},
@@ -218,7 +218,7 @@ func Test_NotifyForkchoiceUpdate(t *testing.T) {
 				require.NoError(t, err)
 				return b
 			}(),
-			newForkchoiceErr: execution.ErrInvalidPayloadStatus,
+			newForkchoiceErr: silaexec.ErrInvalidPayloadStatus,
 			finalizedRoot:    bellatrixBlkRoot,
 			justifiedRoot:    bellatrixBlkRoot,
 			headRoot:         [32]byte{'a'},
@@ -303,7 +303,7 @@ func Test_NotifyForkchoiceUpdate_NIlLVH(t *testing.T) {
 	require.NoError(t, fcs.InsertNode(ctx, state, blkRoot))
 
 	// Prepare Engine Mock to return invalid LVH =  nil
-	service.cfg.SilaEngineCaller = &mockSila.SilaEngineClient{ErrForkchoiceUpdated: execution.ErrInvalidPayloadStatus, OverrideValidHash: [32]byte{'C'}}
+	service.cfg.SilaEngineCaller = &mockSila.SilaEngineClient{ErrForkchoiceUpdated: silaexec.ErrInvalidPayloadStatus, OverrideValidHash: [32]byte{'C'}}
 	st, _ := util.DeterministicGenesisState(t, 1)
 	service.head = &head{
 		state: st,
@@ -442,7 +442,7 @@ func Test_NotifyForkchoiceUpdateRecursive_DoublyLinkedTree(t *testing.T) {
 	require.Equal(t, brg, headRoot)
 
 	// Prepare Engine Mock to return invalid unless head is D, LVH =  E
-	service.cfg.SilaEngineCaller = &mockSila.SilaEngineClient{ErrForkchoiceUpdated: execution.ErrInvalidPayloadStatus, ForkChoiceUpdatedResp: pe[:], OverrideValidHash: [32]byte{'D'}}
+	service.cfg.SilaEngineCaller = &mockSila.SilaEngineClient{ErrForkchoiceUpdated: silaexec.ErrInvalidPayloadStatus, ForkChoiceUpdatedResp: pe[:], OverrideValidHash: [32]byte{'D'}}
 	st, _ := util.DeterministicGenesisState(t, 1)
 	service.head = &head{
 		state: st,
@@ -527,14 +527,14 @@ func Test_NotifyNewPayload(t *testing.T) {
 			name:           "new payload with optimistic block",
 			postState:      bellatrixState,
 			blk:            bellatrixBlk,
-			newPayloadErr:  execution.ErrAcceptedSyncingPayloadStatus,
+			newPayloadErr:  silaexec.ErrAcceptedSyncingPayloadStatus,
 			isValidPayload: false,
 		},
 		{
 			name:           "new payload with invalid block",
 			postState:      bellatrixState,
 			blk:            bellatrixBlk,
-			newPayloadErr:  execution.ErrInvalidPayloadStatus,
+			newPayloadErr:  silaexec.ErrInvalidPayloadStatus,
 			errString:      ErrInvalidPayload.Error(),
 			isValidPayload: false,
 			invalidBlock:   true,

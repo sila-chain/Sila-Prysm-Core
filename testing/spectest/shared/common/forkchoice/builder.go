@@ -8,11 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice"
 	doublylinkedtree "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice/doubly-linked-tree"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/verification"
@@ -24,6 +23,7 @@ import (
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common"
+	"github.com/sila-chain/go-bitfield"
 )
 
 type Builder struct {
@@ -87,11 +87,11 @@ func (bb *Builder) SetPayloadStatus(resp *MockEngineResp) error {
 	}
 	switch *resp.Status {
 	case "SYNCING":
-		bb.execMock.payloadStatus = execution.ErrAcceptedSyncingPayloadStatus
+		bb.execMock.payloadStatus = silaexec.ErrAcceptedSyncingPayloadStatus
 	case "VALID":
 		bb.execMock.payloadStatus = nil
 	case "INVALID":
-		bb.execMock.payloadStatus = execution.ErrInvalidPayloadStatus
+		bb.execMock.payloadStatus = silaexec.ErrInvalidPayloadStatus
 	default:
 		return errors.New("unknown payload status")
 	}

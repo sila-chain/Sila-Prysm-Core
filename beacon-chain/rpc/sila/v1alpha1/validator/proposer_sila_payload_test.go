@@ -8,14 +8,14 @@ import (
 	chainMock "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
 	dbTest "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/testing"
-	powtesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
+	powtesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila/common"
@@ -148,7 +148,7 @@ func TestServer_getSilaPayload(t *testing.T) {
 			ed, err := blocks.NewWrappedSilaData(&pb.SilaPayload{})
 			require.NoError(t, err)
 			vs := &Server{
-				SilaEngineCaller:  &powtesting.SilaEngineClient{PayloadIDBytes: tt.payloadID, ErrForkchoiceUpdated: tt.forkchoiceErr, GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed, OverrideBuilder: tt.override}},
+				SilaEngineCaller:       &powtesting.SilaEngineClient{PayloadIDBytes: tt.payloadID, ErrForkchoiceUpdated: tt.forkchoiceErr, GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed, OverrideBuilder: tt.override}},
 				HeadFetcher:            &chainMock.ChainService{State: tt.st},
 				FinalizationFetcher:    &chainMock.ChainService{},
 				BeaconDB:               beaconDB,
@@ -263,7 +263,7 @@ func TestServer_getSilaPayloadContextTimeout(t *testing.T) {
 	ed, err := blocks.NewWrappedSilaData(&pb.SilaPayload{})
 	require.NoError(t, err)
 	vs := &Server{
-		SilaEngineCaller:  &powtesting.SilaEngineClient{PayloadIDBytes: &pb.PayloadIDBytes{}, ErrGetPayload: context.DeadlineExceeded, GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed}},
+		SilaEngineCaller:       &powtesting.SilaEngineClient{PayloadIDBytes: &pb.PayloadIDBytes{}, ErrGetPayload: context.DeadlineExceeded, GetPayloadResponse: &blocks.GetPayloadResponse{SilaData: ed}},
 		HeadFetcher:            &chainMock.ChainService{State: nonTransitionSt},
 		BeaconDB:               beaconDB,
 		PayloadIDCache:         cache.NewPayloadIDCache(),
@@ -437,7 +437,7 @@ func TestServer_getTerminalBlockHashIfExists(t *testing.T) {
 			vs := &Server{
 				SilaBlockFetcher: c,
 				SilaEngineCaller: &powtesting.SilaEngineClient{
-					SilaBlock: tt.currentPowBlock,
+					SilaBlock:      tt.currentPowBlock,
 					BlockByHashMap: m,
 				},
 			}

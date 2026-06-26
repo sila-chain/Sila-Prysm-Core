@@ -14,17 +14,17 @@ import (
 	chainMock "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
 	dbTest "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/testing"
-	executiontesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
 	mockp2p "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/lookup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/testutil"
+	executiontesting "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	mock2 "github.com/sila-chain/Sila-Consensus-Core/v7/testing/mock"
@@ -79,7 +79,7 @@ func TestGetSilaPayloadEnvelope_AcceptsSlotID(t *testing.T) {
 				Withdrawals:   []*silaenginev1.Withdrawal{},
 				SlotNumber:    primitives.Slot(177),
 			},
-			SilaRequests:     &silaenginev1.SilaRequests{},
+			SilaRequests:          &silaenginev1.SilaRequests{},
 			BuilderIndex:          primitives.BuilderIndex(42),
 			BeaconBlockRoot:       root[:],
 			ParentBeaconBlockRoot: bytesutil.PadTo([]byte("parent-beacon-root"), 32),
@@ -159,7 +159,7 @@ func testSignedEnvelope() *silapb.SignedSilaPayloadEnvelope {
 				Withdrawals:   []*silaenginev1.Withdrawal{},
 				SlotNumber:    primitives.Slot(100),
 			},
-			SilaRequests:     &silaenginev1.SilaRequests{},
+			SilaRequests:          &silaenginev1.SilaRequests{},
 			BuilderIndex:          primitives.BuilderIndex(42),
 			BeaconBlockRoot:       bytesutil.PadTo([]byte("beacon-root"), 32),
 			ParentBeaconBlockRoot: bytesutil.PadTo([]byte("parent-beacon-root"), 32),
@@ -186,7 +186,7 @@ func TestPublishSilaPayloadEnvelope_StatefulBlinded_OK(t *testing.T) {
 	body := blindedJSONBody(t, signed)
 
 	s := &Server{
-		V1Alpha1ValidatorServer:       v1alpha1Server,
+		V1Alpha1ValidatorServer:  v1alpha1Server,
 		SilaPayloadEnvelopeCache: envelopeCacheFor(signed),
 	}
 	req := httptest.NewRequest(http.MethodPost, "/sila/v1/beacon/sila_payload_envelope", bytes.NewReader(body))
@@ -388,7 +388,7 @@ func TestPublishSilaPayloadEnvelope_ServerError(t *testing.T) {
 	body := blindedJSONBody(t, signed)
 
 	s := &Server{
-		V1Alpha1ValidatorServer:       v1alpha1Server,
+		V1Alpha1ValidatorServer:  v1alpha1Server,
 		SilaPayloadEnvelopeCache: envelopeCacheFor(signed),
 	}
 	req := httptest.NewRequest(http.MethodPost, "/sila/v1/beacon/sila_payload_envelope", bytes.NewReader(body))
@@ -421,7 +421,7 @@ func TestPublishSilaPayloadEnvelope_SSZ_StatefulBlinded(t *testing.T) {
 	).Return(&emptypb.Empty{}, nil)
 
 	s := &Server{
-		V1Alpha1ValidatorServer:       v1alpha1Server,
+		V1Alpha1ValidatorServer:  v1alpha1Server,
 		SilaPayloadEnvelopeCache: envelopeCacheFor(signed),
 	}
 	req := httptest.NewRequest(http.MethodPost, "/sila/v1/beacon/sila_payload_envelope", bytes.NewReader(sszBody))
@@ -620,9 +620,9 @@ func TestPublishSilaPayloadEnvelope_BroadcastValidation(t *testing.T) {
 				chainSvc.MockCanonicalFull = map[primitives.Slot]bool{envSlot: false}
 			}
 			s := &Server{
-				V1Alpha1ValidatorServer:       v1alpha1Server,
-				ForkchoiceFetcher:             chainSvc,
-				HeadFetcher:                   chainSvc,
+				V1Alpha1ValidatorServer:  v1alpha1Server,
+				ForkchoiceFetcher:        chainSvc,
+				HeadFetcher:              chainSvc,
 				SilaPayloadEnvelopeCache: envelopeCacheFor(signed),
 			}
 			req := httptest.NewRequest(http.MethodPost, "/sila/v1/beacon/sila_payload_envelope"+tc.query, bytes.NewReader(body))

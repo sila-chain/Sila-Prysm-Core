@@ -4,7 +4,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/builder"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/filesystem"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 )
 
@@ -20,7 +20,7 @@ func WithBlockchainFlagOptions(opts []blockchain.Option) Option {
 }
 
 // WithSilaChainOptions includes functional options for the Sila chain service related to CLI flags.
-func WithSilaChainOptions(opts []execution.Option) Option {
+func WithSilaChainOptions(opts []silaexec.Option) Option {
 	return func(bn *BeaconNode) error {
 		bn.serviceFlagOpts.silaChainFlagOpts = opts
 		return nil

@@ -5,16 +5,16 @@ import (
 	"math/big"
 	"testing"
 
-	mocks "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
+	"github.com/holiman/uint256"
+	mocks "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	gethtypes "github.com/sila-chain/Sila/core/types"
-	"github.com/holiman/uint256"
 )
 
 func Test_validTerminalPowBlock(t *testing.T) {

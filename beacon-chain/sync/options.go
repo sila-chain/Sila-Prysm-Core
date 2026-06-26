@@ -8,7 +8,6 @@ import (
 	statefeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/filesystem"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	lightClient "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/blstoexec"
@@ -17,6 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/synccommittee"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/voluntaryexits"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync/backfill/coverage"
@@ -138,7 +138,7 @@ func WithSlasherBlockHeadersFeed(slasherBlockHeadersFeed *event.Feed) Option {
 	}
 }
 
-func WithReconstructor(r execution.Reconstructor) Option {
+func WithReconstructor(r silaexec.Reconstructor) Option {
 	return func(s *Service) error {
 		s.cfg.executionReconstructor = r
 		return nil

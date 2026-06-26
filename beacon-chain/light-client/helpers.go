@@ -4,18 +4,18 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
+	"github.com/pkg/errors"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
 	light_client "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/pkg/errors"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -92,7 +92,7 @@ func createDefaultLightClientBootstrap(currentSlot primitives.Slot) (interfaces.
 
 func makeExecutionAndProofDeneb(ctx context.Context, blk interfaces.ReadOnlySignedBeaconBlock) (*silaenginev1.SilaPayloadHeaderDeneb, [][]byte, error) {
 	if blk.Version() < version.Capella {
-		p, err := execution.EmptySilaPayloadHeader(version.Deneb)
+		p, err := silaexec.EmptySilaPayloadHeader(version.Deneb)
 		if err != nil {
 			return nil, nil, errors.Wrap(err, "could not get payload header")
 		}
@@ -165,7 +165,7 @@ func makeExecutionAndProofCapella(ctx context.Context, blk interfaces.ReadOnlySi
 		return nil, nil, fmt.Errorf("unsupported block version %s for capella sila payload", version.String(blk.Version()))
 	}
 	if blk.Version() < version.Capella {
-		p, err := execution.EmptySilaPayloadHeader(version.Capella)
+		p, err := silaexec.EmptySilaPayloadHeader(version.Capella)
 		if err != nil {
 			return nil, nil, errors.Wrap(err, "could not get payload header")
 		}

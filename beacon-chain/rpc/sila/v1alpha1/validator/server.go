@@ -17,7 +17,6 @@ import (
 	statefeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/signing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/blstoexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/payloadattestation"
@@ -26,6 +25,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/voluntaryexits"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/core"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
 	silaSync "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync"
@@ -45,52 +45,52 @@ import (
 // and committees in which particular validators need to perform their responsibilities,
 // and more.
 type Server struct {
-	Ctx                              context.Context
-	PayloadIDCache                   *cache.PayloadIDCache
-	TrackedValidatorsCache           *cache.TrackedValidatorsCache
-	ProposerPreferencesCache         *cache.ProposerPreferencesCache
-	HighestBidCache                  *cache.HighestSilaPayloadBidCache
+	Ctx                         context.Context
+	PayloadIDCache              *cache.PayloadIDCache
+	TrackedValidatorsCache      *cache.TrackedValidatorsCache
+	ProposerPreferencesCache    *cache.ProposerPreferencesCache
+	HighestBidCache             *cache.HighestSilaPayloadBidCache
 	SilaPayloadEnvelopeCache    *cache.SilaPayloadEnvelopeCache
-	HeadFetcher                      blockchain.HeadFetcher
-	ForkFetcher                      blockchain.ForkFetcher
-	ForkchoiceFetcher                blockchain.ForkchoiceFetcher
-	GenesisFetcher                   blockchain.GenesisFetcher
-	FinalizationFetcher              blockchain.FinalizationFetcher
-	TimeFetcher                      blockchain.TimeFetcher
-	BlockFetcher                     execution.POWBlockFetcher
-	DepositFetcher                   cache.DepositFetcher
-	ChainStartFetcher                execution.ChainStartFetcher
-	SilaChainInfoFetcher                  execution.ChainInfoFetcher
-	OptimisticModeFetcher            blockchain.OptimisticModeFetcher
-	SyncChecker                      silaSync.Checker
-	StateNotifier                    statefeed.Notifier
-	BlockNotifier                    blockfeed.Notifier
-	P2P                              p2p.Broadcaster
-	AttestationCache                 *cache.AttestationCache
-	AttPool                          attestations.Pool
-	PayloadAttestationPool           payloadattestation.PoolManager
-	SlashingsPool                    slashings.PoolManager
-	ExitPool                         voluntaryexits.PoolManager
-	SyncCommitteePool                synccommittee.Pool
-	BlockReceiver                    blockchain.BlockReceiver
-	PayloadAttestationReceiver       blockchain.PayloadAttestationReceiver
+	HeadFetcher                 blockchain.HeadFetcher
+	ForkFetcher                 blockchain.ForkFetcher
+	ForkchoiceFetcher           blockchain.ForkchoiceFetcher
+	GenesisFetcher              blockchain.GenesisFetcher
+	FinalizationFetcher         blockchain.FinalizationFetcher
+	TimeFetcher                 blockchain.TimeFetcher
+	BlockFetcher                silaexec.POWBlockFetcher
+	DepositFetcher              cache.DepositFetcher
+	ChainStartFetcher           silaexec.ChainStartFetcher
+	SilaChainInfoFetcher        silaexec.ChainInfoFetcher
+	OptimisticModeFetcher       blockchain.OptimisticModeFetcher
+	SyncChecker                 silaSync.Checker
+	StateNotifier               statefeed.Notifier
+	BlockNotifier               blockfeed.Notifier
+	P2P                         p2p.Broadcaster
+	AttestationCache            *cache.AttestationCache
+	AttPool                     attestations.Pool
+	PayloadAttestationPool      payloadattestation.PoolManager
+	SlashingsPool               slashings.PoolManager
+	ExitPool                    voluntaryexits.PoolManager
+	SyncCommitteePool           synccommittee.Pool
+	BlockReceiver               blockchain.BlockReceiver
+	PayloadAttestationReceiver  blockchain.PayloadAttestationReceiver
 	SilaPayloadEnvelopeReceiver blockchain.SilaPayloadEnvelopeReceiver
-	BlobReceiver                     blockchain.BlobReceiver
-	DataColumnReceiver               blockchain.DataColumnReceiver
-	MockSilaExecutionVotes                    bool
-	SilaBlockFetcher                 execution.POWBlockFetcher
-	PendingDepositsFetcher           depositsnapshot.PendingDepositsFetcher
-	OperationNotifier                opfeed.Notifier
-	StateGen                         stategen.StateManager
-	ReplayerBuilder                  stategen.ReplayerBuilder
-	BeaconDB                         db.HeadAccessDatabase
-	SilaEngineCaller            execution.EngineCaller
-	BlockBuilder                     builder.BlockBuilder
-	BLSChangesPool                   blstoexec.PoolManager
-	ClockWaiter                      startup.ClockWaiter
-	CoreService                      *core.Service
-	AttestationStateFetcher          blockchain.AttestationStateFetcher
-	GraffitiInfo                     *execution.GraffitiInfo
+	BlobReceiver                blockchain.BlobReceiver
+	DataColumnReceiver          blockchain.DataColumnReceiver
+	MockSilaExecutionVotes      bool
+	SilaBlockFetcher            silaexec.POWBlockFetcher
+	PendingDepositsFetcher      depositsnapshot.PendingDepositsFetcher
+	OperationNotifier           opfeed.Notifier
+	StateGen                    stategen.StateManager
+	ReplayerBuilder             stategen.ReplayerBuilder
+	BeaconDB                    db.HeadAccessDatabase
+	SilaEngineCaller            silaexec.EngineCaller
+	BlockBuilder                builder.BlockBuilder
+	BLSChangesPool              blstoexec.PoolManager
+	ClockWaiter                 startup.ClockWaiter
+	CoreService                 *core.Service
+	AttestationStateFetcher     blockchain.AttestationStateFetcher
+	GraffitiInfo                *silaexec.GraffitiInfo
 }
 
 // Deprecated: The gRPC API will remain the default and fully supported through v8 (expected in 2026) but will be eventually removed in favor of REST API.

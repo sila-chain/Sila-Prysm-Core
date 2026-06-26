@@ -9,6 +9,13 @@ import (
 	"sync"
 	"time"
 
+	lru "github.com/hashicorp/golang-lru"
+	pubsub "github.com/libp2p/go-libp2p-pubsub"
+	libp2pcore "github.com/libp2p/go-libp2p/core"
+	"github.com/libp2p/go-libp2p/core/network"
+	"github.com/libp2p/go-libp2p/core/peer"
+	gcache "github.com/patrickmn/go-cache"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/async"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/async/abool"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/async/event"
@@ -20,7 +27,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/peerdas"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/filesystem"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	lightClient "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/blstoexec"
@@ -30,6 +36,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/voluntaryexits"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
 	p2ptypes "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/types"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync/backfill/coverage"
@@ -47,13 +54,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	lru "github.com/hashicorp/golang-lru"
-	pubsub "github.com/libp2p/go-libp2p-pubsub"
-	libp2pcore "github.com/libp2p/go-libp2p/core"
-	"github.com/libp2p/go-libp2p/core/network"
-	"github.com/libp2p/go-libp2p/core/peer"
-	gcache "github.com/patrickmn/go-cache"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/trailofbits/go-mutexasserts"
 	"golang.org/x/sync/singleflight"
@@ -62,19 +62,19 @@ import (
 var _ runtime.Service = (*Service)(nil)
 
 const (
-	rangeLimit                  = 1024
-	seenBlockSize               = 1000
-	seenPayloadEnvelopeSize     = 1000
-	seenSilaPayloadBidSize = 1000
-	seenDataColumnSize          = seenBlockSize * 128 // Each block can have max 128 data columns.
-	seenUnaggregatedAttSize     = 20000
-	seenAggregatedAttSize       = 16384
-	seenSyncMsgSize             = 1000 // Maximum of 512 sync committee members, 1000 is a safe amount.
-	seenSyncContributionSize    = 512  // Maximum of SYNC_COMMITTEE_SIZE as specified by the spec.
-	seenExitSize                = 100
-	seenProposerSlashingSize    = 100
-	badBlockSize                = 1000
-	syncMetricsInterval         = 10 * time.Second
+	rangeLimit               = 1024
+	seenBlockSize            = 1000
+	seenPayloadEnvelopeSize  = 1000
+	seenSilaPayloadBidSize   = 1000
+	seenDataColumnSize       = seenBlockSize * 128 // Each block can have max 128 data columns.
+	seenUnaggregatedAttSize  = 20000
+	seenAggregatedAttSize    = 16384
+	seenSyncMsgSize          = 1000 // Maximum of 512 sync committee members, 1000 is a safe amount.
+	seenSyncContributionSize = 512  // Maximum of SYNC_COMMITTEE_SIZE as specified by the spec.
+	seenExitSize             = 100
+	seenProposerSlashingSize = 100
+	badBlockSize             = 1000
+	syncMetricsInterval      = 10 * time.Second
 )
 
 var (
@@ -106,7 +106,7 @@ type config struct {
 	initialSync             Checker
 	blockNotifier           blockfeed.Notifier
 	operationNotifier       operation.Notifier
-	executionReconstructor  execution.Reconstructor
+	executionReconstructor  silaexec.Reconstructor
 	stateGen                *stategen.State
 	slasherAttestationsFeed *event.Feed
 	slasherBlockHeadersFeed *event.Feed
@@ -155,8 +155,8 @@ type Service struct {
 	seenBlockLock                        sync.RWMutex
 	seenBlockCache                       *lru.Cache
 	seenPayloadEnvelopeCache             *lru.Cache
-	seenSilaPayloadBidCache         *slotAwareCache
-	highestSilaPayloadBidCache      *cache.HighestSilaPayloadBidCache
+	seenSilaPayloadBidCache              *slotAwareCache
+	highestSilaPayloadBidCache           *cache.HighestSilaPayloadBidCache
 	seenBlobLock                         sync.RWMutex
 	seenBlobCache                        *lru.Cache
 	seenDataColumnCache                  *slotAwareCache
@@ -190,7 +190,7 @@ type Service struct {
 	newColumnsVerifier                   verification.NewDataColumnsVerifier
 	newPayloadAttestationVerifier        verification.NewPayloadAttestationMsgVerifier
 	newSignedProposerPreferencesVerifier verification.NewSignedProposerPreferencesVerifier
-	newSilaPayloadBidVerifier       verification.NewSilaPayloadBidVerifier
+	newSilaPayloadBidVerifier            verification.NewSilaPayloadBidVerifier
 	columnSidecarsExecSingleFlight       singleflight.Group
 	reconstructionSingleFlight           singleflight.Group
 	payloadEnvelopeRequestSingleFlight   singleflight.Group
@@ -205,7 +205,7 @@ type Service struct {
 	proposerPreferencesCache             *cache.ProposerPreferencesCache
 	digestActions                        perDigestSet
 	subscriptionSpawner                  func(func()) // see Service.spawn for details
-	newSilaPayloadEnvelopeVerifier  verification.NewSilaPayloadEnvelopeVerifier
+	newSilaPayloadEnvelopeVerifier       verification.NewSilaPayloadEnvelopeVerifier
 	pendingPayloadEnvelopes              map[[32]byte]map[uint64]*silapb.SignedSilaPayloadEnvelope
 	pendingEnvelopeLock                  sync.RWMutex
 	selfBuildSigFailures                 int

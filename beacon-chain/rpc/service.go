@@ -9,6 +9,11 @@ import (
 	"net/http"
 	"sync"
 
+	middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpcopentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
+	grpcprometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/builder"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
@@ -18,7 +23,6 @@ import (
 	statefeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/filesystem"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	lightClient "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/blstoexec"
@@ -28,12 +32,13 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/voluntaryexits"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/core"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/rewards"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/lookup"
 	beaconv1alpha1 "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/sila/v1alpha1/beacon"
 	debugv1alpha1 "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/sila/v1alpha1/debug"
 	nodev1alpha1 "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/sila/v1alpha1/node"
 	validatorv1alpha1 "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/sila/v1alpha1/validator"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/silaapi/rewards"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
 	chainSync "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync"
@@ -42,11 +47,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/logs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing"
 	silapbv1alpha1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
-	middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	grpcopentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
-	grpcprometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
@@ -73,66 +73,66 @@ type Service struct {
 
 // Config options for the beacon node RPC server.
 type Config struct {
-	ExecutionReconstructor           execution.Reconstructor
-	Host                             string
-	Port                             string
-	CertFlag                         string
-	KeyFlag                          string
-	BeaconMonitoringHost             string
-	BeaconMonitoringPort             int
-	BeaconDB                         db.HeadAccessDatabase
-	ChainInfoFetcher                 blockchain.ChainInfoFetcher
-	HeadFetcher                      blockchain.HeadFetcher
-	CanonicalFetcher                 blockchain.CanonicalFetcher
-	ForkFetcher                      blockchain.ForkFetcher
-	ForkchoiceFetcher                blockchain.ForkchoiceFetcher
-	FinalizationFetcher              blockchain.FinalizationFetcher
-	AttestationReceiver              blockchain.AttestationReceiver
-	BlockReceiver                    blockchain.BlockReceiver
-	PayloadAttestationReceiver       blockchain.PayloadAttestationReceiver
+	ExecutionReconstructor      silaexec.Reconstructor
+	Host                        string
+	Port                        string
+	CertFlag                    string
+	KeyFlag                     string
+	BeaconMonitoringHost        string
+	BeaconMonitoringPort        int
+	BeaconDB                    db.HeadAccessDatabase
+	ChainInfoFetcher            blockchain.ChainInfoFetcher
+	HeadFetcher                 blockchain.HeadFetcher
+	CanonicalFetcher            blockchain.CanonicalFetcher
+	ForkFetcher                 blockchain.ForkFetcher
+	ForkchoiceFetcher           blockchain.ForkchoiceFetcher
+	FinalizationFetcher         blockchain.FinalizationFetcher
+	AttestationReceiver         blockchain.AttestationReceiver
+	BlockReceiver               blockchain.BlockReceiver
+	PayloadAttestationReceiver  blockchain.PayloadAttestationReceiver
 	SilaPayloadEnvelopeReceiver blockchain.SilaPayloadEnvelopeReceiver
-	BlobReceiver                     blockchain.BlobReceiver
-	DataColumnReceiver               blockchain.DataColumnReceiver
-	SilaChainService            execution.Chain
-	ChainStartFetcher                execution.ChainStartFetcher
-	SilaChainInfoFetcher        execution.ChainInfoFetcher
-	GenesisTimeFetcher               blockchain.TimeFetcher
-	GenesisFetcher                   blockchain.GenesisFetcher
-	MockSilaExecutionVotes                    bool
-	EnableDebugRPCEndpoints          bool
-	AttestationCache                 *cache.AttestationCache
-	AttestationsPool                 attestations.Pool
-	PayloadAttestationPool           payloadattestation.PoolManager
-	ExitPool                         voluntaryexits.PoolManager
-	SlashingsPool                    slashings.PoolManager
-	SyncCommitteeObjectPool          synccommittee.Pool
-	BLSChangesPool                   blstoexec.PoolManager
-	SyncService                      chainSync.Checker
-	Broadcaster                      p2p.Broadcaster
-	PeersFetcher                     p2p.PeersProvider
-	PeerManager                      p2p.PeerManager
-	MetadataProvider                 p2p.MetadataProvider
-	DepositFetcher                   cache.DepositFetcher
-	PendingDepositFetcher            depositsnapshot.PendingDepositsFetcher
-	StateNotifier                    statefeed.Notifier
-	BlockNotifier                    blockfeed.Notifier
-	OperationNotifier                opfeed.Notifier
-	StateGen                         *stategen.State
-	MaxMsgSize                       int
-	SilaEngineCaller            execution.EngineCaller
-	OptimisticModeFetcher            blockchain.OptimisticModeFetcher
-	BlockBuilder                     builder.BlockBuilder
-	Router                           *http.ServeMux
-	ClockWaiter                      startup.ClockWaiter
-	BlobStorage                      *filesystem.BlobStorage
-	DataColumnStorage                *filesystem.DataColumnStorage
-	TrackedValidatorsCache           *cache.TrackedValidatorsCache
-	ProposerPreferencesCache         *cache.ProposerPreferencesCache
-	HighestBidCache                  *cache.HighestSilaPayloadBidCache
-	PayloadIDCache                   *cache.PayloadIDCache
+	BlobReceiver                blockchain.BlobReceiver
+	DataColumnReceiver          blockchain.DataColumnReceiver
+	SilaChainService            silaexec.Chain
+	ChainStartFetcher           silaexec.ChainStartFetcher
+	SilaChainInfoFetcher        silaexec.ChainInfoFetcher
+	GenesisTimeFetcher          blockchain.TimeFetcher
+	GenesisFetcher              blockchain.GenesisFetcher
+	MockSilaExecutionVotes      bool
+	EnableDebugRPCEndpoints     bool
+	AttestationCache            *cache.AttestationCache
+	AttestationsPool            attestations.Pool
+	PayloadAttestationPool      payloadattestation.PoolManager
+	ExitPool                    voluntaryexits.PoolManager
+	SlashingsPool               slashings.PoolManager
+	SyncCommitteeObjectPool     synccommittee.Pool
+	BLSChangesPool              blstoexec.PoolManager
+	SyncService                 chainSync.Checker
+	Broadcaster                 p2p.Broadcaster
+	PeersFetcher                p2p.PeersProvider
+	PeerManager                 p2p.PeerManager
+	MetadataProvider            p2p.MetadataProvider
+	DepositFetcher              cache.DepositFetcher
+	PendingDepositFetcher       depositsnapshot.PendingDepositsFetcher
+	StateNotifier               statefeed.Notifier
+	BlockNotifier               blockfeed.Notifier
+	OperationNotifier           opfeed.Notifier
+	StateGen                    *stategen.State
+	MaxMsgSize                  int
+	SilaEngineCaller            silaexec.EngineCaller
+	OptimisticModeFetcher       blockchain.OptimisticModeFetcher
+	BlockBuilder                builder.BlockBuilder
+	Router                      *http.ServeMux
+	ClockWaiter                 startup.ClockWaiter
+	BlobStorage                 *filesystem.BlobStorage
+	DataColumnStorage           *filesystem.DataColumnStorage
+	TrackedValidatorsCache      *cache.TrackedValidatorsCache
+	ProposerPreferencesCache    *cache.ProposerPreferencesCache
+	HighestBidCache             *cache.HighestSilaPayloadBidCache
+	PayloadIDCache              *cache.PayloadIDCache
 	SilaPayloadEnvelopeCache    *cache.SilaPayloadEnvelopeCache
-	LCStore                          *lightClient.Store
-	GraffitiInfo                     *execution.GraffitiInfo
+	LCStore                     *lightClient.Store
+	GraffitiInfo                *silaexec.GraffitiInfo
 }
 
 // NewService instantiates a new RPC service instance that will
@@ -227,52 +227,52 @@ func NewService(ctx context.Context, cfg *Config) *Service {
 		OptimisticModeFetcher: s.cfg.OptimisticModeFetcher,
 	}
 	validatorServer := &validatorv1alpha1.Server{
-		Ctx:                              s.ctx,
-		AttestationCache:                 s.cfg.AttestationCache,
-		AttPool:                          s.cfg.AttestationsPool,
-		ExitPool:                         s.cfg.ExitPool,
-		HeadFetcher:                      s.cfg.HeadFetcher,
-		ForkFetcher:                      s.cfg.ForkFetcher,
-		ForkchoiceFetcher:                s.cfg.ForkchoiceFetcher,
-		GenesisFetcher:                   s.cfg.GenesisFetcher,
-		FinalizationFetcher:              s.cfg.FinalizationFetcher,
-		TimeFetcher:                      s.cfg.GenesisTimeFetcher,
-		BlockFetcher:                     s.cfg.SilaChainService,
-		DepositFetcher:                   s.cfg.DepositFetcher,
-		ChainStartFetcher:                s.cfg.ChainStartFetcher,
-		SilaChainInfoFetcher:                  s.cfg.SilaChainService,
-		OptimisticModeFetcher:            s.cfg.OptimisticModeFetcher,
-		SyncChecker:                      s.cfg.SyncService,
-		StateNotifier:                    s.cfg.StateNotifier,
-		BlockNotifier:                    s.cfg.BlockNotifier,
-		OperationNotifier:                s.cfg.OperationNotifier,
-		P2P:                              s.cfg.Broadcaster,
-		BlockReceiver:                    s.cfg.BlockReceiver,
-		PayloadAttestationPool:           s.cfg.PayloadAttestationPool,
-		PayloadAttestationReceiver:       s.cfg.PayloadAttestationReceiver,
+		Ctx:                         s.ctx,
+		AttestationCache:            s.cfg.AttestationCache,
+		AttPool:                     s.cfg.AttestationsPool,
+		ExitPool:                    s.cfg.ExitPool,
+		HeadFetcher:                 s.cfg.HeadFetcher,
+		ForkFetcher:                 s.cfg.ForkFetcher,
+		ForkchoiceFetcher:           s.cfg.ForkchoiceFetcher,
+		GenesisFetcher:              s.cfg.GenesisFetcher,
+		FinalizationFetcher:         s.cfg.FinalizationFetcher,
+		TimeFetcher:                 s.cfg.GenesisTimeFetcher,
+		BlockFetcher:                s.cfg.SilaChainService,
+		DepositFetcher:              s.cfg.DepositFetcher,
+		ChainStartFetcher:           s.cfg.ChainStartFetcher,
+		SilaChainInfoFetcher:        s.cfg.SilaChainService,
+		OptimisticModeFetcher:       s.cfg.OptimisticModeFetcher,
+		SyncChecker:                 s.cfg.SyncService,
+		StateNotifier:               s.cfg.StateNotifier,
+		BlockNotifier:               s.cfg.BlockNotifier,
+		OperationNotifier:           s.cfg.OperationNotifier,
+		P2P:                         s.cfg.Broadcaster,
+		BlockReceiver:               s.cfg.BlockReceiver,
+		PayloadAttestationPool:      s.cfg.PayloadAttestationPool,
+		PayloadAttestationReceiver:  s.cfg.PayloadAttestationReceiver,
 		SilaPayloadEnvelopeReceiver: s.cfg.SilaPayloadEnvelopeReceiver,
-		BlobReceiver:                     s.cfg.BlobReceiver,
-		DataColumnReceiver:               s.cfg.DataColumnReceiver,
-		MockSilaExecutionVotes:                    s.cfg.MockSilaExecutionVotes,
-		SilaBlockFetcher:                 s.cfg.SilaChainService,
-		PendingDepositsFetcher:           s.cfg.PendingDepositFetcher,
-		SlashingsPool:                    s.cfg.SlashingsPool,
-		StateGen:                         s.cfg.StateGen,
-		SyncCommitteePool:                s.cfg.SyncCommitteeObjectPool,
-		ReplayerBuilder:                  ch,
+		BlobReceiver:                s.cfg.BlobReceiver,
+		DataColumnReceiver:          s.cfg.DataColumnReceiver,
+		MockSilaExecutionVotes:      s.cfg.MockSilaExecutionVotes,
+		SilaBlockFetcher:            s.cfg.SilaChainService,
+		PendingDepositsFetcher:      s.cfg.PendingDepositFetcher,
+		SlashingsPool:               s.cfg.SlashingsPool,
+		StateGen:                    s.cfg.StateGen,
+		SyncCommitteePool:           s.cfg.SyncCommitteeObjectPool,
+		ReplayerBuilder:             ch,
 		SilaEngineCaller:            s.cfg.SilaEngineCaller,
-		BeaconDB:                         s.cfg.BeaconDB,
-		BlockBuilder:                     s.cfg.BlockBuilder,
-		BLSChangesPool:                   s.cfg.BLSChangesPool,
-		ClockWaiter:                      s.cfg.ClockWaiter,
-		CoreService:                      coreService,
-		TrackedValidatorsCache:           s.cfg.TrackedValidatorsCache,
-		ProposerPreferencesCache:         s.cfg.ProposerPreferencesCache,
-		HighestBidCache:                  s.cfg.HighestBidCache,
-		PayloadIDCache:                   s.cfg.PayloadIDCache,
+		BeaconDB:                    s.cfg.BeaconDB,
+		BlockBuilder:                s.cfg.BlockBuilder,
+		BLSChangesPool:              s.cfg.BLSChangesPool,
+		ClockWaiter:                 s.cfg.ClockWaiter,
+		CoreService:                 coreService,
+		TrackedValidatorsCache:      s.cfg.TrackedValidatorsCache,
+		ProposerPreferencesCache:    s.cfg.ProposerPreferencesCache,
+		HighestBidCache:             s.cfg.HighestBidCache,
+		PayloadIDCache:              s.cfg.PayloadIDCache,
 		SilaPayloadEnvelopeCache:    s.cfg.SilaPayloadEnvelopeCache,
-		AttestationStateFetcher:          s.cfg.AttestationReceiver,
-		GraffitiInfo:                     s.cfg.GraffitiInfo,
+		AttestationStateFetcher:     s.cfg.AttestationReceiver,
+		GraffitiInfo:                s.cfg.GraffitiInfo,
 	}
 	s.validatorServer = validatorServer
 	nodeServer := &nodev1alpha1.Server{

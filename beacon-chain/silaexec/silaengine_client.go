@@ -1,0 +1,1288 @@
+package silaexec
+
+import (
+	"context"
+	"fmt"
+	"math/big"
+	"strings"
+	"time"
+
+	"github.com/holiman/uint256"
+	"github.com/pkg/errors"
+	"github.com/sila-chain/Sila"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/kzg"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/peerdas"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/types"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/verification"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/flags"
+	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/interfaces"
+	payloadattribute "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/payload-attribute"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
+	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
+	"github.com/sila-chain/Sila/common"
+	"github.com/sila-chain/Sila/common/hexutil"
+	gethRPC "github.com/sila-chain/Sila/rpc"
+	"github.com/sirupsen/logrus"
+	"golang.org/x/sync/errgroup"
+	"google.golang.org/protobuf/proto"
+)
+
+var (
+	supportedEngineEndpoints = []string{
+		NewPayloadMethod,
+		NewPayloadMethodV2,
+		NewPayloadMethodV3,
+		ForkchoiceUpdatedMethod,
+		ForkchoiceUpdatedMethodV2,
+		ForkchoiceUpdatedMethodV3,
+		GetPayloadMethod,
+		GetPayloadMethodV2,
+		GetPayloadMethodV3,
+		GetPayloadBodiesByHashV1,
+		GetPayloadBodiesByRangeV1,
+		GetBlobsV1,
+	}
+
+	electraEngineEndpoints = []string{
+		NewPayloadMethodV4,
+		GetPayloadMethodV4,
+	}
+
+	fuluEngineEndpoints = []string{
+		GetPayloadMethodV5,
+		GetBlobsV2,
+	}
+
+	gloasEngineEndpoints = []string{
+		NewPayloadMethodV5,
+		GetPayloadMethodV6,
+		ForkchoiceUpdatedMethodV4,
+		GetPayloadBodiesByHashV2,
+		GetPayloadBodiesByRangeV2,
+	}
+)
+
+const (
+	// NewPayloadMethod v1 request string for JSON-RPC.
+	NewPayloadMethod = "silaEngine_newPayloadV1"
+	// NewPayloadMethodV2 v2 request string for JSON-RPC.
+	NewPayloadMethodV2 = "silaEngine_newPayloadV2"
+	NewPayloadMethodV3 = "silaEngine_newPayloadV3"
+	// NewPayloadMethodV4 is the silaEngine_newPayloadVX method added at Electra.
+	NewPayloadMethodV4 = "silaEngine_newPayloadV4"
+	// NewPayloadMethodV5 is the silaEngine_newPayloadVX method added at Gloas.
+	NewPayloadMethodV5 = "silaEngine_newPayloadV5"
+	// ForkchoiceUpdatedMethod v1 request string for JSON-RPC.
+	ForkchoiceUpdatedMethod = "silaEngine_forkchoiceUpdatedV1"
+	// ForkchoiceUpdatedMethodV2 v2 request string for JSON-RPC.
+	ForkchoiceUpdatedMethodV2 = "silaEngine_forkchoiceUpdatedV2"
+	// ForkchoiceUpdatedMethodV3 v3 request string for JSON-RPC.
+	ForkchoiceUpdatedMethodV3 = "silaEngine_forkchoiceUpdatedV3"
+	// GetPayloadMethod v1 request string for JSON-RPC.
+	GetPayloadMethod = "silaEngine_getPayloadV1"
+	// GetPayloadMethodV2 v2 request string for JSON-RPC.
+	GetPayloadMethodV2 = "silaEngine_getPayloadV2"
+	// GetPayloadMethodV3 is the get payload method added for deneb
+	GetPayloadMethodV3 = "silaEngine_getPayloadV3"
+	// GetPayloadMethodV4 is the get payload method added for electra
+	GetPayloadMethodV4 = "silaEngine_getPayloadV4"
+	// GetPayloadMethodV5 is the get payload method added for fulu
+	GetPayloadMethodV5 = "silaEngine_getPayloadV5"
+	// GetPayloadMethodV6 is the get payload method added for gloas/amsterdam.
+	GetPayloadMethodV6 = "silaEngine_getPayloadV6"
+	// ForkchoiceUpdatedMethodV4 is the forkchoice updated method added for gloas/amsterdam.
+	ForkchoiceUpdatedMethodV4 = "silaEngine_forkchoiceUpdatedV4"
+	// BlockByHashMethod request string for JSON-RPC.
+	BlockByHashMethod = "sila_getBlockByHash"
+	// BlockByNumberMethod request string for JSON-RPC.
+	BlockByNumberMethod = "sila_getBlockByNumber"
+	// GetPayloadBodiesByHashV1 is the silaEngine_getPayloadBodiesByHashX JSON-RPC method for pre-Electra payloads.
+	GetPayloadBodiesByHashV1 = "silaEngine_getPayloadBodiesByHashV1"
+	// GetPayloadBodiesByRangeV1 is the silaEngine_getPayloadBodiesByRangeX JSON-RPC method for pre-Electra payloads.
+	GetPayloadBodiesByRangeV1 = "silaEngine_getPayloadBodiesByRangeV1"
+	// GetPayloadBodiesByHashV2 is the silaEngine_getPayloadBodiesByHashV2 JSON-RPC method for amsterdam payloads.
+	GetPayloadBodiesByHashV2 = "silaEngine_getPayloadBodiesByHashV2"
+	// GetPayloadBodiesByRangeV2 is the silaEngine_getPayloadBodiesByRangeV2 JSON-RPC method for amsterdam payloads.
+	GetPayloadBodiesByRangeV2 = "silaEngine_getPayloadBodiesByRangeV2"
+	// ExchangeCapabilities request string for JSON-RPC.
+	ExchangeCapabilities = "silaEngine_exchangeCapabilities"
+	// GetBlobsV1 request string for JSON-RPC.
+	GetBlobsV1 = "silaEngine_getBlobsV1"
+	// GetBlobsV2 request string for JSON-RPC.
+	GetBlobsV2 = "silaEngine_getBlobsV2"
+	// GetClientVersionV1 is the JSON-RPC method that identifies the Sila client.
+	GetClientVersionV1 = "silaEngine_getClientVersionV1"
+	// Defines the seconds before timing out engine endpoints with non-block execution semantics.
+	defaultEngineTimeout = time.Second
+)
+
+var errInvalidPayloadBodyResponse = errors.New("engine api payload body response is invalid")
+
+// ForkchoiceUpdatedResponse is the response kind received by the
+// silaEngine_forkchoiceUpdatedV1 endpoint.
+type ForkchoiceUpdatedResponse struct {
+	Status          *pb.PayloadStatus  `json:"payloadStatus"`
+	PayloadId       *pb.PayloadIDBytes `json:"payloadId"`
+	ValidationError string             `json:"validationError"`
+}
+
+// Reconstructor defines a service responsible for reconstructing full beacon chain objects by utilizing the execution API and making requests through the Sila client.
+type Reconstructor interface {
+	ReconstructFullBlock(
+		ctx context.Context, blindedBlock interfaces.ReadOnlySignedBeaconBlock,
+	) (interfaces.SignedBeaconBlock, error)
+	ReconstructFullBellatrixBlockBatch(
+		ctx context.Context, blindedBlocks []interfaces.ReadOnlySignedBeaconBlock,
+	) ([]interfaces.SignedBeaconBlock, error)
+	ReconstructFullGloasSilaPayloadsByHash(
+		ctx context.Context, blockHashes [][32]byte,
+	) (map[[32]byte]*pb.SilaPayloadGloas, error)
+	ReconstructBlobSidecars(ctx context.Context, block interfaces.ReadOnlySignedBeaconBlock, blockRoot [fieldparams.RootLength]byte, hi func(uint64) bool) ([]blocks.VerifiedROBlob, error)
+	ConstructDataColumnSidecars(ctx context.Context, populator peerdas.ConstructionPopulator) ([]blocks.VerifiedRODataColumn, error)
+	ReconstructSilaPayloadEnvelope(ctx context.Context, envelope *silapb.SignedBlindedSilaPayloadEnvelope) (*silapb.SignedSilaPayloadEnvelope, error)
+}
+
+// EngineCaller defines a client that can interact with a Sila
+// Sila node's engine service via JSON-RPC.
+type EngineCaller interface {
+	NewPayload(ctx context.Context, payload interfaces.SilaData, versionedHashes []common.Hash, parentBlockRoot *common.Hash, silaRequests *pb.SilaRequests) ([]byte, error)
+	ForkchoiceUpdated(
+		ctx context.Context, state *pb.ForkchoiceState, attrs payloadattribute.Attributer,
+	) (*pb.PayloadIDBytes, []byte, error)
+	GetPayload(ctx context.Context, payloadId [8]byte, slot primitives.Slot) (*blocks.GetPayloadResponse, error)
+	SilaBlockByHash(ctx context.Context, hash common.Hash, withTxs bool) (*pb.SilaBlock, error)
+	GetTerminalBlockHash(ctx context.Context, transitionTime uint64) ([]byte, bool, error)
+	GetClientVersionV1(ctx context.Context) ([]*structs.ClientVersionV1, error)
+}
+
+var ErrEmptyBlockHash = errors.New("Block hash is empty 0x0000...")
+
+// NewPayload request calls the silaEngine_newPayloadVX method via JSON-RPC.
+func (s *Service) NewPayload(ctx context.Context, payload interfaces.SilaData, versionedHashes []common.Hash, parentBlockRoot *common.Hash, silaRequests *pb.SilaRequests) ([]byte, error) {
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.NewPayload")
+	defer span.End()
+	defer func(start time.Time) {
+		newPayloadLatency.Observe(float64(time.Since(start).Milliseconds()))
+	}(time.Now())
+
+	d := time.Now().Add(time.Duration(params.BeaconConfig().ExecutionEngineTimeoutValue) * time.Second)
+	ctx, cancel := context.WithDeadline(ctx, d)
+	defer cancel()
+	result := &pb.PayloadStatus{}
+
+	switch payloadPb := payload.Proto().(type) {
+	case *pb.SilaPayload:
+		err := s.rpcClient.CallContext(ctx, result, NewPayloadMethod, payloadPb)
+		if err != nil {
+			return nil, handleRPCError(err)
+		}
+	case *pb.SilaPayloadCapella:
+		err := s.rpcClient.CallContext(ctx, result, NewPayloadMethodV2, payloadPb)
+		if err != nil {
+			return nil, handleRPCError(err)
+		}
+	case *pb.SilaPayloadDeneb:
+		if silaRequests == nil {
+			err := s.rpcClient.CallContext(ctx, result, NewPayloadMethodV3, payloadPb, versionedHashes, parentBlockRoot)
+			if err != nil {
+				return nil, handleRPCError(err)
+			}
+		} else {
+			flattenedRequests, err := pb.EncodeSilaRequests(silaRequests)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to encode sila requests")
+			}
+			err = s.rpcClient.CallContext(ctx, result, NewPayloadMethodV4, payloadPb, versionedHashes, parentBlockRoot, flattenedRequests)
+			if err != nil {
+				return nil, handleRPCError(err)
+			}
+		}
+	case *pb.SilaPayloadGloas:
+		flattenedRequests, err := pb.EncodeSilaRequests(silaRequests)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to encode sila requests")
+		}
+		err = s.rpcClient.CallContext(ctx, result, NewPayloadMethodV5, payloadPb, versionedHashes, parentBlockRoot, flattenedRequests)
+		if err != nil {
+			return nil, handleRPCError(err)
+		}
+	default:
+		return nil, errors.New("unknown sila data type")
+	}
+	if result.ValidationError != "" {
+		log.WithField("status", result.Status.String()).
+			WithField("parentRoot", fmt.Sprintf("%#x", parentBlockRoot)).
+			WithError(errors.New(result.ValidationError)).
+			Error("Got a validation error in newPayload")
+	}
+	switch result.Status {
+	case pb.PayloadStatus_INVALID_BLOCK_HASH:
+		return nil, ErrInvalidBlockHashPayloadStatus
+	case pb.PayloadStatus_ACCEPTED, pb.PayloadStatus_SYNCING:
+		return nil, ErrAcceptedSyncingPayloadStatus
+	case pb.PayloadStatus_INVALID:
+		return result.LatestValidHash, ErrInvalidPayloadStatus
+	case pb.PayloadStatus_VALID:
+		return result.LatestValidHash, nil
+	default:
+		return nil, errors.Wrapf(ErrUnknownPayloadStatus, "unknown payload status: %s", result.Status.String())
+	}
+}
+
+// ForkchoiceUpdated calls the silaEngine_forkchoiceUpdatedV1 method via JSON-RPC.
+func (s *Service) ForkchoiceUpdated(
+	ctx context.Context, state *pb.ForkchoiceState, attrs payloadattribute.Attributer,
+) (*pb.PayloadIDBytes, []byte, error) {
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.ForkchoiceUpdated")
+	defer span.End()
+	start := time.Now()
+	defer func() {
+		forkchoiceUpdatedLatency.Observe(float64(time.Since(start).Milliseconds()))
+	}()
+
+	d := time.Now().Add(time.Duration(params.BeaconConfig().ExecutionEngineTimeoutValue) * time.Second)
+	ctx, cancel := context.WithDeadline(ctx, d)
+	defer cancel()
+	result := &ForkchoiceUpdatedResponse{}
+
+	if attrs == nil {
+		return nil, nil, errors.New("nil payload attributer")
+	}
+	switch attrs.Version() {
+	case version.Bellatrix:
+		a, err := attrs.PbV1()
+		if err != nil {
+			return nil, nil, err
+		}
+		err = s.rpcClient.CallContext(ctx, result, ForkchoiceUpdatedMethod, state, a)
+		if err != nil {
+			return nil, nil, handleRPCError(err)
+		}
+	case version.Capella:
+		a, err := attrs.PbV2()
+		if err != nil {
+			return nil, nil, err
+		}
+		err = s.rpcClient.CallContext(ctx, result, ForkchoiceUpdatedMethodV2, state, a)
+		if err != nil {
+			return nil, nil, handleRPCError(err)
+		}
+	case version.Deneb, version.Electra, version.Fulu:
+		a, err := attrs.PbV3()
+		if err != nil {
+			return nil, nil, err
+		}
+		err = s.rpcClient.CallContext(ctx, result, ForkchoiceUpdatedMethodV3, state, a)
+		if err != nil {
+			return nil, nil, handleRPCError(err)
+		}
+	case version.Gloas:
+		a, err := attrs.PbV4()
+		if err != nil {
+			return nil, nil, err
+		}
+		err = s.rpcClient.CallContext(ctx, result, ForkchoiceUpdatedMethodV4, state, a)
+		if err != nil {
+			return nil, nil, handleRPCError(err)
+		}
+	default:
+		return nil, nil, fmt.Errorf("unknown payload attribute version: %v", attrs.Version())
+	}
+
+	if result.Status == nil {
+		return nil, nil, ErrNilResponse
+	}
+	if result.ValidationError != "" {
+		log.WithError(errors.New(result.ValidationError)).Error("Got a validation error in forkChoiceUpdated")
+	}
+	resp := result.Status
+	switch resp.Status {
+	case pb.PayloadStatus_SYNCING:
+		return nil, nil, ErrAcceptedSyncingPayloadStatus
+	case pb.PayloadStatus_INVALID:
+		return nil, resp.LatestValidHash, ErrInvalidPayloadStatus
+	case pb.PayloadStatus_VALID:
+		return result.PayloadId, resp.LatestValidHash, nil
+	default:
+		return nil, nil, ErrUnknownPayloadStatus
+	}
+}
+
+func getPayloadMethodAndMessage(slot primitives.Slot) (string, proto.Message) {
+	epoch := slots.ToEpoch(slot)
+	if epoch >= params.BeaconConfig().GloasForkEpoch {
+		return GetPayloadMethodV6, &pb.ExecutionBundleGloas{}
+	}
+	if epoch >= params.BeaconConfig().FuluForkEpoch {
+		return GetPayloadMethodV5, &pb.ExecutionBundleFulu{}
+	}
+	if epoch >= params.BeaconConfig().ElectraForkEpoch {
+		return GetPayloadMethodV4, &pb.ExecutionBundleElectra{}
+	}
+	if epoch >= params.BeaconConfig().DenebForkEpoch {
+		return GetPayloadMethodV3, &pb.SilaPayloadDenebWithValueAndBlobsBundle{}
+	}
+	if epoch >= params.BeaconConfig().CapellaForkEpoch {
+		return GetPayloadMethodV2, &pb.SilaPayloadCapellaWithValue{}
+	}
+	return GetPayloadMethod, &pb.SilaPayload{}
+}
+
+// GetPayload calls the silaEngine_getPayloadVX method via JSON-RPC.
+// It returns the sila data as well as the blobs bundle.
+func (s *Service) GetPayload(ctx context.Context, payloadId [8]byte, slot primitives.Slot) (*blocks.GetPayloadResponse, error) {
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.GetPayload")
+	defer span.End()
+	start := time.Now()
+	defer func() {
+		getPayloadLatency.Observe(float64(time.Since(start).Milliseconds()))
+	}()
+	d := time.Now().Add(defaultEngineTimeout)
+	ctx, cancel := context.WithDeadline(ctx, d)
+	defer cancel()
+
+	method, result := getPayloadMethodAndMessage(slot)
+	err := s.rpcClient.CallContext(ctx, result, method, pb.PayloadIDBytes(payloadId))
+	if err != nil {
+		return nil, handleRPCError(err)
+	}
+	res, err := blocks.NewGetPayloadResponse(result)
+	if err != nil {
+		return nil, errors.Wrap(err, "new get payload response")
+	}
+	return res, nil
+}
+
+func (s *Service) ExchangeCapabilities(ctx context.Context) ([]string, error) {
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.ExchangeCapabilities")
+	defer span.End()
+
+	if params.ElectraEnabled() {
+		supportedEngineEndpoints = append(supportedEngineEndpoints, electraEngineEndpoints...)
+	}
+
+	if params.FuluEnabled() {
+		supportedEngineEndpoints = append(supportedEngineEndpoints, fuluEngineEndpoints...)
+	}
+
+	if params.GloasEnabled() {
+		supportedEngineEndpoints = append(supportedEngineEndpoints, gloasEngineEndpoints...)
+	}
+
+	elSupportedEndpointsSlice := make([]string, len(supportedEngineEndpoints))
+	if err := s.rpcClient.CallContext(ctx, &elSupportedEndpointsSlice, ExchangeCapabilities, supportedEngineEndpoints); err != nil {
+		return nil, handleRPCError(err)
+	}
+
+	elSupportedEndpoints := make(map[string]bool, len(elSupportedEndpointsSlice))
+	for _, method := range elSupportedEndpointsSlice {
+		elSupportedEndpoints[method] = true
+	}
+
+	unsupported := make([]string, 0)
+	for _, method := range supportedEngineEndpoints {
+		if !elSupportedEndpoints[method] {
+			unsupported = append(unsupported, method)
+		}
+	}
+
+	if len(unsupported) != 0 {
+		log.WithField("methods", unsupported).Warning("Connected Sila client does not support some requested engine methods")
+	}
+
+	return elSupportedEndpointsSlice, nil
+}
+
+// GetTerminalBlockHash returns the valid terminal block hash based on total difficulty.
+//
+// Spec code:
+// def get_pow_block_at_terminal_total_difficulty(pow_chain: Dict[Hash32, PowBlock]) -> Optional[PowBlock]:
+//
+//	# `pow_chain` abstractly represents all blocks in the PoW chain
+//	for block in pow_chain:
+//	    parent = pow_chain[block.parent_hash]
+//	    block_reached_ttd = block.total_difficulty >= TERMINAL_TOTAL_DIFFICULTY
+//	    parent_reached_ttd = parent.total_difficulty >= TERMINAL_TOTAL_DIFFICULTY
+//	    if block_reached_ttd and not parent_reached_ttd:
+//	        return block
+//
+//	return None
+func (s *Service) GetTerminalBlockHash(ctx context.Context, transitionTime uint64) ([]byte, bool, error) {
+	ttd := new(big.Int)
+	ttd.SetString(params.BeaconConfig().TerminalTotalDifficulty, 10)
+	terminalTotalDifficulty, overflows := uint256.FromBig(ttd)
+	if overflows {
+		return nil, false, errors.New("could not convert terminal total difficulty to uint256")
+	}
+	blk, err := s.LatestSilaBlock(ctx)
+	if err != nil {
+		return nil, false, errors.Wrap(err, "could not get latest sila block")
+	}
+	if blk == nil {
+		return nil, false, errors.New("latest sila block is nil")
+	}
+
+	for {
+		if ctx.Err() != nil {
+			return nil, false, ctx.Err()
+		}
+		currentTotalDifficulty, err := tDStringToUint256(blk.TotalDifficulty)
+		if err != nil {
+			return nil, false, errors.Wrap(err, "could not convert total difficulty to uint256")
+		}
+		blockReachedTTD := currentTotalDifficulty.Cmp(terminalTotalDifficulty) >= 0
+
+		parentHash := blk.ParentHash
+		if parentHash == params.BeaconConfig().ZeroHash {
+			return nil, false, nil
+		}
+		parentBlk, err := s.SilaBlockByHash(ctx, parentHash, false /* no txs */)
+		if err != nil {
+			return nil, false, errors.Wrap(err, "could not get parent sila block")
+		}
+		if parentBlk == nil {
+			return nil, false, errors.New("parent sila block is nil")
+		}
+
+		if blockReachedTTD {
+			parentTotalDifficulty, err := tDStringToUint256(parentBlk.TotalDifficulty)
+			if err != nil {
+				return nil, false, errors.Wrap(err, "could not convert total difficulty to uint256")
+			}
+
+			// If terminal block has time same timestamp or greater than transition time,
+			// then the node violates the invariant that a block's timestamp must be
+			// greater than its parent's timestamp. Execution layer will reject
+			// a fcu call with such payload attributes. It's best that we return `None` in this a case.
+			parentReachedTTD := parentTotalDifficulty.Cmp(terminalTotalDifficulty) >= 0
+			if !parentReachedTTD {
+				if blk.Time >= transitionTime {
+					return nil, false, nil
+				}
+
+				log.WithFields(logrus.Fields{
+					"number":   blk.Number,
+					"hash":     fmt.Sprintf("%#x", bytesutil.Trunc(blk.Hash[:])),
+					"td":       blk.TotalDifficulty,
+					"parentTd": parentBlk.TotalDifficulty,
+					"ttd":      terminalTotalDifficulty,
+				}).Info("Retrieved terminal block hash")
+				return blk.Hash[:], true, nil
+			}
+		} else {
+			return nil, false, nil
+		}
+		blk = parentBlk
+	}
+}
+
+// LatestSilaBlock fetches the latest SilaEngine block by calling
+// sila_blockByNumber via JSON-RPC.
+func (s *Service) LatestSilaBlock(ctx context.Context) (*pb.SilaBlock, error) {
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.LatestSilaBlock")
+	defer span.End()
+
+	result := &pb.SilaBlock{}
+	err := s.rpcClient.CallContext(
+		ctx,
+		result,
+		BlockByNumberMethod,
+		"latest",
+		false, /* no full transaction objects */
+	)
+	return result, handleRPCError(err)
+}
+
+// SilaBlockByHash fetches an SilaEngine block by hash by calling
+// sila_blockByHash via JSON-RPC.
+func (s *Service) SilaBlockByHash(ctx context.Context, hash common.Hash, withTxs bool) (*pb.SilaBlock, error) {
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.SilaBlockByHash")
+	defer span.End()
+	result := &pb.SilaBlock{}
+	err := s.rpcClient.CallContext(ctx, result, BlockByHashMethod, hash, withTxs)
+	return result, handleRPCError(err)
+}
+
+// SilaBlocksByHashes fetches a batch of SilaEngine blocks by hash by calling
+// sila_blockByHash via JSON-RPC.
+func (s *Service) SilaBlocksByHashes(ctx context.Context, hashes []common.Hash, withTxs bool) ([]*pb.SilaBlock, error) {
+	_, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.SilaBlocksByHashes")
+	defer span.End()
+	numOfHashes := len(hashes)
+	elems := make([]gethRPC.BatchElem, 0, numOfHashes)
+	execBlks := make([]*pb.SilaBlock, 0, numOfHashes)
+	if numOfHashes == 0 {
+		return execBlks, nil
+	}
+	for _, h := range hashes {
+		blk := &pb.SilaBlock{}
+		newH := h
+		elems = append(elems, gethRPC.BatchElem{
+			Method: BlockByHashMethod,
+			Args:   []any{newH, withTxs},
+			Result: blk,
+			Error:  error(nil),
+		})
+		execBlks = append(execBlks, blk)
+	}
+	ioErr := s.rpcClient.BatchCall(elems)
+	if ioErr != nil {
+		return nil, ioErr
+	}
+	for _, e := range elems {
+		if e.Error != nil {
+			return nil, handleRPCError(e.Error)
+		}
+	}
+	return execBlks, nil
+}
+
+// HeaderByHash returns the relevant header details for the provided block hash.
+func (s *Service) HeaderByHash(ctx context.Context, hash common.Hash) (*types.HeaderInfo, error) {
+	var hdr *types.HeaderInfo
+	err := s.rpcClient.CallContext(ctx, &hdr, BlockByHashMethod, hash, false /* no transactions */)
+	if err == nil && hdr == nil {
+		err = sila.NotFound
+	}
+	return hdr, err
+}
+
+// HeaderByNumber returns the relevant header details for the provided block number.
+func (s *Service) HeaderByNumber(ctx context.Context, number *big.Int) (*types.HeaderInfo, error) {
+	var hdr *types.HeaderInfo
+	err := s.rpcClient.CallContext(ctx, &hdr, BlockByNumberMethod, toBlockNumArg(number), false /* no transactions */)
+	if err == nil && hdr == nil {
+		err = sila.NotFound
+	}
+	return hdr, err
+}
+
+// GetBlobs returns the blob and proof from the SilaEngine for the given versioned hashes.
+func (s *Service) GetBlobs(ctx context.Context, versionedHashes []common.Hash) ([]*pb.BlobAndProof, error) {
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.GetBlobs")
+	defer span.End()
+
+	// If the SilaEngine does not support `GetBlobsV1`, return early to prevent encountering an error later.
+	if !s.capabilityCache.has(GetBlobsV1) {
+		return nil, errors.New(fmt.Sprintf("%s is not supported", GetBlobsV1))
+	}
+
+	result := make([]*pb.BlobAndProof, len(versionedHashes))
+	err := s.rpcClient.CallContext(ctx, &result, GetBlobsV1, versionedHashes)
+	return result, handleRPCError(err)
+}
+
+func (s *Service) GetBlobsV2(ctx context.Context, versionedHashes []common.Hash) ([]*pb.BlobAndProofV2, error) {
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.GetBlobsV2")
+	defer span.End()
+
+	start := time.Now()
+
+	if !s.capabilityCache.has(GetBlobsV2) {
+		return nil, errors.New(fmt.Sprintf("%s is not supported", GetBlobsV2))
+	}
+
+	if flags.Get().DisableGetBlobsV2 {
+		return []*pb.BlobAndProofV2{}, nil
+	}
+
+	result := make([]*pb.BlobAndProofV2, len(versionedHashes))
+	err := s.rpcClient.CallContext(ctx, &result, GetBlobsV2, versionedHashes)
+
+	if len(result) != 0 {
+		getBlobsV2Latency.Observe(float64(time.Since(start).Milliseconds()))
+	}
+
+	return result, handleRPCError(err)
+}
+
+// GetClientVersion calls silaEngine_getClientVersionV1 to retrieve EL client information.
+func (s *Service) GetClientVersionV1(ctx context.Context) ([]*structs.ClientVersionV1, error) {
+	ctx, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.GetClientVersionV1")
+	defer span.End()
+
+	// First 4 bytes of the git commit are used.
+	commit := version.GitCommit()
+	if len(commit) >= 8 {
+		commit = commit[:8]
+	}
+
+	var result []*structs.ClientVersionV1
+	err := s.rpcClient.CallContext(
+		ctx,
+		&result,
+		GetClientVersionV1,
+		structs.ClientVersionV1{
+			Code:    SilaClientCode,
+			Name:    SilaClientName,
+			Version: version.SemanticVersion(),
+			Commit:  commit,
+		},
+	)
+	if err != nil {
+		return nil, handleRPCError(err)
+	}
+
+	if len(result) == 0 {
+		return nil, errors.New("Sila client returned no result")
+	}
+
+	return result, nil
+}
+
+// ReconstructFullBlock takes in a blinded beacon block and reconstructs
+// a beacon block with a full sila payload via the SilaEngine API.
+func (s *Service) ReconstructFullBlock(
+	ctx context.Context, blindedBlock interfaces.ReadOnlySignedBeaconBlock,
+) (interfaces.SignedBeaconBlock, error) {
+	reconstructed, err := s.ReconstructFullBellatrixBlockBatch(ctx, []interfaces.ReadOnlySignedBeaconBlock{blindedBlock})
+	if err != nil {
+		return nil, err
+	}
+	if len(reconstructed) != 1 {
+		return nil, errors.Errorf("could not retrieve the correct number of payload bodies: wanted 1 but got %d", len(reconstructed))
+	}
+	return reconstructed[0], nil
+}
+
+// ReconstructFullBellatrixBlockBatch takes in a batch of blinded beacon blocks and reconstructs
+// them with a full sila payload for each block via the SilaEngine API.
+func (s *Service) ReconstructFullBellatrixBlockBatch(
+	ctx context.Context, blindedBlocks []interfaces.ReadOnlySignedBeaconBlock,
+) ([]interfaces.SignedBeaconBlock, error) {
+	unb, err := reconstructBlindedBlockBatch(ctx, s.rpcClient, blindedBlocks)
+	if err != nil {
+		return nil, err
+	}
+	reconstructedSilaPayloadCount.Add(float64(len(unb)))
+	return unb, nil
+}
+
+// ReconstructSilaPayloadEnvelope reconstructs a full Gloas envelope from a blinded envelope.
+func (s *Service) ReconstructSilaPayloadEnvelope(
+	ctx context.Context, envelope *silapb.SignedBlindedSilaPayloadEnvelope,
+) (*silapb.SignedSilaPayloadEnvelope, error) {
+	if envelope == nil || envelope.Message == nil {
+		return nil, errors.New("nil blinded sila payload envelope")
+	}
+	blockHash := bytesutil.ToBytes32(envelope.Message.BlockHash)
+	payloads, err := s.ReconstructFullGloasSilaPayloadsByHash(ctx, [][32]byte{blockHash})
+	if err != nil {
+		return nil, errors.Wrap(err, "could not reconstruct sila payload")
+	}
+	payload, ok := payloads[blockHash]
+	if !ok || payload == nil {
+		return nil, errors.New("sila payload not found")
+	}
+	return &silapb.SignedSilaPayloadEnvelope{
+		Message: &silapb.SilaPayloadEnvelope{
+			Payload:               payload,
+			SilaRequests:          envelope.Message.SilaRequests,
+			BuilderIndex:          envelope.Message.BuilderIndex,
+			BeaconBlockRoot:       envelope.Message.BeaconBlockRoot,
+			ParentBeaconBlockRoot: envelope.Message.ParentBeaconBlockRoot,
+		},
+		Signature: envelope.Signature,
+	}, nil
+}
+
+// ReconstructFullGloasSilaPayloadsByHash reconstructs full Gloas payloads from EL data.
+func (s *Service) ReconstructFullGloasSilaPayloadsByHash(
+	ctx context.Context, blockHashes [][32]byte,
+) (map[[32]byte]*pb.SilaPayloadGloas, error) {
+	payloads := make(map[[32]byte]*pb.SilaPayloadGloas, len(blockHashes))
+	if len(blockHashes) == 0 {
+		return payloads, nil
+	}
+
+	uniqueSet := make(map[[32]byte]struct{}, len(blockHashes))
+	uniqueHashes := make([][32]byte, 0, len(blockHashes))
+	for i := range blockHashes {
+		h := blockHashes[i]
+		if _, ok := uniqueSet[h]; ok {
+			continue
+		}
+		uniqueSet[h] = struct{}{}
+		uniqueHashes = append(uniqueHashes, h)
+	}
+
+	requestHashes := make([]common.Hash, 0, len(uniqueHashes))
+	for i := range uniqueHashes {
+		if uniqueHashes[i] == params.BeaconConfig().ZeroHash {
+			empty, err := EmptySilaPayload(version.Gloas)
+			if err != nil {
+				return nil, err
+			}
+			payloads[uniqueHashes[i]] = empty.(*pb.SilaPayloadGloas)
+			continue
+		}
+		requestHashes = append(requestHashes, uniqueHashes[i])
+	}
+
+	if len(requestHashes) == 0 {
+		return payloads, nil
+	}
+
+	var execBlocks []*pb.SilaBlock
+	bodiesV2 := make([]*pb.SilaPayloadBodyV2, 0)
+	g, gctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
+		blks, err := s.SilaBlocksByHashes(gctx, requestHashes, false)
+		if err != nil {
+			return errors.Wrap(err, "could not fetch sila blocks by hash")
+		}
+		execBlocks = blks
+		return nil
+	})
+	g.Go(func() error {
+		if err := s.rpcClient.CallContext(gctx, &bodiesV2, GetPayloadBodiesByHashV2, requestHashes); err != nil {
+			return errors.Wrap(err, "could not fetch payload bodies V2 by hash")
+		}
+		return nil
+	})
+	if err := g.Wait(); err != nil {
+		return nil, err
+	}
+	if len(bodiesV2) != len(requestHashes) {
+		return nil, errors.Errorf("payload bodies V2 count mismatch: got %d, want %d", len(bodiesV2), len(requestHashes))
+	}
+
+	for i, h := range requestHashes {
+		blk := execBlocks[i]
+		payload, err := gloasPayloadFromSilaBlock(h, blk)
+		if err != nil {
+			return nil, err
+		}
+		if bodiesV2[i] != nil {
+			payload.Transactions = pb.RecastHexutilByteSlice(bodiesV2[i].Transactions)
+			payload.Withdrawals = bodiesV2[i].Withdrawals
+			if bodiesV2[i].BlockAccessList != nil {
+				payload.BlockAccessList = *bodiesV2[i].BlockAccessList
+			}
+		}
+		payloads[h] = payload
+	}
+
+	return payloads, nil
+}
+
+// gloasPayloadFromSilaBlock extracts header fields from a Sila block.
+func gloasPayloadFromSilaBlock(
+	requestedHash [32]byte, blk *pb.SilaBlock,
+) (*pb.SilaPayloadGloas, error) {
+	if blk == nil {
+		return nil, errors.New("sila block not found")
+	}
+	if blk.Hash == (common.Hash{}) || blk.Hash != requestedHash {
+		return nil, errors.New("sila block hash mismatch")
+	}
+	if blk.Number == nil {
+		return nil, errors.New("sila block number is nil")
+	}
+	if blk.BaseFee == nil {
+		return nil, errors.New("sila block base fee is nil")
+	}
+
+	if blk.BlobGasUsed == nil {
+		return nil, errors.New("sila block blob gas used is nil")
+	}
+	if blk.ExcessBlobGas == nil {
+		return nil, errors.New("sila block excess blob gas is nil")
+	}
+	if blk.SlotNumber == nil {
+		return nil, errors.New("sila block slot number is nil")
+	}
+
+	return &pb.SilaPayloadGloas{
+		ParentHash:      blk.ParentHash.Bytes(),
+		FeeRecipient:    blk.Coinbase.Bytes(),
+		StateRoot:       blk.Root.Bytes(),
+		ReceiptsRoot:    blk.ReceiptHash.Bytes(),
+		LogsBloom:       blk.Bloom.Bytes(),
+		PrevRandao:      blk.MixDigest.Bytes(),
+		BlockNumber:     blk.Number.Uint64(),
+		GasLimit:        blk.GasLimit,
+		GasUsed:         blk.GasUsed,
+		Timestamp:       blk.Time,
+		ExtraData:       blk.Extra,
+		BaseFeePerGas:   bytesutil.PadTo(bytesutil.ReverseByteOrder(blk.BaseFee.Bytes()), fieldparams.RootLength),
+		BlockHash:       blk.Hash.Bytes(),
+		BlobGasUsed:     *blk.BlobGasUsed,
+		ExcessBlobGas:   *blk.ExcessBlobGas,
+		SlotNumber:      primitives.Slot(*blk.SlotNumber),
+		BlockAccessList: blk.BlockAccessList,
+	}, nil
+}
+
+// ReconstructBlobSidecars reconstructs the verified blob sidecars for a given beacon block.
+// It retrieves the KZG commitments from the block body, fetches the associated blobs and proofs,
+// and constructs the corresponding verified read-only blob sidecars.
+//
+// The 'hasIndex' argument is a function returns true if the given uint64 blob index already exists on disc.
+// Only the blobs that do not already exist (where hasIndex(i) is false)
+// will be fetched from the SilaEngine using the KZG commitments from block body.
+func (s *Service) ReconstructBlobSidecars(ctx context.Context, block interfaces.ReadOnlySignedBeaconBlock, blockRoot [32]byte, hasIndex func(uint64) bool) ([]blocks.VerifiedROBlob, error) {
+	blockBody := block.Block().Body()
+	kzgCommitments, err := blockBody.BlobKzgCommitments()
+	if err != nil {
+		return nil, errors.Wrap(err, "could not get blob KZG commitments")
+	}
+
+	// Collect KZG hashes for non-existing blobs
+	var kzgHashes []common.Hash
+	var kzgIndexes []int
+	for i, commitment := range kzgCommitments {
+		if !hasIndex(uint64(i)) {
+			kzgHashes = append(kzgHashes, primitives.ConvertKzgCommitmentToVersionedHash(commitment))
+			kzgIndexes = append(kzgIndexes, i)
+		}
+	}
+	if len(kzgHashes) == 0 {
+		return nil, nil
+	}
+
+	// Fetch blobs from EL
+	blobs, err := s.GetBlobs(ctx, kzgHashes)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not get blobs")
+	}
+	if len(blobs) == 0 {
+		return nil, nil
+	}
+
+	header, err := block.Header()
+	if err != nil {
+		return nil, errors.Wrap(err, "could not get header")
+	}
+
+	// Reconstruct verified blob sidecars
+	var verifiedBlobs []blocks.VerifiedROBlob
+	for i := 0; i < len(kzgHashes); i++ {
+		if blobs[i] == nil {
+			continue
+		}
+		blob := blobs[i]
+		blobIndex := kzgIndexes[i]
+		proof, err := blocks.MerkleProofKZGCommitment(blockBody, blobIndex)
+		if err != nil {
+			log.WithError(err).WithField("index", blobIndex).Error("Failed to get Merkle proof for KZG commitment")
+			continue
+		}
+		sidecar := &silapb.BlobSidecar{
+			Index:                    uint64(blobIndex),
+			Blob:                     blob.Blob,
+			KzgCommitment:            kzgCommitments[blobIndex],
+			KzgProof:                 blob.KzgProof,
+			SignedBlockHeader:        header,
+			CommitmentInclusionProof: proof,
+		}
+
+		roBlob, err := blocks.NewROBlobWithRoot(sidecar, blockRoot)
+		if err != nil {
+			log.WithError(err).WithField("index", blobIndex).Error("Failed to create RO blob with root")
+			continue
+		}
+
+		v := s.blobVerifier(roBlob, verification.ELMemPoolRequirements)
+		verifiedBlob, err := v.VerifiedROBlob()
+		if err != nil {
+			log.WithError(err).WithField("index", blobIndex).Error("Failed to verify RO blob")
+			continue
+		}
+
+		verifiedBlobs = append(verifiedBlobs, verifiedBlob)
+	}
+
+	return verifiedBlobs, nil
+}
+
+func (s *Service) ConstructDataColumnSidecars(ctx context.Context, populator peerdas.ConstructionPopulator) ([]blocks.VerifiedRODataColumn, error) {
+	root := populator.Root()
+
+	// Fetch cells and proofs from the Sila client using the KZG commitments from the sidecar.
+	commitments, err := populator.Commitments()
+	if err != nil {
+		return nil, wrapWithBlockRoot(err, root, "commitments")
+	}
+
+	cellsPerBlob, proofsPerBlob, err := s.fetchCellsAndProofsFromExecution(ctx, commitments)
+	if err != nil {
+		return nil, wrapWithBlockRoot(err, root, "fetch cells and proofs from Sila client")
+	}
+
+	// Return early if nothing is returned from the EL.
+	if len(cellsPerBlob) == 0 {
+		return nil, nil
+	}
+
+	// Construct data column sidears from the signed block and cells and proofs.
+	roSidecars, err := peerdas.DataColumnSidecars(cellsPerBlob, proofsPerBlob, populator)
+	if err != nil {
+		return nil, wrapWithBlockRoot(err, populator.Root(), "data column sidcars from column sidecar")
+	}
+
+	// Upgrade the sidecars to verified sidecars.
+	// We trust the Sila layer we are connected to, so we can upgrade the sidecar into a verified one.
+	verifiedROSidecars := upgradeSidecarsToVerifiedSidecars(roSidecars)
+
+	return verifiedROSidecars, nil
+}
+
+// fetchCellsAndProofsFromExecution fetches cells and proofs from the Sila client (using silaEngine_getBlobsV2 execution API method)
+func (s *Service) fetchCellsAndProofsFromExecution(ctx context.Context, kzgCommitments [][]byte) ([][]kzg.Cell, [][]kzg.Proof, error) {
+	// Collect KZG hashes for all blobs.
+	versionedHashes := make([]common.Hash, 0, len(kzgCommitments))
+	for _, commitment := range kzgCommitments {
+		versionedHash := primitives.ConvertKzgCommitmentToVersionedHash(commitment)
+		versionedHashes = append(versionedHashes, versionedHash)
+	}
+
+	// Fetch all blobsAndCellsProofs from the Sila client.
+	blobAndProofV2s, err := s.GetBlobsV2(ctx, versionedHashes)
+	if err != nil {
+		return nil, nil, errors.Wrapf(err, "get blobs V2")
+	}
+
+	// Return early if nothing is returned from the EL.
+	if len(blobAndProofV2s) == 0 {
+		return nil, nil, nil
+	}
+
+	// Compute cells and proofs from the blobs and cell proofs.
+	cellsPerBlob, proofsPerBlob, err := peerdas.ComputeCellsAndProofsFromStructured(blobAndProofV2s)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "compute cells and proofs")
+	}
+
+	return cellsPerBlob, proofsPerBlob, nil
+}
+
+// upgradeSidecarsToVerifiedSidecars upgrades a list of data column sidecars into verified data column sidecars.
+func upgradeSidecarsToVerifiedSidecars(roSidecars []blocks.RODataColumn) []blocks.VerifiedRODataColumn {
+	verifiedRODataColumns := make([]blocks.VerifiedRODataColumn, 0, len(roSidecars))
+	for _, roSidecar := range roSidecars {
+		verifiedRODataColumn := blocks.NewVerifiedRODataColumn(roSidecar)
+		verifiedRODataColumns = append(verifiedRODataColumns, verifiedRODataColumn)
+	}
+
+	return verifiedRODataColumns
+}
+
+func fullPayloadFromPayloadBody(
+	header interfaces.SilaData, body *pb.SilaPayloadBody, bVersion int,
+) (interfaces.SilaData, error) {
+	if header == nil || header.IsNil() || body == nil {
+		return nil, errors.New("sila block and header cannot be nil")
+	}
+
+	if bVersion >= version.Deneb {
+		ebg, err := header.ExcessBlobGas()
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to extract ExcessBlobGas attribute from sila payload header")
+		}
+		bgu, err := header.BlobGasUsed()
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to extract BlobGasUsed attribute from sila payload header")
+		}
+		return blocks.WrappedSilaPayloadDeneb(
+			&pb.SilaPayloadDeneb{
+				ParentHash:    header.ParentHash(),
+				FeeRecipient:  header.FeeRecipient(),
+				StateRoot:     header.StateRoot(),
+				ReceiptsRoot:  header.ReceiptsRoot(),
+				LogsBloom:     header.LogsBloom(),
+				PrevRandao:    header.PrevRandao(),
+				BlockNumber:   header.BlockNumber(),
+				GasLimit:      header.GasLimit(),
+				GasUsed:       header.GasUsed(),
+				Timestamp:     header.Timestamp(),
+				ExtraData:     header.ExtraData(),
+				BaseFeePerGas: header.BaseFeePerGas(),
+				BlockHash:     header.BlockHash(),
+				Transactions:  pb.RecastHexutilByteSlice(body.Transactions),
+				Withdrawals:   body.Withdrawals,
+				ExcessBlobGas: ebg,
+				BlobGasUsed:   bgu,
+			}) // We can't get the block value and don't care about the block value for this instance
+	}
+
+	if bVersion >= version.Capella {
+		return blocks.WrappedSilaPayloadCapella(&pb.SilaPayloadCapella{
+			ParentHash:    header.ParentHash(),
+			FeeRecipient:  header.FeeRecipient(),
+			StateRoot:     header.StateRoot(),
+			ReceiptsRoot:  header.ReceiptsRoot(),
+			LogsBloom:     header.LogsBloom(),
+			PrevRandao:    header.PrevRandao(),
+			BlockNumber:   header.BlockNumber(),
+			GasLimit:      header.GasLimit(),
+			GasUsed:       header.GasUsed(),
+			Timestamp:     header.Timestamp(),
+			ExtraData:     header.ExtraData(),
+			BaseFeePerGas: header.BaseFeePerGas(),
+			BlockHash:     header.BlockHash(),
+			Transactions:  pb.RecastHexutilByteSlice(body.Transactions),
+			Withdrawals:   body.Withdrawals,
+		}) // We can't get the block value and don't care about the block value for this instance
+	}
+
+	if bVersion >= version.Bellatrix {
+		return blocks.WrappedSilaPayload(&pb.SilaPayload{
+			ParentHash:    header.ParentHash(),
+			FeeRecipient:  header.FeeRecipient(),
+			StateRoot:     header.StateRoot(),
+			ReceiptsRoot:  header.ReceiptsRoot(),
+			LogsBloom:     header.LogsBloom(),
+			PrevRandao:    header.PrevRandao(),
+			BlockNumber:   header.BlockNumber(),
+			GasLimit:      header.GasLimit(),
+			GasUsed:       header.GasUsed(),
+			Timestamp:     header.Timestamp(),
+			ExtraData:     header.ExtraData(),
+			BaseFeePerGas: header.BaseFeePerGas(),
+			BlockHash:     header.BlockHash(),
+			Transactions:  pb.RecastHexutilByteSlice(body.Transactions),
+		})
+	}
+
+	return nil, fmt.Errorf("unknown sila block version for payload %s", version.String(bVersion))
+}
+
+// Handles errors received from the RPC server according to the specification.
+func handleRPCError(err error) error {
+	if err == nil {
+		return nil
+	}
+	if isTimeout(err) {
+		return ErrHTTPTimeout
+	}
+	var e gethRPC.Error
+	ok := errors.As(err, &e)
+	if !ok {
+		if strings.Contains(err.Error(), "401 Unauthorized") {
+			log.Error("HTTP authentication to your Sila client is not working. Please ensure " +
+				"you are setting a correct value for the --jwt-secret flag in Sila, or use an IPC connection if on " +
+				"the same machine. Please see our documentation for more information on authenticating connections " +
+				"here https://docs.prylabs.network/docs/execution-node/authentication")
+			return fmt.Errorf("could not authenticate connection to Sila client: %w", err)
+		}
+		return errors.Wrapf(err, "got an unexpected error in JSON-RPC response")
+	}
+	switch e.ErrorCode() {
+	case -32700:
+		errParseCount.Inc()
+		return ErrParse
+	case -32600:
+		errInvalidRequestCount.Inc()
+		return ErrInvalidRequest
+	case -32601:
+		errMethodNotFoundCount.Inc()
+		return ErrMethodNotFound
+	case -32602:
+		errInvalidParamsCount.Inc()
+		return ErrInvalidParams
+	case -32603:
+		errInternalCount.Inc()
+		return ErrInternal
+	case -38001:
+		errUnknownPayloadCount.Inc()
+		return ErrUnknownPayload
+	case -38002:
+		errInvalidForkchoiceStateCount.Inc()
+		return ErrInvalidForkchoiceState
+	case -38003:
+		errInvalidPayloadAttributesCount.Inc()
+		return ErrInvalidPayloadAttributes
+	case -38004:
+		errRequestTooLargeCount.Inc()
+		return ErrRequestTooLarge
+	case -32000:
+		errServerErrorCount.Inc()
+		// Only -32000 status codes are data errors in the RPC specification.
+		var errWithData gethRPC.DataError
+		ok := errors.As(err, &errWithData)
+		if !ok {
+			return errors.Wrapf(err, "got an unexpected error in JSON-RPC response")
+		}
+		return errors.Wrapf(ErrServer, "%v", errWithData.Error())
+	default:
+		return err
+	}
+}
+
+// ErrHTTPTimeout returns true if the error is a http.Client timeout error.
+var ErrHTTPTimeout = errors.New("timeout from http.Client")
+
+type httpTimeoutError interface {
+	Error() string
+	Timeout() bool
+}
+
+func isTimeout(e error) bool {
+	var t httpTimeoutError
+	ok := errors.As(e, &t)
+	return ok && t.Timeout()
+}
+
+func tDStringToUint256(td string) (*uint256.Int, error) {
+	b, err := hexutil.DecodeBig(td)
+	if err != nil {
+		return nil, err
+	}
+	i, overflows := uint256.FromBig(b)
+	if overflows {
+		return nil, errors.New("total difficulty overflowed")
+	}
+	return i, nil
+}
+
+func EmptySilaPayload(v int) (proto.Message, error) {
+	if v >= version.Gloas {
+		return &pb.SilaPayloadGloas{
+			ParentHash:      make([]byte, fieldparams.RootLength),
+			FeeRecipient:    make([]byte, fieldparams.FeeRecipientLength),
+			StateRoot:       make([]byte, fieldparams.RootLength),
+			ReceiptsRoot:    make([]byte, fieldparams.RootLength),
+			LogsBloom:       make([]byte, fieldparams.LogsBloomLength),
+			PrevRandao:      make([]byte, fieldparams.RootLength),
+			ExtraData:       make([]byte, 0),
+			BaseFeePerGas:   make([]byte, fieldparams.RootLength),
+			BlockHash:       make([]byte, fieldparams.RootLength),
+			Transactions:    make([][]byte, 0),
+			Withdrawals:     make([]*pb.Withdrawal, 0),
+			BlockAccessList: make([]byte, 0),
+		}, nil
+	}
+
+	if v >= version.Deneb {
+		return &pb.SilaPayloadDeneb{
+			ParentHash:    make([]byte, fieldparams.RootLength),
+			FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
+			StateRoot:     make([]byte, fieldparams.RootLength),
+			ReceiptsRoot:  make([]byte, fieldparams.RootLength),
+			LogsBloom:     make([]byte, fieldparams.LogsBloomLength),
+			PrevRandao:    make([]byte, fieldparams.RootLength),
+			ExtraData:     make([]byte, 0),
+			BaseFeePerGas: make([]byte, fieldparams.RootLength),
+			BlockHash:     make([]byte, fieldparams.RootLength),
+			Transactions:  make([][]byte, 0),
+			Withdrawals:   make([]*pb.Withdrawal, 0),
+		}, nil
+	}
+
+	if v >= version.Capella {
+		return &pb.SilaPayloadCapella{
+			ParentHash:    make([]byte, fieldparams.RootLength),
+			FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
+			StateRoot:     make([]byte, fieldparams.RootLength),
+			ReceiptsRoot:  make([]byte, fieldparams.RootLength),
+			LogsBloom:     make([]byte, fieldparams.LogsBloomLength),
+			PrevRandao:    make([]byte, fieldparams.RootLength),
+			ExtraData:     make([]byte, 0),
+			BaseFeePerGas: make([]byte, fieldparams.RootLength),
+			BlockHash:     make([]byte, fieldparams.RootLength),
+			Transactions:  make([][]byte, 0),
+			Withdrawals:   make([]*pb.Withdrawal, 0),
+		}, nil
+	}
+
+	if v >= version.Bellatrix {
+		return &pb.SilaPayload{
+			ParentHash:    make([]byte, fieldparams.RootLength),
+			FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
+			StateRoot:     make([]byte, fieldparams.RootLength),
+			ReceiptsRoot:  make([]byte, fieldparams.RootLength),
+			LogsBloom:     make([]byte, fieldparams.LogsBloomLength),
+			PrevRandao:    make([]byte, fieldparams.RootLength),
+			ExtraData:     make([]byte, 0),
+			BaseFeePerGas: make([]byte, fieldparams.RootLength),
+			BlockHash:     make([]byte, fieldparams.RootLength),
+			Transactions:  make([][]byte, 0),
+		}, nil
+	}
+
+	return nil, errors.Wrapf(ErrUnsupportedVersion, "version=%s", version.String(v))
+}
+
+func EmptySilaPayloadHeader(v int) (proto.Message, error) {
+	if v >= version.Deneb {
+		return &pb.SilaPayloadHeaderDeneb{
+			ParentHash:       make([]byte, fieldparams.RootLength),
+			FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
+			StateRoot:        make([]byte, fieldparams.RootLength),
+			ReceiptsRoot:     make([]byte, fieldparams.RootLength),
+			LogsBloom:        make([]byte, fieldparams.LogsBloomLength),
+			PrevRandao:       make([]byte, fieldparams.RootLength),
+			ExtraData:        make([]byte, 0),
+			BaseFeePerGas:    make([]byte, fieldparams.RootLength),
+			BlockHash:        make([]byte, fieldparams.RootLength),
+			TransactionsRoot: make([]byte, fieldparams.RootLength),
+			WithdrawalsRoot:  make([]byte, fieldparams.RootLength),
+		}, nil
+	}
+
+	if v >= version.Capella {
+		return &pb.SilaPayloadHeaderCapella{
+			ParentHash:       make([]byte, fieldparams.RootLength),
+			FeeRecipient:     make([]byte, fieldparams.FeeRecipientLength),
+			StateRoot:        make([]byte, fieldparams.RootLength),
+			ReceiptsRoot:     make([]byte, fieldparams.RootLength),
+			LogsBloom:        make([]byte, fieldparams.LogsBloomLength),
+			PrevRandao:       make([]byte, fieldparams.RootLength),
+			ExtraData:        make([]byte, 0),
+			BaseFeePerGas:    make([]byte, fieldparams.RootLength),
+			BlockHash:        make([]byte, fieldparams.RootLength),
+			TransactionsRoot: make([]byte, fieldparams.RootLength),
+			WithdrawalsRoot:  make([]byte, fieldparams.RootLength),
+		}, nil
+	}
+
+	if v >= version.Bellatrix {
+		return &pb.SilaPayloadHeader{
+			ParentHash:    make([]byte, fieldparams.RootLength),
+			FeeRecipient:  make([]byte, fieldparams.FeeRecipientLength),
+			StateRoot:     make([]byte, fieldparams.RootLength),
+			ReceiptsRoot:  make([]byte, fieldparams.RootLength),
+			LogsBloom:     make([]byte, fieldparams.LogsBloomLength),
+			PrevRandao:    make([]byte, fieldparams.RootLength),
+			ExtraData:     make([]byte, 0),
+			BaseFeePerGas: make([]byte, fieldparams.RootLength),
+			BlockHash:     make([]byte, fieldparams.RootLength),
+		}, nil
+	}
+
+	return nil, errors.Wrapf(ErrUnsupportedVersion, "version=%s", version.String(v))
+}
+
+func toBlockNumArg(number *big.Int) string {
+	if number == nil {
+		return "latest"
+	}
+	pending := big.NewInt(-1)
+	if number.Cmp(pending) == 0 {
+		return "pending"
+	}
+	finalized := big.NewInt(int64(gethRPC.FinalizedBlockNumber))
+	if number.Cmp(finalized) == 0 {
+		return "finalized"
+	}
+	safe := big.NewInt(int64(gethRPC.SafeBlockNumber))
+	if number.Cmp(safe) == 0 {
+		return "safe"
+	}
+	return hexutil.EncodeBig(number)
+}
+
+// wrapWithBlockRoot returns a new error with the given block root.
+func wrapWithBlockRoot(err error, blockRoot [fieldparams.RootLength]byte, message string) error {
+	return errors.Wrap(err, fmt.Sprintf("%s for block %#x", message, blockRoot))
+}

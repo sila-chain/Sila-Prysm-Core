@@ -1,0 +1,23 @@
+load("@sila//tools/go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["silaexec_types.go"],
+    importpath = "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/types",
+    visibility = ["//beacon-chain:__subpackages__"],
+    deps = [
+        "//encoding/bytesutil:go_default_library",
+        "@com_github_sila_chain_sila//common:go_default_library",
+        "@com_github_sila_chain_sila//common/hexutil:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["silaexec_types_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//testing/assert:go_default_library",
+        "@com_github_sila_chain_sila//common:go_default_library",
+    ],
+)

@@ -11,7 +11,7 @@ import (
 	statefeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/gloas"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
@@ -176,8 +176,8 @@ func (s *Service) ReceiveSilaPayloadEnvelope(ctx context.Context, signed interfa
 	log.WithFields(logrus.Fields{
 		"slot":       envelope.Slot(),
 		"blockRoot":  fmt.Sprintf("%#x", bytesutil.Trunc(root[:])),
-		"blockHash":  fmt.Sprintf("%#x", bytesutil.Trunc(execution.BlockHash())),
-		"parentHash": fmt.Sprintf("%#x", bytesutil.Trunc(execution.ParentHash())),
+		"blockHash":  fmt.Sprintf("%#x", bytesutil.Trunc(silaexec.BlockHash())),
+		"parentHash": fmt.Sprintf("%#x", bytesutil.Trunc(silaexec.ParentHash())),
 	}).Info("Processed sila payload envelope")
 	return nil
 }
@@ -268,14 +268,14 @@ func (s *Service) callNewPayload(
 	if err == nil {
 		return true, nil
 	}
-	if errors.Is(err, execution.ErrAcceptedSyncingPayloadStatus) {
+	if errors.Is(err, silaexec.ErrAcceptedSyncingPayloadStatus) {
 		log.WithFields(logrus.Fields{
 			"slot":             slot,
 			"payloadBlockHash": fmt.Sprintf("%#x", bytesutil.Trunc(payload.BlockHash())),
 		}).Info("Called new payload with optimistic envelope")
 		return false, nil
 	}
-	if errors.Is(err, execution.ErrInvalidPayloadStatus) {
+	if errors.Is(err, silaexec.ErrInvalidPayloadStatus) {
 		return false, invalidBlock{error: ErrInvalidPayload}
 	}
 	return false, errors.WithMessage(ErrUndefinedSilaEngineError, err.Error())
@@ -394,13 +394,13 @@ func (s *Service) notifyForkchoiceUpdateGloas(ctx context.Context, blockHash [32
 	}
 
 	switch {
-	case errors.Is(err, execution.ErrAcceptedSyncingPayloadStatus):
+	case errors.Is(err, silaexec.ErrAcceptedSyncingPayloadStatus):
 		log.WithFields(logrus.Fields{
 			"headBlockHash":             fmt.Sprintf("%#x", bytesutil.Trunc(blockHash[:])),
 			"finalizedPayloadBlockHash": fmt.Sprintf("%#x", bytesutil.Trunc(finalizedHash[:])),
 		}).Info("Called forkchoice updated with optimistic block (Gloas)")
 		return payloadID, nil
-	case errors.Is(err, execution.ErrInvalidPayloadStatus):
+	case errors.Is(err, silaexec.ErrInvalidPayloadStatus):
 		if len(lastValidHash) == 0 {
 			lastValidHash = defaultLatestValidHash
 		}

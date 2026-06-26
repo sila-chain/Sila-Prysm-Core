@@ -19,7 +19,7 @@ go_library(
         "//cmd/beacon-chain/das:go_default_library",
         "//cmd/beacon-chain/das/flags:go_default_library",
         "//cmd/beacon-chain/db:go_default_library",
-        "//cmd/beacon-chain/execution:go_default_library",
+        "//cmd/beacon-chain/silaexec:go_default_library",
         "//cmd/beacon-chain/flags:go_default_library",
         "//cmd/beacon-chain/genesis:go_default_library",
         "//cmd/beacon-chain/jwt:go_default_library",

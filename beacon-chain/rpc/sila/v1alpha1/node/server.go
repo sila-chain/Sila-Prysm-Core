@@ -11,19 +11,19 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/golang/protobuf/ptypes/timestamp"
+	"github.com/libp2p/go-libp2p/core/network"
+	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/logs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/monitoring/tracing/trace"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
-	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/golang/protobuf/ptypes/timestamp"
-	"github.com/libp2p/go-libp2p/core/network"
-	"github.com/libp2p/go-libp2p/core/peer"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -44,7 +44,7 @@ type Server struct {
 	PeerManager           p2p.PeerManager
 	GenesisTimeFetcher    blockchain.TimeFetcher
 	GenesisFetcher        blockchain.GenesisFetcher
-	POWChainInfoFetcher   execution.ChainInfoFetcher
+	POWChainInfoFetcher   silaexec.ChainInfoFetcher
 	BeaconMonitoringHost  string
 	BeaconMonitoringPort  int
 	OptimisticModeFetcher blockchain.OptimisticModeFetcher
@@ -117,9 +117,9 @@ func (ns *Server) GetGenesis(ctx context.Context, _ *empty.Empty) (*silapb.Genes
 
 	genValRoot := ns.GenesisFetcher.GenesisValidatorsRoot()
 	return &silapb.Genesis{
-		GenesisTime:            gt,
-		SilaDepositAddress: contractAddr,
-		GenesisValidatorsRoot:  genValRoot[:],
+		GenesisTime:           gt,
+		SilaDepositAddress:    contractAddr,
+		GenesisValidatorsRoot: genValRoot[:],
 	}, nil
 }
 

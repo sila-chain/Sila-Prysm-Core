@@ -9,10 +9,10 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache/depositsnapshot"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/altair"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/transition"
-	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
+	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	mockSync "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync/initial-sync/testing"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
@@ -234,7 +234,7 @@ func TestGetBellatrixDuties_SyncCommitteeOK(t *testing.T) {
 	require.NoError(t, bs.SetSlot(params.BeaconConfig().SlotsPerEpoch*primitives.Slot(params.BeaconConfig().EpochsPerSyncCommitteePeriod)-1))
 	require.NoError(t, helpers.UpdateSyncCommitteeCache(bs))
 
-	bs, err = execution.UpgradeToBellatrix(bs)
+	bs, err = silaexec.UpgradeToBellatrix(bs)
 	require.NoError(t, err)
 
 	pubkeysAs48ByteType := make([][fieldparams.BLSPubkeyLength]byte, len(pubKeys))

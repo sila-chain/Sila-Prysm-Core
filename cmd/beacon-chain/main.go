@@ -10,6 +10,9 @@ import (
 	runtimeDebug "runtime/debug"
 	"strings"
 
+	golog "github.com/ipfs/go-log/v2"
+	joonix "github.com/joonix/log"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/builder"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/node"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd"
@@ -17,10 +20,10 @@ import (
 	das "github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/das"
 	dasFlags "github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/das/flags"
 	dbcommands "github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/db"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/flags"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/genesis"
 	jwtcommands "github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/jwt"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/storage"
 	backfill "github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/sync/backfill"
 	bflags "github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/sync/backfill/flags"
@@ -36,9 +39,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/tos"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	gethlog "github.com/sila-chain/Sila/log"
-	golog "github.com/ipfs/go-log/v2"
-	joonix "github.com/joonix/log"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -363,7 +363,7 @@ func startNode(ctx *cli.Context, cancel context.CancelFunc) error {
 	if err != nil {
 		return err
 	}
-	executionFlagOpts, err := execution.FlagOptions(ctx)
+	executionFlagOpts, err := silaexec.FlagOptions(ctx)
 	if err != nil {
 		return err
 	}

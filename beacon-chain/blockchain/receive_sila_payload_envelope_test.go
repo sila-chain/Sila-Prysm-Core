@@ -7,8 +7,8 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed"
 	statefeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/signing"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
-	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
+	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
@@ -115,7 +115,7 @@ func TestReceiveSilaPayloadEnvelope_EmitEvents(t *testing.T) {
 		},
 		{
 			name:          "EL-invalid still emits available but not processed",
-			engine:        &mockSila.SilaEngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus},
+			engine:        &mockSila.SilaEngineClient{ErrNewPayload: silaexec.ErrInvalidPayloadStatus},
 			wantErr:       true,
 			wantAvailable: 1,
 			wantProcessed: 0,

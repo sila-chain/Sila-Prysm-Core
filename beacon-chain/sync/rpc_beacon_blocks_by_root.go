@@ -4,11 +4,14 @@ import (
 	"context"
 	"fmt"
 
+	libp2pcore "github.com/libp2p/go-libp2p/core"
+	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/peerdas"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/filesystem"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/types"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync/verify"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/verification"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
@@ -18,9 +21,6 @@ import (
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	libp2pcore "github.com/libp2p/go-libp2p/core"
-	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pkg/errors"
 )
 
 // sendBeaconBlocksRequest sends the `requests` beacon blocks by root requests to
@@ -225,7 +225,7 @@ func (s *Service) beaconBlocksRootRPCHandler(ctx context.Context, msg any, strea
 		if blk.Block().IsBlinded() {
 			blk, err = s.cfg.executionReconstructor.ReconstructFullBlock(ctx, blk)
 			if err != nil {
-				if errors.Is(err, execution.ErrEmptyBlockHash) {
+				if errors.Is(err, silaexec.ErrEmptyBlockHash) {
 					log.WithError(err).Warn("Could not reconstruct block from header with syncing Sila client. Waiting to complete syncing")
 				} else {
 					log.WithError(err).Error("Could not get reconstruct full block from blinded body")

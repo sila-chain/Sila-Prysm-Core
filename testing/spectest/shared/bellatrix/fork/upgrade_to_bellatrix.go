@@ -4,14 +4,14 @@ import (
 	"path"
 	"testing"
 
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/execution"
+	"github.com/golang/snappy"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/silaexec"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/spectest/utils"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
-	"github.com/golang/snappy"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -39,7 +39,7 @@ func RunUpgradeToBellatrix(t *testing.T, config string) {
 			}
 			preState, err := state_native.InitializeFromProtoUnsafeAltair(preStateBase)
 			require.NoError(t, err)
-			postState, err := execution.UpgradeToBellatrix(preState)
+			postState, err := silaexec.UpgradeToBellatrix(preState)
 			require.NoError(t, err)
 			postStateFromFunction, err := state_native.ProtobufBeaconStateBellatrix(postState.ToProtoUnsafe())
 			require.NoError(t, err)

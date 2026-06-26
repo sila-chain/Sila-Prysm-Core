@@ -5123,7 +5123,7 @@
 
 - name: get_pow_block_at_terminal_total_difficulty#bellatrix
   sources:
-    - file: beacon-chain/execution/silaengine_client.go
+    - file: beacon-chain/silaexec/silaengine_client.go
       search: func (s *Service) GetTerminalBlockHash(
   spec: |
     <spec fn="get_pow_block_at_terminal_total_difficulty" fork="bellatrix" hash="7b6668d2">
@@ -12480,7 +12480,7 @@
 
 - name: upgrade_to_bellatrix#bellatrix
   sources:
-    - file: beacon-chain/core/execution/upgrade.go
+    - file: beacon-chain/core/silaexec/upgrade.go
       search: func UpgradeToBellatrix(
   spec: |
     <spec fn="upgrade_to_bellatrix" fork="bellatrix" hash="73a0a7ba">

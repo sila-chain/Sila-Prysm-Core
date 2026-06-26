@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
-	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
+	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
@@ -281,7 +281,7 @@ func TestNotifyNewEnvelope_Valid(t *testing.T) {
 
 func TestNotifyNewEnvelope_Syncing(t *testing.T) {
 	s, _ := setupGloasService(t, &mockSila.SilaEngineClient{
-		ErrNewPayload: execution.ErrAcceptedSyncingPayloadStatus,
+		ErrNewPayload: silaexec.ErrAcceptedSyncingPayloadStatus,
 	})
 	ctx := t.Context()
 
@@ -309,7 +309,7 @@ func TestNotifyNewEnvelope_Syncing(t *testing.T) {
 
 func TestNotifyNewEnvelope_Invalid(t *testing.T) {
 	s, _ := setupGloasService(t, &mockSila.SilaEngineClient{
-		ErrNewPayload: execution.ErrInvalidPayloadStatus,
+		ErrNewPayload: silaexec.ErrInvalidPayloadStatus,
 	})
 	ctx := t.Context()
 
@@ -349,7 +349,7 @@ func TestNotifyForkchoiceUpdateGloas_Valid(t *testing.T) {
 
 func TestNotifyForkchoiceUpdateGloas_Syncing(t *testing.T) {
 	s, _ := setupGloasService(t, &mockSila.SilaEngineClient{
-		ErrForkchoiceUpdated: execution.ErrAcceptedSyncingPayloadStatus,
+		ErrForkchoiceUpdated: silaexec.ErrAcceptedSyncingPayloadStatus,
 	})
 	ctx := t.Context()
 
@@ -360,7 +360,7 @@ func TestNotifyForkchoiceUpdateGloas_Syncing(t *testing.T) {
 
 func TestNotifyForkchoiceUpdateGloas_Invalid(t *testing.T) {
 	s, _ := setupGloasService(t, &mockSila.SilaEngineClient{
-		ErrForkchoiceUpdated: execution.ErrInvalidPayloadStatus,
+		ErrForkchoiceUpdated: silaexec.ErrInvalidPayloadStatus,
 	})
 	ctx := t.Context()
 
@@ -423,7 +423,7 @@ func TestFcuFromReorgData_EngineError(t *testing.T) {
 	logHook := logTest.NewGlobal()
 	// An invalid-payload status surfaces as an error from notifyForkchoiceUpdateGloas.
 	s, _ := setupGloasService(t, &mockSila.SilaEngineClient{
-		ErrForkchoiceUpdated: execution.ErrInvalidPayloadStatus,
+		ErrForkchoiceUpdated: silaexec.ErrInvalidPayloadStatus,
 	})
 
 	headRoot := bytesutil.ToBytes32([]byte("headroot"))

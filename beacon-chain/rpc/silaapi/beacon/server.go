@@ -9,7 +9,6 @@ import (
 	blockfeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/block"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/operation"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/blstoexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/payloadattestation"
@@ -18,6 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/core"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/lookup"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
@@ -47,7 +47,7 @@ type Server struct {
 	V1Alpha1ValidatorServer eth.BeaconNodeValidatorServer
 	SyncChecker             sync.Checker
 	CanonicalHistory        *stategen.CanonicalHistory
-	ExecutionReconstructor  execution.Reconstructor
+	ExecutionReconstructor  silaexec.Reconstructor
 	FinalizationFetcher     blockchain.FinalizationFetcher
 	BLSChangesPool          blstoexec.PoolManager
 	PayloadAttestationPool  payloadattestation.PoolManager

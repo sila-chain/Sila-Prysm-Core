@@ -15,9 +15,9 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/builder"
 	statefeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/filesystem"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
-	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/monitor"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
+	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime"
@@ -82,7 +82,7 @@ func TestNodeStart_Ok(t *testing.T) {
 	options := []Option{
 		WithBlockchainFlagOptions([]blockchain.Option{}),
 		WithBuilderFlagOptions([]builder.Option{}),
-		WithSilaChainOptions([]execution.Option{}),
+		WithSilaChainOptions([]silaexec.Option{}),
 		WithBlobStorage(filesystem.NewEphemeralBlobStorage(t)),
 		WithDataColumnStorage(filesystem.NewEphemeralDataColumnStorage(t)),
 	}
@@ -111,7 +111,7 @@ func TestNodeStart_SyncChecker(t *testing.T) {
 	options := []Option{
 		WithBlockchainFlagOptions([]blockchain.Option{}),
 		WithBuilderFlagOptions([]builder.Option{}),
-		WithSilaChainOptions([]execution.Option{}),
+		WithSilaChainOptions([]silaexec.Option{}),
 		WithBlobStorage(filesystem.NewEphemeralBlobStorage(t)),
 		WithDataColumnStorage(filesystem.NewEphemeralDataColumnStorage(t)),
 	}
@@ -146,7 +146,7 @@ func TestClearDB(t *testing.T) {
 	context, cancel := newCliContextWithCancel(&app, set)
 
 	options := []Option{
-		WithSilaChainOptions([]execution.Option{execution.WithHttpEndpoint(endpoint)}),
+		WithSilaChainOptions([]silaexec.Option{silaexec.WithHttpEndpoint(endpoint)}),
 		WithBlobStorage(filesystem.NewEphemeralBlobStorage(t)),
 		WithDataColumnStorage(filesystem.NewEphemeralDataColumnStorage(t)),
 	}

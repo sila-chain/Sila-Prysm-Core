@@ -9,13 +9,14 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/sila-chain/go-bitfield"
+	"github.com/libp2p/go-libp2p/core/peer"
+	ma "github.com/multiformats/go-multiaddr"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	mock "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/testing"
-	mockengine "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
 	mockp2p "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/rpc/testutil"
+	mockengine "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	syncmock "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/sync/initial-sync/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
@@ -28,8 +29,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila/p2p/enode"
 	"github.com/sila-chain/Sila/p2p/enr"
-	"github.com/libp2p/go-libp2p/core/peer"
-	ma "github.com/multiformats/go-multiaddr"
+	"github.com/sila-chain/go-bitfield"
 )
 
 type dummyIdentity enode.ID
@@ -49,11 +49,11 @@ func TestSyncStatus(t *testing.T) {
 	syncChecker.IsSyncing = true
 
 	s := &Server{
-		HeadFetcher:               chainService,
-		GenesisTimeFetcher:        chainService,
-		OptimisticModeFetcher:     chainService,
-		SyncChecker:               syncChecker,
-		SilaChainInfoFetcher: &testutil.MockSilaChainInfoFetcher{},
+		HeadFetcher:           chainService,
+		GenesisTimeFetcher:    chainService,
+		OptimisticModeFetcher: chainService,
+		SyncChecker:           syncChecker,
+		SilaChainInfoFetcher:  &testutil.MockSilaChainInfoFetcher{},
 	}
 
 	request := httptest.NewRequest(http.MethodGet, "http://example.com", nil)

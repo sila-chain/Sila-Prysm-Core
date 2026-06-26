@@ -8,7 +8,6 @@ import (
 	statefeed "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/feed/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/filesystem"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice"
 	lightclient "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations"
@@ -16,6 +15,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/slashings"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/voluntaryexits"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
@@ -57,7 +57,7 @@ func WithDatabase(beaconDB db.HeadAccessDatabase) Option {
 }
 
 // WithChainStartFetcher to retrieve information about genesis.
-func WithChainStartFetcher(f execution.ChainStartFetcher) Option {
+func WithChainStartFetcher(f silaexec.ChainStartFetcher) Option {
 	return func(s *Service) error {
 		s.cfg.ChainStartFetcher = f
 		return nil
@@ -65,7 +65,7 @@ func WithChainStartFetcher(f execution.ChainStartFetcher) Option {
 }
 
 // WithSilaEngineCaller to call SilaEngine.
-func WithSilaEngineCaller(c execution.EngineCaller) Option {
+func WithSilaEngineCaller(c silaexec.EngineCaller) Option {
 	return func(s *Service) error {
 		s.cfg.SilaEngineCaller = c
 		return nil

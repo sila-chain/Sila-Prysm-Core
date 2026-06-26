@@ -14,12 +14,12 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/transition"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db"
 	testDB "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/testing"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
-	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
 	doublylinkedtree "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice/doubly-linked-tree"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/slashings"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/voluntaryexits"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
+	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	state_native "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/state-native"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
@@ -44,7 +44,7 @@ import (
 
 func setupBeaconChain(t *testing.T, beaconDB db.Database) *Service {
 	ctx := t.Context()
-	var web3Service *execution.Service
+	var web3Service *silaexec.Service
 	var err error
 	srv, endpoint, err := mockSila.SetupRPCServer()
 	require.NoError(t, err)
@@ -77,12 +77,12 @@ func setupBeaconChain(t *testing.T, beaconDB db.Database) *Service {
 	depositCache, err := depositsnapshot.New()
 	require.NoError(t, err)
 
-	web3Service, err = execution.NewService(
+	web3Service, err = silaexec.NewService(
 		ctx,
-		execution.WithDatabase(beaconDB),
-		execution.WithHttpEndpoint(endpoint),
-		execution.WithSilaDepositAddress(common.Address{}),
-		execution.WithDepositCache(depositCache),
+		silaexec.WithDatabase(beaconDB),
+		silaexec.WithHttpEndpoint(endpoint),
+		silaexec.WithSilaDepositAddress(common.Address{}),
+		silaexec.WithDepositCache(depositCache),
 	)
 	require.NoError(t, err, "Unable to set up web3 service")
 

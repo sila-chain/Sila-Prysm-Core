@@ -22,13 +22,13 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/filesystem"
 	testDB "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/testing"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
-	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution/testing"
 	doublylinkedtree "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice/doubly-linked-tree"
 	forkchoicetypes "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice/types"
 	lightClient "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations/kv"
 	mockp2p "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p/testing"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
+	mockSila "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
@@ -1412,7 +1412,7 @@ func TestStore_NoViableHead_NewPayload(t *testing.T) {
 	config.BellatrixForkEpoch = 2
 	params.OverrideBeaconConfig(config)
 
-	mockEngine := &mockSila.SilaEngineClient{ErrNewPayload: execution.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: execution.ErrAcceptedSyncingPayloadStatus}
+	mockEngine := &mockSila.SilaEngineClient{ErrNewPayload: silaexec.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: silaexec.ErrAcceptedSyncingPayloadStatus}
 	service, tr := minimalTestService(t, WithSilaEngineCaller(mockEngine))
 	ctx := tr.ctx
 
@@ -1537,7 +1537,7 @@ func TestStore_NoViableHead_NewPayload(t *testing.T) {
 	time.Sleep(20 * time.Millisecond) // wait for async forkchoice update to be processed
 
 	// import another block to find out that it was invalid
-	mockEngine = &mockSila.SilaEngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
+	mockEngine = &mockSila.SilaEngineClient{ErrNewPayload: silaexec.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
 	service.cfg.SilaEngineCaller = mockEngine
 	driftGenesisTime(service, 19, 0)
 	st, err = service.HeadState(ctx)
@@ -1616,7 +1616,7 @@ func TestStore_NoViableHead_Liveness(t *testing.T) {
 	config.BellatrixForkEpoch = 2
 	params.OverrideBeaconConfig(config)
 
-	mockEngine := &mockSila.SilaEngineClient{ErrNewPayload: execution.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: execution.ErrAcceptedSyncingPayloadStatus}
+	mockEngine := &mockSila.SilaEngineClient{ErrNewPayload: silaexec.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: silaexec.ErrAcceptedSyncingPayloadStatus}
 	service, tr := minimalTestService(t, WithSilaEngineCaller(mockEngine))
 	ctx := tr.ctx
 
@@ -1741,7 +1741,7 @@ func TestStore_NoViableHead_Liveness(t *testing.T) {
 
 	// import block 19 to find out that the whole chain 13--18 was in fact
 	// invalid
-	mockEngine = &mockSila.SilaEngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
+	mockEngine = &mockSila.SilaEngineClient{ErrNewPayload: silaexec.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
 	service.cfg.SilaEngineCaller = mockEngine
 	driftGenesisTime(service, 19, 0)
 	st, err = service.HeadState(ctx)
@@ -1882,7 +1882,7 @@ func TestNoViableHead_Reboot(t *testing.T) {
 	config.BellatrixForkEpoch = 2
 	params.OverrideBeaconConfig(config)
 
-	mockEngine := &mockSila.SilaEngineClient{ErrNewPayload: execution.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: execution.ErrAcceptedSyncingPayloadStatus}
+	mockEngine := &mockSila.SilaEngineClient{ErrNewPayload: silaexec.ErrAcceptedSyncingPayloadStatus, ErrForkchoiceUpdated: silaexec.ErrAcceptedSyncingPayloadStatus}
 	service, tr := minimalTestService(t, WithSilaEngineCaller(mockEngine))
 	ctx := tr.ctx
 
@@ -2010,7 +2010,7 @@ func TestNoViableHead_Reboot(t *testing.T) {
 
 	// import block 19 to find out that the whole chain 13--18 was in fact
 	// invalid
-	mockEngine = &mockSila.SilaEngineClient{ErrNewPayload: execution.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
+	mockEngine = &mockSila.SilaEngineClient{ErrNewPayload: silaexec.ErrInvalidPayloadStatus, NewPayloadResp: lvh}
 	service.cfg.SilaEngineCaller = mockEngine
 	driftGenesisTime(service, 19, 0)
 	st, err = service.HeadState(ctx)

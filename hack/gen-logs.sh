@@ -33,7 +33,7 @@ EXCLUDED_PATH_PREFIXES=(
 
 # Gitignore overrides: paths that should still be scanned even if ignored by VCS.
 GITIGNORE_OVERRIDES=(
-  "cmd/beacon-chain/execution"
+  "cmd/beacon-chain/silaexec"
 )
 
 # The logrus import path

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/async/event"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/blocks"
@@ -12,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/transition"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/features"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
@@ -26,7 +27,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -87,7 +87,7 @@ func (s *Service) notifyForkchoiceUpdate(ctx context.Context, arg *fcuConfig) (*
 	payloadID, lastValidHash, err := s.cfg.SilaEngineCaller.ForkchoiceUpdated(ctx, fcs, arg.attributes)
 	if err != nil {
 		switch {
-		case errors.Is(err, execution.ErrAcceptedSyncingPayloadStatus):
+		case errors.Is(err, silaexec.ErrAcceptedSyncingPayloadStatus):
 			forkchoiceUpdatedOptimisticNodeCount.Inc()
 			log.WithFields(logrus.Fields{
 				"headSlot":                  headBlk.Slot(),
@@ -95,7 +95,7 @@ func (s *Service) notifyForkchoiceUpdate(ctx context.Context, arg *fcuConfig) (*
 				"finalizedPayloadBlockHash": fmt.Sprintf("%#x", bytesutil.Trunc(finalizedHash[:])),
 			}).Info("Called fork choice updated with optimistic block")
 			return payloadID, nil
-		case errors.Is(err, execution.ErrInvalidPayloadStatus):
+		case errors.Is(err, silaexec.ErrInvalidPayloadStatus):
 			forkchoiceUpdatedInvalidNodeCount.Inc()
 			headRoot := arg.headRoot
 			if len(lastValidHash) == 0 {
@@ -282,12 +282,12 @@ func (s *Service) notifyNewPayload(ctx context.Context, stVersion int, header in
 		"root":             fmt.Sprintf("%#x", blk.Root()),
 		"payloadBlockHash": fmt.Sprintf("%#x", bytesutil.Trunc(payload.BlockHash())),
 	}
-	if errors.Is(err, execution.ErrAcceptedSyncingPayloadStatus) {
+	if errors.Is(err, silaexec.ErrAcceptedSyncingPayloadStatus) {
 		newPayloadOptimisticNodeCount.Inc()
 		log.WithFields(logFields).Info("Called new payload with optimistic block")
 		return false, nil
 	}
-	if errors.Is(err, execution.ErrInvalidPayloadStatus) {
+	if errors.Is(err, silaexec.ErrInvalidPayloadStatus) {
 		log.WithFields(logFields).WithError(err).Error("Invalid payload status")
 		return false, invalidBlock{
 			error:         ErrInvalidPayload,

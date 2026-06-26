@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/async/event"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/kzg"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/cache"
@@ -17,7 +18,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/transition"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/filesystem"
-	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/execution"
 	f "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/forkchoice"
 	lightClient "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/light-client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/attestations"
@@ -25,6 +25,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/slashings"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/operations/voluntaryexits"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
+	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/silaexec"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/startup"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
@@ -37,7 +38,6 @@ import (
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -75,7 +75,7 @@ type Service struct {
 // config options for the service.
 type config struct {
 	BeaconBlockBuf           int
-	ChainStartFetcher        execution.ChainStartFetcher
+	ChainStartFetcher        silaexec.ChainStartFetcher
 	BeaconDB                 db.HeadAccessDatabase
 	DepositCache             cache.DepositCache
 	PayloadIDCache           *cache.PayloadIDCache
@@ -94,9 +94,9 @@ type config struct {
 	StateGen                 *stategen.State
 	SlasherAttestationsFeed  *event.Feed
 	WeakSubjectivityCheckpt  *silapb.Checkpoint
-	BlockFetcher             execution.POWBlockFetcher
+	BlockFetcher             silaexec.POWBlockFetcher
 	FinalizedStateAtStartUp  state.BeaconState
-	SilaEngineCaller    execution.EngineCaller
+	SilaEngineCaller         silaexec.EngineCaller
 	SyncChecker              Checker
 }
 
