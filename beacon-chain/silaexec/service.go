@@ -40,7 +40,7 @@ import (
 	"github.com/sila-chain/Sila/accounts/abi/bind"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	gethRPC "github.com/sila-chain/Sila/rpc"
+	silaRPC "github.com/sila-chain/Sila/rpc"
 	"github.com/sirupsen/logrus"
 )
 
@@ -102,7 +102,7 @@ type Chain interface {
 // RPCClient defines the rpc methods required to interact with the silaexec node.
 type RPCClient interface {
 	Close()
-	BatchCall(b []gethRPC.BatchElem) error
+	BatchCall(b []silaRPC.BatchElem) error
 	CallContext(ctx context.Context, result any, method string, args ...any) error
 }
 
@@ -110,7 +110,7 @@ type RPCClientEmpty struct {
 }
 
 func (RPCClientEmpty) Close() {}
-func (RPCClientEmpty) BatchCall([]gethRPC.BatchElem) error {
+func (RPCClientEmpty) BatchCall([]silaRPC.BatchElem) error {
 	return errors.New("rpc client is not initialized")
 }
 
@@ -443,11 +443,11 @@ func (s *Service) batchRequestHeaders(startBlock, endBlock uint64) ([]*types.Hea
 		return nil, fmt.Errorf("start block height %d cannot be > end block height %d", startBlock, endBlock)
 	}
 	requestRange := (endBlock - startBlock) + 1
-	elems := make([]gethRPC.BatchElem, 0, requestRange)
+	elems := make([]silaRPC.BatchElem, 0, requestRange)
 	headers := make([]*types.HeaderInfo, 0, requestRange)
 	for i := startBlock; i <= endBlock; i++ {
 		header := &types.HeaderInfo{}
-		elems = append(elems, gethRPC.BatchElem{
+		elems = append(elems, silaRPC.BatchElem{
 			Method: "sila_getBlockByNumber",
 			Args:   []any{hexutil.EncodeBig(new(big.Int).SetUint64(i)), false},
 			Result: header,

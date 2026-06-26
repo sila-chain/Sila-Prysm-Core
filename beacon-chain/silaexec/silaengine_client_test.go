@@ -37,7 +37,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	gethtypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 	"github.com/sila-chain/Sila/rpc"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
@@ -1134,13 +1134,13 @@ func TestReconstructFullBellatrixBlock(t *testing.T) {
 		require.Equal(t, true, ok)
 
 		jsonPayload := make(map[string]any)
-		tx := gethtypes.NewTransaction(
+		tx := silaTypes.NewTransaction(
 			0,
 			common.HexToAddress("095e7baea6a6c7c4c2dfeb977efac326af552d87"),
 			big.NewInt(0), 0, big.NewInt(0),
 			nil,
 		)
-		txs := []*gethtypes.Transaction{tx}
+		txs := []*silaTypes.Transaction{tx}
 		encodedBinaryTxs := make([][]byte, 1)
 		var err error
 		encodedBinaryTxs[0], err = txs[0].MarshalBinary()
@@ -1226,13 +1226,13 @@ func TestReconstructFullBellatrixBlockBatch(t *testing.T) {
 		require.Equal(t, true, ok)
 
 		jsonPayload := make(map[string]any)
-		tx := gethtypes.NewTransaction(
+		tx := silaTypes.NewTransaction(
 			0,
 			common.HexToAddress("095e7baea6a6c7c4c2dfeb977efac326af552d87"),
 			big.NewInt(0), 0, big.NewInt(0),
 			nil,
 		)
-		txs := []*gethtypes.Transaction{tx}
+		txs := []*silaTypes.Transaction{tx}
 		encodedBinaryTxs := make([][]byte, 1)
 		var err error
 		encodedBinaryTxs[0], err = txs[0].MarshalBinary()
@@ -1301,13 +1301,13 @@ func TestReconstructFullBellatrixBlockBatch(t *testing.T) {
 		require.Equal(t, true, ok)
 
 		jsonPayload := make(map[string]any)
-		tx := gethtypes.NewTransaction(
+		tx := silaTypes.NewTransaction(
 			0,
 			common.HexToAddress("095e7baea6a6c7c4c2dfeb977efac326af552d87"),
 			big.NewInt(0), 0, big.NewInt(0),
 			nil,
 		)
-		txs := []*gethtypes.Transaction{tx}
+		txs := []*silaTypes.Transaction{tx}
 		encodedBinaryTxs := make([][]byte, 1)
 		var err error
 		encodedBinaryTxs[0], err = txs[0].MarshalBinary()
@@ -1405,7 +1405,7 @@ func TestServer_getPowBlockHashAtTerminalTotalDifficulty(t *testing.T) {
 			paramsTd: "2",
 			currentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("a")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash(params.BeaconConfig().ZeroHash[:]),
 				},
 				TotalDifficulty: "0x3",
@@ -1416,7 +1416,7 @@ func TestServer_getPowBlockHashAtTerminalTotalDifficulty(t *testing.T) {
 			paramsTd: "2",
 			currentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("a")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("b")),
 				},
 				TotalDifficulty: "0x3",
@@ -1428,14 +1428,14 @@ func TestServer_getPowBlockHashAtTerminalTotalDifficulty(t *testing.T) {
 			paramsTd: "2",
 			currentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("a")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("b")),
 				},
 				TotalDifficulty: "0x3",
 			},
 			parentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("b")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("c")),
 				},
 				TotalDifficulty: "1",
@@ -1447,14 +1447,14 @@ func TestServer_getPowBlockHashAtTerminalTotalDifficulty(t *testing.T) {
 			paramsTd: "2",
 			currentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("a")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("b")),
 				},
 				TotalDifficulty: "0x3",
 			},
 			parentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("b")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("c")),
 				},
 				TotalDifficulty: "0x1",
@@ -1467,7 +1467,7 @@ func TestServer_getPowBlockHashAtTerminalTotalDifficulty(t *testing.T) {
 			paramsTd: "2",
 			currentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("a")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("b")),
 					Time:       1,
 				},
@@ -1475,7 +1475,7 @@ func TestServer_getPowBlockHashAtTerminalTotalDifficulty(t *testing.T) {
 			},
 			parentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("b")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("c")),
 				},
 				TotalDifficulty: "0x1",
@@ -1486,14 +1486,14 @@ func TestServer_getPowBlockHashAtTerminalTotalDifficulty(t *testing.T) {
 			paramsTd: "3",
 			currentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("a")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("b")),
 				},
 				TotalDifficulty: "0x2",
 			},
 			parentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("b")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("c")),
 				},
 				TotalDifficulty: "0x1",
@@ -1956,14 +1956,14 @@ func fixturesStruct() *payloadFixtures {
 	logsBloom := bytesutil.PadTo([]byte("logs"), fieldparams.LogsBloomLength)
 	silaBlock := &pb.SilaBlock{
 		Version: version.Bellatrix,
-		Header: gethtypes.Header{
+		Header: silaTypes.Header{
 			ParentHash:  common.BytesToHash(parent),
 			UncleHash:   common.BytesToHash(sha3Uncles),
 			Coinbase:    common.BytesToAddress(miner),
 			Root:        common.BytesToHash(stateRoot),
 			TxHash:      common.BytesToHash(transactionsRoot),
 			ReceiptHash: common.BytesToHash(receiptsRoot),
-			Bloom:       gethtypes.BytesToBloom(logsBloom),
+			Bloom:       silaTypes.BytesToBloom(logsBloom),
 			Difficulty:  big.NewInt(1),
 			Number:      big.NewInt(2),
 			GasLimit:    3,
@@ -1971,7 +1971,7 @@ func fixturesStruct() *payloadFixtures {
 			Time:        5,
 			Extra:       []byte("extra"),
 			MixDigest:   common.BytesToHash([]byte("mix")),
-			Nonce:       gethtypes.EncodeNonce(6),
+			Nonce:       silaTypes.EncodeNonce(6),
 			BaseFee:     big.NewInt(7),
 		},
 	}
@@ -2830,7 +2830,7 @@ func TestGloasPayloadFromSilaBlock_PropagatesBlockAccessList(t *testing.T) {
 
 	blk := &pb.SilaBlock{
 		Hash: hash,
-		Header: gethtypes.Header{
+		Header: silaTypes.Header{
 			ParentHash:    common.BytesToHash([]byte("parent")),
 			Coinbase:      common.BytesToAddress([]byte("coinbase")),
 			Root:          common.BytesToHash([]byte("state")),
@@ -2854,7 +2854,7 @@ func TestSilaBlock_MarshalUnmarshalJSON_BlockAccessList(t *testing.T) {
 	original := &pb.SilaBlock{
 		Version: version.Gloas,
 		Hash:    common.BytesToHash([]byte("block-hash")),
-		Header: gethtypes.Header{
+		Header: silaTypes.Header{
 			ParentHash: common.BytesToHash([]byte("parent")),
 			Number:     big.NewInt(1),
 			Difficulty: big.NewInt(0),

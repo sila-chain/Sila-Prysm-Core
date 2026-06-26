@@ -25,7 +25,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/accounts/abi/bind"
 	"github.com/sila-chain/Sila/common"
-	gethtypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 	"github.com/sirupsen/logrus"
 )
 
@@ -90,7 +90,7 @@ func (s *Service) ProcessSilaBlock(ctx context.Context, blkNum *big.Int) error {
 
 // ProcessLog is the main method which handles the processing of all
 // logs from the sila deposit on the silaexec chain.
-func (s *Service) ProcessLog(ctx context.Context, depositLog *gethtypes.Log) error {
+func (s *Service) ProcessLog(ctx context.Context, depositLog *silaTypes.Log) error {
 	s.processingLock.RLock()
 	defer s.processingLock.RUnlock()
 	// Process logs according to their event signature.
@@ -110,7 +110,7 @@ func (s *Service) ProcessLog(ctx context.Context, depositLog *gethtypes.Log) err
 // ProcessDepositLog processes the log which had been received from
 // the silaexec chain by trying to ascertain which participant deposited
 // in the contract.
-func (s *Service) ProcessDepositLog(ctx context.Context, depositLog *gethtypes.Log) error {
+func (s *Service) ProcessDepositLog(ctx context.Context, depositLog *silaTypes.Log) error {
 	pubkey, withdrawalCredentials, amount, signature, merkleTreeIndex, err := contracts.UnpackDepositLogData(depositLog.Data)
 	if err != nil {
 		return errors.Wrap(err, "Could not unpack log")

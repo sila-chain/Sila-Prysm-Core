@@ -17,7 +17,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
-	gethTypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 )
 
 type FuluBlockGeneratorOption func(*fuluBlockGenerator)
@@ -69,7 +69,7 @@ func GenerateTestFuluBlockWithSidecars(t *testing.T, blobCount int, options ...F
 
 	if generator.payload == nil {
 		ads := common.HexToAddress("095e7baea6a6c7c4c2dfeb977efac326af552d87")
-		tx := gethTypes.NewTx(&gethTypes.LegacyTx{
+		tx := silaTypes.NewTx(&silaTypes.LegacyTx{
 			Nonce:    0,
 			To:       &ads,
 			Value:    big.NewInt(0),
@@ -78,7 +78,7 @@ func GenerateTestFuluBlockWithSidecars(t *testing.T, blobCount int, options ...F
 			Data:     nil,
 		})
 
-		txs := []*gethTypes.Transaction{tx}
+		txs := []*silaTypes.Transaction{tx}
 		encodedBinaryTxs := make([][]byte, 1)
 
 		var err error

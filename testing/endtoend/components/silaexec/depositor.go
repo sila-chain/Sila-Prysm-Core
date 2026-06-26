@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	contracts "github.com/sila-chain/Sila-Consensus-Core/v7/contracts/deposit"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
@@ -18,9 +19,8 @@ import (
 	"github.com/sila-chain/Sila/accounts/abi/bind"
 	"github.com/sila-chain/Sila/accounts/keystore"
 	"github.com/sila-chain/Sila/common"
-	gethtypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 	"github.com/sila-chain/Sila/ethclient"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -131,7 +131,7 @@ func (h *DepositHistory) Balances(batch types.DepositBatch) map[[48]byte]uint64 
 type SentDeposit struct {
 	root    [32]byte
 	deposit *eth.Deposit
-	tx      *gethtypes.Transaction
+	tx      *silaTypes.Transaction
 	time    time.Time
 	batch   types.DepositBatch
 }

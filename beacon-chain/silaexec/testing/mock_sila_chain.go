@@ -18,7 +18,7 @@ import (
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	gethTypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 	"github.com/sila-chain/Sila/ethclient/simulated"
 	"github.com/sila-chain/Sila/rpc"
 )
@@ -174,7 +174,7 @@ func (r *RPCClient) CallContext(ctx context.Context, obj any, methodName string,
 		return nil
 	}
 	if r.Backend == nil && methodName == "sila_getBlockByNumber" {
-		h := &gethTypes.Header{
+		h := &silaTypes.Header{
 			Number: big.NewInt(15),
 			Time:   150,
 		}

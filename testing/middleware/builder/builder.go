@@ -14,6 +14,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pkg/errors"
 	builderAPI "github.com/sila-chain/Sila-Consensus-Core/v7/api/client/builder"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/signing"
@@ -26,16 +27,15 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/authorization"
-	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila/beacon/engine"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	gethTypes "github.com/sila-chain/Sila/core/types"
-	gethRPC "github.com/sila-chain/Sila/rpc"
+	silaTypes "github.com/sila-chain/Sila/core/types"
+	silaRPC "github.com/sila-chain/Sila/rpc"
 	"github.com/sila-chain/Sila/trie"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -86,13 +86,13 @@ type ForkchoiceUpdatedResponse struct {
 }
 
 type ExecPayloadResponse struct {
-	Version string               `json:"version"`
+	Version string          `json:"version"`
 	Data    *v1.SilaPayload `json:"data"`
 }
 type Builder struct {
 	cfg            *config
 	address        string
-	execClient     *gethRPC.Client
+	execClient     *silaRPC.Client
 	currId         *v1.PayloadIDBytes
 	prevBeaconRoot []byte
 	currVersion    int
@@ -644,7 +644,7 @@ func (p *Builder) handleHeaderRequestElectra(w http.ResponseWriter) {
 		BlobKzgCommitments: commitments,
 		Value:              val,
 		Pubkey:             secKey.PublicKey().Marshal(),
-		SilaRequests:  rv1,
+		SilaRequests:       rv1,
 	}
 
 	sszBid := &eth.BuilderBidElectra{
@@ -652,7 +652,7 @@ func (p *Builder) handleHeaderRequestElectra(w http.ResponseWriter) {
 		BlobKzgCommitments: b.BlobsBundle.KzgCommitments,
 		Value:              val.SSZBytes(),
 		Pubkey:             secKey.PublicKey().Marshal(),
-		SilaRequests:  requests,
+		SilaRequests:       requests,
 	}
 	d, err := signing.ComputeDomain(params.BeaconConfig().DomainApplicationBuilder,
 		nil, /* fork version */
@@ -750,7 +750,7 @@ func SilaPayloadResponseFromData(v int, ed interfaces.SilaData, bundle *v1.Blobs
 		}
 		data = &builderAPI.SilaPayloadDenebAndBlobsBundle{
 			SilaPayload: payloadStruct,
-			BlobsBundle:      builderAPI.FromBundleProto(bundle),
+			BlobsBundle: builderAPI.FromBundleProto(bundle),
 		}
 	case *v1.SilaPayloadCapella:
 		data, err = structs.SilaPayloadCapellaFromConsensus(pbStruct)
@@ -955,7 +955,7 @@ func modifySilaPayload(execPayload engine.ExecutableData, fees *big.Int, prevBea
 }
 
 // This modifies the provided payload to imprint the builder's extra data
-func executableDataToBlock(params engine.ExecutableData, prevBeaconRoot []byte, requests [][]byte) (*gethTypes.Block, error) {
+func executableDataToBlock(params engine.ExecutableData, prevBeaconRoot []byte, requests [][]byte) (*silaTypes.Block, error) {
 	txs, err := decodeTransactions(params.Transactions)
 	if err != nil {
 		return nil, err
@@ -965,24 +965,24 @@ func executableDataToBlock(params engine.ExecutableData, prevBeaconRoot []byte, 
 	// Withdrawals as the json null value.
 	var withdrawalsRoot *common.Hash
 	if params.Withdrawals != nil {
-		h := gethTypes.DeriveSha(gethTypes.Withdrawals(params.Withdrawals), trie.NewStackTrie(nil))
+		h := silaTypes.DeriveSha(silaTypes.Withdrawals(params.Withdrawals), trie.NewStackTrie(nil))
 		withdrawalsRoot = &h
 	}
 
 	var requestsHash *common.Hash
 	if requests != nil {
-		h := gethTypes.CalcRequestsHash(requests)
+		h := silaTypes.CalcRequestsHash(requests)
 		requestsHash = &h
 	}
 
-	header := &gethTypes.Header{
+	header := &silaTypes.Header{
 		ParentHash:      params.ParentHash,
-		UncleHash:       gethTypes.EmptyUncleHash,
+		UncleHash:       silaTypes.EmptyUncleHash,
 		Coinbase:        params.FeeRecipient,
 		Root:            params.StateRoot,
-		TxHash:          gethTypes.DeriveSha(gethTypes.Transactions(txs), trie.NewStackTrie(nil)),
+		TxHash:          silaTypes.DeriveSha(silaTypes.Transactions(txs), trie.NewStackTrie(nil)),
 		ReceiptHash:     params.ReceiptsRoot,
-		Bloom:           gethTypes.BytesToBloom(params.LogsBloom),
+		Bloom:           silaTypes.BytesToBloom(params.LogsBloom),
 		Difficulty:      common.Big0,
 		Number:          new(big.Int).SetUint64(params.Number),
 		GasLimit:        params.GasLimit,
@@ -1002,19 +1002,19 @@ func executableDataToBlock(params engine.ExecutableData, prevBeaconRoot []byte, 
 		header.ParentBeaconRoot = &pRoot
 	}
 
-	body := gethTypes.Body{
+	body := silaTypes.Body{
 		Transactions: txs,
 		Uncles:       nil,
 		Withdrawals:  params.Withdrawals,
 	}
-	block := gethTypes.NewBlockWithHeader(header).WithBody(body)
+	block := silaTypes.NewBlockWithHeader(header).WithBody(body)
 	return block, nil
 }
 
-func decodeTransactions(enc [][]byte) ([]*gethTypes.Transaction, error) {
-	var txs = make([]*gethTypes.Transaction, len(enc))
+func decodeTransactions(enc [][]byte) ([]*silaTypes.Transaction, error) {
+	var txs = make([]*silaTypes.Transaction, len(enc))
 	for i, encTx := range enc {
-		var tx gethTypes.Transaction
+		var tx silaTypes.Transaction
 		if err := tx.UnmarshalBinary(encTx); err != nil {
 			return nil, fmt.Errorf("invalid transaction %d: %w", i, err)
 		}

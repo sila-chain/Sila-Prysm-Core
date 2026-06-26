@@ -34,7 +34,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	gethTypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 	"github.com/sila-chain/Sila/ethclient/simulated"
 	"github.com/sila-chain/Sila/rpc"
 	logTest "github.com/sirupsen/logrus/hooks/test"
@@ -51,16 +51,16 @@ type goodLogger struct {
 
 func (_ *goodLogger) Close() {}
 
-func (g *goodLogger) SubscribeFilterLogs(ctx context.Context, q sila.FilterQuery, ch chan<- gethTypes.Log) (sila.Subscription, error) {
+func (g *goodLogger) SubscribeFilterLogs(ctx context.Context, q sila.FilterQuery, ch chan<- silaTypes.Log) (sila.Subscription, error) {
 	if g.backend == nil {
 		return new(event.Feed).Subscribe(ch), nil
 	}
 	return g.backend.Client().SubscribeFilterLogs(ctx, q, ch)
 }
 
-func (g *goodLogger) FilterLogs(ctx context.Context, q sila.FilterQuery) ([]gethTypes.Log, error) {
+func (g *goodLogger) FilterLogs(ctx context.Context, q sila.FilterQuery) ([]silaTypes.Log, error) {
 	if g.backend == nil {
-		logs := make([]gethTypes.Log, 3)
+		logs := make([]silaTypes.Log, 3)
 		for i := range logs {
 			logs[i].Address = common.Address{}
 			logs[i].Topics = make([]common.Hash, 5)
@@ -786,7 +786,7 @@ func TestService_FollowBlock(t *testing.T) {
 	followTime += 10000
 	bMap := make(map[uint64]*types.HeaderInfo)
 	for i := uint64(3000); i > 0; i-- {
-		h := &gethTypes.Header{
+		h := &silaTypes.Header{
 			Number: big.NewInt(int64(i)),
 			Time:   followTime + (i * 40),
 		}
@@ -827,7 +827,7 @@ func (s *slowRPCClient) BatchCall(b []rpc.BatchElem) error {
 		if err != nil {
 			return err
 		}
-		h := &gethTypes.Header{Number: num}
+		h := &silaTypes.Header{Number: num}
 		*e.Result.(*types.HeaderInfo) = types.HeaderInfo{Number: h.Number, Hash: h.Hash()}
 	}
 	return nil

@@ -14,7 +14,7 @@ import (
 	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
-	gethtypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 )
 
 func Test_validTerminalPowBlock(t *testing.T) {
@@ -113,13 +113,13 @@ func Test_validateMergeBlock(t *testing.T) {
 	b := [32]byte{'b'}
 	mergeBlockParentHash := [32]byte{'3'}
 	engine.BlockByHashMap[a] = &silaenginev1.SilaBlock{
-		Header: gethtypes.Header{
+		Header: silaTypes.Header{
 			ParentHash: b,
 		},
 		TotalDifficulty: "0x2",
 	}
 	engine.BlockByHashMap[b] = &silaenginev1.SilaBlock{
-		Header: gethtypes.Header{
+		Header: silaTypes.Header{
 			ParentHash: mergeBlockParentHash,
 		},
 		TotalDifficulty: "0x1",
@@ -155,7 +155,7 @@ func Test_getBlkParentHashAndTD(t *testing.T) {
 	p := [32]byte{'b'}
 	td := "0x1"
 	engine.BlockByHashMap[h] = &silaenginev1.SilaBlock{
-		Header: gethtypes.Header{
+		Header: silaTypes.Header{
 			ParentHash: p,
 		},
 		TotalDifficulty: td,
@@ -173,7 +173,7 @@ func Test_getBlkParentHashAndTD(t *testing.T) {
 	require.ErrorContains(t, "pow block is nil", err)
 
 	engine.BlockByHashMap[h] = &silaenginev1.SilaBlock{
-		Header: gethtypes.Header{
+		Header: silaTypes.Header{
 			ParentHash: p,
 		},
 		TotalDifficulty: "1",
@@ -182,7 +182,7 @@ func Test_getBlkParentHashAndTD(t *testing.T) {
 	require.ErrorContains(t, "could not decode merge block total difficulty: hex string without 0x prefix", err)
 
 	engine.BlockByHashMap[h] = &silaenginev1.SilaBlock{
-		Header: gethtypes.Header{
+		Header: silaTypes.Header{
 			ParentHash: p,
 		},
 		TotalDifficulty: "0XFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",

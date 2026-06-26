@@ -7,14 +7,14 @@ import (
 	"context"
 	"os"
 
+	"github.com/golang/protobuf/ptypes/empty"
+	golog "github.com/ipfs/go-log/v2"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/p2p"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state/stategen"
 	pbrpc "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
-	gethlog "github.com/sila-chain/Sila/log"
-	"github.com/golang/protobuf/ptypes/empty"
-	golog "github.com/ipfs/go-log/v2"
+	silaLog "github.com/sila-chain/Sila/log"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -56,7 +56,7 @@ func (_ *Server) SetLoggingLevel(_ context.Context, req *pbrpc.LoggingLevelReque
 		// Libp2p specific logging.
 		golog.SetAllLoggers(golog.LevelDebug)
 		// Geth specific logging.
-		gethlog.SetDefault(gethlog.NewLogger(gethlog.NewTerminalHandlerWithLevel(os.Stderr, gethlog.LvlTrace, true)))
+		silaLog.SetDefault(silaLog.NewLogger(silaLog.NewTerminalHandlerWithLevel(os.Stderr, silaLog.LvlTrace, true)))
 	}
 	return &empty.Empty{}, nil
 }

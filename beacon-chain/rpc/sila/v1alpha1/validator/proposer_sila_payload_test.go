@@ -19,7 +19,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila/common"
-	gethtypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
 
@@ -385,14 +385,14 @@ func TestServer_getTerminalBlockHashIfExists(t *testing.T) {
 			paramsTd: "2",
 			currentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("a")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("b")),
 				},
 				TotalDifficulty: "0x3",
 			},
 			parentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("b")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("c")),
 				},
 				TotalDifficulty: "0x1",
@@ -405,7 +405,7 @@ func TestServer_getTerminalBlockHashIfExists(t *testing.T) {
 			paramsTd: "2",
 			currentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("a")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("b")),
 					Time:       1,
 				},
@@ -413,7 +413,7 @@ func TestServer_getTerminalBlockHashIfExists(t *testing.T) {
 			},
 			parentPowBlock: &pb.SilaBlock{
 				Hash: common.BytesToHash([]byte("b")),
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("c")),
 				},
 				TotalDifficulty: "0x1",

@@ -38,7 +38,7 @@ import (
 	_ "github.com/sila-chain/Sila-Consensus-Core/v7/runtime/maxprocs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/tos"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
-	gethlog "github.com/sila-chain/Sila/log"
+	silaLog "github.com/sila-chain/Sila/log"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -356,7 +356,7 @@ func startNode(ctx *cli.Context, cancel context.CancelFunc) error {
 		// libp2p specific logging.
 		golog.SetAllLoggers(golog.LevelDebug)
 		// Geth specific logging.
-		gethlog.SetDefault(gethlog.NewLogger(gethlog.NewTerminalHandlerWithLevel(os.Stderr, gethlog.LvlTrace, true)))
+		silaLog.SetDefault(silaLog.NewLogger(silaLog.NewTerminalHandlerWithLevel(os.Stderr, silaLog.LvlTrace, true)))
 	}
 
 	blockchainFlagOpts, err := blockchaincmd.FlagOptions(ctx)

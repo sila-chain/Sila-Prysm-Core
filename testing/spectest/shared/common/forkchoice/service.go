@@ -26,12 +26,12 @@ import (
 	payloadattribute "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/payload-attribute"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	pb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	gethtypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 )
 
 func startChainService(t testing.TB,
@@ -131,7 +131,7 @@ func (m *engineMock) SilaBlockByHash(_ context.Context, hash common.Hash, _ bool
 	td := new(big.Int).SetBytes(bytesutil.ReverseByteOrder(b.TotalDifficulty))
 	tdHex := hexutil.EncodeBig(td)
 	return &pb.SilaBlock{
-		Header: gethtypes.Header{
+		Header: silaTypes.Header{
 			ParentHash: common.BytesToHash(b.ParentHash),
 		},
 		TotalDifficulty: tdHex,

@@ -17,9 +17,9 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/authorization"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	gethTypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 	"github.com/sila-chain/Sila/ethclient"
-	gethRPC "github.com/sila-chain/Sila/rpc"
+	silaRPC "github.com/sila-chain/Sila/rpc"
 )
 
 type silaCallArg struct {
@@ -32,19 +32,19 @@ type silaCallArg struct {
 }
 
 type silaLogFilterer struct {
-	client *gethRPC.Client
+	client *silaRPC.Client
 }
 
-func (f *silaLogFilterer) FilterLogs(ctx context.Context, q sila.FilterQuery) ([]gethTypes.Log, error) {
+func (f *silaLogFilterer) FilterLogs(ctx context.Context, q sila.FilterQuery) ([]silaTypes.Log, error) {
 	arg := toSilaFilterArg(q)
-	var result []gethTypes.Log
+	var result []silaTypes.Log
 	if err := f.client.CallContext(ctx, &result, "sila_getLogs", arg); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (f *silaLogFilterer) SubscribeFilterLogs(context.Context, sila.FilterQuery, chan<- gethTypes.Log) (sila.Subscription, error) {
+func (f *silaLogFilterer) SubscribeFilterLogs(context.Context, sila.FilterQuery, chan<- silaTypes.Log) (sila.Subscription, error) {
 	return nil, errors.New("sila log subscriptions are not implemented")
 }
 
@@ -89,7 +89,7 @@ func toSilaFilterArg(q sila.FilterQuery) map[string]any {
 }
 
 type silaContractCaller struct {
-	client *gethRPC.Client
+	client *silaRPC.Client
 }
 
 func (c *silaContractCaller) CodeAt(ctx context.Context, contract common.Address, blockNumber *big.Int) ([]byte, error) {
@@ -219,7 +219,7 @@ func (s *Service) retrySilaClientConnection(ctx context.Context, err error) {
 }
 
 // Initializes an RPC connection with authentication headers.
-func (s *Service) newRPCClientWithAuth(ctx context.Context, endpoint network.Endpoint) (*gethRPC.Client, error) {
+func (s *Service) newRPCClientWithAuth(ctx context.Context, endpoint network.Endpoint) (*silaRPC.Client, error) {
 	headers := http.Header{}
 	if endpoint.Auth.Method != authorization.None {
 		header, err := endpoint.Auth.ToHeaderValue()

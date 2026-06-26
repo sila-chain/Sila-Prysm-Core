@@ -5,6 +5,7 @@ import (
 	"math/big"
 	"testing"
 
+	GoKZG "github.com/crate-crypto/go-kzg-4844"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/signing"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
@@ -13,13 +14,12 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/bls"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/random"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	GoKZG "github.com/crate-crypto/go-kzg-4844"
 	"github.com/sila-chain/Sila/common"
-	gethTypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 )
 
 type DenebBlockGeneratorOption func(*denebBlockGenerator)
@@ -77,7 +77,7 @@ func GenerateTestDenebBlockWithSidecar(t *testing.T, parent [32]byte, slot primi
 	if g.payload == nil {
 		stateRoot := bytesutil.PadTo([]byte("stateRoot"), fieldparams.RootLength)
 		ads := common.HexToAddress("095e7baea6a6c7c4c2dfeb977efac326af552d87")
-		tx := gethTypes.NewTx(&gethTypes.LegacyTx{
+		tx := silaTypes.NewTx(&silaTypes.LegacyTx{
 			Nonce:    0,
 			To:       &ads,
 			Value:    big.NewInt(0),
@@ -86,7 +86,7 @@ func GenerateTestDenebBlockWithSidecar(t *testing.T, parent [32]byte, slot primi
 			Data:     nil,
 		})
 
-		txs := []*gethTypes.Transaction{tx}
+		txs := []*silaTypes.Transaction{tx}
 		encodedBinaryTxs := make([][]byte, 1)
 		var err error
 		encodedBinaryTxs[0], err = txs[0].MarshalBinary()

@@ -26,7 +26,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila/common"
-	gethtypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 )
 
 func Test_NotifyForkchoiceUpdate_GetPayloadAttrErrorCanContinue(t *testing.T) {
@@ -611,13 +611,13 @@ func Test_NotifyNewPayload(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			e := &mockSila.SilaEngineClient{ErrNewPayload: tt.newPayloadErr, BlockByHashMap: map[[32]byte]*v1.SilaBlock{}}
 			e.BlockByHashMap[[32]byte{'a'}] = &v1.SilaBlock{
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("b")),
 				},
 				TotalDifficulty: "0x2",
 			}
 			e.BlockByHashMap[[32]byte{'b'}] = &v1.SilaBlock{
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("3")),
 				},
 				TotalDifficulty: "0x1",
@@ -663,13 +663,13 @@ func Test_NotifyNewPayload_SetOptimisticToValid(t *testing.T) {
 	require.NoError(t, err)
 	e := &mockSila.SilaEngineClient{BlockByHashMap: map[[32]byte]*v1.SilaBlock{}}
 	e.BlockByHashMap[[32]byte{'a'}] = &v1.SilaBlock{
-		Header: gethtypes.Header{
+		Header: silaTypes.Header{
 			ParentHash: common.BytesToHash([]byte("b")),
 		},
 		TotalDifficulty: "0x2",
 	}
 	e.BlockByHashMap[[32]byte{'b'}] = &v1.SilaBlock{
-		Header: gethtypes.Header{
+		Header: silaTypes.Header{
 			ParentHash: common.BytesToHash([]byte("3")),
 		},
 		TotalDifficulty: "0x1",

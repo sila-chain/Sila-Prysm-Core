@@ -48,7 +48,7 @@ import (
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
-	gethtypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 	"github.com/sila-chain/go-bitfield"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
@@ -1170,13 +1170,13 @@ func Test_validateMergeTransitionBlock(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			e := &mockSila.SilaEngineClient{BlockByHashMap: map[[32]byte]*silaenginev1.SilaBlock{}}
 			e.BlockByHashMap[aHash] = &silaenginev1.SilaBlock{
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: bHash,
 				},
 				TotalDifficulty: "0x2",
 			}
 			e.BlockByHashMap[bHash] = &silaenginev1.SilaBlock{
-				Header: gethtypes.Header{
+				Header: silaTypes.Header{
 					ParentHash: common.BytesToHash([]byte("3")),
 				},
 				TotalDifficulty: "0x1",

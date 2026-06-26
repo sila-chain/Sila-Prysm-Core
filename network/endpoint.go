@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network/authorization"
-	gethRPC "github.com/sila-chain/Sila/rpc"
+	silaRPC "github.com/sila-chain/Sila/rpc"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
@@ -125,21 +125,21 @@ func NewHttpClientWithSecret(secret, id string) *http.Client {
 	}
 }
 
-func NewExecutionRPCClient(ctx context.Context, endpoint Endpoint, headers http.Header) (*gethRPC.Client, error) {
+func NewExecutionRPCClient(ctx context.Context, endpoint Endpoint, headers http.Header) (*silaRPC.Client, error) {
 	// Need to handle ipc and http
-	var client *gethRPC.Client
+	var client *silaRPC.Client
 	u, err := url.Parse(endpoint.Url)
 	if err != nil {
 		return nil, err
 	}
 	switch u.Scheme {
 	case "http", "https":
-		client, err = gethRPC.DialOptions(ctx, endpoint.Url, gethRPC.WithHTTPClient(endpoint.HttpClient()), gethRPC.WithHeaders(headers))
+		client, err = silaRPC.DialOptions(ctx, endpoint.Url, silaRPC.WithHTTPClient(endpoint.HttpClient()), silaRPC.WithHeaders(headers))
 		if err != nil {
 			return nil, err
 		}
 	case "", "ipc":
-		client, err = gethRPC.DialIPC(ctx, endpoint.Url)
+		client, err = silaRPC.DialIPC(ctx, endpoint.Url)
 		if err != nil {
 			return nil, err
 		}

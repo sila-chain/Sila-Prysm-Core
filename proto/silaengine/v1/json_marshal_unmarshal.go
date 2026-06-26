@@ -6,14 +6,14 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/pkg/errors"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	gethtypes "github.com/sila-chain/Sila/core/types"
-	"github.com/pkg/errors"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 )
 
 const (
@@ -72,9 +72,9 @@ func (b PayloadIDBytes) MarshalJSON() ([]byte, error) {
 // sila_getBlockByNumber endpoints via JSON-RPC.
 type SilaBlock struct {
 	Version int
-	gethtypes.Header
+	silaTypes.Header
 	Hash            common.Hash              `json:"hash"`
-	Transactions    []*gethtypes.Transaction `json:"transactions"`
+	Transactions    []*silaTypes.Transaction `json:"transactions"`
 	TotalDifficulty string                   `json:"totalDifficulty"`
 	Withdrawals     []*Withdrawal            `json:"withdrawals"`
 	BlockAccessList hexutil.Bytes            `json:"blockAccessList"`
@@ -105,7 +105,7 @@ func (e *SilaBlock) MarshalJSON() ([]byte, error) {
 
 func (e *SilaBlock) UnmarshalJSON(enc []byte) error {
 	type transactionsJson struct {
-		Transactions []*gethtypes.Transaction `json:"transactions"`
+		Transactions []*silaTypes.Transaction `json:"transactions"`
 	}
 	type withdrawalsJson struct {
 		Withdrawals []*withdrawalJSON `json:"withdrawals"`
@@ -285,7 +285,7 @@ type silaPayloadJSON struct {
 
 type GetPayloadV2ResponseJson struct {
 	SilaPayload *SilaPayloadCapellaJSON `json:"silaPayload"`
-	BlockValue       string                       `json:"blockValue"`
+	BlockValue  string                  `json:"blockValue"`
 }
 
 type SilaPayloadCapellaJSON struct {
@@ -307,26 +307,26 @@ type SilaPayloadCapellaJSON struct {
 }
 
 type GetPayloadV3ResponseJson struct {
-	SilaPayload      *SilaPayloadDenebJSON `json:"silaPayload"`
-	BlockValue            string                     `json:"blockValue"`
-	BlobsBundle           *BlobBundleJSON            `json:"blobsBundle"`
-	ShouldOverrideBuilder bool                       `json:"shouldOverrideBuilder"`
+	SilaPayload           *SilaPayloadDenebJSON `json:"silaPayload"`
+	BlockValue            string                `json:"blockValue"`
+	BlobsBundle           *BlobBundleJSON       `json:"blobsBundle"`
+	ShouldOverrideBuilder bool                  `json:"shouldOverrideBuilder"`
 }
 
 type GetPayloadV4ResponseJson struct {
-	SilaPayload      *SilaPayloadDenebJSON `json:"silaPayload"`
-	BlockValue            string                     `json:"blockValue"`
-	BlobsBundle           *BlobBundleJSON            `json:"blobsBundle"`
-	ShouldOverrideBuilder bool                       `json:"shouldOverrideBuilder"`
-	SilaRequests     []hexutil.Bytes            `json:"silaRequests"`
+	SilaPayload           *SilaPayloadDenebJSON `json:"silaPayload"`
+	BlockValue            string                `json:"blockValue"`
+	BlobsBundle           *BlobBundleJSON       `json:"blobsBundle"`
+	ShouldOverrideBuilder bool                  `json:"shouldOverrideBuilder"`
+	SilaRequests          []hexutil.Bytes       `json:"silaRequests"`
 }
 
 type GetPayloadV5ResponseJson struct {
-	SilaPayload      *SilaPayloadDenebJSON `json:"silaPayload"`
-	BlockValue            string                     `json:"blockValue"`
-	BlobsBundle           *BlobBundleV2JSON          `json:"blobsBundle"`
-	ShouldOverrideBuilder bool                       `json:"shouldOverrideBuilder"`
-	SilaRequests     []hexutil.Bytes            `json:"silaRequests"`
+	SilaPayload           *SilaPayloadDenebJSON `json:"silaPayload"`
+	BlockValue            string                `json:"blockValue"`
+	BlobsBundle           *BlobBundleV2JSON     `json:"blobsBundle"`
+	ShouldOverrideBuilder bool                  `json:"shouldOverrideBuilder"`
+	SilaRequests          []hexutil.Bytes       `json:"silaRequests"`
 }
 
 // SilaPayloadGloasJSON is the JSON representation of SilaPayloadV4 (Amsterdam).
@@ -353,11 +353,11 @@ type SilaPayloadGloasJSON struct {
 }
 
 type GetPayloadV6ResponseJson struct {
-	SilaPayload      *SilaPayloadGloasJSON `json:"silaPayload"`
-	BlockValue            string                     `json:"blockValue"`
-	BlobsBundle           *BlobBundleV2JSON          `json:"blobsBundle"`
-	ShouldOverrideBuilder bool                       `json:"shouldOverrideBuilder"`
-	SilaRequests     []hexutil.Bytes            `json:"silaRequests"`
+	SilaPayload           *SilaPayloadGloasJSON `json:"silaPayload"`
+	BlockValue            string                `json:"blockValue"`
+	BlobsBundle           *BlobBundleV2JSON     `json:"blobsBundle"`
+	ShouldOverrideBuilder bool                  `json:"shouldOverrideBuilder"`
+	SilaRequests          []hexutil.Bytes       `json:"silaRequests"`
 }
 
 // SilaPayloadBodyV2 represents the SilaEngine API SilaPayloadBodyV2 type (Amsterdam).

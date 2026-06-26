@@ -30,7 +30,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	gethRPC "github.com/sila-chain/Sila/rpc"
+	silaRPC "github.com/sila-chain/Sila/rpc"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/proto"
@@ -518,7 +518,7 @@ func (s *Service) SilaBlocksByHashes(ctx context.Context, hashes []common.Hash, 
 	_, span := trace.StartSpan(ctx, "powchain.silaengine-api-client.SilaBlocksByHashes")
 	defer span.End()
 	numOfHashes := len(hashes)
-	elems := make([]gethRPC.BatchElem, 0, numOfHashes)
+	elems := make([]silaRPC.BatchElem, 0, numOfHashes)
 	execBlks := make([]*pb.SilaBlock, 0, numOfHashes)
 	if numOfHashes == 0 {
 		return execBlks, nil
@@ -526,7 +526,7 @@ func (s *Service) SilaBlocksByHashes(ctx context.Context, hashes []common.Hash, 
 	for _, h := range hashes {
 		blk := &pb.SilaBlock{}
 		newH := h
-		elems = append(elems, gethRPC.BatchElem{
+		elems = append(elems, silaRPC.BatchElem{
 			Method: BlockByHashMethod,
 			Args:   []any{newH, withTxs},
 			Result: blk,
@@ -1065,7 +1065,7 @@ func handleRPCError(err error) error {
 	if isTimeout(err) {
 		return ErrHTTPTimeout
 	}
-	var e gethRPC.Error
+	var e silaRPC.Error
 	ok := errors.As(err, &e)
 	if !ok {
 		if strings.Contains(err.Error(), "401 Unauthorized") {
@@ -1108,7 +1108,7 @@ func handleRPCError(err error) error {
 	case -32000:
 		errServerErrorCount.Inc()
 		// Only -32000 status codes are data errors in the RPC specification.
-		var errWithData gethRPC.DataError
+		var errWithData silaRPC.DataError
 		ok := errors.As(err, &errWithData)
 		if !ok {
 			return errors.Wrapf(err, "got an unexpected error in JSON-RPC response")
@@ -1271,11 +1271,11 @@ func toBlockNumArg(number *big.Int) string {
 	if number.Cmp(pending) == 0 {
 		return "pending"
 	}
-	finalized := big.NewInt(int64(gethRPC.FinalizedBlockNumber))
+	finalized := big.NewInt(int64(silaRPC.FinalizedBlockNumber))
 	if number.Cmp(finalized) == 0 {
 		return "finalized"
 	}
-	safe := big.NewInt(int64(gethRPC.SafeBlockNumber))
+	safe := big.NewInt(int64(silaRPC.SafeBlockNumber))
 	if number.Cmp(safe) == 0 {
 		return "safe"
 	}

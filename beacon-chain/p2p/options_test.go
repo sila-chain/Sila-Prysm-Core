@@ -8,20 +8,20 @@ import (
 	"path"
 	"testing"
 
+	"github.com/libp2p/go-libp2p"
+	"github.com/libp2p/go-libp2p/core/connmgr"
+	"github.com/libp2p/go-libp2p/core/crypto"
+	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/libp2p/go-libp2p/core/protocol"
 	mock "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	ecdsasila "github.com/sila-chain/Sila-Consensus-Core/v7/crypto/ecdsa"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/network"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
-	gethCrypto "github.com/sila-chain/Sila/crypto"
+	silaCrypto "github.com/sila-chain/Sila/crypto"
 	"github.com/sila-chain/Sila/p2p/enode"
 	"github.com/sila-chain/Sila/p2p/enr"
-	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p/core/connmgr"
-	"github.com/libp2p/go-libp2p/core/crypto"
-	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/libp2p/go-libp2p/core/protocol"
 )
 
 func TestPrivateKeyLoading(t *testing.T) {
@@ -81,7 +81,7 @@ func TestPrivateKeyLoading_StaticPrivateKey(t *testing.T) {
 
 func TestIPV6Support(t *testing.T) {
 	params.SetupTestConfigCleanup(t)
-	key, err := gethCrypto.GenerateKey()
+	key, err := silaCrypto.GenerateKey()
 	require.NoError(t, err)
 	db, err := enode.OpenDB("")
 	if err != nil {

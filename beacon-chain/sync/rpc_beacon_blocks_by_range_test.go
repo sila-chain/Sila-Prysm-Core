@@ -33,7 +33,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
-	gethTypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
 
@@ -181,13 +181,13 @@ func TestRPCBeaconBlocksByRange_ReconstructsPayloads(t *testing.T) {
 	stateRoot := bytesutil.PadTo([]byte("stateRoot"), fieldparams.RootLength)
 	receiptsRoot := bytesutil.PadTo([]byte("receiptsRoot"), fieldparams.RootLength)
 	logsBloom := bytesutil.PadTo([]byte("logs"), fieldparams.LogsBloomLength)
-	tx := gethTypes.NewTransaction(
+	tx := silaTypes.NewTransaction(
 		0,
 		common.HexToAddress("095e7baea6a6c7c4c2dfeb977efac326af552d87"),
 		big.NewInt(0), 0, big.NewInt(0),
 		nil,
 	)
-	txs := []*gethTypes.Transaction{tx}
+	txs := []*silaTypes.Transaction{tx}
 	encodedBinaryTxs := make([][]byte, 1)
 	var err error
 	encodedBinaryTxs[0], err = txs[0].MarshalBinary()

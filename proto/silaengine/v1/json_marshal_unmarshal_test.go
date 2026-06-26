@@ -13,7 +13,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	gethtypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 )
 
 type withdrawalJSON struct {
@@ -275,7 +275,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 	})
 	t.Run("sila block", func(t *testing.T) {
 		baseFeePerGas := big.NewInt(1770307273)
-		want := &gethtypes.Header{
+		want := &silaTypes.Header{
 			Number:      big.NewInt(1),
 			ParentHash:  common.BytesToHash([]byte("parent")),
 			UncleHash:   common.BytesToHash([]byte("uncle")),
@@ -283,7 +283,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			Root:        common.BytesToHash([]byte("uncle")),
 			TxHash:      common.BytesToHash([]byte("txHash")),
 			ReceiptHash: common.BytesToHash([]byte("receiptHash")),
-			Bloom:       gethtypes.BytesToBloom([]byte("bloom")),
+			Bloom:       silaTypes.BytesToBloom([]byte("bloom")),
 			Difficulty:  big.NewInt(2),
 			GasLimit:    3,
 			GasUsed:     4,
@@ -291,7 +291,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			BaseFee:     baseFeePerGas,
 			Extra:       []byte("extraData"),
 			MixDigest:   common.BytesToHash([]byte("mix")),
-			Nonce:       gethtypes.EncodeNonce(6),
+			Nonce:       silaTypes.EncodeNonce(6),
 		}
 		enc, err := json.Marshal(want)
 		require.NoError(t, err)
@@ -330,7 +330,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 	})
 	t.Run("sila block with txs as hashes", func(t *testing.T) {
 		baseFeePerGas := big.NewInt(1770307273)
-		want := &gethtypes.Header{
+		want := &silaTypes.Header{
 			Number:      big.NewInt(1),
 			ParentHash:  common.BytesToHash([]byte("parent")),
 			UncleHash:   common.BytesToHash([]byte("uncle")),
@@ -338,7 +338,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			Root:        common.BytesToHash([]byte("uncle")),
 			TxHash:      common.BytesToHash([]byte("txHash")),
 			ReceiptHash: common.BytesToHash([]byte("receiptHash")),
-			Bloom:       gethtypes.BytesToBloom([]byte("bloom")),
+			Bloom:       silaTypes.BytesToBloom([]byte("bloom")),
 			Difficulty:  big.NewInt(2),
 			GasLimit:    3,
 			GasUsed:     4,
@@ -346,7 +346,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			BaseFee:     baseFeePerGas,
 			Extra:       []byte("extraData"),
 			MixDigest:   common.BytesToHash([]byte("mix")),
-			Nonce:       gethtypes.EncodeNonce(6),
+			Nonce:       silaTypes.EncodeNonce(6),
 		}
 		enc, err := json.Marshal(want)
 		require.NoError(t, err)
@@ -389,7 +389,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 	})
 	t.Run("sila block with full transaction data", func(t *testing.T) {
 		baseFeePerGas := big.NewInt(1770307273)
-		want := &gethtypes.Header{
+		want := &silaTypes.Header{
 			Number:      big.NewInt(1),
 			ParentHash:  common.BytesToHash([]byte("parent")),
 			UncleHash:   common.BytesToHash([]byte("uncle")),
@@ -397,7 +397,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			Root:        common.BytesToHash([]byte("uncle")),
 			TxHash:      common.BytesToHash([]byte("txHash")),
 			ReceiptHash: common.BytesToHash([]byte("receiptHash")),
-			Bloom:       gethtypes.BytesToBloom([]byte("bloom")),
+			Bloom:       silaTypes.BytesToBloom([]byte("bloom")),
 			Difficulty:  big.NewInt(2),
 			GasLimit:    3,
 			GasUsed:     4,
@@ -405,7 +405,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			BaseFee:     baseFeePerGas,
 			Extra:       []byte("extraData"),
 			MixDigest:   common.BytesToHash([]byte("mix")),
-			Nonce:       gethtypes.EncodeNonce(6),
+			Nonce:       silaTypes.EncodeNonce(6),
 		}
 		enc, err := json.Marshal(want)
 		require.NoError(t, err)
@@ -413,7 +413,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		payloadItems := make(map[string]any)
 		require.NoError(t, json.Unmarshal(enc, &payloadItems))
 
-		tx := gethtypes.NewTransaction(
+		tx := silaTypes.NewTransaction(
 			1,
 			common.BytesToAddress([]byte("hi")),
 			big.NewInt(0),
@@ -421,7 +421,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			big.NewInt(1e6),
 			[]byte{},
 		)
-		txs := []*gethtypes.Transaction{tx}
+		txs := []*silaTypes.Transaction{tx}
 
 		blockHash := want.Hash()
 		payloadItems["hash"] = blockHash.String()
@@ -457,7 +457,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 	})
 	t.Run("sila block with withdrawals", func(t *testing.T) {
 		baseFeePerGas := big.NewInt(1770307273)
-		want := &gethtypes.Header{
+		want := &silaTypes.Header{
 			Number:      big.NewInt(1),
 			ParentHash:  common.BytesToHash([]byte("parent")),
 			UncleHash:   common.BytesToHash([]byte("uncle")),
@@ -465,7 +465,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			Root:        common.BytesToHash([]byte("uncle")),
 			TxHash:      common.BytesToHash([]byte("txHash")),
 			ReceiptHash: common.BytesToHash([]byte("receiptHash")),
-			Bloom:       gethtypes.BytesToBloom([]byte("bloom")),
+			Bloom:       silaTypes.BytesToBloom([]byte("bloom")),
 			Difficulty:  big.NewInt(2),
 			GasLimit:    3,
 			GasUsed:     4,
@@ -473,7 +473,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			BaseFee:     baseFeePerGas,
 			Extra:       []byte("extraData"),
 			MixDigest:   common.BytesToHash([]byte("mix")),
-			Nonce:       gethtypes.EncodeNonce(6),
+			Nonce:       silaTypes.EncodeNonce(6),
 		}
 		enc, err := json.Marshal(want)
 		require.NoError(t, err)
@@ -546,7 +546,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 		baseFeePerGas := big.NewInt(1770307273)
 		blobGas := uint64(3000)
 		excessGas := uint64(7000)
-		want := &gethtypes.Header{
+		want := &silaTypes.Header{
 			Number:        big.NewInt(1),
 			ParentHash:    common.BytesToHash([]byte("parent")),
 			UncleHash:     common.BytesToHash([]byte("uncle")),
@@ -554,7 +554,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			Root:          common.BytesToHash([]byte("uncle")),
 			TxHash:        common.BytesToHash([]byte("txHash")),
 			ReceiptHash:   common.BytesToHash([]byte("receiptHash")),
-			Bloom:         gethtypes.BytesToBloom([]byte("bloom")),
+			Bloom:         silaTypes.BytesToBloom([]byte("bloom")),
 			Difficulty:    big.NewInt(2),
 			GasLimit:      3,
 			GasUsed:       4,
@@ -562,7 +562,7 @@ func TestJsonMarshalUnmarshal(t *testing.T) {
 			BaseFee:       baseFeePerGas,
 			Extra:         []byte("extraData"),
 			MixDigest:     common.BytesToHash([]byte("mix")),
-			Nonce:         gethtypes.EncodeNonce(6),
+			Nonce:         silaTypes.EncodeNonce(6),
 			BlobGasUsed:   &blobGas,
 			ExcessBlobGas: &excessGas,
 		}

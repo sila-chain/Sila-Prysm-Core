@@ -16,7 +16,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	gethTypes "github.com/sila-chain/Sila/core/types"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 )
 
 func setDefaultMocks(service *Service) *Service {
@@ -87,7 +87,7 @@ func TestBlockHashByHeight_ReturnsHash(t *testing.T) {
 	web3Service.rpcClient = &mockSila.RPCClient{}
 	ctx := t.Context()
 
-	header := &gethTypes.Header{
+	header := &silaTypes.Header{
 		Number: big.NewInt(15),
 		Time:   150,
 	}

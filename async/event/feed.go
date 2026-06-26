@@ -17,9 +17,9 @@
 package event
 
 import (
-	geth_event "github.com/sila-chain/Sila/event"
+	silaEvent "github.com/sila-chain/Sila/event"
 )
 
 // Feed is a re-export of the Sila event feed.
-type Feed = geth_event.Feed
-type Subscription = geth_event.Subscription
+type Feed = silaEvent.Feed
+type Subscription = silaEvent.Subscription

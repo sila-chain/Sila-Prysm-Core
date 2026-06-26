@@ -8,6 +8,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/libp2p/go-libp2p/core/network"
+	"github.com/libp2p/go-libp2p/core/protocol"
 	mock "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/filesystem"
 	db "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/db/testing"
@@ -24,15 +26,13 @@ import (
 	leakybucket "github.com/sila-chain/Sila-Consensus-Core/v7/container/leaky-bucket"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/encoding/bytesutil"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/genesis"
-	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
+	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila/common"
-	gethTypes "github.com/sila-chain/Sila/core/types"
-	"github.com/libp2p/go-libp2p/core/network"
-	"github.com/libp2p/go-libp2p/core/protocol"
+	silaTypes "github.com/sila-chain/Sila/core/types"
 )
 
 type blobsTestCase struct {
@@ -64,13 +64,13 @@ func generateTestBlockWithSidecars(t *testing.T, parent [32]byte, slot types.Slo
 	receiptsRoot := bytesutil.PadTo([]byte("receiptsRoot"), fieldparams.RootLength)
 	logsBloom := bytesutil.PadTo([]byte("logs"), fieldparams.LogsBloomLength)
 	parentHash := bytesutil.PadTo([]byte("parentHash"), fieldparams.RootLength)
-	tx := gethTypes.NewTransaction(
+	tx := silaTypes.NewTransaction(
 		0,
 		common.HexToAddress("095e7baea6a6c7c4c2dfeb977efac326af552d87"),
 		big.NewInt(0), 0, big.NewInt(0),
 		nil,
 	)
-	txs := []*gethTypes.Transaction{tx}
+	txs := []*silaTypes.Transaction{tx}
 	encodedBinaryTxs := make([][]byte, 1)
 	var err error
 	encodedBinaryTxs[0], err = txs[0].MarshalBinary()

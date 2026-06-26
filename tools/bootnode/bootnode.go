@@ -23,7 +23,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/sila-chain/go-bitfield"
+	"github.com/libp2p/go-libp2p/core/crypto"
+	"github.com/pkg/errors"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/async"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/signing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
@@ -35,14 +38,11 @@ import (
 	_ "github.com/sila-chain/Sila-Consensus-Core/v7/runtime/maxprocs"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	gcrypto "github.com/sila-chain/Sila/crypto"
-	gethlog "github.com/sila-chain/Sila/log"
+	silaLog "github.com/sila-chain/Sila/log"
 	"github.com/sila-chain/Sila/p2p/discover"
 	"github.com/sila-chain/Sila/p2p/enode"
 	"github.com/sila-chain/Sila/p2p/enr"
-	"github.com/libp2p/go-libp2p/core/crypto"
-	"github.com/pkg/errors"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/sila-chain/go-bitfield"
 	"github.com/sirupsen/logrus"
 )
 
@@ -82,7 +82,7 @@ func main() {
 		logrus.SetLevel(logrus.DebugLevel)
 
 		// Geth specific logging.
-		gethlog.SetDefault(gethlog.NewLogger(gethlog.NewTerminalHandlerWithLevel(os.Stderr, gethlog.LvlTrace, true)))
+		silaLog.SetDefault(silaLog.NewLogger(silaLog.NewTerminalHandlerWithLevel(os.Stderr, silaLog.LvlTrace, true)))
 
 		log.Debug("Debug logging enabled.")
 	}
