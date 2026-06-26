@@ -11,13 +11,13 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/bazelbuild/rules_go/go/tools/bazel"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/file"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/helpers"
 	e2e "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/params"
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
-	"github.com/bazelbuild/rules_go/go/tools/bazel"
-	"github.com/pkg/errors"
 )
 
 var _ e2etypes.ComponentRunner = (*LighthouseBeaconNode)(nil)
@@ -171,7 +171,7 @@ func (node *LighthouseBeaconNode) Start(ctx context.Context) error {
 
 	silaNodeCount := e2e.TestParams.BeaconNodeCount
 	jwtPath := path.Join(e2e.TestParams.TestPath, "silaData/"+strconv.Itoa(node.index+silaNodeCount)+"/")
-	jwtPath = path.Join(jwtPath, "geth/jwtsecret")
+	jwtPath = path.Join(jwtPath, "sila/jwtsecret")
 	args := []string{
 		"beacon_node",
 		fmt.Sprintf("--datadir=%s/lighthouse-beacon-node-%d", e2e.TestParams.TestPath, index),

@@ -12,6 +12,8 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/bazelbuild/rules_go/go/tools/bazel"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	cmdshared "github.com/sila-chain/Sila-Consensus-Core/v7/cmd"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/beacon-chain/flags"
@@ -23,8 +25,6 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/helpers"
 	e2e "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/params"
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
-	"github.com/bazelbuild/rules_go/go/tools/bazel"
-	"github.com/pkg/errors"
 )
 
 var _ e2etypes.ComponentRunner = (*BeaconNode)(nil)
@@ -237,7 +237,7 @@ func (node *BeaconNode) Start(ctx context.Context) error {
 	if index == 0 {
 		jwtPath = path.Join(e2e.TestParams.TestPath, "silaData/miner/")
 	}
-	jwtPath = path.Join(jwtPath, "geth/jwtsecret")
+	jwtPath = path.Join(jwtPath, "sila/jwtsecret")
 
 	genesisPath, err := node.saveGenesis(ctx)
 	if err != nil {

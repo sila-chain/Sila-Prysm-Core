@@ -9,12 +9,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/file"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/helpers"
 	e2e "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/params"
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
 	proxy "github.com/sila-chain/Sila-Consensus-Core/v7/testing/middleware/silaengine-api-proxy"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -143,7 +143,7 @@ func (node *Proxy) Start(ctx context.Context) error {
 	if node.index == 0 {
 		jwtPath = path.Join(e2e.TestParams.TestPath, "silaData/miner/")
 	}
-	jwtPath = path.Join(jwtPath, "geth/jwtsecret")
+	jwtPath = path.Join(jwtPath, "sila/jwtsecret")
 	secret, err := parseJWTSecretFromFile(jwtPath)
 	if err != nil {
 		return err
