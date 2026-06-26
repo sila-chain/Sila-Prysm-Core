@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ghodss/yaml"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/state"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/cmd/flags"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
@@ -21,8 +23,6 @@ import (
 	"github.com/sila-chain/Sila/core"
 	"github.com/sila-chain/Sila/ethclient"
 	"github.com/sila-chain/Sila/rpc"
-	"github.com/ghodss/yaml"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -39,9 +39,9 @@ var (
 		OutputYaml         string
 		ForkName           string
 		OverrideSilaData   bool
-		SilaEndpoint  string
-		GethGenesisJsonIn  string
-		GethGenesisJsonOut string
+		SilaEndpoint       string
+		SilaGenesisJsonIn  string
+		SilaGenesisJsonOut string
 	}{}
 	outputSSZFlag = &cli.StringFlag{
 		Name:        "output-ssz",
@@ -104,19 +104,19 @@ var (
 				Value:       false,
 			},
 			&cli.StringFlag{
-				Name:        "geth-genesis-json-in",
-				Destination: &generateGenesisStateFlags.GethGenesisJsonIn,
-				Usage:       "Path to a \"genesis.json\" file, containing a json representation of Geth's core.Genesis",
+				Name:        "sila-genesis-json-in",
+				Destination: &generateGenesisStateFlags.SilaGenesisJsonIn,
+				Usage:       "Path to a \"genesis.json\" file, containing a json representation of Sila execution core.Genesis",
 			},
 			&cli.StringFlag{
-				Name:        "geth-genesis-json-out",
-				Destination: &generateGenesisStateFlags.GethGenesisJsonOut,
-				Usage:       "Path to write generated \"genesis.json\" file, containing a json representation of Geth's core.Genesis",
+				Name:        "sila-genesis-json-out",
+				Destination: &generateGenesisStateFlags.SilaGenesisJsonOut,
+				Usage:       "Path to write generated \"genesis.json\" file, containing a json representation of Sila execution core.Genesis",
 			},
 			&cli.StringFlag{
 				Name:        "execution-endpoint",
 				Destination: &generateGenesisStateFlags.SilaEndpoint,
-				Usage:       "Endpoint to preferred Sila client. If unset, defaults to Geth",
+				Usage:       "Endpoint to preferred Sila client. If unset, defaults to the Sila execution client",
 				Value:       "http://localhost:8545",
 			},
 			flags.EnumValue{
@@ -250,10 +250,10 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 	}
 
 	gen := &core.Genesis{}
-	if f.GethGenesisJsonIn != "" {
-		gbytes, err := os.ReadFile(f.GethGenesisJsonIn) // #nosec G304
+	if f.SilaGenesisJsonIn != "" {
+		gbytes, err := os.ReadFile(f.SilaGenesisJsonIn) // #nosec G304
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to read %s", f.GethGenesisJsonIn)
+			return nil, errors.Wrapf(err, "failed to read %s", f.SilaGenesisJsonIn)
 		}
 		if err := json.Unmarshal(gbytes, gen); err != nil {
 			return nil, err
@@ -279,7 +279,7 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 	log.Infof("Genesis time is %d", f.GenesisTime)
 
 	// Set the timestamps for genesis and forks
-	if f.GethGenesisJsonIn != "" {
+	if f.SilaGenesisJsonIn != "" {
 		gen.Timestamp = f.GenesisTime
 		genesis := time.Unix(int64(f.GenesisTime), 0)
 		gen.Config.ShanghaiTime = interop.GethShanghaiTime(genesis, params.BeaconConfig())
@@ -300,7 +300,7 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 		if gen.Config.OsakaTime != nil {
 			fields["osaka"] = fmt.Sprintf("%d", *gen.Config.OsakaTime)
 		}
-		log.WithFields(fields).Info("Setting fork geth times")
+		log.WithFields(fields).Info("Setting fork Sila execution times")
 		if v > version.Altair {
 			// set ttd to zero so EL goes post-merge immediately
 			gen.Config.TerminalTotalDifficulty = big.NewInt(0)
@@ -317,13 +317,13 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 		gen = interop.GethTestnetGenesis(time.Unix(int64(f.GenesisTime), 0), params.BeaconConfig())
 	}
 
-	if f.GethGenesisJsonOut != "" {
+	if f.SilaGenesisJsonOut != "" {
 		gbytes, err := json.MarshalIndent(gen, "", "\t")
 		if err != nil {
 			return nil, err
 		}
-		if err := os.WriteFile(f.GethGenesisJsonOut, gbytes, 0o600); err != nil {
-			return nil, errors.Wrapf(err, "failed to write %s", f.GethGenesisJsonOut)
+		if err := os.WriteFile(f.SilaGenesisJsonOut, gbytes, 0o600); err != nil {
+			return nil, errors.Wrapf(err, "failed to write %s", f.SilaGenesisJsonOut)
 		}
 	}
 

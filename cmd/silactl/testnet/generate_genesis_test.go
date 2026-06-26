@@ -111,7 +111,7 @@ func Test_generateGenesis_BaseFeeValidation(t *testing.T) {
 			err = writeFile(tmpFile, genesisJSON)
 			require.NoError(t, err)
 
-			generateGenesisStateFlags.GethGenesisJsonIn = tmpFile
+			generateGenesisStateFlags.SilaGenesisJsonIn = tmpFile
 
 			ctx := context.Background()
 			_, err = generateGenesis(ctx)
@@ -184,7 +184,7 @@ func Test_generateGenesis_TimestampHandling(t *testing.T) {
 				require.NoError(t, err)
 				tmpFile := t.TempDir() + "/genesis.json"
 				require.NoError(t, writeFile(tmpFile, genesisJSON))
-				generateGenesisStateFlags.GethGenesisJsonIn = tmpFile
+				generateGenesisStateFlags.SilaGenesisJsonIn = tmpFile
 			}
 
 			st, err := generateGenesis(context.Background())
