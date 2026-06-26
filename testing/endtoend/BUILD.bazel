@@ -111,7 +111,7 @@ go_test(
         "@com_github_sila_chain_sila//cmd/geth",
         "@web3signer",
     ],
-    eth_network = "minimal",
+    sila_network = "minimal",
     flaky = True,
     shard_count = 2,
     tags = [
@@ -144,7 +144,7 @@ go_test(
         "@com_github_sila_chain_sila//cmd/geth",
         "@web3signer",
     ],
-    eth_network = "minimal",
+    sila_network = "minimal",
     flaky = True,
     shard_count = 2,
     tags = [
@@ -177,7 +177,7 @@ go_test(
         "@com_github_sila_chain_sila//cmd/geth",
         "@web3signer",
     ],
-    eth_network = "minimal",
+    sila_network = "minimal",
     flaky = True,
     shard_count = 2,
     tags = [
@@ -209,7 +209,7 @@ go_test(
         "@com_github_sila_chain_sila//cmd/geth",
         "@web3signer",
     ],
-    eth_network = "mainnet",
+    sila_network = "mainnet",
     flaky = True,
     shard_count = 2,
     tags = [
@@ -242,7 +242,7 @@ go_test(
         "@com_github_sila_chain_sila//cmd/geth",
         "@web3signer",
     ],
-    eth_network = "mainnet",
+    sila_network = "mainnet",
     flaky = True,
     shard_count = 2,
     tags = [
@@ -275,7 +275,7 @@ go_test(
         "@com_github_sila_chain_sila//cmd/geth",
         "@web3signer",
     ],
-    eth_network = "minimal",
+    sila_network = "minimal",
     flaky = True,
     shard_count = 2,
     tags = [

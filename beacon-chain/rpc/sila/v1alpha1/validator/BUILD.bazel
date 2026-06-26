@@ -236,7 +236,7 @@ go_test(
         "validator_test.go",
     ],
     embed = [":go_default_library"],
-    eth_network = "minimal",
+    sila_network = "minimal",
     tags = ["minimal"],
     deps = common_deps + [
         "//beacon-chain/operations/attestations/mock:go_default_library",
