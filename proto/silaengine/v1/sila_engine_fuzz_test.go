@@ -1,12 +1,12 @@
-package enginev1_test
+package silaenginev1_test
 
 import (
 	"fmt"
 	"testing"
 
+	fuzz "github.com/google/gofuzz"
 	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
-	fuzz "github.com/google/gofuzz"
 )
 
 func TestCopySilaPayload_Fuzz(t *testing.T) {
