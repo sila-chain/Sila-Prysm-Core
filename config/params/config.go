@@ -158,7 +158,7 @@ type BeaconChainConfig struct {
 
 	// Sila constants.
 	GenesisValidatorsRoot          [32]byte        // GenesisValidatorsRoot is the root hash of the genesis validators.
-	GweiPerEth                     uint64          // GweiPerEth is the amount of gwei corresponding to 1 eth.
+	GweiPerEth                     uint64          // GweiPerEth is the amount of gwei corresponding to 1 SILA.
 	BLSSecretKeyLength             int             // BLSSecretKeyLength defines the expected length of BLS secret keys in bytes.
 	BLSPubkeyLength                int             // BLSPubkeyLength defines the expected length of BLS public keys in bytes.
 	DefaultBufferSize              int             // DefaultBufferSize for channels across the Sila repository.
@@ -255,7 +255,7 @@ type BeaconChainConfig struct {
 	BytesPerLogsBloom                uint64           `yaml:"BYTES_PER_LOGS_BLOOM" spec:"true"`                 // BytesPerLogsBloom is the number of bytes that constitute a log bloom filter.
 	MaxExtraDataBytes                uint64           `yaml:"MAX_EXTRA_DATA_BYTES" spec:"true"`                 // MaxExtraDataBytes is the maximum number of bytes for the sila payload's extra data field.
 	DefaultFeeRecipient              common.Address   // DefaultFeeRecipient where the transaction fee goes to.
-	EthBurnAddressHex                string           // EthBurnAddressHex is the constant eth address written in hex format to burn fees in that network. the default is 0x0
+	EthBurnAddressHex                string           // EthBurnAddressHex is the constant Sila execution address written in hex format to burn fees in that network. the default is 0x0
 	DefaultBuilderGasLimit           uint64           // DefaultBuilderGasLimit is the default used to set the gaslimit for the Builder APIs, typically at around 30M wei.
 
 	// Mev-boost circuit breaker

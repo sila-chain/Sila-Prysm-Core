@@ -364,7 +364,7 @@ var (
 	// SuggestedFeeRecipientFlag defines the address of the fee recipient.
 	SuggestedFeeRecipientFlag = &cli.StringFlag{
 		Name: "suggested-fee-recipient",
-		Usage: `Sets ALL validators' mapping to a suggested eth address to receive gas fees when proposing a block.
+		Usage: `Sets ALL validators' mapping to a suggested Sila execution address to receive gas fees when proposing a block.
 		Note that this is only a suggestion when integrating with a Builder API, which may choose to specify
 		a different fee recipient as payment for the blocks it builds.For additional setting overrides use the
 		--` + ProposerSettingsFlag.Name + " or --" + ProposerSettingsURLFlag.Name + " flags.",
