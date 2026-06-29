@@ -1,5 +1,5 @@
 // Prometheus exporter for Sila address balances.
-// Forked from https://github.com/hunterlong/ethexporter
+// Based on an upstream exporter implementation
 package main
 
 import (
@@ -25,7 +25,7 @@ var (
 	allWatching []*Watching
 	loadSeconds float64
 	totalLoaded int64
-	eth         *ethclient.Client
+	silaExecClient *ethclient.Client
 )
 
 var (
@@ -60,7 +60,7 @@ func main() {
 			t1 := time.Now()
 			fmt.Printf("Checking %v wallets...\n", len(allWatching))
 			for _, v := range allWatching {
-				v.Balance = EthBalance(v.Address).String()
+				v.Balance = SilaBalance(v.Address).String()
 				totalLoaded++
 			}
 			t2 := time.Now()
@@ -72,7 +72,7 @@ func main() {
 
 	block := CurrentBlock()
 
-	fmt.Printf("ETHexporter has started on port %v using web3 server: %v at block #%v\n", *port, *web3URL, block)
+	fmt.Printf("Sila exporter has started on port %v using web3 server: %v at block #%v\n", *port, *web3URL, block)
 
 	http.HandleFunc("/metrics", MetricsHTTP)
 	http.HandleFunc("/reload", ReloadHTTP)
@@ -93,22 +93,22 @@ type Watching struct {
 // ConnectionToSilaExec - Connect to remote server.
 func ConnectionToSilaExec(url string) error {
 	var err error
-	eth, err = ethclient.Dial(url)
+	silaExecClient, err = ethclient.Dial(url)
 	return err
 }
 
-// EthBalance from remote server.
-func EthBalance(address string) *big.Float {
-	balance, err := eth.BalanceAt(context.TODO(), common.HexToAddress(address), nil)
+// SilaBalance from remote server.
+func SilaBalance(address string) *big.Float {
+	balance, err := silaExecClient.BalanceAt(context.TODO(), common.HexToAddress(address), nil)
 	if err != nil {
 		fmt.Printf("Error fetching SILA Balance for address: %v\n", address)
 	}
-	return ToEther(balance)
+	return ToSila(balance)
 }
 
 // CurrentBlock in SILAEXEC.
 func CurrentBlock() uint64 {
-	block, err := eth.BlockByNumber(context.TODO(), nil)
+	block, err := silaExecClient.BlockByNumber(context.TODO(), nil)
 	if err != nil {
 		fmt.Printf("Error fetching current block height: %v\n", err)
 		return 0
@@ -116,8 +116,8 @@ func CurrentBlock() uint64 {
 	return block.NumberU64()
 }
 
-// ToEther from Wei.
-func ToEther(o *big.Int) *big.Float {
+// ToSila from Wei.
+func ToSila(o *big.Int) *big.Float {
 	wei := big.NewFloat(0)
 	wei.SetInt(o)
 	return new(big.Float).Quo(wei, big.NewFloat(params.Sila))
@@ -134,13 +134,13 @@ func MetricsHTTP(w http.ResponseWriter, _ *http.Request) {
 		bal := big.NewFloat(0)
 		bal.SetString(v.Balance)
 		total.Add(total, bal)
-		allOut = append(allOut, fmt.Sprintf("%veth_balance{name=\"%v\",address=\"%v\"} %v", *prefix, v.Name, v.Address, v.Balance))
+		allOut = append(allOut, fmt.Sprintf("%vsila_balance{name=\"%v\",address=\"%v\"} %v", *prefix, v.Name, v.Address, v.Balance))
 	}
 	allOut = append(allOut,
-		fmt.Sprintf("%veth_balance_total %0.18f", *prefix, total),
-		fmt.Sprintf("%veth_load_seconds %0.2f", *prefix, loadSeconds),
-		fmt.Sprintf("%veth_loaded_addresses %v", *prefix, totalLoaded),
-		fmt.Sprintf("%veth_total_addresses %v", *prefix, len(allWatching)))
+		fmt.Sprintf("%vsila_balance_total %0.18f", *prefix, total),
+		fmt.Sprintf("%vsila_load_seconds %0.2f", *prefix, loadSeconds),
+		fmt.Sprintf("%vsila_loaded_addresses %v", *prefix, totalLoaded),
+		fmt.Sprintf("%vsila_total_addresses %v", *prefix, len(allWatching)))
 
 	if _, err := fmt.Fprintln(w, strings.Join(allOut, "\n")); err != nil {
 		logrus.WithError(err).Error("Failed to write metrics")
