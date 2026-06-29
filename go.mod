@@ -4,7 +4,7 @@ go 1.26.4
 
 require (
 	github.com/sila-chain/go-bitfield v0.0.0-20260504143531-5cbb6d0f5f2e
-	github.com/SilaLabs/hashtree v0.2.3
+	github.com/sila-chain/hashtree v0.2.3
 	github.com/aristanetworks/goarista v0.0.0-20200805130819-fd197cf57d96
 	github.com/bazelbuild/rules_go v0.23.2
 	github.com/btcsuite/btcd/btcec/v2 v2.3.4
