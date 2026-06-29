@@ -48,7 +48,7 @@ func main() {
 		panic(err)
 	}
 
-	err = ConnectionToGeth(*web3URL)
+	err = ConnectionToSilaExec(*web3URL)
 	if err != nil {
 		panic(err)
 	}
@@ -90,8 +90,8 @@ type Watching struct {
 	Balance string
 }
 
-// ConnectionToGeth - Connect to remote server.
-func ConnectionToGeth(url string) error {
+// ConnectionToSilaExec - Connect to remote server.
+func ConnectionToSilaExec(url string) error {
 	var err error
 	eth, err = ethclient.Dial(url)
 	return err

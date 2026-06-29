@@ -128,10 +128,10 @@ func SilaOsakaTime(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint
 	return osakaTime
 }
 
-// GethBPO1Time calculates the absolute time of the BPO1 activation
+// SilaBPO1Time calculates the absolute time of the BPO1 activation
 // by finding the first BlobSchedule entry with MaxBlobsPerBlock > 9 (Electra's limit)
 // which corresponds to the first BPO increase.
-func GethBPO1Time(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
+func SilaBPO1Time(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
 	for _, entry := range cfg.BlobSchedule {
 		// BPO1 is the first entry that increases beyond Electra's 9 blobs
 		if entry.MaxBlobsPerBlock > uint64(cfg.DeprecatedMaxBlobsPerBlockElectra) {
@@ -146,9 +146,9 @@ func GethBPO1Time(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint6
 	return nil
 }
 
-// GethBPO2Time calculates the absolute time of the BPO2 activation
+// SilaBPO2Time calculates the absolute time of the BPO2 activation
 // by finding the second BlobSchedule entry with MaxBlobsPerBlock > 9.
-func GethBPO2Time(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
+func SilaBPO2Time(genesisTime time.Time, cfg *clparams.BeaconChainConfig) *uint64 {
 	count := 0
 	for _, entry := range cfg.BlobSchedule {
 		// Count entries that are beyond Electra's limit
@@ -188,8 +188,8 @@ func SilaTestnetGenesis(genesis time.Time, cfg *clparams.BeaconChainConfig) *cor
 	if cfg.FuluForkEpoch == 0 {
 		osakaTime = &genesisTime
 	}
-	bpo1Time := GethBPO1Time(genesis, cfg)
-	bpo2Time := GethBPO2Time(genesis, cfg)
+	bpo1Time := SilaBPO1Time(genesis, cfg)
+	bpo2Time := SilaBPO2Time(genesis, cfg)
 	cc := &params.ChainConfig{
 		ChainID:                 big.NewInt(defaultTestChainId),
 		HomesteadBlock:          bigz,
