@@ -53,7 +53,7 @@ func TestProcessPendingDepositsMultiplesSameDeposits(t *testing.T) {
 
 	// The first deposit should create a new validator,
 	// and the second deposit should top up the same validator
-	// We should have 1 validator with balance of 64 ETH.
+	// We should have 1 validator with balance of 64 SILA.
 	validators = state.Validators()
 	require.Equal(t, 1, len(validators))
 

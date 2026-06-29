@@ -44,8 +44,8 @@ func createValidatorsWithTotalActiveBalance(totalBal primitives.Gwei) []*sila.Va
 }
 
 func TestComputeConsolidationEpochAndUpdateChurn(t *testing.T) {
-	// Test setup: create a state with 32M ETH total active balance.
-	// In this state, the churn is expected to be 232 ETH per epoch.
+	// Test setup: create a state with 32M SILA total active balance.
+	// In this state, the churn is expected to be 232 SILA per epoch.
 	tests := []struct {
 		name                                  string
 		state                                 state.BeaconState
@@ -59,14 +59,14 @@ func TestComputeConsolidationEpochAndUpdateChurn(t *testing.T) {
 				s, err := state_native.InitializeFromProtoUnsafeElectra(&sila.BeaconStateElectra{
 					Slot:                       slots.UnsafeEpochStart(10),
 					EarliestConsolidationEpoch: 9,
-					Validators:                 createValidatorsWithTotalActiveBalance(32000000000000000), // 32M ETH
+					Validators:                 createValidatorsWithTotalActiveBalance(32000000000000000), // 32M SILA
 				})
 				require.NoError(t, err)
 				return s
 			}(t),
-			consolidationBalance:                  0,            // 0 ETH
+			consolidationBalance:                  0,            // 0 SILA
 			expectedEpoch:                         15,           // current epoch + 1 + MaxSeedLookahead
-			expectedConsolidationBalanceToConsume: 232000000000, // 232 ETH
+			expectedConsolidationBalanceToConsume: 232000000000, // 232 SILA
 		},
 		{
 			name: "new epoch for consolidations",
@@ -74,14 +74,14 @@ func TestComputeConsolidationEpochAndUpdateChurn(t *testing.T) {
 				s, err := state_native.InitializeFromProtoUnsafeElectra(&sila.BeaconStateElectra{
 					Slot:                       slots.UnsafeEpochStart(10),
 					EarliestConsolidationEpoch: 9,
-					Validators:                 createValidatorsWithTotalActiveBalance(32000000000000000), // 32M ETH
+					Validators:                 createValidatorsWithTotalActiveBalance(32000000000000000), // 32M SILA
 				})
 				require.NoError(t, err)
 				return s
 			}(t),
-			consolidationBalance:                  32000000000,  // 32 ETH
+			consolidationBalance:                  32000000000,  // 32 SILA
 			expectedEpoch:                         15,           // current epoch + 1 + MaxSeedLookahead
-			expectedConsolidationBalanceToConsume: 200000000000, // 200 ETH
+			expectedConsolidationBalanceToConsume: 200000000000, // 200 SILA
 		},
 		{
 			name: "flows into another epoch",
@@ -89,14 +89,14 @@ func TestComputeConsolidationEpochAndUpdateChurn(t *testing.T) {
 				s, err := state_native.InitializeFromProtoUnsafeElectra(&sila.BeaconStateElectra{
 					Slot:                       slots.UnsafeEpochStart(10),
 					EarliestConsolidationEpoch: 9,
-					Validators:                 createValidatorsWithTotalActiveBalance(32000000000000000), // 32M ETH
+					Validators:                 createValidatorsWithTotalActiveBalance(32000000000000000), // 32M SILA
 				})
 				require.NoError(t, err)
 				return s
 			}(t),
-			consolidationBalance:                  235000000000, // 235 ETH
+			consolidationBalance:                  235000000000, // 235 SILA
 			expectedEpoch:                         16,           // Flows into another epoch.
-			expectedConsolidationBalanceToConsume: 229000000000, // 229 ETH
+			expectedConsolidationBalanceToConsume: 229000000000, // 229 SILA
 		},
 		{
 			name: "not a new epoch, fits in remaining balance of current epoch",
@@ -104,15 +104,15 @@ func TestComputeConsolidationEpochAndUpdateChurn(t *testing.T) {
 				s, err := state_native.InitializeFromProtoUnsafeElectra(&sila.BeaconStateElectra{
 					Slot:                          slots.UnsafeEpochStart(10),
 					EarliestConsolidationEpoch:    15,
-					ConsolidationBalanceToConsume: 200000000000,                                              // 200 ETH
-					Validators:                    createValidatorsWithTotalActiveBalance(32000000000000000), // 32M ETH
+					ConsolidationBalanceToConsume: 200000000000,                                              // 200 SILA
+					Validators:                    createValidatorsWithTotalActiveBalance(32000000000000000), // 32M SILA
 				})
 				require.NoError(t, err)
 				return s
 			}(t),
-			consolidationBalance:                  32000000000,  // 32 ETH
+			consolidationBalance:                  32000000000,  // 32 SILA
 			expectedEpoch:                         15,           // Fits into current earliest consolidation epoch.
-			expectedConsolidationBalanceToConsume: 168000000000, // 126 ETH
+			expectedConsolidationBalanceToConsume: 168000000000, // 126 SILA
 		},
 		{
 			name: "not a new epoch, fits in remaining balance of current epoch",
@@ -120,20 +120,20 @@ func TestComputeConsolidationEpochAndUpdateChurn(t *testing.T) {
 				s, err := state_native.InitializeFromProtoUnsafeElectra(&sila.BeaconStateElectra{
 					Slot:                          slots.UnsafeEpochStart(10),
 					EarliestConsolidationEpoch:    15,
-					ConsolidationBalanceToConsume: 200000000000,                                              // 200 ETH
-					Validators:                    createValidatorsWithTotalActiveBalance(32000000000000000), // 32M ETH
+					ConsolidationBalanceToConsume: 200000000000,                                              // 200 SILA
+					Validators:                    createValidatorsWithTotalActiveBalance(32000000000000000), // 32M SILA
 				})
 				require.NoError(t, err)
 				return s
 			}(t),
-			consolidationBalance:                  232000000000, // 232 ETH
+			consolidationBalance:                  232000000000, // 232 SILA
 			expectedEpoch:                         16,           // Flows into another epoch.
-			expectedConsolidationBalanceToConsume: 200000000000, // 200 ETH
+			expectedConsolidationBalanceToConsume: 200000000000, // 200 SILA
 		},
 		{
 			name: "balance to consume is zero, consolidation balance at limit",
 			state: func(t *testing.T) state.BeaconState {
-				activeBal := 32000000000000000 // 32M ETH
+				activeBal := 32000000000000000 // 32M SILA
 				s, err := state_native.InitializeFromProtoUnsafeElectra(&sila.BeaconStateElectra{
 					Slot:                          slots.UnsafeEpochStart(10),
 					EarliestConsolidationEpoch:    16,
@@ -150,7 +150,7 @@ func TestComputeConsolidationEpochAndUpdateChurn(t *testing.T) {
 		{
 			name: "consolidation balance equals consolidation balance to consume",
 			state: func(t *testing.T) state.BeaconState {
-				activeBal := 32000000000000000 // 32M ETH
+				activeBal := 32000000000000000 // 32M SILA
 				s, err := state_native.InitializeFromProtoUnsafeElectra(&sila.BeaconStateElectra{
 					Slot:                          slots.UnsafeEpochStart(10),
 					EarliestConsolidationEpoch:    16,
@@ -167,7 +167,7 @@ func TestComputeConsolidationEpochAndUpdateChurn(t *testing.T) {
 		{
 			name: "consolidation balance exceeds limit by one",
 			state: func(t *testing.T) state.BeaconState {
-				activeBal := 32000000000000000 // 32M ETH
+				activeBal := 32000000000000000 // 32M SILA
 				s, err := state_native.InitializeFromProtoUnsafeElectra(&sila.BeaconStateElectra{
 					Slot:                          slots.UnsafeEpochStart(10),
 					EarliestConsolidationEpoch:    16,

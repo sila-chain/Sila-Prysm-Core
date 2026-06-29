@@ -70,7 +70,7 @@ func TestProcessConsolidationRequests(t *testing.T) {
 			state: func() state.BeaconState {
 				st := &sila.BeaconStateElectra{
 					Slot:       params.BeaconConfig().SlotsPerEpoch.Mul(uint64(params.BeaconConfig().ShardCommitteePeriod)),
-					Validators: createValidatorsWithTotalActiveBalance(32000000000000000), // 32M ETH
+					Validators: createValidatorsWithTotalActiveBalance(32000000000000000), // 32M SILA
 				}
 				// Validator scenario setup. See comments in reqs section.
 				st.Validators[3].WithdrawalCredentials = bytesutil.Bytes32(0)
@@ -186,7 +186,7 @@ func TestProcessConsolidationRequests(t *testing.T) {
 			name: "pending consolidations limit reached",
 			state: func() state.BeaconState {
 				st := &sila.BeaconStateElectra{
-					Validators:            createValidatorsWithTotalActiveBalance(32000000000000000), // 32M ETH
+					Validators:            createValidatorsWithTotalActiveBalance(32000000000000000), // 32M SILA
 					PendingConsolidations: make([]*sila.PendingConsolidation, params.BeaconConfig().PendingConsolidationsLimit),
 				}
 				s, err := state_native.InitializeFromProtoElectra(st)
@@ -219,7 +219,7 @@ func TestProcessConsolidationRequests(t *testing.T) {
 			state: func() state.BeaconState {
 				st := &sila.BeaconStateElectra{
 					Slot:                  params.BeaconConfig().SlotsPerEpoch.Mul(uint64(params.BeaconConfig().ShardCommitteePeriod)),
-					Validators:            createValidatorsWithTotalActiveBalance(32000000000000000), // 32M ETH
+					Validators:            createValidatorsWithTotalActiveBalance(32000000000000000), // 32M SILA
 					PendingConsolidations: make([]*sila.PendingConsolidation, params.BeaconConfig().PendingConsolidationsLimit-1),
 				}
 				s, err := state_native.InitializeFromProtoElectra(st)
@@ -263,7 +263,7 @@ func TestProcessConsolidationRequests(t *testing.T) {
 			state: func() state.BeaconState {
 				st := &sila.BeaconStateElectra{
 					Slot:                  params.BeaconConfig().SlotsPerEpoch.Mul(uint64(params.BeaconConfig().ShardCommitteePeriod)),
-					Validators:            createValidatorsWithTotalActiveBalance(32000000000000000), // 32M ETH
+					Validators:            createValidatorsWithTotalActiveBalance(32000000000000000), // 32M SILA
 					PendingConsolidations: make([]*sila.PendingConsolidation, params.BeaconConfig().PendingConsolidationsLimit),
 				}
 				// To allow compounding consolidation requests.

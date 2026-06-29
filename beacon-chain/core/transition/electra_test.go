@@ -142,7 +142,7 @@ func TestElectraOperations_ProcessingErrors(t *testing.T) {
 						Data: &silapb.Deposit_Data{
 							PublicKey:             make([]byte, 48),
 							WithdrawalCredentials: make([]byte, 32),
-							Amount:                32000000000, // 32 ETH in Gwei
+							Amount:                32000000000, // 32 SILA in Gwei
 							Signature:             make([]byte, 96),
 						},
 					},
