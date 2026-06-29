@@ -33,7 +33,7 @@
 					],
 					"port": "7500",
 					"path": [
-						"eth",
+						"sila",
 						"v1",
 						"keystores"
 					]
@@ -73,7 +73,7 @@
 					],
 					"port": "7500",
 					"path": [
-						"eth",
+						"sila",
 						"v1",
 						"keystores"
 					]
@@ -113,7 +113,7 @@
 					],
 					"port": "7500",
 					"path": [
-						"eth",
+						"sila",
 						"v1",
 						"keystores"
 					]
@@ -149,7 +149,7 @@
 					],
 					"port": "7500",
 					"path": [
-						"eth",
+						"sila",
 						"v1",
 						"validator",
 						"0xaf2e7ba294e03438ea819bd4033c6c1bf6b04320ee2075b77273c08d02f8a61bcc303c2c06bd3713cb442072ae591494",
@@ -185,7 +185,7 @@
 					],
 					"port": "7500",
 					"path": [
-						"eth",
+						"sila",
 						"v1",
 						"validator",
 						"0xaf2e7ba294e03438ea819bd4033c6c1bf6b04320ee2075b77273c08d02f8a61bcc303c2c06bd3713cb442072ae591494",
@@ -223,7 +223,7 @@
 					],
 					"port": "7500",
 					"path": [
-						"eth",
+						"sila",
 						"v1",
 						"validator",
 						"0xaf2e7ba294e03438ea819bd4033c6c1bf6b04320ee2075b77273c08d02f8a61bcc303c2c06bd3713cb442072ae591494",
