@@ -36,7 +36,7 @@ diff -urN a/BUILD.bazel b/BUILD.bazel
 +        ],
 +        "//conditions:default": [],
 +    }),
-+    importpath = "github.com/SilaLabs/hashtree",
++    importpath = "github.com/sila-chain/hashtree",
 +    visibility = ["//visibility:public"],
 +    deps = ["@com_github_klauspost_cpuid_v2//:go_default_library"],
 +)

@@ -1021,15 +1021,15 @@ func (d *DepositSnapshot) MarshalSSZTo(buf []byte) (dst []byte, err error) {
 	// Field (2) 'DepositCount'
 	dst = ssz.MarshalUint(dst, d.DepositCount)
 
-	// Field (3) 'ExecutionHash'
-	if size := len(d.ExecutionHash); size != 32 {
-		err = ssz.ErrBytesLengthFn("--.ExecutionHash", size, 32)
+	// Field (3) 'SilaHash'
+	if size := len(d.SilaHash); size != 32 {
+		err = ssz.ErrBytesLengthFn("--.SilaHash", size, 32)
 		return
 	}
-	dst = append(dst, d.ExecutionHash...)
+	dst = append(dst, d.SilaHash...)
 
-	// Field (4) 'ExecutionDepth'
-	dst = ssz.MarshalUint(dst, d.ExecutionDepth)
+	// Field (4) 'SilaDepth'
+	dst = ssz.MarshalUint(dst, d.SilaDepth)
 
 	// Field (0) 'Finalized'
 	if size := len(d.Finalized); size > 32 {
@@ -1076,14 +1076,14 @@ func (d *DepositSnapshot) UnmarshalSSZ(buf []byte) error {
 	// Field (2) 'DepositCount'
 	d.DepositCount = ssz.UnmarshallUint[uint64](buf[36:44])
 
-	// Field (3) 'ExecutionHash'
-	if cap(d.ExecutionHash) == 0 {
-		d.ExecutionHash = make([]byte, 0, len(buf[44:76]))
+	// Field (3) 'SilaHash'
+	if cap(d.SilaHash) == 0 {
+		d.SilaHash = make([]byte, 0, len(buf[44:76]))
 	}
-	d.ExecutionHash = append(d.ExecutionHash, buf[44:76]...)
+	d.SilaHash = append(d.SilaHash, buf[44:76]...)
 
-	// Field (4) 'ExecutionDepth'
-	d.ExecutionDepth = ssz.UnmarshallUint[uint64](buf[76:84])
+	// Field (4) 'SilaDepth'
+	d.SilaDepth = ssz.UnmarshallUint[uint64](buf[76:84])
 
 	// Field (0) 'Finalized'
 	{
@@ -1151,15 +1151,15 @@ func (d *DepositSnapshot) HashTreeRootWith(hh *ssz.Hasher) (err error) {
 	// Field (2) 'DepositCount'
 	ssz.PutUint(hh, d.DepositCount)
 
-	// Field (3) 'ExecutionHash'
-	if size := len(d.ExecutionHash); size != 32 {
-		err = ssz.ErrBytesLengthFn("--.ExecutionHash", size, 32)
+	// Field (3) 'SilaHash'
+	if size := len(d.SilaHash); size != 32 {
+		err = ssz.ErrBytesLengthFn("--.SilaHash", size, 32)
 		return
 	}
-	hh.PutBytes(d.ExecutionHash)
+	hh.PutBytes(d.SilaHash)
 
-	// Field (4) 'ExecutionDepth'
-	ssz.PutUint(hh, d.ExecutionDepth)
+	// Field (4) 'SilaDepth'
+	ssz.PutUint(hh, d.SilaDepth)
 
 	hh.Merkleize(indx)
 	return

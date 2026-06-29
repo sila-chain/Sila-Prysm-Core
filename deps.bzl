@@ -2341,11 +2341,11 @@ def sila_deps():
         version = "v1.4.4",
     )
     go_repository(
-        name = "com_github_offchainlabs_hashtree",
+        name = "com_github_sila_chain_hashtree",
         build_file_generation = "off",
-        importpath = "github.com/SilaLabs/hashtree",
+        importpath = "github.com/sila-chain/hashtree",
         patch_args = ["-p1"],
-        patches = ["//third_party:com_github_offchainlabs_hashtree.patch"],
+        patches = ["//third_party:com_github_sila_chain_hashtree.patch"],
         sum = "h1:nM8dBAQZzHLzzM14FaAHXnHTAXZIst69v5xWuS48y/c=",
         version = "v0.2.3",
     )
