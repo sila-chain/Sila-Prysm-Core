@@ -14,8 +14,8 @@ var urltests = []struct {
 	maskedUrl string
 }{
 	{"https://a:b@xyz.net", "https://***@xyz.net"},
-	{"https://eth-holesky.alchemyapi.io/v2/tOZG5mjl3.zl_nZdZTNIBUzsDq62R_dkOtY",
-		"https://eth-holesky.alchemyapi.io/***"},
+	{"https://sila-rpc.example.com/v2/tOZG5mjl3.zl_nZdZTNIBUzsDq62R_dkOtY",
+		"https://sila-rpc.example.com/***"},
 	{"https://google.com/search?q=golang", "https://google.com/***"},
 	{"https://user@example.com/foo%2fbar", "https://***@example.com/***"},
 	{"http://john@example.com/#x/y%2Fz", "http://***@example.com/#***"},
