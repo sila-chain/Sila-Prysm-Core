@@ -12,7 +12,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/validator"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
-	eth "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
+	silaapi "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
 	validatorHelpers "github.com/sila-chain/Sila-Consensus-Core/v7/validator/helpers"
 )

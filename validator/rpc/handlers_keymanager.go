@@ -620,11 +620,11 @@ func (s *Server) SetFeeRecipientByPubkey(w http.ResponseWriter, r *http.Request)
 		httputil.HandleError(w, "Could not decode request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	ethAddress, valid := shared.ValidateHex(w, "ethaddress", req.Ethaddress, fieldparams.FeeRecipientLength)
+	silaExecutionAddress, valid := shared.ValidateHex(w, "ethaddress", req.Ethaddress, fieldparams.FeeRecipientLength)
 	if !valid {
 		return
 	}
-	feeRecipient := common.BytesToAddress(ethAddress)
+	feeRecipient := common.BytesToAddress(silaExecutionAddress)
 	settings := s.validatorService.ProposerSettings()
 	switch {
 	case settings == nil:

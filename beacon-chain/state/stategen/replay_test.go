@@ -299,11 +299,11 @@ func TestReplayBlocks_ProcessEpoch_Electra(t *testing.T) {
 
 	sk, err := bls.RandKey()
 	require.NoError(t, err)
-	ethAddress, err := hexutil.Decode("0x967646dCD8d34F4E02204faeDcbAe0cC96fB9245")
+	silaExecutionAddress, err := hexutil.Decode("0x967646dCD8d34F4E02204faeDcbAe0cC96fB9245")
 	require.NoError(t, err)
 	newCredentials := make([]byte, 12)
 	newCredentials[0] = params.BeaconConfig().SilaAddressWithdrawalPrefixByte
-	withdrawalCredentials := append(newCredentials, ethAddress...)
+	withdrawalCredentials := append(newCredentials, silaExecutionAddress...)
 	ffe := params.BeaconConfig().FarFutureEpoch
 	require.NoError(t, beaconState.SetValidators([]*silapb.Validator{
 		{
