@@ -44,7 +44,7 @@ const depositLoggingInterval = 1024
 var errTimedOut = errors.New("net/http: request canceled")
 
 func tooMuchDataRequestedError(err error) bool {
-	// this error is only infura specific (other providers might have different error messages)
+	// this error is provider specific; other providers might have different error messages
 	return err.Error() == "query returned more than 10000 results"
 }
 
