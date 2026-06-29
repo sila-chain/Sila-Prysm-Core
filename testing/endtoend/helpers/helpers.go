@@ -24,8 +24,8 @@ import (
 	e2e "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/params"
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
-	"github.com/sila-chain/Sila/ethclient"
 	"github.com/sila-chain/Sila/rpc"
+	"github.com/sila-chain/Sila/silaclient"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
@@ -407,10 +407,10 @@ func GracefulStop(p *os.Process) error {
 	return nil
 }
 
-func MinerRPCClient() (*ethclient.Client, error) {
+func MinerRPCClient() (*silaclient.Client, error) {
 	client, err := rpc.DialHTTP(e2e.TestParams.SilaExecutionRPCURL(e2e.MinerComponentOffset).String())
 	if err != nil {
 		return nil, err
 	}
-	return ethclient.NewClient(client), nil
+	return silaclient.NewClient(client), nil
 }

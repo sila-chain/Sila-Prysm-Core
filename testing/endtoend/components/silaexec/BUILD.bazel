@@ -35,7 +35,7 @@ go_library(
         "@com_github_sila_chain_sila//common:go_default_library",
         "@com_github_sila_chain_sila//core/types:go_default_library",
         "@com_github_sila_chain_sila//crypto/kzg4844:go_default_library",
-        "@com_github_sila_chain_sila//ethclient:go_default_library",
+        "@com_github_sila_chain_sila//silaclient:go_default_library",
         "@com_github_sila_chain_sila//silaclient/silaclient:go_default_library",
         "@com_github_sila_chain_sila//rpc:go_default_library",
         "@com_github_holiman_uint256//:go_default_library",

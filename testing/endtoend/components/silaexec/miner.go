@@ -21,8 +21,8 @@ import (
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
 	"github.com/sila-chain/Sila/accounts/abi/bind"
 	"github.com/sila-chain/Sila/common"
-	"github.com/sila-chain/Sila/ethclient"
 	"github.com/sila-chain/Sila/rpc"
+	"github.com/sila-chain/Sila/silaclient"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -215,7 +215,7 @@ func (m *Miner) Start(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to connect to ipc: %w", err)
 	}
-	web3 := ethclient.NewClient(client)
+	web3 := silaclient.NewClient(client)
 	block, err := web3.BlockByNumber(ctx, nil)
 	if err != nil {
 		return err

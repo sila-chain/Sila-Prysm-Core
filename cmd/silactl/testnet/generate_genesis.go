@@ -21,8 +21,8 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/interop"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila/core"
-	"github.com/sila-chain/Sila/ethclient"
 	"github.com/sila-chain/Sila/rpc"
+	"github.com/sila-chain/Sila/silaclient"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -344,7 +344,7 @@ func generateGenesis(ctx context.Context) (state.BeaconState, error) {
 				"could not dial %s please make sure you are running your Sila client",
 				generateGenesisStateFlags.SilaEndpoint)
 		}
-		client := ethclient.NewClient(conn)
+		client := silaclient.NewClient(conn)
 		header, err := client.HeaderByNumber(ctx, big.NewInt(0))
 		if err != nil {
 			return nil, errors.Wrap(err, "could not get header by number")

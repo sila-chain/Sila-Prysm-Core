@@ -10,7 +10,7 @@ go_library(
     deps = [
         "//runtime/maxprocs:go_default_library",
         "@com_github_sila_chain_sila//common:go_default_library",
-        "@com_github_sila_chain_sila//ethclient:go_default_library",
+        "@com_github_sila_chain_sila//silaclient:go_default_library",
         "@com_github_sila_chain_sila//params:go_default_library",
         "@com_github_sirupsen_logrus//:go_default_library",
     ],

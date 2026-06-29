@@ -10,7 +10,7 @@ import (
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
 	"github.com/sila-chain/Sila/accounts/keystore"
 	"github.com/sila-chain/Sila/core/types"
-	"github.com/sila-chain/Sila/ethclient"
+	"github.com/sila-chain/Sila/silaclient"
 )
 
 // NetworkId is the ID of the SILAEXEC chain.
@@ -31,7 +31,7 @@ var _ e2etypes.ComponentRunner = (*Node)(nil)
 var _ e2etypes.SilaEngineProxy = (*Proxy)(nil)
 
 // WaitForBlocks waits for a certain amount of blocks to be mined by the SILAEXEC chain before returning.
-func WaitForBlocks(ctx context.Context, web3 *ethclient.Client, key *keystore.Key, blocksToWait uint64) error {
+func WaitForBlocks(ctx context.Context, web3 *silaclient.Client, key *keystore.Key, blocksToWait uint64) error {
 	chainID, err := web3.NetworkID(ctx)
 	if err != nil {
 		return err

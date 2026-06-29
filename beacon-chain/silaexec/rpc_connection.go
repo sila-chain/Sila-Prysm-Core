@@ -18,8 +18,8 @@ import (
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
 	silaTypes "github.com/sila-chain/Sila/core/types"
-	"github.com/sila-chain/Sila/ethclient"
 	silaRPC "github.com/sila-chain/Sila/rpc"
+	"github.com/sila-chain/Sila/silaclient"
 )
 
 type silaCallArg struct {
@@ -129,7 +129,7 @@ func (s *Service) setupSilaClientConnections(ctx context.Context, currEndpoint n
 		return errors.Wrap(err, "could not dial Sila node")
 	}
 	// Attach the clients to the service struct.
-	fetcher := ethclient.NewClient(client)
+	fetcher := silaclient.NewClient(client)
 	s.rpcClient = client
 	s.httpLogger = &silaLogFilterer{client: client}
 
@@ -244,7 +244,7 @@ func (s *Service) newRPCClientWithAuth(ctx context.Context, endpoint network.End
 
 // Checks the chain ID of the Sila client to ensure
 // it matches local parameters of what Sila expects.
-func ensureCorrectSilaChain(ctx context.Context, client *ethclient.Client) error {
+func ensureCorrectSilaChain(ctx context.Context, client *silaclient.Client) error {
 	var chainIDHex string
 	if err := client.Client().CallContext(ctx, &chainIDHex, "sila_chainId"); err != nil {
 		return err

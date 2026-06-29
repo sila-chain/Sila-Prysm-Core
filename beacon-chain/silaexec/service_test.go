@@ -35,8 +35,8 @@ import (
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
 	silaTypes "github.com/sila-chain/Sila/core/types"
-	"github.com/sila-chain/Sila/ethclient/simulated"
 	"github.com/sila-chain/Sila/rpc"
+	"github.com/sila-chain/Sila/silaclient/simulated"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 )
 

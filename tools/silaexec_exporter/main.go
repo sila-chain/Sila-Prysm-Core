@@ -16,16 +16,16 @@ import (
 
 	_ "github.com/sila-chain/Sila-Consensus-Core/v7/runtime/maxprocs"
 	"github.com/sila-chain/Sila/common"
-	"github.com/sila-chain/Sila/ethclient"
 	"github.com/sila-chain/Sila/params"
+	"github.com/sila-chain/Sila/silaclient"
 	"github.com/sirupsen/logrus"
 )
 
 var (
-	allWatching []*Watching
-	loadSeconds float64
-	totalLoaded int64
-	silaExecClient *ethclient.Client
+	allWatching    []*Watching
+	loadSeconds    float64
+	totalLoaded    int64
+	silaExecClient *silaclient.Client
 )
 
 var (
@@ -93,7 +93,7 @@ type Watching struct {
 // ConnectionToSilaExec - Connect to remote server.
 func ConnectionToSilaExec(url string) error {
 	var err error
-	silaExecClient, err = ethclient.Dial(url)
+	silaExecClient, err = silaclient.Dial(url)
 	return err
 }
 

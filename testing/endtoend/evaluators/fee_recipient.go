@@ -16,8 +16,8 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	"github.com/sila-chain/Sila/ethclient"
 	"github.com/sila-chain/Sila/rpc"
+	"github.com/sila-chain/Sila/silaclient"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -157,7 +157,7 @@ func feeRecipientIsPresent(_ *types.EvaluationContext, conns ...*grpc.ClientConn
 }
 
 func checkRecipientBalance(c *rpc.Client, block, parent common.Hash, account common.Address) error {
-	web3 := ethclient.NewClient(c)
+	web3 := silaclient.NewClient(c)
 	ctx := context.Background()
 	b, err := web3.BlockByHash(ctx, block)
 	if err != nil {

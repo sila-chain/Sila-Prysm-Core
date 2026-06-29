@@ -13,6 +13,6 @@ go_library(
         "@com_github_sila_chain_sila//common:go_default_library",
         "@com_github_sila_chain_sila//core/types:go_default_library",
         "@com_github_sila_chain_sila//crypto:go_default_library",
-        "@com_github_sila_chain_sila//ethclient/simulated:go_default_library",
+        "@com_github_sila_chain_sila//silaclient/simulated:go_default_library",
     ],
 )

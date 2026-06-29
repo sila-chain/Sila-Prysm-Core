@@ -23,8 +23,8 @@ import (
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/core/types"
 	"github.com/sila-chain/Sila/crypto/kzg4844"
-	"github.com/sila-chain/Sila/ethclient"
 	"github.com/sila-chain/Sila/rpc"
+	"github.com/sila-chain/Sila/silaclient"
 	silaAccessListClient "github.com/sila-chain/Sila/silaclient/silaclient"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
@@ -89,7 +89,7 @@ func (t *TransactionGenerator) Start(ctx context.Context) error {
 	fundedAccount = newKey
 	// Ensure funding tx is mined before generating txs that rely on balance.
 	// Mine 1 block using the miner key to include the funding transfer.
-	backend := ethclient.NewClient(client)
+	backend := silaclient.NewClient(client)
 	defer backend.Close()
 
 	if err := WaitForBlocks(ctx, backend, mineKey, 1); err != nil {
@@ -114,7 +114,7 @@ func (t *TransactionGenerator) Start(ctx context.Context) error {
 			if t.paused {
 				continue
 			}
-			backend := ethclient.NewClient(client)
+			backend := silaclient.NewClient(client)
 			err = SendTransaction(client, mineKey.PrivateKey, gasPrice, mineKey.Address.String(), txCount, backend, false, t.useLargeBlobs)
 			if err != nil {
 				return err
@@ -129,7 +129,7 @@ func (s *TransactionGenerator) Started() <-chan struct{} {
 	return s.started
 }
 
-func SendTransaction(client *rpc.Client, key *ecdsa.PrivateKey, gasPrice *big.Int, addr string, txCount uint64, backend *ethclient.Client, al bool, useLargeBlobs bool) error {
+func SendTransaction(client *rpc.Client, key *ecdsa.PrivateKey, gasPrice *big.Int, addr string, txCount uint64, backend *silaclient.Client, al bool, useLargeBlobs bool) error {
 	sender := common.HexToAddress(addr)
 	nonce, err := backend.PendingNonceAt(context.Background(), fundedAccount.Address)
 	if err != nil {
@@ -287,7 +287,7 @@ func (t *TransactionGenerator) Stop() error {
 func RandomBlobCellTx(rpc *rpc.Client, sender common.Address, nonce uint64, gasPrice, chainID *big.Int, al bool, useLargeBlobs bool) (*types.Transaction, error) {
 	// Set fields if non-nil
 	if rpc != nil {
-		client := ethclient.NewClient(rpc)
+		client := silaclient.NewClient(rpc)
 
 		var err error
 
@@ -384,7 +384,7 @@ func RandomBlobCellTx(rpc *rpc.Client, sender common.Address, nonce uint64, gasP
 func RandomBlobTx(rpc *rpc.Client, sender common.Address, nonce uint64, gasPrice, chainID *big.Int, al bool, useLargeBlobs bool) (*types.Transaction, error) {
 	// Set fields if non-nil
 	if rpc != nil {
-		client := ethclient.NewClient(rpc)
+		client := silaclient.NewClient(rpc)
 		var err error
 		if gasPrice == nil {
 			gasPrice, err = client.SuggestGasPrice(context.Background())
@@ -587,7 +587,7 @@ func clampTxGas(tx *types.Transaction, gasCap uint64) *types.Transaction {
 }
 
 // ensureMinBalance tops up dest account from miner if its balance is below minWei.
-func ensureMinBalance(ctx context.Context, rpcCli *rpc.Client, backend *ethclient.Client, minerKey, destKey *keystore.Key, minWei *big.Int) error {
+func ensureMinBalance(ctx context.Context, rpcCli *rpc.Client, backend *silaclient.Client, minerKey, destKey *keystore.Key, minWei *big.Int) error {
 	bal, err := backend.BalanceAt(ctx, destKey.Address, nil)
 	if err != nil {
 		return err
@@ -736,7 +736,7 @@ func getCaps(rpc *rpc.Client, defaultGasPrice *big.Int) (*big.Int, *big.Int, err
 		}
 		return big.NewInt(0), defaultGasPrice, nil
 	}
-	client := ethclient.NewClient(rpc)
+	client := silaclient.NewClient(rpc)
 	tip, err := client.SuggestGasTipCap(context.Background())
 	if err != nil {
 		return nil, nil, err
@@ -746,7 +746,7 @@ func getCaps(rpc *rpc.Client, defaultGasPrice *big.Int) (*big.Int, *big.Int, err
 }
 
 func fundAccount(client *rpc.Client, sourceKey, destKey *keystore.Key) error {
-	backend := ethclient.NewClient(client)
+	backend := silaclient.NewClient(client)
 	defer backend.Close()
 	nonce, err := backend.PendingNonceAt(context.Background(), sourceKey.Address)
 	if err != nil {

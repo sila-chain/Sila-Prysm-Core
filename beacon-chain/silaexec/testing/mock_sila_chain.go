@@ -19,8 +19,8 @@ import (
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
 	silaTypes "github.com/sila-chain/Sila/core/types"
-	"github.com/sila-chain/Sila/ethclient/simulated"
 	"github.com/sila-chain/Sila/rpc"
+	"github.com/sila-chain/Sila/silaclient/simulated"
 )
 
 // Chain defines a properly functioning mock for the powchain service.

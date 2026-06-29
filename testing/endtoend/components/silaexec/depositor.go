@@ -20,7 +20,7 @@ import (
 	"github.com/sila-chain/Sila/accounts/keystore"
 	"github.com/sila-chain/Sila/common"
 	silaTypes "github.com/sila-chain/Sila/core/types"
-	"github.com/sila-chain/Sila/ethclient"
+	"github.com/sila-chain/Sila/silaclient"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -72,7 +72,7 @@ type Depositor struct {
 	// This allows other components or e2e set up code to block until its Start method has been called.
 	types.EmptyComponent
 	Key       *keystore.Key
-	Client    *ethclient.Client
+	Client    *silaclient.Client
 	ChainID   *big.Int
 	NetworkId *big.Int
 	cd        *contracts.SilaDeposit
