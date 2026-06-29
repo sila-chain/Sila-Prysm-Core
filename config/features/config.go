@@ -141,19 +141,19 @@ func configureTestnet(ctx *cli.Context) error {
 			return err
 		}
 		params.UseCustomNetworkConfig()
-	} else if ctx.Bool(SepoliaTestnet.Name) {
+	} else if ctx.Bool(SilaCompatTestnet.Name) {
 		log.Info("Running on a Sila compatibility beacon test network")
 		if err := params.SetActive(params.SepoliaConfig().Copy()); err != nil {
 			return err
 		}
-		applySepoliaFeatureFlags(ctx)
+		applySilaCompatFeatureFlags(ctx)
 		params.UseSepoliaNetworkConfig()
-	} else if ctx.Bool(HoleskyTestnet.Name) {
+	} else if ctx.Bool(SilaValidatorScaleTestnet.Name) {
 		log.Info("Running on a Sila validator-scale compatibility beacon test network")
 		if err := params.SetActive(params.HoleskyConfig().Copy()); err != nil {
 			return err
 		}
-		applyHoleskyFeatureFlags(ctx)
+		applySilaValidatorScaleFeatureFlags(ctx)
 		params.UseHoleskyNetworkConfig()
 	} else if ctx.Bool(HoodiTestnet.Name) {
 		log.Info("Running on the Hoodi Beacon Chain Testnet")
@@ -176,11 +176,11 @@ func configureTestnet(ctx *cli.Context) error {
 }
 
 // Insert feature flags within the function to be enabled for this Sila compatibility testnet profile.
-func applySepoliaFeatureFlags(_ *cli.Context) {
+func applySilaCompatFeatureFlags(_ *cli.Context) {
 }
 
 // Insert feature flags within the function to be enabled for this Sila validator-scale compatibility testnet profile.
-func applyHoleskyFeatureFlags(_ *cli.Context) {
+func applySilaValidatorScaleFeatureFlags(_ *cli.Context) {
 }
 
 // ConfigureBeaconChain sets the global config based

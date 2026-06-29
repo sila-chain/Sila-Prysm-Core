@@ -182,7 +182,7 @@ func Test_hasNetworkFlag(t *testing.T) {
 	}{
 		{
 			name:         "Sila compatibility testnet",
-			networkName:  features.HoleskyTestnet.Name,
+			networkName:  features.SilaValidatorScaleTestnet.Name,
 			networkValue: "holesky",
 			want:         true,
 		},

@@ -67,12 +67,12 @@ func TestValidateNetworkFlags(t *testing.T) {
 		},
 		{
 			name:    "Two network flags",
-			args:    []string{"command", "--sepolia", "--holesky"},
+			args:    []string{"command", "--sila-compat-testnet", "--sila-validator-scale-testnet"},
 			wantErr: true,
 		},
 		{
 			name:    "All network flags",
-			args:    []string{"command", "--sila", "--sepolia", "--holesky", "--mainnet"},
+			args:    []string{"command", "--sila", "--sila-compat-testnet", "--sila-validator-scale-testnet", "--mainnet"},
 			wantErr: true,
 		},
 	}

@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	// SepoliaTestnet flag for the multiclient Sila consensus testnet.
-	SepoliaTestnet = &cli.BoolFlag{
-		Name:  "sepolia",
+	// SilaCompatTestnet flag for the multiclient Sila consensus testnet.
+	SilaCompatTestnet = &cli.BoolFlag{
+		Name:  "sila-compat-testnet",
 		Usage: "Runs Sila configured for this compatibility test network profile.",
 	}
 	// SilaMainnet flag for the Sila main network.
@@ -18,9 +18,9 @@ var (
 		Name:  "sila",
 		Usage: "Runs Sila configured for the Sila main network.",
 	}
-	// HoleskyTestnet flag for the multiclient Sila consensus testnet.
-	HoleskyTestnet = &cli.BoolFlag{
-		Name:  "holesky",
+	// SilaValidatorScaleTestnet flag for the multiclient Sila consensus testnet.
+	SilaValidatorScaleTestnet = &cli.BoolFlag{
+		Name:  "sila-validator-scale-testnet",
 		Usage: "Runs Sila configured for this validator-scale compatibility test network profile.",
 	}
 	// HoodiTestnet flag for Sila testnet.
@@ -239,8 +239,8 @@ var devModeFlags = []cli.Flag{
 // ValidatorFlags contains a list of all the feature flags that apply to the validator client.
 var ValidatorFlags = append(deprecatedFlags, []cli.Flag{
 	writeWalletPasswordOnWebOnboarding,
-	HoleskyTestnet,
-	SepoliaTestnet,
+	SilaValidatorScaleTestnet,
+	SilaCompatTestnet,
 	HoodiTestnet,
 	LegacyMainNetwork,
 	SilaMainnet,
@@ -266,8 +266,8 @@ var BeaconChainFlags = combinedFlags([]cli.Flag{
 	saveInvalidBlockTempFlag,
 	saveInvalidBlobTempFlag,
 	disableGRPCConnectionLogging,
-	HoleskyTestnet,
-	SepoliaTestnet,
+	SilaValidatorScaleTestnet,
+	SilaCompatTestnet,
 	HoodiTestnet,
 	LegacyMainNetwork,
 	SilaMainnet,
@@ -318,7 +318,7 @@ var E2EBeaconChainFlags = []string{
 var NetworkFlags = []cli.Flag{
 	LegacyMainNetwork,
 	SilaMainnet,
-	SepoliaTestnet,
-	HoleskyTestnet,
+	SilaCompatTestnet,
+	SilaValidatorScaleTestnet,
 	HoodiTestnet,
 }
