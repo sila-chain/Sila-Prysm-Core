@@ -188,7 +188,7 @@ go_test(
         "@com_github_stretchr_testify//assert:go_default_library",
         "@com_github_stretchr_testify//require:go_default_library",
         "@com_github_urfave_cli_v2//:go_default_library",
-        "@com_github_wealdtech_go_silaconsensus_util//:go_default_library",
+        "@com_github_sila_chain_go_silaconsensus_util//:go_default_library",
         "@in_gopkg_d4l3k_messagediff_v1//:go_default_library",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
         "@org_golang_google_grpc//codes:go_default_library",

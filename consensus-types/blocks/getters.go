@@ -498,7 +498,7 @@ func (b *SignedBeaconBlock) MarshalSSZTo(dst []byte) ([]byte, error) {
 //
 // WARNING: This function panics. It is required to change the signature
 // of fastssz's SizeSSZ() interface function to avoid panicking.
-// Changing the signature causes very problematic issues with wealdtech deps.
+// Changing the signature causes very problematic issues with Sila deps.
 // For the time being panicking is preferable.
 // lint:nopanic -- Panic warning is communicated in godoc commentary.
 func (b *SignedBeaconBlock) SizeSSZ() int {
@@ -914,7 +914,7 @@ func (b *BeaconBlock) MarshalSSZTo(dst []byte) ([]byte, error) {
 //
 // WARNING: This function panics. It is required to change the signature
 // of fastssz's SizeSSZ() interface function to avoid panicking.
-// Changing the signature causes very problematic issues with wealdtech deps.
+// Changing the signature causes very problematic issues with Sila deps.
 // For the time being panicking is preferable.
 // lint:nopanic -- Panic is communicated in godoc.
 func (b *BeaconBlock) SizeSSZ() int {

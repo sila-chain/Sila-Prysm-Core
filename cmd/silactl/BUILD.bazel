@@ -32,7 +32,7 @@ sila_image_upload(
     name = "push_images",
     binary = ":silactl",
     entrypoint = ["/silactl"],
-    repository = "gcr.io/offchainlabs/sila/cmd/silactl",
+    repository = "gcr.io/sila-chain/sila/cmd/silactl",
     symlinks = {
         # Backwards compatibility for images that depended on the old filepath.
         "/app/cmd/silactl/silactl": "/silactl",

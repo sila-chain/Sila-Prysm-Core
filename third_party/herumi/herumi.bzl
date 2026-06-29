@@ -4,14 +4,14 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 Herumi's BLS library for go depends on
 - herumi/mcl
 - herumi/bls
-- herumi/bls-eth-go-binary
+- sila-chain/bls-sila-go-binary
 """
 
 def bls_dependencies():
     _maybe(
         http_archive,
         name = "sila_bls_sila_go_binary",
-        strip_prefix = "bls-eth-go-binary-d37c07cfda4e5369f269368f92c42209400e0742",
+        strip_prefix = "bls-sila-go-binary-d37c07cfda4e5369f269368f92c42209400e0742",
         urls = [
             "https://github.com/sila-chain/bls-sila-go-binary/archive/d37c07cfda4e5369f269368f92c42209400e0742.tar.gz",
         ],

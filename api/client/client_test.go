@@ -35,14 +35,14 @@ func TestValidHostname(t *testing.T) {
 }
 
 func TestWithAuthenticationToken(t *testing.T) {
-	cl, err := NewClient("https://www.offchainlabs.com:3500", WithAuthenticationToken("my token"))
+	cl, err := NewClient("https://www.sila-chain.com:3500", WithAuthenticationToken("my token"))
 	require.NoError(t, err)
 	require.Equal(t, cl.Token(), "my token")
 }
 
 func TestBaseURL(t *testing.T) {
-	cl, err := NewClient("https://www.offchainlabs.com:3500")
+	cl, err := NewClient("https://www.sila-chain.com:3500")
 	require.NoError(t, err)
-	require.Equal(t, "www.offchainlabs.com", cl.BaseURL().Hostname())
+	require.Equal(t, "www.sila-chain.com", cl.BaseURL().Hostname())
 	require.Equal(t, "3500", cl.BaseURL().Port())
 }

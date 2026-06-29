@@ -1,6 +1,6 @@
 load("@sila//tools/go:def.bzl", "go_library")
 
-# gazelle:resolve go github.com/herumi/bls-eth-go-binary/bls @herumi_bls_eth_go_binary//:go_default_library
+# gazelle:resolve go github.com/sila-chain/bls-sila-go-binary/bls @sila_bls_sila_go_binary//:go_default_library
 
 go_library(
     name = "go_default_library",
@@ -10,6 +10,6 @@ go_library(
         "//crypto/bls:__pkg__",
     ],
     deps = [
-        "@herumi_bls_eth_go_binary//:go_default_library",
+        "@sila_bls_sila_go_binary//:go_default_library",
     ],
 )

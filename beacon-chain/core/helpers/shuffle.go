@@ -34,13 +34,13 @@ func SplitIndices(l []uint64, n uint64) [][]uint64 {
 // ShuffledIndex returns `p(index)` in a pseudorandom permutation `p` of `0...list_size - 1` with “seed“ as entropy.
 // We utilize 'swap or not' shuffling in this implementation; we are allocating the memory with the seed that stays
 // constant between iterations instead of reallocating it each iteration as in the spec. This implementation is based
-// on the original implementation from protolambda, https://github.com/protolambda/sila-shuffle
+// on the original implementation from Sila, https://github.com/sila-chain/sila-shuffle
 func ShuffledIndex(index primitives.ValidatorIndex, indexCount uint64, seed [32]byte) (primitives.ValidatorIndex, error) {
 	return ComputeShuffledIndex(index, indexCount, seed, true /* shuffle */)
 }
 
 // UnShuffledIndex returns the inverse of ShuffledIndex. This implementation is based
-// on the original implementation from protolambda, https://github.com/protolambda/sila-shuffle
+// on the original implementation from Sila, https://github.com/sila-chain/sila-shuffle
 func UnShuffledIndex(index primitives.ValidatorIndex, indexCount uint64, seed [32]byte) (primitives.ValidatorIndex, error) {
 	return ComputeShuffledIndex(index, indexCount, seed, false /* un-shuffle */)
 }
@@ -136,7 +136,7 @@ func ComputeShuffledIndex(index primitives.ValidatorIndex, indexCount uint64, se
 // ShuffleList returns list of shuffled indexes in a pseudorandom permutation `p` of `0...list_size - 1` with “seed“ as entropy.
 // We utilize 'swap or not' shuffling in this implementation; we are allocating the memory with the seed that stays
 // constant between iterations instead of reallocating it each iteration as in the spec. This implementation is based
-// on the original implementation from protolambda, https://github.com/protolambda/sila-shuffle
+// on the original implementation from Sila, https://github.com/sila-chain/sila-shuffle
 //
 //	improvements:
 //	 - seed is always the first 32 bytes of the hash input, we just copy it into the buffer one time.

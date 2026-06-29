@@ -645,7 +645,7 @@ func ComputeCommittee(
 	copy(shuffledIndices, indices)
 	// UnshuffleList is used here as it is an optimized implementation created
 	// for fast computation of committees.
-	// Reference implementation: https://github.com/protolambda/sila-shuffle
+	// Reference implementation: https://github.com/sila-chain/sila-shuffle
 	shuffledList, err := UnshuffleList(shuffledIndices, seed)
 	if err != nil {
 		return nil, err
