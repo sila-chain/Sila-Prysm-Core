@@ -72,8 +72,8 @@ func TestUnsupportedVersionsAreNotScheduledOnTestnets(t *testing.T) {
 	}
 
 	testnetConfigs := []*params.BeaconChainConfig{
-		params.HoleskyConfig(),
-		params.SepoliaConfig(),
+		params.SilaValidatorScaleConfig(),
+		params.SilaCompatConfig(),
 		params.HoodiConfig(),
 	}
 

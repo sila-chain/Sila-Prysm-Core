@@ -9,8 +9,8 @@ func init() {
 		E2ETestConfig(),
 		E2EMainnetTestConfig(),
 		InteropConfig(),
-		HoleskyConfig(),
-		SepoliaConfig(),
+		SilaValidatorScaleConfig(),
+		SilaCompatConfig(),
 		HoodiConfig(),
 	}
 	configs = newConfigset(defaults...)

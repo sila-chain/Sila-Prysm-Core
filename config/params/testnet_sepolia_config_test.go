@@ -9,7 +9,7 @@ import (
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 )
 
-func TestSepoliaConfigMatchesUpstreamYaml(t *testing.T) {
+func TestSilaCompatConfigMatchesUpstreamYaml(t *testing.T) {
 	presetFPs := presetsFilePath(t, "mainnet")
 	mn, err := params.ByName(params.MainnetName)
 	require.NoError(t, err)
@@ -24,5 +24,5 @@ func TestSepoliaConfigMatchesUpstreamYaml(t *testing.T) {
 	pcfg, err := params.UnmarshalConfigFile(configFP, nil)
 	require.NoError(t, err)
 	fields := fieldsFromYamls(t, append(presetFPs, configFP))
-	assertYamlFieldsMatch(t, "sepolia", fields, pcfg, params.SepoliaConfig())
+	assertYamlFieldsMatch(t, "sepolia", fields, pcfg, params.SilaCompatConfig())
 }

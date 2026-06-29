@@ -175,9 +175,9 @@ func formatBeaconChaURL(key []byte) string {
 	keyWithout0x := hexutil.Encode(key)[2:]
 
 	switch env := params.BeaconConfig().ConfigName; env {
-	case params.HoleskyName:
+	case params.SilaValidatorScaleName:
 		return fmt.Sprintf(baseURL, "holesky.", keyWithout0x)
-	case params.SepoliaName:
+	case params.SilaCompatName:
 		return fmt.Sprintf(baseURL, "sepolia.", keyWithout0x)
 	default:
 		return fmt.Sprintf(baseURL, "", keyWithout0x)

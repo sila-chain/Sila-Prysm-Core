@@ -4,8 +4,8 @@ import (
 	silaexecParams "github.com/sila-chain/Sila/params"
 )
 
-// UseSepoliaNetworkConfig uses the Sila compatibility beacon-chain network config for this profile.
-func UseSepoliaNetworkConfig() {
+// UseSilaCompatNetworkConfig uses the Sila compatibility beacon-chain network config for this profile.
+func UseSilaCompatNetworkConfig() {
 	cfg := BeaconNetworkConfig().Copy()
 	cfg.ContractDeploymentBlock = 1273020
 	cfg.BootstrapNodes = []string{
@@ -22,14 +22,14 @@ func UseSepoliaNetworkConfig() {
 	OverrideBeaconNetworkConfig(cfg)
 }
 
-// SepoliaConfig defines the config for this Sila compatibility beacon-chain testnet profile.
-func SepoliaConfig() *BeaconChainConfig {
+// SilaCompatConfig defines the config for this Sila compatibility beacon-chain testnet profile.
+func SilaCompatConfig() *BeaconChainConfig {
 	cfg := MainnetConfig()
 	cfg.MinGenesisTime = 1655647200
 	cfg.GenesisDelay = 86400
 	cfg.MinGenesisActiveValidatorCount = 1300
 	cfg.GenesisValidatorsRoot = [32]byte{216, 234, 23, 31, 60, 148, 174, 162, 30, 188, 66, 161, 237, 97, 5, 42, 207, 63, 146, 9, 192, 14, 78, 251, 170, 221, 172, 9, 237, 155, 128, 120}
-	cfg.ConfigName = SepoliaName
+	cfg.ConfigName = SilaCompatName
 	cfg.GenesisForkVersion = []byte{0x90, 0x00, 0x00, 0x69}
 	cfg.SecondsPerSilaBlock = 14
 	cfg.DepositChainID = silaexecParams.SepoliaChainConfig.ChainID.Uint64()

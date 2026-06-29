@@ -209,12 +209,12 @@ var stateTransitionCommand = &cli.Command{
 	Action: func(c *cli.Context) error {
 		if network != "" {
 			switch network {
-			case params.SepoliaName:
-				if err := params.SetActive(params.SepoliaConfig()); err != nil {
+			case params.SilaCompatName:
+				if err := params.SetActive(params.SilaCompatConfig()); err != nil {
 					log.Fatal(err)
 				}
-			case params.HoleskyName:
-				if err := params.SetActive(params.HoleskyConfig()); err != nil {
+			case params.SilaValidatorScaleName:
+				if err := params.SetActive(params.SilaValidatorScaleConfig()); err != nil {
 					log.Fatal(err)
 				}
 			case params.HoodiName:

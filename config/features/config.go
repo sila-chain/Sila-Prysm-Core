@@ -143,18 +143,18 @@ func configureTestnet(ctx *cli.Context) error {
 		params.UseCustomNetworkConfig()
 	} else if ctx.Bool(SilaCompatTestnet.Name) {
 		log.Info("Running on a Sila compatibility beacon test network")
-		if err := params.SetActive(params.SepoliaConfig().Copy()); err != nil {
+		if err := params.SetActive(params.SilaCompatConfig().Copy()); err != nil {
 			return err
 		}
 		applySilaCompatFeatureFlags(ctx)
-		params.UseSepoliaNetworkConfig()
+		params.UseSilaCompatNetworkConfig()
 	} else if ctx.Bool(SilaValidatorScaleTestnet.Name) {
 		log.Info("Running on a Sila validator-scale compatibility beacon test network")
-		if err := params.SetActive(params.HoleskyConfig().Copy()); err != nil {
+		if err := params.SetActive(params.SilaValidatorScaleConfig().Copy()); err != nil {
 			return err
 		}
 		applySilaValidatorScaleFeatureFlags(ctx)
-		params.UseHoleskyNetworkConfig()
+		params.UseSilaValidatorScaleNetworkConfig()
 	} else if ctx.Bool(HoodiTestnet.Name) {
 		log.Info("Running on the Hoodi Beacon Chain Testnet")
 		if err := params.SetActive(params.HoodiConfig().Copy()); err != nil {

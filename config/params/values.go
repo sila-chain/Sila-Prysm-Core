@@ -10,7 +10,7 @@ const (
 	SilaPublicTestnetName = "sila-public-testnet"
 	MainnetTestName       = "mainnet-test"
 	MinimalName           = "minimal"
-	SepoliaName           = "sepolia"
-	HoleskyName           = "holesky"
+	SilaCompatName          = "sila-compat-testnet"
+	SilaValidatorScaleName  = "sila-validator-scale-testnet"
 	HoodiName             = "hoodi"
 )
