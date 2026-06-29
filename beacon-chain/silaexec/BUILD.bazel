@@ -144,7 +144,7 @@ go_test(
         "//testing/util:go_default_library",
         "//time/slots:go_default_library",
         "@com_github_sila_chain_sila//:go_default_library",
-        "@com_github_sila_chain_sila//beacon/engine:go_default_library",
+        "@com_github_sila_chain_sila//beacon/silaEngine:go_default_library",
         "@com_github_sila_chain_sila//common:go_default_library",
         "@com_github_sila_chain_sila//common/hexutil:go_default_library",
         "@com_github_sila_chain_sila//core/types:go_default_library",

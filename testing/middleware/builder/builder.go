@@ -30,7 +30,7 @@ import (
 	sila "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	v1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
-	"github.com/sila-chain/Sila/beacon/engine"
+	silaEngine "github.com/sila-chain/Sila/beacon/silaEngine"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
 	silaTypes "github.com/sila-chain/Sila/core/types"
@@ -776,7 +776,7 @@ func SilaPayloadResponseFromData(v int, ed interfaces.SilaData, bundle *v1.Blobs
 }
 
 func (p *Builder) retrievePendingBlock() (*v1.SilaPayload, error) {
-	result := &engine.ExecutableData{}
+	result := &silaEngine.ExecutableData{}
 	if p.currId == nil {
 		return nil, errors.New("no payload id is cached")
 	}
@@ -801,7 +801,7 @@ func (p *Builder) retrievePendingBlock() (*v1.SilaPayload, error) {
 }
 
 func (p *Builder) retrievePendingBlockCapella() (*v1.SilaPayloadCapellaWithValue, error) {
-	result := &engine.SilaPayloadEnvelope{}
+	result := &silaEngine.SilaPayloadEnvelope{}
 	if p.currId == nil {
 		return nil, errors.New("no payload id is cached")
 	}
@@ -826,7 +826,7 @@ func (p *Builder) retrievePendingBlockCapella() (*v1.SilaPayloadCapellaWithValue
 }
 
 func (p *Builder) retrievePendingBlockDeneb() (*v1.SilaPayloadDenebWithValueAndBlobsBundle, error) {
-	result := &engine.SilaPayloadEnvelope{}
+	result := &silaEngine.SilaPayloadEnvelope{}
 	if p.currId == nil {
 		return nil, errors.New("no payload id is cached")
 	}
@@ -855,7 +855,7 @@ func (p *Builder) retrievePendingBlockDeneb() (*v1.SilaPayloadDenebWithValueAndB
 }
 
 func (p *Builder) retrievePendingBlockElectra() (*v1.ExecutionBundleElectra, error) {
-	result := &engine.SilaPayloadEnvelope{}
+	result := &silaEngine.SilaPayloadEnvelope{}
 	if p.currId == nil {
 		return nil, errors.New("no payload id is cached")
 	}
@@ -946,16 +946,16 @@ func unmarshalRPCObject(b []byte) (*jsonRPCObject, error) {
 	return r, nil
 }
 
-func modifySilaPayload(execPayload engine.ExecutableData, fees *big.Int, prevBeaconRoot []byte, requests [][]byte) (*engine.SilaPayloadEnvelope, error) {
+func modifySilaPayload(execPayload silaEngine.ExecutableData, fees *big.Int, prevBeaconRoot []byte, requests [][]byte) (*silaEngine.SilaPayloadEnvelope, error) {
 	modifiedBlock, err := executableDataToBlock(execPayload, prevBeaconRoot, requests)
 	if err != nil {
-		return &engine.SilaPayloadEnvelope{}, err
+		return &silaEngine.SilaPayloadEnvelope{}, err
 	}
-	return engine.BlockToExecutableData(modifiedBlock, fees, nil /*blobs*/, requests /*requests*/), nil
+	return silaEngine.BlockToExecutableData(modifiedBlock, fees, nil /*blobs*/, requests /*requests*/), nil
 }
 
 // This modifies the provided payload to imprint the builder's extra data
-func executableDataToBlock(params engine.ExecutableData, prevBeaconRoot []byte, requests [][]byte) (*silaTypes.Block, error) {
+func executableDataToBlock(params silaEngine.ExecutableData, prevBeaconRoot []byte, requests [][]byte) (*silaTypes.Block, error) {
 	txs, err := decodeTransactions(params.Transactions)
 	if err != nil {
 		return nil, err
