@@ -25,7 +25,7 @@ import (
 //	def verify_sila_payload_envelope(
 //	    state: BeaconState,
 //	    signed_envelope: SignedSilaPayloadEnvelope,
-//	    sila_engine: SilaEngine,
+//	    silaEngine: SilaEngine,
 //	) -> None:
 //	    envelope = signed_envelope.message
 //	    payload = envelope.payload
@@ -52,7 +52,7 @@ import (
 //	    assert payload.parent_hash == state.latest_block_hash
 //	    assert payload.timestamp == compute_time_at_slot(state, state.slot)
 //	    assert hash_tree_root(payload.withdrawals) == hash_tree_root(state.payload_expected_withdrawals)
-//	    assert sila_engine.verify_and_notify_new_payload(
+//	    assert silaEngine.verify_and_notify_new_payload(
 //	        NewPayloadRequest(
 //	            sila_payload=payload,
 //	            versioned_hashes=[

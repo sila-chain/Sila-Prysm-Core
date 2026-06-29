@@ -180,7 +180,7 @@ func ValidatePayload(st state.BeaconState, payload interfaces.SilaData) error {
 // These validation steps ONLY apply to post merge.
 //
 // Spec code:
-// def process_sila_payload(state: BeaconState, payload: SilaPayload, sila_engine: SilaEngine) -> None:
+// def process_sila_payload(state: BeaconState, payload: SilaPayload, silaEngine: SilaEngine) -> None:
 //
 //	# Verify consistency of the parent hash with respect to the previous sila payload header
 //	if is_merge_complete(state):
@@ -190,7 +190,7 @@ func ValidatePayload(st state.BeaconState, payload interfaces.SilaData) error {
 //	# Verify timestamp
 //	assert payload.timestamp == compute_timestamp_at_slot(state, state.slot)
 //	# Verify the sila payload is valid
-//	assert sila_engine.execute_payload(payload)
+//	assert silaEngine.execute_payload(payload)
 //	# Cache sila payload header
 //	state.latest_sila_payload_header = SilaPayloadHeader(
 //	    parent_hash=payload.parent_hash,

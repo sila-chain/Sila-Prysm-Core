@@ -17,7 +17,7 @@ package sila.eth.v1alpha1;
 
 import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
-import "proto/silaengine/v1/sila_engine.proto";
+import "proto/silaengine/v1/silaengine.proto";
 
 option csharp_namespace = "Sila.Eth.V1alpha1";
 option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1alpha1;eth";

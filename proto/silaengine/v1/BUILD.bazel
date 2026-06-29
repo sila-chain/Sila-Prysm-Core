@@ -79,7 +79,7 @@ go_library(
     srcs = [
         "blobs_bundle.go",
         "electra.go",
-        "sila_engine.go",
+        "silaengine.go",
         "fulu.go",
         "gloas.go",
         "json_marshal_unmarshal.go",
@@ -116,7 +116,7 @@ ssz_proto_files(
     name = "ssz_proto_files",
     srcs = [
         "electra.proto",
-        "sila_engine.proto",
+        "silaengine.proto",
         "fulu.proto",
     ],
     config = select({
@@ -129,7 +129,7 @@ ssz_proto_files(
 go_test(
     name = "go_default_test",
     srcs = [
-        "sila_engine_fuzz_test.go",
+        "silaengine_fuzz_test.go",
         "export_test.go",
         "json_marshal_unmarshal_test.go",
     ],

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package sila.eth.v1alpha1;
 
-import "proto/silaengine/v1/sila_engine.proto";
+import "proto/silaengine/v1/silaengine.proto";
 import "proto/silaengine/v1/electra.proto";
 import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1alpha1/attestation.proto";

@@ -16,7 +16,7 @@ syntax = "proto3";
 package sila.silaengine.v1;
 
 import "proto/silaapi/ext/options.proto";
-import "proto/silaengine/v1/sila_engine.proto";
+import "proto/silaengine/v1/silaengine.proto";
 
 option csharp_namespace = "Sila.Engine.V1";
 option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1;silaenginev1";
