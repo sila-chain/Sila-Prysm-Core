@@ -154,7 +154,7 @@ go_library(
     visibility = [
         # Additional access will require security approval.
         "@sila//crypto/bls/herumi:__pkg__",
-        "@com_github_wealdtech_go_silaconsensus_types_v2//:__pkg__",
+        "@com_github_sila_chain_go_silaconsensus_types_v2//:__pkg__",
     ],
     clinkopts = select({
         "//conditions:default": [],

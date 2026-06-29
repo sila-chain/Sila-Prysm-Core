@@ -3234,13 +3234,13 @@ def sila_deps():
         version = "v2.0.0",
     )
     go_repository(
-        name = "com_github_wealdtech_go_bytesutil",
+        name = "com_github_sila_chain_go_bytesutil",
         importpath = "github.com/sila-chain/go-bytesutil",
         sum = "h1:ocEg3Ke2GkZ4vQw5lp46rmO+pfqCCTgq35gqOy8JKVc=",
         version = "v1.1.1",
     )
     go_repository(
-        name = "com_github_wealdtech_go_silaconsensus_types_v2",
+        name = "com_github_sila_chain_go_silaconsensus_types_v2",
         build_directives = [
             "gazelle:resolve go github.com/sila-chain/bls-sila-go-binary/bls @sila_bls_sila_go_binary//:go_default_library",
         ],
@@ -3249,19 +3249,19 @@ def sila_deps():
         version = "v2.8.2",
     )
     go_repository(
-        name = "com_github_wealdtech_go_silaconsensus_util",
+        name = "com_github_sila_chain_go_silaconsensus_util",
         importpath = "github.com/sila-chain/go-silaconsensus-util",
         sum = "h1:2INPeOR35x5LdFFpSzyw954WzTD+DFyHe3yKlJnG5As=",
         version = "v1.6.3",
     )
     go_repository(
-        name = "com_github_wealdtech_go_silaconsensus_wallet_encryptor_keystorev4",
+        name = "com_github_sila_chain_go_silaconsensus_wallet_encryptor_keystorev4",
         importpath = "github.com/sila-chain/go-silaconsensus-wallet-encryptor-keystorev4",
         sum = "h1:SxrDVSr+oXuT1x8kZt4uWqNCvv5xXEGV9zd7cuSrZS8=",
         version = "v1.1.3",
     )
     go_repository(
-        name = "com_github_wealdtech_go_silaconsensus_wallet_types_v2",
+        name = "com_github_sila_chain_go_silaconsensus_wallet_types_v2",
         importpath = "github.com/sila-chain/go-silaconsensus-wallet-types/v2",
         sum = "h1:264/meVYWt1wFw6Mtn+xwkZkXjID42gNra4rycoiDXI=",
         version = "v2.8.2",

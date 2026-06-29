@@ -13,7 +13,7 @@ go_library(
         "//validator/keymanager:go_default_library",
         "//validator/keymanager/derived:go_default_library",
         "//validator/keymanager/local:go_default_library",
-        "@com_github_wealdtech_go_silaconsensus_util//:go_default_library",
+        "@com_github_sila_chain_go_silaconsensus_util//:go_default_library",
     ],
 )
 
