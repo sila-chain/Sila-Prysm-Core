@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pkg/errors"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/crypto/hash"
@@ -17,20 +18,19 @@ import (
 	silaenginev1 "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaengine/v1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila/common"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
 // BeaconChainConfig contains constant configs for node to participate in beacon chain.
 type BeaconChainConfig struct {
 	// Constants (non-configurable)
-	GenesisSlot              primitives.Slot  `yaml:"GENESIS_SLOT"`                // GenesisSlot represents the first canonical slot number of the beacon chain.
-	GenesisEpoch             primitives.Epoch `yaml:"GENESIS_EPOCH"`               // GenesisEpoch represents the first canonical epoch number of the beacon chain.
-	FarFutureEpoch           primitives.Epoch `yaml:"FAR_FUTURE_EPOCH"`            // FarFutureEpoch represents a epoch extremely far away in the future used as the default penalization epoch for validators.
-	FarFutureSlot            primitives.Slot  `yaml:"FAR_FUTURE_SLOT"`             // FarFutureSlot represents a slot extremely far away in the future.
-	BaseRewardsPerEpoch      uint64           `yaml:"BASE_REWARDS_PER_EPOCH"`      // BaseRewardsPerEpoch is used to calculate the per epoch rewards.
-	SilaDepositTreeDepth uint64           `yaml:"SILA_DEPOSIT_TREE_DEPTH"` // SilaDepositTreeDepth depth of the Merkle trie of deposits in the validator sila deposit on the PoW chain.
-	JustificationBitsLength  uint64           `yaml:"JUSTIFICATION_BITS_LENGTH"`   // JustificationBitsLength defines number of epochs to track when implementing k-finality in Casper FFG.
+	GenesisSlot             primitives.Slot  `yaml:"GENESIS_SLOT"`              // GenesisSlot represents the first canonical slot number of the beacon chain.
+	GenesisEpoch            primitives.Epoch `yaml:"GENESIS_EPOCH"`             // GenesisEpoch represents the first canonical epoch number of the beacon chain.
+	FarFutureEpoch          primitives.Epoch `yaml:"FAR_FUTURE_EPOCH"`          // FarFutureEpoch represents a epoch extremely far away in the future used as the default penalization epoch for validators.
+	FarFutureSlot           primitives.Slot  `yaml:"FAR_FUTURE_SLOT"`           // FarFutureSlot represents a slot extremely far away in the future.
+	BaseRewardsPerEpoch     uint64           `yaml:"BASE_REWARDS_PER_EPOCH"`    // BaseRewardsPerEpoch is used to calculate the per epoch rewards.
+	SilaDepositTreeDepth    uint64           `yaml:"SILA_DEPOSIT_TREE_DEPTH"`   // SilaDepositTreeDepth depth of the Merkle trie of deposits in the validator sila deposit on the PoW chain.
+	JustificationBitsLength uint64           `yaml:"JUSTIFICATION_BITS_LENGTH"` // JustificationBitsLength defines number of epochs to track when implementing k-finality in Casper FFG.
 
 	// Misc constants.
 	PresetBase                     string `yaml:"PRESET_BASE" spec:"true"`                        // PresetBase represents the underlying spec preset this config is based on.
@@ -56,30 +56,30 @@ type BeaconChainConfig struct {
 	EffectiveBalanceIncrement uint64 `yaml:"EFFECTIVE_BALANCE_INCREMENT" spec:"true"` // EffectiveBalanceIncrement is used for converting the high balance into the low balance for validators.
 
 	// Initial value constants.
-	BLSWithdrawalPrefixByte         byte                    `yaml:"BLS_WITHDRAWAL_PREFIX" spec:"true"`          // BLSWithdrawalPrefixByte is used for BLS withdrawal and it's the first byte.
+	BLSWithdrawalPrefixByte         byte                    `yaml:"BLS_WITHDRAWAL_PREFIX" spec:"true"`                   // BLSWithdrawalPrefixByte is used for BLS withdrawal and it's the first byte.
 	SilaAddressWithdrawalPrefixByte byte                    `yaml:"SilaExecution_ADDRESS_WITHDRAWAL_PREFIX" spec:"true"` // SilaAddressWithdrawalPrefixByte is used for withdrawals and it's the first byte.
-	CompoundingWithdrawalPrefixByte byte                    `yaml:"COMPOUNDING_WITHDRAWAL_PREFIX" spec:"true"`  // CompoundingWithdrawalPrefixByteByte is used for compounding withdrawals and it's the first byte.
-	BuilderWithdrawalPrefixByte     byte                    `yaml:"BUILDER_WITHDRAWAL_PREFIX" spec:"true"`      // BuilderWithdrawalPrefixByte is used for builder withdrawals and it's the first byte.
-	BuilderIndexSelfBuild           primitives.BuilderIndex `yaml:"BUILDER_INDEX_SELF_BUILD" spec:"true"`       // BuilderIndexSelfBuild indicates proposer self-built payloads.
+	CompoundingWithdrawalPrefixByte byte                    `yaml:"COMPOUNDING_WITHDRAWAL_PREFIX" spec:"true"`           // CompoundingWithdrawalPrefixByteByte is used for compounding withdrawals and it's the first byte.
+	BuilderWithdrawalPrefixByte     byte                    `yaml:"BUILDER_WITHDRAWAL_PREFIX" spec:"true"`               // BuilderWithdrawalPrefixByte is used for builder withdrawals and it's the first byte.
+	BuilderIndexSelfBuild           primitives.BuilderIndex `yaml:"BUILDER_INDEX_SELF_BUILD" spec:"true"`                // BuilderIndexSelfBuild indicates proposer self-built payloads.
 	ZeroHash                        [32]byte                // ZeroHash is used to represent a zeroed out 32 byte array.
 
 	// Time parameters constants.
-	GenesisDelay                     uint64           `yaml:"GENESIS_DELAY" spec:"true"`                   // GenesisDelay is the minimum number of seconds to delay starting the Sila Beacon Chain genesis. Must be at least 1 second.
-	MinAttestationInclusionDelay     primitives.Slot  `yaml:"MIN_ATTESTATION_INCLUSION_DELAY" spec:"true"` // MinAttestationInclusionDelay defines how many slots validator has to wait to include attestation for beacon block.
-	SecondsPerSlot                   uint64           `yaml:"SECONDS_PER_SLOT" spec:"true"`                // SecondsPerSlot is how many seconds are in a single slot.
-	SlotDurationMilliseconds         uint64           `yaml:"SLOT_DURATION_MS" spec:"true"`                // SlotDurationMilliseconds is the slot time expressed in milliseconds.
-	SlotsPerEpoch                    primitives.Slot  `yaml:"SLOTS_PER_EPOCH" spec:"true"`                 // SlotsPerEpoch is the number of slots in an epoch.
-	SqrRootSlotsPerEpoch             primitives.Slot  // SqrRootSlotsPerEpoch is a hard coded value where we take the square root of `SlotsPerEpoch` and round down.
-	MinSeedLookahead                 primitives.Epoch `yaml:"MIN_SEED_LOOKAHEAD" spec:"true"`                  // MinSeedLookahead is the duration of randao look ahead seed.
-	MaxSeedLookahead                 primitives.Epoch `yaml:"MAX_SEED_LOOKAHEAD" spec:"true"`                  // MaxSeedLookahead is the duration a validator has to wait for entry and exit in epoch.
-	EpochsPerSilaExecutionVotingPeriod        primitives.Epoch `yaml:"EPOCHS_PER_SilaExecution_VOTING_PERIOD" spec:"true"`       // EpochsPerSilaExecutionVotingPeriod defines how often the merkle root of deposit receipts get updated in beacon node on per epoch basis.
-	SlotsPerHistoricalRoot           primitives.Slot  `yaml:"SLOTS_PER_HISTORICAL_ROOT" spec:"true"`           // SlotsPerHistoricalRoot defines how often the historical root is saved.
-	MinValidatorWithdrawabilityDelay primitives.Epoch `yaml:"MIN_VALIDATOR_WITHDRAWABILITY_DELAY" spec:"true"` // MinValidatorWithdrawabilityDelay is the shortest amount of time a validator has to wait to withdraw.
-	MinBuilderWithdrawabilityDelay   primitives.Epoch `yaml:"MIN_BUILDER_WITHDRAWABILITY_DELAY" spec:"true"`   // MinBuilderWithdrawabilityDelay is the shortest amount of time a builder has to wait to withdraw after exit.
-	ShardCommitteePeriod             primitives.Epoch `yaml:"SHARD_COMMITTEE_PERIOD" spec:"true"`              // ShardCommitteePeriod is the minimum amount of epochs a validator must participate before exiting.
-	MinEpochsToInactivityPenalty     primitives.Epoch `yaml:"MIN_EPOCHS_TO_INACTIVITY_PENALTY" spec:"true"`    // MinEpochsToInactivityPenalty defines the minimum amount of epochs since finality to begin penalizing inactivity.
-	SilaExecutionFollowDistance               uint64           `yaml:"SilaExecution_FOLLOW_DISTANCE" spec:"true"`                // SilaExecutionFollowDistance is the number of silaexec.0 blocks to wait before considering a new deposit for voting. This only applies after the chain as been started.
-	SecondsPerSilaBlock              uint64           `yaml:"SECONDS_PER_SilaExecution_BLOCK" spec:"true"`              // SecondsPerSilaBlock is the approximate time for a single silaexec block to be produced.
+	GenesisDelay                       uint64           `yaml:"GENESIS_DELAY" spec:"true"`                   // GenesisDelay is the minimum number of seconds to delay starting the Sila Beacon Chain genesis. Must be at least 1 second.
+	MinAttestationInclusionDelay       primitives.Slot  `yaml:"MIN_ATTESTATION_INCLUSION_DELAY" spec:"true"` // MinAttestationInclusionDelay defines how many slots validator has to wait to include attestation for beacon block.
+	SecondsPerSlot                     uint64           `yaml:"SECONDS_PER_SLOT" spec:"true"`                // SecondsPerSlot is how many seconds are in a single slot.
+	SlotDurationMilliseconds           uint64           `yaml:"SLOT_DURATION_MS" spec:"true"`                // SlotDurationMilliseconds is the slot time expressed in milliseconds.
+	SlotsPerEpoch                      primitives.Slot  `yaml:"SLOTS_PER_EPOCH" spec:"true"`                 // SlotsPerEpoch is the number of slots in an epoch.
+	SqrRootSlotsPerEpoch               primitives.Slot  // SqrRootSlotsPerEpoch is a hard coded value where we take the square root of `SlotsPerEpoch` and round down.
+	MinSeedLookahead                   primitives.Epoch `yaml:"MIN_SEED_LOOKAHEAD" spec:"true"`                     // MinSeedLookahead is the duration of randao look ahead seed.
+	MaxSeedLookahead                   primitives.Epoch `yaml:"MAX_SEED_LOOKAHEAD" spec:"true"`                     // MaxSeedLookahead is the duration a validator has to wait for entry and exit in epoch.
+	EpochsPerSilaExecutionVotingPeriod primitives.Epoch `yaml:"EPOCHS_PER_SilaExecution_VOTING_PERIOD" spec:"true"` // EpochsPerSilaExecutionVotingPeriod defines how often the merkle root of deposit receipts get updated in beacon node on per epoch basis.
+	SlotsPerHistoricalRoot             primitives.Slot  `yaml:"SLOTS_PER_HISTORICAL_ROOT" spec:"true"`              // SlotsPerHistoricalRoot defines how often the historical root is saved.
+	MinValidatorWithdrawabilityDelay   primitives.Epoch `yaml:"MIN_VALIDATOR_WITHDRAWABILITY_DELAY" spec:"true"`    // MinValidatorWithdrawabilityDelay is the shortest amount of time a validator has to wait to withdraw.
+	MinBuilderWithdrawabilityDelay     primitives.Epoch `yaml:"MIN_BUILDER_WITHDRAWABILITY_DELAY" spec:"true"`      // MinBuilderWithdrawabilityDelay is the shortest amount of time a builder has to wait to withdraw after exit.
+	ShardCommitteePeriod               primitives.Epoch `yaml:"SHARD_COMMITTEE_PERIOD" spec:"true"`                 // ShardCommitteePeriod is the minimum amount of epochs a validator must participate before exiting.
+	MinEpochsToInactivityPenalty       primitives.Epoch `yaml:"MIN_EPOCHS_TO_INACTIVITY_PENALTY" spec:"true"`       // MinEpochsToInactivityPenalty defines the minimum amount of epochs since finality to begin penalizing inactivity.
+	SilaExecutionFollowDistance        uint64           `yaml:"SilaExecution_FOLLOW_DISTANCE" spec:"true"`          // SilaExecutionFollowDistance is the number of silaexec.0 blocks to wait before considering a new deposit for voting. This only applies after the chain as been started.
+	SecondsPerSilaBlock                uint64           `yaml:"SECONDS_PER_SilaExecution_BLOCK" spec:"true"`        // SecondsPerSilaBlock is the approximate time for a single silaexec block to be produced.
 
 	// Fork choice algorithm constants.
 	ProposerScoreBoost              uint64           `yaml:"PROPOSER_SCORE_BOOST" spec:"true"`                // ProposerScoreBoost defines a value that is a % of the committee weight for fork-choice boosting.
@@ -103,8 +103,8 @@ type BeaconChainConfig struct {
 	EquivocationEarlyDueBPS primitives.BP `yaml:"-"` // Cutoff for an "early" proposer equivocation, in basis points of the slot.
 
 	// Sila execution-layer PoW compatibility parameters.
-	DepositChainID         uint64 `yaml:"DEPOSIT_CHAIN_ID" spec:"true"`         // DepositChainID of the silaexec network. This used for replay protection.
-	DepositNetworkID       uint64 `yaml:"DEPOSIT_NETWORK_ID" spec:"true"`       // DepositNetworkID of the silaexec network. This used for replay protection.
+	DepositChainID     uint64 `yaml:"DEPOSIT_CHAIN_ID" spec:"true"`     // DepositChainID of the silaexec network. This used for replay protection.
+	DepositNetworkID   uint64 `yaml:"DEPOSIT_NETWORK_ID" spec:"true"`   // DepositNetworkID of the silaexec network. This used for replay protection.
 	SilaDepositAddress string `yaml:"SILA_DEPOSIT_ADDRESS" spec:"true"` // SilaDepositAddress is the address of the sila deposit.
 
 	// Validator parameters.
@@ -134,7 +134,7 @@ type BeaconChainConfig struct {
 	MaxDeposits                      uint64 `yaml:"MAX_DEPOSITS" spec:"true"`                         // MaxDeposits defines the maximum number of validator deposits in a block.
 	MaxVoluntaryExits                uint64 `yaml:"MAX_VOLUNTARY_EXITS" spec:"true"`                  // MaxVoluntaryExits defines the maximum number of validator exits in a block.
 	MaxWithdrawalsPerPayload         uint64 `yaml:"MAX_WITHDRAWALS_PER_PAYLOAD" spec:"true"`          // MaxWithdrawalsPerPayload defines the maximum number of withdrawals in a block.
-	MaxBlsToSilaChanges         uint64 `yaml:"MAX_BLS_TO_SILA_CHANGES" spec:"true"`         // MaxBlsToSilaChanges defines the maximum number of BLS-to-Sila-change objects in a block.
+	MaxBlsToSilaChanges              uint64 `yaml:"MAX_BLS_TO_SILA_CHANGES" spec:"true"`              // MaxBlsToSilaChanges defines the maximum number of BLS-to-Sila-change objects in a block.
 	MaxValidatorsPerWithdrawalsSweep uint64 `yaml:"MAX_VALIDATORS_PER_WITHDRAWALS_SWEEP" spec:"true"` // MaxValidatorsPerWithdrawalsSweep bounds the size of the sweep searching for withdrawals per slot.
 	MaxBuildersPerWithdrawalsSweep   uint64 `yaml:"MAX_BUILDERS_PER_WITHDRAWALS_SWEEP" spec:"true"`   // MaxBuildersPerWithdrawalsSweep bounds the size of the builder withdrawals sweep per slot.
 
@@ -151,14 +151,14 @@ type BeaconChainConfig struct {
 	DomainContributionAndProof        [4]byte `yaml:"DOMAIN_CONTRIBUTION_AND_PROOF" spec:"true"`         // DomainAggregateAndProof defines the BLS signature domain for contribution and proof.
 	DomainApplicationMask             [4]byte `yaml:"DOMAIN_APPLICATION_MASK" spec:"true"`               // DomainApplicationMask defines the BLS signature domain for application mask.
 	DomainApplicationBuilder          [4]byte `yaml:"DOMAIN_APPLICATION_BUILDER" spec:"true"`            // DomainApplicationBuilder defines the BLS signature domain for application builder.
-	DomainBLSToSilaChange        [4]byte `yaml:"DOMAIN_BLS_TO_SILA_CHANGE" spec:"true"`        // DomainBLSToSilaChange defines the BLS signature domain to change withdrawal addresses to SILAEXEC prefix
+	DomainBLSToSilaChange             [4]byte `yaml:"DOMAIN_BLS_TO_SILA_CHANGE" spec:"true"`             // DomainBLSToSilaChange defines the BLS signature domain to change withdrawal addresses to SILAEXEC prefix
 	DomainBeaconBuilder               [4]byte `yaml:"DOMAIN_BEACON_BUILDER" spec:"true"`                 // DomainBeaconBuilder defines the BLS signature domain for beacon block builder.
 	DomainPTCAttester                 [4]byte `yaml:"DOMAIN_PTC_ATTESTER" spec:"true"`                   // DomainPTCAttester defines the BLS signature domain for payload transaction committee attester.
 	DomainProposerPreferences         [4]byte `yaml:"DOMAIN_PROPOSER_PREFERENCES" spec:"true"`           // DomainProposerPreferences defines the BLS signature domain for proposer preferences.
 
 	// Sila constants.
 	GenesisValidatorsRoot          [32]byte        // GenesisValidatorsRoot is the root hash of the genesis validators.
-	GweiPerEth                     uint64          // GweiPerEth is the amount of gwei corresponding to 1 SILA.
+	GweiPerSila                    uint64          // GweiPerSila is the amount of gwei corresponding to 1 SILA.
 	BLSSecretKeyLength             int             // BLSSecretKeyLength defines the expected length of BLS secret keys in bytes.
 	BLSPubkeyLength                int             // BLSPubkeyLength defines the expected length of BLS public keys in bytes.
 	DefaultBufferSize              int             // DefaultBufferSize for channels across the Sila repository.

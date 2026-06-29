@@ -7,6 +7,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/client/beacon"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	corehelpers "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/helpers"
@@ -24,7 +25,6 @@ import (
 	e2etypes "github.com/sila-chain/Sila-Consensus-Core/v7/testing/endtoend/types"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	"github.com/sila-chain/Sila/common/hexutil"
-	"github.com/pkg/errors"
 	"golang.org/x/exp/rand"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -717,9 +717,9 @@ func submitWithdrawal(ec *e2etypes.EvaluationContext, conns ...*grpc.ClientConn)
 			return errors.Errorf("pubkey is not equal, wanted %#x but received %#x", val.PublicKey, privKeys[idx].PublicKey().Marshal())
 		}
 		message := &silapb.BLSToSilaChange{
-			ValidatorIndex:     idx,
-			FromBlsPubkey:      privKeys[idx].PublicKey().Marshal(),
-			ToSilaAddress: bytesutil.ToBytes(uint64(idx), 20),
+			ValidatorIndex: idx,
+			FromBlsPubkey:  privKeys[idx].PublicKey().Marshal(),
+			ToSilaAddress:  bytesutil.ToBytes(uint64(idx), 20),
 		}
 		domain, err := signing.ComputeDomain(params.BeaconConfig().DomainBLSToSilaChange, params.BeaconConfig().GenesisForkVersion, st.GenesisValidatorsRoot())
 		if err != nil {
@@ -779,7 +779,7 @@ func validatorsAreWithdrawn(ec *e2etypes.EvaluationContext, conns ...*grpc.Clien
 		}
 		// Only return an error if the validator has more than 1 SILA
 		// in its balance.
-		if bal > 1*params.BeaconConfig().GweiPerEth {
+		if bal > 1*params.BeaconConfig().GweiPerSila {
 			return errors.Errorf("Validator index %d with key %#x hasn't withdrawn. Their balance is %d.", valIdx, key, bal)
 		}
 	}

@@ -73,10 +73,10 @@ func ComputeWeakSubjectivityPeriod(ctx context.Context, st state.ReadOnlyBeaconS
 	if err != nil {
 		return 0, fmt.Errorf("cannot find total active balance of validators: %w", err)
 	}
-	t = t / N / cfg.GweiPerEth
+	t = t / N / cfg.GweiPerSila
 
 	// Maximum effective balance per validator.
-	T := cfg.MaxEffectiveBalance / cfg.GweiPerEth
+	T := cfg.MaxEffectiveBalance / cfg.GweiPerSila
 
 	// Validator churn limit.
 	delta := ValidatorExitChurnLimit(N)

@@ -360,7 +360,7 @@ func (p *Builder) handleHeaderRequest(w http.ResponseWriter, req *http.Request) 
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	gSila := big.NewInt(int64(params.BeaconConfig().GweiPerEth))
+	gSila := big.NewInt(int64(params.BeaconConfig().GweiPerSila))
 	weiSila := gSila.Mul(gSila, gSila)
 	val := builderAPI.Uint256{Int: weiSila}
 

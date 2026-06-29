@@ -155,7 +155,7 @@ func compareConfigs(t *testing.T, expected, actual *BeaconChainConfig) {
 	require.DeepEqual(t, expected.DomainSyncCommittee, actual.DomainSyncCommittee)
 	require.DeepEqual(t, expected.DomainSyncCommitteeSelectionProof, actual.DomainSyncCommitteeSelectionProof)
 	require.DeepEqual(t, expected.DomainContributionAndProof, actual.DomainContributionAndProof)
-	require.DeepEqual(t, expected.GweiPerEth, actual.GweiPerEth)
+	require.DeepEqual(t, expected.GweiPerSila, actual.GweiPerSila)
 	require.DeepEqual(t, expected.BLSSecretKeyLength, actual.BLSSecretKeyLength)
 	require.DeepEqual(t, expected.BLSPubkeyLength, actual.BLSPubkeyLength)
 	require.DeepEqual(t, expected.DefaultBufferSize, actual.DefaultBufferSize)

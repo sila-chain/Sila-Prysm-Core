@@ -320,7 +320,7 @@
 - name: ETH_TO_GWEI#phase0
   sources:
     - file: config/params/config.go
-      search: GweiPerEth\s+uint64
+      search: GweiPerSila\s+uint64
       regex: true
   spec: |
     <spec constant_var="ETH_TO_GWEI" fork="phase0" hash="37392e73">

@@ -112,11 +112,11 @@ var mainnetNetworkConfig = &NetworkConfig{
 
 var mainnetBeaconConfig = &BeaconChainConfig{
 	// Constants (Non-configurable)
-	FarFutureEpoch:           math.MaxUint64,
-	FarFutureSlot:            math.MaxUint64,
-	BaseRewardsPerEpoch:      4,
+	FarFutureEpoch:       math.MaxUint64,
+	FarFutureSlot:        math.MaxUint64,
+	BaseRewardsPerEpoch:  4,
 	SilaDepositTreeDepth: 32,
-	GenesisDelay:             604800, // 1 week.
+	GenesisDelay:         604800, // 1 week.
 
 	// Misc constant.
 	TargetCommitteeSize:            128,
@@ -147,20 +147,20 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	ZeroHash:                        [32]byte{},
 
 	// Time parameter constants.
-	MinAttestationInclusionDelay:     1,
-	SecondsPerSlot:                   12,
-	SlotDurationMilliseconds:         12000,
-	SlotsPerEpoch:                    32,
-	SqrRootSlotsPerEpoch:             5,
-	MinSeedLookahead:                 1,
-	MaxSeedLookahead:                 4,
-	EpochsPerSilaExecutionVotingPeriod:        64,
-	SlotsPerHistoricalRoot:           8192,
-	MinValidatorWithdrawabilityDelay: 256,
-	MinBuilderWithdrawabilityDelay:   8192,
-	ShardCommitteePeriod:             256,
-	MinEpochsToInactivityPenalty:     4,
-	SilaExecutionFollowDistance:               2048,
+	MinAttestationInclusionDelay:       1,
+	SecondsPerSlot:                     12,
+	SlotDurationMilliseconds:           12000,
+	SlotsPerEpoch:                      32,
+	SqrRootSlotsPerEpoch:               5,
+	MinSeedLookahead:                   1,
+	MaxSeedLookahead:                   4,
+	EpochsPerSilaExecutionVotingPeriod: 64,
+	SlotsPerHistoricalRoot:             8192,
+	MinValidatorWithdrawabilityDelay:   256,
+	MinBuilderWithdrawabilityDelay:     8192,
+	ShardCommitteePeriod:               256,
+	MinEpochsToInactivityPenalty:       4,
+	SilaExecutionFollowDistance:        2048,
 
 	// Fork choice algorithm constants.
 	ProposerScoreBoost:              40,
@@ -184,8 +184,8 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	EquivocationEarlyDueBPS:  primitives.BP(7500),
 
 	// Sila execution-layer PoW compatibility parameters.
-	DepositChainID:         1, // Chain ID of silaexec mainnet.
-	DepositNetworkID:       1, // Network ID of silaexec mainnet.
+	DepositChainID:     1, // Chain ID of silaexec mainnet.
+	DepositNetworkID:   1, // Network ID of silaexec mainnet.
 	SilaDepositAddress: "0x00000000219ab540356cBB839Cbe05303d7705Fa",
 
 	// Validator params.
@@ -223,7 +223,7 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	MaxDeposits:                      16,
 	MaxVoluntaryExits:                16,
 	MaxWithdrawalsPerPayload:         16,
-	MaxBlsToSilaChanges:         16,
+	MaxBlsToSilaChanges:              16,
 	MaxValidatorsPerWithdrawalsSweep: 16384,
 	MaxBuildersPerWithdrawalsSweep:   16384,
 
@@ -240,14 +240,14 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	DomainContributionAndProof:        bytesutil.Uint32ToBytes4(0x09000000),
 	DomainApplicationMask:             bytesutil.Uint32ToBytes4(0x00000001),
 	DomainApplicationBuilder:          bytesutil.Uint32ToBytes4(0x00000001),
-	DomainBLSToSilaChange:        bytesutil.Uint32ToBytes4(0x0A000000),
+	DomainBLSToSilaChange:             bytesutil.Uint32ToBytes4(0x0A000000),
 	DomainBeaconBuilder:               bytesutil.Uint32ToBytes4(0x0B000000),
 	DomainPTCAttester:                 bytesutil.Uint32ToBytes4(0x0C000000),
 	DomainProposerPreferences:         bytesutil.Uint32ToBytes4(0x0D000000),
 
 	// Sila constants.
 	GenesisValidatorsRoot:          [32]byte{75, 54, 61, 185, 78, 40, 97, 32, 215, 110, 185, 5, 52, 15, 221, 78, 84, 191, 233, 240, 107, 243, 63, 246, 207, 90, 210, 127, 81, 27, 254, 149},
-	GweiPerEth:                     1000000000,
+	GweiPerSila:                    1000000000,
 	BLSSecretKeyLength:             32,
 	BLSPubkeyLength:                48,
 	DefaultBufferSize:              10000,

@@ -8,7 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sila-chain/go-bitfield"
 	mock "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/altair"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/epoch/precompute"
@@ -38,6 +37,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
 	silaTime "github.com/sila-chain/Sila-Consensus-Core/v7/time"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
+	"github.com/sila-chain/go-bitfield"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -1572,8 +1572,8 @@ func TestServer_GetValidatorParticipation_CurrentAndPrevEpoch(t *testing.T) {
 
 	wanted := &silapb.ValidatorParticipation{
 		GlobalParticipationRate:          float32(params.BeaconConfig().EffectiveBalanceIncrement) / float32(validatorCount*params.BeaconConfig().MaxEffectiveBalance),
-		VotedSila:                       params.BeaconConfig().EffectiveBalanceIncrement,
-		EligibleSila:                    validatorCount * params.BeaconConfig().MaxEffectiveBalance,
+		VotedSila:                        params.BeaconConfig().EffectiveBalanceIncrement,
+		EligibleSila:                     validatorCount * params.BeaconConfig().MaxEffectiveBalance,
 		CurrentEpochActiveGwei:           validatorCount * params.BeaconConfig().MaxEffectiveBalance,
 		CurrentEpochAttestingGwei:        params.BeaconConfig().EffectiveBalanceIncrement,
 		CurrentEpochTargetAttestingGwei:  params.BeaconConfig().EffectiveBalanceIncrement,
@@ -1653,8 +1653,8 @@ func TestServer_GetValidatorParticipation_OrphanedUntilGenesis(t *testing.T) {
 
 	wanted := &silapb.ValidatorParticipation{
 		GlobalParticipationRate:          float32(params.BeaconConfig().EffectiveBalanceIncrement) / float32(validatorCount*params.BeaconConfig().MaxEffectiveBalance),
-		VotedSila:                       params.BeaconConfig().EffectiveBalanceIncrement,
-		EligibleSila:                    validatorCount * params.BeaconConfig().MaxEffectiveBalance,
+		VotedSila:                        params.BeaconConfig().EffectiveBalanceIncrement,
+		EligibleSila:                     validatorCount * params.BeaconConfig().MaxEffectiveBalance,
 		CurrentEpochActiveGwei:           validatorCount * params.BeaconConfig().MaxEffectiveBalance,
 		CurrentEpochAttestingGwei:        params.BeaconConfig().EffectiveBalanceIncrement,
 		CurrentEpochTargetAttestingGwei:  params.BeaconConfig().EffectiveBalanceIncrement,
@@ -1766,8 +1766,8 @@ func runGetValidatorParticipationCurrentAndPrevEpoch(t *testing.T, genState stat
 
 	wanted := &silapb.ValidatorParticipation{
 		GlobalParticipationRate:          1,
-		VotedSila:                       validatorCount * params.BeaconConfig().MaxEffectiveBalance,
-		EligibleSila:                    validatorCount * params.BeaconConfig().MaxEffectiveBalance,
+		VotedSila:                        validatorCount * params.BeaconConfig().MaxEffectiveBalance,
+		EligibleSila:                     validatorCount * params.BeaconConfig().MaxEffectiveBalance,
 		CurrentEpochActiveGwei:           validatorCount * params.BeaconConfig().MaxEffectiveBalance,
 		CurrentEpochAttestingGwei:        validatorCount * params.BeaconConfig().MaxEffectiveBalance,
 		CurrentEpochTargetAttestingGwei:  validatorCount * params.BeaconConfig().MaxEffectiveBalance,
@@ -1784,8 +1784,8 @@ func runGetValidatorParticipationCurrentAndPrevEpoch(t *testing.T, genState stat
 
 	wanted = &silapb.ValidatorParticipation{
 		GlobalParticipationRate:          1,
-		VotedSila:                       validatorCount * params.BeaconConfig().MaxEffectiveBalance,
-		EligibleSila:                    validatorCount * params.BeaconConfig().MaxEffectiveBalance,
+		VotedSila:                        validatorCount * params.BeaconConfig().MaxEffectiveBalance,
+		EligibleSila:                     validatorCount * params.BeaconConfig().MaxEffectiveBalance,
 		CurrentEpochActiveGwei:           validatorCount * params.BeaconConfig().MaxEffectiveBalance,
 		CurrentEpochAttestingGwei:        params.BeaconConfig().EffectiveBalanceIncrement, // Empty because after one epoch, current participation rotates to previous
 		CurrentEpochTargetAttestingGwei:  params.BeaconConfig().EffectiveBalanceIncrement,
@@ -1835,8 +1835,8 @@ func TestGetValidatorPerformance_OK(t *testing.T) {
 		require.NoError(t, headState.AppendPreviousEpochAttestations(atts[i]))
 	}
 	defaultBal := params.BeaconConfig().MaxEffectiveBalance
-	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerEth
-	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerEth}
+	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerSila
+	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerSila}
 	require.NoError(t, headState.SetBalances(balances))
 	publicKey1 := bytesutil.ToBytes48([]byte{1})
 	publicKey2 := bytesutil.ToBytes48([]byte{2})
@@ -1896,11 +1896,11 @@ func TestGetValidatorPerformance_Indices(t *testing.T) {
 	ctx := t.Context()
 	epoch := primitives.Epoch(1)
 	defaultBal := params.BeaconConfig().MaxEffectiveBalance
-	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerEth
+	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerSila
 	headState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, headState.SetSlot(params.BeaconConfig().SlotsPerEpoch.Mul(uint64(epoch+1))))
-	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerEth}
+	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerSila}
 	require.NoError(t, headState.SetBalances(balances))
 	publicKey1 := bytesutil.ToBytes48([]byte{1})
 	publicKey2 := bytesutil.ToBytes48([]byte{2})
@@ -1949,7 +1949,7 @@ func TestGetValidatorPerformance_Indices(t *testing.T) {
 		CorrectlyVotedSource:          []bool{false, false},
 		CorrectlyVotedTarget:          []bool{false, false},
 		CorrectlyVotedHead:            []bool{false, false},
-		BalancesBeforeEpochTransition: []uint64{extraBal, extraBal + params.BeaconConfig().GweiPerEth},
+		BalancesBeforeEpochTransition: []uint64{extraBal, extraBal + params.BeaconConfig().GweiPerSila},
 		BalancesAfterEpochTransition:  []uint64{vp[1].AfterEpochTransitionBalance, vp[2].AfterEpochTransitionBalance},
 		MissingValidators:             [][]byte{publicKey1[:]},
 	}
@@ -1967,11 +1967,11 @@ func TestGetValidatorPerformance_IndicesPubkeys(t *testing.T) {
 	ctx := t.Context()
 	epoch := primitives.Epoch(1)
 	defaultBal := params.BeaconConfig().MaxEffectiveBalance
-	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerEth
+	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerSila
 	headState, err := util.NewBeaconState()
 	require.NoError(t, err)
 	require.NoError(t, headState.SetSlot(params.BeaconConfig().SlotsPerEpoch.Mul(uint64(epoch+1))))
-	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerEth}
+	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerSila}
 	require.NoError(t, headState.SetBalances(balances))
 	publicKey1 := bytesutil.ToBytes48([]byte{1})
 	publicKey2 := bytesutil.ToBytes48([]byte{2})
@@ -2021,7 +2021,7 @@ func TestGetValidatorPerformance_IndicesPubkeys(t *testing.T) {
 		CorrectlyVotedSource:          []bool{false, false},
 		CorrectlyVotedTarget:          []bool{false, false},
 		CorrectlyVotedHead:            []bool{false, false},
-		BalancesBeforeEpochTransition: []uint64{extraBal, extraBal + params.BeaconConfig().GweiPerEth},
+		BalancesBeforeEpochTransition: []uint64{extraBal, extraBal + params.BeaconConfig().GweiPerSila},
 		BalancesAfterEpochTransition:  []uint64{vp[1].AfterEpochTransitionBalance, vp[2].AfterEpochTransitionBalance},
 		MissingValidators:             [][]byte{publicKey1[:]},
 	}
@@ -2047,8 +2047,8 @@ func TestGetValidatorPerformanceAltair_OK(t *testing.T) {
 	require.NoError(t, headState.SetSlot(params.BeaconConfig().SlotsPerEpoch.Mul(uint64(epoch+1))))
 
 	defaultBal := params.BeaconConfig().MaxEffectiveBalance
-	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerEth
-	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerEth}
+	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerSila
+	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerSila}
 	require.NoError(t, headState.SetBalances(balances))
 	publicKey1 := bytesutil.ToBytes48([]byte{1})
 	publicKey2 := bytesutil.ToBytes48([]byte{2})
@@ -2117,8 +2117,8 @@ func TestGetValidatorPerformanceBellatrix_OK(t *testing.T) {
 	require.NoError(t, headState.SetSlot(params.BeaconConfig().SlotsPerEpoch.Mul(uint64(epoch+1))))
 
 	defaultBal := params.BeaconConfig().MaxEffectiveBalance
-	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerEth
-	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerEth}
+	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerSila
+	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerSila}
 	require.NoError(t, headState.SetBalances(balances))
 	publicKey1 := bytesutil.ToBytes48([]byte{1})
 	publicKey2 := bytesutil.ToBytes48([]byte{2})
@@ -2187,8 +2187,8 @@ func TestGetValidatorPerformanceCapella_OK(t *testing.T) {
 	require.NoError(t, headState.SetSlot(params.BeaconConfig().SlotsPerEpoch.Mul(uint64(epoch+1))))
 
 	defaultBal := params.BeaconConfig().MaxEffectiveBalance
-	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerEth
-	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerEth}
+	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerSila
+	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerSila}
 	require.NoError(t, headState.SetBalances(balances))
 	publicKey1 := bytesutil.ToBytes48([]byte{1})
 	publicKey2 := bytesutil.ToBytes48([]byte{2})

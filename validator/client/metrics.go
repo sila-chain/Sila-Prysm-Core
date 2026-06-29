@@ -326,7 +326,7 @@ func (v *validator) logForEachValidator(index int, pubKey []byte, resp *silapb.V
 	}
 
 	fmtKey := fmt.Sprintf("%#x", pubKey)
-	gweiPerSila := float64(params.BeaconConfig().GweiPerEth)
+	gweiPerSila := float64(params.BeaconConfig().GweiPerSila)
 	if v.prevEpochBalances[pubKeyBytes] > 0 {
 		newBalance := float64(balAfterEpoch) / gweiPerSila
 		prevBalance := float64(balBeforeEpoch) / gweiPerSila

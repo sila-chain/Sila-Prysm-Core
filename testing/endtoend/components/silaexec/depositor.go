@@ -24,7 +24,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var gweiPerSila = big.NewInt(int64(params.BeaconConfig().GweiPerEth))
+var gweiPerSila = big.NewInt(int64(params.BeaconConfig().GweiPerSila))
 
 func amtInGwei(deposit *sila.Deposit) *big.Int {
 	amt := big.NewInt(0).SetUint64(deposit.Data.Amount)

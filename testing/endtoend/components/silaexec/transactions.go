@@ -97,7 +97,7 @@ func (t *TransactionGenerator) Start(ctx context.Context) error {
 	}
 
 	// Ensure the funded account has a comfortable minimum balance for blob and fuzzed txs.
-	minWei := new(big.Int).Mul(big.NewInt(1000), big.NewInt(0).SetUint64(params.BeaconConfig().GweiPerEth))
+	minWei := new(big.Int).Mul(big.NewInt(1000), big.NewInt(0).SetUint64(params.BeaconConfig().GweiPerSila))
 	minWei.Mul(minWei, big.NewInt(1e9)) // 1000 SILA in wei
 	if err := ensureMinBalance(ctx, client, backend, mineKey, fundedAccount, minWei); err != nil {
 		return err
@@ -729,7 +729,7 @@ func randomAddress() common.Address {
 
 func getCaps(rpc *rpc.Client, defaultGasPrice *big.Int) (*big.Int, *big.Int, error) {
 	if rpc == nil {
-		tip := new(big.Int).Mul(big.NewInt(1), big.NewInt(0).SetUint64(params.BeaconConfig().GweiPerEth))
+		tip := new(big.Int).Mul(big.NewInt(1), big.NewInt(0).SetUint64(params.BeaconConfig().GweiPerSila))
 		if defaultGasPrice.Cmp(tip) >= 0 {
 			feeCap := new(big.Int).Sub(defaultGasPrice, tip)
 			return tip, feeCap, nil

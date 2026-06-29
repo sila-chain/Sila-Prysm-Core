@@ -4,11 +4,11 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/io/file"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/assert"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
-	"github.com/bazelbuild/rules_go/go/tools/bazel"
 )
 
 func TestE2EConfigParity(t *testing.T) {
@@ -106,7 +106,7 @@ func compareConfigs(t *testing.T, expected, actual *params.BeaconChainConfig) {
 	require.DeepEqual(t, expected.DomainSyncCommittee, actual.DomainSyncCommittee)
 	require.DeepEqual(t, expected.DomainSyncCommitteeSelectionProof, actual.DomainSyncCommitteeSelectionProof)
 	require.DeepEqual(t, expected.DomainContributionAndProof, actual.DomainContributionAndProof)
-	require.DeepEqual(t, expected.GweiPerEth, actual.GweiPerEth)
+	require.DeepEqual(t, expected.GweiPerSila, actual.GweiPerSila)
 	require.DeepEqual(t, expected.BLSSecretKeyLength, actual.BLSSecretKeyLength)
 	require.DeepEqual(t, expected.BLSPubkeyLength, actual.BLSPubkeyLength)
 	require.DeepEqual(t, expected.DefaultBufferSize, actual.DefaultBufferSize)

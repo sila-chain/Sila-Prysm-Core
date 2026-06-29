@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sila-chain/go-bitfield"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
 	mock "github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/blockchain/testing"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/beacon-chain/core/epoch/precompute"
@@ -24,6 +23,7 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/runtime/version"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/require"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/testing/util"
+	"github.com/sila-chain/go-bitfield"
 )
 
 func TestServer_GetValidatorPerformance(t *testing.T) {
@@ -131,7 +131,7 @@ func TestServer_GetValidatorPerformance(t *testing.T) {
 		require.NoError(t, err)
 		_, err = precompute.ProcessRewardsAndPenaltiesPrecompute(c, bp, vp, precompute.AttestationsDelta, precompute.ProposersDelta)
 		require.NoError(t, err)
-		extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerEth
+		extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerSila
 
 		want := &structs.GetValidatorPerformanceResponse{
 			PublicKeys:                    [][]byte{publicKeys[1][:], publicKeys[2][:]},
@@ -139,7 +139,7 @@ func TestServer_GetValidatorPerformance(t *testing.T) {
 			CorrectlyVotedSource:          []bool{false, false},
 			CorrectlyVotedTarget:          []bool{false, false},
 			CorrectlyVotedHead:            []bool{false, false},
-			BalancesBeforeEpochTransition: []uint64{extraBal, extraBal + params.BeaconConfig().GweiPerEth},
+			BalancesBeforeEpochTransition: []uint64{extraBal, extraBal + params.BeaconConfig().GweiPerSila},
 			BalancesAfterEpochTransition:  []uint64{vp[1].AfterEpochTransitionBalance, vp[2].AfterEpochTransitionBalance},
 			MissingValidators:             [][]byte{publicKeys[0][:]},
 		}
@@ -196,7 +196,7 @@ func TestServer_GetValidatorPerformance(t *testing.T) {
 		require.NoError(t, err)
 		_, err = precompute.ProcessRewardsAndPenaltiesPrecompute(c, bp, vp, precompute.AttestationsDelta, precompute.ProposersDelta)
 		require.NoError(t, err)
-		extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerEth
+		extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerSila
 
 		want := &structs.GetValidatorPerformanceResponse{
 			PublicKeys:                    [][]byte{publicKeys[1][:], publicKeys[2][:]},
@@ -204,7 +204,7 @@ func TestServer_GetValidatorPerformance(t *testing.T) {
 			CorrectlyVotedSource:          []bool{false, false},
 			CorrectlyVotedTarget:          []bool{false, false},
 			CorrectlyVotedHead:            []bool{false, false},
-			BalancesBeforeEpochTransition: []uint64{extraBal, extraBal + params.BeaconConfig().GweiPerEth},
+			BalancesBeforeEpochTransition: []uint64{extraBal, extraBal + params.BeaconConfig().GweiPerSila},
 			BalancesAfterEpochTransition:  []uint64{vp[1].AfterEpochTransitionBalance, vp[2].AfterEpochTransitionBalance},
 			MissingValidators:             [][]byte{publicKeys[0][:]},
 		}
@@ -439,8 +439,8 @@ func setHeadState(t *testing.T, headState state.BeaconState, publicKeys [][48]by
 	}
 
 	defaultBal := params.BeaconConfig().MaxEffectiveBalance
-	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerEth
-	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerEth}
+	extraBal := params.BeaconConfig().MaxEffectiveBalance + params.BeaconConfig().GweiPerSila
+	balances := []uint64{defaultBal, extraBal, extraBal + params.BeaconConfig().GweiPerSila}
 	require.NoError(t, headState.SetBalances(balances))
 
 	validators := []*silapb.Validator{
