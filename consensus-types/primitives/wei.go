@@ -94,8 +94,8 @@ func WeiToGwei(v Wei) Gwei {
 	if v == nil {
 		return 0
 	}
-	gweiPerEth := big.NewInt(1e9)
+	gweiPerSila := big.NewInt(1e9)
 	copied := big.NewInt(0).Set(v)
-	copied.Div(copied, gweiPerEth)
+	copied.Div(copied, gweiPerSila)
 	return Gwei(copied.Uint64())
 }

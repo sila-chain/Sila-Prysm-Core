@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/pkg/errors"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	fieldparams "github.com/sila-chain/Sila-Consensus-Core/v7/config/fieldparams"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
@@ -11,9 +14,6 @@ import (
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/time/slots"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/client/iface"
-	"github.com/pkg/errors"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sirupsen/logrus"
 )
 
@@ -326,11 +326,11 @@ func (v *validator) logForEachValidator(index int, pubKey []byte, resp *silapb.V
 	}
 
 	fmtKey := fmt.Sprintf("%#x", pubKey)
-	gweiPerEth := float64(params.BeaconConfig().GweiPerEth)
+	gweiPerSila := float64(params.BeaconConfig().GweiPerEth)
 	if v.prevEpochBalances[pubKeyBytes] > 0 {
-		newBalance := float64(balAfterEpoch) / gweiPerEth
-		prevBalance := float64(balBeforeEpoch) / gweiPerEth
-		startBalance := float64(v.startBalances[pubKeyBytes]) / gweiPerEth
+		newBalance := float64(balAfterEpoch) / gweiPerSila
+		prevBalance := float64(balBeforeEpoch) / gweiPerSila
+		startBalance := float64(v.startBalances[pubKeyBytes]) / gweiPerSila
 		percentNet := (newBalance - prevBalance) / prevBalance
 		percentSinceStart := (newBalance - startBalance) / startBalance
 

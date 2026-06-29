@@ -268,13 +268,13 @@ func (m *Chain) InsertBlock(height int, time uint64, hash []byte) *Chain {
 
 func SetupRPCServer() (*rpc.Server, string, error) {
 	srv := rpc.NewServer()
-	if err := srv.RegisterName("eth", &testETHRPC{}); err != nil {
+	if err := srv.RegisterName("eth", &testSilaRPC{}); err != nil {
 		return nil, "", err
 	}
-	if err := srv.RegisterName("sila", &testETHRPC{}); err != nil {
+	if err := srv.RegisterName("sila", &testSilaRPC{}); err != nil {
 		return nil, "", err
 	}
-	if err := srv.RegisterName("net", &testETHRPC{}); err != nil {
+	if err := srv.RegisterName("net", &testSilaRPC{}); err != nil {
 		return nil, "", err
 	}
 	hs := httptest.NewUnstartedServer(srv)
@@ -282,14 +282,14 @@ func SetupRPCServer() (*rpc.Server, string, error) {
 	return srv, hs.URL, nil
 }
 
-type testETHRPC struct{}
+type testSilaRPC struct{}
 
-func (*testETHRPC) NoArgsRets() {}
+func (*testSilaRPC) NoArgsRets() {}
 
-func (*testETHRPC) ChainId(_ context.Context) *hexutil.Big {
+func (*testSilaRPC) ChainId(_ context.Context) *hexutil.Big {
 	return (*hexutil.Big)(big.NewInt(int64(params.BeaconConfig().DepositChainID)))
 }
 
-func (*testETHRPC) Version(_ context.Context) string {
+func (*testSilaRPC) Version(_ context.Context) string {
 	return fmt.Sprintf("%d", params.BeaconConfig().DepositNetworkID)
 }

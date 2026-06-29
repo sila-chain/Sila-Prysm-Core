@@ -24,11 +24,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var gweiPerEth = big.NewInt(int64(params.BeaconConfig().GweiPerEth))
+var gweiPerSila = big.NewInt(int64(params.BeaconConfig().GweiPerEth))
 
 func amtInGwei(deposit *sila.Deposit) *big.Int {
 	amt := big.NewInt(0).SetUint64(deposit.Data.Amount)
-	return amt.Mul(amt, gweiPerEth)
+	return amt.Mul(amt, gweiPerSila)
 }
 
 // computeDeposits uses the deterministic validator generator to generate deposits for `nvals` (number of validators).

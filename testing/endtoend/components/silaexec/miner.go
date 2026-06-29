@@ -27,7 +27,7 @@ import (
 )
 
 const (
-	EthAddress = "0x878705ba3f8bc32fcf7f4caa1a35e72af65cf766"
+	SilaExecutionAddress = "0x878705ba3f8bc32fcf7f4caa1a35e72af65cf766"
 )
 
 // Miner represents an SILAEXEC node which mines blocks.
@@ -143,11 +143,11 @@ func (m *Miner) initAttempt(ctx context.Context, attempt int) (*os.File, error) 
 		"--ws.origins=\"*\"",
 		"--ipcdisable",
 		"--verbosity=4",
-		fmt.Sprintf("--unlock=%s", EthAddress),
+		fmt.Sprintf("--unlock=%s", SilaExecutionAddress),
 		"--allow-insecure-unlock",
 		"--syncmode=full",
 		fmt.Sprintf("--miner.gaslimit=%d", params.BeaconConfig().DefaultBuilderGasLimit),
-		fmt.Sprintf("--txpool.locals=%s", EthAddress),
+		fmt.Sprintf("--txpool.locals=%s", SilaExecutionAddress),
 		fmt.Sprintf("--password=%s", pwFile),
 	}
 

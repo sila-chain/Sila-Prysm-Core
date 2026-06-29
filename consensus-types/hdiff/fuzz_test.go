@@ -18,7 +18,7 @@ const maxFuzzDecodedSize = maxFuzzStateDiffSize * 10
 const maxFuzzScanRange = 200
 const fuzzRootsLengthOffset = 16
 const maxFuzzInputSize = 10
-const oneEthInGwei = 1000000000
+const oneSilaInGwei = 1000000000
 
 // FuzzNewHdiff tests parsing variations of realistic diffs
 func FuzzNewHdiff(f *testing.F) {
@@ -140,7 +140,7 @@ func FuzzNewStateDiff(f *testing.F) {
 				idx := i % len(balances)
 				delta := int64(binary.LittleEndian.Uint64(balanceData[i*8+8 : (i+1)*8+8]))
 				// Keep delta reasonable
-				delta = delta % oneEthInGwei // Max 1 SILA change
+				delta = delta % oneSilaInGwei // Max 1 SILA change
 
 				if delta < 0 && uint64(-delta) > balances[idx] {
 					balances[idx] = 0
@@ -160,7 +160,7 @@ func FuzzNewStateDiff(f *testing.F) {
 			for i := 0; i < numChanges && i < len(validatorData)-1; i++ {
 				idx := i % len(validators)
 				if validatorData[i+1]%2 == 0 {
-					validators[idx].EffectiveBalance += oneEthInGwei // 1 SILA
+					validators[idx].EffectiveBalance += oneSilaInGwei // 1 SILA
 				}
 			}
 			_ = target.SetValidators(validators)
@@ -213,7 +213,7 @@ func FuzzNewValidatorDiffs(f *testing.F) {
 
 				switch changeType {
 				case 0: // Change effective balance
-					vals[idx].EffectiveBalance += oneEthInGwei
+					vals[idx].EffectiveBalance += oneSilaInGwei
 				case 1: // Toggle slashed status
 					vals[idx].Slashed = !vals[idx].Slashed
 				case 2: // Change activation epoch
@@ -270,7 +270,7 @@ func FuzzNewBalancesDiff(f *testing.F) {
 				idx := i % numBalances
 				delta := int64(binary.LittleEndian.Uint64(balanceData[i*8+8 : (i+1)*8+8]))
 				// Keep delta reasonable
-				delta = delta % oneEthInGwei // Max 1 SILA change
+				delta = delta % oneSilaInGwei // Max 1 SILA change
 
 				if delta < 0 && uint64(-delta) > balances[idx] {
 					balances[idx] = 0

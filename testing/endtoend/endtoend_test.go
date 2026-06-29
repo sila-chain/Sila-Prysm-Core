@@ -298,11 +298,11 @@ func (r *testRunner) waitForMatchingHead(ctx context.Context, timeout time.Durat
 
 func (r *testRunner) testCheckpointSync(ctx context.Context, g *errgroup.Group, i int, conns []*grpc.ClientConn, bnAPI, enr, minerEnr string) error {
 	matchTimeout := 5 * time.Minute
-	ethNode := silaexec.NewNode(i, minerEnr)
+	silaNode := silaexec.NewNode(i, minerEnr)
 	g.Go(func() error {
-		return ethNode.Start(ctx)
+		return silaNode.Start(ctx)
 	})
-	if err := helpers.ComponentsStarted(ctx, []e2etypes.ComponentRunner{ethNode}); err != nil {
+	if err := helpers.ComponentsStarted(ctx, []e2etypes.ComponentRunner{silaNode}); err != nil {
 		return fmt.Errorf("sync beacon node not ready: %w", err)
 	}
 	proxyNode := silaexec.NewProxy(i)
@@ -365,11 +365,11 @@ func (r *testRunner) testBeaconChainSync(ctx context.Context, g *errgroup.Group,
 	conns []*grpc.ClientConn, tickingStartTime time.Time, bootnodeEnr, minerEnr string) error {
 	t, config := r.t, r.config
 	index := e2e.TestParams.BeaconNodeCount + e2e.TestParams.LighthouseBeaconNodeCount
-	ethNode := silaexec.NewNode(index, minerEnr)
+	silaNode := silaexec.NewNode(index, minerEnr)
 	g.Go(func() error {
-		return ethNode.Start(ctx)
+		return silaNode.Start(ctx)
 	})
-	if err := helpers.ComponentsStarted(ctx, []e2etypes.ComponentRunner{ethNode}); err != nil {
+	if err := helpers.ComponentsStarted(ctx, []e2etypes.ComponentRunner{silaNode}); err != nil {
 		return fmt.Errorf("sync beacon node not ready: %w", err)
 	}
 	proxyNode := silaexec.NewProxy(index)

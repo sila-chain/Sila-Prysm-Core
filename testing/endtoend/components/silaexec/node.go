@@ -111,7 +111,7 @@ func (node *Node) Start(ctx context.Context) error {
 		"--verbosity=4",
 		"--syncmode=full",
 		fmt.Sprintf("--miner.gaslimit=%d", params.BeaconConfig().DefaultBuilderGasLimit),
-		fmt.Sprintf("--txpool.locals=%s", EthAddress),
+		fmt.Sprintf("--txpool.locals=%s", SilaExecutionAddress),
 	}
 
 	// give the miner start a couple of tries, since the p2p networking check is flaky

@@ -360,9 +360,9 @@ func (p *Builder) handleHeaderRequest(w http.ResponseWriter, req *http.Request) 
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	gEth := big.NewInt(int64(params.BeaconConfig().GweiPerEth))
-	weiEth := gEth.Mul(gEth, gEth)
-	val := builderAPI.Uint256{Int: weiEth}
+	gSila := big.NewInt(int64(params.BeaconConfig().GweiPerEth))
+	weiSila := gSila.Mul(gSila, gSila)
+	val := builderAPI.Uint256{Int: weiSila}
 
 	wrappedHdr, err := structs.SilaPayloadHeaderFromConsensus(hdr)
 	if err != nil {
