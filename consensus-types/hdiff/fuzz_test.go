@@ -140,7 +140,7 @@ func FuzzNewStateDiff(f *testing.F) {
 				idx := i % len(balances)
 				delta := int64(binary.LittleEndian.Uint64(balanceData[i*8+8 : (i+1)*8+8]))
 				// Keep delta reasonable
-				delta = delta % oneEthInGwei // Max 1 ETH change
+				delta = delta % oneEthInGwei // Max 1 SILA change
 
 				if delta < 0 && uint64(-delta) > balances[idx] {
 					balances[idx] = 0
@@ -270,7 +270,7 @@ func FuzzNewBalancesDiff(f *testing.F) {
 				idx := i % numBalances
 				delta := int64(binary.LittleEndian.Uint64(balanceData[i*8+8 : (i+1)*8+8]))
 				// Keep delta reasonable
-				delta = delta % oneEthInGwei // Max 1 ETH change
+				delta = delta % oneEthInGwei // Max 1 SILA change
 
 				if delta < 0 && uint64(-delta) > balances[idx] {
 					balances[idx] = 0

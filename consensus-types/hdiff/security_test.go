@@ -19,9 +19,9 @@ func TestIntegerOverflowProtection(t *testing.T) {
 		target := source.Copy()
 		balances := target.Balances()
 
-		// Set high but realistic balance values (32 ETH in Gwei = 32e9)
-		balances[0] = 32000000000 // 32 ETH
-		balances[1] = 64000000000 // 64 ETH
+		// Set high but realistic balance values (32 SILA in Gwei = 32e9)
+		balances[0] = 32000000000 // 32 SILA
+		balances[1] = 64000000000 // 64 SILA
 		_ = target.SetBalances(balances)
 
 		// This should work fine with realistic values
@@ -35,11 +35,11 @@ func TestIntegerOverflowProtection(t *testing.T) {
 	// Test reasonable balance changes
 	t.Run("realistic_balance_changes", func(t *testing.T) {
 		// Create realistic balance changes (slashing, rewards)
-		balancesDiff := []int64{1000000000, -500000000, 2000000000} // 1 ETH gain, 0.5 ETH loss, 2 ETH gain
+		balancesDiff := []int64{1000000000, -500000000, 2000000000} // 1 SILA gain, 0.5 SILA loss, 2 SILA gain
 
 		// Apply to state with normal balances
 		testSource := source.Copy()
-		normalBalances := []uint64{32000000000, 32000000000, 32000000000} // 32 ETH each
+		normalBalances := []uint64{32000000000, 32000000000, 32000000000} // 32 SILA each
 		_ = testSource.SetBalances(normalBalances)
 
 		// This should work fine
@@ -47,9 +47,9 @@ func TestIntegerOverflowProtection(t *testing.T) {
 		require.NoError(t, err)
 
 		resultBalances := result.Balances()
-		require.Equal(t, uint64(33000000000), resultBalances[0]) // 33 ETH
-		require.Equal(t, uint64(31500000000), resultBalances[1]) // 31.5 ETH
-		require.Equal(t, uint64(34000000000), resultBalances[2]) // 34 ETH
+		require.Equal(t, uint64(33000000000), resultBalances[0]) // 33 SILA
+		require.Equal(t, uint64(31500000000), resultBalances[1]) // 31.5 SILA
+		require.Equal(t, uint64(34000000000), resultBalances[2]) // 34 SILA
 	})
 }
 
@@ -64,7 +64,7 @@ func TestReasonablePerformance(t *testing.T) {
 		_ = target.SetSlot(source.Slot() + 32) // One epoch
 		validators := target.Validators()
 		for i := range 100 { // 10% of validators changed
-			validators[i].EffectiveBalance += 1000000000 // 1 ETH change
+			validators[i].EffectiveBalance += 1000000000 // 1 SILA change
 		}
 		_ = target.SetValidators(validators)
 
@@ -131,10 +131,10 @@ func TestStateTransitionValidation(t *testing.T) {
 		balances := target.Balances()
 		for i := range balances {
 			if i%2 == 0 {
-				balances[i] += 100000000 // 0.1 ETH reward
+				balances[i] += 100000000 // 0.1 SILA reward
 			} else {
 				if balances[i] > 50000000 {
-					balances[i] -= 50000000 // 0.05 ETH penalty
+					balances[i] -= 50000000 // 0.05 SILA penalty
 				}
 			}
 		}

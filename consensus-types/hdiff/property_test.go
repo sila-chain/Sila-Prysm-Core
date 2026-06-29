@@ -29,7 +29,7 @@ func FuzzPropertyRoundTrip(f *testing.F) {
 		// Parse balance deltas - limit to realistic amounts (8 bytes per int64)
 		for i := 0; i+7 < len(balanceData) && len(balanceDeltas) < 20; i += 8 {
 			delta := int64(binary.LittleEndian.Uint64(balanceData[i : i+8]))
-			// Keep deltas realistic (max 10 ETH change)
+			// Keep deltas realistic (max 10 SILA change)
 			if delta > 10000000000 {
 				delta = delta % 10000000000
 			}
@@ -75,8 +75,8 @@ func FuzzPropertyRoundTrip(f *testing.F) {
 						balances[i] -= uint64(-delta)
 					}
 				} else {
-					// Cap at reasonable maximum (1000 ETH)
-					maxBalance := uint64(1000000000000) // 1000 ETH in Gwei
+					// Cap at reasonable maximum (1000 SILA)
+					maxBalance := uint64(1000000000000) // 1000 SILA in Gwei
 					if balances[i]+uint64(delta) > maxBalance {
 						balances[i] = maxBalance
 					} else {
