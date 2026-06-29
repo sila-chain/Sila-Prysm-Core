@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/client"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/rpc"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -101,7 +101,7 @@ func (c *Client) GetFeeRecipientAddresses(ctx context.Context, validators []stri
 		if feejson.Data == nil {
 			continue
 		}
-		feeRecipients[index] = feejson.Data.Ethaddress
+		feeRecipients[index] = feejson.Data.SilaExecutionAddress
 	}
 	return feeRecipients, nil
 }

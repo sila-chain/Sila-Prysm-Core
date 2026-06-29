@@ -1596,7 +1596,7 @@ func TestServer_ListFeeRecipientByPubkey(t *testing.T) {
 			assert.Equal(t, http.StatusOK, w.Code)
 			resp := &GetFeeRecipientByPubkeyResponse{}
 			require.NoError(t, json.Unmarshal(w.Body.Bytes(), resp))
-			assert.Equal(t, tt.want.SilaExecutionAddress, resp.Data.Ethaddress)
+			assert.Equal(t, tt.want.SilaExecutionAddress, resp.Data.SilaExecutionAddress)
 		})
 	}
 }
@@ -1806,7 +1806,7 @@ func TestServer_FeeRecipientByPubkey(t *testing.T) {
 					db:                        validatorDB,
 				}
 				request := &SetFeeRecipientByPubkeyRequest{
-					Ethaddress: tt.args,
+					SilaExecutionAddress: tt.args,
 				}
 
 				var buf bytes.Buffer
@@ -1846,7 +1846,7 @@ func TestServer_SetFeeRecipientByPubkey_InvalidFeeRecipient(t *testing.T) {
 		validatorService: &client.ValidatorService{},
 	}
 	request := &SetFeeRecipientByPubkeyRequest{
-		Ethaddress: "0x00",
+		SilaExecutionAddress: "0x00",
 	}
 
 	var buf bytes.Buffer

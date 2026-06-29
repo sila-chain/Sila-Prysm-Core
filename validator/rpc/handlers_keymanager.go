@@ -580,7 +580,7 @@ func (s *Server) ListFeeRecipientByPubkey(w http.ResponseWriter, r *http.Request
 		proposerOption, found := proposerSettings.ProposeConfig[bytesutil.ToBytes48(pubkey)]
 
 		if found && proposerOption.FeeRecipientConfig != nil {
-			finalResp.Data.Ethaddress = proposerOption.FeeRecipientConfig.FeeRecipient.String()
+			finalResp.Data.SilaExecutionAddress = proposerOption.FeeRecipientConfig.FeeRecipient.String()
 			httputil.WriteJson(w, finalResp)
 			return
 		}
@@ -588,7 +588,7 @@ func (s *Server) ListFeeRecipientByPubkey(w http.ResponseWriter, r *http.Request
 
 	// If fee recipient is defined in default configuration, use it
 	if proposerSettings != nil && proposerSettings.DefaultConfig != nil && proposerSettings.DefaultConfig.FeeRecipientConfig != nil {
-		finalResp.Data.Ethaddress = proposerSettings.DefaultConfig.FeeRecipientConfig.FeeRecipient.String()
+		finalResp.Data.SilaExecutionAddress = proposerSettings.DefaultConfig.FeeRecipientConfig.FeeRecipient.String()
 		httputil.WriteJson(w, finalResp)
 		return
 	}
@@ -620,7 +620,7 @@ func (s *Server) SetFeeRecipientByPubkey(w http.ResponseWriter, r *http.Request)
 		httputil.HandleError(w, "Could not decode request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	silaExecutionAddress, valid := shared.ValidateHex(w, "ethaddress", req.Ethaddress, fieldparams.FeeRecipientLength)
+	silaExecutionAddress, valid := shared.ValidateHex(w, "ethaddress", req.SilaExecutionAddress, fieldparams.FeeRecipientLength)
 	if !valid {
 		return
 	}
