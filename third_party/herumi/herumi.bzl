@@ -10,13 +10,13 @@ Herumi's BLS library for go depends on
 def bls_dependencies():
     _maybe(
         http_archive,
-        name = "herumi_bls_eth_go_binary",
+        name = "sila_bls_sila_go_binary",
         strip_prefix = "bls-eth-go-binary-d37c07cfda4e5369f269368f92c42209400e0742",
         urls = [
-            "https://github.com/herumi/bls-eth-go-binary/archive/d37c07cfda4e5369f269368f92c42209400e0742.tar.gz",
+            "https://github.com/sila-chain/bls-sila-go-binary/archive/d37c07cfda4e5369f269368f92c42209400e0742.tar.gz",
         ],
         sha256 = "9d811ed2a4a9fd06d9549c392aefc6ac1ffb6685d15f940b4d14976cfcfd26fa",
-        build_file = "@sila//third_party/herumi:bls_eth_go_binary.BUILD",
+        build_file = "@sila//third_party/herumi:bls_sila_go_binary.BUILD",
     )
     _maybe(
         http_archive,

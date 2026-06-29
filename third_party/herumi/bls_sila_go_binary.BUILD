@@ -137,7 +137,7 @@ config_setting(
 
 go_library(
     name = "go_default_library",
-    importpath = "github.com/herumi/bls-eth-go-binary/bls",
+    importpath = "github.com/sila-chain/bls-sila-go-binary/bls",
     srcs = [
         "bls/bls.go",
         "bls/eth.go",

@@ -531,8 +531,8 @@ def sila_deps():
         version = "v2.0.7",
     )
     go_repository(
-        name = "com_github_crate_crypto_go_eth_kzg",
-        importpath = "github.com/crate-crypto/go-eth-kzg",
+        name = "com_github_sila_chain_go_sila_kzg",
+        importpath = "github.com/sila-chain/go-sila-kzg",
         sum = "h1:FYRiJMJG2iv+2Dy3fi14SVGjcPteZ5HAAUe4YWlJygc=",
         version = "v1.5.0",
     )
@@ -1491,8 +1491,8 @@ def sila_deps():
         version = "v1.1.2",
     )
     go_repository(
-        name = "com_github_herumi_bls_eth_go_binary",
-        importpath = "github.com/herumi/bls-eth-go-binary",
+        name = "com_github_sila_bls_sila_go_binary",
+        importpath = "github.com/sila-chain/bls-sila-go-binary",
         sum = "h1:9eeW3EA4epCb7FIHt2luENpAW69MvKGL5jieHlBiP+w=",
         version = "v1.31.0",
     )
@@ -2765,19 +2765,19 @@ def sila_deps():
     )
     go_repository(
         name = "com_github_protolambda_bls12_381_util",
-        importpath = "github.com/protolambda/bls12-381-util",
+        importpath = "github.com/sila-chain/bls12-381-util",
         sum = "h1:05DU2wJN7DTU7z28+Q+zejXkIsA/MF8JZQGhtBZZiWk=",
         version = "v0.1.0",
     )
     go_repository(
         name = "com_github_protolambda_zrnt",
-        importpath = "github.com/protolambda/zrnt",
+        importpath = "github.com/sila-chain/zrnt",
         sum = "h1:qW55rnhZJDnOb3TwFiFRJZi3yTXFrJdGOFQM7vCwYGg=",
         version = "v0.34.1",
     )
     go_repository(
         name = "com_github_protolambda_ztyp",
-        importpath = "github.com/protolambda/ztyp",
+        importpath = "github.com/sila-chain/ztyp",
         sum = "h1:rVcL3vBu9W/aV646zF6caLS/dyn9BN8NYiuJzicLNyY=",
         version = "v0.2.2",
     )
@@ -3242,7 +3242,7 @@ def sila_deps():
     go_repository(
         name = "com_github_wealdtech_go_silaconsensus_types_v2",
         build_directives = [
-            "gazelle:resolve go github.com/herumi/bls-eth-go-binary/bls @herumi_bls_eth_go_binary//:go_default_library",
+            "gazelle:resolve go github.com/sila-chain/bls-sila-go-binary/bls @sila_bls_sila_go_binary//:go_default_library",
         ],
         importpath = "github.com/sila-chain/go-silaconsensus-types/v2",
         sum = "h1:b5aXlNBLKgjAg/Fft9VvGlqAUCQMP5LzYhlHRrr4yPg=",
