@@ -18,6 +18,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/dgraph-io/ristretto/v2"
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/client"
 	eventClient "github.com/sila-chain/Sila-Consensus-Core/v7/api/client/event"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/api/server/structs"
@@ -43,10 +45,8 @@ import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/keymanager"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/validator/keymanager/local"
 	remoteweb3signer "github.com/sila-chain/Sila-Consensus-Core/v7/validator/keymanager/remote-web3signer"
-	"github.com/dgraph-io/ristretto/v2"
 	"github.com/sila-chain/Sila/common"
 	"github.com/sila-chain/Sila/common/hexutil"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -107,7 +107,7 @@ type validator struct {
 	validatorClient              iface.ValidatorClient
 	chainClient                  iface.ChainClient
 	nodeClient                   iface.NodeClient
-	silaChainClient             iface.SilaChainClient
+	silaChainClient              iface.SilaChainClient
 	db                           db.Database
 	conn                         validatorHelpers.NodeConnection
 	accountChangedSub            event.Subscription
@@ -1016,7 +1016,7 @@ func (v *validator) buildProposerSettingsRequests(
 			continue
 		}
 
-		feeRecipient := common.HexToAddress(params.BeaconConfig().EthBurnAddressHex)
+		feeRecipient := common.HexToAddress(params.BeaconConfig().SilaBurnAddressHex)
 		if ps != nil && ps.DefaultConfig != nil && ps.DefaultConfig.FeeRecipientConfig != nil {
 			feeRecipient = ps.DefaultConfig.FeeRecipientConfig.FeeRecipient
 		}
@@ -1207,7 +1207,7 @@ func (v *validator) releasePrefSlot(proposalSlot primitives.Slot) {
 // proposerConfigForKey returns the fee recipient and gas limit for pk, using the
 // per-key proposer config when present and otherwise the defaults.
 func (v *validator) proposerConfigForKey(pk pubkey) (common.Address, uint64) {
-	feeRecipient := common.HexToAddress(params.BeaconConfig().EthBurnAddressHex)
+	feeRecipient := common.HexToAddress(params.BeaconConfig().SilaBurnAddressHex)
 	gasLimit := params.BeaconConfig().DefaultBuilderGasLimit
 	ps := v.ProposerSettings()
 	if ps == nil {
@@ -1301,7 +1301,7 @@ func (v *validator) buildSignedRegReqs(
 			continue
 		}
 
-		feeRecipient := common.HexToAddress(params.BeaconConfig().EthBurnAddressHex)
+		feeRecipient := common.HexToAddress(params.BeaconConfig().SilaBurnAddressHex)
 		gasLimit := params.BeaconConfig().DefaultBuilderGasLimit
 		enabled := false
 
@@ -1352,7 +1352,7 @@ func (v *validator) buildSignedRegReqs(
 			continue
 		}
 
-		if hexutil.Encode(feeRecipient.Bytes()) == params.BeaconConfig().EthBurnAddressHex {
+		if hexutil.Encode(feeRecipient.Bytes()) == params.BeaconConfig().SilaBurnAddressHex {
 			log.WithFields(logrus.Fields{
 				"pubkey":       fmt.Sprintf("%#x", req.Pubkey),
 				"feeRecipient": feeRecipient,

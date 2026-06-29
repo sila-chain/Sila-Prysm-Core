@@ -114,7 +114,7 @@ func TestClient_RegisterValidator(t *testing.T) {
 		}
 		reg := &sila.SignedValidatorRegistrationV1{
 			Message: &sila.ValidatorRegistrationV1{
-				FeeRecipient: ezDecode(t, params.BeaconConfig().EthBurnAddressHex),
+				FeeRecipient: ezDecode(t, params.BeaconConfig().SilaBurnAddressHex),
 				GasLimit:     23,
 				Timestamp:    42,
 				Pubkey:       ezDecode(t, "0x93247f2209abcacf57b75a51dafae777f9dd38bc7053d1af526f220a7489a6d3a2753e5f3e8b1cfe39b56f43611df74a"),
@@ -157,7 +157,7 @@ func TestClient_RegisterValidator(t *testing.T) {
 		}
 		reg := &sila.SignedValidatorRegistrationV1{
 			Message: &sila.ValidatorRegistrationV1{
-				FeeRecipient: ezDecode(t, params.BeaconConfig().EthBurnAddressHex),
+				FeeRecipient: ezDecode(t, params.BeaconConfig().SilaBurnAddressHex),
 				GasLimit:     23,
 				Timestamp:    42,
 				Pubkey:       ezDecode(t, "0x93247f2209abcacf57b75a51dafae777f9dd38bc7053d1af526f220a7489a6d3a2753e5f3e8b1cfe39b56f43611df74a"),

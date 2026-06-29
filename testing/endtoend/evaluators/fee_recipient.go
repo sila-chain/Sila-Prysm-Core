@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/config/params"
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"
 	silapb "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1"
@@ -17,7 +18,6 @@ import (
 	"github.com/sila-chain/Sila/common/hexutil"
 	"github.com/sila-chain/Sila/ethclient"
 	"github.com/sila-chain/Sila/rpc"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -106,7 +106,7 @@ func feeRecipientIsPresent(_ *types.EvaluationContext, conns ...*grpc.ClientConn
 			if bytes.Equal(payload.BlockHash, make([]byte, 32)) {
 				continue
 			}
-			if len(payload.FeeRecipient) == 0 || hexutil.Encode(payload.FeeRecipient) == params.BeaconConfig().EthBurnAddressHex {
+			if len(payload.FeeRecipient) == 0 || hexutil.Encode(payload.FeeRecipient) == params.BeaconConfig().SilaBurnAddressHex {
 				log.WithField("proposerIndex", bb.ProposerIndex).WithField("slot", bb.Slot).Error("Fee recipient eval bug")
 				return errors.New("fee recipient is not set")
 			}

@@ -255,7 +255,7 @@ type BeaconChainConfig struct {
 	BytesPerLogsBloom                uint64           `yaml:"BYTES_PER_LOGS_BLOOM" spec:"true"`                 // BytesPerLogsBloom is the number of bytes that constitute a log bloom filter.
 	MaxExtraDataBytes                uint64           `yaml:"MAX_EXTRA_DATA_BYTES" spec:"true"`                 // MaxExtraDataBytes is the maximum number of bytes for the sila payload's extra data field.
 	DefaultFeeRecipient              common.Address   // DefaultFeeRecipient where the transaction fee goes to.
-	EthBurnAddressHex                string           // EthBurnAddressHex is the constant Sila execution address written in hex format to burn fees in that network. the default is 0x0
+	SilaBurnAddressHex               string           // SilaBurnAddressHex is the constant Sila execution address written in hex format to burn fees in that network. the default is 0x0
 	DefaultBuilderGasLimit           uint64           // DefaultBuilderGasLimit is the default used to set the gaslimit for the Builder APIs, typically at around 30M wei.
 
 	// Mev-boost circuit breaker

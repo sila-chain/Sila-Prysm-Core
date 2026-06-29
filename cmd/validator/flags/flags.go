@@ -368,7 +368,7 @@ var (
 		Note that this is only a suggestion when integrating with a Builder API, which may choose to specify
 		a different fee recipient as payment for the blocks it builds.For additional setting overrides use the
 		--` + ProposerSettingsFlag.Name + " or --" + ProposerSettingsURLFlag.Name + " flags.",
-		Value: params.BeaconConfig().EthBurnAddressHex,
+		Value: params.BeaconConfig().SilaBurnAddressHex,
 	}
 	// EnableBuilderFlag enables the periodic validator registration API calls that will update the custom builder with validator settings.
 	EnableBuilderFlag = &cli.BoolFlag{

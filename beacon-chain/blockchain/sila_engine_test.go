@@ -726,7 +726,7 @@ func Test_GetPayloadAttribute(t *testing.T) {
 	service.cfg.PayloadIDCache.Set(slot, [32]byte{}, [8]byte{})
 	attr = service.getPayloadAttribute(ctx, st, slot, params.BeaconConfig().ZeroHash[:], true)
 	require.Equal(t, false, attr.IsEmpty())
-	require.Equal(t, params.BeaconConfig().EthBurnAddressHex, common.BytesToAddress(attr.SuggestedFeeRecipient()).String())
+	require.Equal(t, params.BeaconConfig().SilaBurnAddressHex, common.BytesToAddress(attr.SuggestedFeeRecipient()).String())
 
 	// Cache hit, advance state, has fee recipient
 	suggestedAddr := common.HexToAddress("123")
@@ -749,7 +749,7 @@ func Test_GetPayloadAttribute_PrepareAllPayloads(t *testing.T) {
 	st, _ := util.DeterministicGenesisStateBellatrix(t, 1)
 	attr := service.getPayloadAttribute(ctx, st, 0, []byte{}, true)
 	require.Equal(t, false, attr.IsEmpty())
-	require.Equal(t, params.BeaconConfig().EthBurnAddressHex, common.BytesToAddress(attr.SuggestedFeeRecipient()).String())
+	require.Equal(t, params.BeaconConfig().SilaBurnAddressHex, common.BytesToAddress(attr.SuggestedFeeRecipient()).String())
 }
 
 func Test_GetPayloadAttributeV2(t *testing.T) {
@@ -766,7 +766,7 @@ func Test_GetPayloadAttributeV2(t *testing.T) {
 	service.cfg.PayloadIDCache.Set(slot, [32]byte{}, [8]byte{})
 	attr = service.getPayloadAttribute(ctx, st, slot, params.BeaconConfig().ZeroHash[:], true)
 	require.Equal(t, false, attr.IsEmpty())
-	require.Equal(t, params.BeaconConfig().EthBurnAddressHex, common.BytesToAddress(attr.SuggestedFeeRecipient()).String())
+	require.Equal(t, params.BeaconConfig().SilaBurnAddressHex, common.BytesToAddress(attr.SuggestedFeeRecipient()).String())
 	a, err := attr.Withdrawals()
 	require.NoError(t, err)
 	require.Equal(t, 0, len(a))
@@ -818,7 +818,7 @@ func Test_GetPayloadAttributeV3(t *testing.T) {
 			service.cfg.PayloadIDCache.Set(slot, [32]byte{}, [8]byte{})
 			attr = service.getPayloadAttribute(ctx, test.st, slot, params.BeaconConfig().ZeroHash[:], true)
 			require.Equal(t, false, attr.IsEmpty())
-			require.Equal(t, params.BeaconConfig().EthBurnAddressHex, common.BytesToAddress(attr.SuggestedFeeRecipient()).String())
+			require.Equal(t, params.BeaconConfig().SilaBurnAddressHex, common.BytesToAddress(attr.SuggestedFeeRecipient()).String())
 			a, err := attr.Withdrawals()
 			require.NoError(t, err)
 			require.Equal(t, 0, len(a))

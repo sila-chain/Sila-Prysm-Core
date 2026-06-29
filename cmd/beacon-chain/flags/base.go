@@ -287,7 +287,7 @@ var (
 	SuggestedFeeRecipient = &cli.StringFlag{
 		Name:  "suggested-fee-recipient",
 		Usage: "Post bellatrix, this address will receive the transaction fees produced by any blocks from this node. Default to junk whilst bellatrix is in development state. Validator client can override this value through the preparebeaconproposer api.",
-		Value: params.BeaconConfig().EthBurnAddressHex,
+		Value: params.BeaconConfig().SilaBurnAddressHex,
 	}
 	// TerminalTotalDifficultyOverride specifies the total difficulty to manual overrides the `TERMINAL_TOTAL_DIFFICULTY` parameter.
 	TerminalTotalDifficultyOverride = &cli.StringFlag{

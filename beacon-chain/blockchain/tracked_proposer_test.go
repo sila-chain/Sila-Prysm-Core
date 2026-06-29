@@ -38,5 +38,5 @@ func TestTrackedProposer_PrepareAllPayloads_Default(t *testing.T) {
 	val, ok := service.trackedProposer(st, 0)
 	require.Equal(t, true, ok)
 	require.Equal(t, true, val.Active)
-	require.Equal(t, params.BeaconConfig().EthBurnAddressHex, common.BytesToAddress(val.FeeRecipient[:]).String())
+	require.Equal(t, params.BeaconConfig().SilaBurnAddressHex, common.BytesToAddress(val.FeeRecipient[:]).String())
 }

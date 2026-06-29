@@ -340,7 +340,7 @@ var mainnetBeaconConfig = &BeaconChainConfig{
 	MaxTransactionsPerPayload:        1048576,
 	BytesPerLogsBloom:                256,
 	MaxExtraDataBytes:                32,
-	EthBurnAddressHex:                "0x0000000000000000000000000000000000000000",
+	SilaBurnAddressHex:               "0x0000000000000000000000000000000000000000",
 	DefaultBuilderGasLimit:           uint64(60000000),
 
 	// Mevboost circuit breaker
