@@ -788,7 +788,7 @@ func (p *Builder) retrievePendingBlock() (*v1.SilaPayload, error) {
 	if err != nil {
 		return nil, err
 	}
-	marshalledOutput, err := payloadEnv.SilaPayload.MarshalJSON()
+	marshalledOutput, err := payloadEnv.SilaExecutionPayload.MarshalJSON()
 	if err != nil {
 		return nil, err
 	}
@@ -801,7 +801,7 @@ func (p *Builder) retrievePendingBlock() (*v1.SilaPayload, error) {
 }
 
 func (p *Builder) retrievePendingBlockCapella() (*v1.SilaPayloadCapellaWithValue, error) {
-	result := &silaEngine.SilaPayloadEnvelope{}
+	result := &silaEngine.SilaExecutionPayloadEnvelope{}
 	if p.currId == nil {
 		return nil, errors.New("no payload id is cached")
 	}
@@ -809,7 +809,7 @@ func (p *Builder) retrievePendingBlockCapella() (*v1.SilaPayloadCapellaWithValue
 	if err != nil {
 		return nil, err
 	}
-	payloadEnv, err := modifySilaPayload(*result.SilaPayload, result.BlockValue, nil, nil)
+	payloadEnv, err := modifySilaPayload(*result.SilaExecutionPayload, result.BlockValue, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -826,7 +826,7 @@ func (p *Builder) retrievePendingBlockCapella() (*v1.SilaPayloadCapellaWithValue
 }
 
 func (p *Builder) retrievePendingBlockDeneb() (*v1.SilaPayloadDenebWithValueAndBlobsBundle, error) {
-	result := &silaEngine.SilaPayloadEnvelope{}
+	result := &silaEngine.SilaExecutionPayloadEnvelope{}
 	if p.currId == nil {
 		return nil, errors.New("no payload id is cached")
 	}
@@ -837,7 +837,7 @@ func (p *Builder) retrievePendingBlockDeneb() (*v1.SilaPayloadDenebWithValueAndB
 	if p.prevBeaconRoot == nil {
 		p.cfg.logger.Errorf("previous root is nil")
 	}
-	payloadEnv, err := modifySilaPayload(*result.SilaPayload, result.BlockValue, p.prevBeaconRoot, nil)
+	payloadEnv, err := modifySilaPayload(*result.SilaExecutionPayload, result.BlockValue, p.prevBeaconRoot, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -855,7 +855,7 @@ func (p *Builder) retrievePendingBlockDeneb() (*v1.SilaPayloadDenebWithValueAndB
 }
 
 func (p *Builder) retrievePendingBlockElectra() (*v1.ExecutionBundleElectra, error) {
-	result := &silaEngine.SilaPayloadEnvelope{}
+	result := &silaEngine.SilaExecutionPayloadEnvelope{}
 	if p.currId == nil {
 		return nil, errors.New("no payload id is cached")
 	}
@@ -867,7 +867,7 @@ func (p *Builder) retrievePendingBlockElectra() (*v1.ExecutionBundleElectra, err
 		p.cfg.logger.Errorf("previous root is nil")
 	}
 
-	payloadEnv, err := modifySilaPayload(*result.SilaPayload, result.BlockValue, p.prevBeaconRoot, result.Requests)
+	payloadEnv, err := modifySilaPayload(*result.SilaExecutionPayload, result.BlockValue, p.prevBeaconRoot, result.Requests)
 	if err != nil {
 		return nil, err
 	}
@@ -946,10 +946,10 @@ func unmarshalRPCObject(b []byte) (*jsonRPCObject, error) {
 	return r, nil
 }
 
-func modifySilaPayload(execPayload silaEngine.ExecutableData, fees *big.Int, prevBeaconRoot []byte, requests [][]byte) (*silaEngine.SilaPayloadEnvelope, error) {
+func modifySilaPayload(execPayload silaEngine.ExecutableData, fees *big.Int, prevBeaconRoot []byte, requests [][]byte) (*silaEngine.SilaExecutionPayloadEnvelope, error) {
 	modifiedBlock, err := executableDataToBlock(execPayload, prevBeaconRoot, requests)
 	if err != nil {
-		return &silaEngine.SilaPayloadEnvelope{}, err
+		return &silaEngine.SilaExecutionPayloadEnvelope{}, err
 	}
 	return silaEngine.BlockToExecutableData(modifiedBlock, fees, nil /*blobs*/, requests /*requests*/), nil
 }
