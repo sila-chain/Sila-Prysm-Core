@@ -494,7 +494,7 @@ func ProcessBlockForStateRoot(
 		return nil, errors.Wrap(ErrProcessRandaoFailed, err.Error())
 	}
 
-	state, err = b.ProcessSilaDataInBlock(ctx, state, signed.Block().Body().SilaData())
+	state, err = b.ProcessSilaDataInBlock(ctx, state, signed.Block().Body().SilaChainData())
 	if err != nil {
 		tracing.AnnotateError(span, err)
 		return nil, errors.Wrap(ErrProcessSilaDataFailed, err.Error())

@@ -391,7 +391,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				StateRoot:     stateRoot[:],
 				Body: &sila.BeaconBlockBodyBellatrix{
 					RandaoReveal:      randaoReveal[:],
-					SilaData:          b.Body().SilaData(),
+					SilaData:          b.Body().SilaChainData(),
 					Graffiti:          graffiti[:],
 					ProposerSlashings: b.Body().ProposerSlashings(),
 					AttesterSlashings: attSlashings,
@@ -443,7 +443,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				StateRoot:     stateRoot[:],
 				Body: &sila.BeaconBlockBodyCapella{
 					RandaoReveal:      randaoReveal[:],
-					SilaData:          b.Body().SilaData(),
+					SilaData:          b.Body().SilaChainData(),
 					Graffiti:          graffiti[:],
 					ProposerSlashings: b.Body().ProposerSlashings(),
 					AttesterSlashings: attSlashings,
@@ -500,7 +500,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				StateRoot:     stateRoot[:],
 				Body: &sila.BeaconBlockBodyDeneb{
 					RandaoReveal:       randaoReveal[:],
-					SilaData:           b.Body().SilaData(),
+					SilaData:           b.Body().SilaChainData(),
 					Graffiti:           graffiti[:],
 					ProposerSlashings:  b.Body().ProposerSlashings(),
 					AttesterSlashings:  attSlashings,
@@ -564,7 +564,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				StateRoot:     stateRoot[:],
 				Body: &sila.BeaconBlockBodyElectra{
 					RandaoReveal:       randaoReveal[:],
-					SilaData:           b.Body().SilaData(),
+					SilaData:           b.Body().SilaChainData(),
 					Graffiti:           graffiti[:],
 					ProposerSlashings:  b.Body().ProposerSlashings(),
 					AttesterSlashings:  attSlashings,
@@ -629,7 +629,7 @@ func BuildSignedBeaconBlockFromSilaPayload(blk interfaces.ReadOnlySignedBeaconBl
 				StateRoot:     stateRoot[:],
 				Body: &sila.BeaconBlockBodyElectra{
 					RandaoReveal:       randaoReveal[:],
-					SilaData:           b.Body().SilaData(),
+					SilaData:           b.Body().SilaChainData(),
 					Graffiti:           graffiti[:],
 					ProposerSlashings:  b.Body().ProposerSlashings(),
 					AttesterSlashings:  attSlashings,

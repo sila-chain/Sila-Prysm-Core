@@ -55,7 +55,7 @@ func (b *SignedBeaconBlock) SetGraffiti(g []byte) {
 
 // SetSilaData sets the silaexec data in the block.
 // This function is not thread safe, it is only used during block creation.
-func (b *SignedBeaconBlock) SetSilaData(e *sila.SilaData) {
+func (b *SignedBeaconBlock) SetSilaChainData(e *sila.SilaData) {
 	b.block.body.silaexecData = e
 }
 

@@ -1165,7 +1165,7 @@ func (b *BeaconBlockBody) RandaoReveal() [field_params.BLSSignatureLength]byte {
 }
 
 // SilaData returns the silaexec data in the block.
-func (b *BeaconBlockBody) SilaData() *sila.SilaData {
+func (b *BeaconBlockBody) SilaChainData() *sila.SilaData {
 	return b.silaexecData
 }
 

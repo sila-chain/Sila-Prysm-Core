@@ -54,7 +54,7 @@ type ReadOnlyBeaconBlock interface {
 type ReadOnlyBeaconBlockBody interface {
 	Version() int
 	RandaoReveal() [field_params.BLSSignatureLength]byte
-	SilaData() *silapb.SilaData
+	SilaChainData() *silapb.SilaData
 	Graffiti() [field_params.RootLength]byte
 	ProposerSlashings() []*silapb.ProposerSlashing
 	AttesterSlashings() []silapb.AttSlashing
@@ -86,7 +86,7 @@ type SignedBeaconBlock interface {
 	SetAttesterSlashings([]silapb.AttSlashing) error
 	SetProposerSlashings([]*silapb.ProposerSlashing)
 	SetGraffiti([]byte)
-	SetSilaData(*silapb.SilaData)
+	SetSilaChainData(*silapb.SilaData)
 	SetRandaoReveal([]byte)
 	SetStateRoot([]byte)
 	SetParentRoot([]byte)

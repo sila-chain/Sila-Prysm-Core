@@ -214,7 +214,7 @@ func SilaTestnetGenesis(genesis time.Time, cfg *clparams.BeaconChainConfig) *cor
 		OsakaTime:               osakaTime,
 		BPO1Time:                bpo1Time,
 		BPO2Time:                bpo2Time,
-		SilaDepositAddress:      common.HexToAddress(cfg.SilaDepositAddress),
+		DepositContractAddress:  common.HexToAddress(cfg.SilaDepositAddress),
 		BlobScheduleConfig: &params.BlobScheduleConfig{
 			Cancun: params.DefaultCancunBlobConfig,
 			Prague: params.DefaultPragueBlobConfig,

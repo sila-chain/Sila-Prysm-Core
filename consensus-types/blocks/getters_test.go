@@ -345,11 +345,11 @@ func Test_BeaconBlockBody_RandaoReveal(t *testing.T) {
 	assert.DeepEqual(t, bytesutil.ToBytes96([]byte("randaoreveal")), bb.Block().Body().RandaoReveal())
 }
 
-func Test_BeaconBlockBody_SilaData(t *testing.T) {
+func Test_BeaconBlockBody_SilaChainData(t *testing.T) {
 	e := &sila.SilaData{DepositRoot: []byte("depositroot")}
 	bb := &SignedBeaconBlock{block: &BeaconBlock{body: &BeaconBlockBody{}}}
-	bb.SetSilaData(e)
-	assert.DeepEqual(t, e, bb.Block().Body().SilaData())
+	bb.SetSilaChainData(e)
+	assert.DeepEqual(t, e, bb.Block().Body().SilaChainData())
 }
 
 func Test_BeaconBlockBody_Graffiti(t *testing.T) {

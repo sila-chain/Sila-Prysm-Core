@@ -275,7 +275,7 @@ require (
 	github.com/peterh/liner v1.2.0 // indirect
 	github.com/sila-chain/Sila v1.17.4
 	github.com/sila-chain/bls-sila-go-binary v1.31.1
-	github.com/sila-chain/fastssz v0.1.4-sila.2
+	github.com/sila-chain/fastssz v0.1.4-sila.3
 	github.com/sila-chain/go-bigmodexpfix v0.1.0-sila.2 // indirect
 	github.com/sila-chain/go-bitfield v0.0.1-sila.1
 	github.com/sila-chain/go-silaconsensus-wallet-types/v2 v2.8.2-sila.1 // indirect

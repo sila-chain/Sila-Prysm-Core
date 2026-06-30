@@ -171,7 +171,7 @@ func (BeaconBlockBody) RandaoReveal() [field_params.BLSSignatureLength]byte {
 	panic("implement me")
 }
 
-func (BeaconBlockBody) SilaData() *sila.SilaData {
+func (BeaconBlockBody) SilaChainData() *sila.SilaData {
 	panic("implement me")
 }
 
@@ -227,7 +227,7 @@ func (b *BeaconBlockBody) SetRandaoReveal([]byte) {
 	panic("implement me")
 }
 
-func (b *BeaconBlockBody) SetSilaData(*sila.SilaData) {
+func (b *BeaconBlockBody) SetSilaChainData(*sila.SilaData) {
 	panic("implement me")
 }
 

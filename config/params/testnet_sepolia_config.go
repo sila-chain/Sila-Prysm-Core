@@ -32,8 +32,8 @@ func SilaCompatConfig() *BeaconChainConfig {
 	cfg.ConfigName = SilaCompatName
 	cfg.GenesisForkVersion = []byte{0x90, 0x00, 0x00, 0x69}
 	cfg.SecondsPerSilaBlock = 14
-	cfg.DepositChainID = silaexecParams.SepoliaChainConfig.ChainID.Uint64()
-	cfg.DepositNetworkID = silaexecParams.SepoliaChainConfig.ChainID.Uint64()
+	cfg.DepositChainID = silaexecParams.SilaPublicTestnetChainConfig.ChainID.Uint64()
+	cfg.DepositNetworkID = silaexecParams.SilaPublicTestnetChainConfig.ChainID.Uint64()
 	cfg.AltairForkEpoch = 50
 	cfg.AltairForkVersion = []byte{0x90, 0x00, 0x00, 0x70}
 	cfg.BellatrixForkEpoch = 100

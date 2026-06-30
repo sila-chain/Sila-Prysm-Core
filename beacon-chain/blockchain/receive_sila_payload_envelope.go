@@ -176,8 +176,8 @@ func (s *Service) ReceiveSilaPayloadEnvelope(ctx context.Context, signed interfa
 	log.WithFields(logrus.Fields{
 		"slot":       envelope.Slot(),
 		"blockRoot":  fmt.Sprintf("%#x", bytesutil.Trunc(root[:])),
-		"blockHash":  fmt.Sprintf("%#x", bytesutil.Trunc(silaexec.BlockHash())),
-		"parentHash": fmt.Sprintf("%#x", bytesutil.Trunc(silaexec.ParentHash())),
+		"blockHash":  fmt.Sprintf("%#x", bytesutil.Trunc(execution.BlockHash())),
+		"parentHash": fmt.Sprintf("%#x", bytesutil.Trunc(execution.ParentHash())),
 	}).Info("Processed sila payload envelope")
 	return nil
 }

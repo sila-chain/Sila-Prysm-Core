@@ -207,7 +207,7 @@ func (vs *Server) BuildBlockParallel(ctx context.Context, sBlk interfaces.Signed
 			silaexecData = &silapb.SilaData{DepositRoot: params.BeaconConfig().ZeroHash[:], BlockHash: params.BeaconConfig().ZeroHash[:]}
 			log.WithError(err).Error("Could not get silaData")
 		}
-		sBlk.SetSilaData(silaexecData)
+		sBlk.SetSilaChainData(silaexecData)
 
 		// Set deposit and attestation.
 		deposits, atts, err := vs.packDepositsAndAttestations(ctx, head, sBlk.Block().Slot(), silaexecData) // TODO: split attestations and deposits
