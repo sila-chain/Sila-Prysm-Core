@@ -59,8 +59,8 @@ require (
 	github.com/schollz/progressbar/v3 v3.3.4
 	github.com/sila-chain/c-kzg-4844/v2 v2.1.6-sila.2
 	github.com/sila-chain/go-bytesutil v1.2.2-sila.1
-	github.com/sila-chain/go-silaconsensus-util v1.6.3-sila.1
-	github.com/sila-chain/go-silaconsensus-wallet-encryptor-keystorev4 v1.1.3-sila.1
+	github.com/sila-chain/go-silaconsensus-util v1.6.3-sila.2
+	github.com/sila-chain/go-silaconsensus-wallet-encryptor-keystorev4 v1.1.3-sila.2
 	github.com/sila-chain/hashtree v0.2.4
 	github.com/sila-chain/protoc-gen-go-cast v0.0.1-sila.1
 	github.com/sirupsen/logrus v1.9.3
@@ -151,7 +151,6 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
 	github.com/hashicorp/go-bexpr v0.1.10 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
-	github.com/herumi/bls-eth-go-binary v1.31.0 // indirect
 	github.com/holiman/billy v0.0.0-20250707135307-f2f9b9aae7db // indirect
 	github.com/holiman/bloomfilter/v2 v2.0.3 // indirect
 	github.com/huin/goupnp v1.3.0 // indirect
@@ -231,7 +230,7 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
 	github.com/sila-chain/go-sila-kzg v1.5.0-sila.2 // indirect
-	github.com/sila-chain/go-silaconsensus-types/v2 v2.8.2-sila.1 // indirect
+	github.com/sila-chain/go-silaconsensus-types/v2 v2.8.2-sila.3 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 // indirect
@@ -278,7 +277,6 @@ require (
 	github.com/sila-chain/fastssz v0.1.4-sila.3
 	github.com/sila-chain/go-bigmodexpfix v0.1.0-sila.2 // indirect
 	github.com/sila-chain/go-bitfield v0.0.1-sila.1
-	github.com/sila-chain/go-silaconsensus-wallet-types/v2 v2.8.2-sila.1 // indirect
 	github.com/sila-chain/gohashtree v0.0.4-beta-sila.1
 	github.com/sila-chain/prombbolt v0.0.1-sila.1
 	golang.org/x/sys v0.41.0 // indirect
