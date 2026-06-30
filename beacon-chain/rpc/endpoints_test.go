@@ -33,9 +33,9 @@ func Test_endpoints(t *testing.T) {
 		"/sila/v1/beacon/states/{state_id}/pending_partial_withdrawals": {http.MethodGet},
 		"/sila/v1/beacon/states/{state_id}/pending_consolidations":      {http.MethodGet},
 		"/sila/v1/beacon/states/{state_id}/proposer_lookahead":          {http.MethodGet},
-		"/sila/v1/beacon/sila_payload_envelopes/{block_id}":        {http.MethodGet},
-		"/sila/v1/beacon/sila_payload_envelopes":                   {http.MethodPost},
-		"/sila/v1/beacon/sila_payload_bids":                        {http.MethodPost},
+		"/sila/v1/beacon/sila_payload_envelopes/{block_id}":             {http.MethodGet},
+		"/sila/v1/beacon/sila_payload_envelopes":                        {http.MethodPost},
+		"/sila/v1/beacon/sila_payload_bids":                             {http.MethodPost},
 		"/sila/v1/beacon/headers":                                       {http.MethodGet},
 		"/sila/v1/beacon/headers/{block_id}":                            {http.MethodGet},
 		"/sila/v2/beacon/blinded_blocks":                                {http.MethodPost},
@@ -50,9 +50,9 @@ func Test_endpoints(t *testing.T) {
 		"/sila/v1/beacon/pool/proposer_slashings":                       {http.MethodGet, http.MethodPost},
 		"/sila/v1/beacon/pool/sync_committees":                          {http.MethodPost},
 		"/sila/v1/beacon/pool/voluntary_exits":                          {http.MethodGet, http.MethodPost},
-		"/sila/v1/beacon/pool/bls_to_sila_changes":                 {http.MethodGet, http.MethodPost},
+		"/sila/v1/beacon/pool/bls_to_sila_changes":                      {http.MethodGet, http.MethodPost},
 		"/sila/v1/beacon/pool/payload_attestations":                     {http.MethodGet, http.MethodPost},
-		"/sila/v1/beacon/individual_votes":                             {http.MethodPost},
+		"/sila/v1/beacon/individual_votes":                              {http.MethodPost},
 	}
 
 	lightClientRoutes := map[string][]string{
@@ -68,9 +68,9 @@ func Test_endpoints(t *testing.T) {
 	}
 
 	configRoutes := map[string][]string{
-		"/sila/v1/config/fork_schedule":    {http.MethodGet},
-		"/sila/v1/config/spec":             {http.MethodGet},
-		"/sila/v1/config/sila_deposit": {http.MethodGet},
+		"/sila/v1/config/fork_schedule": {http.MethodGet},
+		"/sila/v1/config/spec":          {http.MethodGet},
+		"/sila/v1/config/sila_deposit":  {http.MethodGet},
 	}
 
 	debugRoutes := map[string][]string{
@@ -97,33 +97,32 @@ func Test_endpoints(t *testing.T) {
 	}
 
 	validatorRoutes := map[string][]string{
-		"/sila/v1/validator/duties/attester/{epoch}":                                {http.MethodPost},
-		"/sila/v1/validator/duties/proposer/{epoch}":                                {http.MethodGet},
-		"/sila/v2/validator/duties/proposer/{epoch}":                                {http.MethodGet},
-		"/sila/v1/validator/duties/sync/{epoch}":                                    {http.MethodPost},
-		"/sila/v1/validator/duties/ptc/{epoch}":                                     {http.MethodPost},
-		"/sila/v3/validator/blocks/{slot}":                                          {http.MethodGet},
-		"/sila/v4/validator/blocks/{slot}":                                          {http.MethodGet},
-		"/sila/v1/validator/attestation_data":                                       {http.MethodGet},
-		"/sila/v2/validator/aggregate_attestation":                                  {http.MethodGet},
-		"/sila/v2/validator/aggregate_and_proofs":                                   {http.MethodPost},
-		"/sila/v1/validator/beacon_committee_subscriptions":                         {http.MethodPost},
-		"/sila/v1/validator/sync_committee_subscriptions":                           {http.MethodPost},
-		"/sila/v1/validator/beacon_committee_selections":                            {http.MethodPost},
-		"/sila/v1/validator/sync_committee_selections":                              {http.MethodPost},
+		"/sila/v1/validator/duties/attester/{epoch}":                           {http.MethodPost},
+		"/sila/v1/validator/duties/proposer/{epoch}":                           {http.MethodGet},
+		"/sila/v2/validator/duties/proposer/{epoch}":                           {http.MethodGet},
+		"/sila/v1/validator/duties/sync/{epoch}":                               {http.MethodPost},
+		"/sila/v1/validator/duties/ptc/{epoch}":                                {http.MethodPost},
+		"/sila/v3/validator/blocks/{slot}":                                     {http.MethodGet},
+		"/sila/v4/validator/blocks/{slot}":                                     {http.MethodGet},
+		"/sila/v1/validator/attestation_data":                                  {http.MethodGet},
+		"/sila/v2/validator/aggregate_attestation":                             {http.MethodGet},
+		"/sila/v2/validator/aggregate_and_proofs":                              {http.MethodPost},
+		"/sila/v1/validator/beacon_committee_subscriptions":                    {http.MethodPost},
+		"/sila/v1/validator/sync_committee_subscriptions":                      {http.MethodPost},
+		"/sila/v1/validator/beacon_committee_selections":                       {http.MethodPost},
+		"/sila/v1/validator/sync_committee_selections":                         {http.MethodPost},
 		"/sila/v1/validator/sila_payload_envelopes/{slot}/{beacon_block_root}": {http.MethodGet},
-		"/sila/v1/validator/sync_committee_contribution":                            {http.MethodGet},
-		"/sila/v1/validator/contribution_and_proofs":                                {http.MethodPost},
-		"/sila/v1/validator/prepare_beacon_proposer":                                {http.MethodPost},
-		"/sila/v1/validator/proposer_preferences":                                   {http.MethodPost},
-		"/sila/v1/validator/register_validator":                                     {http.MethodPost},
-		"/sila/v1/validator/liveness/{epoch}":                                       {http.MethodPost},
-		"/sila/v1/validator/payload_attestation_data/{slot}":                        {http.MethodGet},
+		"/sila/v1/validator/sync_committee_contribution":                       {http.MethodGet},
+		"/sila/v1/validator/contribution_and_proofs":                           {http.MethodPost},
+		"/sila/v1/validator/prepare_beacon_proposer":                           {http.MethodPost},
+		"/sila/v1/validator/proposer_preferences":                              {http.MethodPost},
+		"/sila/v1/validator/register_validator":                                {http.MethodPost},
+		"/sila/v1/validator/liveness/{epoch}":                                  {http.MethodPost},
+		"/sila/v1/validator/payload_attestation_data/{slot}":                   {http.MethodGet},
 	}
 
 	silaBeaconRoutes := map[string][]string{
 		"/sila/v1/beacon/weak_subjectivity":                 {http.MethodGet},
-		"/sila/v1/beacon/states/{state_id}/validator_count":  {http.MethodGet},
 		"/sila/v1/beacon/states/{state_id}/validator_count": {http.MethodGet},
 		"/sila/v1/beacon/chain_head":                        {http.MethodGet},
 		"/sila/v1/beacon/blobs":                             {http.MethodPost},

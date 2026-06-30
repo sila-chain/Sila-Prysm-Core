@@ -28,7 +28,7 @@ type stubBlockBody struct {
 
 func (s stubBlockBody) Version() int                                  { return version.Gloas }
 func (s stubBlockBody) RandaoReveal() [96]byte                        { return [96]byte{} }
-func (s stubBlockBody) SilaData() *silapb.SilaData                    { return nil }
+func (s stubBlockBody) SilaChainData() *silapb.SilaData               { return nil }
 func (s stubBlockBody) Graffiti() [32]byte                            { return [32]byte{} }
 func (s stubBlockBody) ProposerSlashings() []*silapb.ProposerSlashing { return nil }
 func (s stubBlockBody) AttesterSlashings() []silapb.AttSlashing       { return nil }

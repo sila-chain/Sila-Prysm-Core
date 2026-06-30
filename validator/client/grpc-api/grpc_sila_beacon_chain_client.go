@@ -38,7 +38,7 @@ func (g grpcSilaChainClient) ValidatorCount(ctx context.Context, _ string, statu
 	}
 
 	if len(statuses) == 0 {
-		for _, val := range sila.ValidatorStatus_value {
+		for _, val := range silaapi.ValidatorStatus_value {
 			statuses = append(statuses, validator.Status(val))
 		}
 	}
