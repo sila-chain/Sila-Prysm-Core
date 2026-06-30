@@ -104,9 +104,9 @@ type beaconStateMarshalable struct {
 	BlockRoots                          customtypes.BlockRoots                  `json:"block_roots" yaml:"block_roots"`
 	StateRoots                          customtypes.StateRoots                  `json:"state_roots" yaml:"state_roots"`
 	HistoricalRoots                     customtypes.HistoricalRoots             `json:"historical_roots" yaml:"historical_roots"`
-	SilaData                            *silapb.SilaData                         `json:"eth_1_data" yaml:"eth_1_data"`
-	SilaDataVotes                       []*silapb.SilaData                       `json:"eth_1_data_votes" yaml:"eth_1_data_votes"`
-	SilaExecutionDepositIndex                    uint64                                  `json:"eth_1_deposit_index" yaml:"eth_1_deposit_index"`
+	SilaData                            *silapb.SilaData                         `json:"sila_data" yaml:"sila_data"`
+	SilaDataVotes                       []*silapb.SilaData                       `json:"sila_data_votes" yaml:"sila_data_votes"`
+	SilaExecutionDepositIndex                    uint64                                  `json:"sila_execution_deposit_index" yaml:"sila_execution_deposit_index"`
 	Validators                          []*silapb.Validator                      `json:"validators" yaml:"validators"`
 	Balances                            []uint64                                `json:"balances" yaml:"balances"`
 	RandaoMixes                         customtypes.RandaoMixes                 `json:"randao_mixes" yaml:"randao_mixes"`
