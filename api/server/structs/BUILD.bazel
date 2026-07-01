@@ -4,11 +4,11 @@ go_library(
     name = "go_default_library",
     srcs = [
         "block.go",
-        "block_execution.go",
+        "block_sila.go",
         "conversions.go",
         "conversions_blob.go",
         "conversions_block.go",
-        "conversions_block_execution.go",
+        "conversions_block_sila.go",
         "conversions_block_gloas.go",
         "conversions_gloas.go",
         "conversions_lightclient.go",
@@ -54,7 +54,7 @@ go_library(
 go_test(
     name = "go_default_test",
     srcs = [
-        "conversions_block_execution_test.go",
+        "conversions_block_sila_test.go",
         "conversions_block_gloas_test.go",
         "conversions_test.go",
     ],

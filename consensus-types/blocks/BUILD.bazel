@@ -15,7 +15,7 @@ go_library(
         "roblock.go",
         "rodatacolumn.go",
         "setters.go",
-        "signed_execution_bid.go",
+        "signed_sila_bid.go",
         "types.go",
     ],
     importpath = "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/blocks",
@@ -57,7 +57,7 @@ go_test(
         "roblock_test.go",
         "rodatacolumn_test.go",
         "setters_test.go",
-        "signed_execution_bid_test.go",
+        "signed_sila_bid_test.go",
     ],
     embed = [":go_default_library"],
     deps = [

@@ -11,11 +11,11 @@ def bls_dependencies():
     _maybe(
         http_archive,
         name = "sila_bls_sila_go_binary",
-        strip_prefix = "bls-sila-go-binary-d37c07cfda4e5369f269368f92c42209400e0742",
+        strip_prefix = "bls-sila-go-binary-1.31.1",
         urls = [
-            "https://github.com/sila-chain/bls-sila-go-binary/archive/d37c07cfda4e5369f269368f92c42209400e0742.tar.gz",
+            "https://github.com/sila-chain/bls-sila-go-binary/archive/refs/tags/v1.31.1.tar.gz",
         ],
-        sha256 = "9d811ed2a4a9fd06d9549c392aefc6ac1ffb6685d15f940b4d14976cfcfd26fa",
+        sha256 = "67827a69cfb50650cacc21f0ad4f3c1dfffa3c81541bc3a1e8b5c1629bf54a46",
         build_file = "@sila//third_party/herumi:bls_sila_go_binary.BUILD",
     )
     _maybe(
