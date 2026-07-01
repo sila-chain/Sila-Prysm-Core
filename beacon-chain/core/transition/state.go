@@ -197,7 +197,7 @@ func OptimizedGenesisBeaconState(genesisTime uint64, preState state.BeaconState,
 		// SilaExecution data.
 		SilaData:         silaexecData,
 		SilaDataVotes:    []*silapb.SilaData{},
-		SilaExecutionDepositIndex: preState.SilaExecutionDepositIndex(),
+		SilaexecDepositIndex: preState.SilaExecutionDepositIndex(),
 	}
 
 	bodyRoot, err := (&silapb.BeaconBlockBody{
@@ -258,7 +258,7 @@ func EmptyGenesisState() (state.BeaconState, error) {
 		// SilaExecution data.
 		SilaData:         &silapb.SilaData{},
 		SilaDataVotes:    []*silapb.SilaData{},
-		SilaExecutionDepositIndex: 0,
+		SilaexecDepositIndex: 0,
 	}
 	return state_native.InitializeFromProtoUnsafePhase0(st)
 }

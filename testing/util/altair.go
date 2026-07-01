@@ -175,7 +175,7 @@ func buildGenesisBeaconState(genesisTime uint64, preState state.BeaconState, sil
 		// SilaExecution data.
 		SilaData:         silaexecData,
 		SilaDataVotes:    []*silapb.SilaData{},
-		SilaExecutionDepositIndex: preState.SilaExecutionDepositIndex(),
+		SilaexecDepositIndex: preState.SilaExecutionDepositIndex(),
 	}
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte
@@ -239,7 +239,7 @@ func emptyGenesisState() (state.BeaconState, error) {
 		// SilaExecution data.
 		SilaData:         &silapb.SilaData{},
 		SilaDataVotes:    []*silapb.SilaData{},
-		SilaExecutionDepositIndex: 0,
+		SilaexecDepositIndex: 0,
 	}
 	return state_native.InitializeFromProtoUnsafeAltair(st)
 }

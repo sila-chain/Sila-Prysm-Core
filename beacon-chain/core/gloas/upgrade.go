@@ -329,7 +329,7 @@ func upgradeToGloas(beaconState state.BeaconState) (state.BeaconState, error) {
 		HistoricalRoots:             beaconState.HistoricalRoots(),
 		SilaData:                    beaconState.SilaData(),
 		SilaDataVotes:               beaconState.SilaDataVotes(),
-		SilaExecutionDepositIndex:            beaconState.SilaExecutionDepositIndex(),
+		SilaexecDepositIndex:            beaconState.SilaExecutionDepositIndex(),
 		Validators:                  beaconState.Validators(),
 		Balances:                    beaconState.Balances(),
 		RandaoMixes:                 beaconState.RandaoMixes(),

@@ -1508,7 +1508,7 @@ func TestProposer_PendingDeposits_OutsideSilaExecutionFollowWindow(t *testing.T)
 			BlockHash:   bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot: make([]byte, 32),
 		},
-		SilaExecutionDepositIndex: 2,
+		SilaexecDepositIndex: 2,
 	})
 	require.NoError(t, err)
 
@@ -1519,7 +1519,7 @@ func TestProposer_PendingDeposits_OutsideSilaExecutionFollowWindow(t *testing.T)
 	readyDeposits := []*silapb.DepositContainer{
 		{
 			Index:           0,
-			SilaBlockHeight: 2,
+			SilaexecBlockHeight: 2,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
@@ -1529,7 +1529,7 @@ func TestProposer_PendingDeposits_OutsideSilaExecutionFollowWindow(t *testing.T)
 		},
 		{
 			Index:           1,
-			SilaBlockHeight: 8,
+			SilaexecBlockHeight: 8,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
@@ -1542,7 +1542,7 @@ func TestProposer_PendingDeposits_OutsideSilaExecutionFollowWindow(t *testing.T)
 	recentDeposits := []*silapb.DepositContainer{
 		{
 			Index:           2,
-			SilaBlockHeight: 400,
+			SilaexecBlockHeight: 400,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("c"), 48),
@@ -1552,7 +1552,7 @@ func TestProposer_PendingDeposits_OutsideSilaExecutionFollowWindow(t *testing.T)
 		},
 		{
 			Index:           3,
-			SilaBlockHeight: 600,
+			SilaexecBlockHeight: 600,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("d"), 48),
@@ -1574,12 +1574,12 @@ func TestProposer_PendingDeposits_OutsideSilaExecutionFollowWindow(t *testing.T)
 		assert.NoError(t, depositTrie.Insert(depositHash[:], int(dp.Index)))
 		root, err := depositTrie.HashTreeRoot()
 		require.NoError(t, err)
-		assert.NoError(t, depositCache.InsertDeposit(ctx, dp.Deposit, dp.SilaBlockHeight, dp.Index, root))
+		assert.NoError(t, depositCache.InsertDeposit(ctx, dp.Deposit, dp.SilaexecBlockHeight, dp.Index, root))
 	}
 	for _, dp := range recentDeposits {
 		root, err := depositTrie.HashTreeRoot()
 		require.NoError(t, err)
-		depositCache.InsertPendingDeposit(ctx, dp.Deposit, dp.SilaBlockHeight, dp.Index, root)
+		depositCache.InsertPendingDeposit(ctx, dp.Deposit, dp.SilaexecBlockHeight, dp.Index, root)
 	}
 
 	blk := util.NewBeaconBlock()
@@ -1641,7 +1641,7 @@ func TestProposer_PendingDeposits_FollowsCorrectSilaBlock(t *testing.T) {
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 5,
 		},
-		SilaExecutionDepositIndex: 1,
+		SilaexecDepositIndex: 1,
 		SilaDataVotes:             votes,
 	})
 	require.NoError(t, err)
@@ -1658,7 +1658,7 @@ func TestProposer_PendingDeposits_FollowsCorrectSilaBlock(t *testing.T) {
 	readyDeposits := []*silapb.DepositContainer{
 		{
 			Index:           0,
-			SilaBlockHeight: 8,
+			SilaexecBlockHeight: 8,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
@@ -1668,7 +1668,7 @@ func TestProposer_PendingDeposits_FollowsCorrectSilaBlock(t *testing.T) {
 		},
 		{
 			Index:           1,
-			SilaBlockHeight: 14,
+			SilaexecBlockHeight: 14,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
@@ -1681,7 +1681,7 @@ func TestProposer_PendingDeposits_FollowsCorrectSilaBlock(t *testing.T) {
 	recentDeposits := []*silapb.DepositContainer{
 		{
 			Index:           2,
-			SilaBlockHeight: 5000,
+			SilaexecBlockHeight: 5000,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("c"), 48),
@@ -1691,7 +1691,7 @@ func TestProposer_PendingDeposits_FollowsCorrectSilaBlock(t *testing.T) {
 		},
 		{
 			Index:           3,
-			SilaBlockHeight: 6000,
+			SilaexecBlockHeight: 6000,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("d"), 48),
@@ -1713,12 +1713,12 @@ func TestProposer_PendingDeposits_FollowsCorrectSilaBlock(t *testing.T) {
 		assert.NoError(t, depositTrie.Insert(depositHash[:], int(dp.Index)))
 		root, err := depositTrie.HashTreeRoot()
 		require.NoError(t, err)
-		assert.NoError(t, depositCache.InsertDeposit(ctx, dp.Deposit, dp.SilaBlockHeight, dp.Index, root))
+		assert.NoError(t, depositCache.InsertDeposit(ctx, dp.Deposit, dp.SilaexecBlockHeight, dp.Index, root))
 	}
 	for _, dp := range recentDeposits {
 		root, err := depositTrie.HashTreeRoot()
 		require.NoError(t, err)
-		depositCache.InsertPendingDeposit(ctx, dp.Deposit, dp.SilaBlockHeight, dp.Index, root)
+		depositCache.InsertPendingDeposit(ctx, dp.Deposit, dp.SilaexecBlockHeight, dp.Index, root)
 	}
 
 	bs := &Server{
@@ -1860,7 +1860,7 @@ func TestProposer_PendingDeposits_CantReturnMoreThanMax(t *testing.T) {
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 100,
 		},
-		SilaExecutionDepositIndex: 2,
+		SilaexecDepositIndex: 2,
 	})
 	require.NoError(t, err)
 	blk := util.NewBeaconBlock()
@@ -1958,7 +1958,7 @@ func TestProposer_PendingDeposits_CantReturnMoreThanDepositCount(t *testing.T) {
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 5,
 		},
-		SilaExecutionDepositIndex: 2,
+		SilaexecDepositIndex: 2,
 	})
 	require.NoError(t, err)
 	blk := util.NewBeaconBlock()
@@ -2056,7 +2056,7 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 4,
 		},
-		SilaExecutionDepositIndex: 1,
+		SilaexecDepositIndex: 1,
 	})
 	require.NoError(t, err)
 	blk := util.NewBeaconBlock()
@@ -2072,7 +2072,7 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 	finalizedDeposits := []*silapb.DepositContainer{
 		{
 			Index:           0,
-			SilaBlockHeight: 10,
+			SilaexecBlockHeight: 10,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
@@ -2082,7 +2082,7 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 		},
 		{
 			Index:           1,
-			SilaBlockHeight: 10,
+			SilaexecBlockHeight: 10,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
@@ -2095,7 +2095,7 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 	recentDeposits := []*silapb.DepositContainer{
 		{
 			Index:           2,
-			SilaBlockHeight: 11,
+			SilaexecBlockHeight: 11,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("c"), 48),
@@ -2105,7 +2105,7 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 		},
 		{
 			Index:           3,
-			SilaBlockHeight: 11,
+			SilaexecBlockHeight: 11,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("d"), 48),
@@ -2127,12 +2127,12 @@ func TestProposer_DepositTrie_UtilizesCachedFinalizedDeposits(t *testing.T) {
 		assert.NoError(t, depositTrie.Insert(depositHash[:], int(dp.Index)))
 		root, err := depositTrie.HashTreeRoot()
 		require.NoError(t, err)
-		assert.NoError(t, depositCache.InsertDeposit(ctx, dp.Deposit, dp.SilaBlockHeight, dp.Index, root))
+		assert.NoError(t, depositCache.InsertDeposit(ctx, dp.Deposit, dp.SilaexecBlockHeight, dp.Index, root))
 	}
 	for _, dp := range recentDeposits {
 		root, err := depositTrie.HashTreeRoot()
 		require.NoError(t, err)
-		depositCache.InsertPendingDeposit(ctx, dp.Deposit, dp.SilaBlockHeight, dp.Index, root)
+		depositCache.InsertPendingDeposit(ctx, dp.Deposit, dp.SilaexecBlockHeight, dp.Index, root)
 	}
 
 	bs := &Server{
@@ -2172,7 +2172,7 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 			DepositRoot:  make([]byte, 32),
 			DepositCount: 4,
 		},
-		SilaExecutionDepositIndex: 1,
+		SilaexecDepositIndex: 1,
 	})
 	require.NoError(t, err)
 	blk := util.NewBeaconBlock()
@@ -2188,7 +2188,7 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 	finalizedDeposits := []*silapb.DepositContainer{
 		{
 			Index:           0,
-			SilaBlockHeight: 10,
+			SilaexecBlockHeight: 10,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("a"), 48),
@@ -2198,7 +2198,7 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 		},
 		{
 			Index:           1,
-			SilaBlockHeight: 10,
+			SilaexecBlockHeight: 10,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("b"), 48),
@@ -2211,7 +2211,7 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 	recentDeposits := []*silapb.DepositContainer{
 		{
 			Index:           2,
-			SilaBlockHeight: 11,
+			SilaexecBlockHeight: 11,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("c"), 48),
@@ -2221,7 +2221,7 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 		},
 		{
 			Index:           3,
-			SilaBlockHeight: 11,
+			SilaexecBlockHeight: 11,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte("d"), 48),
@@ -2243,12 +2243,12 @@ func TestProposer_DepositTrie_RebuildTrie(t *testing.T) {
 		assert.NoError(t, depositTrie.Insert(depositHash[:], int(dp.Index)))
 		root, err := depositTrie.HashTreeRoot()
 		require.NoError(t, err)
-		assert.NoError(t, depositCache.InsertDeposit(ctx, dp.Deposit, dp.SilaBlockHeight, dp.Index, root))
+		assert.NoError(t, depositCache.InsertDeposit(ctx, dp.Deposit, dp.SilaexecBlockHeight, dp.Index, root))
 	}
 	for _, dp := range recentDeposits {
 		root, err := depositTrie.HashTreeRoot()
 		require.NoError(t, err)
-		depositCache.InsertPendingDeposit(ctx, dp.Deposit, dp.SilaBlockHeight, dp.Index, root)
+		depositCache.InsertPendingDeposit(ctx, dp.Deposit, dp.SilaexecBlockHeight, dp.Index, root)
 	}
 	d := depositCache.AllDepositContainers(ctx)
 	origDeposit, ok := proto.Clone(d[0].Deposit).(*silapb.Deposit)
@@ -2403,7 +2403,7 @@ func TestProposer_SilaData_MajorityVote(t *testing.T) {
 
 	dc := silapb.DepositContainer{
 		Index:           0,
-		SilaBlockHeight: 0,
+		SilaexecBlockHeight: 0,
 		Deposit: &silapb.Deposit{
 			Data: &silapb.Deposit_Data{
 				PublicKey:             bytesutil.PadTo([]byte("a"), 48),
@@ -2417,7 +2417,7 @@ func TestProposer_SilaData_MajorityVote(t *testing.T) {
 	require.NoError(t, err)
 	root, err := depositTrie.HashTreeRoot()
 	require.NoError(t, err)
-	assert.NoError(t, depositCache.InsertDeposit(t.Context(), dc.Deposit, dc.SilaBlockHeight, dc.Index, root))
+	assert.NoError(t, depositCache.InsertDeposit(t.Context(), dc.Deposit, dc.SilaexecBlockHeight, dc.Index, root))
 
 	t.Run("choose highest count", func(t *testing.T) {
 		t.Skip()
@@ -3090,7 +3090,7 @@ func TestProposer_Deposits_ReturnsEmptyList_IfLatestSilaDataEqGenesisSilaBlock(t
 			BlockHash:   bytesutil.PadTo([]byte("0x0"), 32),
 			DepositRoot: make([]byte, 32),
 		},
-		SilaExecutionDepositIndex: 2,
+		SilaexecDepositIndex: 2,
 	})
 	require.NoError(t, err)
 	blk := util.NewBeaconBlock()

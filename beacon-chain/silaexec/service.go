@@ -414,7 +414,7 @@ func (s *Service) initDepositCaches(ctx context.Context, ctrs []*silapb.DepositC
 	// is more than the current index in state.
 	if uint64(len(ctrs)) > currIndex {
 		for _, c := range ctrs[currIndex:] {
-			s.cfg.depositCache.InsertPendingDeposit(ctx, c.Deposit, c.SilaBlockHeight, c.Index, bytesutil.ToBytes32(c.DepositRoot))
+			s.cfg.depositCache.InsertPendingDeposit(ctx, c.Deposit, c.SilaexecBlockHeight, c.Index, bytesutil.ToBytes32(c.DepositRoot))
 		}
 	}
 	return nil

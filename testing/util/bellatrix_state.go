@@ -80,7 +80,7 @@ func emptyGenesisStateBellatrix() (state.BeaconState, error) {
 		// SilaExecution data.
 		SilaData:         &silapb.SilaData{},
 		SilaDataVotes:    []*silapb.SilaData{},
-		SilaExecutionDepositIndex: 0,
+		SilaexecDepositIndex: 0,
 
 		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeader{},
 	}
@@ -187,7 +187,7 @@ func buildGenesisBeaconStateBellatrix(genesisTime time.Time, preState state.Beac
 		// SilaExecution data.
 		SilaData:         silaexecData,
 		SilaDataVotes:    []*silapb.SilaData{},
-		SilaExecutionDepositIndex: preState.SilaExecutionDepositIndex(),
+		SilaexecDepositIndex: preState.SilaExecutionDepositIndex(),
 	}
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte

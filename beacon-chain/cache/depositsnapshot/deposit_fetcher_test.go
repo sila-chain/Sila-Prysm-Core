@@ -28,9 +28,9 @@ func TestPendingDeposits_OK(t *testing.T) {
 	dc := Cache{}
 
 	dc.pendingDeposits = []*silapb.DepositContainer{
-		{SilaBlockHeight: 2, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("A")}}},
-		{SilaBlockHeight: 4, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("B")}}},
-		{SilaBlockHeight: 6, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("c")}}},
+		{SilaexecBlockHeight: 2, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("A")}}},
+		{SilaexecBlockHeight: 4, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("B")}}},
+		{SilaexecBlockHeight: 6, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("c")}}},
 	}
 
 	deposits := dc.PendingDeposits(t.Context(), big.NewInt(4))

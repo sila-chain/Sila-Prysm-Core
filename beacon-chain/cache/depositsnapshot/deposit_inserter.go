@@ -47,7 +47,7 @@ func (c *Cache) InsertDeposit(ctx context.Context, d *silapb.Deposit, blockNum u
 	}
 	// Keep the slice sorted on insertion in order to avoid costly sorting on retrieval.
 	heightIdx := sort.Search(len(c.deposits), func(i int) bool { return c.deposits[i].Index >= index })
-	depCtr := &silapb.DepositContainer{Deposit: d, SilaBlockHeight: blockNum, DepositRoot: depositRoot[:], Index: index}
+	depCtr := &silapb.DepositContainer{Deposit: d, SilaexecBlockHeight: blockNum, DepositRoot: depositRoot[:], Index: index}
 	newDeposits := append(
 		[]*silapb.DepositContainer{depCtr},
 		c.deposits[heightIdx:]...)

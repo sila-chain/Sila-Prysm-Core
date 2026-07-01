@@ -359,9 +359,9 @@ func TestLogTillGenesis_OK(t *testing.T) {
 
 func TestInitDepositCache_OK(t *testing.T) {
 	ctrs := []*silapb.DepositContainer{
-		{Index: 0, SilaBlockHeight: 2, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("A")}, Data: &silapb.Deposit_Data{PublicKey: []byte{}}}},
-		{Index: 1, SilaBlockHeight: 4, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("B")}, Data: &silapb.Deposit_Data{PublicKey: []byte{}}}},
-		{Index: 2, SilaBlockHeight: 6, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("c")}, Data: &silapb.Deposit_Data{PublicKey: []byte{}}}},
+		{Index: 0, SilaexecBlockHeight: 2, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("A")}, Data: &silapb.Deposit_Data{PublicKey: []byte{}}}},
+		{Index: 1, SilaexecBlockHeight: 4, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("B")}, Data: &silapb.Deposit_Data{PublicKey: []byte{}}}},
+		{Index: 2, SilaexecBlockHeight: 6, Deposit: &silapb.Deposit{Proof: [][]byte{[]byte("c")}, Data: &silapb.Deposit_Data{PublicKey: []byte{}}}},
 	}
 	gs, _ := util.DeterministicGenesisState(t, 1)
 	beaconDB := dbutil.SetupDB(t)
@@ -393,7 +393,7 @@ func TestInitDepositCacheWithFinalization_OK(t *testing.T) {
 	ctrs := []*silapb.DepositContainer{
 		{
 			Index:           0,
-			SilaBlockHeight: 2,
+			SilaexecBlockHeight: 2,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{0}, 48),
@@ -404,7 +404,7 @@ func TestInitDepositCacheWithFinalization_OK(t *testing.T) {
 		},
 		{
 			Index:           1,
-			SilaBlockHeight: 4,
+			SilaexecBlockHeight: 4,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{1}, 48),
@@ -415,7 +415,7 @@ func TestInitDepositCacheWithFinalization_OK(t *testing.T) {
 		},
 		{
 			Index:           2,
-			SilaBlockHeight: 6,
+			SilaexecBlockHeight: 6,
 			Deposit: &silapb.Deposit{
 				Data: &silapb.Deposit_Data{
 					PublicKey:             bytesutil.PadTo([]byte{2}, 48),
@@ -696,7 +696,7 @@ func TestService_ValidateDepositContainers(t *testing.T) {
 			ctrsFunc: func() []*silapb.DepositContainer {
 				ctrs := make([]*silapb.DepositContainer, 0)
 				for i := range 10 {
-					ctrs = append(ctrs, &silapb.DepositContainer{Index: int64(i), SilaBlockHeight: uint64(i + 10)})
+					ctrs = append(ctrs, &silapb.DepositContainer{Index: int64(i), SilaexecBlockHeight: uint64(i + 10)})
 				}
 				return ctrs
 			},
@@ -707,7 +707,7 @@ func TestService_ValidateDepositContainers(t *testing.T) {
 			ctrsFunc: func() []*silapb.DepositContainer {
 				ctrs := make([]*silapb.DepositContainer, 0)
 				for i := 1; i < 10; i++ {
-					ctrs = append(ctrs, &silapb.DepositContainer{Index: int64(i), SilaBlockHeight: uint64(i + 10)})
+					ctrs = append(ctrs, &silapb.DepositContainer{Index: int64(i), SilaexecBlockHeight: uint64(i + 10)})
 				}
 				return ctrs
 			},
@@ -721,7 +721,7 @@ func TestService_ValidateDepositContainers(t *testing.T) {
 					if i == 5 || i == 7 {
 						continue
 					}
-					ctrs = append(ctrs, &silapb.DepositContainer{Index: int64(i), SilaBlockHeight: uint64(i + 10)})
+					ctrs = append(ctrs, &silapb.DepositContainer{Index: int64(i), SilaexecBlockHeight: uint64(i + 10)})
 				}
 				return ctrs
 			},

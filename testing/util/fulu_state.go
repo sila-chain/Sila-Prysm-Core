@@ -94,7 +94,7 @@ func emptyGenesisStateFulu() (state.BeaconState, error) {
 		// SilaExecution data.
 		SilaData:         &silapb.SilaData{},
 		SilaDataVotes:    []*silapb.SilaData{},
-		SilaExecutionDepositIndex: 0,
+		SilaexecDepositIndex: 0,
 
 		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{},
 
@@ -208,7 +208,7 @@ func buildGenesisBeaconStateFulu(ctx context.Context, genesisTime uint64, preSta
 		// SilaExecution data.
 		SilaData:         silaexecData,
 		SilaDataVotes:    []*silapb.SilaData{},
-		SilaExecutionDepositIndex: preState.SilaExecutionDepositIndex(),
+		SilaexecDepositIndex: preState.SilaExecutionDepositIndex(),
 
 		// Electra Data
 		DepositRequestsStartIndex:     params.BeaconConfig().UnsetDepositRequestsStartIndex,

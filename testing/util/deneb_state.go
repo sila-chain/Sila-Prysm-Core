@@ -78,7 +78,7 @@ func emptyGenesisStateDeneb() (state.BeaconState, error) {
 		// SilaExecution data.
 		SilaData:         &silapb.SilaData{},
 		SilaDataVotes:    []*silapb.SilaData{},
-		SilaExecutionDepositIndex: 0,
+		SilaexecDepositIndex: 0,
 
 		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeaderDeneb{},
 	}
@@ -179,7 +179,7 @@ func buildGenesisBeaconStateDeneb(genesisTime uint64, preState state.BeaconState
 		// SilaExecution data.
 		SilaData:         silaexecData,
 		SilaDataVotes:    []*silapb.SilaData{},
-		SilaExecutionDepositIndex: preState.SilaExecutionDepositIndex(),
+		SilaexecDepositIndex: preState.SilaExecutionDepositIndex(),
 	}
 
 	var scBits [fieldparams.SyncAggregateSyncCommitteeBytesLength]byte

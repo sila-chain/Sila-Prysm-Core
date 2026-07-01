@@ -513,7 +513,7 @@ func TestProcessBlock_OverMaxVoluntaryExits(t *testing.T) {
 func TestProcessBlock_IncorrectDeposits(t *testing.T) {
 	base := &silapb.BeaconState{
 		SilaData:         &silapb.SilaData{DepositCount: 100},
-		SilaExecutionDepositIndex: 98,
+		SilaexecDepositIndex: 98,
 	}
 	s, err := state_native.InitializeFromProtoPhase0(base)
 	require.NoError(t, err)

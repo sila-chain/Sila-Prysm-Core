@@ -57,7 +57,7 @@ func UpgradeToCapella(state state.BeaconState) (state.BeaconState, error) {
 		HistoricalRoots:             state.HistoricalRoots(),
 		SilaData:                    state.SilaData(),
 		SilaDataVotes:               state.SilaDataVotes(),
-		SilaExecutionDepositIndex:            state.SilaExecutionDepositIndex(),
+		SilaexecDepositIndex:            state.SilaExecutionDepositIndex(),
 		Validators:                  state.Validators(),
 		Balances:                    state.Balances(),
 		RandaoMixes:                 state.RandaoMixes(),

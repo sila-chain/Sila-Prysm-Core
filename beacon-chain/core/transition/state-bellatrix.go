@@ -186,7 +186,7 @@ func OptimizedGenesisBeaconStateBellatrix(genesisTime uint64, preState state.Bea
 		// SilaExecution data.
 		SilaData:                     silaexecData,
 		SilaDataVotes:                []*silapb.SilaData{},
-		SilaExecutionDepositIndex:             preState.SilaExecutionDepositIndex(),
+		SilaexecDepositIndex:             preState.SilaExecutionDepositIndex(),
 		LatestSilaPayloadHeader: eph,
 		InactivityScores:             scores,
 	}
@@ -262,7 +262,7 @@ func EmptyGenesisStateBellatrix() (state.BeaconState, error) {
 		// SilaExecution data.
 		SilaData:         &silapb.SilaData{},
 		SilaDataVotes:    []*silapb.SilaData{},
-		SilaExecutionDepositIndex: 0,
+		SilaexecDepositIndex: 0,
 		LatestSilaPayloadHeader: &silaenginev1.SilaPayloadHeader{
 			ParentHash:       make([]byte, 32),
 			FeeRecipient:     make([]byte, 20),
