@@ -13,40 +13,40 @@
 // limitations under the License.
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "proto/silaapi/ext/options.proto";
 
-option csharp_namespace = "Sila.Eth.v1alpha1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.v1alpha1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "SIP7251Proto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 message PendingDeposit {
   // 48 byte BLS public key of the validator.
   bytes public_key = 1 [
-    (sila.eth.ext.ssz_size) = "48",
-    (sila.eth.ext.spec_name) = "pubkey"
+    (sila.consensus.ext.ssz_size) = "48",
+    (sila.consensus.ext.spec_name) = "pubkey"
   ];
 
   // A 32 byte hash of the withdrawal address public key.
-  bytes withdrawal_credentials = 2 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes withdrawal_credentials = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // The amount of the deposit (gwei).
   uint64 amount = 3;
   // 96 byte BLS signature from the validator that produced this block.
-  bytes signature = 4 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 4 [ (sila.consensus.ext.ssz_size) = "96" ];
   uint64 slot = 5 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
 
 message PendingPartialWithdrawal {
   // Validator index for the withdrawal.
-  uint64 index = 1 [ (sila.eth.ext.cast_type) =
+  uint64 index = 1 [ (sila.consensus.ext.cast_type) =
                          "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
                          "primitives.ValidatorIndex" ];
 
@@ -55,18 +55,18 @@ message PendingPartialWithdrawal {
 
   // A partial withdrawal is valid at this epoch or later.
   uint64 withdrawable_epoch = 3 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 }
 
 message PendingConsolidation {
   // Validator from which the funds will be moved.
-  uint64 source_index = 1 [ (sila.eth.ext.cast_type) =
+  uint64 source_index = 1 [ (sila.consensus.ext.cast_type) =
                                 "github.com/sila-chain/Sila-Consensus-Core/v7/"
                                 "consensus-types/primitives.ValidatorIndex" ];
   // Validator to which the funds will be moved.
-  uint64 target_index = 2 [ (sila.eth.ext.cast_type) =
+  uint64 target_index = 2 [ (sila.consensus.ext.cast_type) =
                                 "github.com/sila-chain/Sila-Consensus-Core/v7/"
                                 "consensus-types/primitives.ValidatorIndex" ];
 }

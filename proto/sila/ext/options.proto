@@ -13,16 +13,16 @@
 // limitations under the License.
 syntax = "proto3";
 
-package sila.eth.ext;
+package sila.consensus.ext;
 
 import "google/protobuf/descriptor.proto";
 
-option csharp_namespace = "Sila.Eth.ext";
+option csharp_namespace = "Sila.Consensus.ext";
 option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/ext";
 option java_multiple_files = true;
 option java_outer_classname = "OptionsProto";
-option java_package = "org.Sila.Eth.ext";
-option php_namespace = "Sila\\Eth\\ext";
+option java_package = "org.Sila.Consensus.ext";
+option php_namespace = "Sila\\Consensus\\ext";
 
 extend google.protobuf.FieldOptions {
   string cast_type = 50000;

@@ -13,7 +13,7 @@
 // limitations under the License.
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
@@ -21,12 +21,12 @@ import "google/protobuf/timestamp.proto";
 
 import "proto/silaapi/ext/options.proto";
 
-option csharp_namespace = "Sila.Eth.v1alpha1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.v1alpha1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "NodeProto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 // Node service API
 //
@@ -138,7 +138,7 @@ message Genesis {
 
   // Root of the genesis validators deposits; used for domain separation
   // when signing data structures for this chain.
-  bytes genesis_validators_root = 3 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes genesis_validators_root = 3 [ (sila.consensus.ext.ssz_size) = "32" ];
 }
 
 // Information about the node version.

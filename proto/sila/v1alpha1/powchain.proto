@@ -1,18 +1,18 @@
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "google/protobuf/descriptor.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
 import "proto/sila/v1alpha1/beacon_state.proto";
 import "proto/silaapi/ext/options.proto";
 
-option csharp_namespace = "Sila.Eth.V1alpha1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.V1alpha1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "PowchainProto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 // SilaChainData is a container which holds all the relevant silaexec
 // information
@@ -28,12 +28,12 @@ message SilaChainData {
 // DepositSnapshot represents an SIP-4881 deposit snapshot
 message DepositSnapshot {
   repeated bytes finalized = 1 [
-    (sila.eth.ext.ssz_size) = "?,32",
-    (sila.eth.ext.ssz_max) = "32"
+    (sila.consensus.ext.ssz_size) = "?,32",
+    (sila.consensus.ext.ssz_max) = "32"
   ];
-  bytes deposit_root = 2 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes deposit_root = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 deposit_count = 3;
-  bytes sila_hash = 4 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes sila_hash = 4 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 sila_depth = 5;
 }
 

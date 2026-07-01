@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "proto/sila/v1alpha1/attestation.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
@@ -8,12 +8,12 @@ import "proto/silaengine/v1/silaengine.proto";
 import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1alpha1/sip_7251.proto";
 
-option csharp_namespace = "Sila.Eth.V1Alpha1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.V1Alpha1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "BeaconStateProto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 // ----------------------------------------------------------------------------
 // Phase 0
@@ -22,9 +22,9 @@ option php_namespace = "Sila\\Eth\\v1alpha1";
 message BeaconState {
   // Versioning [1001-2000]
   uint64 genesis_time = 1001;
-  bytes genesis_validators_root = 1002 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes genesis_validators_root = 1002 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 slot = 1003 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   Fork fork = 1004;
@@ -32,45 +32,45 @@ message BeaconState {
   // History [2001-3000]
   BeaconBlockHeader latest_block_header = 2001;
   repeated bytes block_roots = 2002
-      [ (sila.eth.ext.ssz_size) = "block_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "block_roots.size" ];
   repeated bytes state_roots = 2003
-      [ (sila.eth.ext.ssz_size) = "state_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "state_roots.size" ];
   repeated bytes historical_roots = 2004 [
-    (sila.eth.ext.ssz_size) = "?,32",
-    (sila.eth.ext.ssz_max) = "16777216"
+    (sila.consensus.ext.ssz_size) = "?,32",
+    (sila.consensus.ext.ssz_max) = "16777216"
   ];
 
   // SilaExecution [3001-4000]
   SilaData sila_data = 3001;
   repeated SilaData sila_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
+      [ (sila.consensus.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
   repeated Validator validators = 4001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   repeated uint64 balances = 4002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Randomness [5001-6000]
   repeated bytes randao_mixes = 5001
-      [ (sila.eth.ext.ssz_size) = "randao_mixes.size" ];
+      [ (sila.consensus.ext.ssz_size) = "randao_mixes.size" ];
 
   // Slashings [6001-7000]
   repeated uint64 slashings = 6001
-      [ (sila.eth.ext.ssz_size) = "slashings.size" ];
+      [ (sila.consensus.ext.ssz_size) = "slashings.size" ];
 
   // Attestations [7001-8000]
   repeated PendingAttestation previous_epoch_attestations = 7001
-      [ (sila.eth.ext.ssz_max) = "previous_epoch_attestations.max" ];
+      [ (sila.consensus.ext.ssz_max) = "previous_epoch_attestations.max" ];
   repeated PendingAttestation current_epoch_attestations = 7002
-      [ (sila.eth.ext.ssz_max) = "current_epoch_attestations.max" ];
+      [ (sila.consensus.ext.ssz_max) = "current_epoch_attestations.max" ];
 
   // Finality [8001-9000]
   // Spec type [4]Bitvector which means this would be a fixed size of 4 bits.
   bytes justification_bits = 8001 [
-    (sila.eth.ext.ssz_size) = "1",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "1",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector4"
   ];
   Checkpoint previous_justified_checkpoint = 8002;
@@ -82,26 +82,26 @@ message PendingAttestation {
   // Bitfield representation of validator indices that have voted exactly
   // the same vote and have been aggregated into this attestation.
   bytes aggregation_bits = 1 [
-    (sila.eth.ext.ssz_max) = "2048",
-    (sila.eth.ext.cast_type) = "github.com/sila-chain/go-bitfield.Bitlist"
+    (sila.consensus.ext.ssz_max) = "2048",
+    (sila.consensus.ext.cast_type) = "github.com/sila-chain/go-bitfield.Bitlist"
   ];
   AttestationData data = 2;
   // The difference of when attestation gets created and get included on chain.
   uint64 inclusion_delay = 3 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   // The proposer who included the attestation in the block.
-  uint64 proposer_index = 4 [ (sila.eth.ext.cast_type) =
+  uint64 proposer_index = 4 [ (sila.consensus.ext.cast_type) =
                                   "github.com/sila-chain/Sila-Consensus-Core/v7/"
                                   "consensus-types/primitives.ValidatorIndex" ];
 }
 
 message HistoricalBatch {
   repeated bytes block_roots = 1
-      [ (sila.eth.ext.ssz_size) = "block_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "block_roots.size" ];
   repeated bytes state_roots = 2
-      [ (sila.eth.ext.ssz_size) = "state_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "state_roots.size" ];
 }
 
 // The state summary object is defined for summarizing a state
@@ -111,7 +111,7 @@ message HistoricalBatch {
 message StateSummary {
   // The slot of the state.
   uint64 slot = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   // The block root of the state.
@@ -120,16 +120,16 @@ message StateSummary {
 
 message SigningData {
   // The root of the object being signed.
-  bytes object_root = 1 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes object_root = 1 [ (sila.consensus.ext.ssz_size) = "32" ];
   // The domain for the particular object being signed.
-  bytes domain = 2 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes domain = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
 }
 
 message ForkData {
   // The current version of the fork.
-  bytes current_version = 4 [ (sila.eth.ext.ssz_size) = "4" ];
+  bytes current_version = 4 [ (sila.consensus.ext.ssz_size) = "4" ];
   // The genesis validators root of the fork.
-  bytes genesis_validators_root = 2 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes genesis_validators_root = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
 }
 
 message CheckPtInfo {
@@ -152,12 +152,12 @@ message CheckPtInfo {
 message DepositMessage {
   // 48 byte BLS public key of the validator.
   bytes public_key = 1 [
-    (sila.eth.ext.ssz_size) = "48",
-    (sila.eth.ext.spec_name) = "pubkey"
+    (sila.consensus.ext.ssz_size) = "48",
+    (sila.consensus.ext.spec_name) = "pubkey"
   ];
 
   // A 32 byte hash of the withdrawal address public key.
-  bytes withdrawal_credentials = 2 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes withdrawal_credentials = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // Deposit amount in gwei.
   uint64 amount = 3;
@@ -169,9 +169,9 @@ message DepositMessage {
 //    parent_hash: Hash32
 //    total_difficulty: uint256
 message PowBlock {
-  bytes block_hash = 1 [ (sila.eth.ext.ssz_size) = "32" ];
-  bytes parent_hash = 2 [ (sila.eth.ext.ssz_size) = "32" ];
-  bytes total_difficulty = 3 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes block_hash = 1 [ (sila.consensus.ext.ssz_size) = "32" ];
+  bytes parent_hash = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
+  bytes total_difficulty = 3 [ (sila.consensus.ext.ssz_size) = "32" ];
 }
 
 // ----------------------------------------------------------------------------
@@ -184,9 +184,9 @@ message PowBlock {
 message BeaconStateAltair {
   // Versioning [1001-2000]
   uint64 genesis_time = 1001;
-  bytes genesis_validators_root = 1002 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes genesis_validators_root = 1002 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 slot = 1003 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   Fork fork = 1004;
@@ -194,47 +194,47 @@ message BeaconStateAltair {
   // History [2001-3000]
   BeaconBlockHeader latest_block_header = 2001;
   repeated bytes block_roots = 2002
-      [ (sila.eth.ext.ssz_size) = "block_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "block_roots.size" ];
   repeated bytes state_roots = 2003
-      [ (sila.eth.ext.ssz_size) = "state_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "state_roots.size" ];
   repeated bytes historical_roots = 2004 [
-    (sila.eth.ext.ssz_size) = "?,32",
-    (sila.eth.ext.ssz_max) = "16777216"
+    (sila.consensus.ext.ssz_size) = "?,32",
+    (sila.consensus.ext.ssz_max) = "16777216"
   ];
 
   // SilaExecution [3001-4000]
   SilaData sila_data = 3001;
   repeated SilaData sila_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
+      [ (sila.consensus.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
   repeated Validator validators = 4001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   repeated uint64 balances = 4002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Randomness [5001-6000]
   repeated bytes randao_mixes = 5001
-      [ (sila.eth.ext.ssz_size) = "randao_mixes.size" ];
+      [ (sila.consensus.ext.ssz_size) = "randao_mixes.size" ];
 
   // Slashings [6001-7000]
   repeated uint64 slashings = 6001
-      [ (sila.eth.ext.ssz_size) = "slashings.size" ];
+      [ (sila.consensus.ext.ssz_size) = "slashings.size" ];
 
   // Participation [7001-8000]
   bytes previous_epoch_participation = 7001 [
-    (sila.eth.ext.ssz_max) = "1099511627776"
+    (sila.consensus.ext.ssz_max) = "1099511627776"
   ]; // [New in Altair, replaced previous_epoch_attestations]
   bytes current_epoch_participation = 7002 [
-    (sila.eth.ext.ssz_max) = "1099511627776"
+    (sila.consensus.ext.ssz_max) = "1099511627776"
   ]; // [New in Altair, replaced current_epoch_attestations]
 
   // Finality [8001-9000]
   // Spec type [4]Bitvector which means this would be a fixed size of 4 bits.
   bytes justification_bits = 8001 [
-    (sila.eth.ext.ssz_size) = "1",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "1",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector4"
   ];
   Checkpoint previous_justified_checkpoint = 8002;
@@ -243,7 +243,7 @@ message BeaconStateAltair {
 
   // New Altair fields [9001-10000]
   repeated uint64 inactivity_scores = 9001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ]; // [New in Altair]
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ]; // [New in Altair]
   SyncCommittee current_sync_committee = 9002;          // [New in Altair]
   SyncCommittee next_sync_committee = 9003;             // [New in Altair]
 }
@@ -253,7 +253,7 @@ message BeaconStateAltair {
 message SyncAggregatorSelectionData {
   // Slot of this signing data.
   uint64 slot = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   // Subcommittee index of this signing data.
@@ -267,9 +267,9 @@ message SyncAggregatorSelectionData {
 message BeaconStateBellatrix {
   // Versioning [1001-2000]
   uint64 genesis_time = 1001;
-  bytes genesis_validators_root = 1002 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes genesis_validators_root = 1002 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 slot = 1003 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   Fork fork = 1004;
@@ -277,45 +277,45 @@ message BeaconStateBellatrix {
   // History [2001-3000]
   BeaconBlockHeader latest_block_header = 2001;
   repeated bytes block_roots = 2002
-      [ (sila.eth.ext.ssz_size) = "block_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "block_roots.size" ];
   repeated bytes state_roots = 2003
-      [ (sila.eth.ext.ssz_size) = "state_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "state_roots.size" ];
   repeated bytes historical_roots = 2004 [
-    (sila.eth.ext.ssz_size) = "?,32",
-    (sila.eth.ext.ssz_max) = "16777216"
+    (sila.consensus.ext.ssz_size) = "?,32",
+    (sila.consensus.ext.ssz_max) = "16777216"
   ];
 
   // SilaExecution [3001-4000]
   SilaData sila_data = 3001;
   repeated SilaData sila_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
+      [ (sila.consensus.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
   repeated Validator validators = 4001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   repeated uint64 balances = 4002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Randomness [5001-6000]
   repeated bytes randao_mixes = 5001
-      [ (sila.eth.ext.ssz_size) = "randao_mixes.size" ];
+      [ (sila.consensus.ext.ssz_size) = "randao_mixes.size" ];
 
   // Slashings [6001-7000]
   repeated uint64 slashings = 6001
-      [ (sila.eth.ext.ssz_size) = "slashings.size" ];
+      [ (sila.consensus.ext.ssz_size) = "slashings.size" ];
 
   // Participation [7001-8000]
   bytes previous_epoch_participation = 7001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   bytes current_epoch_participation = 7002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Finality [8001-9000]
   // Spec type [4]Bitvector which means this would be a fixed size of 4 bits.
   bytes justification_bits = 8001 [
-    (sila.eth.ext.ssz_size) = "1",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "1",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector4"
   ];
   Checkpoint previous_justified_checkpoint = 8002;
@@ -324,7 +324,7 @@ message BeaconStateBellatrix {
 
   // Altair fields [9001-10000]
   repeated uint64 inactivity_scores = 9001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   SyncCommittee current_sync_committee = 9002;
   SyncCommittee next_sync_committee = 9003;
 
@@ -340,9 +340,9 @@ message BeaconStateBellatrix {
 message BeaconStateCapella {
   // Versioning [1001-2000]
   uint64 genesis_time = 1001;
-  bytes genesis_validators_root = 1002 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes genesis_validators_root = 1002 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 slot = 1003 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   Fork fork = 1004;
@@ -350,45 +350,45 @@ message BeaconStateCapella {
   // History [2001-3000]
   BeaconBlockHeader latest_block_header = 2001;
   repeated bytes block_roots = 2002
-      [ (sila.eth.ext.ssz_size) = "block_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "block_roots.size" ];
   repeated bytes state_roots = 2003
-      [ (sila.eth.ext.ssz_size) = "state_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "state_roots.size" ];
   repeated bytes historical_roots = 2004 [
-    (sila.eth.ext.ssz_size) = "?,32",
-    (sila.eth.ext.ssz_max) = "16777216"
+    (sila.consensus.ext.ssz_size) = "?,32",
+    (sila.consensus.ext.ssz_max) = "16777216"
   ];
 
   // SilaExecution [3001-4000]
   SilaData sila_data = 3001;
   repeated SilaData sila_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
+      [ (sila.consensus.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
   repeated Validator validators = 4001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   repeated uint64 balances = 4002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Randomness [5001-6000]
   repeated bytes randao_mixes = 5001
-      [ (sila.eth.ext.ssz_size) = "randao_mixes.size" ];
+      [ (sila.consensus.ext.ssz_size) = "randao_mixes.size" ];
 
   // Slashings [6001-7000]
   repeated uint64 slashings = 6001
-      [ (sila.eth.ext.ssz_size) = "slashings.size" ];
+      [ (sila.consensus.ext.ssz_size) = "slashings.size" ];
 
   // Participation [7001-8000]
   bytes previous_epoch_participation = 7001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   bytes current_epoch_participation = 7002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Finality [8001-9000]
   // Spec type [4]Bitvector which means this would be a fixed size of 4 bits.
   bytes justification_bits = 8001 [
-    (sila.eth.ext.ssz_size) = "1",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "1",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector4"
   ];
   Checkpoint previous_justified_checkpoint = 8002;
@@ -397,7 +397,7 @@ message BeaconStateCapella {
 
   // Altair fields [9001-10000]
   repeated uint64 inactivity_scores = 9001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   SyncCommittee current_sync_committee = 9002;
   SyncCommittee next_sync_committee = 9003;
 
@@ -408,11 +408,11 @@ message BeaconStateCapella {
   // Capella fields [11001-12000]
   uint64 next_withdrawal_index = 11001; // [New in Capella]
   uint64 next_withdrawal_validator_index = 11002
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ]; // [New in Capella]
   repeated HistoricalSummary historical_summaries = 11003
-      [ (sila.eth.ext.ssz_max) = "16777216" ]; // [New in Capella]
+      [ (sila.consensus.ext.ssz_max) = "16777216" ]; // [New in Capella]
 }
 
 // ----------------------------------------------------------------------------
@@ -422,9 +422,9 @@ message BeaconStateCapella {
 message BeaconStateDeneb {
   // Versioning [1001-2000]
   uint64 genesis_time = 1001;
-  bytes genesis_validators_root = 1002 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes genesis_validators_root = 1002 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 slot = 1003 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   Fork fork = 1004;
@@ -432,45 +432,45 @@ message BeaconStateDeneb {
   // History [2001-3000]
   BeaconBlockHeader latest_block_header = 2001;
   repeated bytes block_roots = 2002
-      [ (sila.eth.ext.ssz_size) = "block_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "block_roots.size" ];
   repeated bytes state_roots = 2003
-      [ (sila.eth.ext.ssz_size) = "state_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "state_roots.size" ];
   repeated bytes historical_roots = 2004 [
-    (sila.eth.ext.ssz_size) = "?,32",
-    (sila.eth.ext.ssz_max) = "16777216"
+    (sila.consensus.ext.ssz_size) = "?,32",
+    (sila.consensus.ext.ssz_max) = "16777216"
   ];
 
   // SilaExecution [3001-4000]
   SilaData sila_data = 3001;
   repeated SilaData sila_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
+      [ (sila.consensus.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
   repeated Validator validators = 4001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   repeated uint64 balances = 4002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Randomness [5001-6000]
   repeated bytes randao_mixes = 5001
-      [ (sila.eth.ext.ssz_size) = "randao_mixes.size" ];
+      [ (sila.consensus.ext.ssz_size) = "randao_mixes.size" ];
 
   // Slashings [6001-7000]
   repeated uint64 slashings = 6001
-      [ (sila.eth.ext.ssz_size) = "slashings.size" ];
+      [ (sila.consensus.ext.ssz_size) = "slashings.size" ];
 
   // Participation [7001-8000]
   bytes previous_epoch_participation = 7001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   bytes current_epoch_participation = 7002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Finality [8001-9000]
   // Spec type [4]Bitvector which means this would be a fixed size of 4 bits.
   bytes justification_bits = 8001 [
-    (sila.eth.ext.ssz_size) = "1",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "1",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector4"
   ];
   Checkpoint previous_justified_checkpoint = 8002;
@@ -479,7 +479,7 @@ message BeaconStateDeneb {
 
   // Fields introduced in Altair fork [9001-10000]
   repeated uint64 inactivity_scores = 9001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   SyncCommittee current_sync_committee = 9002;
   SyncCommittee next_sync_committee = 9003;
 
@@ -490,11 +490,11 @@ message BeaconStateDeneb {
   // Fields introduced in Capella fork [11001-12000]
   uint64 next_withdrawal_index = 11001;
   uint64 next_withdrawal_validator_index = 11002
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
   repeated HistoricalSummary historical_summaries = 11003
-      [ (sila.eth.ext.ssz_max) = "16777216" ];
+      [ (sila.consensus.ext.ssz_max) = "16777216" ];
 }
 
 // ----------------------------------------------------------------------------
@@ -504,9 +504,9 @@ message BeaconStateDeneb {
 message BeaconStateElectra {
   // Versioning [1001-2000]
   uint64 genesis_time = 1001;
-  bytes genesis_validators_root = 1002 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes genesis_validators_root = 1002 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 slot = 1003 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   Fork fork = 1004;
@@ -514,45 +514,45 @@ message BeaconStateElectra {
   // History [2001-3000]
   BeaconBlockHeader latest_block_header = 2001;
   repeated bytes block_roots = 2002
-      [ (sila.eth.ext.ssz_size) = "block_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "block_roots.size" ];
   repeated bytes state_roots = 2003
-      [ (sila.eth.ext.ssz_size) = "state_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "state_roots.size" ];
   repeated bytes historical_roots = 2004 [
-    (sila.eth.ext.ssz_size) = "?,32",
-    (sila.eth.ext.ssz_max) = "16777216"
+    (sila.consensus.ext.ssz_size) = "?,32",
+    (sila.consensus.ext.ssz_max) = "16777216"
   ];
 
   // SilaExecution [3001-4000]
   SilaData sila_data = 3001;
   repeated SilaData sila_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
+      [ (sila.consensus.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
   repeated Validator validators = 4001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   repeated uint64 balances = 4002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Randomness [5001-6000]
   repeated bytes randao_mixes = 5001
-      [ (sila.eth.ext.ssz_size) = "randao_mixes.size" ];
+      [ (sila.consensus.ext.ssz_size) = "randao_mixes.size" ];
 
   // Slashings [6001-7000]
   repeated uint64 slashings = 6001
-      [ (sila.eth.ext.ssz_size) = "slashings.size" ];
+      [ (sila.consensus.ext.ssz_size) = "slashings.size" ];
 
   // Participation [7001-8000]
   bytes previous_epoch_participation = 7001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   bytes current_epoch_participation = 7002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Finality [8001-9000]
   // Spec type [4]Bitvector which means this would be a fixed size of 4 bits.
   bytes justification_bits = 8001 [
-    (sila.eth.ext.ssz_size) = "1",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "1",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector4"
   ];
   Checkpoint previous_justified_checkpoint = 8002;
@@ -561,7 +561,7 @@ message BeaconStateElectra {
 
   // Fields introduced in Altair fork [9001-10000]
   repeated uint64 inactivity_scores = 9001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   SyncCommittee current_sync_committee = 9002;
   SyncCommittee next_sync_committee = 9003;
 
@@ -572,40 +572,40 @@ message BeaconStateElectra {
   // Fields introduced in Capella fork [11001-12000]
   uint64 next_withdrawal_index = 11001;
   uint64 next_withdrawal_validator_index = 11002
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
   repeated HistoricalSummary historical_summaries = 11003
-      [ (sila.eth.ext.ssz_max) = "16777216" ];
+      [ (sila.consensus.ext.ssz_max) = "16777216" ];
 
   // Fields introduced in Electra fork [12001-13000]
   uint64 deposit_requests_start_index = 12001;
   uint64 deposit_balance_to_consume = 12002 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Gwei"
   ];
   uint64 exit_balance_to_consume = 12003 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Gwei"
   ];
   uint64 earliest_exit_epoch = 12004 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
   uint64 consolidation_balance_to_consume = 12005 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Gwei"
   ];
   uint64 earliest_consolidation_epoch = 12006 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
   repeated PendingDeposit pending_deposits = 12007
-      [ (sila.eth.ext.ssz_max) = "pending_deposits_limit" ];
+      [ (sila.consensus.ext.ssz_max) = "pending_deposits_limit" ];
   repeated PendingPartialWithdrawal pending_partial_withdrawals = 12008
-      [ (sila.eth.ext.ssz_max) = "pending_partial_withdrawals_limit" ];
+      [ (sila.consensus.ext.ssz_max) = "pending_partial_withdrawals_limit" ];
   repeated PendingConsolidation pending_consolidations = 12009
-      [ (sila.eth.ext.ssz_max) = "pending_consolidations_limit" ];
+      [ (sila.consensus.ext.ssz_max) = "pending_consolidations_limit" ];
 }
 
 // ----------------------------------------------------------------------------
@@ -615,9 +615,9 @@ message BeaconStateElectra {
 message BeaconStateFulu {
   // Versioning [1001-2000]
   uint64 genesis_time = 1001;
-  bytes genesis_validators_root = 1002 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes genesis_validators_root = 1002 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 slot = 1003 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   Fork fork = 1004;
@@ -625,45 +625,45 @@ message BeaconStateFulu {
   // History [2001-3000]
   BeaconBlockHeader latest_block_header = 2001;
   repeated bytes block_roots = 2002
-      [ (sila.eth.ext.ssz_size) = "block_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "block_roots.size" ];
   repeated bytes state_roots = 2003
-      [ (sila.eth.ext.ssz_size) = "state_roots.size" ];
+      [ (sila.consensus.ext.ssz_size) = "state_roots.size" ];
   repeated bytes historical_roots = 2004 [
-    (sila.eth.ext.ssz_size) = "?,32",
-    (sila.eth.ext.ssz_max) = "16777216"
+    (sila.consensus.ext.ssz_size) = "?,32",
+    (sila.consensus.ext.ssz_max) = "16777216"
   ];
 
   // SilaExecution [3001-4000]
   SilaData sila_data = 3001;
   repeated SilaData sila_data_votes = 3002
-      [ (sila.eth.ext.ssz_max) = "sila_data_votes.size" ];
+      [ (sila.consensus.ext.ssz_max) = "sila_data_votes.size" ];
   uint64 silaexec_deposit_index = 3003;
 
   // Registry [4001-5000]
   repeated Validator validators = 4001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   repeated uint64 balances = 4002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Randomness [5001-6000]
   repeated bytes randao_mixes = 5001
-      [ (sila.eth.ext.ssz_size) = "randao_mixes.size" ];
+      [ (sila.consensus.ext.ssz_size) = "randao_mixes.size" ];
 
   // Slashings [6001-7000]
   repeated uint64 slashings = 6001
-      [ (sila.eth.ext.ssz_size) = "slashings.size" ];
+      [ (sila.consensus.ext.ssz_size) = "slashings.size" ];
 
   // Participation [7001-8000]
   bytes previous_epoch_participation = 7001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   bytes current_epoch_participation = 7002
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
 
   // Finality [8001-9000]
   // Spec type [4]Bitvector which means this would be a fixed size of 4 bits.
   bytes justification_bits = 8001 [
-    (sila.eth.ext.ssz_size) = "1",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "1",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector4"
   ];
   Checkpoint previous_justified_checkpoint = 8002;
@@ -672,7 +672,7 @@ message BeaconStateFulu {
 
   // Fields introduced in Altair fork [9001-10000]
   repeated uint64 inactivity_scores = 9001
-      [ (sila.eth.ext.ssz_max) = "1099511627776" ];
+      [ (sila.consensus.ext.ssz_max) = "1099511627776" ];
   SyncCommittee current_sync_committee = 9002;
   SyncCommittee next_sync_committee = 9003;
 
@@ -683,45 +683,45 @@ message BeaconStateFulu {
   // Fields introduced in Capella fork [11001-12000]
   uint64 next_withdrawal_index = 11001;
   uint64 next_withdrawal_validator_index = 11002
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
   repeated HistoricalSummary historical_summaries = 11003
-      [ (sila.eth.ext.ssz_max) = "16777216" ];
+      [ (sila.consensus.ext.ssz_max) = "16777216" ];
 
   // Fields introduced in Electra fork [12001-13000]
   uint64 deposit_requests_start_index = 12001;
   uint64 deposit_balance_to_consume = 12002 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Gwei"
   ];
   uint64 exit_balance_to_consume = 12003 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Gwei"
   ];
   uint64 earliest_exit_epoch = 12004 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
   uint64 consolidation_balance_to_consume = 12005 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Gwei"
   ];
   uint64 earliest_consolidation_epoch = 12006 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
   repeated PendingDeposit pending_deposits = 12007
-      [ (sila.eth.ext.ssz_max) = "pending_deposits_limit" ];
+      [ (sila.consensus.ext.ssz_max) = "pending_deposits_limit" ];
   repeated PendingPartialWithdrawal pending_partial_withdrawals = 12008
-      [ (sila.eth.ext.ssz_max) = "pending_partial_withdrawals_limit" ];
+      [ (sila.consensus.ext.ssz_max) = "pending_partial_withdrawals_limit" ];
   repeated PendingConsolidation pending_consolidations = 12009
-      [ (sila.eth.ext.ssz_max) = "pending_consolidations_limit" ];
+      [ (sila.consensus.ext.ssz_max) = "pending_consolidations_limit" ];
 
   // Fields introduced in Fulu fork [13001-14000]
   repeated uint64 proposer_lookahead = 13001 [
-    (sila.eth.ext.ssz_size) = "proposer_lookahead_size",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "proposer_lookahead_size",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
         "primitives.ValidatorIndex"
   ];

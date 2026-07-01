@@ -31,20 +31,20 @@ option php_namespace = "Sila\\Consensus\\v1";
 message BeaconBlock {
   // Beacon chain slot that this block represents.
   uint64 slot = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 
   // Validator index of the validator that proposed the block header.
-  uint64 proposer_index = 2 [ (sila.eth.ext.cast_type) =
+  uint64 proposer_index = 2 [ (sila.consensus.ext.cast_type) =
                                   "github.com/sila-chain/Sila-Consensus-Core/v7/"
                                   "consensus-types/primitives.ValidatorIndex" ];
 
   // 32 byte root of the parent block.
-  bytes parent_root = 3 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes parent_root = 3 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // 32 byte root of the resulting state after processing this block.
-  bytes state_root = 4 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes state_root = 4 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // The block body itself.
   BeaconBlockBody body = 5;
@@ -56,20 +56,20 @@ message SignedBeaconBlock {
   BeaconBlock block = 1;
 
   // 96 byte BLS signature from the validator that produced this block.
-  bytes signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 2 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 // The block body of an Sila consensus beacon block.
 message BeaconBlockBody {
   // The validators RANDAO reveal 96 byte value.
-  bytes randao_reveal = 1 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes randao_reveal = 1 [ (sila.consensus.ext.ssz_size) = "96" ];
 
   // A reference to the Sila chain.
   SilaData sila_data = 2;
 
   // 32 byte field of arbitrary data. This field may contain any data and
   // is not used for anything other than a fun message.
-  bytes graffiti = 3 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes graffiti = 3 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // Block operations
   // Refer to spec constants at
@@ -77,21 +77,21 @@ message BeaconBlockBody {
 
   // At most MAX_PROPOSER_SLASHINGS.
   repeated ProposerSlashing proposer_slashings = 4
-      [ (sila.eth.ext.ssz_max) = "16" ];
+      [ (sila.consensus.ext.ssz_max) = "16" ];
 
   // At most MAX_ATTESTER_SLASHINGS.
   repeated AttesterSlashing attester_slashings = 5
-      [ (sila.eth.ext.ssz_max) = "2" ];
+      [ (sila.consensus.ext.ssz_max) = "2" ];
 
   // At most MAX_ATTESTATIONS.
-  repeated Attestation attestations = 6 [ (sila.eth.ext.ssz_max) = "128" ];
+  repeated Attestation attestations = 6 [ (sila.consensus.ext.ssz_max) = "128" ];
 
   // At most MAX_DEPOSITS.
-  repeated Deposit deposits = 7 [ (sila.eth.ext.ssz_max) = "16" ];
+  repeated Deposit deposits = 7 [ (sila.consensus.ext.ssz_max) = "16" ];
 
   // At most MAX_VOLUNTARY_EXITS.
   repeated SignedVoluntaryExit voluntary_exits = 8
-      [ (sila.eth.ext.ssz_max) = "16" ];
+      [ (sila.consensus.ext.ssz_max) = "16" ];
 }
 
 // Proposer slashings are proofs that a slashable offense has been committed by
@@ -119,22 +119,22 @@ message Deposit {
   message Data {
     // 48 byte BLS public key of the validator.
     bytes pubkey = 1 [
-      (sila.eth.ext.ssz_size) = "48",
-      (sila.eth.ext.spec_name) = "pubkey"
+      (sila.consensus.ext.ssz_size) = "48",
+      (sila.consensus.ext.spec_name) = "pubkey"
     ];
 
     // A 32 byte hash of the withdrawal address public key.
-    bytes withdrawal_credentials = 2 [ (sila.eth.ext.ssz_size) = "32" ];
+    bytes withdrawal_credentials = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
 
     // Deposit amount in gwei.
     uint64 amount = 3;
 
     // 96 byte signature from the validators public key.
-    bytes signature = 4 [ (sila.eth.ext.ssz_size) = "96" ];
+    bytes signature = 4 [ (sila.consensus.ext.ssz_size) = "96" ];
   }
 
   // 32 byte roots in the deposit tree branch.
-  repeated bytes proof = 1 [ (sila.eth.ext.ssz_size) = "33,32" ];
+  repeated bytes proof = 1 [ (sila.consensus.ext.ssz_size) = "33,32" ];
 
   Data data = 2;
 }
@@ -145,13 +145,13 @@ message Deposit {
 message VoluntaryExit {
   // The epoch on when exit request becomes valid.
   uint64 epoch = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
   // Index of the exiting validator.
   uint64 validator_index = 2
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 }
@@ -162,14 +162,14 @@ message SignedVoluntaryExit {
   VoluntaryExit message = 1;
 
   // Validator's 96 byte signature
-  bytes signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 2 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 // SilaData represents references to the Sila deposit.
 message SilaData {
   // The 32 byte deposit tree root for the last deposit included in this
   // block.
-  bytes deposit_root = 1 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes deposit_root = 1 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // The total number of deposits included in the beacon chain since genesis
   // including the deposits in this block.
@@ -177,7 +177,7 @@ message SilaData {
 
   // The 32 byte block hash of the Sila block considered for deposit
   // inclusion.
-  bytes block_hash = 3 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes block_hash = 3 [ (sila.consensus.ext.ssz_size) = "32" ];
 }
 
 // A beacon block header is essentially a beacon block with only a reference to
@@ -187,24 +187,24 @@ message SilaData {
 message BeaconBlockHeader {
   // Beacon chain slot that this block represents.
   uint64 slot = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 
   // Validator index of the validator that proposed the block header.
-  uint64 proposer_index = 2 [ (sila.eth.ext.cast_type) =
+  uint64 proposer_index = 2 [ (sila.consensus.ext.cast_type) =
                                   "github.com/sila-chain/Sila-Consensus-Core/v7/"
                                   "consensus-types/primitives.ValidatorIndex" ];
 
   // 32 byte merkle tree root of the parent ssz encoded block.
-  bytes parent_root = 3 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes parent_root = 3 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // 32 byte merkle tree root of the resulting ssz encoded state after
   // processing this block.
-  bytes state_root = 4 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes state_root = 4 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // 32 byte merkle tree root of the ssz encoded block body.
-  bytes body_root = 5 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes body_root = 5 [ (sila.consensus.ext.ssz_size) = "32" ];
 }
 
 message SignedBeaconBlockHeader {
@@ -212,16 +212,16 @@ message SignedBeaconBlockHeader {
   BeaconBlockHeader message = 1;
 
   // 96 byte BLS signature from the validator that produced this block header.
-  bytes signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 2 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 message IndexedAttestation {
-  repeated uint64 attesting_indices = 1 [ (sila.eth.ext.ssz_max) = "2048" ];
+  repeated uint64 attesting_indices = 1 [ (sila.consensus.ext.ssz_max) = "2048" ];
 
   AttestationData data = 2;
 
   // 96 bytes aggregate signature.
-  bytes signature = 3 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 3 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 // The sync aggregate object for the beacon chain to track sync committee votes
@@ -229,10 +229,10 @@ message IndexedAttestation {
 message SyncAggregate {
   // Sync committee bits as Bitvector to track votes.
   bytes sync_committee_bits = 1 [
-    (sila.eth.ext.ssz_size) = "sync_committee_bytes.size",
-    (sila.eth.ext.cast_type) = "sync_committee_bits.type"
+    (sila.consensus.ext.ssz_size) = "sync_committee_bytes.size",
+    (sila.consensus.ext.cast_type) = "sync_committee_bits.type"
   ];
 
   // BLS aggregated signature of the sync committee for the ones that voted.
-  bytes sync_committee_signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes sync_committee_signature = 2 [ (sila.consensus.ext.ssz_size) = "96" ];
 }

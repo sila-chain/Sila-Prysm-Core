@@ -13,7 +13,7 @@
 // limitations under the License.
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
@@ -24,12 +24,12 @@ import "proto/sila/v1alpha1/beacon_block.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
 import "proto/sila/v1alpha1/validator.proto";
 
-option csharp_namespace = "Sila.Eth.v1alpha1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.v1alpha1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "BeaconChainProto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 // Beacon chain API
 //
@@ -313,7 +313,7 @@ message ListIndexedAttestationsRequest {
   oneof query_filter {
     // Retrieve attestations by epoch processed.
     uint64 epoch = 1 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
     ];
 
@@ -338,7 +338,7 @@ message ListAttestationsRequest {
   oneof query_filter {
     // Filter attestations by epoch processed.
     uint64 epoch = 1 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
     ];
 
@@ -423,14 +423,14 @@ message ListBlocksRequest {
     // criteria may yield multiple valid blocks if the node has seen blocks
     // from another fork.
     uint64 slot = 2 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
     ];
 
     // The epoch number for which to retrieve blocks. If specified, this
     // will return all blocks found within the span of the specified epoch.
     uint64 epoch = 3 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
     ];
 
@@ -518,64 +518,64 @@ message ChainHead {
 
   // Slot of the head block.
   uint64 head_slot = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 
   // Epoch of the head block.
   uint64 head_epoch = 2 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
   // 32 byte merkle tree root of the canonical head block in the beacon node.
-  bytes head_block_root = 3 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes head_block_root = 3 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // Most recent slot that contains the finalized block.
   uint64 finalized_slot = 4 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 
   // Epoch of the finalized block.
   uint64 finalized_epoch = 5 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
   // Most recent 32 byte finalized block root.
-  bytes finalized_block_root = 6 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes finalized_block_root = 6 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // Most recent slot that contains the justified block.
   uint64 justified_slot = 7 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 
   // Epoch of the justified block.
   uint64 justified_epoch = 8 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
   // Most recent 32 byte justified block root.
-  bytes justified_block_root = 9 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes justified_block_root = 9 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // Most recent slot that contains the previous justified block.
   uint64 previous_justified_slot = 10 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 
   // Epoch of the previous justified block.
   uint64 previous_justified_epoch = 11 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
   // Previous 32 byte justified block root.
   bytes previous_justified_block_root = 12
-      [ (sila.eth.ext.ssz_size) = "32" ];
+      [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // Optimistic status of the current head
   bool optimistic_status = 13;
@@ -587,7 +587,7 @@ message ListCommitteesRequest {
   oneof query_filter {
     // Optional criteria to retrieve data at a specific epoch.
     uint64 epoch = 1 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
     ];
 
@@ -603,7 +603,7 @@ message BeaconCommittees {
     // A committee is a list of validator indices participating in consensus at
     // a slot.
     repeated uint64 validator_indices = 1
-        [ (sila.eth.ext.cast_type) =
+        [ (sila.consensus.ext.cast_type) =
               "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
               "primitives.ValidatorIndex" ];
   }
@@ -615,7 +615,7 @@ message BeaconCommittees {
 
   // The epoch for which the committees in the response belong to.
   uint64 epoch = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
@@ -632,7 +632,7 @@ message ListValidatorBalancesRequest {
   oneof query_filter {
     // Optional criteria to retrieve balances at a specific epoch.
     uint64 epoch = 1 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
     ];
 
@@ -642,10 +642,10 @@ message ListValidatorBalancesRequest {
 
   // Validator 48 byte BLS public keys to filter validators for the given
   // epoch.
-  repeated bytes public_keys = 3 [ (sila.eth.ext.ssz_size) = "?,48" ];
+  repeated bytes public_keys = 3 [ (sila.consensus.ext.ssz_size) = "?,48" ];
   // Validator indices to filter validators for the given epoch.
   repeated uint64 indices = 4
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 
@@ -664,16 +664,16 @@ message ValidatorBalances {
 
   // Epoch which the state was considered to determine the validator balances.
   uint64 epoch = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
   message Balance {
     // Validator's 48 byte BLS public key.
-    bytes public_key = 1 [ (sila.eth.ext.ssz_size) = "48" ];
+    bytes public_key = 1 [ (sila.consensus.ext.ssz_size) = "48" ];
 
     // Validator's index in the validator set.
-    uint64 index = 2 [ (sila.eth.ext.cast_type) =
+    uint64 index = 2 [ (sila.consensus.ext.cast_type) =
                            "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
                            "primitives.ValidatorIndex" ];
 
@@ -703,7 +703,7 @@ message ListValidatorsRequest {
     // Omitting this field or setting it to zero will retrieve a response
     // with the current active validator set.
     uint64 epoch = 1 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
     ];
 
@@ -730,7 +730,7 @@ message ListValidatorsRequest {
   // Specify which validators you would like to retrieve by their indices.
   // This field is optional.
   repeated uint64 indices = 7
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 }
@@ -740,12 +740,12 @@ message GetValidatorRequest {
 
   oneof query_filter {
     // Validator index in the registry.
-    uint64 index = 1 [ (sila.eth.ext.cast_type) =
+    uint64 index = 1 [ (sila.consensus.ext.cast_type) =
                            "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
                            "primitives.ValidatorIndex" ];
 
     // 48 byte validator public key.
-    bytes public_key = 2 [ (sila.eth.ext.ssz_size) = "48" ];
+    bytes public_key = 2 [ (sila.consensus.ext.ssz_size) = "48" ];
   }
 }
 
@@ -756,12 +756,12 @@ message Validators {
   // set. This field is not optional. Zero value epoch indicates the validator
   // set is from the Sila proof of stake genesis set.
   uint64 epoch = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
   message ValidatorContainer {
-    uint64 index = 1 [ (sila.eth.ext.cast_type) =
+    uint64 index = 1 [ (sila.consensus.ext.cast_type) =
                            "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
                            "primitives.ValidatorIndex" ];
     Validator validator = 2;
@@ -784,7 +784,7 @@ message GetValidatorActiveSetChangesRequest {
   oneof query_filter {
     // Optional criteria to retrieve balances at a specific epoch.
     uint64 epoch = 1 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
     ];
 
@@ -799,49 +799,49 @@ message ActiveSetChanges {
   // Epoch which the state was considered to determine the active validator
   // set.
   uint64 epoch = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
   // 48 byte validator public keys that have been activated in the given epoch.
   repeated bytes activated_public_keys = 2
-      [ (sila.eth.ext.ssz_size) = "?,48" ];
+      [ (sila.consensus.ext.ssz_size) = "?,48" ];
 
   // Indices of validators activated in the given epoch.
   repeated uint64 activated_indices = 3
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 
   // 48 byte validator public keys that have been voluntarily exited in the
   // given epoch.
   repeated bytes exited_public_keys = 4
-      [ (sila.eth.ext.ssz_size) = "?,48" ];
+      [ (sila.consensus.ext.ssz_size) = "?,48" ];
 
   // Indices of validators exited in the given epoch.
   repeated uint64 exited_indices = 5
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 
   // 48 byte validator public keys that have been slashed in the given epoch.
   repeated bytes slashed_public_keys = 6
-      [ (sila.eth.ext.ssz_size) = "?,48" ];
+      [ (sila.consensus.ext.ssz_size) = "?,48" ];
 
   // Indices of validators slashed in the given epoch.
   repeated uint64 slashed_indices = 7
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 
   // 48 byte validator public keys that have been involuntarily ejected in this
   // epoch.
   repeated bytes ejected_public_keys = 8
-      [ (sila.eth.ext.ssz_size) = "?,48" ];
+      [ (sila.consensus.ext.ssz_size) = "?,48" ];
 
   // Indices of validators ejected in the given epoch.
   repeated uint64 ejected_indices = 9
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 }
@@ -853,7 +853,7 @@ message ValidatorPerformanceRequest {
   repeated bytes public_keys = 1 [ deprecated = true ];
   // A list of validator indices to retrieve performance by their indices.
   repeated uint64 indices = 2
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 }
@@ -869,7 +869,7 @@ message ValidatorPerformanceResponse {
   // Deprecated: This field can no longer be fetched from the beacon state after
   // the Altair hard fork.
   repeated uint64 inclusion_slots = 2 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot",
     deprecated = true
   ];
@@ -878,7 +878,7 @@ message ValidatorPerformanceResponse {
   // field can no longer be fetched from the beacon state after the Altair hard
   // fork.
   repeated uint64 inclusion_distances = 3 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot",
     deprecated = true
   ];
@@ -903,7 +903,7 @@ message ValidatorPerformanceResponse {
   // The average active validator balance in the beacon chain.
   float average_active_validator_balance = 10;
   // The public keys in the order they are in of the response.
-  repeated bytes public_keys = 11 [ (sila.eth.ext.ssz_size) = "?,48" ];
+  repeated bytes public_keys = 11 [ (sila.consensus.ext.ssz_size) = "?,48" ];
   // The inactivity score of the validator tracks validator participation. [New
   // in Altair]
   repeated uint64 inactivity_scores = 12;
@@ -921,24 +921,24 @@ message ValidatorQueue {
   // Ordered list of 48 byte public keys awaiting activation. 0th index is the
   // next key to be processed.
   repeated bytes activation_public_keys = 2
-      [ (sila.eth.ext.ssz_size) = "?,48", deprecated = true ];
+      [ (sila.consensus.ext.ssz_size) = "?,48", deprecated = true ];
 
   // Ordered list of public keys awaiting exit. 0th index is the next key to
   // be processed.
   repeated bytes exit_public_keys = 3
-      [ (sila.eth.ext.ssz_size) = "?,48", deprecated = true ];
+      [ (sila.consensus.ext.ssz_size) = "?,48", deprecated = true ];
 
   // Ordered list of validator indices awaiting activation. 0th item in the list
   // is the next validator index to be processed.
   repeated uint64 activation_validator_indices = 4
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 
   // Ordered list of validator indices awaiting exit. 0th item in the list is
   // the next validator index to be processed.
   repeated uint64 exit_validator_indices = 5
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 }
@@ -949,7 +949,7 @@ message ListValidatorAssignmentsRequest {
   oneof query_filter {
     // Epoch to validator assignments for.
     uint64 epoch = 1 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
     ];
 
@@ -957,10 +957,10 @@ message ListValidatorAssignmentsRequest {
     bool genesis = 2;
   }
   // 48 byte validator public keys to filter assignments for the given epoch.
-  repeated bytes public_keys = 3 [ (sila.eth.ext.ssz_size) = "?,48" ];
+  repeated bytes public_keys = 3 [ (sila.consensus.ext.ssz_size) = "?,48" ];
   // Validator indices to filter assignments for the given epoch.
   repeated uint64 indices = 4
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 
@@ -984,44 +984,44 @@ message ValidatorAssignments {
     // requested validator, everyone in the committee is assigned to the same
     // slot and same committee.
     repeated uint64 beacon_committees = 1
-        [ (sila.eth.ext.cast_type) =
+        [ (sila.consensus.ext.cast_type) =
               "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
               "primitives.ValidatorIndex" ];
 
     // Committee index represents the committee of validator that's in.
     uint64 committee_index = 2
-        [ (sila.eth.ext.cast_type) =
+        [ (sila.consensus.ext.cast_type) =
               "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
               "primitives.CommitteeIndex" ];
 
     // Beacon chain slot in which the validator must perform its assigned
     // duty as an attester.
     uint64 attester_slot = 3 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
     ];
 
     // Beacon chain slots in which the validator must perform its assigned
     // duty as a proposer.
     repeated uint64 proposer_slots = 4 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
     ];
 
     // 48 byte BLS public key.
     bytes public_key = 5
-        [ (sila.eth.ext.ssz_size) = "48", deprecated = true ];
+        [ (sila.consensus.ext.ssz_size) = "48", deprecated = true ];
 
     // Validator index in the beacon state.
     uint64 validator_index = 6
-        [ (sila.eth.ext.cast_type) =
+        [ (sila.consensus.ext.cast_type) =
               "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
               "primitives.ValidatorIndex" ];
   }
 
   // The epoch for which this set of validator assignments is valid.
   uint64 epoch = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
@@ -1043,7 +1043,7 @@ message GetValidatorParticipationRequest {
   oneof query_filter {
     // Epoch to request participation information.
     uint64 epoch = 1 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
     ];
 
@@ -1056,7 +1056,7 @@ message ValidatorParticipationResponse {
   option deprecated = true;
   // Epoch which this message is applicable.
   uint64 epoch = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
@@ -1118,7 +1118,7 @@ message SubmitSlashingResponse {
   // Indices of the validators to be slashed by the submitted
   // proposer/attester slashing object.
   repeated uint64 slashed_indices = 1
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 }
@@ -1126,14 +1126,14 @@ message SubmitSlashingResponse {
 message IndividualVotesRequest {
   // Epoch of the request.
   uint64 epoch = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
   // Validator 48 byte BLS public keys to filter validators for the given epoch.
   repeated bytes public_keys = 2;
   // Validator indices to filter validators for the given epoch.
   repeated uint64 indices = 3
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 }
@@ -1142,14 +1142,14 @@ message IndividualVotesRespond {
   message IndividualVote {
     // The epoch of the vote status request.
     uint64 epoch = 1 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
     ];
     // The public key of the vote status request.
     bytes public_key = 2;
     // The validator index of the request.
     uint64 validator_index = 3
-        [ (sila.eth.ext.cast_type) =
+        [ (sila.consensus.ext.cast_type) =
               "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
               "primitives.ValidatorIndex" ];
     // Has the validator been slashed.
@@ -1175,14 +1175,14 @@ message IndividualVotesRespond {
     // The slots of when the validator's attestation got included in the block.
     // Only available in phase0.
     uint64 inclusion_slot = 14 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot",
       deprecated = true
     ];
     // How many slots have passed until the validator's attestation got included
     // in the block. Only available in phase0.
     uint64 inclusion_distance = 15 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot",
       deprecated = true
     ];

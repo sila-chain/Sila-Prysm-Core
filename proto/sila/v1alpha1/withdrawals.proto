@@ -13,16 +13,16 @@
 // limitations under the License.
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "proto/silaapi/ext/options.proto";
 
-option csharp_namespace = "Sila.Eth.v1alpha1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.v1alpha1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "WithdrawalsProto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 // The signed version of a BLSToSilaChange
 message SignedBLSToSilaChange {
@@ -30,20 +30,20 @@ message SignedBLSToSilaChange {
   BLSToSilaChange message = 1;
 
   // The 96 byte BLS signature from the withdrawal address requesting the change
-  bytes signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 2 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 // The message requesting a BLS to Sila withdrawal credentials change
 message BLSToSilaChange {
   // The validator index requesting the change
   uint64 validator_index = 1
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 
   // The public key of the BLS address requesting the change
-  bytes from_bls_pubkey = 2 [ (sila.eth.ext.ssz_size) = "48" ];
+  bytes from_bls_pubkey = 2 [ (sila.consensus.ext.ssz_size) = "48" ];
 
   // The new sila address to be the withdrawal credentials
-  bytes to_sila_address = 3 [ (sila.eth.ext.ssz_size) = "20" ];
+  bytes to_sila_address = 3 [ (sila.consensus.ext.ssz_size) = "20" ];
 }

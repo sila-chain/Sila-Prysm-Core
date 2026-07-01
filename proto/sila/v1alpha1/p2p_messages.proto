@@ -1,52 +1,52 @@
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "google/protobuf/descriptor.proto";
 import "proto/silaapi/ext/options.proto";
 
-option csharp_namespace = "Sila.Eth.V1alpha1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.V1alpha1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "P2PMessagesProto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 message Status {
-  bytes fork_digest = 1 [ (sila.eth.ext.ssz_size) = "4" ];
-  bytes finalized_root = 2 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes fork_digest = 1 [ (sila.consensus.ext.ssz_size) = "4" ];
+  bytes finalized_root = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 finalized_epoch = 3 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
-  bytes head_root = 4 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes head_root = 4 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 head_slot = 5 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
 
 message StatusV2 {
-  bytes fork_digest = 1 [ (sila.eth.ext.ssz_size) = "4" ];
-  bytes finalized_root = 2 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes fork_digest = 1 [ (sila.consensus.ext.ssz_size) = "4" ];
+  bytes finalized_root = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 finalized_epoch = 3 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
-  bytes head_root = 4 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes head_root = 4 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 head_slot = 5 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   uint64 earliest_available_slot = 6 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
 
 message BeaconBlocksByRangeRequest {
   uint64 start_slot = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   uint64 count = 2;
@@ -54,10 +54,10 @@ message BeaconBlocksByRangeRequest {
 }
 
 message ENRForkID {
-  bytes current_fork_digest = 1 [ (sila.eth.ext.ssz_size) = "4" ];
-  bytes next_fork_version = 2 [ (sila.eth.ext.ssz_size) = "4" ];
+  bytes current_fork_digest = 1 [ (sila.consensus.ext.ssz_size) = "4" ];
+  bytes next_fork_version = 2 [ (sila.consensus.ext.ssz_size) = "4" ];
   uint64 next_fork_epoch = 3 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 }
@@ -73,8 +73,8 @@ message ENRForkID {
 message MetaDataV0 {
   uint64 seq_number = 1;
   bytes attnets = 2 [
-    (sila.eth.ext.ssz_size) = "8",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "8",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector64"
   ];
 }
@@ -91,13 +91,13 @@ message MetaDataV0 {
 message MetaDataV1 {
   uint64 seq_number = 1;
   bytes attnets = 2 [
-    (sila.eth.ext.ssz_size) = "8",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "8",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector64"
   ];
   bytes syncnets = 3 [
-    (sila.eth.ext.ssz_size) = "1",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "1",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector4"
   ];
 }
@@ -115,13 +115,13 @@ message MetaDataV1 {
 message MetaDataV2 {
   uint64 seq_number = 1;
   bytes attnets = 2 [
-    (sila.eth.ext.ssz_size) = "8",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "8",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector64"
   ];
   bytes syncnets = 3 [
-    (sila.eth.ext.ssz_size) = "1",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "1",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector4"
   ];
   uint64 custody_group_count = 4;
@@ -136,7 +136,7 @@ message MetaDataV2 {
 */
 message BlobSidecarsByRangeRequest {
   uint64 start_slot = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   uint64 count = 2;
@@ -152,11 +152,11 @@ Spec Definition:
  */
 message DataColumnSidecarsByRangeRequest {
   uint64 start_slot = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
   uint64 count = 2;
-  repeated uint64 columns = 3 [ (sila.eth.ext.ssz_max) = "128" ];
+  repeated uint64 columns = 3 [ (sila.consensus.ext.ssz_max) = "128" ];
 }
 
 /*

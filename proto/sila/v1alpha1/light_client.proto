@@ -13,18 +13,18 @@
 // limitations under the License.
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1alpha1/beacon_core_types.proto";
 import "proto/silaengine/v1/silaengine.proto";
 
-option csharp_namespace = "Sila.Eth.V1alpha1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/silaapi/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.V1alpha1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "LightClientProto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 // ----------------------------------------------------------------------------
 // Altair & Bellatrix
@@ -34,19 +34,19 @@ message LightClientBootstrapAltair {
   LightClientHeaderAltair header = 1;
   SyncCommittee current_sync_committee = 2;
   repeated bytes current_sync_committee_branch = 3
-      [ (sila.eth.ext.ssz_size) = "5,32" ];
+      [ (sila.consensus.ext.ssz_size) = "5,32" ];
 }
 
 message LightClientUpdateAltair {
   LightClientHeaderAltair attested_header = 1;
   SyncCommittee next_sync_committee = 2;
   repeated bytes next_sync_committee_branch = 3
-      [ (sila.eth.ext.ssz_size) = "5,32" ];
+      [ (sila.consensus.ext.ssz_size) = "5,32" ];
   LightClientHeaderAltair finalized_header = 4;
-  repeated bytes finality_branch = 5 [ (sila.eth.ext.ssz_size) = "6,32" ];
+  repeated bytes finality_branch = 5 [ (sila.consensus.ext.ssz_size) = "6,32" ];
   SyncAggregate sync_aggregate = 6;
   uint64 signature_slot = 7 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -54,10 +54,10 @@ message LightClientUpdateAltair {
 message LightClientFinalityUpdateAltair {
   LightClientHeaderAltair attested_header = 1;
   LightClientHeaderAltair finalized_header = 2;
-  repeated bytes finality_branch = 3 [ (sila.eth.ext.ssz_size) = "6,32" ];
+  repeated bytes finality_branch = 3 [ (sila.consensus.ext.ssz_size) = "6,32" ];
   SyncAggregate sync_aggregate = 4;
   uint64 signature_slot = 5 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -66,7 +66,7 @@ message LightClientOptimisticUpdateAltair {
   LightClientHeaderAltair attested_header = 1;
   SyncAggregate sync_aggregate = 2;
   uint64 signature_slot = 3 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -81,19 +81,19 @@ message LightClientBootstrapCapella {
   LightClientHeaderCapella header = 1;
   SyncCommittee current_sync_committee = 2;
   repeated bytes current_sync_committee_branch = 3
-      [ (sila.eth.ext.ssz_size) = "5,32" ];
+      [ (sila.consensus.ext.ssz_size) = "5,32" ];
 }
 
 message LightClientUpdateCapella {
   LightClientHeaderCapella attested_header = 1;
   SyncCommittee next_sync_committee = 2;
   repeated bytes next_sync_committee_branch = 3
-      [ (sila.eth.ext.ssz_size) = "5,32" ];
+      [ (sila.consensus.ext.ssz_size) = "5,32" ];
   LightClientHeaderCapella finalized_header = 4;
-  repeated bytes finality_branch = 5 [ (sila.eth.ext.ssz_size) = "6,32" ];
+  repeated bytes finality_branch = 5 [ (sila.consensus.ext.ssz_size) = "6,32" ];
   SyncAggregate sync_aggregate = 6;
   uint64 signature_slot = 7 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -101,10 +101,10 @@ message LightClientUpdateCapella {
 message LightClientFinalityUpdateCapella {
   LightClientHeaderCapella attested_header = 1;
   LightClientHeaderCapella finalized_header = 2;
-  repeated bytes finality_branch = 3 [ (sila.eth.ext.ssz_size) = "6,32" ];
+  repeated bytes finality_branch = 3 [ (sila.consensus.ext.ssz_size) = "6,32" ];
   SyncAggregate sync_aggregate = 4;
   uint64 signature_slot = 5 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -113,7 +113,7 @@ message LightClientOptimisticUpdateCapella {
   LightClientHeaderCapella attested_header = 1;
   SyncAggregate sync_aggregate = 2;
   uint64 signature_slot = 3 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -121,7 +121,7 @@ message LightClientOptimisticUpdateCapella {
 message LightClientHeaderCapella {
   BeaconBlockHeader beacon = 1;
   sila.silaengine.v1.SilaPayloadHeaderCapella sila_light_client_payload_header = 2;
-  repeated bytes sila_light_client_payload_branch = 3 [ (sila.eth.ext.ssz_size) = "4,32" ];
+  repeated bytes sila_light_client_payload_branch = 3 [ (sila.consensus.ext.ssz_size) = "4,32" ];
 }
 
 // ----------------------------------------------------------------------------
@@ -132,19 +132,19 @@ message LightClientBootstrapDeneb {
   LightClientHeaderDeneb header = 1;
   SyncCommittee current_sync_committee = 2;
   repeated bytes current_sync_committee_branch = 3
-      [ (sila.eth.ext.ssz_size) = "5,32" ];
+      [ (sila.consensus.ext.ssz_size) = "5,32" ];
 }
 
 message LightClientUpdateDeneb {
   LightClientHeaderDeneb attested_header = 1;
   SyncCommittee next_sync_committee = 2;
   repeated bytes next_sync_committee_branch = 3
-      [ (sila.eth.ext.ssz_size) = "5,32" ];
+      [ (sila.consensus.ext.ssz_size) = "5,32" ];
   LightClientHeaderDeneb finalized_header = 4;
-  repeated bytes finality_branch = 5 [ (sila.eth.ext.ssz_size) = "6,32" ];
+  repeated bytes finality_branch = 5 [ (sila.consensus.ext.ssz_size) = "6,32" ];
   SyncAggregate sync_aggregate = 6;
   uint64 signature_slot = 7 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -152,10 +152,10 @@ message LightClientUpdateDeneb {
 message LightClientFinalityUpdateDeneb {
   LightClientHeaderDeneb attested_header = 1;
   LightClientHeaderDeneb finalized_header = 2;
-  repeated bytes finality_branch = 3 [ (sila.eth.ext.ssz_size) = "6,32" ];
+  repeated bytes finality_branch = 3 [ (sila.consensus.ext.ssz_size) = "6,32" ];
   SyncAggregate sync_aggregate = 4;
   uint64 signature_slot = 5 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -164,7 +164,7 @@ message LightClientOptimisticUpdateDeneb {
   LightClientHeaderDeneb attested_header = 1;
   SyncAggregate sync_aggregate = 2;
   uint64 signature_slot = 3 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -172,7 +172,7 @@ message LightClientOptimisticUpdateDeneb {
 message LightClientHeaderDeneb {
   BeaconBlockHeader beacon = 1;
   sila.silaengine.v1.SilaPayloadHeaderDeneb sila_light_client_payload_header = 2;
-  repeated bytes sila_light_client_payload_branch = 3 [ (sila.eth.ext.ssz_size) = "4,32" ];
+  repeated bytes sila_light_client_payload_branch = 3 [ (sila.consensus.ext.ssz_size) = "4,32" ];
 }
 
 // ----------------------------------------------------------------------------
@@ -183,19 +183,19 @@ message LightClientBootstrapElectra {
   LightClientHeaderDeneb header = 1;
   SyncCommittee current_sync_committee = 2;
   repeated bytes current_sync_committee_branch = 3
-      [ (sila.eth.ext.ssz_size) = "6,32" ];
+      [ (sila.consensus.ext.ssz_size) = "6,32" ];
 }
 
 message LightClientUpdateElectra {
   LightClientHeaderDeneb attested_header = 1;
   SyncCommittee next_sync_committee = 2;
   repeated bytes next_sync_committee_branch = 3
-      [ (sila.eth.ext.ssz_size) = "6,32" ];
+      [ (sila.consensus.ext.ssz_size) = "6,32" ];
   LightClientHeaderDeneb finalized_header = 4;
-  repeated bytes finality_branch = 5 [ (sila.eth.ext.ssz_size) = "7,32" ];
+  repeated bytes finality_branch = 5 [ (sila.consensus.ext.ssz_size) = "7,32" ];
   SyncAggregate sync_aggregate = 6;
   uint64 signature_slot = 7 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -203,10 +203,10 @@ message LightClientUpdateElectra {
 message LightClientFinalityUpdateElectra {
   LightClientHeaderDeneb attested_header = 1;
   LightClientHeaderDeneb finalized_header = 2;
-  repeated bytes finality_branch = 3 [ (sila.eth.ext.ssz_size) = "7,32" ];
+  repeated bytes finality_branch = 3 [ (sila.consensus.ext.ssz_size) = "7,32" ];
   SyncAggregate sync_aggregate = 4;
   uint64 signature_slot = 5 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }

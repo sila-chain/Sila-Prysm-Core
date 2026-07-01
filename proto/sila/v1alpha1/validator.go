@@ -1,4 +1,4 @@
-package sila
+package v1alpha1
 
 import (
 	"github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives"

@@ -13,44 +13,44 @@
 // limitations under the License.
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "proto/silaapi/ext/options.proto";
 
-option csharp_namespace = "Sila.Eth.v1alpha1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.v1alpha1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "BlobsProto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 message BlindedBlobSidecars {
   repeated BlindedBlobSidecar sidecars = 1
-      [ (sila.eth.ext.ssz_max) = "max_blobs_per_block.size" ];
+      [ (sila.consensus.ext.ssz_max) = "max_blobs_per_block.size" ];
 }
 
 message SignedBlindedBlobSidecar {
   BlindedBlobSidecar message = 1;
-  bytes signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 2 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 message BlindedBlobSidecar {
-  bytes block_root = 1 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes block_root = 1 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 index = 2;
   uint64 slot = 3 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
-  bytes block_parent_root = 4 [ (sila.eth.ext.ssz_size) = "32" ];
-  uint64 proposer_index = 5 [ (sila.eth.ext.cast_type) =
+  bytes block_parent_root = 4 [ (sila.consensus.ext.ssz_size) = "32" ];
+  uint64 proposer_index = 5 [ (sila.consensus.ext.cast_type) =
                                   "github.com/sila-chain/Sila-Consensus-Core/v7/"
                                   "consensus-types/primitives.ValidatorIndex" ];
-  bytes blob_root = 6 [ (sila.eth.ext.ssz_size) = "32" ];
-  bytes kzg_commitment = 7 [ (sila.eth.ext.ssz_size) = "48" ];
-  bytes kzg_proof = 8 [ (sila.eth.ext.ssz_size) = "48" ];
+  bytes blob_root = 6 [ (sila.consensus.ext.ssz_size) = "32" ];
+  bytes kzg_commitment = 7 [ (sila.consensus.ext.ssz_size) = "48" ];
+  bytes kzg_proof = 8 [ (sila.consensus.ext.ssz_size) = "48" ];
 }
 
 message BlobIdentifier {
-  bytes block_root = 1 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes block_root = 1 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 index = 2;
 }

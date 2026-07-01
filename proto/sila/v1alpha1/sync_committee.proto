@@ -13,16 +13,16 @@
 // limitations under the License.
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "proto/silaapi/ext/options.proto";
 
-option csharp_namespace = "Sila.Eth.V1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.V1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "SyncCommitteeProto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 // Sync committee object to support light client.
 message SyncCommitteeMessage {
@@ -30,21 +30,21 @@ message SyncCommitteeMessage {
 
   // Slot to which this contribution pertains.
   uint64 slot = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 
   // 32 byte block root for this signature.
-  bytes block_root = 2 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes block_root = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // Index of the validator that produced this signature.
   uint64 validator_index = 3
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 
   // Signature by the validator over the block root of `slot`.
-  bytes signature = 4 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 4 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 // Signed aggregated sync committee signature object with selection proof to
@@ -53,7 +53,7 @@ message SignedContributionAndProof {
   ContributionAndProof message = 1;
 
   // Signature of the aggregator that produced `message`.
-  bytes signature = 4 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 4 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 // Aggregated sync committee signature object with selection proof to support
@@ -61,26 +61,26 @@ message SignedContributionAndProof {
 message ContributionAndProof {
   // Index of the aggregator that produced this proof.
   uint64 aggregator_index = 1
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 
   SyncCommitteeContribution contribution = 2;
 
   // The selection proof itself.
-  bytes selection_proof = 3 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes selection_proof = 3 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 // Aggregated sync committee object to support light client.
 message SyncCommitteeContribution {
   // Slot to which this contribution pertains.
   uint64 slot = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 
   // 32 byte block root for this signature.
-  bytes block_root = 2 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes block_root = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // The subcommittee this contribution pertains to out of the broader sync
   // committee.
@@ -89,9 +89,9 @@ message SyncCommitteeContribution {
   // A bit is set if a signature from the validator at the corresponding
   // index in the subcommittee is present in the aggregate `signature`.
   bytes aggregation_bits = 4 [
-    (sila.eth.ext.ssz_size) = "sync_committee_aggregate_bytes.size",
-    (sila.eth.ext.cast_type) = "sync_committee_aggregate_bits.type"
+    (sila.consensus.ext.ssz_size) = "sync_committee_aggregate_bytes.size",
+    (sila.consensus.ext.cast_type) = "sync_committee_aggregate_bits.type"
   ];
   // Signature by the validator(s) over the block root of `slot`.
-  bytes signature = 5 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 5 [ (sila.consensus.ext.ssz_size) = "96" ];
 }

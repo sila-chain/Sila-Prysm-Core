@@ -17,7 +17,7 @@ option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/ssz_quer
 message FixedNestedContainer {
   uint64 value1 =
       1; // Test: uint64 basic type, offset calculation in nested context
-  bytes value2 = 2 [ (sila.eth.ext.ssz_size) =
+  bytes value2 = 2 [ (sila.consensus.ext.ssz_size) =
                          "32" ]; // Test: fixed-size bytes in nested container
 }
 
@@ -36,7 +36,7 @@ message FixedTestContainer {
 
   // Fixed-size bytes - test byte array
   bytes field_bytes32 = 4
-      [ (sila.eth.ext.ssz_size) = "32" ]; // Test: 32-byte array, offset: 13
+      [ (sila.consensus.ext.ssz_size) = "32" ]; // Test: 32-byte array, offset: 13
 
   // Nested container - test container nesting and field access
   FixedNestedContainer nested =
@@ -44,31 +44,31 @@ message FixedTestContainer {
 
   // Vector type - test fixed-size array of basic elements
   repeated uint64 vector_field = 6
-      [ (sila.eth.ext.ssz_size) =
+      [ (sila.consensus.ext.ssz_size) =
             "24" ]; // Test: Vector[24] of uint64 (24*8=192 bytes), offset: 85
 
   // 2D bytes type - test 2-dimensional byte arrays, common in blockchain state
   // roots (e.g., beacon_state.block_roots)
   repeated bytes two_dimension_bytes_field = 7
-      [ (sila.eth.ext.ssz_size) =
+      [ (sila.consensus.ext.ssz_size) =
             "5,32" ]; // Test: Vector[Bytes32, 5] (32*5=160 bytes), offset: 277
 
   // Bitvector types - test bitfield serialization
   bytes bitvector64_field = 8 [
-    (sila.eth.ext.ssz_size) = "8",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "8",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector64"
   ]; // Test: Bitvector64 (8 bytes), offset: 437
 
   bytes bitvector512_field = 9 [
-    (sila.eth.ext.ssz_size) = "64",
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.ssz_size) = "64",
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/go-bitfield.Bitvector512"
   ]; // Test: Bitvector512 (64 bytes), offset: 445
 
   // Additional bytes field - test field ordering and offset calculation
   bytes trailing_field = 10
-      [ (sila.eth.ext.ssz_size) =
+      [ (sila.consensus.ext.ssz_size) =
             "56" ]; // Test: trailing field after vector, offset: 509
 }
 
@@ -79,10 +79,10 @@ message FixedTestContainer {
 // structures
 message VariableNestedContainer {
   uint64 value1 = 1;
-  repeated uint64 field_list_uint64 = 2 [ (sila.eth.ext.ssz_max) = "100" ];
+  repeated uint64 field_list_uint64 = 2 [ (sila.consensus.ext.ssz_max) = "100" ];
   repeated bytes nested_list_field = 3 [
-    (sila.eth.ext.ssz_size) = "?,?",
-    (sila.eth.ext.ssz_max) = "100,50"
+    (sila.consensus.ext.ssz_size) = "?,?",
+    (sila.consensus.ext.ssz_max) = "100,50"
   ];
 }
 
@@ -99,26 +99,26 @@ message VariableTestContainer {
   // Fixed-size leading field - test fixed field before variable fields
   // Acts as a baseline to verify offset calculations start correctly
   bytes leading_field = 1
-      [ (sila.eth.ext.ssz_size) =
+      [ (sila.consensus.ext.ssz_size) =
             "32" ]; // Test: fixed 32-byte field at start, offset: 0
 
   // Variable-size list of basic type - test list with primitive elements
   // SSZ uses 4-byte offset pointer, actual data stored after all fixed fields
   repeated uint64 field_list_uint64 = 2
-      [ (sila.eth.ext.ssz_max) =
+      [ (sila.consensus.ext.ssz_max) =
             "2048" ]; // Test: List[uint64, 2048] (max 2048 elements)
 
   // Variable-size list of containers - test list with composite elements
   // Each container is fixed-size (40 bytes), but list itself is variable
   repeated FixedNestedContainer field_list_container = 3
-      [ (sila.eth.ext.ssz_max) =
+      [ (sila.consensus.ext.ssz_max) =
             "128" ]; // Test: List[FixedNestedContainer, 128]
 
   // Variable-size list of bytes32 - test list with fixed-size byte arrays
   // e.g., beacon_state.historical_roots
   repeated bytes field_list_bytes32 = 4 [
-    (sila.eth.ext.ssz_size) = "?,32",
-    (sila.eth.ext.ssz_max) = "100"
+    (sila.consensus.ext.ssz_size) = "?,32",
+    (sila.consensus.ext.ssz_max) = "100"
   ]; // Test: List[Bytes32, 100]
 
   // Variable nested container - test nested container access within variable
@@ -128,26 +128,26 @@ message VariableTestContainer {
   // List of variable-sized containers
   // e.g., BeaconBlockBody.attester_slashings
   repeated VariableOuterContainer variable_container_list = 6
-      [ (sila.eth.ext.ssz_max) =
+      [ (sila.consensus.ext.ssz_max) =
             "10" ]; // Test: List[VariableOuterContainer, 10]
 
   // Bitlist type - test bitlist serialization
   bytes bitlist_field = 7 [
-    (sila.eth.ext.ssz_max) = "2048",
-    (sila.eth.ext.cast_type) = "github.com/sila-chain/go-bitfield.Bitlist"
+    (sila.consensus.ext.ssz_max) = "2048",
+    (sila.consensus.ext.cast_type) = "github.com/sila-chain/go-bitfield.Bitlist"
   ];
 
   // 2D bytes list - test list of bytelists.
   // e.g., SilaPayload.transactions
   repeated bytes nested_list_field = 8 [
-    (sila.eth.ext.ssz_size) = "?,?",
-    (sila.eth.ext.ssz_max) = "100,50"
+    (sila.consensus.ext.ssz_size) = "?,?",
+    (sila.consensus.ext.ssz_max) = "100,50"
   ];
 
   // Fixed-size trailing field - test fixed field after variable fields
   // Verifies correct offset calculation after variable-size fields
   bytes trailing_field = 9
-      [ (sila.eth.ext.ssz_size) =
+      [ (sila.consensus.ext.ssz_size) =
             "56" ]; // Test: fixed 56-byte field at end, offset: 32 + 4 + 4 + 4
                     // + 4 + 4 + 4 + 4 = 60
 }

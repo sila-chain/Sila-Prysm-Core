@@ -7,21 +7,21 @@ import "proto/silaapi/ext/options.proto";
 option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/ssz_query";
 
 message SSZQueryProof {
-  bytes leaf = 1 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes leaf = 1 [ (sila.consensus.ext.ssz_size) = "32" ];
   uint64 gindex = 2;
   repeated bytes proofs = 3 [
-    (sila.eth.ext.ssz_size) = "?,32",
-    (sila.eth.ext.ssz_max) = "64,?"
+    (sila.consensus.ext.ssz_size) = "?,32",
+    (sila.consensus.ext.ssz_max) = "64,?"
   ];
 }
 
 message SSZQueryResponse {
-  bytes root = 1 [ (sila.eth.ext.ssz_size) = "32" ];
-  bytes result = 2 [ (sila.eth.ext.ssz_max) = "1073741824" ];
+  bytes root = 1 [ (sila.consensus.ext.ssz_size) = "32" ];
+  bytes result = 2 [ (sila.consensus.ext.ssz_max) = "1073741824" ];
 }
 
 message SSZQueryResponseWithProof {
-  bytes root = 1 [ (sila.eth.ext.ssz_size) = "32" ];
-  bytes result = 2 [ (sila.eth.ext.ssz_max) = "1073741824" ];
+  bytes root = 1 [ (sila.consensus.ext.ssz_size) = "32" ];
+  bytes result = 2 [ (sila.consensus.ext.ssz_max) = "1073741824" ];
   SSZQueryProof proof = 3;
 }

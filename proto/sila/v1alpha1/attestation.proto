@@ -13,16 +13,16 @@
 // limitations under the License.
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "proto/silaapi/ext/options.proto";
 
-option csharp_namespace = "Sila.Eth.v1alpha1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.v1alpha1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "AttestationProto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 // ----------------------------------------------------------------------------
 // Phase0, Altair, Bellatrix, Capella & Deneb
@@ -33,13 +33,13 @@ message SignedAggregateAttestationAndProof {
   AggregateAttestationAndProof message = 1;
 
   // 96 byte BLS aggregate signature signed by the aggregator over the message.
-  bytes signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 2 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 message AggregateAttestationAndProof {
   // The aggregator index that submitted this aggregated attestation and proof.
   uint64 aggregator_index = 1
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 
@@ -48,21 +48,21 @@ message AggregateAttestationAndProof {
 
   // 96 byte selection proof signed by the aggregator, which is the signature of
   // the slot to aggregate.
-  bytes selection_proof = 2 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes selection_proof = 2 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 message Attestation {
   // A bitfield representation of validator indices that have voted exactly
   // the same vote and have been aggregated into this attestation.
   bytes aggregation_bits = 1 [
-    (sila.eth.ext.ssz_max) = "2048",
-    (sila.eth.ext.cast_type) = "github.com/sila-chain/go-bitfield.Bitlist"
+    (sila.consensus.ext.ssz_max) = "2048",
+    (sila.consensus.ext.cast_type) = "github.com/sila-chain/go-bitfield.Bitlist"
   ];
 
   AttestationData data = 2;
 
   // 96 byte BLS aggregate signature.
-  bytes signature = 3 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 3 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 message AttestationData {
@@ -71,18 +71,18 @@ message AttestationData {
 
   // Slot of the attestation attesting for.
   uint64 slot = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 
   // The committee index that submitted this attestation.
   uint64 committee_index = 2
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.CommitteeIndex" ];
 
   // 32 byte root of the LMD GHOST block vote.
-  bytes beacon_block_root = 3 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes beacon_block_root = 3 [ (sila.consensus.ext.ssz_size) = "32" ];
 
   // The most recent justified checkpoint in the beacon state
   Checkpoint source = 4;
@@ -98,12 +98,12 @@ message Checkpoint {
 
   // Epoch the checkpoint references.
   uint64 epoch = 1 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
   ];
 
   // Block root of the checkpoint references.
-  bytes root = 2 [ (sila.eth.ext.ssz_size) = "32" ];
+  bytes root = 2 [ (sila.consensus.ext.ssz_size) = "32" ];
 }
 
 // ----------------------------------------------------------------------------
@@ -115,13 +115,13 @@ message SignedAggregateAttestationAndProofElectra {
   AggregateAttestationAndProofElectra message = 1;
 
   // 96 byte BLS aggregate signature signed by the aggregator over the message.
-  bytes signature = 2 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 2 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 message AggregateAttestationAndProofElectra {
   // The aggregator index that submitted this aggregated attestation and proof.
   uint64 aggregator_index = 1
-      [ (sila.eth.ext.cast_type) =
+      [ (sila.consensus.ext.cast_type) =
             "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/"
             "primitives.ValidatorIndex" ];
 
@@ -130,36 +130,36 @@ message AggregateAttestationAndProofElectra {
 
   // 96 byte selection proof signed by the aggregator, which is the signature of
   // the slot to aggregate.
-  bytes selection_proof = 3 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes selection_proof = 3 [ (sila.consensus.ext.ssz_size) = "96" ];
 }
 
 message AttestationElectra {
   // A bitfield representation of validator indices that have voted exactly
   // the same vote and have been aggregated into this attestation.
   bytes aggregation_bits = 1 [
-    (sila.eth.ext.ssz_max) = "max_attesting_indices.size",
-    (sila.eth.ext.cast_type) = "github.com/sila-chain/go-bitfield.Bitlist"
+    (sila.consensus.ext.ssz_max) = "max_attesting_indices.size",
+    (sila.consensus.ext.cast_type) = "github.com/sila-chain/go-bitfield.Bitlist"
   ];
 
   AttestationData data = 2;
 
   // 96 byte BLS aggregate signature.
-  bytes signature = 3 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 3 [ (sila.consensus.ext.ssz_size) = "96" ];
 
   // Represents the committee which aggregated attestation belong.
   bytes committee_bits = 4 [
-    (sila.eth.ext.ssz_size) = "committee_bits.size",
-    (sila.eth.ext.cast_type) = "committee_bits.type"
+    (sila.consensus.ext.ssz_size) = "committee_bits.size",
+    (sila.consensus.ext.cast_type) = "committee_bits.type"
   ];
 }
 
 message SingleAttestation {
-  uint64 committee_id = 1 [ (sila.eth.ext.cast_type) =
+  uint64 committee_id = 1 [ (sila.consensus.ext.cast_type) =
                                 "github.com/sila-chain/Sila-Consensus-Core/v7/"
                                 "consensus-types/primitives.CommitteeIndex" ];
-  uint64 attester_index = 2 [ (sila.eth.ext.cast_type) =
+  uint64 attester_index = 2 [ (sila.consensus.ext.cast_type) =
                                   "github.com/sila-chain/Sila-Consensus-Core/v7/"
                                   "consensus-types/primitives.ValidatorIndex" ];
   AttestationData data = 3;
-  bytes signature = 4 [ (sila.eth.ext.ssz_size) = "96" ];
+  bytes signature = 4 [ (sila.consensus.ext.ssz_size) = "96" ];
 }

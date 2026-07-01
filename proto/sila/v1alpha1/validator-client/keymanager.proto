@@ -35,63 +35,63 @@ message SignRequest {
   // Beacon chain objects. [100-200]
   oneof object {
     // Phase0 objects.
-    sila.eth.v1alpha1.BeaconBlock block = 101;
-    sila.eth.v1alpha1.AttestationData attestation_data = 102;
-    sila.eth.v1alpha1.AggregateAttestationAndProof
+    sila.consensus.v1alpha1.BeaconBlock block = 101;
+    sila.consensus.v1alpha1.AttestationData attestation_data = 102;
+    sila.consensus.v1alpha1.AggregateAttestationAndProof
         aggregate_attestation_and_proof = 103;
-    sila.eth.v1alpha1.VoluntaryExit exit = 104;
+    sila.consensus.v1alpha1.VoluntaryExit exit = 104;
     uint64 slot = 105 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
     ];
     uint64 epoch = 106 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Epoch"
     ];
 
     // Altair objects.
-    sila.eth.v1alpha1.BeaconBlockAltair block_altair = 107;
-    sila.eth.v1alpha1.SyncAggregatorSelectionData
+    sila.consensus.v1alpha1.BeaconBlockAltair block_altair = 107;
+    sila.consensus.v1alpha1.SyncAggregatorSelectionData
         sync_aggregator_selection_data = 108;
-    sila.eth.v1alpha1.ContributionAndProof contribution_and_proof = 109;
+    sila.consensus.v1alpha1.ContributionAndProof contribution_and_proof = 109;
     bytes sync_message_block_root = 110;
 
     // Bellatrix objects.
-    sila.eth.v1alpha1.BeaconBlockBellatrix block_bellatrix = 111;
-    sila.eth.v1alpha1.BlindedBeaconBlockBellatrix blinded_block_bellatrix =
+    sila.consensus.v1alpha1.BeaconBlockBellatrix block_bellatrix = 111;
+    sila.consensus.v1alpha1.BlindedBeaconBlockBellatrix blinded_block_bellatrix =
         112;
 
     // Builder objects.
-    sila.eth.v1alpha1.ValidatorRegistrationV1 registration = 113;
+    sila.consensus.v1alpha1.ValidatorRegistrationV1 registration = 113;
 
     // Capella objects.
-    sila.eth.v1alpha1.BeaconBlockCapella block_capella = 114;
-    sila.eth.v1alpha1.BlindedBeaconBlockCapella blinded_block_capella = 115;
+    sila.consensus.v1alpha1.BeaconBlockCapella block_capella = 114;
+    sila.consensus.v1alpha1.BlindedBeaconBlockCapella blinded_block_capella = 115;
 
     // Deneb objects.
-    sila.eth.v1alpha1.BeaconBlockDeneb block_deneb = 116;
-    sila.eth.v1alpha1.BlindedBeaconBlockDeneb blinded_block_deneb = 117;
+    sila.consensus.v1alpha1.BeaconBlockDeneb block_deneb = 116;
+    sila.consensus.v1alpha1.BlindedBeaconBlockDeneb blinded_block_deneb = 117;
 
     // Electra objects.
-    sila.eth.v1alpha1.BeaconBlockElectra block_electra = 118;
-    sila.eth.v1alpha1.BlindedBeaconBlockElectra blinded_block_electra = 119;
-    sila.eth.v1alpha1.AggregateAttestationAndProofElectra
+    sila.consensus.v1alpha1.BeaconBlockElectra block_electra = 118;
+    sila.consensus.v1alpha1.BlindedBeaconBlockElectra blinded_block_electra = 119;
+    sila.consensus.v1alpha1.AggregateAttestationAndProofElectra
         aggregate_attestation_and_proof_electra = 120;
 
     // Fulu objects.
-    sila.eth.v1alpha1.BeaconBlockElectra block_fulu = 121;
-    sila.eth.v1alpha1.BlindedBeaconBlockFulu blinded_block_fulu = 122;
+    sila.consensus.v1alpha1.BeaconBlockElectra block_fulu = 121;
+    sila.consensus.v1alpha1.BlindedBeaconBlockFulu blinded_block_fulu = 122;
 
     // Gloas objects.
-    sila.eth.v1alpha1.BeaconBlockGloas block_gloas = 123;
-    sila.eth.v1alpha1.SilaPayloadEnvelope sila_payload_envelope = 124;
-    sila.eth.v1alpha1.PayloadAttestationData payload_attestation_data = 125;
-    sila.eth.v1alpha1.ProposerPreferences proposer_preference = 126;
+    sila.consensus.v1alpha1.BeaconBlockGloas block_gloas = 123;
+    sila.consensus.v1alpha1.SilaPayloadEnvelope sila_payload_envelope = 124;
+    sila.consensus.v1alpha1.PayloadAttestationData payload_attestation_data = 125;
+    sila.consensus.v1alpha1.ProposerPreferences proposer_preference = 126;
   }
 
   reserved 4, 5; // Reserving old, deleted fields.
   uint64 signing_slot = 6 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -125,7 +125,7 @@ message ProposerOptionPayload {
 message BuilderConfig {
   bool enabled = 1;
   uint64 gas_limit = 2 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/validator.Uint64"
   ];
   repeated string relays = 3;

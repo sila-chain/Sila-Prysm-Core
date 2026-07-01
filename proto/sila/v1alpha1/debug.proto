@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package sila.eth.v1alpha1;
+package sila.consensus.v1alpha1;
 
 import "proto/silaapi/ext/options.proto";
 import "proto/sila/v1alpha1/node.proto";
@@ -8,12 +8,12 @@ import "proto/sila/v1alpha1/p2p_messages.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
-option csharp_namespace = "Sila.Eth.V1alpha1";
-option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;eth";
+option csharp_namespace = "Sila.Consensus.V1alpha1";
+option go_package = "github.com/sila-chain/Sila-Consensus-Core/v7/proto/sila/v1alpha1;v1alpha1";
 option java_multiple_files = true;
 option java_outer_classname = "DebugProto";
-option java_package = "org.sila.eth.v1alpha1";
-option php_namespace = "Sila\\Eth\\v1alpha1";
+option java_package = "org.sila.consensus.v1alpha1";
+option php_namespace = "Sila\\Consensus\\v1alpha1";
 
 // Debug service API
 //
@@ -51,7 +51,7 @@ service Debug {
     };
   }
   // Returns requested peer with specified peer id if it exists.
-  rpc GetPeer(sila.eth.v1alpha1.PeerRequest) returns (DebugPeerResponse) {
+  rpc GetPeer(sila.consensus.v1alpha1.PeerRequest) returns (DebugPeerResponse) {
     option deprecated = true;
     option (google.api.http) = {
       get : "/sila/v1alpha1/debug/peer"
@@ -62,14 +62,14 @@ service Debug {
 message InclusionSlotRequest {
   uint64 id = 1;
   uint64 slot = 2 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
 
 message InclusionSlotResponse {
   uint64 slot = 2 [
-    (sila.eth.ext.cast_type) =
+    (sila.consensus.ext.cast_type) =
         "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
   ];
 }
@@ -80,7 +80,7 @@ message BeaconStateRequest {
   oneof query_filter {
     // The slot corresponding to a desired beacon state.
     uint64 slot = 1 [
-      (sila.eth.ext.cast_type) =
+      (sila.consensus.ext.cast_type) =
           "github.com/sila-chain/Sila-Consensus-Core/v7/consensus-types/primitives.Slot"
     ];
 
@@ -145,9 +145,9 @@ message DebugPeerResponse {
   // Listening addresses know of the peer.
   repeated string listening_addresses = 1;
   // Direction of current connection.
-  sila.eth.v1alpha1.PeerDirection direction = 2;
+  sila.consensus.v1alpha1.PeerDirection direction = 2;
   // Current connection between host and peer.
-  sila.eth.v1alpha1.ConnectionState connection_state = 3;
+  sila.consensus.v1alpha1.ConnectionState connection_state = 3;
   // Peer ID of peer.
   string peer_id = 4;
   // ENR of peer at the current moment.

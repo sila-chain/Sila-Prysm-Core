@@ -1,5 +1,4 @@
-package sila_test
-
+package v1alpha1_test
 import (
 	"math/rand"
 	"reflect"
